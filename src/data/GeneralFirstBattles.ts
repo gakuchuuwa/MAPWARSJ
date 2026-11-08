@@ -3328,25 +3328,32 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #169 奥克巴 (622 ~ 683) — 公元682年韦斯卡拉之战
+    // #169 乌克巴 (622 ~ 683) — 公元683年塔胡达之战（史称维斯凯拉战役）
+    // 🔴 [2026-11-08 主人令「请修复，该修复的一起修复」「不要画路」]
+    //    原条目：年份 682、坐标用凯鲁万（35.67,10.1）、targetName「凯鲁万北草原」—— 三处全错。
+    //    按史：乌克巴 683 年在塔胡达（今阿尔及利亚比斯克拉省西迪乌克巴北侧，塔布达 Thabudeos 遗址 34.8025,5.8954）
+    //    被库萨伊拉联军设伏合围、全军覆没，他本人阵亡。年份/坐标改对后，
+    //    `findBattlefieldOfGeneralEvent`（同年 + 0.15° 容差）会自动配到 `bf_tahuda`，不另建事件、不画路。
+    //    兵力：正史随行仅数百亲骑（他把主力先遣回凯鲁万），游戏沿用既有 10000 规模，与库萨伊拉条目的 enemyTroops 对齐，不按 500 打。
+    //    角色改 defender：他是被伏击合围的一方（库萨伊拉条目 role = attacker）。
     gen_uqba: {
         generalId: 'gen_uqba',
-        battleName: '韦斯卡拉之战',
-        battleYear: 682,
+        battleName: '塔胡达之战',
+        battleYear: 683,
         battleType: 'field',
-        role: 'attacker',
-        targetName: '凯鲁万北草原',
-        targetCityId: 'city_kailuwan',
-        targetLat: 35.67,
-        targetLng: 10.1,
-        myTroops: 12500,
+        role: 'defender',
+        targetName: '塔胡达',
+        targetCityId: 'city_bujiaya',   // 50 km 内无据点；锚最近据点 布佳亚（约 229 km）—— 与库萨伊拉条目同一口径
+        targetLat: 34.8025,
+        targetLng: 5.8954,
+        myTroops: 10000,
         enemyFactionId: 'mulabite',
         enemyFactionName: '柏柏尔联军',
         enemyGeneralId: 'gen_kusaila',
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '大军纵横北非直至大洋波涛！拜占庭与柏柏尔溃兵再聚草莽，勇士，挥舞弯刀随我冲锋，让号角响彻马格里布！' },
-            { speaker: 'player', text: '愿随奥克巴将军共赴韦斯卡拉之战，大破柏柏尔联军敌军！' },
+            { speaker: 'player', text: '愿随乌克巴将军共赴塔胡达之战，大破柏柏尔联军敌军！' },
         ],
     },
 
@@ -9124,7 +9131,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetName: '塔胡达',
         targetCityId: 'city_bujiaya',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 布佳亚（约 220 km）
         // 塔胡达（34.8025,5.8954）50 km 内无据点（最近的布佳亚约 229 km）；野战按史实战场坐标打。
-        // 🔴 [2026-11-08 按史改坐标] 塔胡达＝今阿尔及利亚比斯克拉省西迪奥克巴北侧的塔布达（Thabudeos）遗址，34.8025,5.8954；
+        // 🔴 [2026-11-08 按史改坐标] 塔胡达＝今阿尔及利亚比斯克拉省西迪乌克巴北侧的塔布达（Thabudeos）遗址，34.8025,5.8954；
         //    原文 35.5,6.5 落在巴特纳一带，偏南约 95 km（法文维基 Bataille de Tahouda：à Tahouda, actuelle Sidi Okba）。
         targetLat: 34.8025,
         targetLng: 5.8954,
@@ -9134,8 +9141,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'gen_uqba',
         enemyTroops: 10000,
         introLines: [
-            { speaker: 'general', text: '欧克巴孤军深入马格里布，本王的柏柏尔勇士已在塔胡达设伏！壮士，随本王合围，叫阿拉伯人全军覆没！' },
-            { speaker: 'player', text: '愿随库赛拉王于塔胡达设伏，围歼欧克巴！' },
+            { speaker: 'general', text: '乌克巴孤军深入马格里布，本王的柏柏尔勇士已在塔胡达设伏！壮士，随本王合围，叫阿拉伯人全军覆没！' },
+            { speaker: 'player', text: '愿随库萨伊拉王于塔胡达设伏，围歼乌克巴！' },
         ],
     },
     gen_vasili_iii: {

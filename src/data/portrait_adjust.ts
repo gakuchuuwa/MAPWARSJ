@@ -1748,9 +1748,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/XIANBEI/tufa_d_tufanutan.png": {
-            "scale": 1.15,
+            "scale": 1.09,
             "offsetX": 0,
-            "offsetY": 34
+            "offsetY": 30
         },
         "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 0.91,

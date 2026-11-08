@@ -657,7 +657,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_theodoric_great': 5,                           // 狄奥多里克 · donggete · 拉文纳
     'donggete_berig': 1,                     // 贝里格 · donggete · 维斯比
     'gen_ugolino': 13,                                   // 乌戈里诺 · anuo · 比萨
-    'gen_uqba': 7,                                      // 奥克巴 · aguelabu · 凯鲁万
+    'gen_uqba': 7,                                      // 乌克巴 · aguelabu · 凯鲁万
     'gen_basil_ii': 10,                                  // 巴西尔二世 · baizanting · 君士坦丁堡
     'gen_wifred_hairy': 9,                              // 威弗雷德 · jiatailuoniya · 巴塞罗那
     'gen_yaghmurasen': 13,                               // 亚格姆拉森 · zhayan · 特莱姆森

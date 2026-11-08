@@ -730,7 +730,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_kotyan': 'CUMAN',   // 库曼｜忽炭汗｜据点 奥列什基
     'gen_krum': 'BULGARIANS',   // 保加利亚｜克鲁姆｜据点 索非亚
     'gen_kuchlug': 'CENTRAL_ASIA',   // 阿尔泰｜屈出律｜据点 也儿的石
-    'gen_kusaila': 'BERBER',   // 扎扬｜库赛拉｜据点 凯鲁万
+    'gen_kusaila': 'BERBER',   // 扎扬｜库萨伊拉｜据点 凯鲁万
     'gen_kutlug_buga': 'CENTRAL_ASIA',   // 金帐｜库特卢格｜据点 萨莱
     'gen_lajos_ii': 'MAGYAR',   // 匈牙利｜拉约什二世｜据点 布达佩斯
     'gen_laudonniere': 'FRANKS',   // 法兰西｜劳多尼耶｜据点 巴黎
@@ -846,7 +846,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_ulrich_augsburg': 'GERMANIC',   // 施瓦本｜乌尔里希｜据点 奥格斯堡
     'gen_ulrich_jungingen': 'GERMANIC',   // 条顿骑士团｜容金根｜据点 柯尼斯堡
     'gen_ulugh_muhammad': 'CENTRAL_ASIA',   // 保加尔｜兀鲁黑｜据点 喀山
-    'gen_uqba': 'BERBER',   // 阿格拉布｜奥克巴｜据点 凯鲁万
+    'gen_uqba': 'BERBER',   // 阿格拉布｜乌克巴｜据点 凯鲁万
     'gen_urdaneta': 'SPANISH',   // 马里｜乌尔达内塔｜据点 阿卡普尔科
     'gen_valdivia': 'SPANISH',   // 西班牙｜瓦尔迪维亚｜据点 瓦尔帕莱索
     'gen_vasili_iii': 'SLAVIC',   // 莫斯科｜瓦西里三世｜据点 莫斯科

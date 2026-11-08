@@ -295,7 +295,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_pietro_tiepolo: { birth: 1200, death: 1250, kaoju: '推定' },      // 提埃波洛（米兰执政官）
     gen_kutlug_buga: { birth: 1300, death: 1363, kaoju: '推定' },         // 库特卢格（金帐王公）
     gen_ali_ibn_yusuf: { birth: 1084, death: 1143 },              // 阿里优素福（穆拉比特埃米尔）
-    gen_kusaila: { birth: 620, death: 690, kaoju: '推定' },              // 库赛拉（柏柏尔王）
+    gen_kusaila: { birth: 620, death: 690, kaoju: '推定' },              // 库萨伊拉（柏柏尔王）
     malin_abulhasan: { birth: 1297, death: 1351 },              // 阿布哈桑（马林苏丹）
     zhao_gerong: { birth: 495, death: 528, kaoju: '推定' },       // 葛荣（六镇起义首领）
     gen_ramiro_ii: { birth: 900, death: 951 },             // 拉米罗二世（莱昂国王）
@@ -711,7 +711,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_yaghmurasen: { birth: 1206, death: 1283 },  // 亚格姆拉森
     gen_barbarossa: { birth: 1478, death: 1546 },  // 巴巴罗萨
     gen_hammad: { birth: 970, death: 1028, kaoju: '推定' },  // 哈马德
-    gen_uqba: { birth: 622, death: 683 },  // 奥克巴
+    gen_uqba: { birth: 622, death: 683 },  // 乌克巴
     gen_dragut: { birth: 1485, death: 1565 },  // 德拉古特
     gen_magas: { birth: -317, death: -250, kaoju: '异说' },  // 马加斯
     talike_talike: { birth: 670, death: 720, kaoju: '推定' },  // 塔里克

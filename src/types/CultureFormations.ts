@@ -981,7 +981,7 @@ export const BERBER_DYNASTY_GENERAL_IDS = new Set([
     'gen_tashfin',          // 塔什芬（马拉喀什 · mulabite）
     'gen_yaghmurasen',      // 亚格姆拉森（特莱姆森 · zhayan）
     'gen_hammad',           // 哈马德（布佳亚 · hamade）
-    'gen_uqba',             // 奥克巴（凯鲁万 · aguelabu）
+    'gen_uqba',             // 乌克巴（凯鲁万 · aguelabu）
     'gen_barbarossa',       // 巴巴罗萨·海雷丁（阿尔及尔 · babali）
     'gen_dragut',           // 德拉古特（的黎波里 · telibolisi）
 ]);

@@ -1696,8 +1696,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     zhayan: [
         { generalId: 'gen_yaghmurasen', cityId: 'city_teleimusen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png', eliteName: '扎扬骑手', eliteTier: 4 },
-        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：库赛拉＝奥雷巴柏柏尔王，阿尔塔瓦王国（今特莱姆森一带）；丹吉尔从未是他的驻地 → 放特莱姆森（zhayan，风格 BERBER）；仍挂本政权 talike
-        { generalId: 'gen_kusaila', cityId: 'city_kailuwan', factionId: 'mulabite', generalName: '库赛拉', portrait: '/assets/BERBER/gen_kusaila.png', eliteName: '柏柏尔轻骑', eliteTier: 2 },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：库萨伊拉＝奥雷巴柏柏尔王，阿尔塔瓦王国（今特莱姆森一带）；丹吉尔从未是他的驻地 → 放特莱姆森（zhayan，风格 BERBER）；仍挂本政权 talike
+        { generalId: 'gen_kusaila', cityId: 'city_kailuwan', factionId: 'mulabite', generalName: '库萨伊拉', portrait: '/assets/BERBER/gen_kusaila.png', eliteName: '柏柏尔轻骑', eliteTier: 2 },
     ],
 
 
@@ -1767,8 +1767,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     aguelabu: [
         
-{ generalId: 'gen_uqba', cityId: 'city_kailuwan', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png', eliteName: '凯鲁万骑', eliteTier: 3 }
-,
         // 🔴 [2026-10-25 补B] 阿齐兹（克里特埃米尔，961 干地亚陷落时在位；克里特埃米尔国出自阿格拉布，据凯鲁万）｜势力 阿格拉布｜据点 凯鲁万（BERBER 文化）｜普将｜精锐「克里特军」T4｜立绘留空
         { generalId: 'bfe_abdulaziz_crete', factionId: 'aguelabu', cityId: 'city_kailuwan', generalName: '阿齐兹', portrait: '/assets/BERBER/bfe_abdulaziz_crete.png', eliteName: '克里特军', eliteTier: 4 },
     ],
@@ -14115,6 +14113,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     womaya: [
+        { generalId: 'gen_uqba', factionId: 'womaya', cityId: 'city_kailuwan', generalName: '乌克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png', eliteName: '凯鲁万骑', eliteTier: 3 },   // 🔴 [2026-11-08 主人令「必须符合历史」] 乌克巴·本·纳菲＝倭马亚王朝的伊夫里奇亚总督（622–683，塔胡达阵亡），不是 9 世纪的阿格拉布；据点仍凯鲁万（他 670 年所建，文化随据点 BERBER），军团＝封建×柏柏尔（womaya 时代 feudal）
         { generalId: 'womaya_hubayra', factionId: 'womaya', cityId: 'city_damasikusi', generalName: '胡拜拉', portrait: '/assets/ORIE/womaya_hubayra.png', eliteName: '叙利亚重装骑兵', eliteTier: 3 },
         { generalId: 'malwan_ibn_marwan', factionId: 'womaya', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德步兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
         { generalId: 'bfe2_rezin', cityId: 'city_damasikusi', generalName: '利汛', portrait: '/assets/ORIE/bfe2_rezin.png', factionId: 'yalan', eliteName: '亚兰战车', eliteTier: 3 },   // 按史：亚兰-大马士革王国以战车兵著称（前 853 卡卡之战、前 732 亚兰亡于亚述）；普将 T4,
