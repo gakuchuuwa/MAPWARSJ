@@ -12,6 +12,8 @@ import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
 import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { AmbientFrameGate } from './AmbientFrameGate';
+import { needsSail, buildSailLayers, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../data/NavalSails';
+import { REGION_TO_DE_STYLE } from '../systems/cityDeStyle';
 
 /** 商队经过时惊走野生动物的半径（度，zoom 9 ≈ 50px） */
 const CARAVAN_SCARE_RADIUS_DEG = 0.14;
@@ -291,6 +293,14 @@ export function playerTourMerchantShipDir(lat: number, lng: number): string {
     if (EAST_ASIA_STYLES.has(style)) return 'JUNK';
     if (EUROPE_STYLES.has(style)) return 'TRADE_COG';
     return 'MERCHANT_SHIP';
+}
+
+/** 按所在地文化映射 DE 船帆文化组（欧洲柯克船固定用欧洲帆组） */
+export function tradeShipSailGroupAt(lat: number, lng: number, shipId?: string): SailGroup {
+    if (shipId === 'TRADE_COG') return 'west';
+    const style = resolveLocalCulture(lat, lng);
+    const deStyle = (REGION_TO_DE_STYLE as Record<string, string>)[style];
+    return (deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west';
 }
 
 export class TradeTrafficLayer {
@@ -675,7 +685,11 @@ export class TradeTrafficLayer {
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
         /** 本帧待画的精灵：位置先全部算完 —— **先画水迹、后画船体**，浪花才垫在船底下 */
-        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; ax: number; ay: number; ox: number; oy: number; rot: number; alpha: number }> = [];
+        const pending: Array<{
+            sheet: HTMLImageElement; frame: number; fw: number; fh: number;
+            ax: number; ay: number; ox: number; oy: number; rot: number; alpha: number;
+            sails?: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[];
+        }> = [];
 
         for (const c of this.caravans) {
             const cartAsset = this.assetFor(c.cartDir);
@@ -751,7 +765,10 @@ export class TradeTrafficLayer {
                     while (resDeg < -180) resDeg += 360;
                     shipRot = resDeg * Math.PI / 180;
                 }
-                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot, alpha });
+                const sails = sea && needsSail(asset.dir)
+                    ? buildSailLayers(asset.dir, dirIdx, scale, tradeShipSailGroupAt(pos.lat, pos.lng, asset.dir))
+                    : undefined;
+                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot, alpha, sails });
                 if (sea) {
                     seaShips.push({
                         x: pt.x, y: pt.y, r: c.count - u, isAlive: true,
@@ -786,9 +803,19 @@ export class TradeTrafficLayer {
                 ctx.translate(p.ax, p.ay);
                 ctx.rotate(p.rot);
                 ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ox, p.oy, p.fw * scale, p.fh * scale);
+                if (p.sails) {
+                    for (const sl of p.sails) {
+                        ctx.drawImage(sl.img, sl.ox, sl.oy, sl.w, sl.h);
+                    }
+                }
                 ctx.restore();
             } else {
                 ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ax + p.ox, p.ay + p.oy, p.fw * scale, p.fh * scale);
+                if (p.sails) {
+                    for (const sl of p.sails) {
+                        ctx.drawImage(sl.img, p.ax + sl.ox, p.ay + sl.oy, sl.w, sl.h);
+                    }
+                }
             }
         }
         ctx.globalAlpha = 1;

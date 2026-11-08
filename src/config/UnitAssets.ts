@@ -1304,14 +1304,11 @@ export const SPRITE_PATHS = {
             DEATH: [],
         },
         'TRADE_COG': {
-            // 柯克船（cog）｜🔴 [2026-11-07 主人令「欧洲柯克船，有帆吗…游戏中没有，请添加」]
-            //   原指向 /SUCAI_TRADE/TRADE_COG/（该目录只剩 README，素材根本不存在 → 游戏里看不到船，更谈不上帆）。
-            //   现用 /SUCAI/TRADE_COG/：船体取自 DE 柯克船壳（HULK 帧）+ DE 船帆（SUCAI_SAIL/WEST/boat_4）按热点合成为 16 向静态帧，
-            //   帆已烘进图里（所以 NavalSails 不再给 TRADE_COG 叠帆，避免双层帆）。_meta.json 同步写热点。
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TRADE_COG/move_${d}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TRADE_COG/attack_${d}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TRADE_COG/idle_${d}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TRADE_COG/attack_${d}.png`),
+            // 柯克货船（商队船模转战船，SUCAI_TRADE 只有 16 向 idle，move/attack 复用 idle；船帆由 NavalSails 按 DE .dat 图层栈动态叠画）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
             DEATH: [],
         },
         'TRANSPORT_SHIP': {
@@ -4273,13 +4270,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
         },
-        // 【柯克船】8方向（与 16 向同一套合成帧，取前 8 向；帆已烘进图里）
+        // 【柯克货船】8方向，商队船模（SUCAI_TRADE 只有 idle 帧，move/attack 复用 idle；船帆由 NavalSails 按 DE .dat 图层栈动态叠画）
         'trade_cog': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRADE_COG/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRADE_COG/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRADE_COG/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRADE_COG/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRADE_COG/idle_${dir}.png`),
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
         },
         // 【运输船/渡船】8方向，商队船模（SUCAI_TRADE 只有 idle 帧，move/attack 复用 idle）
         'transport_ship': {

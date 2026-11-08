@@ -39,7 +39,8 @@ import { getGeneralCulture } from '../data/GeneralCulture';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
-import { destrFamilyOf, destrCandidatesOf, rubbleCandidatesOf, DE_DESTR_FALLBACK, DE_RUBBLE_FALLBACK } from '../data/buildingDestructionAssets';
+import { destrFamilyOf, destrCandidatesOf, rubbleCandidatesOf, DE_DESTR_FALLBACK, DE_RUBBLE_FALLBACK } from '../data/buildingDestructionAssets';
+import { needsSail, getSailDeltas, getSailPartDir, loadSailPartAsync, DE_STYLE_TO_SAIL_GROUP } from '../data/NavalSails';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { audioManager } from '../audio/AudioManager';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
@@ -4534,10 +4535,73 @@ export class Scene13WarLayer {
                     im = new Image();
                     this.animalImgCache.set(url, im);
                     im.src = url;
-                }
-                const ready = im;
-                if (ready.complete && ready.naturalWidth > 0) na.img = ready;
-                else ready.addEventListener('load', () => { na.img = ready; }, { once: true });
+                }
+                const ready = im;
+                const applyReadyHull = (hullImg: HTMLImageElement) => {
+                    if (!isTrade || !needsSail(species)) {
+                        na.img = hullImg;
+                        return;
+                    }
+                    const deltas = getSailDeltas(species);
+                    if (!deltas || deltas.length === 0) {
+                        na.img = hullImg;
+                        return;
+                    }
+                    const deStyle = this.buildingStyleFor(1);
+                    const sailGroup = species === 'TRADE_COG' ? 'west' : ((deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west');
+                    void Promise.all(deltas.map(dl => loadSailPartAsync(getSailPartDir(dl.part, sailGroup)))).then((parts) => {
+                        const fw = finalMeta.box_w;
+                        const fh = finalMeta.box_h;
+                        const hx = finalMeta.anchor_x;
+                        const hy = finalMeta.anchor_y;
+                        let minX = -hx, maxX = fw - hx, minY = -hy, maxY = fh - hy;
+                        const layers: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[] = [];
+                        for (let i = 0; i < deltas.length; i++) {
+                            const part = parts[i];
+                            if (!part) continue;
+                            const sm = part.dirs[String(dirNum)];
+                            const simg = part.imgs[dirNum];
+                            if (!sm || !simg || !simg.complete || simg.naturalWidth === 0) continue;
+                            const ox = -sm.hx;
+                            const oy = -sm.hy + deltas[i].oy;
+                            minX = Math.min(minX, ox);
+                            maxX = Math.max(maxX, ox + sm.fw);
+                            minY = Math.min(minY, oy);
+                            maxY = Math.max(maxY, oy + sm.fh);
+                            layers.push({ img: simg, ox, oy, w: sm.fw, h: sm.fh });
+                        }
+                        if (layers.length === 0) {
+                            na.img = hullImg;
+                            return;
+                        }
+                        const cw = Math.max(1, Math.round(maxX - minX));
+                        const ch = Math.max(1, Math.round(maxY - minY));
+                        const newHx = -minX;
+                        const newHy = -minY;
+                        const cv = document.createElement('canvas');
+                        cv.width = cw;
+                        cv.height = ch;
+                        const cctx = cv.getContext('2d');
+                        if (cctx) {
+                            cctx.drawImage(hullImg, 0, 0, fw, fh, newHx - hx, newHy - hy, fw, fh);
+                            for (const sl of layers) {
+                                cctx.drawImage(sl.img, newHx + sl.ox, newHy + sl.oy, sl.w, sl.h);
+                            }
+                        }
+                        na.meta = {
+                            ...finalMeta,
+                            box_w: cw,
+                            box_h: ch,
+                            anchor_x: newHx,
+                            anchor_y: newHy,
+                        };
+                        const outImg = new Image();
+                        outImg.onload = () => { na.img = outImg; };
+                        outImg.src = cv.toDataURL();
+                    });
+                };
+                if (ready.complete && ready.naturalWidth > 0) applyReadyHull(ready);
+                else ready.addEventListener('load', () => { applyReadyHull(ready); }, { once: true });
             });
         } else {
             const im = new Image();

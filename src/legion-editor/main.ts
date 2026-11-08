@@ -57,6 +57,7 @@ import { LEGION_78_SIEGE_MAP } from '../data/SiegeWeaponsByCulture';
 import { getUnitLookNote } from '../data/UnitLookNotes';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
+import { needsSail, getSailDeltas, getSailPartDir, loadSailPartAsync, buildSailLayers } from '../data/NavalSails';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -6085,6 +6086,10 @@ function startUnitCanvasPreview(unitId: string): void {
 
             const s = UNIT_PREVIEW_SCALE;
             const dw = fw * s, dh = fh * s;
+            const shipKey = unitId.toUpperCase();
+            const sailLayers = needsSail(shipKey)
+                ? buildSailLayers(shipKey, animDirection, s, 'west')
+                : undefined;
 
             // 水平按整帧居中（不按锚点：器械类的 hx 常年偏在一侧，按锚点会左右乱跑）
             const dx = (canvas.width - dw) / 2;
@@ -6093,8 +6098,22 @@ function startUnitCanvasPreview(unitId: string): void {
             let dy = groundY - hy * s;
             if (dh >= canvas.height - 8) dy = (canvas.height - dh) / 2;
             else dy = Math.max(4, Math.min(dy, canvas.height - dh - 4));
+            if (sailLayers && sailLayers.length > 0) {
+                let minTop = dy;
+                for (const sl of sailLayers) {
+                    minTop = Math.min(minTop, dy + hy * s + sl.oy);
+                }
+                if (minTop < 4) dy += 4 - minTop;
+            }
 
             ctx.drawImage(img, cur * fw, 0, fw, fh, dx, dy, dw, dh);
+            if (sailLayers) {
+                const anchorX = dx + hx * s;
+                const anchorY = dy + hy * s;
+                for (const sl of sailLayers) {
+                    ctx.drawImage(sl.img, anchorX + sl.ox, anchorY + sl.oy, sl.w, sl.h);
+                }
+            }
 
             ctx.fillStyle = '#7a7266';
             ctx.font = '11px "Microsoft YaHei", sans-serif';
@@ -6232,20 +6251,50 @@ export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string, c
         const img = await loadSprite(imgUrl);
         let meta = metaCache.get(prefix);
         if (meta === undefined) meta = await loadMeta(prefix);
+        const shipKey = unitId.toUpperCase();
+        const sailDeltas = needsSail(shipKey) ? getSailDeltas(shipKey) : null;
+        const sailParts = sailDeltas
+            ? await Promise.all(sailDeltas.map(dl => loadSailPartAsync(getSailPartDir(dl.part, 'west'))))
+            : null;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         ctx.imageSmoothingEnabled = !crisp;
         const actMeta = meta?.idle;
         const dirMeta = actMeta?.dirs?.[String(unitThumbDir)];
-        let fw: number, fh: number;
-        if (actMeta && dirMeta) { fw = dirMeta.fw; fh = dirMeta.fh; }
-        else { fw = img.naturalHeight; fh = img.naturalHeight; }   // 兜底：假设正方形帧
+        let fw: number, fh: number, hx: number, hy: number;
+        if (actMeta && dirMeta) { fw = dirMeta.fw; fh = dirMeta.fh; hx = dirMeta.hx; hy = dirMeta.hy; }
+        else { fw = img.naturalHeight; fh = img.naturalHeight; hx = fw / 2; hy = fh / 2; }   // 兜底：假设正方形帧
+
+        let minX = -hx, maxX = fw - hx, minY = -hy, maxY = fh - hy;
+        const readySails: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[] = [];
+        if (sailDeltas && sailParts) {
+            for (let i = 0; i < sailDeltas.length; i++) {
+                const part = sailParts[i];
+                if (!part) continue;
+                const sm = part.dirs[String(unitThumbDir)];
+                const simg = part.imgs[unitThumbDir];
+                if (!sm || !simg || !simg.complete || simg.naturalWidth === 0) continue;
+                const ox = -sm.hx;
+                const oy = -sm.hy + sailDeltas[i].oy;
+                minX = Math.min(minX, ox);
+                maxX = Math.max(maxX, ox + sm.fw);
+                minY = Math.min(minY, oy);
+                maxY = Math.max(maxY, oy + sm.fh);
+                readySails.push({ img: simg, ox, oy, w: sm.fw, h: sm.fh });
+            }
+        }
+
+        const unionW = Math.max(1, maxX - minX);
+        const unionH = Math.max(1, maxY - minY);
         const size = canvas.width;
-        const scale = Math.min(size / fw, size / fh);
-        const dw = fw * scale, dh = fh * scale;
-        const dx = (size - dw) / 2, dy = (size - dh) / 2;
+        const scale = Math.min(size / unionW, size / unionH);
+        const originX = (size - unionW * scale) / 2 - minX * scale;
+        const originY = (size - unionH * scale) / 2 - minY * scale;
         ctx.clearRect(0, 0, size, size);
-        ctx.drawImage(img, 0, 0, fw, fh, dx, dy, dw, dh);   // 第 0 帧（sx=0, sy=0）
+        ctx.drawImage(img, 0, 0, fw, fh, originX - hx * scale, originY - hy * scale, fw * scale, fh * scale);   // 第 0 帧（sx=0, sy=0）
+        for (const sl of readySails) {
+            ctx.drawImage(sl.img, originX + sl.ox * scale, originY + sl.oy * scale, sl.w * scale, sl.h * scale);
+        }
     } catch { /* 素材加载失败 → 留空占位，不拖累列表 */ }
 }
 
@@ -6698,6 +6747,15 @@ function startCanvasPreview(): void {
 
                 // 绘制单帧
                 ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+                const shipKey = u.type.toUpperCase();
+                if (needsSail(shipKey)) {
+                    const sailLayers = buildSailLayers(shipKey, animDirection, s, 'west');
+                    if (sailLayers) {
+                        for (const sl of sailLayers) {
+                            ctx.drawImage(sl.img, u.x + sl.ox, u.y + sl.oy, sl.w, sl.h);
+                        }
+                    }
+                }
 
                 // 绘制标签（若有）
                 if (u.label) {

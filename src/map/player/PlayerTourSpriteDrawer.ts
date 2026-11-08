@@ -16,8 +16,9 @@
  */
 import { OrientationSystem } from '../../core/OrientationSystem';
 import { NavalWakeDrawer } from '../legion/NavalWakeDrawer';
-import { playerTourCaravanDir, playerTourMerchantShipDir } from '../TradeTrafficLayer';
+import { playerTourCaravanDir, playerTourMerchantShipDir, tradeShipSailGroupAt } from '../TradeTrafficLayer';
 import { HeroSpriteDrawer } from './HeroSpriteDrawer';
+import { needsSail, buildSailLayers } from '../../data/NavalSails';
 
 type Pt = { lat: number; lng: number };
 
@@ -220,19 +221,38 @@ export class PlayerTourSpriteDrawer {
             );
         }
 
-        // 3. 商队车 / 商船船体
+        // 3. 商队车 / 商船船体（若 DE 该船型有独立船帆图层栈，按同热点与缩放叠画）
+        const sails = o.kind === 'ship' && needsSail(dir)
+            ? buildSailLayers(dir, idx, px, tradeShipSailGroupAt(o.to.lat, o.to.lng, dir))
+            : undefined;
         if (Math.abs(rot) > 0.001) {
             ctx.save();
             ctx.translate(o.center.x, o.center.y);
             ctx.rotate(rot);
             ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, ax - o.center.x, ay - o.center.y, w, h);
+            if (sails) {
+                for (const sl of sails) {
+                    ctx.drawImage(sl.img, sl.ox, sl.oy, sl.w, sl.h);
+                }
+            }
             ctx.restore();
         } else {
             ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, ax, ay, w, h);
+            if (sails) {
+                for (const sl of sails) {
+                    ctx.drawImage(sl.img, o.center.x + sl.ox, o.center.y + sl.oy, sl.w, sl.h);
+                }
+            }
         }
 
         // 4. 头顶名牌（模型变高时名牌跟着抬高，别压在车顶/船帆上）
-        const lift = Math.max(0, box.hy * px - HeroSpriteDrawer.labelLift(o.scale));
+        let topReach = box.hy * px;
+        if (sails) {
+            for (const sl of sails) {
+                topReach = Math.max(topReach, -sl.oy);
+            }
+        }
+        const lift = Math.max(0, topReach - HeroSpriteDrawer.labelLift(o.scale));
         HeroSpriteDrawer.drawLabel(ctx, { x: o.center.x, y: o.center.y - lift }, o.name, o.scale);
         return true;
     }

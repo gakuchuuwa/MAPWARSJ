@@ -11,7 +11,7 @@ import { WAR_TYPES } from '../../data/WarTypes';
 import type { FormationMode } from '../../types/CultureFormations';
 import { commanderRowOf } from '../../types/LegionRowOrder';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, getFactionCultureRegion, type NavalShipAssetId } from '../../types/NavalShipTiers';
-import { needsSail, getSailDeltas, getSailPartDir, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../../data/NavalSails';
+import { needsSail, getSailDeltas, getSailPartDir, getSailPart as getSharedSailPart, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../../data/NavalSails';
 import { REGION_TO_DE_STYLE } from '../../systems/cityDeStyle';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
@@ -671,43 +671,12 @@ export class LegionPhalanxDrawer {
     // 🔴 [2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」；同日复核对齐 DE .dat]
     //   DE 的帆不在船体 SLD 里，是单独的 u_shp_sail_<group>_<boat|ship>_<2..8>_x1.sld（12 个前后图层组件）。
     //   素材由 tools/extract_sail_assets.py 解到 public/SUCAI_SAIL/<GROUP>/<PART>/（含 16 向热点 _meta.json）。
-    private static sailPartCache = new Map<string, {
-        imgs: Record<number, HTMLImageElement>;
-        dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }>;
-    }>();
-    private static sailPartLoading = new Set<string>();
-
     /** 取某个帆图层组件的贴图与热点元数据；首次调用发起加载并返回 null（下一帧就有）。 */
     public static getSailPart(dir: string): {
         imgs: Record<number, HTMLImageElement>;
         dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }>;
     } | null {
-        const hit = this.sailPartCache.get(dir);
-        if (hit) return hit;
-        if (this.sailPartLoading.has(dir)) return null;
-        this.sailPartLoading.add(dir);
-        fetch(`${dir}/_meta.json`)
-            .then(r => (r.ok ? r.json() : null))
-            .then((meta: any) => {
-                const dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> = meta?.idle?.dirs ?? {};
-                const keys = Object.keys(dirs);
-                if (keys.length === 0) return;
-                const imgs: Record<number, HTMLImageElement> = {};
-                let pending = keys.length;
-                const settle = () => {
-                    if (--pending <= 0) this.sailPartCache.set(dir, { imgs, dirs });
-                };
-                for (const k of keys) {
-                    const d = Number(k);
-                    const img = new Image();
-                    img.onload = settle;
-                    img.onerror = settle;
-                    img.src = `${dir}/idle_${d}.png`;
-                    imgs[d] = img;
-                }
-            })
-            .catch(() => {});
-        return null;
+        return getSharedSailPart(dir);
     }
 
     /** 势力文化 → DE 帆文化组（10 组）。判据与据点建筑风格同源：region → DE style。 */

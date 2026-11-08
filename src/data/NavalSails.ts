@@ -45,8 +45,7 @@ export const SAIL_DELTAS_BY_SHIP: Record<string, readonly SailDelta[]> = {
     DEMO_RAFT:            [{ part: 'boat_4', oy: -6 }],
 
     // ── 双桅/多桅 boat 系 ──
-    // 🔴 [2026-11-07 主人令「欧洲柯克船…游戏中没有，请添加」] TRADE_COG（柯克船）**已把帆烘进船体帧**（见 UnitAssets
-    //    `/SUCAI/COG/`，由 DE 柯克船壳 + WEST boat_4 帆按热点合成）→ 这里不再登记，否则会叠出两层帆。
+    TRADE_COG:            [{ part: 'boat_3', oy: -23 }, { part: 'boat_4', oy: -15 }, { part: 'boat_5', oy: -23 }],
     HEAVY_DEMO_SHIP:      [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
     HERO_STOERTEBEKER:    [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
     FIRE_GALLEY:          [{ part: 'boat_2', oy: -16 }, { part: 'boat_3', oy: -16 }, { part: 'boat_5', oy: -16 }, { part: 'boat_6', oy: -16 }],
@@ -98,3 +97,96 @@ export function getSailDeltas(shipId: string): readonly SailDelta[] | null {
 export function getSailPartDir(part: SailPartId, group: SailGroup): string {
     return `/SUCAI_SAIL/${group.toUpperCase()}/${part}`;
 }
+
+export interface SailPartDirMeta {
+    fw: number;
+    fh: number;
+    hx: number;
+    hy: number;
+}
+
+export interface SailPartAsset {
+    imgs: Record<number, HTMLImageElement>;
+    dirs: Record<string, SailPartDirMeta>;
+}
+
+const sailPartCache = new Map<string, SailPartAsset>();
+const sailPartInFlight = new Map<string, Promise<SailPartAsset | null>>();
+
+/** 异步加载某个帆图层组件的贴图与热点元数据（全局共用同一份缓存） */
+export function loadSailPartAsync(dir: string): Promise<SailPartAsset | null> {
+    const hit = sailPartCache.get(dir);
+    if (hit) return Promise.resolve(hit);
+    const inflight = sailPartInFlight.get(dir);
+    if (inflight) return inflight;
+
+    const p = fetch(`${dir}/_meta.json`)
+        .then(r => (r.ok ? r.json() : null))
+        .then((meta: any) => {
+            const dirs: Record<string, SailPartDirMeta> = meta?.idle?.dirs ?? {};
+            const keys = Object.keys(dirs);
+            if (keys.length === 0) return null;
+            return new Promise<SailPartAsset>((resolve) => {
+                const imgs: Record<number, HTMLImageElement> = {};
+                let pending = keys.length;
+                const settle = () => {
+                    if (--pending <= 0) {
+                        const asset: SailPartAsset = { imgs, dirs };
+                        sailPartCache.set(dir, asset);
+                        resolve(asset);
+                    }
+                };
+                for (const k of keys) {
+                    const d = Number(k);
+                    const img = new Image();
+                    img.onload = settle;
+                    img.onerror = settle;
+                    img.src = `${dir}/idle_${d}.png`;
+                    imgs[d] = img;
+                }
+            });
+        })
+        .catch(() => null)
+        .finally(() => {
+            sailPartInFlight.delete(dir);
+        });
+
+    sailPartInFlight.set(dir, p);
+    return p;
+}
+
+/** 同步取某个帆图层组件；首次调用发起后台加载并返回 null（下一帧即就绪） */
+export function getSailPart(dir: string): SailPartAsset | null {
+    const hit = sailPartCache.get(dir);
+    if (hit) return hit;
+    void loadSailPartAsync(dir);
+    return null;
+}
+
+/** 按船型、方向、缩放系数生成相对船体热点 (0,0) 的 DE 帆图层绘制表 */
+export function buildSailLayers(
+    shipId: string,
+    shipDir: number,
+    scale: number,
+    group: SailGroup = 'west',
+): { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[] | undefined {
+    const deltas = getSailDeltas(shipId);
+    if (!deltas || deltas.length === 0) return undefined;
+    const out: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[] = [];
+    for (const dl of deltas) {
+        const part = getSailPart(getSailPartDir(dl.part, group));
+        if (!part) continue;
+        const sm = part.dirs[String(shipDir)];
+        const simg = part.imgs[shipDir];
+        if (!sm || !simg || !simg.complete || simg.naturalWidth === 0) continue;
+        out.push({
+            img: simg,
+            ox: -sm.hx * scale,
+            oy: (-sm.hy + dl.oy) * scale,
+            w: sm.fw * scale,
+            h: sm.fh * scale,
+        });
+    }
+    return out.length > 0 ? out : undefined;
+}
+
