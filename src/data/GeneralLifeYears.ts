@@ -924,6 +924,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     luzhou_zhangwenxiu: { birth: 685, death: 740, kaoju: '推定' },  // 张文休
     wuzhou_limu: { birth: -290, death: -229, kaoju: '推定' },  // 李牧
     ashina_ashinayandou: { birth: 525, death: 572, kaoju: '推定' },  // 阿史那燕都
+    wala_mahamu: { birth: 1355, death: 1416, kaoju: '推定' },  // 马哈木：卒年明确（1416 为阿鲁台所败后死），生年无载，按子脱欢、孙也先（1407 生）倒推约 1355
     wala_yexian: { birth: 1407, death: 1454 },  // 也先
     chenli_d_zuoxianwang: { birth: 1320, death: 1364, kaoju: '推定' },  // 张必先
     nuoyan_d_sanyinnuoyan: { birth: 1567, death: 1627, kaoju: '推定' },  // 三音诺颜

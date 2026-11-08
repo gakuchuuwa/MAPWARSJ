@@ -585,6 +585,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
+        // 🔴 [2026-11-08 新建] 马哈木（瓦剌绰罗斯部首领、顺宁王）：普将，骑射进攻型
+        wala_mahamu: { generalId: 'wala_mahamu', tier: 'ordinary', tacticalSkillId: 'ts_626', advantageSkillId: 'ts_626', balanceSkillId: 'ts_1119', disadvantageSkillId: 'ts_237', atkAdvantageSkillId: 'ts_626', atkBalanceSkillId: 'ts_1119', atkDisadvantageSkillId: 'ts_237', defAdvantageSkillId: 'ts_806', defBalanceSkillId: 'ts_102', defDisadvantageSkillId: 'ts_153', aptitude: 'leverage', attackStyle: 'attack' },
         wala_yexian: { generalId: 'wala_yexian', tier: 'famous', tacticalSkillId: 'ts_626', advantageSkillId: 'ts_626', balanceSkillId: 'ts_1119', disadvantageSkillId: 'ts_237', atkAdvantageSkillId: 'ts_626', atkBalanceSkillId: 'ts_1119', atkDisadvantageSkillId: 'ts_237', defAdvantageSkillId: 'ts_806', defBalanceSkillId: 'ts_102', defDisadvantageSkillId: 'ts_153', aptitude: 'create' , attackStyle: 'attack'},
 
 

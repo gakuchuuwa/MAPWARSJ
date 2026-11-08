@@ -9068,7 +9068,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/WESTERN/bfe_shulezhong.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": 10
         },

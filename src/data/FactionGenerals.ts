@@ -6812,7 +6812,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'sima_d_simayi', factionId: 'dongjin', cityId: 'city_luoyang', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png', eliteName: '魏国中军', eliteTier: 3  },   // 按史：司马懿夺洛阳中军兵权、平辽东统中军（《三国志·卷九·曹爽传》）
+        // 🔴 [2026-11-08 按史改势力] 司马懿：原挂 dongjin（司马晋＝东晋 317–420）→ caowei（曹魏）。卤城 231 年他是魏大将军、宣王，东晋尚未立；精锐本就「魏国中军」、据点洛阳即曹魏都城；两势力同属古典时代 → 军团与编制不变，只换势力名/旗号/势力色。
+        { generalId: 'sima_d_simayi', factionId: 'caowei', cityId: 'city_luoyang', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png', eliteName: '魏国中军', eliteTier: 3  },   // 按史：司马懿夺洛阳中军兵权、平辽东统中军（《三国志·卷九·曹爽传》）
 
 
 
@@ -12409,6 +12410,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'oirat_ming_gaerdan', cityId: 'city_kuoyitian', generalName: '噶尔丹', portrait: '/assets/MONGOL/oirat_ming_gaerdan.png', eliteName: '准噶尔骑', eliteTier: 2 },
+
+        // 🔴 [2026-11-08 主人令「可以建立武将。建马哈木」] 瓦剌（卫拉特）绰罗斯部首领、明封顺宁王；
+        //    据点＝科布多（瓦剌本部，MONGOL 漠北草原文化，与也先／噶尔丹同一条文化链）；
+        //    精锐＝「瓦剌骑兵」T1 与也先共用（同族同部，档位 1–2 人合规）；立绘留空，走势力／文化池回落。
+        //    定级＝普将（四闸：亲统✓、格局✓、对阵有名✓，但「史载实胜」只破阿鲁台一路且记载不一，存疑列普将）。
+        { generalId: 'wala_mahamu', cityId: 'city_kobdo', generalName: '马哈木', portrait: '', eliteName: '瓦剌骑兵', eliteTier: 1 },
 
 
 

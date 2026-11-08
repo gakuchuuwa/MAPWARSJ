@@ -1322,6 +1322,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'tuva_qinggunzabu': 'imperial',
     'tuyu_d_kualv': 'feudal',
     'varendra_devapala': 'feudal',
+    'wala_mahamu': 'imperial',   // 马哈木（瓦剌，1414 忽兰忽失温）
     'wala_yexian': 'imperial',
     'wan_liuyuan': 'castle',
     'wang_d_liuyu': 'feudal',

@@ -56,6 +56,9 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     //   本表只登记**史有其人、有真名**的战场人物（例：下面这位曼努埃尔·皮雷斯）。
     bfe_portuguese_officer: { generalId: 'bfe_portuguese_officer', generalName: '皮雷斯', factionId: 'putaoya', portrait: '/assets/PORTUGUESE/bfe_portuguese_officer.png', note: '史有其人：1641 年姆博罗雷之战圣保罗 bandeira 主将 Manuel Pires（副将 Jerónimo Pedroso de Barros）；生卒无载，仅此战出场。' },
 
+    // 🔴 [2026-11-08] 马哈木（瓦剌，顺宁王）已升级为正式据点武将（FactionGenerals 瓦剌块／科布多／瓦剌骑兵 T1），
+    //    按 2026-10-25 口径本表不再保留其条目；朱棣「忽兰忽失温之战」的 enemyGeneralId 照旧解析到他本人。
+
     // 🔴 [2026-10-25 经典战敌将复核 → 同日升级] 原本登记为战场人物的 58 位「该战真实对方指挥官」，
     //    已按主人令「新增武将要符合标准」升级为**正式据点武将**（进 FactionGenerals / profiles / GeneralEra / GeneralLifeYears / GeneralCenturies，
     //    配据点＋势力＋时代＋名将/普将＋精锐 T0–T4，立绘留空），本表不再保留他们的条目。

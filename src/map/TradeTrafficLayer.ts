@@ -138,7 +138,7 @@ function resolveLocalCulture(lat: number, lng: number): BuildingStyle | string {
     let bestD2 = Infinity;
     for (const c of CITIES_V2) {
         const dLat = c.lat - lat;
-        const dLng = c.lng - lng;
+        const dLng = ((((c.lng - lng) % 360) + 540) % 360) - 180;
         const d2 = dLat * dLat + dLng * dLng;
         if (d2 < bestD2) {
             bestD2 = d2;

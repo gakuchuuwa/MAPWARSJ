@@ -170,7 +170,7 @@ export class BattlefieldLayer {
 
         // 2. 更新或添加战场（新出现的在剧本模式下渐显）
         for (const [id, bf] of visibleBfs) {
-            const fought = isBattlefieldFought(bf.id);
+            const fought = !isScriptPeriod() || isBattlefieldFought(bf.id);
             const prevFought = this.markerFoughtState.get(id);
 
             if (this.markers.has(id)) {

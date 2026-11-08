@@ -154,7 +154,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '达拉',
-        targetCityId: 'city_telabizong',
+        // 🔴 [2026-11-08 按史改锚] 达拉（今土耳其马尔丁省达拉，37.18,40.56）城库无据点 → 锚最近的【尼西比斯】60km。
+        //    敌手是萨珊波斯，锚定城决定野战敌军军团的编制文化：尼西比斯是 ORIE（近东），贴萨珊；
+        //    原锚特拉布宗（BYZANTINE，431km 外）会让波斯军挂上拜占庭编制。
+        targetCityId: 'city_nixibisi',
         targetLat: 37.18,
         targetLng: 40.56,
         myTroops: 25000,
@@ -1559,10 +1562,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: -36,
         battleType: 'siege',
         role: 'attacker',
-        targetName: '它乾城',
-        targetCityId: 'city_taqian',
-        targetLat: 41.875,
-        targetLng: 83.59,
+        // 🔴 [2026-11-08 按史改锚] 郅支城（都赖水／塔拉斯河，今哈萨克江布尔州）城库已有【郅支城】city_zhizhicheng
+        //    42.906205,72.765198（111km 内，WESTERN 西域），原先锚到 850km 外的它乾城，地理不对。
+        targetName: '郅支城',
+        targetCityId: 'city_zhizhicheng',
+        targetLat: 42.906205,
+        targetLng: 72.765198,
         myTroops: 40000,
         enemyFactionId: 'xiongnu',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '北匈奴',
@@ -1834,8 +1839,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.139089,
         targetLng: 112.887268,
         myTroops: 30000,
-        enemyFactionId: 'han_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '董卓军',
+        // 🔴 [2026-11-08 按史改势力] 原写 han_d（刘汉）：191 年阳人聚的对手是董卓部将胡轸、华雄，属西凉军；
+        //    敌将华雄（bfe3_69）已挂 xiliangjun，势力显示随势力表变「西凉军」，与文案「痛击董卓西凉军」一致。
+        enemyFactionId: 'xiliangjun',
+        enemyFactionName: '西凉军',
         enemyGeneralId: 'bfe3_69',
         enemyTroops: 45000,
         introLines: [
@@ -2743,6 +2750,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'attacker',
         targetName: '荥阳',
+        // 🔴 [2026-11-08 判：不改锚] 荥阳城库无据点，最近的【虎牢关】21km 就在荥阳汜水境内（虎牢关今属荥阳市），
+        //    地理最准；它此刻在库里归南梁，是「据点在陈庆之北伐后被占」的归属问题，开战时引擎会把目标城临时划给拓跋魏，
+        //    不构成打自家城。改锚获嘉（57km）反而让战场跑偏 46km，故保留虎牢关。
         targetCityId: 'city_hulaoguan',
         targetLat: 34.81,
         targetLng: 113.17,
@@ -9525,7 +9535,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '突沦川',
-        targetCityId: 'city_jingjue',   // 库内无突沦川；精绝为最近据点（约 277km），仅登记锚点
+        // 🔴 [2026-11-08 按史改锚] 突沦川战场最近据点是【播仙】1km（WESTERN 西域）；原锚精绝 278km
+        targetCityId: 'city_qiemo',
         targetLat: 38.15,
         targetLng: 85.53,
         myTroops: 10000,
@@ -10226,7 +10237,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '卡莱',
-        targetCityId: 'city_alepo',
+        // 🔴 [2026-11-08 按史改锚] 卡莱（今哈兰，36.87,39.03）最近据点是【埃德萨】38km（ORIE 近东，贴安息）；原锚阿勒颇 183km
+        targetCityId: 'city_aidesa',
         targetLat: 36.87,
         targetLng: 39.03,
         myTroops: 20000,
@@ -10490,7 +10502,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '萨河内山',
-        targetCityId: 'city_toumancheng',
+        // 🔴 [2026-11-08 按史改锚] 战场(46.5,103)最近据点是【燕然山】29km（MONGOL 漠北，贴突厥）；原锚头曼城 728km
+        targetCityId: 'city_yanran',
         targetLat: 46.5,
         targetLng: 103,
         myTroops: 20000,
@@ -10513,7 +10526,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '漠北',
-        targetCityId: 'city_toumancheng',
+        // 🔴 [2026-11-08 按史改锚] 敌手是匈奴（文化键 XIANBEI 漠南），按「先看据点文化」锚【赛汉塔拉】212km（XIANBEI）；
+        //    原锚头曼城 432km。更近的赛音山达 116km 是 MONGOL（蒙古）文化，给匈奴当编制属穿越，故不取。
+        targetCityId: 'city_saihantala',
         targetLat: 44.5,
         targetLng: 111.5,
         myTroops: 50000,
@@ -10582,7 +10597,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '卡莱',
-        targetCityId: 'city_alepo',
+        // 🔴 [2026-11-08 按史改锚] 同上：卡莱战场的最近据点是【埃德萨】38km，原锚阿勒颇 183km
+        targetCityId: 'city_aidesa',
         targetLat: 36.87,
         targetLng: 39.03,
         myTroops: 10000,
@@ -10936,6 +10952,153 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '马尼拉的木栅城就在眼前，拉者苏莱曼据河而守。勇士，架炮轰开栅墙，火枪队压住滩头，一举拿下这座港城！' },
             { speaker: 'player', text: '愿随莱加斯皮攻克马尼拉，为西班牙王国夺下东方良港！' },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔴 [2026-11-08 主人令「逐个补全，要符合历史」] 名将缺知名战 · 第一批 6 条
+    //    选场标准：①史实最知名那一战 ②敌将史有其人且已在本库 ③据点↔战场 ≤4000km
+    //    ④锚定城文化贴敌方（野战敌军编制取锚城文化）⑤兵力按史书比例、悬殊 ≤2 倍
+    // ═══════════════════════════════════════════════════════════════════
+
+    // #488 君士坦丁 (272 ~ 337) — 312 米尔维安桥之战（罗马城北台伯河桥，十字之兆后进军罗马）
+    // 兵力：优西比乌《教会史》/《君士坦丁传》与拉丁颂词作 君士坦丁约四万、马克森提乌斯约二万五千
+    // 内战：双方同属罗马帝国 → 引擎按「史实内战」兜底为无字旗叛军（沿用 2026-10-25 口径）
+    gen_constantine_great: {
+        generalId: 'gen_constantine_great',
+        battleName: '米尔维安桥之战',
+        battleYear: 312,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '罗马',
+        targetCityId: 'city_luoma',
+        targetLat: 41.938,
+        targetLng: 12.468,
+        myTroops: 40000,
+        enemyFactionId: 'luoma_diguo',
+        enemyFactionName: '罗马帝国',
+        enemyGeneralId: 'bfe3_81',
+        enemyTroops: 25000,
+        introLines: [
+            { speaker: 'general', text: '马克森提乌斯僭据罗马、废法乱政，元老与百姓都盼我带兵南下。台伯河上的米尔维安桥是他最后的退路，壮士可愿随我渡河，在桥头决此一战？' },
+            { speaker: 'player', text: '愿随君士坦丁越过米尔维安桥，破马克森提乌斯，定罗马！' },
+        ],
+    },
+
+    // #489 勾践 (? ~ 前 464) — 前 473 姑苏之战（围姑苏三年，吴亡）
+    // 兵力：《国语·越语》《史记·越王勾践世家》记越军数万围吴、吴师疲敝；取越三万、吴一万五千
+    yue_goujian: {
+        generalId: 'yue_goujian',
+        battleName: '姑苏之战',
+        battleYear: -473,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '姑苏',
+        targetCityId: 'city_gusu',
+        targetLat: 31.30,
+        targetLng: 120.62,
+        myTroops: 30000,
+        enemyFactionId: 'wu',
+        enemyFactionName: '吴国',
+        enemyGeneralId: 'wu_fuchai',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '夫差囚我于石室三年，此辱二十年生聚教训，就为今日。姑苏城已被我围了三年，粮尽援绝，壮士可愿随我登城，一雪前耻？' },
+            { speaker: 'player', text: '愿随大王攻破姑苏，灭吴雪耻！' },
+        ],
+    },
+
+    // #490 吴三桂 (1612 ~ 1678) — 1644 一片石之战（山海关东九门口，关宁军与清军合破大顺军）
+    // 兵力：《清史稿·世祖本纪》《明史纪事本末》：李自成率六万东来，吴三桂部约五万（另有清军同场，本战只列大顺一方）
+    linyu_wusangui: {
+        generalId: 'linyu_wusangui',
+        battleName: '一片石之战',
+        battleYear: 1644,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '一片石',
+        // 锚最近的据点山海关（5km）；战场本是一片石（九门口），大顺军此行编制按河朔当地据点取
+        targetCityId: 'city_shanhaiguan',
+        targetLat: 40.10,
+        targetLng: 119.72,
+        myTroops: 50000,
+        enemyFactionId: 'dashun',
+        enemyFactionName: '大顺',
+        enemyGeneralId: 'dashun_lizicheng',
+        enemyTroops: 60000,
+        introLines: [
+            { speaker: 'general', text: '李自成陷京师、逼死先帝，又挟我父、掠我妾，如今竟追到关下。关宁铁骑已列阵一片石，壮士可愿随我冲其中军？' },
+            { speaker: 'player', text: '愿随吴总兵出关迎战，于一片石击破李自成！' },
+        ],
+    },
+
+    // #491 铁铉 (1366 ~ 1402) — 1400 济南之战（靖难之役，燕军围济南三月不下）
+    // 兵力：《明史·铁铉传》：燕兵十余万围济南，铉与盛庸以兵民守；守方按不成比例缩放取一万
+    jinan_tiexuan: {
+        generalId: 'jinan_tiexuan',
+        battleName: '济南之战',
+        battleYear: 1400,
+        battleType: 'siege',
+        role: 'defender',
+        targetName: '济南',
+        targetCityId: 'city_licheng',
+        targetLat: 36.67,
+        targetLng: 117.00,
+        myTroops: 10000,
+        enemyFactionId: 'ming_d',
+        enemyFactionName: '大明',
+        enemyGeneralId: 'ming_d_zhudi',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '燕王以「靖难」为名，实图大位，十几万众已薄济南城下。城在则山东在，壮士可愿与我同守此城，教他三个月进不得一步？' },
+            { speaker: 'player', text: '愿随铁布政使死守济南，挡住燕军！' },
+        ],
+    },
+
+    // #492 王守仁 (1472 ~ 1529) — 1519 鄱阳湖之战（平宁王朱宸濠，樵舍纵火焚其舟师）
+    // 兵力：《明史·王守仁传》：守仁集义兵三万，宸濠舟师号称十万、实六万上下
+    dayu_wangshouren: {
+        generalId: 'dayu_wangshouren',
+        battleName: '鄱阳湖之战',
+        battleYear: 1519,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '鄱阳湖',
+        targetCityId: 'city_raozhou',
+        targetLat: 28.95,
+        targetLng: 116.40,
+        myTroops: 30000,
+        enemyFactionId: 'ming_d',
+        enemyFactionName: '大明',
+        enemyGeneralId: 'bfe_zhu_chenhao',
+        enemyTroops: 60000,
+        introLines: [
+            { speaker: 'general', text: '朱宸濠举兵、舟师蔽江，意在南京。我已募义兵扼其归路，他连舟为阵、转动不灵，正当以火攻之。壮士可愿随我乘风纵火，焚其樵舍？' },
+            { speaker: 'player', text: '愿随王巡抚夜袭樵舍，火攻宁王舟师！' },
+        ],
+    },
+
+    // #493 李存勖 (885 ~ 926) — 910 柏乡之战（晋军以骑兵诱敌、大破后梁八万）
+    // 兵力：《资治通鉴》卷二六七：梁王景仁等率八万（一说十万）屯柏乡，晋军五万上下
+    yingzhou_d2_licunxu: {
+        generalId: 'yingzhou_d2_licunxu',
+        battleName: '柏乡之战',
+        battleYear: 910,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '柏乡',
+        // 锚最近的**中原**据点安阳 158km：后梁军是中原编制，不取 43km 外文化不符的巨鹿（河朔）
+        targetCityId: 'city_anyang',
+        targetLat: 37.50,
+        targetLng: 114.70,
+        myTroops: 50000,
+        enemyFactionId: 'hou_liang',
+        enemyFactionName: '朱梁',
+        enemyGeneralId: 'liang_d_wangjingren',
+        enemyTroops: 80000,
+        introLines: [
+            { speaker: 'general', text: '朱梁以王景仁率八万众结阵柏乡，甲光耀日，欲以势压我河东。他阵严而不整、步骑不相救，正可诱其离阵。壮士可愿随我纵铁骑冲之？' },
+            { speaker: 'player', text: '愿随晋王出击柏乡，破梁军八万！' },
         ],
     },
 };

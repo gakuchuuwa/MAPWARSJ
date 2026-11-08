@@ -126,6 +126,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'tuoming_tuomin': 19,                                // 妥明 · tuoming · 达坂城
     'tushetu_tuxietuhan': 17,                            // 衮布 · tushetu · 库伦
     'tuva_qinggunzabu': 18,                              // 青滚杂卜 · tuva · 唐努
+    'wala_mahamu': 15,
     'wala_yexian': 15,                                   // 也先 · wala · 博尔巴任
     'wugu_d_tugelile': 11,                               // 图格里勒 · wugu_d · 毡的
     'wuhuan_tadun': 3,                                  // 蹋顿 · wuhuan · 白狼山

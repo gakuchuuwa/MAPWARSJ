@@ -15,6 +15,7 @@
  * 素材还没加载完时 `draw()` 返回 false，调用方照旧退回人物兵模 —— 玩家任何时候都不会凭空消失。
  */
 import { OrientationSystem } from '../../core/OrientationSystem';
+import { CITIES_V2 } from '../../data/cities_v2';
 import { NavalWakeDrawer } from '../legion/NavalWakeDrawer';
 import { playerTourCaravanDir, playerTourMerchantShipDir, tradeShipSailGroupAt } from '../TradeTrafficLayer';
 import { HeroSpriteDrawer } from './HeroSpriteDrawer';
@@ -60,14 +61,47 @@ interface TourAsset {
 /** 车/船行进动画帧率（与商贸交通层的 CART_ANIM_FPS 同频） */
 const MOVE_ANIM_FPS = 18;
 /**
- * 跨文化换车/换船的滞回：玩家走够这么远（纬度/经度各 0.35°≈40 km）才重新判定所在地文化。
- * 不走滞回的话，贴着两个文化区的边界走会一帧一换车。
+ * 🔴 [2026-11-08 主人令「环球中，路上不要更换模型，我建议在经过据点的时候，可以跟换模型，这样更加真实」]
+ * 经过据点判定半径（度，约 8.8km；略大于 PLAYER_CITY_ARRIVE_DIST=0.06°，确保沿路途经或抵达据点必中）。
+ * 在路上/海上行进期间锁定上一次据点的文化车船模型，只有经过据点时才按该据点文化更换。
  */
-const RELOOK_DEG = 0.35;
+const PASS_CITY_RADIUS_DEG = 0.08;
+const PASS_CITY_RADIUS_SQ = PASS_CITY_RADIUS_DEG * PASS_CITY_RADIUS_DEG;
+
+/** 检查本帧移动线段 from→to 是否正处于或穿过某座据点；在路上返回 null */
+function findPassingCity(from: Pt, to: Pt): { id: string; lat: number; lng: number } | null {
+    const abLat = to.lat - from.lat;
+    const abLng = ((((to.lng - from.lng) % 360) + 540) % 360) - 180;
+    const abLenSq = abLat * abLat + abLng * abLng;
+    let best: { id: string; lat: number; lng: number } | null = null;
+    let bestD2 = PASS_CITY_RADIUS_SQ;
+    for (const c of CITIES_V2) {
+        const apLat = c.lat - from.lat;
+        const apLng = ((((c.lng - from.lng) % 360) + 540) % 360) - 180;
+        let t = 0;
+        if (abLenSq > 1e-12) {
+            t = Math.max(0, Math.min(1, (apLat * abLat + apLng * abLng) / abLenSq));
+        }
+        const dLat = apLat - t * abLat;
+        const dLng = apLng - t * abLng;
+        const d2 = dLat * dLat + dLng * dLng;
+        if (d2 <= bestD2) {
+            bestD2 = d2;
+            best = c;
+        }
+    }
+    return best;
+}
 
 const assets = new Map<string, TourAsset>();
-/** 每个玩家当前的皮肤（按文化区选定后钉住，见 RELOOK_DEG） */
-const picks = new Map<string, { kind: PlayerTourKind; dir: string; at: Pt }>();
+/** 每个玩家当前的皮肤（只在初始化或经过据点时按该据点文化更新，路上锁定不变） */
+const picks = new Map<string, {
+    kind: PlayerTourKind;
+    dir: string;
+    readyDir: string;
+    anchor: Pt;
+    cityId: string | null;
+}>();
 /** 每个玩家当前的朝向（迟滞用，换皮肤时重置） */
 const headings = new Map<string, { asset: string; idx: number; deg: number }>();
 
@@ -119,7 +153,7 @@ function ensureAsset(dir: string): TourAsset {
 /**
  * 玩家当前该用哪套商队/商船皮肤：
  *   ① 面板里手选了就用手选的那套（`override`）；
- *   ② 否则按所在地文化选定，走够 RELOOK_DEG 才重新判定（环境商队那套「均化轮换」不适用玩家）。
+ *   ② 否则只在「首次进入该形态」或「经过据点」时按据点文化更新，在路上/海上行进途中保持不变。
  */
 export function resolvePlayerTourDir(
     kind: PlayerTourKind,
@@ -127,17 +161,27 @@ export function resolvePlayerTourDir(
     lng: number,
     key: string,
     override?: string | null,
+    from?: Pt,
 ): string {
-    if (override) return override;
     const prev = picks.get(key);
-    if (prev && prev.kind === kind
-        && Math.abs(prev.at.lat - lat) < RELOOK_DEG
-        && Math.abs(prev.at.lng - lng) < RELOOK_DEG) {
-        return prev.dir;
+    const passing = findPassingCity(from ?? { lat, lng }, { lat, lng });
+    if (!prev || prev.kind !== kind) {
+        const anchor = passing ? { lat: passing.lat, lng: passing.lng } : { lat, lng };
+        const dir = kind === 'ship'
+            ? playerTourMerchantShipDir(anchor.lat, anchor.lng)
+            : playerTourCaravanDir(anchor.lat, anchor.lng);
+        picks.set(key, { kind, dir, readyDir: dir, anchor, cityId: passing?.id ?? null });
+    } else if (passing && passing.id !== prev.cityId) {
+        const anchor = { lat: passing.lat, lng: passing.lng };
+        const dir = kind === 'ship'
+            ? playerTourMerchantShipDir(anchor.lat, anchor.lng)
+            : playerTourCaravanDir(anchor.lat, anchor.lng);
+        prev.dir = dir;
+        prev.anchor = anchor;
+        prev.cityId = passing.id;
     }
-    const dir = kind === 'ship' ? playerTourMerchantShipDir(lat, lng) : playerTourCaravanDir(lat, lng);
-    picks.set(key, { kind, dir, at: { lat, lng } });
-    return dir;
+    if (override) return override;
+    return picks.get(key)!.dir;
 }
 
 /** 切到环球/航行前预热素材（不阻塞；没预热完就先用人物兵模顶着） */
@@ -187,9 +231,19 @@ export interface PlayerTourDrawOptions {
 export class PlayerTourSpriteDrawer {
     /** 画玩家商队/商船；素材没就绪返回 false（调用方退回人物兵模） */
     public static draw(ctx: CanvasRenderingContext2D, o: PlayerTourDrawOptions): boolean {
-        const dir = resolvePlayerTourDir(o.kind, o.to.lat, o.to.lng, o.key, o.overrideDir ?? null);
-        const asset = ensureAsset(dir);
+        const targetDir = resolvePlayerTourDir(o.kind, o.to.lat, o.to.lng, o.key, o.overrideDir ?? null, o.from);
+        let dir = targetDir;
+        let asset = ensureAsset(dir);
+        const state = picks.get(o.key);
+        if (!asset.ready && state && state.readyDir !== dir) {
+            const fallbackAsset = ensureAsset(state.readyDir);
+            if (fallbackAsset.ready) {
+                dir = state.readyDir;
+                asset = fallbackAsset;
+            }
+        }
         if (!asset.ready) return false;
+        if (state) state.readyDir = dir;
 
         const d = this.dirIndex(asset, o.key, o.from, o.to);
         // 帧框与贴图必须同一向：个别素材缺某向时退回 0 向，两处一起退，别拿 A 向的框去切 B 向的图
@@ -242,9 +296,10 @@ export class PlayerTourSpriteDrawer {
             );
         }
 
-        // 3. 商队车 / 商船船体（若 DE 该船型有独立船帆图层栈，按同热点与缩放叠画）
+        // 3. 商队车 / 商船船体（若 DE 该船型有独立船帆图层栈，按同热点与缩放叠画；帆文化组同样锁定于所经据点）
+        const sailAnchor = state?.anchor ?? o.to;
         const sails = o.kind === 'ship' && needsSail(dir)
-            ? buildSailLayers(dir, idx, px, tradeShipSailGroupAt(o.to.lat, o.to.lng, dir))
+            ? buildSailLayers(dir, idx, px, tradeShipSailGroupAt(sailAnchor.lat, sailAnchor.lng, dir))
             : undefined;
         if (Math.abs(rot) > 0.001) {
             ctx.save();
