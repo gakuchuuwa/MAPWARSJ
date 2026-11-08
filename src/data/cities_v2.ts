@@ -3231,7 +3231,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 
     { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.987000, lng: 120.582000, type: 'medium_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 汉会稽郡（今绍兴）；越国都城；lat 南微调 0.01° 与临安间距≥50km；按 2026-10-25 标准：城居 10–15 → 中城' },
     { id: 'city_luling', name: '庐陵', factionId: 'song', lat: 27.1133, lng: 114.9806, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 汉庐陵县（今吉安），江西；吉州治庐陵；欧阳頠世居，梁庐陵蛮兵；推算：城居 3 万（吉州治庐陵，同期州城 2–4 万）→ 小城' },
-    { id: 'city_hongzhou', name: '豫章', factionId: 'tang', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '🔴 [2026-11-07 按史补依据] 汉豫章郡（今南昌）；按 2026-10-25 标准：城居 8–10 → 中城' },
+    { id: 'city_hongzhou', name: '豫章', factionId: 'tang', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '🔴 [2026-11-07 按史补依据] 汉豫章郡（今南昌）；按 2026-10-25 标准：城居 8–10 → 中城。🔴 [2026-11-08] 城随将走：本城原主李唐，开局归在场武将（明·朱文正／顺德·朱宸濠／孙吴·太史慈），不把原主钉给某一家。' },
 
 
     { id: 'city_qingliuguan', name: '清流关', factionId: 'nantang', lat: 32.280000, lng: 118.250000, type: 'pass', region: 'JIANGNAN',

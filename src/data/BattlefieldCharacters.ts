@@ -120,13 +120,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portraitProposedPath: '/assets/CENTRAL/bfe_chen_jingxuan.png',
         note: '史有其人：唐西川节度使陈敬瑄（田令孜之兄），据成都；大顺二年（891）为王建围困，粮尽出降（《旧唐书·陈敬瑄传》《资治通鉴》卷二五八）。立绘留空。',
     },
-    bfe_svyatopolk: {
-        generalId: 'bfe_svyatopolk',
-        generalName: '斯维亚托波尔克',
-        factionId: 'luosi',
-        portraitProposedPath: '/assets/SLAVIC/bfe_svyatopolk.png',
-        note: '史有其人：基辅大公斯维亚托波尔克一世（"被诅咒者"），1015 年弑弟夺位；1019 年阿尔塔河之战为雅罗斯拉夫所败，逃亡途中死（《往年纪事》1019 年条）。立绘留空。',
-    },
     bfe_tran_duc_tong: {
         generalId: 'bfe_tran_duc_tong',
         generalName: '陈睿宗',
@@ -149,13 +142,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'han_d',
         portraitProposedPath: '/assets/CENTRAL/bfe_liu_shang.png',
         note: '史有其人：东汉武威将军刘尚，建武二十三年（47）率南郡、长沙、武陵兵万余人溯沅水击武陵蛮，轻敌入险，全军覆没（《后汉书·南蛮西南夷列传》「尚军大败，悉没」）。立绘留空。',
-    },
-    bfe_kuki_yoshitaka: {
-        generalId: 'bfe_kuki_yoshitaka',
-        generalName: '九鬼嘉隆',
-        factionId: 'oda',
-        portraitProposedPath: '/assets/JAPAN/bfe_kuki_yoshitaka.png',
-        note: '史有其人：织田氏水军大将九鬼嘉隆，天正四年（1576）率织田水军封锁石山本愿寺海口，于木津川口为毛利水军（村上武吉等）所破，失船甚众（《信长公记》）。立绘留空。',
     },
     bfe_shoni_yorihisa: {
         generalId: 'bfe_shoni_yorihisa',

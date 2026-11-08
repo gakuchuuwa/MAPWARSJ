@@ -5120,7 +5120,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'hongzhou_zhuwenzheng', factionId: 'ming_d', cityId: 'city_hongzhou', generalName: '朱文正', portrait: '/assets/JIANGNAN/hongzhou_zhuwenzheng.png', eliteName: '洪都守备', eliteTier: 2 },
-        { generalId: 'bfe_zhu_chenhao', cityId: 'city_hongzhou', generalName: '朱宸濠', portrait: '/assets/JIANGNAN/bfe_zhu_chenhao.png', factionId: 'ming_d', eliteName: '民壮营', eliteTier: 4 },
+        { generalId: 'bfe_zhu_chenhao', cityId: 'city_hongzhou', generalName: '朱宸濠', portrait: '/assets/JIANGNAN/bfe_zhu_chenhao.png', factionId: 'shunde', eliteName: '民壮营', eliteTier: 4 },
 
 
 
@@ -5393,7 +5393,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jinan_tiexuan', factionId: 'ming_d', cityId: 'city_licheng', generalName: '铁铉', portrait: '/assets/CENTRAL/jinan_tiexuan.png', eliteName: '济南劲勇', eliteTier: 3 },
+        { generalId: 'jinan_tiexuan', factionId: 'jianwen', cityId: 'city_licheng', generalName: '铁铉', portrait: '/assets/CENTRAL/jinan_tiexuan.png', eliteName: '济南劲勇', eliteTier: 3 },
 
 
 

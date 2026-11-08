@@ -270,12 +270,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代燕晋军团",
         legionType: "sub",
     },
-    // 🔴 [2026-11-08 主人令] 燕（靖难·朱棣 1399–1402）：帝国时代 × 首府北京（WEI 河朔）＝帝国时代燕晋军团
-    "ning_wang": {
+    // 顺德（宁王朱宸濠 1519；据点豫章 江南）＝帝国时代两江军团
+    "shunde": {
         legionName: "帝国时代两江军团",
         legionType: "sub",
     },
-    "yanjingnan": {
+    // 建文（靖难中的建文朝廷 1399–1402；据点历下 河朔）＝帝国时代燕晋军团
+    "jianwen": {
         legionName: "帝国时代燕晋军团",
         legionType: "sub",
     },
