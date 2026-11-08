@@ -759,135 +759,146 @@ export class PlayerHUD {
 
         singleRow.appendChild(secControls);
 
-        // ── 4. 右区：陆战下拉 + 战船下拉 + 收起按钮 ──
+        // ── 4. 右区：陆路兵模下拉 + 海路兵模下拉 + 收起按钮 ──
+        // 🔴 [2026-11-08 主人令] 四个兵模下拉合并为两个（陆路兵模 + 海路兵模）：
+        //   · 自动模式获得新兵模自动换上；休息模式保持不动；
+        //   · 环球陆路、环球海路自动切为「随当地文化」换商队/商船；同时保留全部手选兵模与车船。
         const secRight = document.createElement('div');
         secRight.className = 'player-hud-section';
 
-        // 陆战选择
-        const uSel = document.createElement('select');
-        uSel.className = 'player-hud-select';
-        uSel.style.cssText = `
-            max-width:105px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 5px;
+        const selectCss = `
+            max-width:118px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 5px;
             background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96)); color:#f5e6c8;
             border:1px solid rgba(212,175,55,0.42); border-radius:4px;
             box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
             outline:none; cursor:pointer; box-sizing:border-box; height:22px; margin:0 !important;
         `;
-        if (!hero.learnedUnits.length) {
-            const fallbackKey = heroKeyForRank(rank.id);
-            const o = document.createElement('option');
-            o.value = '-1';
-            o.textContent = WAR_TYPES[fallbackKey]?.name ?? fallbackKey;
-            o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-            uSel.appendChild(o);
-        }
+        const optCss = 'background:#1e1812; color:#f5e6c8;';
+
+        // 1. 陆路兵模（陆战兵模 + 环球商队）
+        const landSel = document.createElement('select');
+        landSel.className = 'player-hud-select';
+        landSel.style.cssText = selectCss;
+        landSel.title = '陆路兵模：自动模式获新兵模自动换；环球模式随当地文化换商队；也可手选任意兵模或商队车';
+
+        const landUnitGroup = document.createElement('optgroup');
+        landUnitGroup.label = '陆战兵模';
+        landUnitGroup.style.cssText = optCss;
+        const fallbackKey = heroKeyForRank(rank.id);
+        const oFallback = document.createElement('option');
+        oFallback.value = 'unit:-1';
+        oFallback.textContent = `🛡️ ${WAR_TYPES[fallbackKey]?.name ?? fallbackKey}`;
+        oFallback.style.cssText = optCss;
+        landUnitGroup.appendChild(oFallback);
         hero.learnedUnits.forEach((u, i) => {
             const o = document.createElement('option');
-            o.value = String(i);
-            o.textContent = u.unitName;
-            o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-            uSel.appendChild(o);
+            o.value = `unit:${i}`;
+            o.textContent = `🛡️ ${u.unitName}`;
+            o.style.cssText = optCss;
+            landUnitGroup.appendChild(o);
         });
-        uSel.value = String(hero.selectedUnit);
-        const canPickUnit = hero.learnedUnits.length > 0;
-        uSel.disabled = !canPickUnit;
-        uSel.title = canPickUnit
-            ? '选择陆战兵模（已获兵模终身可选用）'
-            : '还没有收到任何兵模：加入军团即可获得';
-        uSel.addEventListener('change', () => hero.selectUnit(Number(uSel.value)));
-        secRight.appendChild(uSel);
+        landSel.appendChild(landUnitGroup);
 
-        // 战船选择
-        if (!hero.canPickShip()) {
-            const shipDisplay = document.createElement('div');
-            shipDisplay.style.cssText = `
-                max-width:110px; font-size:11px; color:#a8cbe6; font-weight:700; height:22px; line-height:20px;
-                padding:0 6px; background:linear-gradient(180deg, rgba(32,38,44,0.88), rgba(18,22,26,0.94));
-                border:1px solid rgba(168,203,230,0.35); border-radius:4px;
-                box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.35);
-                overflow:hidden; text-overflow:ellipsis; white-space:nowrap; box-sizing:border-box; margin:0 !important;
-            `;
-            shipDisplay.title = `随势力舰队出战：${getNavalShipChineseName(hero.shipKey)}`;
-            shipDisplay.textContent = `⚓ ${getNavalShipChineseName(hero.shipKey)}`;
-            secRight.appendChild(shipDisplay);
-        } else {
-            const sSel = document.createElement('select');
-            sSel.className = 'player-hud-select';
-            sSel.style.cssText = uSel.style.cssText;
-            const opt0 = document.createElement('option');
-            opt0.value = '-1';
-            opt0.textContent = getNavalShipChineseName('CANOE');
-            opt0.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-            sSel.appendChild(opt0);
-            hero.learnedShips.forEach((sh, i) => {
-                const o = document.createElement('option');
-                o.value = String(i);
-                o.textContent = getNavalShipChineseName(sh);
-                o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-                sSel.appendChild(o);
-            });
-            sSel.value = String(hero.selectedShip);
-            sSel.disabled = hero.learnedShips.length === 0;
-            sSel.title = '独行侠可自选水战战船';
-            sSel.addEventListener('change', () => hero.selectShip(Number(sSel.value)));
-            secRight.appendChild(sSel);
+        const landTourGroup = document.createElement('optgroup');
+        landTourGroup.label = '环球商队';
+        landTourGroup.style.cssText = optCss;
+        const landAutoOpt = document.createElement('option');
+        landAutoOpt.value = 'tour:';
+        landAutoOpt.textContent = '🐪 随当地文化';
+        landAutoOpt.style.cssText = optCss;
+        landTourGroup.appendChild(landAutoOpt);
+        for (const ch of TOUR_CARAVAN_CHOICES) {
+            const o = document.createElement('option');
+            o.value = `tour:${ch.dir}`;
+            o.textContent = `🐪 ${ch.name}`;
+            o.style.cssText = optCss;
+            landTourGroup.appendChild(o);
         }
+        landSel.appendChild(landTourGroup);
 
-        // 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」＋「玩家面板内容改为一行」：
-        //    环球模式的商队车、航行模式的商船各一格下拉，与陆战兵模／战船**同一行**（默认「随当地文化」）。
-        const mkTourSelect = (
-            icon: string,
-            kind: 'caravan' | 'ship',
-            choices: ReadonlyArray<{ dir: string; name: string }>,
-            current: string | null,
-            tip: string,
-        ): HTMLElement => {
-            const wrap = document.createElement('span');
-            wrap.style.cssText = 'display:inline-flex; align-items:center; gap:2px; flex-shrink:0;';
-            const label = document.createElement('span');
-            label.textContent = icon;
-            label.title = tip;
-            label.style.cssText = 'font-size:11px; line-height:20px; color:#dfc28c;';
-            const sel = document.createElement('select');
-            sel.className = 'player-hud-select';
-            sel.style.cssText = `
-                max-width:104px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 4px;
-                background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96)); color:#f5e6c8;
-                border:1px solid rgba(212,175,55,0.42); border-radius:4px;
-                box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
-                outline:none; cursor:pointer; box-sizing:border-box; height:22px; margin:0 !important;
-            `;
-            sel.title = tip;
-            const auto = document.createElement('option');
-            auto.value = '';
-            auto.textContent = '随当地文化';
-            auto.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-            sel.appendChild(auto);
-            for (const ch of choices) {
-                const o = document.createElement('option');
-                o.value = ch.dir;
-                o.textContent = ch.name;
-                o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
-                sel.appendChild(o);
-            }
-            sel.value = current ?? '';
-            sel.addEventListener('change', () => {
-                const v = sel.value || null;
-                if (kind === 'caravan') hero.selectTourCaravanDir(v);
-                else hero.selectTourShipDir(v);
+        landSel.value = hero.useTourCaravan
+            ? `tour:${hero.tourCaravanDir ?? ''}`
+            : `unit:${hero.selectedUnit}`;
+        landSel.addEventListener('change', () => {
+            const v = landSel.value;
+            if (v.startsWith('tour:')) {
+                hero.selectTourCaravanDir(v.slice(5) || null);
                 const p = hero.getPosition();
                 preloadPlayerTourModels(p.lat, p.lng, hero.tourCaravanDir, hero.tourShipDir);
-                this.refresh(true);
-            });
-            wrap.appendChild(label);
-            wrap.appendChild(sel);
-            return wrap;
-        };
-        secRight.appendChild(mkTourSelect('🐪', 'caravan', TOUR_CARAVAN_CHOICES, hero.tourCaravanDir,
-            '环球/航行模式陆路上用的商队车模型（默认随当地文化自动换）'));
-        secRight.appendChild(mkTourSelect('⛵', 'ship', TOUR_SHIP_CHOICES, hero.tourShipDir,
-            '环球/航行模式海上用的商船模型（默认随当地海域文化自动换）'));
+            } else if (v.startsWith('unit:')) {
+                hero.selectUnit(Number(v.slice(5)));
+            }
+            this.refresh(true);
+        });
+        secRight.appendChild(landSel);
 
+        // 2. 海路兵模（水战战船 + 航行商船）
+        const seaSel = document.createElement('select');
+        seaSel.className = 'player-hud-select';
+        seaSel.style.cssText = selectCss;
+        seaSel.title = '海路兵模：随军用势力舰队，独行可选战船；环球航行随当地文化换商船；也可手选战船或商船';
+
+        const seaWarGroup = document.createElement('optgroup');
+        seaWarGroup.label = '水战战船';
+        seaWarGroup.style.cssText = optCss;
+        if (!hero.canPickShip()) {
+            const oFac = document.createElement('option');
+            oFac.value = 'faction';
+            oFac.textContent = `⚓ ${getNavalShipChineseName(hero.shipKey)}`;
+            oFac.style.cssText = optCss;
+            seaWarGroup.appendChild(oFac);
+        } else {
+            const opt0 = document.createElement('option');
+            opt0.value = 'ship:-1';
+            opt0.textContent = `⚓ ${getNavalShipChineseName('CANOE')}`;
+            opt0.style.cssText = optCss;
+            seaWarGroup.appendChild(opt0);
+            hero.learnedShips.forEach((sh, i) => {
+                const o = document.createElement('option');
+                o.value = `ship:${i}`;
+                o.textContent = `⚓ ${getNavalShipChineseName(sh)}`;
+                o.style.cssText = optCss;
+                seaWarGroup.appendChild(o);
+            });
+        }
+        seaSel.appendChild(seaWarGroup);
+
+        const seaTourGroup = document.createElement('optgroup');
+        seaTourGroup.label = '环球商船';
+        seaTourGroup.style.cssText = optCss;
+        const seaAutoOpt = document.createElement('option');
+        seaAutoOpt.value = 'tour:';
+        seaAutoOpt.textContent = '⛵ 随当地文化';
+        seaAutoOpt.style.cssText = optCss;
+        seaTourGroup.appendChild(seaAutoOpt);
+        for (const ch of TOUR_SHIP_CHOICES) {
+            const o = document.createElement('option');
+            o.value = `tour:${ch.dir}`;
+            o.textContent = `⛵ ${ch.name}`;
+            o.style.cssText = optCss;
+            seaTourGroup.appendChild(o);
+        }
+        seaSel.appendChild(seaTourGroup);
+
+        seaSel.value = hero.useTourShip
+            ? `tour:${hero.tourShipDir ?? ''}`
+            : !hero.canPickShip()
+                ? 'faction'
+                : `ship:${hero.selectedShip}`;
+        seaSel.addEventListener('change', () => {
+            const v = seaSel.value;
+            if (v.startsWith('tour:')) {
+                hero.selectTourShipDir(v.slice(5) || null);
+                const p = hero.getPosition();
+                preloadPlayerTourModels(p.lat, p.lng, hero.tourCaravanDir, hero.tourShipDir);
+            } else if (v === 'faction') {
+                hero.useTourShip = false;
+            } else if (v.startsWith('ship:')) {
+                hero.selectShip(Number(v.slice(5)));
+            }
+            this.refresh(true);
+        });
+        secRight.appendChild(seaSel);
         // 收起按钮
         const minBtn = document.createElement('button');
         minBtn.type = 'button';

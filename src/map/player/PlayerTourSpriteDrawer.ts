@@ -18,7 +18,7 @@ import { OrientationSystem } from '../../core/OrientationSystem';
 import { NavalWakeDrawer } from '../legion/NavalWakeDrawer';
 import { playerTourCaravanDir, playerTourMerchantShipDir, tradeShipSailGroupAt } from '../TradeTrafficLayer';
 import { HeroSpriteDrawer } from './HeroSpriteDrawer';
-import { needsSail, buildSailLayers } from '../../data/NavalSails';
+import { needsSail, getSailDeltas, getSailPartDir, loadSailPartAsync, buildSailLayers } from '../../data/NavalSails';
 
 type Pt = { lat: number; lng: number };
 
@@ -93,10 +93,21 @@ function ensureAsset(dir: string): TourAsset {
             const nDir = asset.nDir;
             asset.sheets = new Array(nDir).fill(null);
             let loaded = 0;
+            const sailDeltas = needsSail(dir) ? getSailDeltas(dir) : null;
+            const defaultGroup = dir === 'CANOE' ? 'meso' : 'west';
+            const sailReady = sailDeltas
+                ? Promise.all(sailDeltas.map((dl) => loadSailPartAsync(getSailPartDir(dl.part, defaultGroup))))
+                : Promise.resolve(null);
             for (let d = 0; d < nDir; d++) {
                 const img = new Image();
-                img.onload = () => { loaded++; if (loaded === nDir) asset.ready = true; };
-                img.onerror = () => { loaded++; if (loaded === nDir) asset.ready = true; };
+                img.onload = () => {
+                    loaded++;
+                    if (loaded === nDir) void sailReady.then(() => { asset.ready = true; });
+                };
+                img.onerror = () => {
+                    loaded++;
+                    if (loaded === nDir) void sailReady.then(() => { asset.ready = true; });
+                };
                 img.src = `${base}/${act}_${d}.png`;
                 asset.sheets[d] = img;
             }
@@ -137,7 +148,17 @@ export function preloadPlayerTourModels(
     shipDir?: string | null,
 ): void {
     ensureAsset(caravanDir || playerTourCaravanDir(lat, lng));
-    ensureAsset(shipDir || playerTourMerchantShipDir(lat, lng));
+    const sDir = shipDir || playerTourMerchantShipDir(lat, lng);
+    ensureAsset(sDir);
+    if (needsSail(sDir)) {
+        const group = tradeShipSailGroupAt(lat, lng, sDir);
+        const deltas = getSailDeltas(sDir);
+        if (deltas) {
+            for (const dl of deltas) {
+                void loadSailPartAsync(getSailPartDir(dl.part, group));
+            }
+        }
+    }
 }
 
 export interface PlayerTourDrawOptions {

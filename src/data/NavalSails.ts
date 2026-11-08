@@ -43,6 +43,8 @@ export const SAIL_DELTAS_BY_SHIP: Record<string, readonly SailDelta[]> = {
     HULK:                 [{ part: 'boat_4', oy: -10 }],
     DEMO_SHIP:            [{ part: 'boat_4', oy: -19 }],
     DEMO_RAFT:            [{ part: 'boat_4', oy: -6 }],
+    // 🔴 [2026-11-08 主人令「做一个吧，毕竟这是玩家初始船模，经常远洋」] 独木舟挂单桅轻帆（boat_4，oy=-4 贴合舟心货捆与船舷支索）
+    CANOE:                [{ part: 'boat_4', oy: -4 }],
 
     // ── 双桅/多桅 boat 系 ──
     TRADE_COG:            [{ part: 'boat_3', oy: -23 }, { part: 'boat_4', oy: -15 }, { part: 'boat_5', oy: -23 }],
@@ -174,7 +176,8 @@ export function buildSailLayers(
     if (!deltas || deltas.length === 0) return undefined;
     const out: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[] = [];
     for (const dl of deltas) {
-        const part = getSailPart(getSailPartDir(dl.part, group));
+        const part = getSailPart(getSailPartDir(dl.part, group))
+            ?? (group !== 'west' ? getSailPart(getSailPartDir(dl.part, 'west')) : null);
         if (!part) continue;
         const sm = part.dirs[String(shipDir)];
         const simg = part.imgs[shipDir];

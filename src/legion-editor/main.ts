@@ -6088,7 +6088,7 @@ function startUnitCanvasPreview(unitId: string): void {
             const dw = fw * s, dh = fh * s;
             const shipKey = unitId.toUpperCase();
             const sailLayers = needsSail(shipKey)
-                ? buildSailLayers(shipKey, animDirection, s, 'west')
+                ? buildSailLayers(shipKey, animDirection, s, shipKey === 'CANOE' ? 'meso' : 'west')
                 : undefined;
 
             // 水平按整帧居中（不按锚点：器械类的 hx 常年偏在一侧，按锚点会左右乱跑）
@@ -6254,7 +6254,7 @@ export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string, c
         const shipKey = unitId.toUpperCase();
         const sailDeltas = needsSail(shipKey) ? getSailDeltas(shipKey) : null;
         const sailParts = sailDeltas
-            ? await Promise.all(sailDeltas.map(dl => loadSailPartAsync(getSailPartDir(dl.part, 'west'))))
+            ? await Promise.all(sailDeltas.map(dl => loadSailPartAsync(getSailPartDir(dl.part, shipKey === 'CANOE' ? 'meso' : 'west'))))
             : null;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -6749,7 +6749,7 @@ function startCanvasPreview(): void {
                 ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
                 const shipKey = u.type.toUpperCase();
                 if (needsSail(shipKey)) {
-                    const sailLayers = buildSailLayers(shipKey, animDirection, s, 'west');
+                    const sailLayers = buildSailLayers(shipKey, animDirection, s, shipKey === 'CANOE' ? 'meso' : 'west');
                     if (sailLayers) {
                         for (const sl of sailLayers) {
                             ctx.drawImage(sl.img, u.x + sl.ox, u.y + sl.oy, sl.w, sl.h);

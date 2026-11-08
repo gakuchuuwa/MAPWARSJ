@@ -665,6 +665,19 @@ export class PlayerHero {
         if (this.playMode === mode) return;
         this.playMode = mode;
         this.autoMode = mode === 'auto';
+        // 🔴 [2026-11-08 主人令] 四个模式联动两个兵模下拉（陆路兵模 + 海路兵模）：
+        //   · auto（自动）：用陆战兵模与水战战船，获得新兵模自动换上；
+        //   · rest（休息）：保持当前陆路/海路兵模选择不动；
+        //   · globe（环球陆路）/ sail（环球海路）：陆路与海路均自动切为「随当地文化」换商队/商船。
+        if (mode === 'auto') {
+            this.useTourCaravan = false;
+            this.useTourShip = false;
+        } else if (mode === 'globe' || mode === 'sail') {
+            this.useTourCaravan = true;
+            this.tourCaravanDir = null;
+            this.useTourShip = true;
+            this.tourShipDir = null;
+        }
         this.tourPlannedAt = 0;
         this.holdUntilMs = 0;
         this.tourTrail = [];   // 换模式后从当前位置重新起算路迹，免得旧路迹误判
@@ -680,20 +693,26 @@ export class PlayerHero {
     /**
      * 🔴 [2026-11-06 主人令]「给项目中的玩家添加商队和商船模型，如果切换到环球旅行，和环球航行的模式的时候，
      *    就自动切换到商队和商船的模式。」
-     *
-     * 环球/航行模式下的玩家形态（战略地图精灵由 `PlayerTourSpriteDrawer` 画）：
-     *   · globe（环球旅行）→ 陆路走商队车；对马海峡、大西洋、太平洋这些必须渡海的一段自动换商船；
-     *   · sail（环球航行）→ 海上商船；上岸去港口的短途走商队车。
-     * 随军时（`hostLegionId` 有值）返回 null：那时玩家是军团前排的英雄兵模，由军团统一画
-     * （2026-09-07 主人定「玩家加入势力后，海上只显示势力船只，不用显示玩家」同一口径）。
+     * 🔴 [2026-11-08 主人令] 面板合并为「陆路兵模」「海路兵模」两个下拉：
+     *   · 切到环球陆路/环球海路时自动启用商队/商船（随当地文化）；
+     *   · 玩家在任意模式下也可从下拉中手选商队/商船或陆战兵模/战船；
+     *   · 随军时（`hostLegionId` 有值）返回 null，由军团统一绘制。
      */
     public getTourModelKind(): 'caravan' | 'ship' | null {
-        if (!this.isTourMode() || this.hostLegionId) return null;
-        return this.army.isOnSea ? 'ship' : 'caravan';
+        if (this.hostLegionId) return null;
+        if (this.army.isOnSea) {
+            if (this.factionId && !this.isTourMode()) return null;
+            return this.useTourShip ? 'ship' : null;
+        }
+        return this.useTourCaravan ? 'caravan' : null;
     }
+    /** 当前陆路是否使用商队车模型（true＝商队车，false＝陆战兵模） */
+    public useTourCaravan = false;
+    /** 当前海路是否使用航行商船模型（true＝商船，false＝水战战船） */
+    public useTourShip = false;
     /**
      * 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」：
-     * 环球/航行模式的商队车与商船由玩家自己在面板里挑；null = 随当地文化自动换。
+     * 商队车与商船由玩家在面板里挑；null = 随当地文化自动换。
      * 目录见 `PlayerTourSpriteDrawer.TOUR_CARAVAN_CHOICES / TOUR_SHIP_CHOICES`。
      */
     public tourCaravanDir: string | null = null;
@@ -772,10 +791,12 @@ export class PlayerHero {
         return kind === 'ship' ? this.tourShipDir : this.tourCaravanDir;
     }
     public selectTourCaravanDir(dir: string | null): void {
+        this.useTourCaravan = true;
         this.tourCaravanDir = dir || null;
         this.emitChange();
     }
     public selectTourShipDir(dir: string | null): void {
+        this.useTourShip = true;
         this.tourShipDir = dir || null;
         this.emitChange();
     }
@@ -1552,6 +1573,7 @@ export class PlayerHero {
                 this.learnedShips.push(pick.key);
                 // 🔴 [2026-10-30 主人令「给了兵模都自动换上」] 战船也一样：拿到即选上，离队独行时海上就是这条船
                 this.selectedShip = this.learnedShips.length - 1;
+                if (this.playMode === 'auto') this.useTourShip = false;
                 this.deps.notify(`⛵ 获得本军团战船【${pick.key}】，已换上`);
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
@@ -1564,11 +1586,13 @@ export class PlayerHero {
                 if (pick.row >= 0 && pick.row <= 2) {
                     // 三排（斥候/探马/先锋档）：入伍、升阶每学到一张立刻换上
                     this.selectedUnit = this.learnedUnits.length - 1;
+                    if (this.playMode === 'auto') this.useTourCaravan = false;
                     this.syncMoveProfile();
                     this.deps.notify(`🛡️ 换上新兵模【${name}】`);
                 } else if (pick.row === 3) {
                     // 🔴 [2026-10-30 主人令] 主将兵模（元帅档）拿到即换上并保持
                     this.selectedUnit = this.learnedUnits.length - 1;
+                    if (this.playMode === 'auto') this.useTourCaravan = false;
                     this.syncMoveProfile();
                     this.deps.notify(`🛡️ 换上新兵模【${name}】`);
                 } else {
@@ -1595,6 +1619,7 @@ export class PlayerHero {
                     const pick = ownedIdx[Math.floor(Math.random() * ownedIdx.length)];
                     if (pick.i !== this.selectedUnit) {
                         this.selectedUnit = pick.i;
+                        if (this.playMode === 'auto') this.useTourCaravan = false;
                         this.syncMoveProfile();
                         this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
                     }
@@ -1603,10 +1628,10 @@ export class PlayerHero {
         }
     }
 
-    /** 面板选兵种素材（探马及以上才开放，见 PlayerHUD） */
+    /** 面板选陆战兵种素材 */
     public selectUnit(idx: number): void {
         this.selectedUnit = idx >= 0 && idx < this.learnedUnits.length ? idx : -1;
-        this.syncMoveProfile();
+        this.useTourCaravan = false;
         this.emitChange();
     }
 
@@ -1634,8 +1659,9 @@ export class PlayerHero {
     public canPickShip(): boolean { return !this.factionId; }
 
     public selectShip(idx: number): void {
-        if (!this.canPickShip()) return;
+        if (!this.canPickShip() && !this.isTourMode()) return;
         this.selectedShip = idx >= 0 && idx < this.learnedShips.length ? idx : -1;
+        this.useTourShip = false;
         this.emitChange();
     }
 
