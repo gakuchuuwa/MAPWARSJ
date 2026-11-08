@@ -1432,6 +1432,9 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 🔴 [2026-11-08 主人令「请分别套用给战术模式中的六计音效」] 败战计用主人给的《败战计.WAV》
     //    （= 之前那条「乱箭」的原文件，10.01s）：skill_baizhan_v2.aud，-13.0 LUFS / 真峰 -6.5 dBFS。
     //    上一版 3.5s 截段 skill_baizhan_storm.aud 保留不删，想换回短版改这一行即可。
+    // 🔴 [2026-11-09 主人选 A] 声画对齐：素材截 **0–4.5s + 0.5s 淡出**，与六计特效 SKILL_CAM_SEC = 4.5s 同长。
+    //    现文件 skill_baizhan_v2.aud = 4.50s / -13.8 LUFS / 真峰 -6.7dBFS；10 秒原件备份在
+    //    scratch/sfx_baizhan_orig_20261109/skill_baizhan_v2_10s.aud（要回退直接拷回）。
     skill_baizhan: sounds('battle', ['skill_baizhan_v2'], 1.0, 600),
 
 
@@ -1695,8 +1698,9 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 🔴 [2026-11-09 主人令「12秒有点长，改为3秒试试」] 冷却 12s → **3s**。
     //    ⚠️ 素材 10s：3s 冷却意味着最多约 3~4 层首尾相叠，会明显更密、更响；嫌糊就回调 6000。
     // 🔴 [2026-11-09 主人令「建筑射箭这个音效音量小了，请大一点」] 0.50 → **0.80**（+4dB）。
-    //    素材 -21.2 LUFS；3s 冷却会叠 3~4 层，实际已比单层响 5~6dB，再叠这个音量足够压过战场。
-    arrow_storm: sound('battle', 'arrow_storm', 0.80, 3000),
+    // 🔴 [2026-11-09 主人令「每次播报完成，然后2秒后再次播放」] 冷却 = 素材 10s + 空档 2s = **12000ms**。
+    //    从「开始播放」计时：10 秒放完 → 再静 2 秒 → 下一次塔放箭才重新起一段，永不叠层。
+    arrow_storm: sound('battle', 'arrow_storm', 0.80, 12000),
 
 
 

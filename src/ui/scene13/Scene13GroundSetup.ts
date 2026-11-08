@@ -1370,12 +1370,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             }
             // 采矿营地（美洲为聚落，游牧为骡车）紧贴矿脉一侧
             pushRelic(campAsset, campSpot.x, campSpot.y, campSpot.x < mx, 0.78, 0, 0, false);
-            // 伴生采石坑紧贴矿脉另一侧
+            // 伴生采石坑紧贴矿脉另一侧（与采矿场高低斜向错开，不水平并排）
             const qSpot = findCompanionSpot(mx, my, quarryAsset, [
-                [-campSide * 185, -36],
-                [campSide * 185, -52],
-                [0, -118],
-                [0, 128],
+                [-campSide * 172, -112],
+                [-campSide * 158, 118],
+                [campSide * 112, -138],
+                [-campSide * 108, 142],
             ], 440, 300);
             if (qSpot) {
                 pushRelic(quarryAsset, qSpot.x, qSpot.y, rnd() < 0.5, 0.84, -1, 0, false);
@@ -1414,13 +1414,14 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             const vx = villageSpot.x, vy = villageSpot.y;
             const fieldSide = rnd() < 0.5 ? 1 : -1;
 
-            // 先校验该选点能否同时放下至少 2 间配套民居与成片相连的农田块，确保磨坊绝不单摆、田块紧挨成片
-            const houseCandOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 245, -42],
-                [-fieldSide * 225, 118],
-                [-fieldSide * 48, -158],
-                [-fieldSide * 315, 28],
-            ];
+            // 先校验该选点能否同时放下至少 2 间配套民居与成片相连的农田块，确保磨坊绝不单摆、田块紧挨成片、民居高低错落不平行
+            const houseCandOffsets: ReadonlyArray<readonly [number, number]> = shuffleOffsets([
+                [-fieldSide * 228, -112],
+                [-fieldSide * 196, 134],
+                [-fieldSide * 92, -172],
+                [-fieldSide * 288, 96],
+                [-fieldSide * 138, 168],
+            ]);
             // 🔴 [2026-11-07 主人令「田地之间要挨着，是不是更现实？」]
             //    FARM / RFARM 贴图为 256×192 等距菱形（PASTURE 384×288 缩放到 0.66 后同尺寸），
             //    沿菱形四边紧挨拼接的步进向量为 (Δx = ±114, Δy = ±86)，4 块田即可拼成严丝合缝的 2×2 连片农田。
@@ -1465,12 +1466,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 plotsPlaced++;
             }
 
-            // 另一侧围以 2~3 间同文化民居/茅屋/毡帐，组成有生活气息的自然村落
+            // 另一侧围以 2~3 间同文化民居/茅屋/毡帐，组成高低错落、有生活气息的自然村落
             const targetHouses = 2 + (rnd() < 0.5 ? 1 : 0);
             let housesPlaced = 0;
             for (let hi = 0; hi < houseCandOffsets.length && housesPlaced < targetHouses; hi++) {
-                const hx = vx + houseCandOffsets[hi][0] + (rnd() - 0.5) * 10;
-                const hy = vy + houseCandOffsets[hi][1] + (rnd() - 0.5) * 6;
+                const hx = vx + houseCandOffsets[hi][0] + Math.round((rnd() - 0.5) * 34);
+                const hy = vy + houseCandOffsets[hi][1] + Math.round((rnd() - 0.5) * 26);
                 const hAsset = culturalHousePool[(hi + Math.floor(rnd() * culturalHousePool.length)) % culturalHousePool.length];
                 if (!canPlaceRelicItemAt(hAsset, hx, hy, 440, 290)) continue;
                 clearTreesInRadius(hx, hy, 125);
@@ -1606,17 +1607,20 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                                                     `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                                 ];
 
+        // 🔴 [2026-11-09 主人令「野战战场上的建筑摆放都是平行的，这不对吧，哪有野外摆放这么规整的？」]
+        //    院落配套建筑偏移全部采用非对称斜向错落坐标（|Δy| ≥ 96~172px，且左右两侧深度互不镜像），
+        //    配合 findCompanionSpot 的随机洗牌与微扰，彻底杜绝两栋建筑在同一水平线上平行并列。
         const companionWingOffsets: ReadonlyArray<readonly [number, number]> = [
-            [265, -48],
-            [-265, -48],
-            [255, 58],
-            [-255, 58],
-            [195, -125],
-            [-195, -125],
-            [195, 125],
-            [-195, 125],
-            [315, 10],
-            [-315, 10],
+            [218, -118],
+            [-208, 128],
+            [188, 142],
+            [-232, -104],
+            [268, 98],
+            [-172, -158],
+            [148, -168],
+            [-264, 108],
+            [136, 172],
+            [-144, 164],
         ];
 
         type CompoundKind = 'trade_post_compound' | 'military_outpost_compound' | 'sacred_shrine_compound';
@@ -1672,11 +1676,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         glLayer.carveFoundation(smithSpot.x, smithSpot.y, VW, VH, 1.6);
                         pushRelic(pickUniqueFromPool([smithBld]), smithSpot.x, smithSpot.y, rnd() < 0.5, 0.74, 0, 0, false);
                     }
-                    // 必配 2：1~2 间本文化商铺民居，围合成完整集市聚落
+                    // 必配 2：1~2 间本文化商铺民居，斜向错落围合成自然集市聚落
                     let shopHousesPlaced = 0;
-                    for (const [dx, dy] of companionWingOffsets) {
+                    for (const [dx, dy] of shuffleOffsets(companionWingOffsets)) {
                         if (shopHousesPlaced >= 2) break;
-                        const hx = sx + dx, hy = sy + dy;
+                        const hx = sx + dx + Math.round((rnd() - 0.5) * 34);
+                        const hy = sy + dy + Math.round((rnd() - 0.5) * 26);
                         const hAsset = culturalHousePool[(shopHousesPlaced + Math.floor(rnd() * culturalHousePool.length)) % culturalHousePool.length];
                         if (!canPlaceRelicItemAt(hAsset, hx, hy, 430, 285)) continue;
                         clearTreesInRadius(hx, hy, 125);
@@ -1928,11 +1933,19 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     0,
                     false,
                 );
-                // 岸上配套：码头货桶 + 渔夫民居（若有干陆空位）
+                // 岸上配套：码头货桶 + 渔夫民居（斜向高低错开，不与船坞平行并列）
                 pushRelic('BARRELS', (ferrySpot.x + ferrySpot.landX) * 0.5 + 24, (ferrySpot.y + ferrySpot.landY) * 0.5 + 10, rnd() < 0.5, 0.76, 0, 0, false);
-                if (canPlaceRelicItemAt(culturalHousePool[0], ferrySpot.landX, ferrySpot.landY, 420, 280)) {
-                    glLayer.carveFoundation(ferrySpot.landX, ferrySpot.landY, VW, VH, 1.3);
-                    pushRelic(culturalHousePool[Math.floor(rnd() * culturalHousePool.length)], ferrySpot.landX, ferrySpot.landY, rnd() < 0.5, 0.74, 0, 0, false);
+                let fisherX = ferrySpot.landX + Math.round((rnd() - 0.5) * 32);
+                let fisherY = ferrySpot.landY + Math.round((rnd() - 0.5) * 24);
+                if (Math.abs(fisherY - ferrySpot.y) < 82) {
+                    fisherY = ferrySpot.y + (fisherY >= ferrySpot.y ? 96 : -96);
+                }
+                if (Math.abs(fisherX - ferrySpot.x) < 86) {
+                    fisherX = ferrySpot.x + (fisherX >= ferrySpot.x ? 104 : -104);
+                }
+                if (canPlaceRelicItemAt(culturalHousePool[0], fisherX, fisherY, 420, 280)) {
+                    glLayer.carveFoundation(fisherX, fisherY, VW, VH, 1.3);
+                    pushRelic(culturalHousePool[Math.floor(rnd() * culturalHousePool.length)], fisherX, fisherY, rnd() < 0.5, 0.74, 0, 0, false);
                 }
                 // 浅水岸线植被（河岸芦苇 REEDS / 海岸海带 KELP_SEAWEEDS）+ 成簇鱼群（封冻冰面绝不放跃水鱼群与水草）
                 if (!isFrozenWater) {

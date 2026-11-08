@@ -1635,6 +1635,7 @@ export class CombatUI {
                 this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
                 this.leftTechBox.style.color = '#e8dcc0';
                 this.leftTechBox.style.alignItems = 'flex-end';
+                this.leftTechBox.style.transformOrigin = 'right bottom';
             }
             if (this.rightTechBox) {
                 this.rightTechBox.style.position = 'fixed';
@@ -1647,6 +1648,16 @@ export class CombatUI {
                 this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
                 this.rightTechBox.style.color = '#e8dcc0';
                 this.rightTechBox.style.alignItems = 'flex-end';
+                this.rightTechBox.style.transformOrigin = 'left bottom';
+            }
+            this.scene13TechSizeObserver?.disconnect();
+            if (typeof ResizeObserver !== 'undefined') {
+                this.scene13TechSizeObserver = new ResizeObserver(() => {
+                    this.fitScene13TechBoxes();
+                });
+                this.scene13TechSizeObserver.observe(document.documentElement);
+                if (this.leftTechBox) this.scene13TechSizeObserver.observe(this.leftTechBox);
+                if (this.rightTechBox) this.scene13TechSizeObserver.observe(this.rightTechBox);
             }
             // 攻守分界徽记：钉在两侧六技能面板的中缝上（血槽正上方中央）
             if (this.techDivider) {
@@ -2064,17 +2075,63 @@ export class CombatUI {
      * @param own 本方已解锁科技  @param foe 对方已解锁科技
      * @param isAtt 是否攻方（左翼）
      */
+    /**
+     * 自适应缩放战术模式底部科技与军团栏：
+     * 确保在任何分辨率或满科技（10~14项）情况下，外缘绝不越过左下/右下立绘边界或出界。
+     */
+    private fitScene13TechBox(box: HTMLDivElement | null | undefined): void {
+        if (!box || !this.scene13LayoutOn || box.style.display === 'none') return;
+        const isLeftBox = box === this.leftTechBox;
+        const portraitFrame = isLeftBox ? this.leftPortraitFrame : this.rightPortraitFrame;
+        const hasPortrait = !!(
+            portraitFrame
+            && portraitFrame.style.display !== 'none'
+            && !this.isPortraitMinimized
+        );
+        // 立绘槽屏宽约 266px（380 * 0.7），预留 272px 安全距离；立绘最小化或无立绘时仅预留 36px 边缘按钮位
+        const outerReserve = hasPortrait ? Math.round(T.portraitSlotWidth * 0.7) + 6 : 36;
+        const skillBar = isLeftBox ? this.leftScene13SkillBar : this.rightScene13SkillBar;
+        const skillBarHidden = !skillBar || skillBar.style.display === 'none';
+        // 若该侧无武将（六技能面板隐藏），内侧起点前移至双剑徽记外侧（50vw + 26px），否则紧贴六技能面板外缘（50vw + 238px）
+        const innerOffset = skillBarHidden ? 26 : 238;
+        if (isLeftBox) {
+            box.style.right = `calc(50vw + ${innerOffset}px)`;
+        } else {
+            box.style.left = `calc(50vw + ${innerOffset}px)`;
+        }
+        const vw = window.innerWidth || document.documentElement.clientWidth || 1920;
+        const availWidth = Math.max(120, vw * 0.5 - innerOffset - outerReserve);
+        const naturalWidth = box.scrollWidth || box.offsetWidth || 0;
+        box.style.transformOrigin = isLeftBox ? 'right bottom' : 'left bottom';
+        if (naturalWidth > availWidth && naturalWidth > 0) {
+            const scale = Math.max(0.62, Math.min(1, availWidth / naturalWidth));
+            box.style.transform = `scale(${scale.toFixed(3)})`;
+        } else {
+            box.style.transform = 'scale(1)';
+        }
+    }
+
+    private fitScene13TechBoxes(): void {
+        if (!this.scene13LayoutOn) return;
+        this.fitScene13TechBox(this.leftTechBox);
+        this.fitScene13TechBox(this.rightTechBox);
+    }
+
     private renderTechSide(
         box: HTMLDivElement,
         own: MilitaryTech[],
         foe: MilitaryTech[],
         isAtt: boolean,
     ): void {
+        const isLeftBox = box === this.leftTechBox;
         const legionName = (isAtt ? this.currentAttackerLegionName : this.currentDefenderLegionName) || '';
         const garrisonLabel = isAtt ? '' : this.defenderGarrisonLabel;
         const eliteName = garrisonLabel || (isAtt ? this.currentAttackerEliteName : this.currentDefenderEliteName) || '';
-        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',') + `|${legionName}|${eliteName}|${isAtt}`;
-        if (box.dataset.sig === sig) return;   // 每帧调用，内容没变就不重绘 DOM
+        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',') + `|${legionName}|${eliteName}|${isAtt}|${isLeftBox}`;
+        if (box.dataset.sig === sig) {
+            this.fitScene13TechBox(box);
+            return;   // 每帧调用，内容没变就不重绘 DOM
+        }
         box.dataset.sig = sig;
         box.textContent = '';
 
@@ -2084,7 +2141,7 @@ export class CombatUI {
         box.style.gap = '6px';
         requestAnimationFrame(() => {
             box.style.opacity = '1';
-            box.style.transform = 'scale(1)';
+            this.fitScene13TechBox(box);
         });
 
         // 科技分类色彩与主题辅助
@@ -2137,21 +2194,11 @@ export class CombatUI {
         // 科技标签
         const tag = document.createElement('span');
         tag.textContent = isAtt ? (own.length ? '⚔️ 攻方科技' : '⚔️ 攻方') : (own.length ? '守方科技 🛡️' : '守方 🛡️');
-        tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; ${isAtt ? 'padding-right: 2px;' : 'padding-left: 2px;'} cursor: help; align-self: flex-end; margin-bottom: 2px;`;
+        tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; ${isLeftBox ? 'padding-right: 2px;' : 'padding-left: 2px;'} cursor: help; align-self: center; flex-shrink: 0;`;
         const totalSummary = summarizeTechEffects(own).join(' · ');
         tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '暂无已研发科技'}`;
 
-        // 科技列表（一律单行横向排布，绝不换行）
-        const chipsWrap = document.createElement('div');
-        chipsWrap.style.cssText = `
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 3px;
-            align-items: flex-end;
-            justify-content: ${box === this.leftTechBox ? 'flex-end' : 'flex-start'};
-        `;
-
-        for (const t of own) {
+        const makeTechChip = (t: MilitaryTech): HTMLDivElement => {
             const effText = summarizeSingleTechEffect(t);
             const theme = getTechCardTheme(t.id);
             const chip = document.createElement('div');
@@ -2175,7 +2222,6 @@ export class CombatUI {
                 flex-shrink: 0;
             `;
 
-            // 科技名（行 1）
             const nameSpan = document.createElement('span');
             nameSpan.textContent = t.name;
             nameSpan.style.cssText = `
@@ -2188,7 +2234,6 @@ export class CombatUI {
             `;
             chip.appendChild(nameSpan);
 
-            // 对应效果（行 2）
             const effSpan = document.createElement('span');
             effSpan.textContent = effText;
             effSpan.style.cssText = `
@@ -2198,9 +2243,66 @@ export class CombatUI {
                 color: ${theme.effColor};
                 white-space: nowrap;
             `;
-
             chip.appendChild(effSpan);
-            chipsWrap.appendChild(chip);
+            return chip;
+        };
+
+        // 科技列表：当科技较多（≥4项）时自动分为上下两行（与旁侧「上军团/下精锐」双行等高对齐），
+        // 避免城堡/帝国时代 10+ 项科技单行横向暴涨撞进左下/右下武将立绘。
+        const chipsWrap = document.createElement('div');
+        if (own.length >= 4) {
+            chipsWrap.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+                align-items: ${isLeftBox ? 'flex-end' : 'flex-start'};
+                justify-content: flex-end;
+            `;
+            const topRow = document.createElement('div');
+            topRow.style.cssText = `
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 3px;
+                align-items: center;
+                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
+            `;
+            const bottomRow = document.createElement('div');
+            bottomRow.style.cssText = `
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 3px;
+                align-items: center;
+                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
+            `;
+            // 上行放置标签 + 前半部分科技，下行放置后半部分科技，使上下两行宽度均衡且紧贴内侧军团列
+            const topTechCount = Math.max(1, Math.floor((own.length - 1) / 2));
+            const topTechs = own.slice(0, topTechCount);
+            const bottomTechs = own.slice(topTechCount);
+            if (isLeftBox) {
+                topRow.appendChild(tag);
+                for (const t of topTechs) topRow.appendChild(makeTechChip(t));
+            } else {
+                for (const t of topTechs) topRow.appendChild(makeTechChip(t));
+                topRow.appendChild(tag);
+            }
+            for (const t of bottomTechs) bottomRow.appendChild(makeTechChip(t));
+            chipsWrap.appendChild(topRow);
+            chipsWrap.appendChild(bottomRow);
+        } else {
+            chipsWrap.style.cssText = `
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 3px;
+                align-items: center;
+                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
+            `;
+            if (isLeftBox) {
+                chipsWrap.appendChild(tag);
+                for (const t of own) chipsWrap.appendChild(makeTechChip(t));
+            } else {
+                for (const t of own) chipsWrap.appendChild(makeTechChip(t));
+                chipsWrap.appendChild(tag);
+            }
         }
 
         // 🔴 [2026-10-18 主人定] 军团（上）与精锐（下）上下叠成一列，与旁侧六技能面板高度对齐，节省横向空间
@@ -2218,19 +2320,17 @@ export class CombatUI {
         unitStackWrap.appendChild(legionChip);
         if (eliteChip) unitStackWrap.appendChild(eliteChip);
 
-        // 🔴 [2026-10-18 主人定] 从中间向外依次排布：六技能面板 -> [上军团/下精锐] -> 科技（单行不换行）
-        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [⚔️ 攻方科技] -> [科技卡片组] -> [上军团/下精锐]
-        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [上军团/下精锐] -> [科技卡片组] -> [守方科技 🛡️]
-        if (box === this.leftTechBox) {
-            box.appendChild(tag);
-            if (own.length) box.appendChild(chipsWrap);
+        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [科技双行组] -> [上军团/下精锐]
+        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [上军团/下精锐] -> [科技双行组]
+        if (isLeftBox) {
+            box.appendChild(chipsWrap);
             box.appendChild(unitStackWrap);
         } else {
             box.appendChild(unitStackWrap);
-            if (own.length) box.appendChild(chipsWrap);
-            box.appendChild(tag);
+            box.appendChild(chipsWrap);
         }
 
+        this.fitScene13TechBox(box);
         void foe;
     }
 
@@ -2571,6 +2671,7 @@ export class CombatUI {
 
         updateVisualSide('left');
         updateVisualSide('right');
+        this.fitScene13TechBoxes();
     }
 
 
@@ -6883,6 +6984,7 @@ export class CombatUI {
                 btn.title = minimized ? '还原立绘' : '最小化立绘';
             }
         }
+        this.fitScene13TechBoxes();
     }
 
     private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {

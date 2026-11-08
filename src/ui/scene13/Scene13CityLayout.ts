@@ -1614,6 +1614,12 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const isoDist = Math.hypot(px - item.x, (py - item.y) * 1.55);
                 const minGap = (isBld && item.isBld) ? MIN_OUTSKIRTS_BLD_GAP : MIN_OUTSKIRTS_PROP_GAP;
                 if (isoDist < r + item.r + minGap) return false;
+                // 🔴 [2026-11-09 主人令「野战战场上的建筑摆放都是平行的，这不对吧，哪有野外摆放这么规整的？」]
+                //    城郊野外院落同样禁止邻近两座实体建筑（非农田）在同一水平线上平行并列或垂直成列（|Δy| ≥ 82px，|Δx| ≥ 86px）。
+                if (isBld && !isFarm && item.isBld && !item.isFarm && Math.hypot(px - item.x, py - item.y) < 660) {
+                    if (Math.abs(py - item.y) < 82) return false;
+                    if (Math.abs(px - item.x) < 86) return false;
+                }
             }
             return true;
         };
@@ -1764,16 +1770,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         // 打散候选点顺序（不再按单一 flankScore 对称排序，避免城外建筑排成整齐队列）
         const shuffledHamlets = shuffle(hamletCandidates);
         const wingBuildingOffsets: ReadonlyArray<readonly [number, number]> = [
-            [305, -58],
-            [-305, -58],
-            [295, 62],
-            [-295, 62],
-            [225, -155],
-            [-225, -155],
-            [225, 155],
-            [-225, 155],
-            [345, 12],
-            [-345, 12],
+            [252, -134],
+            [-238, 142],
+            [218, 158],
+            [-268, -118],
+            [298, 108],
+            [-196, -172],
+            [178, -182],
+            [-294, 118],
+            [162, 188],
+            [-168, 178],
         ];
         const findOutskirtsCompanionSpot = (
             baseX: number,
@@ -1781,8 +1787,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             asset: string,
             offsets: ReadonlyArray<readonly [number, number]>,
         ): { x: number; y: number } | null => {
-            for (const [dx, dy] of offsets) {
-                const px = baseX + dx, py = baseY + dy;
+            const { isBld, isFarm } = outskirtsRadiusOf(asset);
+            const isSolidBld = isBld && !isFarm;
+            const iterOffsets = isSolidBld ? shuffle([...offsets]) : offsets;
+            for (const [dx, dy] of iterOffsets) {
+                const jx = isSolidBld ? Math.round((mRnd() - 0.5) * 38) : 0;
+                const jy = isSolidBld ? Math.round((mRnd() - 0.5) * 28) : 0;
+                const px = baseX + dx + jx, py = baseY + dy + jy;
                 if (!isPointDryAndOpen(px, py) || isNearAnySpawn(px, py, 440)) continue;
                 if (canPlaceOutskirtsAt(asset, px, py)) {
                     return { x: px, y: py };
@@ -1818,12 +1829,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 [fieldSide * 205, 188],
                 [fieldSide * 205, -156],
             ];
-            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 275, -45],
-                [-fieldSide * 255, 145],
-                [-fieldSide * 45, -185],
-                [-fieldSide * 335, 35],
-            ];
+            const houseOffsets: ReadonlyArray<readonly [number, number]> = shuffle([
+                [-fieldSide * 255, -124],
+                [-fieldSide * 224, 148],
+                [-fieldSide * 108, -192],
+                [-fieldSide * 312, 108],
+                [-fieldSide * 152, 184],
+            ]);
             let validPlotsPreview = 0;
             for (const [dx, dy] of diamondOffsets) {
                 if (isPointDryAndOpen(vx + dx, vy + dy) && canPlaceOutskirtsAt(plotAsset, vx + dx, vy + dy)) validPlotsPreview++;
@@ -1870,8 +1882,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const houseCount = 2;
             let hPlaced = 0;
             for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
-                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 12;
-                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 8;
+                const hx = vx + houseOffsets[hi][0] + Math.round((mRnd() - 0.5) * 34);
+                const hy = vy + houseOffsets[hi][1] + Math.round((mRnd() - 0.5) * 26);
                 if (!isPointDryAndOpen(hx, hy)) continue;
                 const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
                 if (pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.04, 0, mRnd() < 0.5, 0)) {
@@ -2025,8 +2037,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             for (const mc of mineSiteCandidates) {
                 if (isTooCloseOrAligned(mc.x, mc.y, 620)) continue;
                 const campSide = mc.x >= cx ? -1 : 1;
-                const campX = mc.x + campSide * 245;
-                const campY = mc.y + 42;
+                const campYSign = mRnd() < 0.5 ? -1 : 1;
+                const campX = mc.x + campSide * 218 + Math.round((mRnd() - 0.5) * 28);
+                const campY = mc.y + campYSign * 118 + Math.round((mRnd() - 0.5) * 22);
                 if (!isPointDryAndOpen(campX, campY) || isNearAnySpawn(campX, campY, 460)) continue;
                 if (!canPlaceOutskirtsAt(miningCampAsset, campX, campY)) continue;
 
@@ -2049,8 +2062,10 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     pushOutskirtsSprite(primaryOre, ox, oy, 0.90, 0, (oi % 2 === 0), oi % 6);
                 }
                 pushOutskirtsSprite(miningCampAsset, campX, campY, 0.78, 0, campSide < 0, 0);
-                if (isPointDryAndOpen(mc.x - campSide * 225, mc.y - 45)) {
-                    pushOutskirtsSprite(quarryAsset, mc.x - campSide * 225, mc.y - 45, 0.84, -1, mRnd() < 0.5, 0);
+                const qx = mc.x - campSide * 204 + Math.round((mRnd() - 0.5) * 24);
+                const qy = mc.y - campYSign * 114 + Math.round((mRnd() - 0.5) * 20);
+                if (isPointDryAndOpen(qx, qy)) {
+                    pushOutskirtsSprite(quarryAsset, qx, qy, 0.84, -1, mRnd() < 0.5, 0);
                 }
                 if (isPointDryAndOpen(campX + campSide * 155, campY + 35)) {
                     pushOutskirtsSprite('BARRELS', campX + campSide * 155, campY + 35, 0.78, 0, mRnd() < 0.5, 0);
@@ -2261,9 +2276,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                             gl.carveFoundation(smSpot.x, smSpot.y, W, H, 1.5);
                         }
                         let shopHousesPlaced = 0;
-                        for (let hi = 0; hi < wingBuildingOffsets.length && shopHousesPlaced < 2; hi++) {
-                            const [dx, dy] = wingBuildingOffsets[hi];
-                            const hx = sx + dx, hy = sy + dy;
+                        const shuffledShopOffsets = shuffle([...wingBuildingOffsets]);
+                        for (let hi = 0; hi < shuffledShopOffsets.length && shopHousesPlaced < 2; hi++) {
+                            const [dx, dy] = shuffledShopOffsets[hi];
+                            const hx = sx + dx + Math.round((mRnd() - 0.5) * 34);
+                            const hy = sy + dy + Math.round((mRnd() - 0.5) * 26);
                             if (!isPointDryAndOpen(hx, hy) || isNearAnySpawn(hx, hy, 440)) continue;
                             const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
                             if (pushOutskirtsSprite(hAsset, hx, hy, 0.75, 0, mRnd() < 0.5, 0)) {

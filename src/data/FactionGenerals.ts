@@ -1,4 +1,4 @@
-﻿/**
+/**
 
 
 
@@ -4934,7 +4934,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'cai_lishuo', factionId: 'hou_zhao', cityId: 'city_xingtai', generalName: '石勒', portrait: '/assets/WEI/cai_lishuo.png', eliteName: '十八骑', eliteTier: 2 },
+        // 🔴 [2026-11-09 主人令「用襄国十八骑」] 精锐番号：史称「石勒十八骑」（《晋书·石勒载记》《册府元龟》：
+        //    王阳、夔安、支雄等八骑＋郭敖、刘徴、刘宝等十骑，掠苑马贿汲桑而起），原写「十八骑」，
+        //    主人定改用「襄国十八骑」——襄国即邢台，后赵都城，也是本将据点；史实骨架不动，只把都城锚进番号。
+        { generalId: 'cai_lishuo', factionId: 'hou_zhao', cityId: 'city_xingtai', generalName: '石勒', portrait: '/assets/WEI/cai_lishuo.png', eliteName: '襄国十八骑', eliteTier: 2 },
 
 
 

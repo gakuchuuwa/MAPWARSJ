@@ -9193,7 +9193,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 51
         },
         "/assets/CENTRAL/bfe_wangyan.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": -16,
             "offsetY": 6
         },
