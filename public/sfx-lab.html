@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -93,6 +93,10 @@
   .ctl{display:grid; grid-template-columns:96px 1fr 62px; gap:10px; align-items:center; margin:9px 0; font-size:12px; color:var(--dim)}
   .ctl output{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums}
   .ctl input[type=range]{width:100%}
+  .ctl select{
+    width:100%; background:#13100c; color:var(--ink); border:1px solid var(--line);
+    border-radius:5px; padding:4px 6px; font-family:inherit; font-size:12px; outline:none;
+  }
   .btns{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
   button{
     background:#241d13; color:var(--ink); border:1px solid #4a3d24; border-radius:6px;
@@ -211,7 +215,11 @@
         <div class="ctl"><span>并发上限</span><input id="pVoices" type="range" min="1" max="12" step="1" value="6"><output id="oVoices"></output></div>
         <div class="ctl"><span>命中声概率</span><input id="pHit" type="range" min="0" max="1" step="0.05" value="0.55"><output id="oHit"></output></div>
         <div class="ctl"><span>左右声像</span><input id="pPan" type="range" min="0" max="1" step="0.05" value="0.8"><output id="oPan"></output></div>
-        <div class="ctl"><span>齐射层</span><input id="pLayer" type="range" min="0" max="1" step="1" value="1"><output id="oLayer"></output></div>
+        <div class="ctl"><span>齐射层</span><select id="pLayer">
+          <option value="none">关</option>
+          <option value="old">旧箭雨（naval）</option>
+          <option value="storm" selected>乱箭（新）</option>
+        </select><output id="oLayer"></output></div>
 
         <div class="btns">
           <button class="ghost" id="playOld">试听「现状」5 秒</button>
@@ -438,7 +446,11 @@
     }
     const root = $('groups');
     root.textContent = '';
-    for (const [group, items] of byGroup) {
+    const ORDER = ['弓弩箭矢', '近战与死亡', '火器与爆炸', '海战', '攻城与建筑', '大象与火攻', '技能与法术', '天气', '行军', '胜负与号角', '其他与测试'];
+    const rank = (g) => { const i = ORDER.indexOf(g); return i < 0 ? 99 : i; };
+    for (const [group, items] of [...byGroup].sort((a, b) => rank(a[0]) - rank(b[0]))) {
+      const tail = (n) => { const m = n.match(/_(\d+)\.[A-Za-z0-9]+$/); return m ? Number(m[1]) : 0; };
+      items.sort((a, b) => (a.key === b.key ? tail(a.name) - tail(b.name) : a.key.localeCompare(b.key)));
       const sec = document.createElement('section');
       sec.className = 'group';
       const h = document.createElement('h2');
@@ -532,6 +544,7 @@
     startedAt: 0,
     recent: [],       // 最近开火时间，用于判断齐射层
     lastLayerAt: -1,
+    lastStormAt: -1,
     timer: 0,
     raf: 0,
   };
@@ -540,12 +553,13 @@
     singles: ['/sfx-lab/assets/single_1.wav', '/sfx-lab/assets/single_2.wav', '/sfx-lab/assets/single_3.wav', '/sfx-lab/assets/single_4.wav'],
     impacts: ['/sfx-lab/assets/impact_1.wav', '/sfx-lab/assets/impact_2.wav', '/sfx-lab/assets/impact_3.wav'],
     volley: ['/sfx/naval_arrow_fire_1.aud', '/sfx/naval_arrow_fire_2.aud', '/sfx/naval_arrow_fire_3.aud', '/sfx/naval_arrow_fire_4.aud'],
+    storm: ['/sfx/arrow_storm.aud'],
     cache: new Map(),
   };
 
   async function preloadArrows() {
     $('log').textContent = '预载射箭素材…';
-    const urls = [...ARROW.singles, ...ARROW.impacts, ...ARROW.volley];
+    const urls = [...ARROW.singles, ...ARROW.impacts, ...ARROW.volley, ...ARROW.storm];
     const bufs = await Promise.all(urls.map((u) => loadBuffer(u).catch(() => null)));
     urls.forEach((u, i) => { if (bufs[i]) ARROW.cache.set(u, bufs[i]); });
     const ok = urls.filter((u) => ARROW.cache.has(u)).length;
@@ -573,7 +587,7 @@
       voices: Number($('pVoices').value),
       hit: Number($('pHit').value),
       pan: Number($('pPan').value),
-      layer: Number($('pLayer').value),
+      layer: $('pLayer').value,
     };
   }
 
@@ -586,7 +600,7 @@
     $('oVoices').textContent = c.voices;
     $('oHit').textContent = Math.round(c.hit * 100) + '%';
     $('oPan').textContent = Math.round(c.pan * 100) + '%';
-    $('oLayer').textContent = c.layer ? '开' : '关';
+    $('oLayer').textContent = { none: '关', old: '旧箭雨', storm: '乱箭' }[c.layer] || '关';
   }
 
   async function startSim(mode) {
@@ -600,7 +614,7 @@
     SIM.startedAt = now;
     SIM.endAt = now + 5;
     SIM.shots = 0; SIM.dropped = 0; SIM.peakVoices = 0;
-    SIM.voices = []; SIM.recent = []; SIM.lastFireAt = -1; SIM.lastLayerAt = -1;
+    SIM.voices = []; SIM.recent = []; SIM.lastFireAt = -1; SIM.lastLayerAt = -1; SIM.lastStormAt = -1;
     SIM.archers = [];
     for (let i = 0; i < c.archers; i++) {
       const side = c.archers === 1 ? 0 : (-1 + 2 * i / (c.archers - 1));
@@ -686,7 +700,7 @@
     SIM.peakVoices = Math.max(SIM.peakVoices, SIM.voices.length);
     SIM.shots++;
     SIM.recent.push(at);
-    SIM.recent = SIM.recent.filter((t) => t > at - 0.1);
+    SIM.recent = SIM.recent.filter((t) => t > at - 0.3);
 
     // 命中层
     if (Math.random() < c.hit) {
@@ -701,11 +715,23 @@
       }
     }
 
-    // 齐射层：0.1 秒内 ≥4 发才叠一层
-    if (c.layer && SIM.recent.length >= 4 && (SIM.lastLayerAt < 0 || at - SIM.lastLayerAt > 0.8)) {
-      SIM.lastLayerAt = at;
-      const vbuf = ARROW.cache.get(pick(ARROW.volley));
-      if (vbuf) playBuffer(vbuf, { when: at, gain: 0.18, rate: 1, pan: 0 });
+    // 齐射层：0.1 秒内 ≥4 发才起
+    const dense = SIM.recent.length >= Math.max(3, Math.round(c.archers / 4));
+    if (c.layer !== 'none' && dense) {
+      if (c.layer === 'old') {
+        if (SIM.lastLayerAt < 0 || at - SIM.lastLayerAt > 0.8) {
+          SIM.lastLayerAt = at;
+          const vbuf = ARROW.cache.get(pick(ARROW.volley));
+          if (vbuf) playBuffer(vbuf, { when: at, gain: 0.18, rate: 1, pan: 0 });
+        }
+      } else if (SIM.lastStormAt < 0 || at - SIM.lastStormAt > 6) {
+        SIM.lastStormAt = at;
+        const sbuf = ARROW.cache.get(ARROW.storm[0]);
+        if (sbuf) {
+          playBuffer(sbuf, { when: at, gain: 0.28, rate: 1, pan: 0 });
+          log('齐射层：乱箭（10s 底噪，0.28）', 'hl');
+        }
+      }
     }
 
     // 数字面板
@@ -764,7 +790,7 @@
         maxVoices: c.voices,
         impactChance: Number(c.hit.toFixed(2)),
         panWidth: Number(c.pan.toFixed(2)),
-        volleyLayer: !!c.layer,
+        volleyLayer: c.layer,
         archers: c.archers,
       },
     };
@@ -925,7 +951,7 @@
     const ibufs = cfg.impact ? cfg.impact.urls.map((u) => loaded.get(u)).filter(Boolean) : [];
     if (!bufs.length) return when;
 
-    const count = isCur ? 4 : 6;
+    const count = (cfg.cooldownMs ?? 0) >= 3000 ? 1 : (isCur ? 4 : 6);
     const step = Math.max(0.07, Math.min(0.8, (cfg.cooldownMs ?? 300) / 1000));
     let t = when;
     for (let i = 0; i < count; i++) {
@@ -1044,12 +1070,6 @@
     .then((list) => {
       S.manifest = list;
       renderLibrary();
-      // 默认选中第一条箭矢
-      const first = list.find((x) => x.url.includes('naval_arrow_fire_1')) || list[0];
-      if (first) {
-        const row = document.querySelector(`.row[data-url="${first.url}"]`);
-        row?.scrollIntoView({ block: 'center' });
-      }
       $('log').textContent = '切到「射箭工作台」点「试听新方案」即可对比现状。';
     })
     .catch((err) => {
@@ -1060,3 +1080,5 @@
 </script>
 </body>
 </html>
+
+

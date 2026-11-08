@@ -16,6 +16,14 @@
         "bytes":  4440142
     },
     {
+        "name":  "arrow_storm.aud",
+        "url":  "/sfx/arrow_storm.aud",
+        "key":  "arrow_storm",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  87505
+    },
+    {
         "name":  "battle_defeat.aud",
         "url":  "/sfx/battle_defeat.aud",
         "key":  "battle_defeat",
@@ -888,6 +896,22 @@
         "bytes":  36382
     },
     {
+        "name":  "skill_baizhan_storm.aud",
+        "url":  "/sfx/skill_baizhan_storm.aud",
+        "key":  "skill_baizhan_storm",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  42116
+    },
+    {
+        "name":  "skill_baizhan_v2.aud",
+        "url":  "/sfx/skill_baizhan_v2.aud",
+        "key":  "skill_baizhan_v2",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  109202
+    },
+    {
         "name":  "skill_bingzhan_1.aud",
         "url":  "/sfx/skill_bingzhan_1.aud",
         "key":  "skill_bingzhan",
@@ -902,6 +926,14 @@
         "group":  "技能与法术",
         "loop":  false,
         "bytes":  40442
+    },
+    {
+        "name":  "skill_bingzhan_v2.aud",
+        "url":  "/sfx/skill_bingzhan_v2.aud",
+        "key":  "skill_bingzhan_v2",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  86058
     },
     {
         "name":  "skill_dizhan_1.aud",
@@ -936,6 +968,14 @@
         "bytes":  48508
     },
     {
+        "name":  "skill_gongzhan_v2.aud",
+        "url":  "/sfx/skill_gongzhan_v2.aud",
+        "key":  "skill_gongzhan_v2",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  98797
+    },
+    {
         "name":  "skill_hunzhan_1.aud",
         "url":  "/sfx/skill_hunzhan_1.aud",
         "key":  "skill_hunzhan",
@@ -952,6 +992,14 @@
         "bytes":  50424
     },
     {
+        "name":  "skill_hunzhan_v2.aud",
+        "url":  "/sfx/skill_hunzhan_v2.aud",
+        "key":  "skill_hunzhan_v2",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  246562
+    },
+    {
         "name":  "skill_shengzhan_1.aud",
         "url":  "/sfx/skill_shengzhan_1.aud",
         "key":  "skill_shengzhan",
@@ -966,6 +1014,14 @@
         "group":  "技能与法术",
         "loop":  false,
         "bytes":  53271
+    },
+    {
+        "name":  "skill_shengzhan_v2.aud",
+        "url":  "/sfx/skill_shengzhan_v2.aud",
+        "key":  "skill_shengzhan_v2",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  51347
     },
     {
         "name":  "sword_clank_1.aud",

@@ -1382,7 +1382,11 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 1.0, 0),
+    // 🔴 [2026-11-08 主人令「请分别套用给战术模式中的六计音效」] 攻战／胜战／混战／并战／败战 五计改用主人自制的成套音效：
+    //    skill_<six>_v2.aud，五条统一归一到 -13 LUFS ±0.4、真峰 ≤ -2.1 dBFS（48k 立体声 ogg）。
+    //    敌战计本次没给素材，仍用原 skill_dizhan_1/2；原六条旧素材全部保留在 public/sfx 不删，回退改一行即可。
+    //    冷却 600ms：防止攻守双方同一瞬间各放一次、两条长音叠成糊。
+    skill_gongzhan: sounds('battle', ['skill_gongzhan_v2'], 1.0, 600),
 
 
 
@@ -1390,7 +1394,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 1.0, 0),
+    skill_shengzhan: sounds('battle', ['skill_shengzhan_v2'], 1.0, 600),
 
 
 
@@ -1406,7 +1410,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 1.0, 0),
+    skill_hunzhan: sounds('battle', ['skill_hunzhan_v2'], 1.0, 600),
 
 
 
@@ -1414,7 +1418,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 1.0, 0),
+    skill_bingzhan: sounds('battle', ['skill_bingzhan_v2'], 1.0, 600),
 
 
 
@@ -1422,7 +1426,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 1.0, 0),
+    // 🔴 [2026-11-08 主人令「请分别套用给战术模式中的六计音效」] 败战计用主人给的《败战计.WAV》
+    //    （= 之前那条「乱箭」的原文件，10.01s）：skill_baizhan_v2.aud，-13.0 LUFS / 真峰 -6.5 dBFS。
+    //    上一版 3.5s 截段 skill_baizhan_storm.aud 保留不删，想换回短版改这一行即可。
+    skill_baizhan: sounds('battle', ['skill_baizhan_v2'], 1.0, 600),
 
 
 

@@ -30,7 +30,7 @@ import { gameLog } from '../utils/GameLogger';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
-import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldBattleName, type BattlefieldData } from '../data/Battlefields';
 import { EVENT_SITES, findEventSite } from '../data/eventSites';
 import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
@@ -855,16 +855,18 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 获取战场的战役标准名称（统一为【XXX战役】或【XXX围城战】）
+     * 获取战场的战役标准名称（统一为【XXX之战】/【XXX战役】/【XXX围城战】）
      * 🔴 [2026-09-16 主人定]「战场名称要写为XXX战役」
+     * 🔴 [2026-11-08 主人令「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等」]
+     *    没有剧本事件兜底时改走 `battlefieldBattleName()`，与地图标牌同一口径。
      */
     public getBattlefieldBattleTitle(bfId: string, fallbackName?: string): string {
         const fb = this.deps.battlefields?.findBattle(bfId);
         if (fb?.title) return fb.title;
         const bf = findEventSite(bfId);
-        const name = fallbackName ?? bf?.name ?? '历史战役';
-        if (name.endsWith('战役') || name.endsWith('围城战')) return name;
-        return `${name}战役`;
+        if (bf) return battlefieldBattleName(bf);
+        const name = fallbackName ?? '历史战役';
+        return /(之战|战役|之役|围城战|会战)$/.test(name) ? name : `${name}战役`;
     }
 
     /**

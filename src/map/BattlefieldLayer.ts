@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { BATTLEFIELDS, battlefieldSamePointCityId, type BattlefieldData } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldSamePointCityId, battlefieldBattleName, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
@@ -181,7 +181,7 @@ export class BattlefieldLayer {
                     this.layerGroup.removeLayer(oldMarker);
                     this.markers.delete(id);
                     // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」] 打完仗、战场遗迹出现：只让遗迹渐显，
-                    //    地名标牌本来就在（只多了「战场」二字），不重播渐显
+                    //    地名标牌本来就在（打完只是换成战役名），不重播渐显
                     const marker = this.createBattlefieldMarker(bf, fought, false, true);
                     this.markers.set(id, marker);
                     this.markerFoughtState.set(id, fought);
@@ -238,7 +238,7 @@ export class BattlefieldLayer {
         this.map.getPane('battlefieldPane')?.classList.toggle('bf-click-through', on);
     }
 
-    /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 + 标牌加「战场」 */
+    /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 战役名 + 战场形态 */
     private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean, fadeIn = false, morphFadeIn = false): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
@@ -257,11 +257,11 @@ export class BattlefieldLayer {
 
         // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
         //    标牌只留地名。
-        // 🔴 [2026-09-16 主人定「地标在战场事件结束后加上战场两个字」]
-        //    未打完 = 纯地名（如「伊苏斯」）；打完战毕 = 地名 + 战场（如「伊苏斯战场」）
-        const displayName = fought
-            ? (bf.name.endsWith('战场') ? bf.name : `${bf.name}战场`)
-            : bf.name;
+        // 🔴 [2026-09-16 主人定「地标在战场事件结束后加上战场两个字」] —— 已于 2026-11-08 被下一条取代
+        // 🔴 [2026-11-08 主人令「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等」]
+        //    未打完 = 纯地名（「伊苏斯」「赤壁」）；打完战毕 = 战役名（「伊苏斯战役」「赤壁之战」）。
+        //    战役名由 `battlefieldBattleName()` 统一给（数据本身是战役名的原样用，纯地名按史补后缀）。
+        const displayName = fought ? battlefieldBattleName(bf) : bf.name;
 
         const animClass = fadeIn ? ' map-fade-in' : '';
 
@@ -276,7 +276,7 @@ export class BattlefieldLayer {
                 cursor: pointer;
             ">
                 ${morph}
-                <!-- 地名标牌（未打完 = 地名；打完战毕 = 地名 + 战场） -->
+                <!-- 地名标牌（未打完 = 地名；打完战毕 = 战役名 XXX之战 / XXX战役） -->
                 <div class="bf-label" style="
                     position: absolute;
                     bottom: -18px;

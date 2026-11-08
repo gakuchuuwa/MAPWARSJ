@@ -18,7 +18,10 @@
  *   「**打完了才叫战场，没打的不叫战场**」：
  *   · **开战前**：只显示**地名**（不显示战场形态）
  *   · **打完之后**：显示战场形态（拒马／尸体／骨骸／火把…）
- *   见 `src/map/BattlefieldLayer.ts` 与 `src/events/battlefieldState.ts`。
+ *   🔴 [2026-11-08 主人令「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等」]
+ *      打完后的标牌**不再加「战场」二字**，改显示战役名（赤壁之战／伊苏斯战役），
+ *      由本文件末尾的 `battlefieldBattleName()` 统一给；地图标牌与任务标题同一口径。
+ *      渲染见 `src/map/BattlefieldLayer.ts`，打没打过见 `src/events/battlefieldState.ts`。
  *
  * 🔴 [2026-09-12 主人令「**怎么战场还显示武将名字呢，删除，别乱加**」]
  *   战场标牌**只许显示地名**，不再有任何「剧情武将」名字行 —— 原先的 `storyGeneralId`
@@ -980,4 +983,34 @@ export function matchesBattlefield(
     if (bf.scriptYear !== eventYear) return false;
     return Math.abs(bf.lat - loc.lat) <= BATTLEFIELD_MATCH_DEG
         && Math.abs(bf.lng - loc.lng) <= BATTLEFIELD_MATCH_DEG;
+}
+
+/* ── 【战略地图标牌上的战役名】2026-11-08 主人令 ────────────────────────────────
+ * 主人原话：「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等。」
+ *
+ * 口径：
+ *   · 数据里**本来就是战役名**的（以 之战 / 战役 / 之役 / 围城战 / 会战 结尾）原样返回，
+ *     不叠第二个后缀 —— 如「格伦瓦德战役」「鄱阳湖战役」。
+ *   · 只有**纯地名**的补后缀：
+ *       东亚战事（中国、日本、朝鲜、越南、蒙古）→「之战」：赤壁之战、街亭之战、山崎之战…
+ *       其余（欧洲、西亚、印度、美洲、北非…）→「战役」：伊苏斯战役、坎尼战役、苏瓦松战役…
+ *   · 个别按史纠正的写在 `BATTLE_ZHIZHAN_IDS` 里（冰上之战是欧洲战事，但汉语史书就叫「冰上之战」）。
+ *
+ * ⚠️ 与 `PlayerQuestSystem.getBattlefieldBattleTitle()` 同一口径：那边没有剧本事件兜底时也走本函数，
+ *    免得「地图上叫赤壁之战、任务栏叫赤壁战役」两种写法。
+ */
+const BATTLE_ZHIZHAN_IDS = new Set<string>([
+    'bf_jieqiao',       // 界桥之战（191，袁绍 vs 公孙瓒）
+    'bf_shiting',       // 街亭之战（228，诸葛亮北伐）
+    'bf_chibi',         // 赤壁之战（208）
+    'bf_wulanbutong',   // 乌兰布通之战（1690，康熙征噶尔丹）
+    'bf_bingshang',     // 冰上之战（1242，楚德湖）
+]);
+
+/** 战略地图标牌 / 任务标题用的战役名（绝不出现「战场」二字） */
+export function battlefieldBattleName(bf: { id: string; name: string }): string {
+    const name = String(bf?.name ?? '').trim();
+    if (!name) return '历史战役';
+    if (/(之战|战役|之役|围城战|会战)$/.test(name)) return name;
+    return BATTLE_ZHIZHAN_IDS.has(bf.id) ? `${name}之战` : `${name}战役`;
 }
