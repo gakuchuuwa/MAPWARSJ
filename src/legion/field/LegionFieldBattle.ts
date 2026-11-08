@@ -339,7 +339,10 @@ function startFieldBattleBetween(
     );
 
     // [语音播报] 野战开战（仅跟随军团那场）。势=攻守初始兵力比（与攻城/攻占同源）。
-    if (followedFieldId) {
+    // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
+    //    名将经典战（firstBattleHero）在接取任务时已念过这一战的历史背景，这一场不再播开战三势句，
+    //    免得同一仗两个声音、把背景解说掐断。普通野战照旧播。
+    if (followedFieldId && !firstBattleHero) {
         const onAtt = attLegions.some((l) => l.id === followedFieldId);
         const onDef = defLegions.some((l) => l.id === followedFieldId);
         if (onAtt || onDef) {

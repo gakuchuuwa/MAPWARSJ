@@ -3,7 +3,7 @@
  *
  *  · 环球（globe）：绝对优先陆路，相邻两站 100% 为路网直连据点，蜿蜒走遍朝鲜、东北、华北、山东、江淮、江南、
  *    浙闽、湖广、巴蜀、荆襄、关中、河套、河西走廊、西域南北道、河中、呼罗珊、波斯、巴格达、帕尔米拉、阿勒颇、
- *    大马士革、黎凡特海岸、安纳托利亚、巴尔干、希腊、多瑙河、意大利、法兰西、伊比利亚、墨西哥，共 452 座不重复据点，零回头路；
+ *    大马士革、黎凡特海岸、安纳托利亚、巴尔干、希腊、多瑙河、意大利、法兰西、伊比利亚、墨西哥，共 451 座不重复据点，零回头路；
  *  · 航行（sail）：纯海路逐港一跳直连，走遍东海、南海、香料群岛、孟加拉湾、印度东西岸、波斯湾、红海口、东非海岸、
  *    好望角、西非、巴西、麦哲伦海峡、南美西岸、太平洋岛链、菲律宾、台湾、琉球、九州，共 96 座不重复港口，零跨站折返。
  */
@@ -23,7 +23,7 @@ const GALLEON_SEA_TAIL: TourStop[] = [
     S('city_tainan'),
 ];
 
-/** 环球：逐据点一跳直连、多绕行广覆盖、零回头路的环球商路（452 站全唯一） */
+/** 环球：逐据点一跳直连、多绕行广覆盖、零回头路的环球商路（451 站全唯一） */
 export const GLOBE_CHAIN: TourStop[] = [
     // 日本与对马海峡（长崎 → 原之辻 → 对马 → 金海）
     S('city_nagasaki'), S('city_yuanzhishi'), S('city_tsushima'), S('city_gimhae'),
@@ -116,26 +116,26 @@ export const GLOBE_CHAIN: TourStop[] = [
     L('city_adana'),
     // 安纳托利亚全境环线（阿达纳 → 特拉布宗 → 锡瓦斯 → 安卡拉 → 伊科尼乌姆 → 爱琴海沿岸 → 特洛伊 → 布尔萨 → 尼凯亚 → 君士坦丁堡）
     L('city_waka'), L('city_erzincan'), L('city_telabuzong'), L('city_themiskyra'), L('city_amaxiya'),
-    L('city_sivas'), L('city_hatusha'), L('city_ankala'), L('city_tiyana'), L('city_yikeniwumu'),
-    L('city_geerdiweng'), L('city_kailaina'), L('city_peierge'), L('city_halikanasu'), L('city_miletus'),
-    L('city_yifusuo'), L('city_kelazuomeinai'), L('city_peierjiameng'), L('city_teluoyi'), L('city_gelanikusi'),
-    L('city_dasijiliweng'), L('city_buersa'), L('city_seyute'), L('city_nixiya'), L('city_junshitandingbao'),
+    L('city_hatusha'), L('city_sivas'), L('city_tiyana'), L('city_yikeniwumu'), L('city_kailaina'),
+    L('city_peierge'), L('city_halikanasu'), L('city_miletus'), L('city_yifusuo'), L('city_kelazuomeinai'),
+    L('city_peierjiameng'), L('city_teluoyi'), L('city_gelanikusi'), L('city_dasijiliweng'), L('city_buersa'),
+    L('city_nixiya'), L('city_seyute'), L('city_geerdiweng'), L('city_ankala'), L('city_junshitandingbao'),
     // 巴尔干、希腊、多瑙河与中欧（君士坦丁堡 → 保加利亚 → 希腊全境 → 塞尔维亚 → 瓦拉几亚 → 贝尔格莱德 → 布达佩斯 → 维也纳 → 威尼斯）
-    L('city_luxiweng'), L('city_aidiernei'), L('city_puleisilafu'), L('city_teernuowo'), L('city_seuthopolis'),
-    L('city_plovdiv'), L('city_anfeibolisi'), L('city_salonica'), L('city_pelina'), L('city_deerfei'),
-    L('city_thebes'), L('city_kalisituosi'), L('city_yadian'), L('city_sparta'), L('city_aolinpiya'),
-    L('city_anbulajiya'), L('city_peiliang'), L('city_prilep'), L('city_skopje'), L('city_sofia'),
-    L('city_nis'), L('city_baba_vida'), L('city_bucharest'), L('city_teergewishite'), L('city_agesi'),
-    L('city_huneiduolala'), L('city_saigede'), L('city_belgrade'), L('city_budapeisi'), L('city_weiyeena'),
-    L('city_gradeci'), L('city_venice'),
-    // 意大利、瑞士与法兰西（威尼斯 → 佛罗伦萨 → 罗马 → 热那亚 → 米兰 → 都灵 → 日内瓦 → 巴塞尔 → 斯特拉斯堡 → 第戎 → 里昂）
+    L('city_luxiweng'), L('city_aidiernei'), L('city_plovdiv'), L('city_anfeibolisi'), L('city_salonica'),
+    L('city_pelina'), L('city_deerfei'), L('city_thebes'), L('city_kalisituosi'), L('city_yadian'),
+    L('city_sparta'), L('city_aolinpiya'), L('city_anbulajiya'), L('city_peiliang'), L('city_prilep'),
+    L('city_skopje'), L('city_nis'), L('city_belgrade'), L('city_baba_vida'), L('city_sofia'),
+    L('city_seuthopolis'), L('city_teernuowo'), L('city_puleisilafu'), L('city_delusitaer'), L('city_bucharest'),
+    L('city_teergewishite'), L('city_agesi'), L('city_huneiduolala'), L('city_saigede'), L('city_budapeisi'),
+    L('city_weiyeena'), L('city_gradeci'), L('city_venice'),
+    // 意大利、瑞士与法兰西（威尼斯 → 佛罗伦萨 → 罗马 → 热那亚 → 米兰 → 都灵 → 日内瓦 → 第戎 → 里昂）
     L('city_verona'), L('city_florence'), L('city_luoma'), L('city_pisa'), L('city_genoa'),
-    L('city_milan'), L('city_turin'), L('city_shangbeili'), L('city_geneva'), L('city_basaier'),
-    L('city_sitelasibao'), L('city_dijon'), L('city_lyon'),
+    L('city_milan'), L('city_turin'), L('city_shangbeili'), L('city_geneva'), L('city_dijon'),
+    L('city_lyon'),
     // 法兰西南境与伊比利亚全境（里昂 → 波尔多 → 图卢兹 → 巴塞罗那 → 布尔戈斯 → 波尔图 → 里斯本 → 科尔多瓦 → 马德里 → 格拉纳达 → 塞维利亚 → 加的斯）
-    L('city_avignon'), L('city_nabone'), L('city_toulouse'), L('city_oushi'), L('city_bayonne'),
-    L('city_pamplona'), L('city_burgos'), L('city_numantia'), L('city_zaragoza'), L('city_barcelona'),
-    L('city_valencia'), L('city_madeli'), L('city_salamanca'), L('city_la_mota'), L('city_braganca'),
+    L('city_bordeaux'), L('city_oushi'), L('city_bayonne'), L('city_toulouse'), L('city_avignon'),
+    L('city_nabone'), L('city_barcelona'), L('city_valencia'), L('city_madeli'), L('city_numantia'),
+    L('city_zaragoza'), L('city_pamplona'), L('city_burgos'), L('city_la_mota'), L('city_braganca'),
     L('city_boertu'), L('city_coimbra'), L('city_lisiben'), L('city_evora'), L('city_badajoz'),
     L('city_merida'), L('city_toledo'), L('city_cordoba'), L('city_seville'), L('city_granada'),
     L('city_jiadisi'),

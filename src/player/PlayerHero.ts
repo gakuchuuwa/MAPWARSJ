@@ -861,7 +861,8 @@ export class PlayerHero {
             if (!dest) continue;
             const res = pathOf(hereId, stop.id, stop.by);
             if (!res) continue;
-            if (this.tourPrevId && res.nodes.slice(1, -1).includes(this.tourPrevId) && k < n - 1) continue;   // 穿过上一站＝折返
+            const midNodes = res.nodes.slice(1, -1);
+            if (k < n - 1 && midNodes.some((nid) => nid === this.tourPrevId || this.recentTourStops.includes(nid))) continue;   // 穿过上一站或近期走过的站＝折返
             if (hereCity) {
                 const km = res.edges.reduce((t, e) => t + e.lengthKm, 0);
                 const straight = PlayerHero.greatCircleKm(hereCity.latitude, hereCity.longitude, dest.latitude, dest.longitude);

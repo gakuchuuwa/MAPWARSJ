@@ -1445,7 +1445,12 @@ export class SiegeManager {
             ?? initialFollowedIdForSpeech;
         // [修复 2026-07-17] r 原在 if 块内声明，下方援军播报循环（块外）引用会 ReferenceError 崩溃——提升到共用作用域
         const r = battleField.getInitialAttDefRatio(); // attacker / defender
-        if (followedIdForSpeech === army.id) {
+        // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
+        //    名将经典战在接取任务时已念过这一战的历史背景（攻城战 / 防守战各按其类型写），
+        //    这一场不再播开战三势句，免得同一仗两个声音。普通攻城照旧播。
+        const skipFirstBattleStartSpeech = !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch
+            || !!(army as { firstBattleTitle?: string }).firstBattleTitle;
+        if (followedIdForSpeech === army.id && !skipFirstBattleStartSpeech) {
             const siegeAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                 ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
             const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;

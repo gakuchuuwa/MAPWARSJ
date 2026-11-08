@@ -7,7 +7,8 @@
 > **单一口径页（按需打开）**：剧本 ＝ `docs/02-design/systems/剧本工序-单一口径.md` ＋ `路的规则.md`｜
 > 据点·势力·旗号·武将·精锐 ＝ `docs/AGENTS/一据点一整套-单一口径.md`｜兵模比例 ＝ `docs/AGENTS/unit-sprite-scale.md`｜
 > 建筑风格判定 ＝ `docs/AGENTS/建筑风格判定与代理规则.md`｜玩家 ＝ `docs/AGENTS/player-hero.md`、`player-rules-verbatim.md`｜
-> 树林地表 ＝ `docs/02-design/树林与地表-DE口径-2026-10-21.md`。
+> 树林地表 ＝ `docs/02-design/树林与地表-DE口径-2026-10-21.md`｜
+> 知名战历史背景播报 ＝ `docs/AGENTS/首战历史背景播报-单一口径.md`。
 
 ---
 

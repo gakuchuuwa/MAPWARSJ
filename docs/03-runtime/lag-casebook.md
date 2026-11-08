@@ -74,6 +74,7 @@
 | [L. 玩家移动有点卡·植被层重采样过勤](#l) | 采样窗按 1 格（46px）对齐 + 每批地形瓦片 / 未解码贴图都强制整层重采样；paint 逐树 `latLngToLayerPoint` | 重采样合计 993–1190 → **448–662ms/12s**，单次最长 75 → **≤32ms**；单次 paint 约 −35% |
 | [K. 跟拍把 `moveend` 打成每帧事件](#k) | 跟拍每帧 `panBy` → Leaflet 每帧完整 fire `moveend`，15 个「按移动结束写」的监听器每秒跑 38 遍 | 冗余工作 **−84%**（moveend 351→55、监听器 129→21ms）；⚠️ **帧间隔无可测改善**，见下 |
 | [M. 战略地图上移动有点卡·长帧](#m) | ① 新兵种进视野按需加载，DE 雪碧图同步 `getImageData` 白跑抠绿（504 个 DE 目录 498 个 0 命中）② 环球每规划一段对路线**每个点**全扫路网节点找最近据点 | 无头 20s 长帧 7 个/1900ms → **2 个/1100ms**，p90 33→**16.8ms**；②单项 116.6s→**8.0s**（300 条路线），逐点 0 差异 |
+| [N. 植被是不是卡的主因（进行中）](#n) | **不是**：主人局 25 份落盘里植被只占长任务 2%～13%；无头复现不了主人的负载 → 给 PerfDoctor 加 LoAF 归因 `longFrames`，等主人局自动落盘 | 待主人局数据 |
 
 ---
 
@@ -682,3 +683,30 @@ zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `Veg
 **前 → 后**（无头、各 20s，地区不同）：长帧 7 个/1900ms → **2 个/1100ms**；gap p90 33.3 → **16.8ms**，p99 66.8 → **50ms**。
 剩下两个长帧里 JS 采样只有 136ms，其余不在 JS（无头合成器），不代表真机。主人的局要等暂停/重开（ReloadGate）后，看下一份
 `perf_doctor_latest.json`（`context.trigger:'march-stutter'`）的 `longTasks` 验收。
+
+
+---
+
+<a id="n"></a>
+## N. 植被是不是战略地图移动卡的主因（2026-11-09，进行中）
+
+**主人原话**：「玩家在战略地图上移动卡顿是植被过多造成的吗？」→「接着查主因」。（本项目不在 zoom8 下运行。）
+
+**主人局数据**（`perf_doctor_log.jsonl` 11-08 共 25 份 march-stutter）：植被 `VegetationLayer.render` 每份 0.05～0.9s，
+长任务每份 3～27.6s → 植被占 **2%～13%**，且与长任务多少不相关（05:59 那份长任务 23s、植被 0.5s）。
+最卡一份（09:06）：`GlobalUnitRenderer.animate` 5.0s 居首、植被 3.6s（单次峰值 123ms）、堆锯齿 5 次 major GC（19MB/s）、
+登记热点合计 ~17s 对长任务 27.6s → **~10s 在热点之外**。
+
+**无头复现**（`scratch/_probe_march_trace_20261109.mjs`，CDP 时间线按 CrRendererMain 归因）：Layerize 几乎每帧一次，10s 合计 ~1.6s，
+每次 ~375 个合成层；但跟拍 372 帧里只有 39 帧有 DOM 增删 → **不是 DOM 增删触发**。
+
+**🔴 已证伪，别重走**：「合成层多 → Layerize 慢」。`.map-fade-in` 用 `both` 让 287 个播完的淡入动画常驻（成层原因 `ActiveOpacityAnimation`），
+运行时注入 `animation-fill-mode:backwards` 后层数 704/1021 → 643/646，但 Layerize 1607/2138 → **3815/3653ms**（反而更高），
+组内差异大于组间 → 无收益，**未改**。藏小地图同样无可测差异。
+
+**无头的局限**：开局不久、军团少，部队渲染与 GC 量级远小于主人局；页面还会被并行会话的源码改动 HMR 整页刷新
+（探针已加 timeOrigin 校验，刷新即作废）。
+
+**下一步**：PerfDoctor 已加 `longFrames`（Long Animation Frames API，常驻，近零开销）。主人局暂停/重开（ReloadGate）后，
+读下一份 march-stutter 落盘的 `longFrames.按脚本` 与 `未归因ms` 定真凶；`GameAppLoop ← FrameRequestCallback` 大时再对照 `hotspots` 拆子系统。
+无头验证：20s 内 12 个长帧 1145ms = 脚本 793 / 渲染段 612 / 未归因 293，按脚本能定位到 `CityLifeAmbientLayer.tick` 单次 116ms 等。

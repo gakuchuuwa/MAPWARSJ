@@ -2155,6 +2155,15 @@ export class PlayerQuestSystem {
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
 
+        // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
+        //    玩家一点「随某将军奔赴某战」＝接取任务，这一刻就念该战的历史背景（语音 ＋ 下方字幕条，
+        //    走 `announceBriefing` 的 S 级长段解说：略慢语速、期间不被打断）。
+        //    本场首战的三势开战句由 `LegionFieldBattle` / `SiegeManager` 两处跳过，不再叠第二段声音。
+        const firstBattleBackground = getFirstBattleBackground(g.generalId);
+        if (firstBattleBackground) {
+            this.deps.announceBriefing?.(firstBattleBackground);
+        }
+
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
         // 🔴 [2026-10-27 主人令] 经典战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
         const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
@@ -2301,6 +2310,7 @@ export class PlayerQuestSystem {
                 enemyArmyId = enemyArmy.id;
             }
         } else if (targetCity) {
+            this.deps.legionManager.abortCitySiege?.(targetCity.id);
             const nextEnemyFaction = targetCity.factionId === myFactionId ? enemyFactionId : targetCity.factionId;
             this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: enemyTroops }, { skipCaptureLog: true });
             const updatedTargetCity = this.deps.cityManager.getCity(targetCity.id) ?? targetCity;
@@ -2347,7 +2357,7 @@ export class PlayerQuestSystem {
         };
 
         // 🔴 [2026-10-21] 接任务时敌将若已带兵在外，先把那支军团撤掉，免得地图上同时有两个他
-        if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, false);
+        if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, true);
 
         this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
         this.deps.ensureUnpaused();
@@ -2495,6 +2505,7 @@ export class PlayerQuestSystem {
             const tag = a as Army & { isFirstBattleFieldEnemy?: boolean; isFirstBattleSiegeEnemy?: boolean };
             if (tag.isFirstBattleFieldEnemy || tag.isFirstBattleSiegeEnemy) continue;
             if (!force && a.getIsInCombat()) continue;
+            lm.disconnectArmyFromCombat?.(a.id);
             const home = this.deps.cityManager.getCity(a.homeCityId ?? a.getSourceCityId() ?? '');
             if (home && home.factionId === a.getFactionId()) home.troops = (home.troops || 0) + a.getTroops();
             a.disband();
@@ -2701,8 +2712,12 @@ export class PlayerQuestSystem {
         }
 
         if (host.getIsInCombat()) {
-            fbState.engaged = true;
-            return;
+            if (host.scriptMarchExempt) {
+                this.deps.legionManager.disconnectArmyFromCombat?.(host.id);
+            } else {
+                fbState.engaged = true;
+                return;
+            }
         }
 
         const targetPos = { lat: fbState.targetLat, lng: fbState.targetLng };
@@ -3855,6 +3870,10 @@ export class PlayerQuestSystem {
         if (ge) {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
+                this.deps.legionManager.disconnectArmyFromCombat?.(army.id);
+                (army as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+                army.scriptMarchExempt = true;
+                army.stopMovement(false);
                 // 🔴 [2026-10-03 主人定] 与城中会面**同一句**（每位英雄只此一句，见 `enlistmentPanelText`）。
                 const narrativeText = enlistmentPanelText(gid);
                 this.deps.showDialogue({
@@ -3872,6 +3891,10 @@ export class PlayerQuestSystem {
         }
         const fb = this.hasPendingFirstBattle(gid);
         if (fb) {
+            this.deps.legionManager.disconnectArmyFromCombat?.(army.id);
+            (army as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+            army.scriptMarchExempt = true;
+            army.stopMovement(false);
             this.showFirstBattleDialogue(
                 city,
                 { generalId: gid, generalName, portrait: rec?.portrait ?? '' },

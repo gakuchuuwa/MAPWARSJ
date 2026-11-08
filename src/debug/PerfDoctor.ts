@@ -132,6 +132,8 @@ export class PerfDoctor {
         this.longTasks.length = 0;
         this.frameGaps.length = 0;
         this.lastFrameAt = 0;
+        this.loaf = { n: 0, totalMs: 0, scriptMs: 0, preRenderScriptMs: 0, renderMs: 0, styleLayoutMs: 0, forcedLayoutMs: 0 };
+        this.loafScripts.clear();
     }
 
     /** 开始堆采样（DEV 自动调用一次即可） */
@@ -181,6 +183,64 @@ export class PerfDoctor {
             });
             po.observe({ entryTypes: ['longtask'] });
         } catch { /* 浏览器不支持就算了，不影响其余指标 */ }
+
+        // 🔴 [2026-11-09] 长动画帧（LoAF）归因。longtask 只给「多长」不给「是谁」，
+        //    主人局里 27.6s 长任务中有 10s+ 落在已登记热点之外，无头复现不了主人的负载。
+        //    LoAF 由浏览器自己记：每个 >50ms 的帧拆成「脚本（带源文件/函数/触发者）」与
+        //    「渲染段（样式·布局·绘制·分层）」，近乎零开销，常驻。
+        try {
+            const po2 = new PerformanceObserver((l) => {
+                for (const e of l.getEntries() as unknown as LoafEntry[]) this.addLoaf(e);
+            });
+            po2.observe({ type: 'long-animation-frame', buffered: false } as PerformanceObserverInit);
+        } catch { /* 老浏览器没有 LoAF */ }
+    }
+
+    private loaf = { n: 0, totalMs: 0, scriptMs: 0, preRenderScriptMs: 0, renderMs: 0, styleLayoutMs: 0, forcedLayoutMs: 0 };
+    private loafScripts = new Map<string, { n: number; ms: number; max: number }>();
+
+    private addLoaf(e: LoafEntry): void {
+        const end = e.startTime + e.duration;
+        const render = e.renderStart > 0 ? end - e.renderStart : 0;
+        const styleLayout = e.styleAndLayoutStart > 0 ? end - e.styleAndLayoutStart : 0;
+        let script = 0;
+        for (const s of e.scripts ?? []) {
+            script += s.duration;
+            // rAF 回调落在渲染段里，只有渲染段之前的脚本才另算，免得重复扣
+            if (!(e.renderStart > 0) || s.startTime < e.renderStart) this.loaf.preRenderScriptMs += s.duration;
+            this.loaf.forcedLayoutMs += s.forcedStyleAndLayoutDuration ?? 0;
+            const url = (s.sourceURL || '').replace(/^https?:\/\/[^/]+/, '').replace(/\?.*$/, '');
+            const key = `${s.sourceFunctionName || '(anon)'} @ ${url || '?'} ← ${s.invoker || s.invokerType || '?'}`;
+            const r = this.loafScripts.get(key) ?? { n: 0, ms: 0, max: 0 };
+            r.n++; r.ms += s.duration; if (s.duration > r.max) r.max = s.duration;
+            this.loafScripts.set(key, r);
+        }
+        if (this.loafScripts.size > 400) {
+            // 只留耗时最多的 200 条，防长时间运行无限增长
+            const keep = [...this.loafScripts].sort((a, b) => b[1].ms - a[1].ms).slice(0, 200);
+            this.loafScripts = new Map(keep);
+        }
+        this.loaf.n++; this.loaf.totalMs += e.duration; this.loaf.scriptMs += script;
+        this.loaf.renderMs += render; this.loaf.styleLayoutMs += styleLayout;
+    }
+
+    private loafReport() {
+        const L = this.loaf;
+        if (L.n === 0) return null;
+        const r0 = (x: number) => Math.round(x);
+        return {
+            帧数: L.n,
+            合计ms: r0(L.totalMs),
+            脚本ms: r0(L.scriptMs),
+            // 渲染段 = renderStart 到帧末：rAF 回调 + 样式 + 布局 + 绘制 + 分层(Layerize)
+            渲染段ms: r0(L.renderMs),
+            其中样式布局之后ms: r0(L.styleLayoutMs),
+            脚本里强制同步布局ms: r0(L.forcedLayoutMs),
+            // 既不是脚本也不在渲染段：GC、图片解码、浏览器内部任务
+            未归因ms: r0(Math.max(0, L.totalMs - L.preRenderScriptMs - L.renderMs)),
+            按脚本: [...this.loafScripts].sort((a, b) => b[1].ms - a[1].ms).slice(0, 25)
+                .map(([k, v]) => ({ 脚本: k, 次数: v.n, 合计ms: r0(v.ms), 最长ms: r0(v.max) })),
+        };
     }
 
     // ── 按画布归因：谁在每帧画东西 ────────────────────────────
@@ -550,6 +610,8 @@ export class PerfDoctor {
                 totalMs: this.longTasks.reduce((a, b) => a + b.ms, 0),
                 worstMs: this.longTasks.length ? Math.max(...this.longTasks.map((t) => t.ms)) : 0,
             },
+            // 长动画帧归因（2026-11-09）：卡顿时先读这一段，「按脚本」给出源文件与函数
+            longFrames: this.loafReport(),
             heap: mem ? {
                 usedMB: +(mem.usedJSHeapSize / MB).toFixed(0),
                 limitMB: +(mem.jsHeapSizeLimit / MB).toFixed(0),
@@ -682,4 +744,14 @@ if (typeof window !== 'undefined') {
         //    它自己只是一条 rAF + 一个数组 push，开销可忽略。
         perfDoctor.startFrameWatch();
     }
+}
+
+/** Long Animation Frames API 条目（lib.dom 尚未收录） */
+interface LoafScript {
+    startTime: number; duration: number; forcedStyleAndLayoutDuration?: number;
+    sourceURL?: string; sourceFunctionName?: string; invoker?: string; invokerType?: string;
+}
+interface LoafEntry {
+    startTime: number; duration: number; renderStart: number; styleAndLayoutStart: number;
+    scripts?: LoafScript[];
 }
