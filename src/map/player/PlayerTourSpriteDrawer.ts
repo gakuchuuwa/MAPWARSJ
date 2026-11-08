@@ -221,6 +221,8 @@ export interface PlayerTourDrawOptions {
     name: string;
     /** 玩家面板手选的素材目录；null/缺省 = 按所在地文化自动 */
     overrideDir?: string | null;
+    /** 权威屏幕罗盘角（0=北，顺时针，度；来自 navalHeadingRad / unitVisualAngles，优先于单帧位移差） */
+    headingCompassDeg?: number;
     /** 水迹世界坐标 ↔ 屏幕坐标投影（与军团舰队同一套） */
     projection: {
         toWorld(point: { x: number; y: number }): { x: number; y: number };
@@ -245,7 +247,7 @@ export class PlayerTourSpriteDrawer {
         if (!asset.ready) return false;
         if (state) state.readyDir = dir;
 
-        const d = this.dirIndex(asset, o.key, o.from, o.to);
+        const d = this.dirIndex(asset, o.key, o.from, o.to, o.headingCompassDeg);
         // 帧框与贴图必须同一向：个别素材缺某向时退回 0 向，两处一起退，别拿 A 向的框去切 B 向的图
         const idx = asset.dirs[String(d.idx)] ? d.idx : 0;
         const box = asset.dirs[String(idx)];
@@ -334,35 +336,52 @@ export class PlayerTourSpriteDrawer {
     }
 
     /**
-     * 朝向量化（与 TradeTrafficLayer.dirIndex 同一套：屏幕轴角度 + 迟滞死区 + 16 向等距换算）。
-     * 玩家站着不动（两个坐标一样）时沿用上一次朝向，不许原地转头。
+     * 朝向量化（与 TradeTrafficLayer.dirIndex 同一套：屏幕轴角度 + 扇区中心迟滞死区 + 16 向等距换算）。
+     * 玩家站着不动（两个坐标一样且无权威航向）时沿用上一次朝向，不许原地转头。
      */
-    private static dirIndex(asset: TourAsset, key: string, from: Pt, to: Pt): { idx: number; deg: number } {
+    private static dirIndex(
+        asset: TourAsset,
+        key: string,
+        from: Pt,
+        to: Pt,
+        headingCompassDeg?: number,
+    ): { idx: number; deg: number } {
         const last = headings.get(key);
         const moved = Math.abs(to.lat - from.lat) > 1e-7 || Math.abs(to.lng - from.lng) > 1e-7;
-        if (!moved) {
+        const hasHeading = typeof headingCompassDeg === 'number' && Number.isFinite(headingCompassDeg);
+        if (!moved && !hasHeading) {
             if (last && last.asset === asset.dir) return { idx: last.idx, deg: last.deg };
             const deg = asset.dirs16 ? 45 : 0;
             const idx = asset.dirs16 ? 0 : OrientationSystem.get8DirectionFromAngle(deg);
             headings.set(key, { asset: asset.dir, idx, deg });
             return { idx, deg };
         }
-        const deg = asset.dirs16
-            ? OrientationSystem.getScreenCompassDeg(from, to)
-            : OrientationSystem.getScreenAngleDeg(from, to);
-        const half = asset.dirs16 ? 11.25 : 22.5;
-        if (last && last.asset === asset.dir && Number.isFinite(last.deg)) {
-            let diff = ((deg - last.deg) % 360 + 360) % 360;
-            if (diff > 180) diff -= 360;
-            if (Math.abs(diff) <= half + 10) return { idx: last.idx, deg: last.deg };
+        const compassDeg = hasHeading
+            ? (headingCompassDeg as number)
+            : OrientationSystem.getScreenCompassDeg(from, to);
+        if (asset.dirs16) {
+            // 16 向帧按等距地面朝向排（竖向压 0.5），屏幕角先换算成地面朝向再取帧；
+            // 迟滞死区必须与「当前已选帧的等距扇区中心 (45 + 22.5 * last.idx)」比较，且始终返回实时罗盘角 compassDeg，
+            // 严禁与旧原始角 last.deg 比较或冻结 deg（否则从西北转向正西跨越两档扇区时会被 21.25° 死区吞掉，一路横着漂过太平洋）。
+            const rad = compassDeg * Math.PI / 180;
+            const worldDeg = ((Math.atan2(Math.sin(rad), 2 * Math.cos(rad)) * 180 / Math.PI) % 360 + 360) % 360;
+            let idx = ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16;
+            if (last && last.asset === asset.dir && idx !== last.idx) {
+                const centerWorldDeg = (45 + 22.5 * last.idx) % 360;
+                let diff = ((worldDeg - centerWorldDeg) % 360 + 360) % 360;
+                if (diff > 180) diff -= 360;
+                if (Math.abs(diff) <= 11.25 + 2.5) idx = last.idx;
+            }
+            headings.set(key, { asset: asset.dir, idx, deg: compassDeg });
+            return { idx, deg: compassDeg };
         }
-        // 16 向帧按等距地面朝向排（竖向压 0.5），屏幕角先换算成地面朝向再取帧
-        const rad = deg * Math.PI / 180;
-        const worldDeg = Math.atan2(Math.sin(rad), 2 * Math.cos(rad)) * 180 / Math.PI;
-        const idx = asset.dirs16
-            ? ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16
-            : OrientationSystem.get8DirectionFromAngle(deg);
-        headings.set(key, { asset: asset.dir, idx, deg });
-        return { idx, deg };
+        const mathDeg = moved
+            ? OrientationSystem.getScreenAngleDeg(from, to)
+            : OrientationSystem.compassToMathDeg(compassDeg);
+        const idx = last && last.asset === asset.dir
+            ? OrientationSystem.get8DirectionWithHysteresis(last.idx, mathDeg, 5)
+            : OrientationSystem.get8DirectionFromAngle(mathDeg);
+        headings.set(key, { asset: asset.dir, idx, deg: mathDeg });
+        return { idx, deg: mathDeg };
     }
 }

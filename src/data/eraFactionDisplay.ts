@@ -41,9 +41,19 @@ const ERA_SAMPLE_YEAR: Record<DefenseEraAge, number> = {
     imperial: 1600,
 };
 
-/** 势力 → 它开局那座据点（一个势力可含多据点；取库里该势力的第一座城的建筑文化作时代名依据） */
+/** 势力 → 它开局那座据点（一个势力可含多据点；优先取该势力武将驻扎据点的建筑文化，兜底取 CITIES_V2） */
 const FACTION_CITY: ReadonlyMap<string, { buildingStyle: string | undefined }> = (() => {
+    const cityById = new Map(CITIES_V2.map((c) => [c.id, c]));
     const map = new Map<string, { buildingStyle: string | undefined }>();
+    for (const [blockFid, entry] of Object.entries(FACTION_GENERALS)) {
+        const list: readonly FactionGeneral[] = Array.isArray(entry) ? entry : [entry as FactionGeneral];
+        for (const g of list) {
+            const fid = g.factionId ?? blockFid;
+            if (map.has(fid) || !g.cityId) continue;
+            const city = cityById.get(g.cityId);
+            if (city) map.set(fid, { buildingStyle: city.buildingStyle });
+        }
+    }
     for (const city of CITIES_V2) {
         if (map.has(city.factionId)) continue;
         map.set(city.factionId, { buildingStyle: city.buildingStyle });

@@ -358,6 +358,25 @@ export class BattlefieldLayer {
         }
         const GAP = 2;
         const placed: LabelBox[] = [];
+        // 🔴 [2026-11-08 主人令「据点标注不要重叠」] 先把据点标注与奇观标注收进固定避让集合，战场标注不得压住它们
+        const labelsPane = this.map.getPane('labelsPane');
+        if (labelsPane && labelsPane.style.display !== 'none') {
+            for (const el of labelsPane.querySelectorAll<HTMLElement>('.city-label-content')) {
+                const r = el.getBoundingClientRect();
+                if (r.width >= 1 && r.height >= 1) {
+                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top });
+                }
+            }
+        }
+        const monumentPane = this.map.getPane('monumentPane');
+        if (monumentPane && monumentPane.style.display !== 'none') {
+            for (const el of monumentPane.querySelectorAll<HTMLElement>('.monument-label')) {
+                const r = el.getBoundingClientRect();
+                if (r.width >= 1 && r.height >= 1) {
+                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top });
+                }
+            }
+        }
         const blocked = (x: number, y: number, w: number, h: number): boolean =>
             placed.some((p) => x < p.x + p.w + GAP && x + w + GAP > p.x && y < p.y + p.h + GAP && y + h + GAP > p.y);
         for (const b of boxes) {

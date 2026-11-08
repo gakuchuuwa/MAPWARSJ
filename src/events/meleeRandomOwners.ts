@@ -12,11 +12,16 @@
  * · 不走占城流程（`skipCaptureLog`）：不播报、不冒烟。
  */
 import { CITIES_V2 } from '../data/cities_v2';
-import { FACTION_GENERALS, type FactionGeneral } from '../data/FactionGenerals';
+import {
+    FACTION_GENERALS,
+    getDefaultCityFactionId,
+    setMeleeCityHomeFactionProvider,
+    type FactionGeneral,
+} from '../data/FactionGenerals';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import type { CityManager } from '../world/CityManager';
 
-const ORIGINAL_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
+const ORIGINAL_OWNER = new Map(CITIES_V2.map((c) => [c.id, getDefaultCityFactionId(c.id)]));
 
 /**
  * 🔴 [2026-10-24 主人「据点和势力没有关系…据点只和武将有关系，同文化，势力看武将。没有武将要什么势力呀」]
@@ -102,6 +107,8 @@ export function rollMeleeOwners(): { owners: Map<string, string>; unplaced: stri
 }
 
 const applied = new Map<string, string>();
+/** 本局乱斗每座据点抽中的当家势力（决定本局该城激活哪一家的武将；即使局中据点被攻占易主，城内将领池仍固定为这一家） */
+const meleeHomeFaction = new Map<string, string>();
 let active = false;
 /** 上一局没分到据点的势力（排查用：控制台 game 里看） */
 export let lastUnplacedFactions: string[] = [];
@@ -117,18 +124,29 @@ export function syncMeleeRandomOwners(cityManager: CityManager, meleeOn: boolean
             }
         }
         applied.clear();
+        meleeHomeFaction.clear();
+        setMeleeCityHomeFactionProvider(null);
         active = false;
         return;
     }
     if (active) return;
     active = true;
+    const { cand } = buildCandidates();
     const { owners, unplaced } = rollMeleeOwners();
     lastUnplacedFactions = unplaced;
+    meleeHomeFaction.clear();
     for (const [cityId, factionId] of owners) {
         const city = cityManager.getCity(cityId);
-        if (!city || city.factionId !== ORIGINAL_OWNER.get(cityId)) continue;   // 读档里已换过主的城不动
-        if (city.factionId === factionId) continue;
+        const cityCand = cand.get(cityId);
+        // 读档恢复时，若城主已是该城候选政权之一，沿用读档里的政权作本局当家势力；否则用本局抽中的政权
+        if (city && city.factionId !== ORIGINAL_OWNER.get(cityId)) {
+            meleeHomeFaction.set(cityId, cityCand?.has(city.factionId) ? city.factionId : factionId);
+            continue;
+        }
+        meleeHomeFaction.set(cityId, factionId);
+        if (!city || city.factionId === factionId) continue;
         cityManager.updateCity(cityId, { factionId }, { skipCaptureLog: true });
         applied.set(cityId, factionId);
     }
+    setMeleeCityHomeFactionProvider((cityId) => meleeHomeFaction.get(cityId) ?? null);
 }

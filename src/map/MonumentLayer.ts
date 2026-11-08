@@ -205,6 +205,7 @@ export class MonumentLayer {
             const marker = this.createMonumentMarker(mon, fadeIn);
             this.markers.set(id, marker);
         }
+        this.scheduleLabelLayout();
     }
 
     private createMonumentMarker(mon: PlacedMonument, fadeIn = false): L.Marker {
@@ -275,7 +276,7 @@ export class MonumentLayer {
                     transition: transform 0.2s ease;
                 " onmouseover="this.style.transform='translateX(-50%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translateX(-50%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
                 <!-- 金色名胜标牌（🔴 2026-09-14 修复据点名与特殊建筑名重叠：下移至 -32px，形成清晰双行排版） -->
-                <div style="
+                <div class="monument-label" style="
                     position: absolute;
                     bottom: -32px;
                     left: 50%;
@@ -388,9 +389,77 @@ export class MonumentLayer {
             if (!this.map.hasLayer(this.layerGroup)) {
                 this.map.addLayer(this.layerGroup);
             }
+            this.scheduleLabelLayout();
         } else {
             if (this.map.hasLayer(this.layerGroup)) {
                 this.map.removeLayer(this.layerGroup);
+            }
+        }
+    }
+
+    private scheduleLabelLayout(): void {
+        if (this.labelLayoutScheduled) return;
+        this.labelLayoutScheduled = true;
+        requestAnimationFrame(() => {
+            this.labelLayoutScheduled = false;
+            if (!this.map.getPane('monumentPane')) return;
+            this.relayoutLabels();
+        });
+    }
+
+    /**
+     * 🔴 [2026-11-08 主人令「据点标注不要重叠」]
+     * 奇观标注（.monument-label）自动避让据点标注（.city-label-content）及其他奇观标注。
+     */
+    private relayoutLabels(): void {
+        const pane = this.map.getPane('monumentPane');
+        if (!pane || pane.style.display === 'none') return;
+        const scale = Math.max(0.01, parseFloat(pane.style.getPropertyValue('--monument-scale') || '') || 1);
+        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number }
+        const boxes: LabelBox[] = [];
+        for (const marker of this.markers.values()) {
+            const el = marker.getElement()?.querySelector<HTMLElement>('.monument-label');
+            if (!el) continue;
+            el.style.transform = 'translateX(-50%)';
+            boxes.push({ el, w: 0, h: 0, x: 0, y: 0 });
+        }
+        for (const b of boxes) {
+            const r = b.el.getBoundingClientRect();
+            b.w = r.width; b.h = r.height; b.x = r.left; b.y = r.top;
+        }
+        const GAP = 2;
+        const placed: LabelBox[] = [];
+        const labelsPane = this.map.getPane('labelsPane');
+        if (labelsPane && labelsPane.style.display !== 'none') {
+            for (const el of labelsPane.querySelectorAll<HTMLElement>('.city-label-content')) {
+                const r = el.getBoundingClientRect();
+                if (r.width >= 1 && r.height >= 1) {
+                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top });
+                }
+            }
+        }
+        const blocked = (x: number, y: number, w: number, h: number): boolean =>
+            placed.some((p) => x < p.x + p.w + GAP && x + w + GAP > p.x && y < p.y + p.h + GAP && y + h + GAP > p.y);
+        for (const b of boxes) {
+            if (b.w < 1 || b.h < 1) continue;
+            const row = b.h + GAP * 2;
+            const col = b.w + GAP * 2;
+            const cands: Array<[number, number]> = [[0, 0]];
+            for (let ring = 1; ring <= 6; ring++) {
+                cands.push(
+                    [0, ring * row], [0, -ring * row],
+                    [ring * col, 0], [-ring * col, 0],
+                    [ring * col, ring * row], [-ring * col, ring * row],
+                    [ring * col, -ring * row], [-ring * col, -ring * row],
+                );
+            }
+            let dx = 0, dy = 0, found = false;
+            for (const [cx, cy] of cands) {
+                if (!blocked(b.x + cx, b.y + cy, b.w, b.h)) { dx = cx; dy = cy; found = true; break; }
+            }
+            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy });
+            if (found && (dx !== 0 || dy !== 0)) {
+                b.el.style.transform = 'translate(calc(-50% + ' + (dx / scale).toFixed(1) + 'px), ' + (dy / scale).toFixed(1) + 'px)';
             }
         }
     }

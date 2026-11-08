@@ -16,13 +16,13 @@
  */
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityAnchorFactionId } from '../data/ExpeditionLegions';
-import { getCityGeneralsResolved } from '../data/FactionGenerals';
+import { getCityGeneralsResolved, getDefaultCityFactionId } from '../data/FactionGenerals';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralDebutYear } from '../data/GeneralLifeYears';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import type { CityManager } from '../world/CityManager';
 
-const MELEE_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
+const MELEE_OWNER = new Map(CITIES_V2.map((c) => [c.id, getDefaultCityFactionId(c.id)]));
 
 /** 据点此刻的当家武将（在场者里名将优先、登场早优先）；没人在场 → null */
 function localLeadGeneral(cityId: string): { generalId: string; factionId: string } | null {

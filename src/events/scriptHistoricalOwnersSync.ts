@@ -8,9 +8,10 @@
  */
 import { SCRIPT_HISTORICAL_OWNERS } from '../data/scriptHistoricalOwners';
 import { CITIES_V2 } from '../data/cities_v2';
+import { getDefaultCityFactionId } from '../data/FactionGenerals';
 import type { CityManager } from '../world/CityManager';
 
-const MELEE_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
+const MELEE_OWNER = new Map(CITIES_V2.map((c) => [c.id, getDefaultCityFactionId(c.id)]));
 
 /** 某年的史实归属：同一座城取年份 ≤ year 的最后一条 */
 function ownersAt(year: number): Map<string, string> {

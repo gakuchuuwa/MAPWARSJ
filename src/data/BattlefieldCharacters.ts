@@ -112,6 +112,59 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '史有其人：后秦东平公姚绍，义熙十二年（416）晋军北伐，他与姚洸等守洛阳、潼关拒之，兵败（《晋书·姚泓载记》《宋书·檀道济传》）。立绘留空。',
     },
 
+    // 🔴 [2026-11-08 补知名战·第五批]
+    bfe_chen_jingxuan: {
+        generalId: 'bfe_chen_jingxuan',
+        generalName: '陈敬瑄',
+        factionId: 'tang',
+        portraitProposedPath: '/assets/CENTRAL/bfe_chen_jingxuan.png',
+        note: '史有其人：唐西川节度使陈敬瑄（田令孜之兄），据成都；大顺二年（891）为王建围困，粮尽出降（《旧唐书·陈敬瑄传》《资治通鉴》卷二五八）。立绘留空。',
+    },
+    bfe_svyatopolk: {
+        generalId: 'bfe_svyatopolk',
+        generalName: '斯维亚托波尔克',
+        factionId: 'luosi',
+        portraitProposedPath: '/assets/SLAVIC/bfe_svyatopolk.png',
+        note: '史有其人：基辅大公斯维亚托波尔克一世（"被诅咒者"），1015 年弑弟夺位；1019 年阿尔塔河之战为雅罗斯拉夫所败，逃亡途中死（《往年纪事》1019 年条）。立绘留空。',
+    },
+    bfe_tran_duc_tong: {
+        generalId: 'bfe_tran_duc_tong',
+        generalName: '陈睿宗',
+        factionId: 'dayue',
+        portraitProposedPath: '/assets/VIETNAMESE/bfe_tran_duc_tong.png',
+        note: '史有其人：大越陈朝皇帝陈睿宗（陈曔，1372–1377 在位），1377 年亲征占城，于尸耐（Thị Nại）中伏兵败、战死阵中（《大越史记全书·陈纪》）。立绘留空。',
+    },
+    bfe_wang_lin: {
+        generalId: 'bfe_wang_lin',
+        generalName: '王琳',
+        factionId: 'nan_liang',
+        portraitProposedPath: '/assets/JIANGNAN/bfe_wang_lin.png',
+        note: '史有其人：梁将王琳，陈霸先代梁后据湘州举兵；天嘉元年（560）为陈将侯安都等所破，走投北齐（《陈书·侯安都传》《资治通鉴》卷一六七）。立绘留空。',
+    },
+
+    // 🔴 [2026-11-08 补知名战·第六批]
+    bfe_liu_shang: {
+        generalId: 'bfe_liu_shang',
+        generalName: '刘尚',
+        factionId: 'han_d',
+        portraitProposedPath: '/assets/CENTRAL/bfe_liu_shang.png',
+        note: '史有其人：东汉武威将军刘尚，建武二十三年（47）率南郡、长沙、武陵兵万余人溯沅水击武陵蛮，轻敌入险，全军覆没（《后汉书·南蛮西南夷列传》「尚军大败，悉没」）。立绘留空。',
+    },
+    bfe_kuki_yoshitaka: {
+        generalId: 'bfe_kuki_yoshitaka',
+        generalName: '九鬼嘉隆',
+        factionId: 'oda',
+        portraitProposedPath: '/assets/JAPAN/bfe_kuki_yoshitaka.png',
+        note: '史有其人：织田氏水军大将九鬼嘉隆，天正四年（1576）率织田水军封锁石山本愿寺海口，于木津川口为毛利水军（村上武吉等）所破，失船甚众（《信长公记》）。立绘留空。',
+    },
+    bfe_shoni_yorihisa: {
+        generalId: 'bfe_shoni_yorihisa',
+        generalName: '少弐赖尚',
+        factionId: 'shoni',
+        portraitProposedPath: '/assets/JAPAN/bfe_shoni_yorihisa.png',
+        note: '史有其人：北朝方九州探题少弐赖尚，正平十四年（1359）率足利幕府军在筑后川与南朝菊池武光决战，大败（《太平记》卷三十三；《大日本史料》同年条）。立绘留空。',
+    },
+
     // 🔴 [2026-10-25 经典战敌将复核 → 同日升级] 原本登记为战场人物的 58 位「该战真实对方指挥官」，
     //    已按主人令「新增武将要符合标准」升级为**正式据点武将**（进 FactionGenerals / profiles / GeneralEra / GeneralLifeYears / GeneralCenturies，
     //    配据点＋势力＋时代＋名将/普将＋精锐 T0–T4，立绘留空），本表不再保留他们的条目。

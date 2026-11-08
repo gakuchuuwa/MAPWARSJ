@@ -822,23 +822,25 @@ export class TradeTrafficLayer {
     }
 
     private dirIndex(asset: TradeAsset, from: Pt, to: Pt, lastIdx: number, lastDeg: number): { idx: number; deg: number } {
-        // 🔴 [2026-09-01 修「商队频繁更换朝向」] 朝向量化加迟滞（死区 10°）：
-        //    折线方向停在扇区边界时，微小角度波动不再让贴图来回跳。
+        // 🔴 [2026-09-01 修「商队频繁更换朝向」] 朝向量化加迟滞：
+        //    迟滞死区必须与「当前已选帧的扇区中心」比较，且始终返回实时角度 deg（严禁与旧原始角 lastDeg 比较或冻结 deg）。
         // 🔴 [2026-09-01] 走 Mercator 屏幕轴，不用原始经纬度差（高纬斜向会整档打偏）
-        const deg = asset.dirs16
-            ? OrientationSystem.getScreenCompassDeg(from, to)
-            : OrientationSystem.getScreenAngleDeg(from, to);
-        const half = asset.dirs16 ? 11.25 : 22.5;
-        if (Number.isFinite(lastDeg)) {
-            let diff = ((deg - lastDeg) % 360 + 360) % 360;
-            if (diff > 180) diff -= 360;
-            if (Math.abs(diff) <= half + 10) return { idx: lastIdx, deg: lastDeg };
+        if (asset.dirs16) {
+            const deg = OrientationSystem.getScreenCompassDeg(from, to);
+            const rad = deg * Math.PI / 180;
+            const worldDeg = ((Math.atan2(Math.sin(rad), 2 * Math.cos(rad)) * 180 / Math.PI) % 360 + 360) % 360;
+            let idx = ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16;
+            if (Number.isFinite(lastDeg) && lastIdx >= 0 && idx !== lastIdx) {
+                const centerWorldDeg = (45 + 22.5 * lastIdx) % 360;
+                let diff = ((worldDeg - centerWorldDeg) % 360 + 360) % 360;
+                if (diff > 180) diff -= 360;
+                if (Math.abs(diff) <= 11.25 + 2.5) idx = lastIdx;
+            }
+            return { idx, deg };
         }
-        // 🔴 [2026-10-08 主人「浪花要和船的朝向为一条线」] 16 向帧按等距地面朝向排（竖向压 0.5），屏幕角先换算成地面朝向再取帧
-        const rad = deg * Math.PI / 180;
-        const worldDeg = Math.atan2(Math.sin(rad), 2 * Math.cos(rad)) * 180 / Math.PI;
-        const idx = asset.dirs16
-            ? ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16
+        const deg = OrientationSystem.getScreenAngleDeg(from, to);
+        const idx = Number.isFinite(lastDeg) && lastIdx >= 0
+            ? OrientationSystem.get8DirectionWithHysteresis(lastIdx, deg, 5)
             : OrientationSystem.get8DirectionFromAngle(deg);
         return { idx, deg };
     }

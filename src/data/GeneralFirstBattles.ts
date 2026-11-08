@@ -11326,6 +11326,267 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随塞利姆苏丹会战查尔迪兰，破萨法维骑兵！' },
         ],
     },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔴 [2026-11-08 主人令「继续补知名战」] 名将缺知名战 · 第四批 4 条
+    // ═══════════════════════════════════════════════════════════════════
+
+    // #503 杨延昭 (958 ~ 1014) — 999 遂城之战（辽军围遂城，杨延昭夜汲水灌城成冰，坚壁不克）
+    // 兵力：辽军南下号称数万，遂城守军不足万；按不可比缩放取守一万、攻二万
+    changshan_yangyanzhao: {
+        generalId: 'changshan_yangyanzhao',
+        battleName: '遂城之战',
+        battleYear: 999,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '遂城',
+        targetCityId: 'city_baoding',
+        targetLat: 39.02,
+        targetLng: 115.65,
+        myTroops: 10000,
+        enemyFactionId: 'liao_d',
+        enemyFactionName: '大辽',
+        enemyGeneralId: 'bfe_xiaotalin',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '辽骑已薄遂城，城中兵少、城墙又薄。今夜汲水灌城、天明冻成冰墙，他的云梯撞车一概使不上——壮士可愿随我据城死守？' },
+            { speaker: 'player', text: '愿随杨将军冰城固守遂城，挡住辽军！' },
+        ],
+    },
+
+    // #504 姚苌 (330 ~ 393) — 384 北地之战（姚苌起兵北地，苻坚遣苻叡来讨，苻叡兵败被杀）
+    // 兵力：《晋书·姚苌载记》记姚苌起兵众数万；苻叡所统步骑约二万
+    beidi_yaochang: {
+        generalId: 'beidi_yaochang',
+        battleName: '北地之战',
+        battleYear: 384,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '北地',
+        targetCityId: 'city_jinsuoguan',
+        targetLat: 34.90,
+        targetLng: 108.98,
+        myTroops: 30000,
+        enemyFactionId: 'fushi',
+        enemyFactionName: '苻秦',
+        enemyGeneralId: 'bfe_fu_rui',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '苻坚淝水一败，关中大乱，正是我羌人自立之时。他已遣其子苻叡来讨，兵少而骄——壮士可愿随我在北地设伏，先斩此子？' },
+            { speaker: 'player', text: '愿随姚将军起兵北地，破苻叡！' },
+        ],
+    },
+
+    // #505 脱欢 (1380? ~ 1439) — 1434 母纳山之战（瓦剌袭破鞑靼阿鲁台，阿鲁台被杀）
+    // 兵力：《明史·鞑靼传》记瓦剌与鞑靼相攻，脱欢袭杀阿鲁台；两军各约二三万
+    choros_tuohuan: {
+        generalId: 'choros_tuohuan',
+        battleName: '母纳山之战',
+        battleYear: 1434,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '母纳山',
+        targetCityId: 'city_hetao',
+        targetLat: 40.70,
+        targetLng: 109.00,
+        myTroops: 30000,
+        enemyFactionId: 'dada_ming',
+        enemyFactionName: '鞑靼',
+        enemyGeneralId: 'bfe_alutai',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '阿鲁台屡败于我手，今率残部屯母纳山下，人马疲敝、斥候又疏。今夜袭营，一战可定漠北——壮士可愿随我冲其中军？' },
+            { speaker: 'player', text: '愿随脱欢太师夜袭母纳山，破阿鲁台！' },
+        ],
+    },
+
+    // #506 檀道济 (? ~ 436) — 416 洛阳之战（晋军北伐后秦，檀道济与王镇恶攻拔洛阳）
+    // 兵力：《宋书·檀道济传》记北伐诸军，晋军约三万、后秦洛阳守军约二万
+    jinling_tandaoji: {
+        generalId: 'jinling_tandaoji',
+        battleName: '洛阳之战',
+        battleYear: 416,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '洛阳',
+        targetCityId: 'city_luoyang',
+        targetLat: 34.62,
+        targetLng: 112.45,
+        myTroops: 30000,
+        enemyFactionId: 'hou_qin',
+        enemyFactionName: '姚秦',
+        enemyGeneralId: 'bfe_yao_shao',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '姚兴新死，关中内乱，洛阳守备已虚。我率王师北出，正取此城为根基——壮士可愿随我填壕登城，先拔洛阳？' },
+            { speaker: 'player', text: '愿随檀道济攻拔洛阳，破后秦守军！' },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔴 [2026-11-08 主人令「继续补知名战」] 名将缺知名战 · 第五批 4 条
+    // ═══════════════════════════════════════════════════════════════════
+
+    // #507 王建 (847 ~ 918) — 891 成都之战（围成都，陈敬瑄粮尽出降，前蜀基业自此）
+    // 兵力：《资治通鉴》卷二五八：王建所部数万围成都，陈敬瑄守军亦称数万，按 1:1 记
+    zizhou_wangjian: {
+        generalId: 'zizhou_wangjian',
+        battleName: '成都之战',
+        battleYear: 891,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '成都',
+        targetCityId: 'city_chengdu',
+        targetLat: 30.66,
+        targetLng: 104.06,
+        myTroops: 30000,
+        enemyFactionId: 'tang',
+        enemyFactionName: '李唐',
+        enemyGeneralId: 'bfe_chen_jingxuan',
+        enemyTroops: 30000,
+        introLines: [
+            { speaker: 'general', text: '陈敬瑄据成都、闭城自守，粮道已断，城中人相食。我兵围城经年，正当乘其困弊一鼓而下——壮士可愿随我填壕登城？' },
+            { speaker: 'player', text: '愿随王建攻取成都，擒陈敬瑄！' },
+        ],
+    },
+
+    // #508 雅罗斯拉夫 (978 ~ 1054) — 1019 阿尔塔河之战（兄弟争位决战，斯维亚托波尔克败走身死）
+    // 兵力：《往年纪事》：雅罗斯拉夫率瓦良格雇佣军与诺夫哥罗德军，兵力少于基辅方面
+    gen_yaroslav: {
+        generalId: 'gen_yaroslav',
+        battleName: '阿尔塔河之战',
+        battleYear: 1019,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '阿尔塔河',
+        targetCityId: 'city_peilieyasilafu',
+        targetLat: 50.20,
+        targetLng: 32.50,
+        myTroops: 10000,
+        enemyFactionId: 'luosi',
+        enemyFactionName: '罗斯',
+        enemyGeneralId: 'bfe_svyatopolk',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '斯维亚托波尔克弑弟夺位，又引佩切涅格人来犯。我以瓦良格雇佣军为锋，就在阿尔塔河边与他决一死战——壮士可愿随我冲阵？' },
+            { speaker: 'player', text: '愿随雅罗斯拉夫决战阿尔塔河，讨斯维亚托波尔克！' },
+        ],
+    },
+
+    // #509 制蓬峨 (? ~ 1390) — 1377 尸耐之战（佯退诱敌，大破越军，陈睿宗战死）
+    // 兵力：《大越史记全书》记越军号称十二万；占城军数万，按「悬殊 ≤2 倍」记 三万:六万
+    champa_zhipenge: {
+        generalId: 'champa_zhipenge',
+        battleName: '尸耐之战',
+        battleYear: 1377,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '尸耐',
+        targetCityId: 'city_dupan',
+        targetLat: 13.90,
+        targetLng: 109.00,
+        myTroops: 30000,
+        enemyFactionId: 'dayue',
+        enemyFactionName: '大越',
+        enemyGeneralId: 'bfe_tran_duc_tong',
+        enemyTroops: 60000,
+        introLines: [
+            { speaker: 'general', text: '陈睿宗倾国而来，兵多而骄、道险而长。我已弃前沿、佯北退，把越军引进尸耐的窄谷——壮士可愿随我伏兵齐发，取他的人头？' },
+            { speaker: 'player', text: '愿随制蓬峨伏击尸耐，破大越军！' },
+        ],
+    },
+
+    // #510 侯安都 (520 ~ 563) — 560 芜湖之战（陈军破王琳水陆之师，王琳走投北齐）
+    // 兵力：《陈书·侯安都传》记双方各数万，按 1:1 记
+    shixing_houandou: {
+        generalId: 'shixing_houandou',
+        battleName: '芜湖之战',
+        battleYear: 560,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '芜湖',
+        targetCityId: 'city_jiuzi',
+        targetLat: 31.33,
+        targetLng: 118.37,
+        myTroops: 30000,
+        enemyFactionId: 'nan_liang',
+        enemyFactionName: '萧梁',
+        enemyGeneralId: 'bfe_wang_lin',
+        enemyTroops: 30000,
+        introLines: [
+            { speaker: 'general', text: '王琳据湘州、引北齐为援，舟师已下芜湖。他船大而滞、又与我军争江心——壮士可愿随我顺流纵火，一战破其水陆？' },
+            { speaker: 'player', text: '愿随侯将军决战芜湖，破王琳舟师！' },
+        ],
+    },
+
+    // #511 相单程 (? ~ 49) — 47 年沅水之战（武陵蛮据险，汉武威将军刘尚万余人溯沅水而入，全军覆没）
+    // 出处：《后汉书·南蛮西南夷列传》「尚军大败，悉没」
+    wuling_xiangdancheng: {
+        generalId: 'wuling_xiangdancheng',
+        battleName: '沅水之战',
+        battleYear: 47,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '临沅沅水',
+        targetCityId: 'city_wuling',
+        targetLat: 29.03,
+        targetLng: 111.69,
+        myTroops: 20000,
+        enemyFactionId: 'han_d',
+        enemyFactionName: '刘汉',
+        enemyGeneralId: 'bfe_liu_shang',
+        enemyTroops: 10000,
+        introLines: [
+            { speaker: 'general', text: '汉家派刘尚率万余人乘船溯沅水来剿，船大滩险、又不知山路。我五溪诸部已守住险隘——壮士可愿随我等他入险，一举尽没其军？' },
+            { speaker: 'player', text: '愿随精夫相单程据险伏击，尽灭刘尚之军！' },
+        ],
+    },
+
+    // #512 村上武吉 (1533 ~ 1604) — 1576 木津川口之战（毛利水军破织田水军封锁）
+    // 出处：《信长公记》天正四年七月，织田水军为毛利·村上水军所破
+    iyo_d_cunshangwuji: {
+        generalId: 'iyo_d_cunshangwuji',
+        battleName: '木津川口之战',
+        battleYear: 1576,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '木津川口',
+        targetCityId: 'city_osaka',
+        targetLat: 34.60,
+        targetLng: 135.10,
+        myTroops: 10000,
+        enemyFactionId: 'oda',
+        enemyFactionName: '织田',
+        enemyGeneralId: 'bfe_kuki_yoshitaka',
+        enemyTroops: 10000,
+        introLines: [
+            { speaker: 'general', text: '织田水军封了木津川口，本愿寺粮道将绝。我村上水军惯于濑户内海，火矢焙烙在手——壮士可愿随我顺潮突入，烧他船阵？' },
+            { speaker: 'player', text: '愿随村上武吉突入木津川口，破织田水军！' },
+        ],
+    },
+
+    // #513 菊池武光 (1319 ~ 1373) — 1359 筑后川之战（南朝军大破足利幕府军）
+    // 出处：《太平记》卷三十三；《大日本史料》正平十四年条
+    higo_d_juchiwuguang: {
+        generalId: 'higo_d_juchiwuguang',
+        battleName: '筑后川之战',
+        battleYear: 1359,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '筑后川',
+        targetCityId: 'city_taizaifu',
+        targetLat: 33.32,
+        targetLng: 130.55,
+        myTroops: 30000,
+        enemyFactionId: 'shoni',
+        enemyFactionName: '少弐',
+        enemyGeneralId: 'bfe_shoni_yorihisa',
+        enemyTroops: 40000,
+        introLines: [
+            { speaker: 'general', text: '北朝倾九州之兵压筑后川，少弐赖尚自以为众。川面雾重、潮水正落，我南朝军可涉水而击——壮士可愿随我趁雾突阵，破他幕府军？' },
+            { speaker: 'player', text: '愿随菊池将军决战筑后川，破少弐赖尚！' },
+        ],
+    },
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

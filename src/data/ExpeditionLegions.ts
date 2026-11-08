@@ -14,7 +14,7 @@
  */
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { CITIES_V2 } from './cities_v2';
-import { FACTION_GENERALS, getRawGeneralByGeneralId } from './FactionGenerals';
+import { FACTION_GENERALS, getDefaultCityFactionId, getRawGeneralByGeneralId } from './FactionGenerals';
 
 export type EliteTier = 0 | 1 | 2 | 3 | 4;
 export interface EliteLegionConfig {
@@ -98,11 +98,15 @@ function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> 
 export const CITY_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = buildCityEliteLegionMap();
 
 function buildCityAnchorFactionMap(): Readonly<Record<string, string>> {
-  // 🔴 [2026-10-22 主人新口径] 一个势力可以拥有多个据点（旧「一城一势力」作废）：
-  //    每个据点都要有史料锚定势力，直接取 cities_v2.factionId；STARTING_CAPITALS 只作兜底。
+  // 🔴 [2026-11-08 主人定] 据点锚定势力优先取该据点当家武将（名将优先）所属政权；无将时兜底 cities_v2.factionId
   const map: Record<string, string> = {};
   for (const city of CITIES_V2) {
-    if (city.factionId) map[city.id] = city.factionId;
+    const genFid = getDefaultCityFactionId(city.id);
+    if (genFid && genFid !== 'panshu') {
+      map[city.id] = genFid;
+    } else if (city.factionId) {
+      map[city.id] = city.factionId;
+    }
   }
   for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
     if (cityId && !map[cityId]) map[cityId] = factionId;

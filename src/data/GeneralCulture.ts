@@ -1667,7 +1667,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wulaertu_mleh': 'ARMENIANS',   // 亚美尼亚｜姆莱｜据点 阿尼
     'wulaertu_stephan': 'ARMENIANS',   // 亚美尼亚｜斯蒂芬（亚美尼亚）｜据点 阿尼
     'wuli_d_celeng': 'MONGOL',   // 大清｜策棱｜据点 扎布汗
-    'wuliangha_subutai': 'MONGOL',   // 蒙古｜速不台｜据点 薛灵哥
+    'wuliangha_subutai': 'CENTRAL_ASIA',   // 蒙古｜速不台｜据点 萨莱
     'wulianghai_chelingwubashen': 'MONGOL',   // 杜尔伯特｜车凌乌巴什｜据点 布尔根
     'wuling_xiangdancheng': 'HUGUANG',   // 五溪｜相单程｜据点 壶头山
     'wuman_gaipin': 'BASHU',   // 爨族｜盖聘｜据点 乌蒙山

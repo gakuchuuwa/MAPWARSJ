@@ -3946,6 +3946,7 @@ export class TerritorySystem {
         if (labelsPane) {
             labelsPane.style.setProperty('--city-scale', String(scale));
         }
+        this.scheduleCityLabelLayout();
     }
 
     /** 按缩放档位切换图层：6 界线无势力色；7 界线+城名；8 据点+势力色；≥9 常规 */

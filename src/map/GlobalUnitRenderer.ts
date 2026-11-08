@@ -2539,6 +2539,12 @@ export class GlobalUnitRenderer {
             const tourKind = hero?.getTourModelKind?.() ?? null;
             if (tourKind && !hostR && !this.isBattleScene13()) {
                 const prevPos = unit.lastPosition && isValidMapCoord(unit.lastPosition) ? unit.lastPosition : unitPos;
+                const visualRad = Number.isFinite(unit.navalHeadingRad)
+                    ? OrientationSystem.geoHeadingToScreenCompassRad(unit.navalHeadingRad as number, unitPos.lat)
+                    : this.unitVisualAngles.get(unit.id || 'unknown');
+                const headingCompassDeg = visualRad !== undefined && Number.isFinite(visualRad)
+                    ? (visualRad * 180) / Math.PI
+                    : undefined;
                 const tourDrawn = PlayerTourSpriteDrawer.draw(ctx, {
                     kind: tourKind,
                     key: unit.id ?? 'player_hero',
@@ -2550,6 +2556,7 @@ export class GlobalUnitRenderer {
                     tick: Date.now(),
                     name: hero?.name ?? '探马者',
                     overrideDir: hero?.getTourModelDir?.(tourKind) ?? null,
+                    headingCompassDeg,
                     projection: {
                         toWorld: (point) => {
                             const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));

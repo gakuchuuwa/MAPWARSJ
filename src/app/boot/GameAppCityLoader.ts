@@ -1,31 +1,16 @@
 import { CITIES_V2 as CITIES } from '../../data/cities_v2';
-import { FACTIONS } from '../../data/factions';
-import { STARTING_CAPITALS } from '../../data/StartingCapitals';
-import { GameConfig } from '../../config/GameConfig';
+import { getDefaultCityFactionId } from '../../data/FactionGenerals';
 import { getCityImage } from '../../systems/RegionSystem';
 import { rollSessionCityMirror } from '../../systems/city-marker/CityBuildingMirror';
 import type { City } from '../../types/core';
 import type { GameApp } from '../GameApp';
 
 /**
- * 🔴 2026-10-22 主人新口径（一个势力可以拥有多个据点）：
- *   非首府城**不再强制降为叛军（panshu）**，保留 cities_v2.factionId；
- *   STARTING_CAPITALS 只用于「某城是某势力首府」的旧沙盒改旗兼容。
+ * 🔴 [2026-11-08 主人定] 据点本身不绑定固定势力，默认归属直接由挂在该据点的当家武将（名将优先）决定；
+ *   无武将的据点一律归 `panshu`（叛军，无字旗、不出兵）。不再读取 `STARTING_CAPITALS` 或手写 `city.factionId`。
  */
-const VALID_FACTION_IDS = new Set(FACTIONS.map((f) => f.id));
-
 export function resolveBootFactionId(city: { id: string; factionId: string }): string {
-    let factionId = city.factionId;
-    if (GameConfig.SYSTEM.SANDBOX_MODE) {
-        const isCapital = STARTING_CAPITALS[factionId] === city.id;
-        if (!isCapital) {
-            const ownerFaction = Object.keys(STARTING_CAPITALS).find(
-                (key) => STARTING_CAPITALS[key] === city.id && VALID_FACTION_IDS.has(key)
-            );
-            if (ownerFaction) factionId = ownerFaction;
-        }
-    }
-    return factionId;
+    return getDefaultCityFactionId(city.id);
 }
 
 export function loadGameAppCityData(app: GameApp): void {

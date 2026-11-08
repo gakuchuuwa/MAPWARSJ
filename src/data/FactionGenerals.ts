@@ -6162,7 +6162,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wuliangha_subutai', factionId: 'menggu_d', cityId: 'city_saiyinshanda', generalName: '速不台', portrait: '/assets/MONGOL/wuliangha_subutai.png', eliteName: '兀良哈骑', eliteTier: 1  },   // 按史：速不台为兀良合（兀良哈）部人，本部部族千户骑兵（《元史·速不台传》）
+        { generalId: 'wuliangha_subutai', factionId: 'menggu_d', cityId: 'city_salai', generalName: '速不台', portrait: '/assets/MONGOL/wuliangha_subutai.png', eliteName: '兀良哈骑', eliteTier: 1  },   // 按史：速不台为兀良合（兀良哈）部人，本部部族千户骑兵（《元史·速不台传》）
 
 
 
@@ -18395,19 +18395,55 @@ function buildCityGeneralIndex(): Map<string, CityGeneralRef[]> {
     return map;
 }
 
-/** 该据点的武将（原始条目，未解析阶段姓名/立绘） */
+/**
+ * 乱斗模式下该据点本局抽中的「当家势力」（由 meleeRandomOwners 注入）。
+ * 同一据点挂有多个不同政权的武将时，本局只激活属于该当家势力的武将（不同政权的同城武将本局轮休，不串朝代）；
+ * 即使局中据点被他国攻占易手，城内归附的将领池仍固定为本局抽中的这一批武将。
+ */
+let _meleeCityHomeFactionProvider: ((cityId: string) => string | null) | null = null;
+export function setMeleeCityHomeFactionProvider(fn: ((cityId: string) => string | null) | null): void {
+    _meleeCityHomeFactionProvider = fn;
+}
+
+function filterCityRefsForMode(cityId: string, refs: CityGeneralRef[]): CityGeneralRef[] {
+    if (refs.length <= 1 || getGameMode() !== 'melee') return refs;
+    const homeFaction = _meleeCityHomeFactionProvider?.(cityId) ?? _cityOwnerProvider?.(cityId) ?? null;
+    if (!homeFaction) return refs;
+    const matched = refs.filter((r) => (r.general.factionId ?? r.blockFactionId) === homeFaction);
+    return matched.length > 0 ? matched : refs;
+}
+
+/**
+ * 据点默认归属势力（由挂在该据点的当家武将自动决定，不再依赖 cities_v2 手写 factionId）：
+ *   · 有武将的据点：取第一位名将（无名将则取第一位武将）所属的政权 `factionId`；
+ *   · 无武将的据点：一律归 `panshu`（叛军，无字旗、不出兵）。
+ */
+export function getDefaultCityFactionId(cityId: string | null | undefined): string {
+    if (!cityId) return 'panshu';
+    if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
+    const refs = _cityGeneralIndex.get(cityId);
+    if (!refs || refs.length === 0) return 'panshu';
+    const famousHit = refs.find((r) => getGeneralProfile(r.general.generalId)?.tier === 'famous');
+    const picked = famousHit ?? refs[0];
+    return picked.general.factionId ?? picked.blockFactionId;
+}
+
+/** 该据点的武将（原始条目，未解析阶段姓名/立绘；乱斗下只取本局当家势力的武将） */
 export function getCityGeneralsRaw(cityId: string | null | undefined): FactionGeneral[] {
     if (!cityId) return [];
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
-    return (_cityGeneralIndex.get(cityId) ?? []).map((r) => ({ ...r.general, factionId: r.general.factionId ?? r.blockFactionId }));
+    const refs = filterCityRefsForMode(cityId, _cityGeneralIndex.get(cityId) ?? []);
+    return refs.map((r) => ({ ...r.general, factionId: r.general.factionId ?? r.blockFactionId }));
 }
 
-/** 该据点的全部武将（已解析阶段姓名/立绘，乱斗下本据点城主同政权优先、名将排前；保留全部武将以支持一据点多武将与选主投奔） */
+/** 该据点的全部武将（已解析阶段姓名/立绘；乱斗下只取本局当家势力的武将，名将排前） */
 export function getCityGeneralsResolved(cityId: string | null | undefined): FactionGeneral[] {
     if (!cityId) return [];
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
-    const refs = _cityGeneralIndex.get(cityId) ?? [];
-    const owner = getGameMode() === 'melee' ? (_cityOwnerProvider?.(cityId) ?? null) : null;
+    const refs = filterCityRefsForMode(cityId, _cityGeneralIndex.get(cityId) ?? []);
+    const owner = getGameMode() === 'melee'
+        ? (_meleeCityHomeFactionProvider?.(cityId) ?? _cityOwnerProvider?.(cityId) ?? null)
+        : null;
     const resolved = refs.map((r, idx) => {
         const g = r.general;
         const factionId = g.factionId ?? r.blockFactionId;
