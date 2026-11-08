@@ -13552,7 +13552,10 @@ export class Scene13WarLayer {
 
         if (inRange.length === 0) return false;
 
-        audioManager.play('tower_arrow_flame');
+        // 🔴 [2026-11-08 主人令「建筑射箭套用音效，arrow_storm.aud，不要其他的。但是是一个10秒的，不要连播」]
+        //    箭塔放箭只播 arrow_storm（10s 整段），不再播 tower_arrow_flame、也不叠别的音效；
+        //    12s 冷却由 AudioManager 管（10s + 2s 空档），所以是多座塔同时开火也只起一段，不会连播。
+        audioManager.play('arrow_storm');
 
         // 射口横向排开：占地边长（格）× 地图尺的 0.7 作为射口总宽，单个弓手居中
 
@@ -18429,6 +18432,12 @@ export class Scene13WarLayer {
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
 
                     m.slashed = true;
+
+                    // 🔴 [2026-11-08 主人令「这几个的声音更重，可以用来近战士兵打击城墙城门，建筑等音效」]
+                    //    近战兵砍的是建筑（城墙/城门/箭塔/城内建筑，都带 sprite）→ 播 sword_clank 重击声。
+                    //    与刀光同相（ph>=3）触发，每轮出手一声；限流交给 AudioManager（120ms）。
+                    //    攻城器械不在本分支（它们走上面的 siege_impact），所以这里只剩刀剑/长兵砸墙。
+                    if ('sprite' in foe) audioManager.play('sword_clank');
 
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
 

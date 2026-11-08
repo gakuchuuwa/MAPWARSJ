@@ -883,7 +883,7 @@
         "name":  "skill_baizhan_1.aud",
         "url":  "/sfx/skill_baizhan_1.aud",
         "key":  "skill_baizhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  38013
     },
@@ -891,7 +891,7 @@
         "name":  "skill_baizhan_2.aud",
         "url":  "/sfx/skill_baizhan_2.aud",
         "key":  "skill_baizhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  36382
     },
@@ -899,7 +899,7 @@
         "name":  "skill_baizhan_storm.aud",
         "url":  "/sfx/skill_baizhan_storm.aud",
         "key":  "skill_baizhan_storm",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  42116
     },
@@ -907,7 +907,7 @@
         "name":  "skill_baizhan_v2.aud",
         "url":  "/sfx/skill_baizhan_v2.aud",
         "key":  "skill_baizhan_v2",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  109202
     },
@@ -915,7 +915,7 @@
         "name":  "skill_bingzhan_1.aud",
         "url":  "/sfx/skill_bingzhan_1.aud",
         "key":  "skill_bingzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  69000
     },
@@ -923,7 +923,7 @@
         "name":  "skill_bingzhan_2.aud",
         "url":  "/sfx/skill_bingzhan_2.aud",
         "key":  "skill_bingzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  40442
     },
@@ -931,7 +931,7 @@
         "name":  "skill_bingzhan_v2.aud",
         "url":  "/sfx/skill_bingzhan_v2.aud",
         "key":  "skill_bingzhan_v2",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  86058
     },
@@ -939,7 +939,7 @@
         "name":  "skill_dizhan_1.aud",
         "url":  "/sfx/skill_dizhan_1.aud",
         "key":  "skill_dizhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  55352
     },
@@ -947,7 +947,7 @@
         "name":  "skill_dizhan_2.aud",
         "url":  "/sfx/skill_dizhan_2.aud",
         "key":  "skill_dizhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  54767
     },
@@ -955,7 +955,7 @@
         "name":  "skill_gongzhan_1.aud",
         "url":  "/sfx/skill_gongzhan_1.aud",
         "key":  "skill_gongzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  53890
     },
@@ -963,7 +963,7 @@
         "name":  "skill_gongzhan_2.aud",
         "url":  "/sfx/skill_gongzhan_2.aud",
         "key":  "skill_gongzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  48508
     },
@@ -971,7 +971,7 @@
         "name":  "skill_gongzhan_v2.aud",
         "url":  "/sfx/skill_gongzhan_v2.aud",
         "key":  "skill_gongzhan_v2",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  98797
     },
@@ -979,7 +979,7 @@
         "name":  "skill_hunzhan_1.aud",
         "url":  "/sfx/skill_hunzhan_1.aud",
         "key":  "skill_hunzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  50450
     },
@@ -987,7 +987,7 @@
         "name":  "skill_hunzhan_2.aud",
         "url":  "/sfx/skill_hunzhan_2.aud",
         "key":  "skill_hunzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  50424
     },
@@ -995,7 +995,7 @@
         "name":  "skill_hunzhan_v2.aud",
         "url":  "/sfx/skill_hunzhan_v2.aud",
         "key":  "skill_hunzhan_v2",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  246562
     },
@@ -1003,7 +1003,7 @@
         "name":  "skill_shengzhan_1.aud",
         "url":  "/sfx/skill_shengzhan_1.aud",
         "key":  "skill_shengzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  52209
     },
@@ -1011,7 +1011,7 @@
         "name":  "skill_shengzhan_2.aud",
         "url":  "/sfx/skill_shengzhan_2.aud",
         "key":  "skill_shengzhan",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  53271
     },
@@ -1019,7 +1019,7 @@
         "name":  "skill_shengzhan_v2.aud",
         "url":  "/sfx/skill_shengzhan_v2.aud",
         "key":  "skill_shengzhan_v2",
-        "group":  "技能与法术",
+        "group":  "六计",
         "loop":  false,
         "bytes":  51347
     },

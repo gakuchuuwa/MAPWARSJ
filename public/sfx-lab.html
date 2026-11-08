@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -75,6 +75,12 @@
     border:1px solid #4a3d24; color:#c8a962; vertical-align:1px;
   }
   .badge.loop{border-color:#2f4a2b; color:var(--green)}
+  .badge.cls{border-color:#3a3f55; color:#a9b6e0}
+  .badge.wt{border-color:#5a4826; color:#e0c27a}
+  .badge.use{border-color:#2f4a2b; color:#9ad487; background:#141c10}
+  .badge.reg{border-color:#6b5423; color:#e0c27a; background:#221a0e}
+  .badge.unused{border-color:#3a3124; color:#8b8272}
+  .row.orphan .nm{opacity:.62}
   .playdot{
     width:22px; height:22px; border-radius:50%; border:1px solid #4a3d24; display:grid; place-items:center;
     font-size:9px; color:var(--gold); background:#1a150e;
@@ -192,7 +198,13 @@
   <!-- ================= 音效库 ================= -->
   <section class="pane" id="pane-library">
     <div class="searchbar">
-      <input id="q" type="text" placeholder="搜索文件名 / 分组（例：arrow、melee、weather）">
+      <input id="q" type="text" placeholder="搜索文件名 / 分组 / 标注（例：arrow、melee、钝击）">
+      <select id="usageFilter">
+        <option value="all">全部音效</option>
+        <option value="called">只看已调用</option>
+        <option value="registered">只看仅注册</option>
+        <option value="none">只看未使用</option>
+      </select>
       <span class="hint" id="countHint"></span>
       <button class="ghost" id="stopAll">全部停止</button>
     </div>
@@ -286,6 +298,8 @@
     buffers: new Map(),        // url -> AudioBuffer
     decoding: new Map(),       // url -> Promise
     manifest: [],
+    labels: {},
+    usage: {},
     selected: null,
     loopTimer: 0,
     liveSources: new Set(),
@@ -432,13 +446,30 @@
   function fmtDb(v) { return Number.isFinite(v) ? v.toFixed(1) + ' dB' : '—'; }
   function fmtDur(v) { return v >= 1 ? v.toFixed(2) + 's' : Math.round(v * 1000) + 'ms'; }
 
+  function usageState(name) {
+    const u = S.usage[name];
+    if (!u) return 'none';
+    if (u.called) return 'called';
+    if (u.registered) return 'registered';
+    return 'none';
+  }
+
   function renderLibrary() {
     const q = $('q').value.trim().toLowerCase();
+    const mode = $('usageFilter').value;
     const list = S.manifest.filter((it) => {
+      const st = usageState(it.name);
+      if (mode === 'called' && st !== 'called') return false;
+      if (mode === 'registered' && st !== 'registered') return false;
+      if (mode === 'none' && st !== 'none') return false;
       if (!q) return true;
-      return (it.name + ' ' + it.key + ' ' + it.group).toLowerCase().includes(q);
+      const lab = S.labels[it.name];
+      return (it.name + ' ' + it.key + ' ' + it.group + ' ' + (lab ? lab.label + ' ' + lab.class : '')).toLowerCase().includes(q);
     });
-    $('countHint').textContent = `${list.length} / ${S.manifest.length} 个文件`;
+    const nCalled = S.manifest.filter((it) => usageState(it.name) === 'called').length;
+    const nReg = S.manifest.filter((it) => usageState(it.name) === 'registered').length;
+    const nNone = S.manifest.length - nCalled - nReg;
+    $('countHint').textContent = `${list.length} / ${S.manifest.length} 个文件 · 已调用 ${nCalled} · 仅注册 ${nReg} · 未使用 ${nNone}`;
     const byGroup = new Map();
     for (const it of list) {
       if (!byGroup.has(it.group)) byGroup.set(it.group, []);
@@ -446,11 +477,24 @@
     }
     const root = $('groups');
     root.textContent = '';
-    const ORDER = ['弓弩箭矢', '近战与死亡', '火器与爆炸', '海战', '攻城与建筑', '大象与火攻', '技能与法术', '天气', '行军', '胜负与号角', '其他与测试'];
+    const ORDER = ['六计', '弓弩箭矢', '近战与死亡', '火器与爆炸', '海战', '攻城与建筑', '大象与火攻', '技能与法术', '天气', '行军', '胜负与号角', '其他与测试'];
     const rank = (g) => { const i = ORDER.indexOf(g); return i < 0 ? 99 : i; };
     for (const [group, items] of [...byGroup].sort((a, b) => rank(a[0]) - rank(b[0]))) {
       const tail = (n) => { const m = n.match(/_(\d+)\.[A-Za-z0-9]+$/); return m ? Number(m[1]) : 0; };
-      items.sort((a, b) => (a.key === b.key ? tail(a.name) - tail(b.name) : a.key.localeCompare(b.key)));
+      if (group === '六计') {
+        // 按三十六计原书六套顺序：胜战 → 敌战 → 攻战 → 混战 → 并战 → 败战；同一计内 v2 在前、备用次之、旧版最后
+        const SIX = ['胜战计', '敌战计', '攻战计', '混战计', '并战计', '败战计'];
+        const rankOf = (it) => {
+          const lab = S.labels[it.name];
+          const base = (lab ? lab.label : it.name).replace(/（.*?）/g, '');
+          const i = SIX.findIndex((s) => base.startsWith(s));
+          return i < 0 ? 99 : i;
+        };
+        const ver = (it) => (it.name.includes('_v2') ? 0 : it.name.includes('_storm') ? 1 : 2);
+        items.sort((a, b) => rankOf(a) - rankOf(b) || ver(a) - ver(b) || a.name.localeCompare(b.name));
+      } else {
+        items.sort((a, b) => (a.key === b.key ? tail(a.name) - tail(b.name) : a.key.localeCompare(b.key)));
+      }
       const sec = document.createElement('section');
       sec.className = 'group';
       const h = document.createElement('h2');
@@ -483,13 +527,36 @@
     dot.textContent = '▶';
     const nm = document.createElement('div');
     nm.className = 'nm';
-    nm.textContent = it.name;
+    const lab = S.labels[it.name];
+    nm.textContent = lab ? lab.label : it.name;
+    nm.title = it.name + (lab && lab.why ? '\n' + lab.why : '');
+    if (lab && lab.class) {
+      const b = document.createElement('span');
+      b.className = 'badge cls';
+      b.textContent = lab.class;
+      nm.append(b);
+    }
+    if (lab && lab.weight) {
+      const b = document.createElement('span');
+      b.className = 'badge wt';
+      b.textContent = lab.weight;
+      nm.append(b);
+    }
     if (it.loop) {
       const b = document.createElement('span');
       b.className = 'badge loop';
       b.textContent = 'loop';
       nm.append(b);
     }
+    const u = S.usage[it.name];
+    const st = usageState(it.name);
+    const ub = document.createElement('span');
+    const ST_TXT = { called: '已调用', registered: '仅注册·不播', none: '未使用' };
+    ub.className = 'badge ' + (st === 'called' ? 'use' : st === 'registered' ? 'reg' : 'unused');
+    ub.textContent = ST_TXT[st];
+    if (u && u.key) ub.title = '音效键：' + u.key + (st === 'registered' ? '（只在 SOUND_DEFINITIONS 里，代码无调用点）' : '');
+    if (st !== 'called') row.classList.add('orphan');
+    nm.append(ub);
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.textContent = '—';
@@ -502,7 +569,9 @@
     document.querySelectorAll('.row.sel').forEach((el) => el.classList.remove('sel'));
     if (row) row.classList.add('sel');
     S.selected = it;
-    $('nowName').textContent = it.name;
+    const labOfIt = S.labels[it.name];
+    $('nowName').textContent = labOfIt ? `${labOfIt.label} · ${it.name}` : it.name;
+    $('nowName').title = it.name;
     $('nowStat').textContent = '解码中…';
     stopSim();
     stopAllSources();
@@ -1028,6 +1097,7 @@
   });
 
   $('q').addEventListener('input', renderLibrary);
+  $('usageFilter').addEventListener('change', renderLibrary);
   $('stopAll').addEventListener('click', () => { stopAllSources(); stopSim(); });
 
   $('replay').addEventListener('click', () => {
@@ -1067,8 +1137,17 @@
   void loadRecs();
   fetch('/sfx-lab/manifest.json', { cache: 'no-store' })
     .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then((list) => {
+    .then(async (list) => {
       S.manifest = list;
+      const labels = await fetch('/sfx-lab/labels.json', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : {}))
+        .catch(() => ({}));
+      delete labels._note;
+      const usage = await fetch('/sfx-lab/usage.json', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : {}))
+        .catch(() => ({}));
+      S.usage = usage || {};
+      S.labels = labels || {};
       renderLibrary();
       $('log').textContent = '切到「射箭工作台」点「试听新方案」即可对比现状。';
     })

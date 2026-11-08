@@ -1,0 +1,211 @@
+{
+  "_note": "兵器碰撞类标注：按包络/频谱推断，已按主人听感纠正（低重心≠钝击，可能是挥舞/箭矢破空）。以实际试听为准。",
+  "melee_hit_1.aud": {
+    "label": "挥舞·厚破空",
+    "class": "破空",
+    "why": "0.90s、重心 840Hz、无金属谐波、起音 91ms 偏慢——是挥舞/箭矢破空，不是钝击（主人 2026-11-08 听感纠正）"
+  },
+  "melee_hit_2.aud": {
+    "label": "金属碎击·密",
+    "class": "金属碎击",
+    "weight": "中",
+    "tail": "中",
+    "why": "0.60s，重心 3.9kHz、高频占 95%，起音 11 次——密集多下碰撞"
+  },
+  "melee_hit_3.aud": {
+    "label": "挥舞·沉破空",
+    "class": "破空",
+    "why": "1.00s、重心 646Hz、起音 83ms——比 1 号更沉的一记破空"
+  },
+  "melee_hit_4.aud": {
+    "label": "金属短击·脆",
+    "class": "金属轻击",
+    "weight": "轻",
+    "tail": "短",
+    "why": "0.37s，重心 4.5kHz、高频占 94%，起音 8 次——短促清脆的兵刃相击"
+  },
+  "melee_hit_5.aud": {
+    "label": "金属长击·厚",
+    "class": "金属长响",
+    "weight": "中",
+    "tail": "长",
+    "why": "1.45s，重心 4.1kHz，起音 7 次、衰减后仍有 249ms 余响"
+  },
+  "melee_hit_6.aud": {
+    "label": "金属短击·亮",
+    "class": "金属轻击",
+    "weight": "轻",
+    "tail": "短",
+    "why": "0.50s，重心 4.3kHz、高频占 97%，起音 5 次——亮度最高的一档"
+  },
+  "melee_hit_7.aud": {
+    "label": "金属碎击·连",
+    "class": "金属碎击",
+    "weight": "中",
+    "tail": "中",
+    "why": "0.75s，起音 13 次、衰减 481ms——多下连击/兵刃刮擦"
+  },
+  "melee_hit_8.aud": {
+    "label": "金属中击·钝",
+    "class": "金属中击",
+    "weight": "中",
+    "tail": "中",
+    "why": "0.75s，重心 4.1kHz 但峰值仅 -17.8dB、起音 242ms 偏慢——隔着甲/盾的闷亮一声"
+  },
+  "melee_hit_9.aud": {
+    "label": "挥舞·短破空",
+    "class": "破空",
+    "why": "0.48s、重心 537Hz、衰减 55ms——最短促的一记破空"
+  },
+  "melee_hit_10.aud": {
+    "label": "金属长击·脆尖",
+    "class": "金属长响",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.50s，重心 5.1kHz、高频 83%，尾音 216ms"
+  },
+  "melee_hit_11.aud": {
+    "label": "金属长击·中亮",
+    "class": "金属长响",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.50s，重心 3.0kHz、低频仅 3%，尾音 179ms"
+  },
+  "melee_hit_12.aud": {
+    "label": "金属长击·尖",
+    "class": "金属长响",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.50s，重心 5.5kHz，全库最尖的一档，尾音 235ms"
+  },
+  "sword_clank_1.aud": {
+    "label": "剑击·长吟",
+    "class": "剑刃长吟",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.50s，重心 5.5kHz；峰值 -2.3dBFS、RMS -21.7dBFS，比 melee_hit 响约 10dB"
+  },
+  "sword_clank_2.aud": {
+    "label": "剑击·短促",
+    "class": "剑刃短击",
+    "weight": "中",
+    "tail": "短",
+    "why": "1.50s，重心 3.4kHz，衰减 123ms（这一组里最短）"
+  },
+  "sword_clank_3.aud": {
+    "label": "剑击·脆吟",
+    "class": "剑刃长吟",
+    "weight": "中",
+    "tail": "长",
+    "why": "1.50s，重心 3.6kHz、高频 84%"
+  },
+  "sword_clank_4.aud": {
+    "label": "剑击·重吟",
+    "class": "剑刃长吟",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.50s，重心 3.5kHz，起音 101ms 偏慢、尾音 204ms"
+  },
+  "sword_clank_5.aud": {
+    "label": "剑击·暗响",
+    "class": "剑刃长吟",
+    "weight": "重",
+    "tail": "长",
+    "why": "1.48s，重心 3.4kHz、低频占 12%（这一组最厚），峰值 -1.0dBFS"
+  },
+  "skill_gongzhan_v2.aud": {
+    "label": "攻战计",
+    "class": "优势计",
+    "why": "6.15s · -13.1 LUFS；振己威（攻方优势计）"
+  },
+  "skill_shengzhan_v2.aud": {
+    "label": "胜战计",
+    "class": "优势计",
+    "why": "3.02s · -13.0 LUFS；护盾类（优势计）"
+  },
+  "skill_dizhan_1.aud": {
+    "label": "敌战计",
+    "class": "均势计",
+    "why": "1.95s · 旧版素材，仍在使用（均势计）"
+  },
+  "skill_dizhan_2.aud": {
+    "label": "敌战计",
+    "class": "均势计",
+    "why": "1.95s · 旧版素材，仍在使用（均势计）"
+  },
+  "skill_hunzhan_v2.aud": {
+    "label": "混战计",
+    "class": "均势计",
+    "why": "11.68s · -13.4 LUFS；乱敌阵（均势计）"
+  },
+  "skill_bingzhan_v2.aud": {
+    "label": "并战计",
+    "class": "劣势计",
+    "why": "4.48s · -13.3 LUFS；倒戈（劣势计）"
+  },
+  "skill_baizhan_v2.aud": {
+    "label": "败战计",
+    "class": "劣势计",
+    "why": "10.01s · -13.0 LUFS；减敌兵（劣势计）"
+  },
+  "skill_baizhan_storm.aud": {
+    "label": "败战计（乱箭截段·备用）",
+    "class": "劣势计",
+    "why": "3.5s 截段，未套用；v2 全长已取代"
+  },
+  "skill_gongzhan_1.aud": {
+    "label": "攻战计（旧版）",
+    "class": "优势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_gongzhan_2.aud": {
+    "label": "攻战计（旧版）",
+    "class": "优势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_shengzhan_1.aud": {
+    "label": "胜战计（旧版）",
+    "class": "优势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_shengzhan_2.aud": {
+    "label": "胜战计（旧版）",
+    "class": "优势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_hunzhan_1.aud": {
+    "label": "混战计（旧版）",
+    "class": "均势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_hunzhan_2.aud": {
+    "label": "混战计（旧版）",
+    "class": "均势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_bingzhan_1.aud": {
+    "label": "并战计（旧版）",
+    "class": "劣势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_bingzhan_2.aud": {
+    "label": "并战计（旧版）",
+    "class": "劣势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_baizhan_1.aud": {
+    "label": "败战计（旧版）",
+    "class": "劣势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "skill_baizhan_2.aud": {
+    "label": "败战计（旧版）",
+    "class": "劣势计",
+    "why": "已由 v2 取代，未套用"
+  },
+  "arrow_storm.aud": {
+    "label": "建筑箭雨（10s）",
+    "class": "建筑射箭",
+    "why": "10.01s · -21.2 LUFS；箭塔/城堡塔楼专用，12s 冷却不连播"
+  }
+}

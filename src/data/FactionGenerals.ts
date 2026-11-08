@@ -1,4 +1,4 @@
-/**
+﻿/**
 
 
 
@@ -4862,7 +4862,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'tongzhou_liuzhiyuan', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘知远', portrait: '/assets/WEI/tongzhou_liuzhiyuan.png', eliteName: '后汉骑兵', eliteTier: 4 },
         { generalId: 'xin_liuchong', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘崇', portrait: '/assets/WEI/xin_liuchong.png', eliteName: '后汉骑兵', eliteTier: 4 },
-        { generalId: 'bing_liji', factionId: 'tang', cityId: 'city_taiyuan', generalName: '李勣', portrait: '/assets/WEI/bing_liji.png', eliteName: '通漠道行军', eliteTier: 2  },   // 按史：李勣以并州都督出任通漠道行军总管，自并州北出白道破颉利（《旧唐书·卷六七·李勣传》）
+        { generalId: 'bing_liji', factionId: 'tang', cityId: 'city_taiyuan', generalName: '李勣', portrait: '/assets/WEI/bing_liji.png', eliteName: '通汉道行军', eliteTier: 2  },   // 🔴 [2026-11-08 主人令「还有李绩」] 贞观三年（629）李勣为**通汉道行军总管**，自并州出白道破颉利（《旧唐书·卷六七·李勣传》「为通汉道行军总管……大战于白道」）。旧「通漠道」是讹字，史书作「通汉道」，按史改正；T2 与唐军诸道行军（定襄道/神丘道/当弥道/昆丘道）同档
         { generalId: 'shatuo_likeyong', cityId: 'city_guanglu', generalName: '李克用', portrait: '/assets/XIANBEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '鸦儿军', eliteTier: 1 },   // 按史：李克用所部号鸦儿军，长期为河东主力（《旧五代史·武皇纪》）；李存勖另配其亲军从马直，不把父子两代的本部混作两支。
         { generalId: 'qingyuan_bd_zhoudewei', cityId: 'city_taiyuan', generalName: '周德威', portrait: '/assets/WEI/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '白马突骑', eliteTier: 2 },
         { generalId: 'song_wangbing', cityId: 'city_taiyuan', generalName: '王禀', portrait: '/assets/WEI/song_wangbing.png', factionId: 'song', eliteName: '龙卫骑', eliteTier: 4 },
@@ -4896,7 +4896,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'loufan_xuerengui', factionId: 'tang', cityId: 'city_fushi', generalName: '薛仁贵', portrait: '/assets/WEI/loufan_xuerengui.png', eliteName: '逻娑道行军', eliteTier: 2  },   // 🔴 [2026-11-08 主人令「薛仁贵的精锐不对，请按历史修复」] 咸亨元年（670）薛仁贵为**逻娑道行军大总管**率军击吐蕃，大非川之战即本将首战（《旧唐书·卷八三·薛仁贵传》「又以仁贵为逻娑道行军大总管」）。旧「代州铁骑」出自其晚年检校代州都督（682 云州破突厥），是自拟番号、非史载军号；按史改为本将亲统的行军道番号，档位随唐军诸「XX道行军」定 T2（通漠道/神丘道/当弥道/昆丘道同档）
+        { generalId: 'loufan_xuerengui', factionId: 'tang', cityId: 'city_fushi', generalName: '薛仁贵', portrait: '/assets/WEI/loufan_xuerengui.png', eliteName: '逻娑道行军', eliteTier: 2  },   // 🔴 [2026-11-08 主人令「薛仁贵的精锐不对，请按历史修复」] 咸亨元年（670）薛仁贵为**逻娑道行军大总管**率军击吐蕃，大非川之战即本将首战（《旧唐书·卷八三·薛仁贵传》「又以仁贵为逻娑道行军大总管」）。旧「代州铁骑」出自其晚年检校代州都督（682 云州破突厥），是自拟番号、非史载军号；按史改为本将亲统的行军道番号，档位随唐军诸「XX道行军」定 T2（通汉道/神丘道/当弥道/昆丘道同档）
 
 
 
@@ -5167,7 +5167,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_piantouguan', generalName: '李靖', portrait: '/assets/WEI/dingxiang_d_lijing.png', eliteName: '定襄骁骑', eliteTier: 1  },   // 按史：李靖以定襄骁骑夜袭破颉利，继灭东突厥，直接改写漠南格局，符合 v3 T0（《旧唐书·卷六七·李靖传》）。
+        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_piantouguan', generalName: '李靖', portrait: '/assets/WEI/dingxiang_d_lijing.png', eliteName: '定襄道行军', eliteTier: 1  },   // 🔴 [2026-11-08 主人令「李靖是不是也可以修改？」] 贞观三年（629）李靖为**定襄道行军总管**，诸道皆受其节度；夜袭定襄、阴山邀击擒颉利，灭东突厥（《新唐书·卷九三·李靖传》《资治通鉴·卷一九三》）。旧「定襄骁骑」是兵种式自拟叫法、非史载军号，按本将亲统的行军道改名；T1 战略级（T0 玄甲军归李世民专属，不与他将共用）
 
 
 

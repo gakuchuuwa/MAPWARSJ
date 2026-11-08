@@ -1,4 +1,4 @@
-export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 
 
@@ -312,6 +312,8 @@ export type SoundKey =
 
     | 'arrow_fire'
 
+    | 'arrow_storm'
+
 
 
 
@@ -447,6 +449,7 @@ export type SoundKey =
 
 
     | 'death_horse'
+    | 'horse_march'
 
 
 
@@ -1687,6 +1690,11 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
     arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.48, 700),
 
+    // 🔴 [2026-11-08 主人令「建筑射箭套用音效，arrow_storm.aud，不要其他的。但是是一个10秒的，不要连播」]
+    //    箭塔/城堡塔楼放箭只播这一条（10.01s 的万箭齐发，-21.2 LUFS）；原 tower_arrow_flame 不再触发。
+    //    冷却是 12s（10s 素材 + 2s 空档），所以**不会连播、不会叠两层**：一响就是一整段，放完静两秒才会再起。
+    arrow_storm: sound('battle', 'arrow_storm', 0.50, 12000),
+
 
 
 
@@ -2045,7 +2053,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.32, 320),
+    // 🔴 [2026-11-08 主人令「这几个的声音更重，可以用来近战士兵打击城墙城门，建筑等音效」]
+    //    近战兵（步兵/骑兵，不含攻城器械）砍城墙、城门、建筑时播这一条：每轮出手一声，重击质感。
+    //    限流 120ms（人多时约 8 声/秒），音量 0.45；素材峰值 -2 ~ -3dBFS，本身就比 melee_hit 重。
+    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.45, 120),
 
 
 
@@ -2062,6 +2073,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
     death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.30, 2800),
+
+    // 🔴 [2026-11-08 主人令「这些是马叫，可以用在骑兵行军中」] 骑兵行军时偶发一声马叫（借用 death_horse 1..5 素材）：
+    //    只跟拍军团、只在行军状态、9s 冷却（一次行军大约几声），音量 0.22 压在 cavalry_march_loop 底下。
+    horse_march: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.22, 9000),
 
 
 
@@ -9366,6 +9381,11 @@ export class AudioManager {
 
 
         const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
+
+        // 🔴 [2026-11-08 主人令「这些是马叫，可以用在骑兵行军中」] 跟拍骑兵军团行军时，偶发一声马叫。
+        //    必须放在下面「状态没变就 return」之前：否则只在开始行军那一帧跑一次，行军途中不会再叫。
+        //    9s 冷却由 horse_march 自己管；13 战术模式、海战不播。
+        if (!inScene13 && isCavalry && !isNaval && state.marching) this.play('horse_march');
 
 
 

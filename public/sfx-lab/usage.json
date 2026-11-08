@@ -1,0 +1,914 @@
+{
+ "6月25日(1).WAV": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "6月27日.WAV": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "arrow_storm.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "arrow_storm"
+ },
+ "battle_defeat.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "battle_defeat"
+ },
+ "battle_horn.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "battle_horn"
+ },
+ "battle_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "battle_loop"
+ },
+ "battle_victory.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "battle_victory"
+ },
+ "building_collapse_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "building_collapse"
+ },
+ "building_collapse_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "building_collapse"
+ },
+ "building_collapse_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "building_collapse"
+ },
+ "building_collapse_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "building_collapse"
+ },
+ "cavalry_march_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "cavalry_march_loop"
+ },
+ "cavalry_march_loop_orig.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "death_horse_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_horse"
+ },
+ "death_horse_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_horse"
+ },
+ "death_horse_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_horse"
+ },
+ "death_horse_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_horse"
+ },
+ "death_horse_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_horse"
+ },
+ "death_infantry_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "death_infantry_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "death_infantry_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "death_infantry_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "death_infantry_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "death_infantry_6.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "death_infantry"
+ },
+ "elephant_attack_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_attack"
+ },
+ "elephant_attack_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_attack"
+ },
+ "elephant_attack_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_attack"
+ },
+ "elephant_attack_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_attack"
+ },
+ "elephant_attack_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_attack"
+ },
+ "elephant_die_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_die"
+ },
+ "elephant_die_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_die"
+ },
+ "elephant_die_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_die"
+ },
+ "elephant_die_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_die"
+ },
+ "elephant_die_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "elephant_die"
+ },
+ "explosion_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "explosion_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "explosion_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "explosion_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "explosion_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "explosion_6.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "explosion"
+ },
+ "flamethrower_fire_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "flamethrower_fire"
+ },
+ "flamethrower_fire_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "flamethrower_fire"
+ },
+ "flamethrower_fire_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "flamethrower_fire"
+ },
+ "flamethrower_fire_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "flamethrower_fire"
+ },
+ "flamethrower_fire_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "flamethrower_fire"
+ },
+ "general_skill.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "general_skill"
+ },
+ "gun_fire_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "gun_fire_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "gun_fire_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "gun_fire_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "gun_fire_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "gun_fire_6.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "gun_fire"
+ },
+ "land_contact.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "land_contact"
+ },
+ "march_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "march_loop"
+ },
+ "melee_hit_1.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_10.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_11.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_12.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_2.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_3.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_4.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_5.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_6.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_7.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_8.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "melee_hit_9.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "melee_hit"
+ },
+ "monk_cast_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "monk_cast"
+ },
+ "monk_cast_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "monk_cast"
+ },
+ "monk_cast_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "monk_cast"
+ },
+ "naval_arrow_fire_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_arrow_fire"
+ },
+ "naval_arrow_fire_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_arrow_fire"
+ },
+ "naval_arrow_fire_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_arrow_fire"
+ },
+ "naval_arrow_fire_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_arrow_fire"
+ },
+ "naval_battle_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_battle_loop"
+ },
+ "naval_cannon_fire_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_fire_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_fire_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_fire_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_fire_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_fire_6.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_fire"
+ },
+ "naval_cannon_splash_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_splash"
+ },
+ "naval_cannon_splash_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_splash"
+ },
+ "naval_cannon_splash_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_splash"
+ },
+ "naval_cannon_splash_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_cannon_splash"
+ },
+ "naval_explode_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_explode"
+ },
+ "naval_explode_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_explode"
+ },
+ "naval_explode_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_explode"
+ },
+ "naval_explode_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_explode"
+ },
+ "naval_march_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_march_loop"
+ },
+ "naval_sink_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "naval_sink_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "naval_sink_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "naval_sink_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "naval_sink_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "naval_sink_6.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "naval_sink"
+ },
+ "player_march_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "player_march_loop"
+ },
+ "siege_destroyed_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_destroyed"
+ },
+ "siege_destroyed_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_destroyed"
+ },
+ "siege_destroyed_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_destroyed"
+ },
+ "siege_destroyed_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_destroyed"
+ },
+ "siege_destroyed_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_destroyed"
+ },
+ "siege_impact_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_impact"
+ },
+ "siege_impact_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_impact"
+ },
+ "siege_impact_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_impact"
+ },
+ "siege_impact_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_impact"
+ },
+ "siege_impact_de.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_impact"
+ },
+ "siege_launch_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_launch"
+ },
+ "siege_launch_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_launch"
+ },
+ "siege_launch_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_launch"
+ },
+ "siege_launch_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "siege_launch"
+ },
+ "skill_baizhan_1.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_baizhan_2.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_baizhan_storm.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_baizhan_v2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_baizhan"
+ },
+ "skill_bingzhan_1.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_bingzhan_2.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_bingzhan_v2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_bingzhan"
+ },
+ "skill_dizhan_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_dizhan"
+ },
+ "skill_dizhan_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_dizhan"
+ },
+ "skill_gongzhan_1.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_gongzhan_2.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_gongzhan_v2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_gongzhan"
+ },
+ "skill_hunzhan_1.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_hunzhan_2.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_hunzhan_v2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_hunzhan"
+ },
+ "skill_shengzhan_1.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_shengzhan_2.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "skill_shengzhan_v2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "skill_shengzhan"
+ },
+ "sword_clank_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "sword_clank"
+ },
+ "sword_clank_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "sword_clank"
+ },
+ "sword_clank_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "sword_clank"
+ },
+ "sword_clank_4.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "sword_clank"
+ },
+ "sword_clank_5.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "sword_clank"
+ },
+ "tmp_test.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "tower_arrow_flame_1.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "tower_arrow_flame"
+ },
+ "tower_arrow_flame_2.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "tower_arrow_flame"
+ },
+ "tower_arrow_flame_3.aud": {
+  "used": false,
+  "registered": true,
+  "called": false,
+  "key": "tower_arrow_flame"
+ },
+ "wall_collapse.aud": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "wall_collapse_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "wall_collapse"
+ },
+ "wall_collapse_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "wall_collapse"
+ },
+ "wall_collapse_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "wall_collapse"
+ },
+ "weather_blizzard_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_blizzard_loop"
+ },
+ "weather_fog_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_fog_loop"
+ },
+ "weather_rain_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_rain_loop"
+ },
+ "weather_sandstorm_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_sandstorm_loop"
+ },
+ "weather_storm_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_storm_loop"
+ },
+ "weather_thunder_1.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_thunder"
+ },
+ "weather_thunder_2.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_thunder"
+ },
+ "weather_thunder_3.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_thunder"
+ },
+ "weather_wind_loop.aud": {
+  "used": true,
+  "registered": true,
+  "called": true,
+  "key": "weather_wind_loop"
+ },
+ "城墙倒塌.WAV": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ },
+ "玩家骑马.WAV": {
+  "used": false,
+  "registered": false,
+  "called": false,
+  "key": ""
+ }
+}

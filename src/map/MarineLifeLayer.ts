@@ -153,7 +153,7 @@ export function canSpawnDeepSeaWhaleOrNessie(lat: number, lng: number): boolean 
  * 🔴 [2026-10-13 主人令] 海洋生物（海豚/抹香鲸/海龟）只在大洋与边缘海生成：
  *    排除里海（Caspian Basin）、死海（Dead Sea）等海拔在 0 以下但与大洋不相通的内陆封闭咸水盆地。
  */
-function isOpenOcean(lat: number, lng: number): boolean {
+export function isOpenOcean(lat: number, lng: number): boolean {
     // 里海盆地（36.5°N~47.5°N, 46.5°E~55.0°E）：内陆咸水湖，无鲸鱼/海豚/海龟
     if (lat >= 36.5 && lat <= 47.5 && lng >= 46.5 && lng <= 55.0) return false;
     // 死海（31.0°N~31.9°N, 35.2°E~35.7°E）：极咸内陆湖
