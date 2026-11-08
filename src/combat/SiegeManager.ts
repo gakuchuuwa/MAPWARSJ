@@ -1167,7 +1167,7 @@ export class SiegeManager {
                     ?? initialFollowedIdForSpeech;
                 const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
                 const failSpeechTaken = followedIdFail === army.id;
-                if (failSpeechTaken && !isFirstBattleSiege) {
+                if (failSpeechTaken) {
                     const failAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                         ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
                     const failR = battleField.getInitialAttDefRatio();
@@ -1500,7 +1500,7 @@ export class SiegeManager {
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
-            if (battleField.isDraw && !skipFirstBattleStartSpeech) {
+            if (battleField.isDraw) {
                 const followedIdDraw = window.game?.cameraFollowUI?.getFollowedArmyId?.()
                     ?? window.game?.playerHero?.getHostLegionId?.()
                     ?? initialFollowedIdForSpeech;

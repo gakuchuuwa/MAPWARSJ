@@ -710,3 +710,11 @@ zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `Veg
 **下一步**：PerfDoctor 已加 `longFrames`（Long Animation Frames API，常驻，近零开销）。主人局暂停/重开（ReloadGate）后，
 读下一份 march-stutter 落盘的 `longFrames.按脚本` 与 `未归因ms` 定真凶；`GameAppLoop ← FrameRequestCallback` 大时再对照 `hotspots` 拆子系统。
 无头验证：20s 内 12 个长帧 1145ms = 脚本 793 / 渲染段 612 / 未归因 293，按脚本能定位到 `CityLifeAmbientLayer.tick` 单次 116ms 等。
+
+**🔴 11-09 主人纠正：说的是「掉帧」不是「卡住」**。掉帧看每帧成本，不看 >50ms 长任务。
+主人局 25 份按真实帧数加权：已登记 JS **每帧合计 3.4ms**（fps<45 的份 4.3ms，其中植被 0.32ms）→ 掉帧时间不在游戏逻辑里。
+无头控制变量（每组 10s 时间线，记镜头位移防「没在走」）：正常跟拍 Layerize 每次 3.0～8.1ms、同组复测差一倍以上；
+藏据点 / 遗迹 / 战场 / 地名 / 画布各组都落在这个噪声区间内 → **无头定不出是哪一层**。曾有一次「藏全部标记 0.9ms」是单次，复测不成立。
+⚠️ LoAF（`longFrames`）只收 >50ms 的帧，30fps 掉帧（33ms/帧）它**收不到**；掉帧要在主人机器上录时间线。
+**11-09 补：PerfDoctor 新增 `frameCost`**（包住 rAF/setTimeout/setInterval，常驻 DEV）——掉帧专用：按帧给「游戏JS / 其余（渲染侧+GC）」，
+另列 rAF 回调每帧 ms。无头验证一次：掉帧帧平均 35.4ms = 游戏JS 14.4 + 其余 20.9；`GameAppLoop` 7.1ms/帧居首。等主人局落盘看真机比例。

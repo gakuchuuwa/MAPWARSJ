@@ -90,6 +90,7 @@ schema        mapwar.perf-doctor/2
 env           ← 先读这段！数据可不可信
 frames        真实 fps / 帧间 p50·p90·p99
 longTasks     >50ms 的主线程阻塞（只有个数与时长）
+frameCost     ★ 掉帧专用：每帧「游戏JS vs 其余(渲染侧)」+ rAF 回调每帧ms（2026-11-09）
 longFrames    ★ 长动画帧归因（2026-11-09）：脚本 / 渲染段 / 未归因，「按脚本」给源文件·函数·触发者
 heap          JS 堆（⚠️ 看不到图片位图，见坑 1）
 caches        各图片缓存的**实算字节数**

@@ -603,13 +603,7 @@ export class GameApp {
                     const followedId = this.cameraFollowUI?.getFollowedArmyId?.()
                         ?? this.playerHero?.getHostLegionId?.();
                     const byFollowed = !!event.captorLegionId && followedId === event.captorLegionId;
-                    const captorArmy = event.captorLegionId
-                        ? this.historicalEventManager?.getLegionManager()?.getLegionById(event.captorLegionId)
-                        : null;
-                    const skipFirstBattleCaptureSpeech = !!(captorArmy as { isFirstBattleMarch?: boolean; isFirstBattleHero?: boolean; firstBattleTitle?: string } | null)?.isFirstBattleMarch
-                        || !!(captorArmy as { isFirstBattleHero?: boolean } | null)?.isFirstBattleHero
-                        || !!(captorArmy as { firstBattleTitle?: string } | null)?.firstBattleTitle;
-                    if (byFollowed && !skipFirstBattleCaptureSpeech) {
+                    if (byFollowed) {
                         const regionKey = isCenter ? this.cityManager.getCity(event.cityId)?.region : undefined;
                         const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : undefined;
                         if (event.noBattleSurrender) {
@@ -672,10 +666,7 @@ export class GameApp {
                         ?? this.playerHero?.getHostLegionId?.();
                     // 野战阵亡('field')/攻城失败('siege_attacker')语音由专句接管，此处跳过通用覆没语音
                     // 援军('siege') — 不管是攻城还是守城援军 — 统一走野战结束句
-                    const skipFirstBattleAnnihilationSpeech = !!(army as { isFirstBattleMarch?: boolean; isFirstBattleHero?: boolean; firstBattleTitle?: string }).isFirstBattleMarch
-                        || !!(army as { isFirstBattleHero?: boolean }).isFirstBattleHero
-                        || !!(army as { firstBattleTitle?: string }).firstBattleTitle;
-                    if (followedId === army.id && !skipFirstBattleAnnihilationSpeech && info.kind !== 'field' && info.kind !== 'siege_attacker') {
+                    if (followedId === army.id && info.kind !== 'field' && info.kind !== 'siege_attacker') {
                         speechAnnouncer.announceFieldBattleEnd({
                             win: false,
                             followerFactionId: army.getDisplayFactionId(),

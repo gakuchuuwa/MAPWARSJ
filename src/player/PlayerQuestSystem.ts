@@ -820,6 +820,7 @@ export class PlayerQuestSystem {
                 this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== generalId);
             }
             this.headingToEventGeneralId = null;
+            this.spokenFirstBattleBgGenerals.delete(generalId);
             const fieldArmy = this.armyOfGeneral(generalId);
             if (fieldArmy && !fieldArmy.isScriptArmy && fieldArmy.id !== this.quest?.legionId) {
                 delete (fieldArmy as { __scriptPinned?: boolean }).__scriptPinned;
@@ -2067,6 +2068,8 @@ export class PlayerQuestSystem {
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
             return;
         }
+        // 🔴 [2026-11-09 主人令「战前可以和武将对话的时候，就开始播报」]
+        this.playFirstBattleBackgroundOnce(g.generalId);
         // 经典战的史实台词并到这一段里讲完：到了前线不再弹第二段对话（见 onArriveFirstBattleFront）
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const gather = `某已传令三军向【${spot.label}】集结，壮士先往【${spot.label}】与某会合，同赴此战。`;
@@ -2086,8 +2089,20 @@ export class PlayerQuestSystem {
         });
     }
 
-    /** 已在远距本城「前往会合」接任务时播报过背景的武将（抵达前线开打时不再重复念第二遍） */
+    /** 已在战前武将对话时播报过背景的武将（接任务／抵达前线开打时不再重复念第二遍） */
     private spokenFirstBattleBgGenerals = new Set<string>();
+
+    private playFirstBattleBackgroundOnce(generalId: string | null | undefined): void {
+        if (!generalId || this.spokenFirstBattleBgGenerals.has(generalId)) return;
+        if (!this.hasPendingFirstBattle(generalId)) return;
+        const bg = getFirstBattleBackground(generalId);
+        if (!bg) return;
+        for (const prevId of [...this.spokenFirstBattleBgGenerals]) {
+            if (!isFirstBattleCompleted(prevId)) this.spokenFirstBattleBgGenerals.delete(prevId);
+        }
+        this.spokenFirstBattleBgGenerals.add(generalId);
+        this.deps.announceBriefing?.(bg);
+    }
 
     /** 玩家出发去远距经典战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
     private travelToFirstBattleFront(generalId: string): void {
@@ -2105,11 +2120,7 @@ export class PlayerQuestSystem {
                 () => this.onArriveFirstBattleFront(generalId),
             );
         if (ok) {
-            const bg = getFirstBattleBackground(generalId);
-            if (bg && !this.spokenFirstBattleBgGenerals.has(generalId)) {
-                this.spokenFirstBattleBgGenerals.add(generalId);
-                this.deps.announceBriefing?.(bg);
-            }
+            this.playFirstBattleBackgroundOnce(generalId);
             this.emitChange();
             return;
         }
@@ -2125,6 +2136,8 @@ export class PlayerQuestSystem {
         existingArmy: Army | null,
         opts?: { metAtFront?: boolean },
     ): void {
+        // 🔴 [2026-11-09 主人令「战前可以和武将对话的时候，就开始播报」]
+        this.playFirstBattleBackgroundOnce(g.generalId);
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const playerLine = fb.introLines.find((l) => l.speaker === 'player')?.text;
         const text = generalLines.length > 0
@@ -2160,20 +2173,11 @@ export class PlayerQuestSystem {
         this.pendingFrontGeneralId = null;
         const metAtFront = !!opts?.metAtFront;
         if (!isGeneralOnStage(g.generalId)) return;
+        // 🔴 [2026-11-09 主人令「等玩家找到武将后，对话开始的时候播报知名战」「战后结果语音播报不要关闭」]
+        //    找到武将弹战前对话时已开口念该战的历史背景；此处放在 markFirstBattleCompleted 前兜底（如前线直接会合）。
+        this.playFirstBattleBackgroundOnce(g.generalId);
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
-
-        // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
-        //    玩家一点「随某将军奔赴某战」＝接取任务，这一刻就念该战的历史背景（语音 ＋ 下方字幕条，
-        //    走 `announceBriefing` 的 S 级长段解说：略慢语速、期间不被打断）。
-        //    本场首战的三势开战句与战果结算句由 `LegionFieldBattle` / `SiegeManager` / `GameApp` 跳过，不再叠第二段声音。
-        if (!this.spokenFirstBattleBgGenerals.has(g.generalId)) {
-            const firstBattleBackground = getFirstBattleBackground(g.generalId);
-            if (firstBattleBackground) {
-                this.spokenFirstBattleBgGenerals.add(g.generalId);
-                this.deps.announceBriefing?.(firstBattleBackground);
-            }
-        }
 
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
         // 🔴 [2026-10-27 主人令] 经典战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）

@@ -1993,7 +1993,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/CENTRAL/wazhai_zhanghan.png": {
-            "scale": 1.06,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 13
         },

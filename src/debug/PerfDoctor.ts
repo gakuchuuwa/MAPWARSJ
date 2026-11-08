@@ -134,6 +134,9 @@ export class PerfDoctor {
         this.lastFrameAt = 0;
         this.loaf = { n: 0, totalMs: 0, scriptMs: 0, preRenderScriptMs: 0, renderMs: 0, styleLayoutMs: 0, forcedLayoutMs: 0 };
         this.loafScripts.clear();
+        this.frameJs.length = 0;
+        this.jsAcc = 0;
+        this.rafByName.clear();
     }
 
     /** 开始堆采样（DEV 自动调用一次即可） */
@@ -168,10 +171,16 @@ export class PerfDoctor {
                 this.frameGaps.push(now - this.lastFrameAt);
                 if (this.frameGaps.length > 1800) this.frameGaps.shift();
             }
+            if (this.lastFrameAt > 0) {
+                this.frameJs.push(this.jsAcc);
+                if (this.frameJs.length > 1800) this.frameJs.shift();
+            }
+            this.jsAcc = 0;
             this.lastFrameAt = now;
             this.frameTimer = requestAnimationFrame(loop);
         };
         this.frameTimer = requestAnimationFrame(loop);
+        this.wrapJsEntryPoints();
 
         // 长任务（>50ms 阻塞主线程）——GC 与同步大计算都会在这里现形
         try {
@@ -194,6 +203,83 @@ export class PerfDoctor {
             });
             po2.observe({ type: 'long-animation-frame', buffered: false } as PerformanceObserverInit);
         } catch { /* 老浏览器没有 LoAF */ }
+    }
+
+    // ── 每帧 JS 总耗时（2026-11-09，查「掉帧」用）────────────────
+    /**
+     * 🔴 主人说的「卡」是**掉帧**（30~40fps 持续），不是 >50ms 的停顿；LoAF 只收 >50ms 的帧，收不到。
+     *    这里包住 rAF / setTimeout / setInterval 的回调，量出**每帧里全部游戏 JS 跑了多久**
+     *    （含没登记热点的循环）。帧间隔减去它 ≈ 浏览器渲染（样式·布局·绘制·分层·提交）+ GC + 事件。
+     *    ⚠️ Leaflet 在模块加载时就取走了原生 rAF，它自己的动画帧不在 JS 里；跟拍的 panBy 由
+     *    GameAppLoop 调用，已算进来。鼠标/图片 onload 等事件回调也不在内（推流时基本无人操作）。
+     */
+    private frameJs: number[] = [];
+    private jsAcc = 0;
+    private rafByName = new Map<string, number>();
+    private rafAnonSeq = 0;
+    private jsWrapped = false;
+
+    private wrapJsEntryPoints(): void {
+        if (this.jsWrapped || typeof window === 'undefined') return;
+        this.jsWrapped = true;
+        const self = this;
+        const ANON_SAMPLE = 32;
+        const origRaf = window.requestAnimationFrame.bind(window);
+        window.requestAnimationFrame = function (cb: FrameRequestCallback): number {
+            let label = cb.name || '';
+            let scale = 1;
+            if (!label) {
+                // 匿名回调每次都是新函数，取栈太贵 → 每 32 次抽一次，按比例放大计入
+                if (++self.rafAnonSeq % ANON_SAMPLE === 0) {
+                    const line = (new Error().stack || '').split('\n')[2] || '';
+                    const m = line.match(/\/src\/[^?:)]+(?:\?[^:)]*)?:(\d+)/);
+                    label = m ? m[0].replace(/\?[^:]*/, '') : '(anon)';
+                    scale = ANON_SAMPLE;
+                }
+            }
+            return origRaf((t: number) => {
+                const s = performance.now();
+                try { cb(t); } finally {
+                    const d = performance.now() - s;
+                    self.jsAcc += d;
+                    if (label) self.rafByName.set(label, (self.rafByName.get(label) ?? 0) + d * scale);
+                }
+            });
+        } as typeof window.requestAnimationFrame;
+        const wrapTimer = (name: 'setTimeout' | 'setInterval') => {
+            const orig = window[name].bind(window) as (h: TimerHandler, ms?: number, ...a: unknown[]) => number;
+            (window as unknown as Record<string, unknown>)[name] = (h: TimerHandler, ms?: number, ...a: unknown[]) => {
+                if (typeof h !== 'function') return orig(h, ms, ...a);
+                const fn = h as (...x: unknown[]) => void;
+                return orig((...x: unknown[]) => {
+                    const s = performance.now();
+                    try { fn(...x); } finally { self.jsAcc += performance.now() - s; }
+                }, ms, ...a);
+            };
+        };
+        wrapTimer('setTimeout');
+        wrapTimer('setInterval');
+    }
+
+    private frameCostReport() {
+        const n = Math.min(this.frameGaps.length, this.frameJs.length);
+        if (n < 30) return null;
+        const gaps = this.frameGaps.slice(-n), js = this.frameJs.slice(-n);
+        const summ = (pred: (g: number) => boolean) => {
+            let c = 0, g = 0, j = 0;
+            for (let i = 0; i < n; i++) if (pred(gaps[i])) { c++; g += gaps[i]; j += js[i]; }
+            return c ? { 帧数: c, 平均帧间隔ms: +(g / c).toFixed(1), 其中游戏JSms: +(j / c).toFixed(1), 其余ms: +((g - j) / c).toFixed(1) } : null;
+        };
+        const totalJs = js.reduce((a, b) => a + b, 0);
+        return {
+            说明: '其余 = 帧间隔 − 游戏JS ≈ 浏览器渲染(样式/布局/绘制/分层/提交) + GC + 未包住的回调；掉帧帧里「其余」远大于 JS → 病在渲染侧',
+            全部帧: summ(() => true),
+            掉帧帧_间隔超20ms: summ((g) => g > 20),
+            正常帧: summ((g) => g <= 20),
+            rAF回调每帧ms: [...this.rafByName].sort((a, b) => b[1] - a[1]).slice(0, 15)
+                .map(([k, v]) => ({ 回调: k, 每帧ms: +(v / n).toFixed(2) })),
+            包住的JS占比: totalJs > 0 ? +(totalJs / gaps.reduce((a, b) => a + b, 0)).toFixed(3) : 0,
+        };
     }
 
     private loaf = { n: 0, totalMs: 0, scriptMs: 0, preRenderScriptMs: 0, renderMs: 0, styleLayoutMs: 0, forcedLayoutMs: 0 };
@@ -612,6 +698,8 @@ export class PerfDoctor {
             },
             // 长动画帧归因（2026-11-09）：卡顿时先读这一段，「按脚本」给出源文件与函数
             longFrames: this.loafReport(),
+            // 每帧成本（2026-11-09）：「掉帧」先读这一段 —— 掉帧帧里游戏JS vs 其余（渲染侧）
+            frameCost: this.frameCostReport(),
             heap: mem ? {
                 usedMB: +(mem.usedJSHeapSize / MB).toFixed(0),
                 limitMB: +(mem.jsHeapSizeLimit / MB).toFixed(0),

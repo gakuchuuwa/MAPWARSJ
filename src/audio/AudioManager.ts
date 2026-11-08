@@ -1694,7 +1694,9 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     //    箭塔/城堡塔楼放箭只播这一条（10.01s 的万箭齐发，-21.2 LUFS）；原 tower_arrow_flame 不再触发。
     // 🔴 [2026-11-09 主人令「12秒有点长，改为3秒试试」] 冷却 12s → **3s**。
     //    ⚠️ 素材 10s：3s 冷却意味着最多约 3~4 层首尾相叠，会明显更密、更响；嫌糊就回调 6000。
-    arrow_storm: sound('battle', 'arrow_storm', 0.50, 3000),
+    // 🔴 [2026-11-09 主人令「建筑射箭这个音效音量小了，请大一点」] 0.50 → **0.80**（+4dB）。
+    //    素材 -21.2 LUFS；3s 冷却会叠 3~4 层，实际已比单层响 5~6dB，再叠这个音量足够压过战场。
+    arrow_storm: sound('battle', 'arrow_storm', 0.80, 3000),
 
 
 

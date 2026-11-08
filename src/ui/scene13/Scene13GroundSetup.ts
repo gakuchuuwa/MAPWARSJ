@@ -955,8 +955,24 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             }
             const minGap = (isBld && item.isBld) ? MIN_RELIC_BLD_GAP : MIN_RELIC_PROP_GAP;
             if (isoDist < r + item.r + minGap) return false;
+            // 🔴 [2026-11-09 主人令「野战战场上的建筑摆放都是平行的，这不对吧，哪有野外摆放这么规整的？」]
+            //    禁止邻近两座实体建筑（非农田）在屏幕同一水平高度（平行横向一排）或同一垂直列上规整对齐：
+            //    凡 620px 邻域内的两栋建筑，纵向高差 |Δy| 必须 ≥ 78px，横向间距 |Δx| 必须 ≥ 82px，强制呈高低错落的斜向自然分布。
+            if (isBld && !isFarm && item.isBld && !item.isFarm && Math.hypot(sx - item.x, sy - item.y) < 620) {
+                if (Math.abs(sy - item.y) < 78) return false;
+                if (Math.abs(sx - item.x) < 82) return false;
+            }
         }
         return true;
+    };
+
+    const shuffleOffsets = <T>(arr: readonly T[]): T[] => {
+        const out = [...arr];
+        for (let i = out.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            [out[i], out[j]] = [out[j], out[i]];
+        }
+        return out;
     };
 
     const findCompanionSpot = (
@@ -968,8 +984,13 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         centerRy = 285,
         parentAnchor?: { x: number; y: number; minIsoDist?: number },
     ): { x: number; y: number } | null => {
-        for (const [dx, dy] of offsets) {
-            const px = baseX + dx, py = baseY + dy;
+        const { isBld, isFarm } = relicRadiusOf(asset);
+        const isSolidBld = isBld && !isFarm;
+        const iterOffsets = isSolidBld ? shuffleOffsets(offsets) : offsets;
+        for (const [dx, dy] of iterOffsets) {
+            const jx = isSolidBld ? Math.round((rnd() - 0.5) * 38) : 0;
+            const jy = isSolidBld ? Math.round((rnd() - 0.5) * 28) : 0;
+            const px = baseX + dx + jx, py = baseY + dy + jy;
             if (canPlaceRelicItemAt(asset, px, py, centerRx, centerRy, parentAnchor)) {
                 return { x: px, y: py };
             }
@@ -1274,11 +1295,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     glLayer.carveFoundation(lx, ly, VW, VH, 1.8);
                     pushRelic(lumCampAsset, lx, ly, ox < 0, 0.78, 0, 0, true);
                     const lumAnchor = { x: lx, y: ly, minIsoDist: 92 };
-                    // 在伐木场周围配套 1 间伐木工屋/木桶 + 林口树桩与原木堆
+                    // 在伐木场周围配套 1 间伐木工屋/木桶 + 林口树桩与原木堆（斜向高低错落，不平行并排）
                     const hutSpot = findCompanionSpot(lx, ly, culturalHousePool[0], [
-                        [ox >= 0 ? 235 : -235, -42],
-                        [ox >= 0 ? 225 : -225, 52],
-                        [0, oy >= 0 ? 155 : -155],
+                        [ox >= 0 ? 205 : -205, -118],
+                        [ox >= 0 ? 185 : -185, 124],
+                        [ox >= 0 ? 115 : -115, oy >= 0 ? 158 : -158],
+                        [ox >= 0 ? -165 : 165, oy >= 0 ? 132 : -132],
                     ], 450, 300);
                     if (hutSpot) {
                         glLayer.carveFoundation(hutSpot.x, hutSpot.y, VW, VH, 1.4);
@@ -1319,10 +1341,10 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             const mx = mineSpot.x, my = mineSpot.y;
             const campSide = mx >= cx ? -1 : 1;
             const campSpot = findCompanionSpot(mx, my, campAsset, [
-                [campSide * 195, 36],
-                [-campSide * 195, 36],
-                [campSide * 185, -48],
-                [-campSide * 185, -48],
+                [campSide * 175, -108],
+                [campSide * 165, 114],
+                [-campSide * 175, 108],
+                [-campSide * 165, -114],
             ], 440, 300);
             if (!campSpot) continue;
 
