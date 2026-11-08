@@ -1965,20 +1965,28 @@ export class PlayerQuestSystem {
     /**
      * 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
      * **远距经典战的接任务地点**（只判 >300km 的；300km 以内照旧去武将本城接、短线行军过去）：
-     *   · 守城战（siege/defender）→ null（原地，他本就在城里守）；
      *   · 攻城战攻方 → 被攻的那座城（targetCityId）；
-     *   · 野战（攻守都算）→ 战场坐标（targetLat/targetLng）。
+     *   · 野战（攻守都算）→ 战场坐标（targetLat/targetLng）；
+     *   · 防守战（siege/defender）→ **被守的那座据点**：被守城就是他本城 → null（原地触发）；
+     *     被守城在别处（例：李世民本城长安、虎牢关之战守虎牢关）→ 去被守城接任务。
      * 这样玩家不必先跑去武将本城（跑完再被瞬移到战场），而是直接去打仗的地方接任务。
+     * 🔴 [2026-11-08 修「防守战被瞬移」] 原先守城战一律 `return null`（原地）：本城≠被守城的那 18 位名将，
+     *    玩家在本城接完任务，军团被 `setPosition` 直接摆到被守城、玩家随军瞬移过去 —— 正是 2026-10-25
+     *    「不再把玩家瞬移过去」要禁的。防守战「原地」指的是**他守的那座据点**，不是他平时住的那座。
      */
     private firstBattleFrontSpot(generalId: string | null | undefined): FirstBattleFrontSpot | null {
         if (!generalId) return null;
         const fb = this.hasPendingFirstBattle(generalId);
         if (!fb) return null;
         const role = fb.role ?? 'attacker';
-        if (fb.battleType === 'siege' && role === 'defender') return null;   // 防守战：原地
         const home = this.generalHomeCity(generalId);
         if (!home) return null;
         const targetCity = fb.targetCityId ? this.deps.cityManager.getCity(fb.targetCityId) : null;
+        // 防守战：被守城＝接任务点；与武将本城同一座 → 原地触发（null，他本就在城里守）
+        if (fb.battleType === 'siege' && role === 'defender') {
+            if (!targetCity || targetCity.id === home.id) return null;
+            return { kind: 'city', cityId: targetCity.id, label: targetCity.name };
+        }
         // 攻城战「打的那座城」＝目标城；野战＝史实战场坐标
         const targetPos = fb.battleType === 'field'
             ? { lat: fb.targetLat, lng: fb.targetLng }

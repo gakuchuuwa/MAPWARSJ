@@ -1,18 +1,15 @@
 /**
- * RecruitmentSystem — 乱斗募兵
+ * RecruitmentSystem — 战略地图募兵与军团组建
  *
- * 用户点「播放」后：执行一次出兵检查（runInitialSpawn，仅一次）
- * 每季（15 游戏秒 = 1 季度）：
- *   1. 据点驻军 + 大城200 / 中城150 / 小城100 / 关隘50（见 CityConfig.recruitPerSeason）
- *      【2026-06-12 主人裁定】产出**全进城防**——曾实装一日的「家城产出优先补自家军团」已删除
- *      （它关闭了"一城一军保护伞下家城囤积→军团死后爆发出大军"的通道，导致大军团绝迹）。
- *      军团兵力的恢复改为**战后恢复 30%**（CombatSystem.getPostBattleRecoveryRate）。
- *      家城失守仍强制回师（行为树 resolveRecaptureTarget，所有军团一致）。
- *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
- *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；16 套 DE 建筑素材家族（不是文化层，文化只有 66）
- *      （BASE16_CULTURES）轮流出兵，从上一季停下的大区开始逐个尝试，在该大区随机一座合格据点出兵
- *      （候选表已被 sortSpawnCandidates 按名将与兵力排序）。
- *      注意：这一步会被 trySpawnLegions 的「同屏保底」抢先——同屏军团 < 2 支时先在镜头内刷。
+ * 1. 开局首发（runInitialSpawn）：
+ *    按 67 文化（buildingStyle）均衡抽选，每个文化最多出 1 支（文化内兵多/名将优先），
+ *    随机抽满 MAX_ACTIVE_LEGIONS（默认 24 支），错峰生成并集结待命后全军拔营。
+ * 2. 每季（15 游戏秒 = 1 季度）：
+ *    - 据点驻军增长（大城 200 / 中城 150 / 小城 100 / 城寨 60 / 关隘 50）；
+ *    - 组建军团（每季最多 MAX_LEGIONS_SPAWN_PER_SEASON 支，总上限 MAX_ACTIVE_LEGIONS）：
+ *      ① 同屏保底：镜头内活跃军团 < 2 支时，优先在屏幕内敌方合格据点组建 1 支；
+ *      ② 67 文化均衡轮转：优先从当前场上活跃军团数最少的文化（0 支优先）中随机抽选文化，
+ *        再在该文化内挑兵最多（同兵力名将优先）的据点组建军团，保证据点少的文化也有同等出兵机会。
  */
 import { CityManager } from '../core/CityManager';
 import { LegionManager } from '../core/LegionManager';
@@ -24,18 +21,18 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import { getCityAnchoredGeneral, getCityAnchoredGenerals, getCityAnchoredGeneralsFast } from '../data/CityGeneralBridge';
+import { getCityAnchoredGenerals, getCityAnchoredGeneralsFast } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
-import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { hasAvailableCityGeneral } from '../legion/LegionSpawnTier';
 import { armDeploy } from '../legion/DeployGate';
-import { toBase16, BASE16_CULTURES, BASE_16_LEGION_NAMES, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
+import { toBase16, BASE_16_LEGION_NAMES, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
 import { toCulture66 } from '../systems/CultureHierarchy';
 import { resolveCityBase16Style } from '../systems/cityDeStyle';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCultureLegionName } from '../types/CultureFormations';
+import { getGeneralCulture } from '../data/GeneralCulture';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -43,6 +40,7 @@ type SpawnCandidate = {
     armySize: number;
     region: RegionType;
     base16: Base16Culture;
+    culture67: string;
     inViewport: boolean;
 };
 
@@ -52,27 +50,11 @@ export class RecruitmentSystem {
     private siegeManager: SiegeManager | null;
     private seasonTimer: number = 0;
     private hasRunInitialSpawn = false;
-    /**
-     * 开局首发因剧本期被跳过 → 剧本结束（闸门打开）后补跑一次。
-     * 🔴 [2026-09-23] 主人定「剧本都结束后，自动切换到乱斗模式」：乱斗模式本来开局就有一批军团，
-     *    不补跑的话切过去全图空着，要等季末才零星出兵。
-     */
     private initialSpawnDeferred = false;
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
 
-    /**
-     * 🔴 [2026-09-23 主人定] 历史剧本期闸门（`PlayerHero.autoPlan === 'script'`）。
-     * 主人原话：「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。」
-     * （原面板「🚫 不出军团」勾选已并入剧本模式。）
-     *
-     * 返回 true = 不生军团，**两条路一起闸**（由 GameApp 注入）：
-     *   · `runInitialSpawn`（播放时的开局首发）
-     *   · `runSeasonTick` → `trySpawnLegions`（季末募兵）
-     * **不闸**季初的 `recruitSeasonGarrison`（往城里补驻军，不产军团、也不把武将调出城）。
-     * 剧本主角军团由剧本自己 `forceCreate`，不走本系统，**不受此闸影响**。
-     */
     private readonly isLegionSpawnPaused: () => boolean;
 
     constructor(
@@ -92,15 +74,7 @@ export class RecruitmentSystem {
         return this.siegeManager?.isCityUnderAttack(cityId) ?? false;
     }
 
-    /**
-     * 用户点击「播放」并开始运行后出兵（仅一次，不等第一个 15 秒季度）
-     * 条件与 trySpawnLegions 相同：大城/中城/小城/关隘、无现役军、90% 兵力 ≥ MIN_ARMY_SIZE
-     */
-    /**
-     * 读档后必须调用：世界已由存档恢复，禁止再执行「开局首次出兵」。
-     * 否则 ① 会在已成型的中盘局面上从各无军据点批量刷新军团；
-     *      ② runInitialSpawn 开头的 trimLegionsToCap() 会把读档强制加入（force）的军团削掉。
-     */
+    /** 读档后调用：世界已由存档恢复，禁止再执行「开局首次出兵」 */
     public markInitialSpawnDone(): void {
         this.hasRunInitialSpawn = true;
         this.initialSpawnDeferred = false;
@@ -110,8 +84,6 @@ export class RecruitmentSystem {
         if (this.hasRunInitialSpawn) return;
         this.hasRunInitialSpawn = true;
 
-        // 🔴 历史剧本期 → **连开局首发也不生**（主人实测「还是有其他军团来捣乱」，捣乱的正是这一批首发）。
-        //    剧本结束转入乱斗后，由 update() 按 initialSpawnDeferred 补跑一次。
         if (this.isLegionSpawnPaused()) {
             this.initialSpawnDeferred = true;
             gameLog('recruitment', '💂 [募兵] 历史剧本期 → 开局首发推迟到剧本结束（全图不随机生军团）');
@@ -125,20 +97,13 @@ export class RecruitmentSystem {
         gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
 
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
-        // [2026-09-19 主人定] 按 16 母体地理与历史文化大区均衡出兵（名将优先）。
-        // 上限留给季末 trySpawnLegions 逐季增长。
         const candidates = this.buildInitialSpawnPlan(cities);
 
-        // [2026-08-19 主人定] 开局集结：起闸，期间全军在都城列阵待命不移动，
-        // 到点（按**游戏运行时间**计，见 DeployGate）自动「选跟随军团 + 全军同时拔营」。
-        // 🔴 必须在生成**之前**起闸：先生成再起闸的话，最早那几支已经开拔了。
         const holdMs = GameConfig.LEGION.INITIAL_DEPLOY_HOLD_MS;
         armDeploy(holdMs, () => {
             gameLog('recruitment', `🚩 [募兵] 集结完毕，全军同时拔营（集结 ${holdMs}ms 游戏运行时间）`);
         });
 
-        // 错峰生成：每隔 INITIAL_SPAWN_INTERVAL_MS 放行 INITIAL_SPAWN_PER_TICK 支，
-        // 让军团陆续登场而非同帧爆出（直播观感 + 避免 INP 卡顿）。
         const perTick = Math.max(1, GameConfig.LEGION.INITIAL_SPAWN_PER_TICK);
         const intervalMs = GameConfig.LEGION.INITIAL_SPAWN_INTERVAL_MS;
         let idx = 0;
@@ -151,21 +116,17 @@ export class RecruitmentSystem {
                 this.legionManager.getActiveLegionCount() < maxLegions
             ) {
                 const { city, armySize } = candidates[idx++];
-                if (this.cityHasActiveLegion(city.id)) continue; // 再次确认
+                if (this.cityHasActiveLegion(city.id)) continue;
 
                 const newLegion = this.spawnCandidate(city, armySize);
                 if (!newLegion) continue;
                 spawnedThisTick++;
             }
 
-            // 还有剩余候选且未达上限，错峰等待下一批
             if (idx < candidates.length && this.legionManager.getActiveLegionCount() < maxLegions) {
                 setTimeout(spawnTick, intervalMs);
             } else {
-                // 全部出完后再挂跟随，确保随机池包含全部文化区军团（名将优先随机）
                 gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
-                // 「选跟随 + 拔营」不在这里做：军团是在 boot 阶段（游戏暂停中）生成的，
-                // 此刻主人还没点播放。交给 DeployGate 在游戏跑满 holdMs 后统一触发。
             }
         };
 
@@ -177,7 +138,6 @@ export class RecruitmentSystem {
 
         this.flushPendingCityLabels();
 
-        // 剧本结束、转入乱斗：补跑那次被推迟的开局首发
         if (this.initialSpawnDeferred && !this.isLegionSpawnPaused()) {
             this.initialSpawnDeferred = false;
             this.hasRunInitialSpawn = false;
@@ -187,7 +147,6 @@ export class RecruitmentSystem {
         this.seasonTimer += gameDelta;
         if (this.seasonTimer < GameTime.SEASON_DURATION) return;
 
-        // 保留溢出，避免丢帧累积误差
         this.seasonTimer -= GameTime.SEASON_DURATION;
         this.runSeasonTick();
     }
@@ -196,25 +155,17 @@ export class RecruitmentSystem {
         const t0 = performance.now();
         const cities = this.cityManager.getCities();
         this.recruitSeasonGarrison(cities);
-        // 季初重算据点将/精名额：上季覆灭或解散的军团所占名额在此释放（方案A）
         this.legionManager.syncCitySpawnTierConsumption();
-        // 🔴 历史剧本期 → 季末也不生军团。
         if (!this.isLegionSpawnPaused()) {
             this.trySpawnLegions(cities);
         }
-        this.legionManager.tickLegionTiers(); // 兵力长到 4万的军团晋升精锐（含名将）
+        this.legionManager.tickLegionTiers();
         PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
     }
 
     /**
-     * 每季：按据点等级补驻军（大200 / 中150 / 小100 / 关50），产出全进城防。
-     * 【2026-06-12 主人裁定】「家城产出优先补自家军团」已删除；军团恢复改为战后统一 30%。
-     *
-     * 【2026-10-26 主人定「武将跟着据点走，各自据点算各自的」「像欧洲封建领主，不像中国大一统」】
-     *   每座据点只按自己的处境调增兵速度，势力之间、据点之间不调兵：
-     *   ① 边境城（路网直连的据点里有别家势力）：本城产量 × BORDER_RECRUIT_MULT。
-     *   ② 内地城：驻军不到基础治安兵（开局驻军 initialTroops，且不低于出兵线）时照常增兵；
-     *      够了以后 × INTERIOR_RECRUIT_MULT（后方领主不扩军，只慢慢补）。
+     * 每季：按据点等级补驻军（大200 / 中150 / 小100 / 寨60 / 关50），产出全进城防。
+     * 边境城 × BORDER_RECRUIT_MULT；内地城够基础治安兵后 × INTERIOR_RECRUIT_MULT。
      */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
         const factionOf = new Map<string, string>();
@@ -222,17 +173,13 @@ export class RecruitmentSystem {
 
         for (const city of cities) {
             if (!city.factionId || city.factionId === '' || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
-            // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→
-            //    据点一律是驻军据点、一律参与每季募兵。（原「战场不补驻军」的特判已撤销。）
 
             const cfg = CITY_CONFIG[city.type];
             if (!cfg) continue;
 
-            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
             if (!this.isCityGarrisonCommitted(city.id)) {
-                const region = this.getCityRegion(city as RecruitmentCity);
-                const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
-                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
+                const culture67 = this.getCityCulture67(city as RecruitmentCity);
+                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture67] ?? 1.0;
                 const troops = city.troops || 0;
                 const postureMult = this.isBorderCity(city.id, city.factionId, factionOf)
                     ? GameConfig.CITY.BORDER_RECRUIT_MULT
@@ -240,7 +187,7 @@ export class RecruitmentSystem {
                         ? GameConfig.CITY.INTERIOR_RECRUIT_MULT
                         : 1;
                 const added = Math.floor(cfg.recruitPerSeason * recruitMult * postureMult);
-                const nextTroops = clampCityTroops(city.type, troops + added, culture66);
+                const nextTroops = clampCityTroops(city.type, troops + added, culture67);
                 if (nextTroops !== troops) {
                     city.troops = nextTroops;
                     this.pendingLabelCityIds.add(city.id);
@@ -249,7 +196,7 @@ export class RecruitmentSystem {
         }
     }
 
-    /** 基础治安兵：开局驻军量，且不低于出兵线（内地城攒够这么多后放慢增兵） */
+    /** 基础治安兵：开局驻军量，且不低于出兵线 */
     private getCityBaseGarrison(city: RecruitmentCity): number {
         const initial = CITY_CONFIG[city.type]?.initialTroops ?? 0;
         return Math.max(initial, this.getCityMinSpawnTroops(city) / 0.9);
@@ -269,7 +216,7 @@ export class RecruitmentSystem {
                 for (const n of roadRegistry.getConnectedCities(cur)) {
                     if (seen.has(n)) continue;
                     seen.add(n);
-                    if (!factionOf.has(n)) queue.push(n); // 战场节点 → 接着往外找据点
+                    if (!factionOf.has(n)) queue.push(n);
                     else neighbors.push(n);
                 }
             }
@@ -297,16 +244,7 @@ export class RecruitmentSystem {
         }
     }
 
-    /** 该军团是否名将军团（与 CameraFollowUI.isFamousGeneralLegion 同口径） */
-    private static isFamousGeneralArmy(army: { generalId?: string }): boolean {
-        const gid = army.generalId;
-        return !!gid && getGeneralProfile(gid)?.tier === 'famous';
-    }
-
-    /**
-     * 候选城排序（2026-09-19 主人定「军团刷新只看兵多，谁兵多谁组建军团」）：
-     *   绝对兵力（armySize）从大到小降序排列；兵力完全相同时名将优先。
-     */
+    /** 同一文化内的候选据点排序：兵力从大到小，同兵力名将优先 */
     private static sortSpawnCandidates(candidates: SpawnCandidate[]): void {
         candidates.sort((a, b) => {
             if (b.armySize !== a.armySize) {
@@ -319,13 +257,16 @@ export class RecruitmentSystem {
         });
     }
 
-
     private getCityRegion(city: RecruitmentCity): RegionType {
         return getCityRegion({
             latitude: city.latitude,
             longitude: city.longitude,
             region: city.region,
         });
+    }
+
+    private getCityCulture67(city: RecruitmentCity): string {
+        return toCulture66((city as { buildingStyle?: string }).buildingStyle || this.getCityRegion(city));
     }
 
     private getCityBase16(city: RecruitmentCity): Base16Culture {
@@ -343,15 +284,10 @@ export class RecruitmentSystem {
         return toBase16(city.region);
     }
 
-
     private getCurrentViewportBounds(): { contains(latlng: [number, number]): boolean } | null {
         if (typeof window === 'undefined') return null;
         const map = (window as any).game?.map?.getLeafletMap?.();
         return map?.getBounds?.() ?? null;
-    }
-
-    private getFollowedFactionId(): string | null {
-        return this.legionManager.getFollowedLegion()?.getFactionId?.() ?? null;
     }
 
     /** 按据点类型 + 是否文化中心，返回最低出兵阈值（armySize 须 ≥ 此值） */
@@ -360,7 +296,7 @@ export class RecruitmentSystem {
             return GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS.region_center;
         }
         const map = GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS as Record<string, number>;
-        return map[city.type] ?? 10000;
+        return map[city.type] ?? 5000;
     }
 
     private collectSpawnCandidates(cities: RecruitmentCity[]): SpawnCandidate[] {
@@ -373,27 +309,25 @@ export class RecruitmentSystem {
             if (!city.factionId || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
             if (!spawnTypes.includes(city.type)) continue;
             if (city.spawnGeneralUsed) continue;
-            // 先判兵力线与冷却（O(1)），过滤掉不达标据点后再跑军团/武将查询
             const baseArmySize = Math.floor((city.troops || 0) * 0.9);
             const minTroops = this.getCityMinSpawnTroops(city);
             if (baseArmySize < minTroops) continue;
             if (isGeneralOnCooldown(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
-            // 🔴 [2026-10-18 主人定「没有武将的据点，不能去打别的据点」「没有武将不能出兵」]
-            //    据点无武将或武将当前不在登场期（此时只有普通守军「XX将军」），不能出兵攻打别的据点。
             const anchoredGenerals = getCityAnchoredGeneralsFast(city.id);
             if (!anchoredGenerals.some((g) => isGeneralOnStage(g.generalId))) continue;
             if (!hasAvailableCityGeneral(city.id, activeGenIds)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
-            let armySize = baseArmySize;
 
             const region = this.getCityRegion(city);
             const base16 = this.getCityBase16(city);
+            const culture67 = this.getCityCulture67(city);
             candidates.push({
                 city,
-                armySize,
+                armySize: baseArmySize,
                 region,
                 base16,
+                culture67,
                 inViewport: bounds?.contains([city.latitude, city.longitude]) ?? false,
             });
         }
@@ -402,44 +336,90 @@ export class RecruitmentSystem {
         return candidates;
     }
 
+    /** 统计当前场上活跃军团在 67 文化上的数量分布 */
+    private getActiveCulture67Counts(): Map<string, number> {
+        const counts = new Map<string, number>();
+        for (const army of this.legionManager.getArmies()) {
+            if (army.isDestroyed || army.type !== 'legion') continue;
+            const cityId = army.homeCityId ?? army.getSourceCityId();
+            const city = cityId ? this.cityManager.getCity(cityId) : undefined;
+            const cult = city?.buildingStyle
+                ? toCulture66(city.buildingStyle)
+                : (army.generalId ? toCulture66(getGeneralCulture(army.generalId)) : toCulture66(army.cultureRegion));
+            counts.set(cult, (counts.get(cult) ?? 0) + 1);
+        }
+        return counts;
+    }
+
     /**
-     * [2026-09-19 主人定] 开局第一轮出兵：只在第一轮让 16 区各出一个军团（各区内兵多者/名将优先），刚好首发 16 支。
+     * 按 67 文化均衡挑选最多 count 支候选军团：
+     * - 每個文化内部按兵多/名将排好序；
+     * - 每一轮从「当前场上军团数最少」的文化集合中随机抽 1 个文化，取该文化的头号候选城，并将该文化计数 +1；
+     * - 如此循环直到挑满 count 支或无候选为止。
+     * 这样 1 座城的小文化与 50 座城的大文化在文化层面上拥有完全相等的出兵抽签权。
      */
-    private buildInitialSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
-        const candidates = this.collectSpawnCandidates(cities);
-        if (candidates.length === 0) return [];
+    private pickBalancedByCulture67(candidates: SpawnCandidate[], count: number): SpawnCandidate[] {
+        if (candidates.length === 0 || count <= 0) return [];
 
+        const byCulture = new Map<string, SpawnCandidate[]>();
+        for (const c of candidates) {
+            let list = byCulture.get(c.culture67);
+            if (!list) {
+                list = [];
+                byCulture.set(c.culture67, list);
+            }
+            list.push(c);
+        }
+
+        const activeCounts = this.getActiveCulture67Counts();
         const selected: SpawnCandidate[] = [];
-        const usedCityIds = new Set<string>();
 
-        // 只在第一轮让 16 区各出一个军团
-        for (const cult of BASE16_CULTURES) {
-            const candidate = candidates.find(
-                (c) => c.base16 === cult && !usedCityIds.has(c.city.id)
-            );
-            if (!candidate) continue;
-            selected.push(candidate);
-            usedCityIds.add(candidate.city.id);
+        while (selected.length < count && byCulture.size > 0) {
+            let minActive = Infinity;
+            for (const cult of byCulture.keys()) {
+                const n = activeCounts.get(cult) ?? 0;
+                if (n < minActive) minActive = n;
+            }
+
+            const lowestCultures: string[] = [];
+            for (const cult of byCulture.keys()) {
+                if ((activeCounts.get(cult) ?? 0) === minActive) {
+                    lowestCultures.push(cult);
+                }
+            }
+
+            const pickedCult = lowestCultures[Math.floor(Math.random() * lowestCultures.length)];
+            const list = byCulture.get(pickedCult)!;
+            const pickedCandidate = list.shift()!;
+            if (list.length === 0) {
+                byCulture.delete(pickedCult);
+            }
+
+            selected.push(pickedCandidate);
+            activeCounts.set(pickedCult, (activeCounts.get(pickedCult) ?? 0) + 1);
         }
 
         return selected;
     }
 
-
     /**
-     * [2026-09-19 主人定] 季度出兵计划：取消 16 区限制，只看兵多，谁兵多谁组建军团，补充至上限 16 支。
+     * 开局第一轮出兵：按 67 文化均衡随机抽选，每个文化最多 1 支，凑满 MAX_ACTIVE_LEGIONS（默认 24 支）。
      */
-    private buildSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
-        const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
-        const remaining = maxLegions - this.legionManager.getActiveLegionCount();
-        if (remaining <= 0) return [];
-
+    private buildInitialSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
         const candidates = this.collectSpawnCandidates(cities);
         if (candidates.length === 0) return [];
-
-        return candidates.slice(0, remaining);
+        const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
+        return this.pickBalancedByCulture67(candidates, maxLegions);
     }
 
+    /**
+     * 季度出兵计划：优先从场上还没有军团（或军团最少）的 67 文化中抽选。
+     */
+    private buildSpawnPlan(cities: RecruitmentCity[], count: number): SpawnCandidate[] {
+        const candidates = this.collectSpawnCandidates(cities);
+        if (candidates.length === 0) return [];
+        return this.pickBalancedByCulture67(candidates, count);
+    }
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
         if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id) || !hasAvailableCityGeneral(city.id)) return null;
@@ -448,7 +428,6 @@ export class RecruitmentSystem {
         const region = this.getCityRegion(city);
         const base16 = this.getCityBase16(city);
         const factionLegion = FACTION_COMPOSITIONS[city.factionId]?.legionName?.trim();
-        // 优先势力专属军团，无则使用该母体大区代表军团（如 东亚军团 / 西欧军团）
         const legionName = factionLegion || BASE_16_LEGION_NAMES[base16] || getCultureLegionName(region);
         const newLegion = this.legionManager.createArmy({
             name: legionName,
@@ -460,15 +439,12 @@ export class RecruitmentSystem {
 
         if (!newLegion) return null;
 
-        // 🔴 [2026-10-18 主人定「没有武将不能出兵」] 若因档位占用等原因未能挂上在场武将，立即销毁移除，绝不放出「XX将军」无将出征
         if (!newLegion.generalId || !isGeneralOnStage(newLegion.generalId)) {
             newLegion.destroy();
             this.legionManager.removeArmy(newLegion);
             return null;
         }
 
-        // 🔴 [2026-09-17 主人定] 据点保留 10% 兵力：征 90%，据点永留 10% 驻军。
-        //    （删「屯兵经略留兵」str_27 已封印 + 「招兵买马」「屯兵经略」死脉冲，防务技系已整体退役）
         const minTroops = this.getCityMinSpawnTroops(city);
         if (newLegion.getTroops() < minTroops) {
             newLegion.destroy();
@@ -482,47 +458,32 @@ export class RecruitmentSystem {
         return newLegion;
     }
 
+    /** 一座据点同时只允许 1 支现役军团在外（战死或解散后才可派下一支） */
     private cityHasActiveLegion(cityId: string): boolean {
         const anchoredGenIds = new Set(
             getCityAnchoredGeneralsFast(cityId)
                 .filter((g) => isGeneralOnStage(g.generalId))
                 .map((g) => g.generalId),
         );
-        const activeFromCity = this.legionManager.getArmies().filter((a) => {
+        return this.legionManager.getArmies().some((a) => {
             if (a.isDestroyed || a.type !== 'legion') return false;
             if (a.generalId && anchoredGenIds.has(a.generalId)) return true;
             return a.homeCityId === cityId || a.getSourceCityId() === cityId;
         });
-        if (activeFromCity.length === 0) return false;
-        // 一据点多武将：若城中还有其他尚未带兵出征的在场武将，则不因已有1支军团而封死余将出兵通道
-        if (anchoredGenIds.size > 1) {
-            const busyCount = activeFromCity.filter((a) => a.generalId && anchoredGenIds.has(a.generalId)).length;
-            return busyCount >= anchoredGenIds.size;
-        }
-
-        // 2026-08-03 档案战略技删除：str_26 招兵买马（recruit_cooldown_mult）已退役封印，
-        // 无任何持有者，「军团离城可再募」豁免不复存在，有活跃军团即视为不可再募
-        return true;
     }
 
     /**
-     * 季度出兵逻辑（每季最多 1 支，见 MAX_LEGIONS_SPAWN_PER_SEASON）
-     *
-     * 优先级：
-     *   1. 同屏保底：跟随镜头内活跃军团 < 2 支时，优先在同屏城池刷兵
-     *      （保持跟随军团 + 至少 1 支其他军团的观赏性）
-     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 63 区轮转扶贫（buildSpawnPlan）
-     *   3. 同组内**随机**取（sortSpawnCandidates 是 Fisher-Yates 洗牌，不按驻军排序）
+     * 季度出兵逻辑（每季最多 MAX_LEGIONS_SPAWN_PER_SEASON 支，默认 2 支）：
+     *   1. 同屏保底：跟随镜头内活跃军团 < 2 支时，第 1 支优先在同屏敌方据点组建（保证屏幕内有对手）；
+     *   2. 剩余名额走全图 67 文化均衡轮转（优先场上 0 军团的文化）。
      */
     private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         const perSeasonCap = Math.max(1, GameConfig.LEGION.MAX_LEGIONS_SPAWN_PER_SEASON);
+        const remainingCap = maxLegions - this.legionManager.getActiveLegionCount();
+        if (remainingCap <= 0) return;
 
-        if (this.legionManager.getActiveLegionCount() >= maxLegions) {
-            return;
-        }
-
-        // ── 统计同屏活跃军团数（含跟随军团自身） ──
+        const targetSpawnCount = Math.min(perSeasonCap, remainingCap);
         const bounds = this.getCurrentViewportBounds();
         let visibleLegionCount = 0;
         if (bounds) {
@@ -535,46 +496,50 @@ export class RecruitmentSystem {
             }
         }
 
-        // ── 决定候选来源 ──
-        let candidates: SpawnCandidate[];
+        const allCandidates = this.collectSpawnCandidates(cities);
+        if (allCandidates.length === 0) return;
+
+        const planned: SpawnCandidate[] = [];
+        const usedCityIds = new Set<string>();
 
         if (visibleLegionCount < 2) {
-            // 同屏不足 2 支 → 优先在屏内挑选兵多的敌对据点刷兵；打不过跟随军团则留在城里等待攒兵
             const followed = this.legionManager.getFollowedLegion();
             const followedFactionId = followed?.getFactionId?.() ?? null;
             const followedTroops = followed && !followed.isDestroyed ? followed.getTroops() : 0;
-            const allCandidates = this.collectSpawnCandidates(cities);
             const viewportEnemyCandidates = allCandidates.filter(
                 (c) => c.inViewport && (!followedFactionId || c.city.factionId !== followedFactionId)
             );
             if (viewportEnemyCandidates.length > 0) {
-                candidates = followedTroops > 0
+                const strongEnough = followedTroops > 0
                     ? viewportEnemyCandidates.filter(
                         (c) => c.armySize * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO >= followedTroops
                     )
                     : viewportEnemyCandidates;
-            } else {
-                const remaining = Math.max(0, maxLegions - this.legionManager.getActiveLegionCount());
-                candidates = allCandidates.slice(0, remaining);
+                const vpPool = strongEnough.length > 0 ? strongEnough : viewportEnemyCandidates;
+                const pickedVp = this.pickBalancedByCulture67(vpPool, 1)[0];
+                if (pickedVp) {
+                    planned.push(pickedVp);
+                    usedCityIds.add(pickedVp.city.id);
+                }
             }
-        } else {
-            // 全图谁兵多谁组建军团
-            candidates = this.buildSpawnPlan(cities);
         }
 
+        const restNeeded = targetSpawnCount - planned.length;
+        if (restNeeded > 0) {
+            const restPool = allCandidates.filter((c) => !usedCityIds.has(c.city.id));
+            planned.push(...this.pickBalancedByCulture67(restPool, restNeeded));
+        }
 
         let spawnedThisSeason = 0;
-
-        for (const { city, armySize, inViewport } of candidates) {
+        for (const { city, armySize, inViewport } of planned) {
             if (spawnedThisSeason >= perSeasonCap) break;
-            if (this.legionManager.getActiveLegionCount() >= maxLegions) {
-                break;
-            }
+            if (this.legionManager.getActiveLegionCount() >= maxLegions) break;
 
             const newLegion = this.spawnCandidate(city, armySize);
             if (!newLegion) continue;
             if (inViewport && visibleLegionCount < 2) {
                 (newLegion as { spawnedInViewport?: boolean }).spawnedInViewport = true;
+                visibleLegionCount++;
             }
 
             spawnedThisSeason++;
@@ -585,5 +550,4 @@ export class RecruitmentSystem {
             );
         }
     }
-
 }
