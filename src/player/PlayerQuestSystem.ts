@@ -46,6 +46,8 @@ import {
     clearCompletedFirstBattles,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
+// 🔴 [2026-11-09 主人令] 知名战历史背景播报（接取任务那一刻念，念完之前/之后本场不再播其他播报）
+import { getFirstBattleBackground } from '../data/GeneralFirstBattleBackgrounds';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -272,6 +274,8 @@ export interface PlayerQuestDeps {
         getArmies(): Army[];
         moveLegionToCity(army: Army, targetCityId: string, sourceCityId?: string): boolean;
         dequeueArmyFromThirdPartyWaiters?(armyId: string): boolean;
+        disconnectArmyFromCombat?(armyId: string): void;
+        abortCitySiege?(cityId: string): void;
         triggerSiege?(army: Army, targetCity: City): 'siege' | 'skipped';
     };
     showDialogue: (payload: DialoguePayload) => void;
@@ -816,6 +820,12 @@ export class PlayerQuestSystem {
                 this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== generalId);
             }
             this.headingToEventGeneralId = null;
+            const fieldArmy = this.armyOfGeneral(generalId);
+            if (fieldArmy && !fieldArmy.isScriptArmy && fieldArmy.id !== this.quest?.legionId) {
+                delete (fieldArmy as { __scriptPinned?: boolean }).__scriptPinned;
+                fieldArmy.scriptMarchExempt = false;
+                this.deps.kickLegionAi(fieldArmy.id);
+            }
             const name = getGeneralRecordByGeneralId(generalId)?.generalName ?? generalId;
             gameLog('expedition', `[玩家] 告辞：${name} → 换下一位武将`);
         }
@@ -895,6 +905,11 @@ export class PlayerQuestSystem {
         // 先看「能不能打」里与距离无关的那些（打过了 / 主帅在外 / 已有战事）
         // 随武将赶来的这一仗：他本人率领的赶路军团不算「主帅率军在外」
         const ownMarchArmyId = this.isFollowingGeneralEvent(bfId) ? this.quest?.legionId : undefined;
+        const fbForRecall = bfApi.findBattle(bfId);
+        if (fbForRecall) {
+            if (fbForRecall.attackerGeneralId) this.recallEnemyGeneralFieldArmy(fbForRecall.attackerGeneralId, true);
+            if (fbForRecall.defenderGeneralId) this.recallEnemyGeneralFieldArmy(fbForRecall.defenderGeneralId, true);
+        }
         const hardBlock = bfApi.checkReady(bfId, undefined, ownMarchArmyId);
         if (hardBlock) { this.deps.notify(hardBlock); return; }
 
@@ -1379,8 +1394,12 @@ export class PlayerQuestSystem {
         //    也不抽出发据点的城防（史实军团的兵力来自事件数据）
         const scriptSideFaction = this.deps.hero.autoPlan === 'script' ? this.sideFactionOf(ev.battlefieldId, g.generalId) : null;
         const cityTroopsBefore = city.troops;
-        const host = army ?? this.raiseLegion(city, scriptSideFaction ?? city.factionId, g, city.id);
-        if (!army && scriptSideFaction) city.troops = cityTroopsBefore;
+        const validArmy = (army && !army.isDestroyed ? army : null) ?? this.armyOfGeneral(g.generalId);
+        if (validArmy) {
+            this.deps.legionManager.disconnectArmyFromCombat?.(validArmy.id);
+        }
+        const host = validArmy ?? this.raiseLegion(city, scriptSideFaction ?? city.factionId, g, city.id);
+        if (!validArmy && scriptSideFaction) city.troops = cityTroopsBefore;
         if (!host) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
@@ -1389,7 +1408,7 @@ export class PlayerQuestSystem {
         //    （如亚历山大 35000、古典时代马其顿军团·伙伴骑兵），与战场上生成的史实军团同源。
         //    只在剧本模式；乱斗模式保持原样（起兵 = 本城兵力九成）。
         const scriptMode = this.deps.hero.autoPlan === 'script';
-        if (army && scriptSideFaction && host.getFactionId() !== scriptSideFaction) {
+        if (validArmy && scriptSideFaction && host.getFactionId() !== scriptSideFaction) {
             host.setFactionId(scriptSideFaction);
         }
         const side = scriptMode ? this.deps.battlefields?.sideOfGeneral?.(ev.battlefieldId, g.generalId) : null;
@@ -1730,6 +1749,9 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
+        if (host.scriptMarchExempt && host.getIsInCombat()) {
+            this.deps.legionManager.disconnectArmyFromCombat?.(host.id);
+        }
         // 动态移出途中已到达的路标（距离当前队首路标 <= 15km）
         while (this.marchWaypointsLeft.length) {
             const wp = this.deps.cityManager.getCity(this.marchWaypointsLeft[0]);
@@ -2141,8 +2163,10 @@ export class PlayerQuestSystem {
         //    先把那支撤掉（兵力还他本城），免得起兵后地图上同时有两个同一个人。
         if (metAtFront && !existingArmy) this.recallEnemyGeneralFieldArmy(g.generalId, true);
 
-        let host: Army | null = existingArmy && !existingArmy.isDestroyed ? existingArmy : null;
+        let host: Army | null = (existingArmy && !existingArmy.isDestroyed ? existingArmy : null)
+            ?? (!metAtFront ? this.armyOfGeneral(g.generalId) : null);
         if (host) {
+            this.deps.legionManager.disconnectArmyFromCombat?.(host.id);
             this.deps.legionManager.dequeueArmyFromThirdPartyWaiters?.(host.id);
             if (host.getIsInCombat()) host.clearExternalCombatState();
             host.clearPostBattleRest();
@@ -2231,6 +2255,7 @@ export class PlayerQuestSystem {
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
         } else if (role === 'defender') {
             const defendedCity = targetCity ?? city;
+            this.deps.legionManager.abortCitySiege?.(defendedCity.id);
             const cityGarrison = Math.min(1000, Math.max(1, Math.floor(myTroops * 0.1)));
             this.deps.cityManager.updateCity(defendedCity.id, { factionId: myFactionId, troops: cityGarrison }, { skipCaptureLog: true });
             const updatedDefendedCity = this.deps.cityManager.getCity(defendedCity.id) ?? defendedCity;

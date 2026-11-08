@@ -101,6 +101,22 @@ const ASSETS: Record<CreatureKind, CreatureAsset> = {
     },
 };
 
+/**
+ * 🔴 [2026-11-09 主人令「海中鲸鱼大一点」] 单个物种的**模型放大倍数**（只放大点名的这一种，
+ * 其余海豚／海龟／鱼群仍按 `strategicActorScale` 的 0.60 基准；倍数作用于帧框与锚点，锚点比例不变）。
+ */
+const CREATURE_SIZE_MULT: Partial<Record<CreatureKind, number>> = {
+    WHALE: 1.4,
+};
+
+/**
+ * 🔴 [2026-11-09 主人令「海怪出现的比例小一点」] 海怪在各海域随机档位里的占比减半：
+ *   暖海 8% → 4%（r 0.18~0.22）、寒温带 10% → 5%（r 0.28~0.33）；
+ *   腾出来的份额按原顺序归给后面的海豚／鱼群，其他物种的排序与门槛不变。
+ */
+const NESSIE_SHARE_WARM_UPPER = 0.22;
+const NESSIE_SHARE_COLD_UPPER = 0.33;
+
 interface Creature {
     id: number;
     kind: CreatureKind;
@@ -426,7 +442,7 @@ export class MarineLifeLayer extends L.Layer {
             else kind = 'SHORE_FISH';
         } else if (isWarmSea) {
             if (r < 0.18) kind = 'WHALE';
-            else if (r < 0.26) kind = 'NESSIE';
+            else if (r < NESSIE_SHARE_WARM_UPPER) kind = 'NESSIE';
             else if (r < 0.46) kind = 'DOLPHIN';
             else if (r < 0.58) kind = 'DORADO_FISH';   // 鲯鳅鱼群（水下潜游鱼影 + 跃水）
             else if (r < 0.68) kind = 'MARLIN_FISH';   // 旗鱼/剑鱼群
@@ -436,7 +452,7 @@ export class MarineLifeLayer extends L.Layer {
         } else {
             // 高纬寒温带海域：抹香鲸、海怪、海豚、鲑鱼群、金枪鱼群
             if (r < 0.28) kind = 'WHALE';
-            else if (r < 0.38) kind = 'NESSIE';
+            else if (r < NESSIE_SHARE_COLD_UPPER) kind = 'NESSIE';
             else if (r < 0.62) kind = 'DOLPHIN';
             else if (r < 0.82) kind = 'SALMON_FISH';
             else kind = 'TUNA_FISH';
@@ -525,8 +541,10 @@ export class MarineLifeLayer extends L.Layer {
             }
 
             // 2. 绘制水上跃鱼/鲸豚破水/浪花层
-            const w = a.boxW * spriteScale;
-            const h = a.boxH * spriteScale;
+            // 🔴 [2026-11-09 主人令「海中鲸鱼大一点」] 按物种放大（鲸 ×1.4），锚点比例不变，落点不跳
+            const sizeMult = CREATURE_SIZE_MULT[c.kind] ?? 1;
+            const w = a.boxW * spriteScale * sizeMult;
+            const h = a.boxH * spriteScale * sizeMult;
             const cols = a.cols || Math.max(1, Math.round(img.naturalWidth / a.boxW));
             const sx = (c.frame % cols) * a.boxW;
             const sy = Math.floor(c.frame / cols) * a.boxH;

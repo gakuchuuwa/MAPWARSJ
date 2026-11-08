@@ -95,6 +95,22 @@ const CART_ANIM_FPS = 18;           // 车 move 动画帧率
 //    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
 const PANE_ZINDEX = 570;            // 商队：地面氛围层最高，仍低于 UNITS_LOW(580)
 const SCALE_BASE = STRATEGIC_SPRITE_SCALE;   // 🔴 2026-10-31 主人令「显示比例统一、大小对齐 DE」：商队与军团/家畜同一基准（原 0.35）
+
+/**
+ * 🔴 [2026-11-09 主人令「中式帆船大一点」] 单型商船的**放大倍数**（只有点名的这一型放大，其余照旧 `SCALE_BASE`）。
+ *    中式帆船 JUNK 素材帧框本身只有 88×108（DE 原生），×0.40 后上屏仅约 35×43px，比海里的鲸鱼小得多；
+ *    ×1.5 后约 53×65px，同样是商船，但看得清是多桅中式帆。
+ *    玩家「环球航行」的商船（`PlayerTourSpriteDrawer`）共用这张表，同一型船在哪都是同一个大小。
+ */
+export const TRADE_SHIP_SIZE_MULT: Readonly<Record<string, number>> = {
+    JUNK: 1.5,
+};
+
+/** 商船模型放大倍数（未登记 = 1，即照旧 `SCALE_BASE`） */
+export function tradeShipSizeMult(dir: string): number {
+    return TRADE_SHIP_SIZE_MULT[dir] ?? 1;
+}
+
 const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视口宽；须大于车队展开长度）
 // 🔴 [2026-08-31] 30 → 8 秒。这个数是「车队生成在视口外多远」——原值意味着
 //    最长要等 30 秒它才走进画面，而镜头常常撑不到 30 秒就切走了。
@@ -688,6 +704,8 @@ export class TradeTrafficLayer {
         const pending: Array<{
             sheet: HTMLImageElement; frame: number; fw: number; fh: number;
             ax: number; ay: number; ox: number; oy: number; rot: number; alpha: number;
+            /** 本精灵自己的缩放（商船按 `tradeShipSizeMult` 放大，见 TRADE_SHIP_SIZE_MULT） */
+            scale: number;
             sails?: { img: HTMLImageElement; ox: number; oy: number; w: number; h: number }[];
         }> = [];
 
@@ -750,6 +768,8 @@ export class TradeTrafficLayer {
 
                 const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
                 const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
+                // 🔴 [2026-11-09 主人令「中式帆船大一点」] 单型商船放大（陆上车队不受影响）
+                const sprScale = sea ? scale * tradeShipSizeMult(asset.dir) : scale;
                 let shipRot = 0;
                 let shipDeg = dirRes.deg;
                 if (sea && asset.dirs16) {
@@ -766,13 +786,13 @@ export class TradeTrafficLayer {
                     shipRot = resDeg * Math.PI / 180;
                 }
                 const sails = sea && needsSail(asset.dir)
-                    ? buildSailLayers(asset.dir, dirIdx, scale, tradeShipSailGroupAt(pos.lat, pos.lng, asset.dir))
+                    ? buildSailLayers(asset.dir, dirIdx, sprScale, tradeShipSailGroupAt(pos.lat, pos.lng, asset.dir))
                     : undefined;
-                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot, alpha, sails });
+                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * sprScale, oy: -hy * sprScale, rot: shipRot, alpha, scale: sprScale, sails });
                 if (sea) {
                     seaShips.push({
                         x: pt.x, y: pt.y, r: c.count - u, isAlive: true,
-                        dir: dirIdx, rot: shipRot, deg: shipDeg, shipLen: Math.max(fw, fh) * scale,
+                        dir: dirIdx, rot: shipRot, deg: shipDeg, shipLen: Math.max(fw, fh) * sprScale,
                     });
                 }
             }
@@ -802,7 +822,7 @@ export class TradeTrafficLayer {
                 ctx.save();
                 ctx.translate(p.ax, p.ay);
                 ctx.rotate(p.rot);
-                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ox, p.oy, p.fw * scale, p.fh * scale);
+                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ox, p.oy, p.fw * p.scale, p.fh * p.scale);
                 if (p.sails) {
                     for (const sl of p.sails) {
                         ctx.drawImage(sl.img, sl.ox, sl.oy, sl.w, sl.h);
@@ -810,7 +830,7 @@ export class TradeTrafficLayer {
                 }
                 ctx.restore();
             } else {
-                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ax + p.ox, p.ay + p.oy, p.fw * scale, p.fh * scale);
+                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ax + p.ox, p.ay + p.oy, p.fw * p.scale, p.fh * p.scale);
                 if (p.sails) {
                     for (const sl of p.sails) {
                         ctx.drawImage(sl.img, p.ax + sl.ox, p.ay + sl.oy, sl.w, sl.h);

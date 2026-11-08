@@ -684,10 +684,11 @@ export class RoadRegistry {
      * 最短路会为了省几公里绕开主人新画的直连路（例：兹拉卡塔—比斯塔姆 176 公里 < 经达姆甘 158 公里，寻路永远不走它）；
      * 剧本的相邻路标若本来就有直连的路，就该走这条路。没有直连返回 null，乱斗与 AI 行军不使用本方法。
      */
-    public findDirectEdgePath(startNodeId: string, endNodeId: string): PathResult | null {
+    public findDirectEdgePath(startNodeId: string, endNodeId: string, wantSea?: boolean): PathResult | null {
         let best: GraphEdge | null = null;
         for (const e of this.edges.values()) {
             if (!((e.from === startNodeId && e.to === endNodeId) || (e.from === endNodeId && e.to === startNodeId))) continue;
+            if (wantSea !== undefined && !!e.isSea !== wantSea) continue;
             if (!best || e.lengthKm < best.lengthKm) best = e;
         }
         if (!best) return null;

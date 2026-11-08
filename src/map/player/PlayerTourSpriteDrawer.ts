@@ -17,7 +17,7 @@
 import { OrientationSystem } from '../../core/OrientationSystem';
 import { CITIES_V2 } from '../../data/cities_v2';
 import { NavalWakeDrawer } from '../legion/NavalWakeDrawer';
-import { playerTourCaravanDir, playerTourMerchantShipDir, tradeShipSailGroupAt } from '../TradeTrafficLayer';
+import { playerTourCaravanDir, playerTourMerchantShipDir, tradeShipSailGroupAt, tradeShipSizeMult } from '../TradeTrafficLayer';
 import { HeroSpriteDrawer } from './HeroSpriteDrawer';
 import { needsSail, getSailDeltas, getSailPartDir, loadSailPartAsync, buildSailLayers } from '../../data/NavalSails';
 
@@ -258,7 +258,9 @@ export class PlayerTourSpriteDrawer {
         //    DE 原生像素 × scale（zoom9 = 0.80；`LegionPhalanxDrawer.drawNaval` 的
         //    `SPRITE_BASE_H(64) × scale × getNavalShipDrawScale(1.0) / 64` 就是这一条）。
         //    原来这里乘了 STRATEGIC_SPRITE_SCALE/STRATEGIC_ARMY_SCALE = 0.5，等于只有战船的一半。
-        const px = o.scale;
+        // 🔴 [2026-11-09 主人令「中式帆船大一点」] 与战略图商船共用同一张单型放大表（`tradeShipSizeMult`），
+        //    同一型船在商队层和玩家环球商船里一样大。
+        const px = o.scale * tradeShipSizeMult(dir);
         const animating = o.moving && asset.action === 'move' && asset.frames > 1;
         const frame = animating ? Math.floor(o.tick / 1000 * MOVE_ANIM_FPS) % asset.frames : 0;
 

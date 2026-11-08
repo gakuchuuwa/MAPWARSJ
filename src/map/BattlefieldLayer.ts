@@ -29,6 +29,37 @@ import type { TerritorySystem } from '../systems/TerritorySystem';
 const BASE_ART_W = 160;
 
 /**
+ * 🔴 [2026-11-09 主人令「战略地图上战场这个据点，在人物上层，请参考其他据点，大中小城看看是如何设计的」]
+ *
+ * 战场照**据点（大中小城）**的层法分两半，美术在人物之下、名字在人物之上：
+ *   据点城墙建筑 `cityPane` **610** ＋ 城名/旗 `labelsPane` **660**，军团 `unitsPane` **620** 夹在中间
+ *   → 战场美术 `battlefieldPane` **617**（据点 610 < 奇观 615 < 战场 617 < **军团 620**）
+ *   → 战场名标牌 `battlefieldLabelPane` **658**（军团之上、城名 660 之下）
+ * 原来整块战场都在 640，军团/玩家走过去被战场美术和名字一起压住。
+ */
+const BATTLEFIELD_PANE = 'battlefieldPane';
+const BATTLEFIELD_LABEL_PANE = 'battlefieldLabelPane';
+/** 名称标牌预留高度（px）：图标盒尺寸照旧留这一条，美术位置与改动前逐像素一致 */
+const LABEL_H = 18;
+
+/**
+ * 一个战场名标牌。
+ *
+ * 🔴 [2026-11-09] 标牌是**裸 DOM**（直接挂在 `battlefieldLabelPane` 里），不是 Leaflet marker。
+ * 实测踩坑：`L.divIcon` 的图标盒（1×1）与被裁的文字不在同一个尺寸里时，浏览器把这块合成为
+ * 独立图层并**按图标盒裁剪**，绝对定位的子元素整块不画（先按 marker 做，标牌全都不显示）；
+ * 裸 div 自己就是标牌本身，不存在「子元素跑出盒子」这回事。
+ */
+interface BattlefieldLabelEl {
+    el: HTMLDivElement;
+    /** 战场真实坐标（避让挪位只在显示层做，不写回数据） */
+    lat: number;
+    lng: number;
+    /** 战场美术盒高（px，未缩放）：标牌竖直落点按它 × `--battlefield-scale` 算 */
+    canvasH: number;
+}
+
+/**
  * 攻城战战场套**据点样式**时的容器尺寸（px）。
  * 据点组装各自算自己的实际包围盒（`buildDe*CityStackHtml` 内部按 baseSize 铺），
  * 这里给一个足够容纳「大城 140 档 + 中心城堡」的固定框，再让容器不裁切内容即可。
@@ -40,6 +71,11 @@ export class BattlefieldLayer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
+    /**
+     * 战场名标牌 —— 独立挂在 **人物之上** 的 `battlefieldLabelPane`。
+     * [2026-11-09 主人令] 与据点同一个思路：城名在 labelsPane(660) 压着军团，战场名同样压着军团。
+     */
+    private labels: Map<string, BattlefieldLabelEl> = new Map();
     private markerFoughtState: Map<string, boolean> = new Map();
     private initialized = false;
     /** 标牌避让的 rAF 去重旗标（同一帧里重绘 + 缩放各叫一次也只排一次） */
@@ -54,12 +90,21 @@ export class BattlefieldLayer {
     constructor(map: L.Map) {
         this.map = map;
 
-        // 专用 pane：压在据点（cityPane 610）之上、奇观（monumentPane 650）之下
-        if (!this.map.getPane('battlefieldPane')) {
-            this.map.createPane('battlefieldPane');
-            const pane = this.map.getPane('battlefieldPane');
+        // 专用 pane：战场**美术**压在据点（cityPane 610）与奇观（monumentPane 615）之上、
+        // **军团（unitsPane 620）之下**；名字另挂 658 的标牌 pane（在军团之上）。
+        // 见文件头 `BATTLEFIELD_PANE` 那段层法。
+        if (!this.map.getPane(BATTLEFIELD_PANE)) {
+            this.map.createPane(BATTLEFIELD_PANE);
+            const pane = this.map.getPane(BATTLEFIELD_PANE);
             if (pane) {
-                pane.style.zIndex = '640';
+                pane.style.zIndex = '617';
+            }
+        }
+        if (!this.map.getPane(BATTLEFIELD_LABEL_PANE)) {
+            this.map.createPane(BATTLEFIELD_LABEL_PANE);
+            const pane = this.map.getPane(BATTLEFIELD_LABEL_PANE);
+            if (pane) {
+                pane.style.zIndex = '658';
             }
         }
 
@@ -84,7 +129,10 @@ export class BattlefieldLayer {
         onBattlefieldFought(() => this.renderBattlefields());
 
         // 随地图缩放，公式与据点（TerritorySystem.updateCityScales）和奇观一致：1.0 + (zoom-9)*0.5
-        this.map.on('zoomend', () => this.updateScale());
+        // 🔴 [2026-11-09] 标牌是裸 DOM（不是 marker），Leaflet 不会替它跟视图：
+        //    `setView`（含同倍率平移）会重置 map pane 并派发 `viewreset`，此时必须自己重算一次图层坐标，
+        //    否则标牌留在旧位置（实测：平移 2400px 后标牌没跟过去）。
+        this.map.on('zoomend viewreset', () => this.updateScale());
         this.updateScale();
     }
 
@@ -92,9 +140,31 @@ export class BattlefieldLayer {
     private updateScale(): void {
         const zoom = this.map.getZoom();
         const scale = Math.max(0, 1.0 + (zoom - 9) * 0.5);
-        this.map.getPane('battlefieldPane')?.style.setProperty('--battlefield-scale', String(scale));
-        // 标牌跟着 scale 变大变小 ⇒ 压不压字的几何变了，重新排一次
+        this.map.getPane(BATTLEFIELD_PANE)?.style.setProperty('--battlefield-scale', String(scale));
+        // 标牌是裸 DOM（不走 marker 自动跟缩放）：图层坐标要自己重算一遍；
+        // 它不跟缩放，但竖直落点要落在**缩放后**的美术下沿 ⇒ 再排一次
+        for (const id of this.labels.keys()) this.positionLabel(id);
         this.scheduleLabelLayout();
+    }
+
+    /** 当前战场美术缩放（美术盒内的 `--battlefield-scale`，标牌落点换算共用） */
+    private battlefieldScale(): number {
+        const raw = this.map.getPane(BATTLEFIELD_PANE)?.style.getPropertyValue('--battlefield-scale') || '';
+        return Math.max(0.01, parseFloat(raw) || 1);
+    }
+
+    /**
+     * 标牌默认位：**marker 坐标点 → 标牌上沿**的屏幕偏移（px）。
+     *
+     * 改动前标牌在美术容器里 `bottom:-18px`，跟 `--battlefield-scale` 一起放大；
+     * 现在搬进独立 pane（和城名一样**文字不缩放**），落点改按缩放后的美术下沿换算：
+     *   dy = (canvasH/2 + 3) × scale − 9
+     * · +3 ＝ 原 `bottom:-18px` 减去标牌自身约 15px 高的一半；
+     * · −9 ＝ 图标盒比美术高 `LABEL_H`(18) 的居中偏移（美术中心比 marker 点高 9px）。
+     * `scale = 1` 时即旧几何 (canvasH − 12) / 2。
+     */
+    private labelBaseY(canvasH: number): number {
+        return Math.round((canvasH / 2 + 3) * this.battlefieldScale() - 9);
     }
 
     /**
@@ -167,6 +237,7 @@ export class BattlefieldLayer {
                 this.layerGroup.removeLayer(marker);
                 this.markers.delete(id);
                 this.markerFoughtState.delete(id);
+                this.removeBattlefieldLabel(id);
             }
         }
 
@@ -207,7 +278,7 @@ export class BattlefieldLayer {
         const useCastle = fought && !!bf.siegeCastleType && !!this.territorySystem;
         const canvasW = useCastle ? SIEGE_CASTLE_BOX_W : BF_REF_W * k;
         const canvasH = useCastle ? SIEGE_CASTLE_BOX_H : BF_REF_H * k;
-        const labelH = 18;
+        const labelH = LABEL_H;
 
         const icon = L.divIcon({
             className: 'battlefield-icon',
@@ -221,24 +292,103 @@ export class BattlefieldLayer {
         const marker = L.marker([bf.lat, bf.lng], {
             icon,
             interactive: true,
-            pane: 'battlefieldPane',
+            pane: BATTLEFIELD_PANE,
         }).addTo(this.layerGroup);
         marker.on('click', () => {
             window.dispatchEvent(new CustomEvent('battlefield-click', { detail: { id: bf.id, name: bf.name } }));
         });
 
+        // 🔴 [2026-11-09 主人令] 名字标牌不在这颗美术 marker 里，单独挂到**人物之上**那一层——
+        //    与据点「建筑在 cityPane(610)、城名在 labelsPane(660)」同一个设计。
+        this.mountBattlefieldLabel(bf, fought, canvasH, fadeIn);
+
         return marker;
+    }
+
+    /**
+     * 挂/换一个战场的名标牌（美术 marker 只管地面与战场形态）。
+     * 位置换算见 `labelBaseY`；重画（打完改名）时先摘旧的再挂新的。
+     */
+    private mountBattlefieldLabel(bf: BattlefieldData, fought: boolean, canvasH: number, fadeIn: boolean): void {
+        this.removeBattlefieldLabel(bf.id);
+
+        // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
+        //    标牌只留地名。
+        // 🔴 [2026-11-08 主人令「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等」]
+        //    未打完 = 纯地名（「伊苏斯」「赤壁」）；打完战毕 = 战役名（「伊苏斯战役」「赤壁之战」）。
+        //    战役名由 `battlefieldBattleName()` 统一给（数据本身是战役名的原样用，纯地名按史补后缀）。
+        const displayName = fought ? battlefieldBattleName(bf) : bf.name;
+
+        const pane = this.map.getPane(BATTLEFIELD_LABEL_PANE);
+        if (!pane) return;
+
+        const el = document.createElement('div');
+        el.className = `bf-label${fadeIn ? ' map-fade-in' : ''}`;
+        el.textContent = displayName;
+        el.style.cssText = [
+            'position:absolute',
+            'left:0',
+            'top:0',
+            'pointer-events:auto',
+            'cursor:pointer',
+            'white-space:nowrap',
+            'text-align:center',
+            'background:linear-gradient(180deg, rgba(30, 20, 18, 0.95) 0%, rgba(14, 10, 9, 0.98) 100%)',
+            'border:1px solid rgba(150, 116, 76, 0.85)',
+            'border-radius:3px',
+            'padding:1px 6px',
+            'color:#e8cfa8',
+            'font-size:11px',
+            'font-weight:bold',
+            'text-shadow:0 1px 2px rgba(0,0,0,0.9)',
+            'box-shadow:0 2px 4px rgba(0,0,0,0.6)',
+        ].join(';');
+        // 点名字和点战场美术是同一件事：打这一场
+        el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            window.dispatchEvent(new CustomEvent('battlefield-click', { detail: { id: bf.id, name: bf.name } }));
+        });
+        pane.appendChild(el);
+
+        this.labels.set(bf.id, { el, lat: bf.lat, lng: bf.lng, canvasH });
+        // 默认位先摆好（避让要等下一帧 rAF 才排，别让标牌先在错地方闪一下）
+        el.style.transform = `translate(-50%, ${this.labelBaseY(canvasH)}px)`;
+        this.positionLabel(bf.id);
+        this.scheduleLabelLayout();
+    }
+
+    /**
+     * 把一颗标牌摆到它战场的**图层坐标**上（`left/top`，pan 时整块 pane 平移，不用管）。
+     * 水平居中与竖向下沿由 `transform`（`labelBaseY`）负责，见 `relayoutLabels`。
+     */
+    private positionLabel(bfId: string): void {
+        const rec = this.labels.get(bfId);
+        if (!rec) return;
+        const p = this.map.latLngToLayerPoint(L.latLng(rec.lat, rec.lng));
+        rec.el.style.left = `${p.x}px`;
+        rec.el.style.top = `${p.y}px`;
+    }
+
+    /** 摘掉一个战场的名标牌（不再显示 / 重画时） */
+    private removeBattlefieldLabel(bfId: string): void {
+        const rec = this.labels.get(bfId);
+        if (rec) {
+            rec.el.remove();
+            this.labels.delete(bfId);
+        }
     }
 
     /**
      * 🔴 [2026-09-24 主人「推罗不能点吗」「我要画路，怎么据点点不了呀」] 画路 / 编辑据点时，
      *    战场标牌不接点击，让点击落到下面的据点上（推罗战场与推罗据点同一坐标，战场层压在据点层之上）。
+     * [2026-11-09] 名字标牌已挪到 658 的独立 pane，同样要让出点击（否则它压着据点却点不到）。
      */
     public setClickThrough(on: boolean): void {
-        this.map.getPane('battlefieldPane')?.classList.toggle('bf-click-through', on);
+        this.map.getPane(BATTLEFIELD_PANE)?.classList.toggle('bf-click-through', on);
+        this.map.getPane(BATTLEFIELD_LABEL_PANE)?.classList.toggle('bf-click-through', on);
     }
 
-    /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 战役名 + 战场形态 */
+    /** 单个战场的**美术** HTML（战场形态 / 攻城战的砦）；名字标牌另挂，见 `mountBattlefieldLabel` */
     private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean, fadeIn = false, morphFadeIn = false): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
@@ -255,13 +405,8 @@ export class BattlefieldLayer {
             ? `<div class="map-fade-in" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">${morphHtml}</div>`
             : morphHtml;
 
-        // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
-        //    标牌只留地名。
-        // 🔴 [2026-09-16 主人定「地标在战场事件结束后加上战场两个字」] —— 已于 2026-11-08 被下一条取代
-        // 🔴 [2026-11-08 主人令「战略地图上战场命名，不要用XXX战场，要用XXX之战，XXXX战役等」]
-        //    未打完 = 纯地名（「伊苏斯」「赤壁」）；打完战毕 = 战役名（「伊苏斯战役」「赤壁之战」）。
-        //    战役名由 `battlefieldBattleName()` 统一给（数据本身是战役名的原样用，纯地名按史补后缀）。
-        const displayName = fought ? battlefieldBattleName(bf) : bf.name;
+        // 名字/战役名的文字已挪去 `mountBattlefieldLabel`（独立标牌，在人物之上）；
+        // 这里只剩地面与战场形态。
 
         const animClass = fadeIn ? ' map-fade-in' : '';
 
@@ -276,27 +421,7 @@ export class BattlefieldLayer {
                 cursor: pointer;
             ">
                 ${morph}
-                <!-- 地名标牌（未打完 = 地名；打完战毕 = 战役名 XXX之战 / XXX战役） -->
-                <div class="bf-label" style="
-                    position: absolute;
-                    bottom: -18px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    white-space: nowrap;
-                    text-align: center;
-                    background: linear-gradient(180deg, rgba(30, 20, 18, 0.95) 0%, rgba(14, 10, 9, 0.98) 100%);
-                    border: 1px solid rgba(150, 116, 76, 0.85);
-                    border-radius: 3px;
-                    padding: 1px 6px;
-                    color: #e8cfa8;
-                    font-size: 11px;
-                    font-weight: bold;
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-                    z-index: 400;
-                ">
-                    ${displayName}
-                </div>
+                <!-- 地名/战役名标牌**不在这里**：另挂 battlefieldLabelPane（658，人物之上），见 mountBattlefieldLabel -->
             </div>
         `;
     }
@@ -306,12 +431,17 @@ export class BattlefieldLayer {
             if (!this.map.hasLayer(this.layerGroup)) {
                 this.map.addLayer(this.layerGroup);
             }
-            // 图层重新上屏后标牌 DOM 才回来，重新排一遍
+            // 标牌是裸 DOM、不在 layerGroup 里：图层开关要单独跟上；重新上屏后重排一遍
+            const pane = this.map.getPane(BATTLEFIELD_LABEL_PANE);
+            if (pane) pane.style.display = '';
+            for (const id of this.labels.keys()) this.positionLabel(id);
             this.scheduleLabelLayout();
         } else {
             if (this.map.hasLayer(this.layerGroup)) {
                 this.map.removeLayer(this.layerGroup);
             }
+            const pane = this.map.getPane(BATTLEFIELD_LABEL_PANE);
+            if (pane) pane.style.display = 'none';
         }
     }
 
@@ -321,7 +451,7 @@ export class BattlefieldLayer {
         this.labelLayoutScheduled = true;
         requestAnimationFrame(() => {
             this.labelLayoutScheduled = false;
-            if (!this.map.getPane('battlefieldPane')) return;
+            if (!this.map.getPane(BATTLEFIELD_LABEL_PANE)) return;
             this.relayoutLabels();
         });
     }
@@ -329,27 +459,27 @@ export class BattlefieldLayer {
     /**
      * 🔴 [2026-10-26 主人令「战略地图上，所有战场的名字不要重叠」] 战场地名标牌**互不压字**。
      *
-     * 做法：先把所有标牌复位到默认位（标记正下方居中）→ 一次性量出各自**屏幕矩形**（已含
-     * `--battlefield-scale` 的缩放）→ 按 `BATTLEFIELDS` 顺序逐个落位：
+     * 做法：先把所有标牌复位到默认位（战场坐标正下方居中，竖直偏移由 `labelBaseY` 给）→
+     * 一次性量出各自**屏幕矩形** → 按 `BATTLEFIELDS` 顺序逐个落位：
      *   默认位空着就原位；被已落位的标牌压住就依次试「下一行 → 上一行 → 右一列 → 左一列 → 外圈」
      *   这些候选位，取第一个不压任何已落位标牌的；全被占（现实中不会）才退回默认位。
-     * 位移量按**屏幕像素**算，再除以 `--battlefield-scale` 写进标牌自己的 transform ——
-     *   标牌在 `scale(var(--battlefield-scale))` 的容器里，除回来才是想要的屏幕位移。
+     * [2026-11-09] 标牌已搬进独立 pane（`battlefieldLabelPane`），**文字不再跟 `--battlefield-scale` 缩放**
+     *   （与城名同一口径），所以位移量就是屏幕像素，不用再除 scale。
      *
-     * 触发：战场重绘（新出现 / 打完改名字与形态）、缩放结束（scale 变）、图层重新显示。
+     * 触发：战场重绘（新出现 / 打完改名字与形态）、缩放结束（美术下沿变了）、图层重新显示。
      * 平移不触发：所有标牌跟着地图一起移，相对位置不变。
      * ⚠️ 这里只管「战场标牌之间」不压字；战场与据点城名之间不归这里（城名在 labelsPane）。
      */
     private relayoutLabels(): void {
-        const pane = this.map.getPane('battlefieldPane');
-        const scale = Math.max(0.01, parseFloat(pane?.style.getPropertyValue('--battlefield-scale') || '') || 1);
-        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number }
+        if (!this.map.getPane(BATTLEFIELD_LABEL_PANE)) return;
+        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number; baseY: number }
         const boxes: LabelBox[] = [];
-        for (const marker of this.markers.values()) {
-            const el = marker.getElement()?.querySelector<HTMLElement>('.bf-label');
-            if (!el) continue;
-            el.style.transform = 'translateX(-50%)';   // 默认位（与 HTML 里写死的那个 transform 一致）
-            boxes.push({ el, w: 0, h: 0, x: 0, y: 0 });
+        for (const rec of this.labels.values()) {
+            const el = rec.el;
+            const baseY = this.labelBaseY(rec.canvasH);
+            // 默认位（与 mountBattlefieldLabel 里写的那个 transform 同一口径）
+            el.style.transform = `translate(-50%, ${baseY}px)`;
+            boxes.push({ el, w: 0, h: 0, x: 0, y: 0, baseY });
         }
         // 量默认位矩形（读 rect 会强制一次布局刷新；只在重绘/缩放时跑，81 个标牌量一次可接受）
         for (const b of boxes) {
@@ -364,7 +494,7 @@ export class BattlefieldLayer {
             for (const el of labelsPane.querySelectorAll<HTMLElement>('.city-label-content')) {
                 const r = el.getBoundingClientRect();
                 if (r.width >= 1 && r.height >= 1) {
-                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top });
+                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top, baseY: 0 });
                 }
             }
         }
@@ -373,7 +503,7 @@ export class BattlefieldLayer {
             for (const el of monumentPane.querySelectorAll<HTMLElement>('.monument-label')) {
                 const r = el.getBoundingClientRect();
                 if (r.width >= 1 && r.height >= 1) {
-                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top });
+                    placed.push({ el, w: r.width, h: r.height, x: r.left, y: r.top, baseY: 0 });
                 }
             }
         }
@@ -396,9 +526,9 @@ export class BattlefieldLayer {
             for (const [cx, cy] of cands) {
                 if (!blocked(b.x + cx, b.y + cy, b.w, b.h)) { dx = cx; dy = cy; found = true; break; }
             }
-            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy });
+            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy, baseY: b.baseY });
             if (found && (dx !== 0 || dy !== 0)) {
-                b.el.style.transform = `translate(calc(-50% + ${(dx / scale).toFixed(1)}px), ${(dy / scale).toFixed(1)}px)`;
+                b.el.style.transform = `translate(calc(-50% + ${dx.toFixed(1)}px), ${(b.baseY + dy).toFixed(1)}px)`;
             }
         }
     }

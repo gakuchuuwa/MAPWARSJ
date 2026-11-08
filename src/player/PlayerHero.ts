@@ -829,8 +829,12 @@ export class PlayerHero {
         if (this.tourIdx >= 0 && chain[this.tourIdx]?.id === hereId) idx = this.tourIdx;
         else idx = chain.findIndex((s) => s.id === hereId);
         const pathOf = (from: string, to: string, by: 'land' | 'sea') => {
+            const direct = roadRegistry.findDirectEdgePath(from, to, by === 'sea');
+            if (direct && direct.coordinates.length >= 2) return direct;
             let res = by === 'land' ? roadRegistry.findLandOnlyPath(from, to) : roadRegistry.findSeaOnlyPath(from, to);
-            if (!res && mode === 'globe') res = roadRegistry.findPath(from, to);
+            if (!res && mode === 'globe') {
+                res = roadRegistry.findDirectEdgePath(from, to) ?? roadRegistry.findPath(from, to);
+            }
             return res && res.coordinates.length >= 2 ? res : null;
         };
         if (idx < 0) {

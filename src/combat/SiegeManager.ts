@@ -1657,6 +1657,16 @@ export class SiegeManager {
      * 统一解析战后行为：destroyAfterBattle > afterBattleChain > afterBattle > 默认驻守
      */
     private resolveChain(siegeData: SiegeData, city: any, army: Army): void {
+        if (
+            army.isDestroyed ||
+            army.scriptMarchExempt ||
+            (army as { __scriptPinned?: boolean }).__scriptPinned ||
+            (army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch ||
+            (army as { isFirstBattleHero?: boolean }).isFirstBattleHero
+        ) {
+            this.consumeMissionComplete(army)?.();
+            return;
+        }
         if (siegeData.destroyAfterBattle) {
             siegeLog(`[SiegeManager] destroyAfterBattle，覆灭 ${army.name}（留 15s 尸体）`);
             army.destroy();
@@ -2022,6 +2032,47 @@ export class SiegeManager {
                 army.ignoreCityCollision = false;
                 army.ignoreUnitCollision = false;
                 this.pendingSieges.delete(armyId);
+            }
+        }
+    }
+
+    /**
+     * 将指定军团从正在进行的攻城战、排队或待开战队列中干净断开：
+     * - 移出第三方攻城排队与 pendingSieges；
+     * - 若该军团正参与某座城的活跃攻城战，中止该场攻城战（不触发胜负结算/占城/覆灭），
+     *   解除同场其余参战军团的战斗姿态并恢复其战前行军，同时唤醒该城排队的第三方军团。
+     */
+    public disconnectArmyFromSiege(armyId: string): void {
+        this.dequeueArmyFromThirdPartyWaiters(armyId);
+        this.pendingSieges.delete(armyId);
+
+        for (const [cityId, battle] of [...this.activeSieges.entries()]) {
+            if (battle.isOver || !battle.hasParticipant(armyId)) continue;
+
+            const city = this.cityManager.getCity(cityId);
+            if (city) {
+                clearSiegeGarrisonBoost(city as typeof city & SiegeGarrisonBoostFields);
+            }
+            battle.abortWithoutSettlement();
+            this.activeSieges.delete(cityId);
+            this.cityManager.stopSiegeEffect(cityId, true);
+
+            for (const u of [...battle.getAttackerUnits(), ...battle.getDefenderUnits()]) {
+                const src = (u.getEntity?.() ?? (u as any).sourceObject) as Army | undefined;
+                if ((u.unitType === 'legion' || u.unitType === 'army') && src && !src.isDestroyed) {
+                    src.clearExternalCombatState?.();
+                    src.setCombatState?.(false);
+                    src.ignoreCityCollision = false;
+                    src.ignoreUnitCollision = false;
+                    src.clearBlocked?.();
+                    if (u.id !== armyId && src.hasSavedMarchState?.()) {
+                        src.resumeMovement?.();
+                    }
+                }
+            }
+
+            if (city) {
+                this.processSiegeThirdPartyWaiters(cityId, city.factionId);
             }
         }
     }

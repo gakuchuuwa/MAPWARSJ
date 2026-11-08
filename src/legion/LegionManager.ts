@@ -660,6 +660,71 @@ export class LegionManager {
         return this.siegeManager?.dequeueArmyFromThirdPartyWaiters?.(armyId) ?? false;
     }
 
+    public abortCitySiege(cityId: string): void {
+        this.siegeManager?.abortCitySiege?.(cityId);
+    }
+
+    /**
+     * 将指定军团从任何正在进行的攻城战、野战或排队状态中干净断开，
+     * 并重置其战斗/受阻/碰撞/战后休整状态，使其可立即接受新行军指令。
+     */
+    public disconnectArmyFromCombat(armyId: string): void {
+        this.siegeManager?.disconnectArmyFromSiege?.(armyId);
+        this.dequeueArmyFromThirdPartyWaiters(armyId);
+
+        if (this.combatSystem) {
+            for (const bf of this.combatSystem.getActiveBattleFields()) {
+                if (bf.isOver || !bf.hasParticipant(armyId)) continue;
+                bf.abortWithoutSettlement();
+                for (const u of [...bf.getAttackerUnits(), ...bf.getDefenderUnits()]) {
+                    const src = (u.getEntity?.() ?? (u as any).sourceObject) as Army | undefined;
+                    if ((u.unitType === 'legion' || u.unitType === 'army') && src && !src.isDestroyed) {
+                        src.clearExternalCombatState?.();
+                        src.setCombatState?.(false);
+                        src.ignoreCityCollision = false;
+                        src.ignoreUnitCollision = false;
+                        src.clearBlocked?.();
+                        if (u.id !== armyId && src.hasSavedMarchState?.()) {
+                            src.resumeMovement?.();
+                        }
+                    }
+                }
+            }
+            for (const b of this.combatSystem.getActiveBattles()) {
+                if (b.isOver || (b.attacker.id !== armyId && b.defender.id !== armyId)) continue;
+                b.isOver = true;
+                for (const u of [b.attacker, b.defender]) {
+                    const src = (u.getEntity?.() ?? (u as any).sourceObject) as Army | undefined;
+                    if (src && !src.isDestroyed) {
+                        src.clearExternalCombatState?.();
+                        src.setCombatState?.(false);
+                        src.ignoreCityCollision = false;
+                        src.ignoreUnitCollision = false;
+                        src.clearBlocked?.();
+                        if (u.id !== armyId && src.hasSavedMarchState?.()) {
+                            src.resumeMovement?.();
+                        }
+                    }
+                }
+            }
+        }
+
+        const army = this.getLegionById(armyId);
+        if (army && !army.isDestroyed) {
+            army.clearExternalCombatState();
+            army.setCombatState(false);
+            army.clearPostBattleRest();
+            army.clearBlocked();
+            army.clearSavedMarchState();
+            army.ignoreCityCollision = false;
+            army.ignoreUnitCollision = false;
+            army.weakCheckAfterBattle = false;
+            army.isRetreatingHome = false;
+            army.setVisible(true);
+            army.setSpeedMultiplier(1.0);
+        }
+    }
+
     /**
      * 触发攻城。返回 'siege' = 正常开战；'skipped' = 已跳过。
      */

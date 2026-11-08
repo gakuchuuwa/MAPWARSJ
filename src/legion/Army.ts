@@ -432,11 +432,13 @@ export class Army implements IBattleUnit {
 
     /** 结束战斗姿态但不触发战后驻留（用于战场收尾、败军清理等） */
     public clearExternalCombatState(): void {
-        if (!this.isExternalCombat && !this.isAttacking) return;
+        if (!this.isExternalCombat && !this.isAttacking && !this.isSiegeAttacker && this.battleSeaLock === null) return;
         this.isExternalCombat = false;
         this.isAttacking = false;
         this.currentBattleType = null;
         this.targetPos = null;
+        this.isSiegeAttacker = false;
+        this.battleSeaLock = null;
         // siegeTargetCityId 不清（理由见 setCombatState：城破后 5s 外推仍需反查城图）
         if (this.marker) {
             const element = this.marker.getElement();
