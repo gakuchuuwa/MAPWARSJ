@@ -1982,7 +1982,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'luoma_catulus': 'antiquity',
     'bfe_harold_godwinson': 'castle',
     'bfe_mstislav_kiev': 'feudal',
-    'bfe_galdan_tseren': 'imperial',
     'bfe_xiaotalin': 'feudal',
     'bfe_fu_rui': 'antiquity',
     'bfe_alutai': 'castle',

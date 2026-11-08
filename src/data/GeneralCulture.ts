@@ -1941,7 +1941,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luoma_catulus': 'ROMA',
     'bfe_harold_godwinson': 'BRITONS',
     'bfe_mstislav_kiev': 'SLAVIC',
-    'bfe_galdan_tseren': 'MONGOL',
     'bfe_xiaotalin': 'XIANBEI',
     'bfe_fu_rui': 'CENTRAL',
     'bfe_alutai': 'XIANBEI',

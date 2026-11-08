@@ -1634,7 +1634,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'luoma_catulus': -3,
     'bfe_harold_godwinson': 11,
     'bfe_mstislav_kiev': 13,
-    'bfe_galdan_tseren': 18,
     'bfe_xiaotalin': 10,
     'bfe_fu_rui': 4,
     'bfe_alutai': 15,

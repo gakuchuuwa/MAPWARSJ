@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔴 [2026-09-14 主人定 / 2026-10-16 校正计数] 二级＝「文明 × 时代」层。
  * 实测（本表逐条统计，2026-10-16 第七批后）：古典时代 63 支 + 封建时代 64 支 + 城堡时代 65 支 + 帝国时代 65 支 = **257** 支。
  * 目标形态：66 个文明 × 4 时代 = 264 支（本批先落中原/河朔/江南/巴蜀/河西/白山黑水/漠北/朝鲜/日本 9 个文明的 36 支）。
@@ -151,8 +151,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_minamoto',
         slots: [
-            { type: 'samurai_elite', count: 2 },
-            { type: 'ninja', count: 3 },
+            { type: 'ninja', count: 2 },
+            { type: 'samurai_elite', count: 3 },
             { type: 'rattan_archer', count: 4 },
         ],
     },
@@ -896,9 +896,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TURTLE_SHIP',
         commanderUnit: 'hero_nobunaga',
         slots: [
-            { type: 'samurai', count: 2 },
-            { type: 'samurai_elite', count: 3 },
-            { type: 'ninja', count: 4 },
+            { type: 'ninja', count: 2 },
+            { type: 'samurai', count: 3 },
+            { type: 'samurai_elite', count: 4 },
         ],
     },
 
@@ -949,7 +949,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'balance_yoke',
-        shipId: 'TRADE_COG',
+        // 🔴 [2026-11-08 主人令「霍克船（hulk）没有被套用，请按历史套用给军团」]
+        //    霍克船（hulk）＝12–15 世纪北海—波罗的海大型单桅帆船，汉萨同盟 14–15 世纪的武装商船／战船主力
+        //    （吕贝克、汉堡、不来梅等汉萨城市与条顿骑士团国同处此海域并肩作战）。
+        //    本条＝城堡日耳曼（北海—波罗的海）核心军团，按史取霍克船；柯克船（TRADE_COG）留给同为汉萨区的
+        //    城堡时代易北河军团（SAXONS），两军团各用一种汉萨船型，不重复。
+        shipId: 'HULK',
         commanderUnit: 'hero_ulrichvonjungingen',
         slots: [
             { type: 'elite_teutonic_knight', count: 4 },

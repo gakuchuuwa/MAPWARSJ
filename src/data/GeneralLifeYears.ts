@@ -1996,7 +1996,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     luoma_catulus: { birth: -280, death: -220, kaoju: '推定' },
     bfe_harold_godwinson: { birth: 1022, death: 1066, kaoju: '推定' },
     bfe_mstislav_kiev: { birth: 1156, death: 1223, kaoju: '推定' },
-    bfe_galdan_tseren: { birth: 1695, death: 1745, kaoju: '推定' },
     bfe_xiaotalin: { birth: 950, death: 1004, kaoju: '推定' },
     bfe_fu_rui: { birth: 350, death: 384, kaoju: '推定' },
     bfe_alutai: { birth: 1370, death: 1434, kaoju: '推定' },

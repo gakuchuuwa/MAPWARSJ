@@ -1,0 +1,1162 @@
+[
+    {
+        "name":  "6月25日(1).WAV",
+        "url":  "/sfx/6%E6%9C%8825%E6%97%A5(1).WAV",
+        "key":  "6月25日(1)",
+        "group":  "其他与测试",
+        "loop":  false,
+        "bytes":  12607566
+    },
+    {
+        "name":  "6月27日.WAV",
+        "url":  "/sfx/6%E6%9C%8827%E6%97%A5.WAV",
+        "key":  "6月27日",
+        "group":  "其他与测试",
+        "loop":  false,
+        "bytes":  4440142
+    },
+    {
+        "name":  "battle_defeat.aud",
+        "url":  "/sfx/battle_defeat.aud",
+        "key":  "battle_defeat",
+        "group":  "胜负与号角",
+        "loop":  false,
+        "bytes":  94979
+    },
+    {
+        "name":  "battle_horn.aud",
+        "url":  "/sfx/battle_horn.aud",
+        "key":  "battle_horn",
+        "group":  "胜负与号角",
+        "loop":  false,
+        "bytes":  110683
+    },
+    {
+        "name":  "battle_loop.aud",
+        "url":  "/sfx/battle_loop.aud",
+        "key":  "battle_loop",
+        "group":  "胜负与号角",
+        "loop":  true,
+        "bytes":  810605
+    },
+    {
+        "name":  "battle_victory.aud",
+        "url":  "/sfx/battle_victory.aud",
+        "key":  "battle_victory",
+        "group":  "胜负与号角",
+        "loop":  false,
+        "bytes":  104802
+    },
+    {
+        "name":  "building_collapse_1.aud",
+        "url":  "/sfx/building_collapse_1.aud",
+        "key":  "building_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  25169
+    },
+    {
+        "name":  "building_collapse_2.aud",
+        "url":  "/sfx/building_collapse_2.aud",
+        "key":  "building_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  46592
+    },
+    {
+        "name":  "building_collapse_3.aud",
+        "url":  "/sfx/building_collapse_3.aud",
+        "key":  "building_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  26169
+    },
+    {
+        "name":  "building_collapse_4.aud",
+        "url":  "/sfx/building_collapse_4.aud",
+        "key":  "building_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  25231
+    },
+    {
+        "name":  "cavalry_march_loop.aud",
+        "url":  "/sfx/cavalry_march_loop.aud",
+        "key":  "cavalry_march_loop",
+        "group":  "行军",
+        "loop":  true,
+        "bytes":  250226
+    },
+    {
+        "name":  "cavalry_march_loop_orig.aud",
+        "url":  "/sfx/cavalry_march_loop_orig.aud",
+        "key":  "cavalry_march_loop_orig",
+        "group":  "行军",
+        "loop":  true,
+        "bytes":  146101
+    },
+    {
+        "name":  "death_horse_1.aud",
+        "url":  "/sfx/death_horse_1.aud",
+        "key":  "death_horse",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  16538
+    },
+    {
+        "name":  "death_horse_2.aud",
+        "url":  "/sfx/death_horse_2.aud",
+        "key":  "death_horse",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  25543
+    },
+    {
+        "name":  "death_horse_3.aud",
+        "url":  "/sfx/death_horse_3.aud",
+        "key":  "death_horse",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  21220
+    },
+    {
+        "name":  "death_horse_4.aud",
+        "url":  "/sfx/death_horse_4.aud",
+        "key":  "death_horse",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  28291
+    },
+    {
+        "name":  "death_horse_5.aud",
+        "url":  "/sfx/death_horse_5.aud",
+        "key":  "death_horse",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  27594
+    },
+    {
+        "name":  "death_infantry_1.aud",
+        "url":  "/sfx/death_infantry_1.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  12920
+    },
+    {
+        "name":  "death_infantry_2.aud",
+        "url":  "/sfx/death_infantry_2.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  15301
+    },
+    {
+        "name":  "death_infantry_3.aud",
+        "url":  "/sfx/death_infantry_3.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  33012
+    },
+    {
+        "name":  "death_infantry_4.aud",
+        "url":  "/sfx/death_infantry_4.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  16759
+    },
+    {
+        "name":  "death_infantry_5.aud",
+        "url":  "/sfx/death_infantry_5.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  28830
+    },
+    {
+        "name":  "death_infantry_6.aud",
+        "url":  "/sfx/death_infantry_6.aud",
+        "key":  "death_infantry",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  9965
+    },
+    {
+        "name":  "elephant_attack_1.aud",
+        "url":  "/sfx/elephant_attack_1.aud",
+        "key":  "elephant_attack",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  23491
+    },
+    {
+        "name":  "elephant_attack_2.aud",
+        "url":  "/sfx/elephant_attack_2.aud",
+        "key":  "elephant_attack",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  21324
+    },
+    {
+        "name":  "elephant_attack_3.aud",
+        "url":  "/sfx/elephant_attack_3.aud",
+        "key":  "elephant_attack",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  16733
+    },
+    {
+        "name":  "elephant_attack_4.aud",
+        "url":  "/sfx/elephant_attack_4.aud",
+        "key":  "elephant_attack",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  17648
+    },
+    {
+        "name":  "elephant_attack_5.aud",
+        "url":  "/sfx/elephant_attack_5.aud",
+        "key":  "elephant_attack",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  17787
+    },
+    {
+        "name":  "elephant_die_1.aud",
+        "url":  "/sfx/elephant_die_1.aud",
+        "key":  "elephant_die",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  30305
+    },
+    {
+        "name":  "elephant_die_2.aud",
+        "url":  "/sfx/elephant_die_2.aud",
+        "key":  "elephant_die",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  25877
+    },
+    {
+        "name":  "elephant_die_3.aud",
+        "url":  "/sfx/elephant_die_3.aud",
+        "key":  "elephant_die",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  21407
+    },
+    {
+        "name":  "elephant_die_4.aud",
+        "url":  "/sfx/elephant_die_4.aud",
+        "key":  "elephant_die",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  31993
+    },
+    {
+        "name":  "elephant_die_5.aud",
+        "url":  "/sfx/elephant_die_5.aud",
+        "key":  "elephant_die",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  17272
+    },
+    {
+        "name":  "explosion_1.aud",
+        "url":  "/sfx/explosion_1.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  25606
+    },
+    {
+        "name":  "explosion_2.aud",
+        "url":  "/sfx/explosion_2.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  23458
+    },
+    {
+        "name":  "explosion_3.aud",
+        "url":  "/sfx/explosion_3.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  23629
+    },
+    {
+        "name":  "explosion_4.aud",
+        "url":  "/sfx/explosion_4.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  24641
+    },
+    {
+        "name":  "explosion_5.aud",
+        "url":  "/sfx/explosion_5.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  24252
+    },
+    {
+        "name":  "explosion_6.aud",
+        "url":  "/sfx/explosion_6.aud",
+        "key":  "explosion",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  23733
+    },
+    {
+        "name":  "flamethrower_fire_1.aud",
+        "url":  "/sfx/flamethrower_fire_1.aud",
+        "key":  "flamethrower_fire",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  12262
+    },
+    {
+        "name":  "flamethrower_fire_2.aud",
+        "url":  "/sfx/flamethrower_fire_2.aud",
+        "key":  "flamethrower_fire",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  10661
+    },
+    {
+        "name":  "flamethrower_fire_3.aud",
+        "url":  "/sfx/flamethrower_fire_3.aud",
+        "key":  "flamethrower_fire",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  12842
+    },
+    {
+        "name":  "flamethrower_fire_4.aud",
+        "url":  "/sfx/flamethrower_fire_4.aud",
+        "key":  "flamethrower_fire",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  18698
+    },
+    {
+        "name":  "flamethrower_fire_5.aud",
+        "url":  "/sfx/flamethrower_fire_5.aud",
+        "key":  "flamethrower_fire",
+        "group":  "大象与火攻",
+        "loop":  false,
+        "bytes":  19040
+    },
+    {
+        "name":  "general_skill.aud",
+        "url":  "/sfx/general_skill.aud",
+        "key":  "general_skill",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  45876
+    },
+    {
+        "name":  "gun_fire_1.aud",
+        "url":  "/sfx/gun_fire_1.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  18784
+    },
+    {
+        "name":  "gun_fire_2.aud",
+        "url":  "/sfx/gun_fire_2.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  18612
+    },
+    {
+        "name":  "gun_fire_3.aud",
+        "url":  "/sfx/gun_fire_3.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  18618
+    },
+    {
+        "name":  "gun_fire_4.aud",
+        "url":  "/sfx/gun_fire_4.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  18423
+    },
+    {
+        "name":  "gun_fire_5.aud",
+        "url":  "/sfx/gun_fire_5.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  18960
+    },
+    {
+        "name":  "gun_fire_6.aud",
+        "url":  "/sfx/gun_fire_6.aud",
+        "key":  "gun_fire",
+        "group":  "火器与爆炸",
+        "loop":  false,
+        "bytes":  19178
+    },
+    {
+        "name":  "land_contact.aud",
+        "url":  "/sfx/land_contact.aud",
+        "key":  "land_contact",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  1010005
+    },
+    {
+        "name":  "march_loop.aud",
+        "url":  "/sfx/march_loop.aud",
+        "key":  "march_loop",
+        "group":  "行军",
+        "loop":  true,
+        "bytes":  289121
+    },
+    {
+        "name":  "melee_hit_1.aud",
+        "url":  "/sfx/melee_hit_1.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  10618
+    },
+    {
+        "name":  "melee_hit_10.aud",
+        "url":  "/sfx/melee_hit_10.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  15590
+    },
+    {
+        "name":  "melee_hit_11.aud",
+        "url":  "/sfx/melee_hit_11.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  16202
+    },
+    {
+        "name":  "melee_hit_12.aud",
+        "url":  "/sfx/melee_hit_12.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  15216
+    },
+    {
+        "name":  "melee_hit_2.aud",
+        "url":  "/sfx/melee_hit_2.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  9069
+    },
+    {
+        "name":  "melee_hit_3.aud",
+        "url":  "/sfx/melee_hit_3.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  11232
+    },
+    {
+        "name":  "melee_hit_4.aud",
+        "url":  "/sfx/melee_hit_4.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  7103
+    },
+    {
+        "name":  "melee_hit_5.aud",
+        "url":  "/sfx/melee_hit_5.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  15509
+    },
+    {
+        "name":  "melee_hit_6.aud",
+        "url":  "/sfx/melee_hit_6.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  8067
+    },
+    {
+        "name":  "melee_hit_7.aud",
+        "url":  "/sfx/melee_hit_7.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  9822
+    },
+    {
+        "name":  "melee_hit_8.aud",
+        "url":  "/sfx/melee_hit_8.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  9559
+    },
+    {
+        "name":  "melee_hit_9.aud",
+        "url":  "/sfx/melee_hit_9.aud",
+        "key":  "melee_hit",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  7517
+    },
+    {
+        "name":  "monk_cast_1.aud",
+        "url":  "/sfx/monk_cast_1.aud",
+        "key":  "monk_cast",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  60561
+    },
+    {
+        "name":  "monk_cast_2.aud",
+        "url":  "/sfx/monk_cast_2.aud",
+        "key":  "monk_cast",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  59687
+    },
+    {
+        "name":  "monk_cast_3.aud",
+        "url":  "/sfx/monk_cast_3.aud",
+        "key":  "monk_cast",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  20438
+    },
+    {
+        "name":  "naval_arrow_fire_1.aud",
+        "url":  "/sfx/naval_arrow_fire_1.aud",
+        "key":  "naval_arrow_fire",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  20572
+    },
+    {
+        "name":  "naval_arrow_fire_2.aud",
+        "url":  "/sfx/naval_arrow_fire_2.aud",
+        "key":  "naval_arrow_fire",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  20889
+    },
+    {
+        "name":  "naval_arrow_fire_3.aud",
+        "url":  "/sfx/naval_arrow_fire_3.aud",
+        "key":  "naval_arrow_fire",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  20891
+    },
+    {
+        "name":  "naval_arrow_fire_4.aud",
+        "url":  "/sfx/naval_arrow_fire_4.aud",
+        "key":  "naval_arrow_fire",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  19822
+    },
+    {
+        "name":  "naval_battle_loop.aud",
+        "url":  "/sfx/naval_battle_loop.aud",
+        "key":  "naval_battle_loop",
+        "group":  "海战",
+        "loop":  true,
+        "bytes":  1352764
+    },
+    {
+        "name":  "naval_cannon_fire_1.aud",
+        "url":  "/sfx/naval_cannon_fire_1.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  22679
+    },
+    {
+        "name":  "naval_cannon_fire_2.aud",
+        "url":  "/sfx/naval_cannon_fire_2.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  22673
+    },
+    {
+        "name":  "naval_cannon_fire_3.aud",
+        "url":  "/sfx/naval_cannon_fire_3.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  18651
+    },
+    {
+        "name":  "naval_cannon_fire_4.aud",
+        "url":  "/sfx/naval_cannon_fire_4.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  18658
+    },
+    {
+        "name":  "naval_cannon_fire_5.aud",
+        "url":  "/sfx/naval_cannon_fire_5.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  18544
+    },
+    {
+        "name":  "naval_cannon_fire_6.aud",
+        "url":  "/sfx/naval_cannon_fire_6.aud",
+        "key":  "naval_cannon_fire",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  19008
+    },
+    {
+        "name":  "naval_cannon_splash_1.aud",
+        "url":  "/sfx/naval_cannon_splash_1.aud",
+        "key":  "naval_cannon_splash",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  47017
+    },
+    {
+        "name":  "naval_cannon_splash_2.aud",
+        "url":  "/sfx/naval_cannon_splash_2.aud",
+        "key":  "naval_cannon_splash",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  31261
+    },
+    {
+        "name":  "naval_cannon_splash_3.aud",
+        "url":  "/sfx/naval_cannon_splash_3.aud",
+        "key":  "naval_cannon_splash",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  26001
+    },
+    {
+        "name":  "naval_cannon_splash_4.aud",
+        "url":  "/sfx/naval_cannon_splash_4.aud",
+        "key":  "naval_cannon_splash",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  39816
+    },
+    {
+        "name":  "naval_explode_1.aud",
+        "url":  "/sfx/naval_explode_1.aud",
+        "key":  "naval_explode",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  39012
+    },
+    {
+        "name":  "naval_explode_2.aud",
+        "url":  "/sfx/naval_explode_2.aud",
+        "key":  "naval_explode",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  38425
+    },
+    {
+        "name":  "naval_explode_3.aud",
+        "url":  "/sfx/naval_explode_3.aud",
+        "key":  "naval_explode",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  38655
+    },
+    {
+        "name":  "naval_explode_4.aud",
+        "url":  "/sfx/naval_explode_4.aud",
+        "key":  "naval_explode",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  38566
+    },
+    {
+        "name":  "naval_march_loop.aud",
+        "url":  "/sfx/naval_march_loop.aud",
+        "key":  "naval_march_loop",
+        "group":  "海战",
+        "loop":  true,
+        "bytes":  1666160
+    },
+    {
+        "name":  "naval_sink_1.aud",
+        "url":  "/sfx/naval_sink_1.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  38621
+    },
+    {
+        "name":  "naval_sink_2.aud",
+        "url":  "/sfx/naval_sink_2.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  38547
+    },
+    {
+        "name":  "naval_sink_3.aud",
+        "url":  "/sfx/naval_sink_3.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  39469
+    },
+    {
+        "name":  "naval_sink_4.aud",
+        "url":  "/sfx/naval_sink_4.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  29604
+    },
+    {
+        "name":  "naval_sink_5.aud",
+        "url":  "/sfx/naval_sink_5.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  35583
+    },
+    {
+        "name":  "naval_sink_6.aud",
+        "url":  "/sfx/naval_sink_6.aud",
+        "key":  "naval_sink",
+        "group":  "海战",
+        "loop":  false,
+        "bytes":  30295
+    },
+    {
+        "name":  "player_march_loop.aud",
+        "url":  "/sfx/player_march_loop.aud",
+        "key":  "player_march_loop",
+        "group":  "行军",
+        "loop":  true,
+        "bytes":  317033
+    },
+    {
+        "name":  "siege_destroyed_1.aud",
+        "url":  "/sfx/siege_destroyed_1.aud",
+        "key":  "siege_destroyed",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  22695
+    },
+    {
+        "name":  "siege_destroyed_2.aud",
+        "url":  "/sfx/siege_destroyed_2.aud",
+        "key":  "siege_destroyed",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  24576
+    },
+    {
+        "name":  "siege_destroyed_3.aud",
+        "url":  "/sfx/siege_destroyed_3.aud",
+        "key":  "siege_destroyed",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  31534
+    },
+    {
+        "name":  "siege_destroyed_4.aud",
+        "url":  "/sfx/siege_destroyed_4.aud",
+        "key":  "siege_destroyed",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  34576
+    },
+    {
+        "name":  "siege_destroyed_5.aud",
+        "url":  "/sfx/siege_destroyed_5.aud",
+        "key":  "siege_destroyed",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  22444
+    },
+    {
+        "name":  "siege_impact_1.aud",
+        "url":  "/sfx/siege_impact_1.aud",
+        "key":  "siege_impact",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  16721
+    },
+    {
+        "name":  "siege_impact_2.aud",
+        "url":  "/sfx/siege_impact_2.aud",
+        "key":  "siege_impact",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  13616
+    },
+    {
+        "name":  "siege_impact_3.aud",
+        "url":  "/sfx/siege_impact_3.aud",
+        "key":  "siege_impact",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  18142
+    },
+    {
+        "name":  "siege_impact_4.aud",
+        "url":  "/sfx/siege_impact_4.aud",
+        "key":  "siege_impact",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  20616
+    },
+    {
+        "name":  "siege_impact_de.aud",
+        "url":  "/sfx/siege_impact_de.aud",
+        "key":  "siege_impact_de",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  12932
+    },
+    {
+        "name":  "siege_launch_1.aud",
+        "url":  "/sfx/siege_launch_1.aud",
+        "key":  "siege_launch",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  25267
+    },
+    {
+        "name":  "siege_launch_2.aud",
+        "url":  "/sfx/siege_launch_2.aud",
+        "key":  "siege_launch",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  33123
+    },
+    {
+        "name":  "siege_launch_3.aud",
+        "url":  "/sfx/siege_launch_3.aud",
+        "key":  "siege_launch",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  37209
+    },
+    {
+        "name":  "siege_launch_4.aud",
+        "url":  "/sfx/siege_launch_4.aud",
+        "key":  "siege_launch",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  59725
+    },
+    {
+        "name":  "skill_baizhan_1.aud",
+        "url":  "/sfx/skill_baizhan_1.aud",
+        "key":  "skill_baizhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  38013
+    },
+    {
+        "name":  "skill_baizhan_2.aud",
+        "url":  "/sfx/skill_baizhan_2.aud",
+        "key":  "skill_baizhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  36382
+    },
+    {
+        "name":  "skill_bingzhan_1.aud",
+        "url":  "/sfx/skill_bingzhan_1.aud",
+        "key":  "skill_bingzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  69000
+    },
+    {
+        "name":  "skill_bingzhan_2.aud",
+        "url":  "/sfx/skill_bingzhan_2.aud",
+        "key":  "skill_bingzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  40442
+    },
+    {
+        "name":  "skill_dizhan_1.aud",
+        "url":  "/sfx/skill_dizhan_1.aud",
+        "key":  "skill_dizhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  55352
+    },
+    {
+        "name":  "skill_dizhan_2.aud",
+        "url":  "/sfx/skill_dizhan_2.aud",
+        "key":  "skill_dizhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  54767
+    },
+    {
+        "name":  "skill_gongzhan_1.aud",
+        "url":  "/sfx/skill_gongzhan_1.aud",
+        "key":  "skill_gongzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  53890
+    },
+    {
+        "name":  "skill_gongzhan_2.aud",
+        "url":  "/sfx/skill_gongzhan_2.aud",
+        "key":  "skill_gongzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  48508
+    },
+    {
+        "name":  "skill_hunzhan_1.aud",
+        "url":  "/sfx/skill_hunzhan_1.aud",
+        "key":  "skill_hunzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  50450
+    },
+    {
+        "name":  "skill_hunzhan_2.aud",
+        "url":  "/sfx/skill_hunzhan_2.aud",
+        "key":  "skill_hunzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  50424
+    },
+    {
+        "name":  "skill_shengzhan_1.aud",
+        "url":  "/sfx/skill_shengzhan_1.aud",
+        "key":  "skill_shengzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  52209
+    },
+    {
+        "name":  "skill_shengzhan_2.aud",
+        "url":  "/sfx/skill_shengzhan_2.aud",
+        "key":  "skill_shengzhan",
+        "group":  "技能与法术",
+        "loop":  false,
+        "bytes":  53271
+    },
+    {
+        "name":  "sword_clank_1.aud",
+        "url":  "/sfx/sword_clank_1.aud",
+        "key":  "sword_clank",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  23401
+    },
+    {
+        "name":  "sword_clank_2.aud",
+        "url":  "/sfx/sword_clank_2.aud",
+        "key":  "sword_clank",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  21627
+    },
+    {
+        "name":  "sword_clank_3.aud",
+        "url":  "/sfx/sword_clank_3.aud",
+        "key":  "sword_clank",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  22664
+    },
+    {
+        "name":  "sword_clank_4.aud",
+        "url":  "/sfx/sword_clank_4.aud",
+        "key":  "sword_clank",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  22448
+    },
+    {
+        "name":  "sword_clank_5.aud",
+        "url":  "/sfx/sword_clank_5.aud",
+        "key":  "sword_clank",
+        "group":  "近战与死亡",
+        "loop":  false,
+        "bytes":  22098
+    },
+    {
+        "name":  "tmp_test.aud",
+        "url":  "/sfx/tmp_test.aud",
+        "key":  "tmp_test",
+        "group":  "其他与测试",
+        "loop":  false,
+        "bytes":  0
+    },
+    {
+        "name":  "tower_arrow_flame_1.aud",
+        "url":  "/sfx/tower_arrow_flame_1.aud",
+        "key":  "tower_arrow_flame",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  29025
+    },
+    {
+        "name":  "tower_arrow_flame_2.aud",
+        "url":  "/sfx/tower_arrow_flame_2.aud",
+        "key":  "tower_arrow_flame",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  29591
+    },
+    {
+        "name":  "tower_arrow_flame_3.aud",
+        "url":  "/sfx/tower_arrow_flame_3.aud",
+        "key":  "tower_arrow_flame",
+        "group":  "弓弩箭矢",
+        "loop":  false,
+        "bytes":  30284
+    },
+    {
+        "name":  "wall_collapse.aud",
+        "url":  "/sfx/wall_collapse.aud",
+        "key":  "wall_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  78660
+    },
+    {
+        "name":  "wall_collapse_1.aud",
+        "url":  "/sfx/wall_collapse_1.aud",
+        "key":  "wall_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  78660
+    },
+    {
+        "name":  "wall_collapse_2.aud",
+        "url":  "/sfx/wall_collapse_2.aud",
+        "key":  "wall_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  66203
+    },
+    {
+        "name":  "wall_collapse_3.aud",
+        "url":  "/sfx/wall_collapse_3.aud",
+        "key":  "wall_collapse",
+        "group":  "攻城与建筑",
+        "loop":  false,
+        "bytes":  41257
+    },
+    {
+        "name":  "weather_blizzard_loop.aud",
+        "url":  "/sfx/weather_blizzard_loop.aud",
+        "key":  "weather_blizzard_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  482637
+    },
+    {
+        "name":  "weather_fog_loop.aud",
+        "url":  "/sfx/weather_fog_loop.aud",
+        "key":  "weather_fog_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  447090
+    },
+    {
+        "name":  "weather_rain_loop.aud",
+        "url":  "/sfx/weather_rain_loop.aud",
+        "key":  "weather_rain_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  693870
+    },
+    {
+        "name":  "weather_sandstorm_loop.aud",
+        "url":  "/sfx/weather_sandstorm_loop.aud",
+        "key":  "weather_sandstorm_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  536777
+    },
+    {
+        "name":  "weather_storm_loop.aud",
+        "url":  "/sfx/weather_storm_loop.aud",
+        "key":  "weather_storm_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  726337
+    },
+    {
+        "name":  "weather_thunder_1.aud",
+        "url":  "/sfx/weather_thunder_1.aud",
+        "key":  "weather_thunder",
+        "group":  "天气",
+        "loop":  false,
+        "bytes":  29058
+    },
+    {
+        "name":  "weather_thunder_2.aud",
+        "url":  "/sfx/weather_thunder_2.aud",
+        "key":  "weather_thunder",
+        "group":  "天气",
+        "loop":  false,
+        "bytes":  41570
+    },
+    {
+        "name":  "weather_thunder_3.aud",
+        "url":  "/sfx/weather_thunder_3.aud",
+        "key":  "weather_thunder",
+        "group":  "天气",
+        "loop":  false,
+        "bytes":  27020
+    },
+    {
+        "name":  "weather_wind_loop.aud",
+        "url":  "/sfx/weather_wind_loop.aud",
+        "key":  "weather_wind_loop",
+        "group":  "天气",
+        "loop":  true,
+        "bytes":  541931
+    },
+    {
+        "name":  "城墙倒塌.WAV",
+        "url":  "/sfx/%E5%9F%8E%E5%A2%99%E5%80%92%E5%A1%8C.WAV",
+        "key":  "城墙倒塌",
+        "group":  "其他与测试",
+        "loop":  false,
+        "bytes":  954446
+    },
+    {
+        "name":  "玩家骑马.WAV",
+        "url":  "/sfx/%E7%8E%A9%E5%AE%B6%E9%AA%91%E9%A9%AC.WAV",
+        "key":  "玩家骑马",
+        "group":  "其他与测试",
+        "loop":  false,
+        "bytes":  3887182
+    }
+]

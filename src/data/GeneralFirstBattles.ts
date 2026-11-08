@@ -11343,7 +11343,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 13300,
         enemyFactionId: 'oirat_ming',
         enemyFactionName: '瓦剌',
-        enemyGeneralId: 'bfe_galdan_tseren',
+        enemyGeneralId: 'dzungar_galedanceling',
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '噶尔丹策零既胜和通泊，势必东掠喀尔喀。我已据光显寺水源，背河列阵、以逸待劳——壮士可愿随我迎头冲击准噶尔中军？' },

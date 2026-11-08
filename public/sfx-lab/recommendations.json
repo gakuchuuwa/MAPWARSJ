@@ -1,0 +1,256 @@
+[
+  {
+    "key": "arrow_fire",
+    "label": "弓箭齐射（陆战）",
+    "status": "replace",
+    "current": {
+      "urls": ["/sfx/naval_arrow_fire_1.aud", "/sfx/naval_arrow_fire_2.aud", "/sfx/naval_arrow_fire_3.aud", "/sfx/naval_arrow_fire_4.aud"],
+      "note": "4 条整段箭雨 · 每条 1.97s · 0.48 音量 · 700ms 全局限流",
+      "gain": 0.48,
+      "cooldownMs": 700
+    },
+    "recommend": {
+      "urls": ["/sfx-lab/assets/single_1.wav", "/sfx-lab/assets/single_2.wav", "/sfx-lab/assets/single_3.wav", "/sfx-lab/assets/single_4.wav"],
+      "note": "同素材切出的 75ms 单发 · 0.55 音量 · 100ms 冷却 · ±6% 音高 · 6 声部 · 左右定位",
+      "gain": 0.55,
+      "cooldownMs": 100,
+      "pitch": 0.06,
+      "pan": 0.8,
+      "voices": 6,
+      "impact": {
+        "urls": ["/sfx-lab/assets/impact_1.wav", "/sfx-lab/assets/impact_2.wav", "/sfx-lab/assets/impact_3.wav"],
+        "chance": 0.55,
+        "gain": 0.3
+      },
+      "volley": {
+        "urls": ["/sfx/naval_arrow_fire_1.aud"],
+        "gain": 0.18,
+        "minShots": 4
+      }
+    },
+    "why": "原素材是「一次齐射」不是「一发」，再按 700ms 全局限流重播，人多人少都一样糊。切成单发后密度才跟人数走，命中声补上打击感。"
+  },
+  {
+    "key": "arrow_impact",
+    "label": "箭矢命中（现库没有）",
+    "status": "add",
+    "current": { "urls": [], "note": "现库无此音效，箭落地/扎盾全静音", "gain": 0.3, "cooldownMs": 80 },
+    "recommend": {
+      "urls": ["/sfx-lab/assets/impact_1.wav", "/sfx-lab/assets/impact_2.wav", "/sfx-lab/assets/impact_3.wav"],
+      "note": "3 条合成闷响 · 0.30 音量 · 落在箭出口 0.28–0.46s 后 · 55% 概率",
+      "gain": 0.3,
+      "cooldownMs": 80,
+      "pitch": 0.08,
+      "pan": 0.7,
+      "voices": 6
+    },
+    "why": "箭飞出去有声音、扎进去没声音，是现在最明显的断层。命中声按 55% 概率播，避免变成机械节拍。"
+  },
+  {
+    "key": "naval_arrow_fire",
+    "label": "海战箭雨",
+    "status": "keep",
+    "current": {
+      "urls": ["/sfx/naval_arrow_fire_1.aud", "/sfx/naval_arrow_fire_2.aud", "/sfx/naval_arrow_fire_3.aud", "/sfx/naval_arrow_fire_4.aud"],
+      "note": "4 条整段箭雨 · 0.65 音量 · 250ms 冷却",
+      "gain": 0.65,
+      "cooldownMs": 250
+    },
+    "recommend": {
+      "urls": ["/sfx/naval_arrow_fire_1.aud", "/sfx/naval_arrow_fire_2.aud", "/sfx/naval_arrow_fire_3.aud", "/sfx/naval_arrow_fire_4.aud"],
+      "note": "素材不动：海战是船与船对射，整段箭雨本来就是对的。只加 ±4% 音高与左右定位",
+      "gain": 0.65,
+      "cooldownMs": 250,
+      "pitch": 0.04,
+      "pan": 0.6,
+      "voices": 4
+    },
+    "why": "同一批素材在陆战是错的、在海战是对的。别一刀切全换，海战保留整段。"
+  },
+  {
+    "key": "tower_arrow_flame",
+    "label": "箭塔火箭",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/tower_arrow_flame_1.aud", "/sfx/tower_arrow_flame_2.aud", "/sfx/tower_arrow_flame_3.aud"],
+      "note": "3 条 · 0.50 音量 · 450ms 冷却",
+      "gain": 0.5,
+      "cooldownMs": 450
+    },
+    "recommend": {
+      "urls": ["/sfx/tower_arrow_flame_1.aud", "/sfx/tower_arrow_flame_2.aud", "/sfx/tower_arrow_flame_3.aud"],
+      "note": "素材不动 · ±5% 音高 · 3 声部 · 按塔位左右定位",
+      "gain": 0.5,
+      "cooldownMs": 450,
+      "pitch": 0.05,
+      "pan": 0.5,
+      "voices": 3
+    },
+    "why": "塔在固定位置，最该有左右声像；多条塔同时开火时用 3 声部压住，不然糊。"
+  },
+  {
+    "key": "melee_hit",
+    "label": "近战命中",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/melee_hit_1.aud", "/sfx/melee_hit_2.aud", "/sfx/melee_hit_3.aud", "/sfx/melee_hit_4.aud", "/sfx/melee_hit_5.aud", "/sfx/melee_hit_6.aud", "/sfx/melee_hit_7.aud", "/sfx/melee_hit_8.aud", "/sfx/melee_hit_9.aud", "/sfx/melee_hit_10.aud", "/sfx/melee_hit_11.aud", "/sfx/melee_hit_12.aud"],
+      "note": "12 条 · 0.35 音量 · 150ms 冷却",
+      "gain": 0.35,
+      "cooldownMs": 150
+    },
+    "recommend": {
+      "urls": ["/sfx/melee_hit_1.aud", "/sfx/melee_hit_2.aud", "/sfx/melee_hit_3.aud", "/sfx/melee_hit_4.aud", "/sfx/melee_hit_5.aud", "/sfx/melee_hit_6.aud", "/sfx/melee_hit_7.aud", "/sfx/melee_hit_8.aud", "/sfx/melee_hit_9.aud", "/sfx/melee_hit_10.aud", "/sfx/melee_hit_11.aud", "/sfx/melee_hit_12.aud"],
+      "note": "素材不动 · 60ms 冷却 · ±4% 音高 · 8 声部 · 随机左右",
+      "gain": 0.33,
+      "cooldownMs": 60,
+      "pitch": 0.04,
+      "pan": 0.9,
+      "voices": 8
+    },
+    "why": "12 条变奏已经很够，问题只在「每条都一样响、都在正中」。加音高和声像就不像机关枪了。"
+  },
+  {
+    "key": "sword_clank",
+    "label": "刀剑相击",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/sword_clank_1.aud", "/sfx/sword_clank_2.aud", "/sfx/sword_clank_3.aud", "/sfx/sword_clank_4.aud", "/sfx/sword_clank_5.aud"],
+      "note": "5 条 · 0.32 音量 · 320ms 冷却",
+      "gain": 0.32,
+      "cooldownMs": 320
+    },
+    "recommend": {
+      "urls": ["/sfx/sword_clank_1.aud", "/sfx/sword_clank_2.aud", "/sfx/sword_clank_3.aud", "/sfx/sword_clank_4.aud", "/sfx/sword_clank_5.aud"],
+      "note": "素材不动 · ±3% 音高 · 6 声部",
+      "gain": 0.32,
+      "cooldownMs": 160,
+      "pitch": 0.03,
+      "pan": 0.7,
+      "voices": 6
+    },
+    "why": "金属声最容易听出重复，±3% 就够；冷却砍半让对砍有密度。"
+  },
+  {
+    "key": "gun_fire",
+    "label": "火器齐射",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/gun_fire_1.aud", "/sfx/gun_fire_2.aud", "/sfx/gun_fire_3.aud", "/sfx/gun_fire_4.aud", "/sfx/gun_fire_5.aud", "/sfx/gun_fire_6.aud"],
+      "note": "6 条 · 0.55 音量 · 150ms 冷却（全库最高）",
+      "gain": 0.55,
+      "cooldownMs": 150
+    },
+    "recommend": {
+      "urls": ["/sfx/gun_fire_1.aud", "/sfx/gun_fire_2.aud", "/sfx/gun_fire_3.aud", "/sfx/gun_fire_4.aud", "/sfx/gun_fire_5.aud", "/sfx/gun_fire_6.aud"],
+      "note": "素材不动 · 0.50 音量 · 4 声部 · ±3% 音高",
+      "gain": 0.5,
+      "cooldownMs": 150,
+      "pitch": 0.03,
+      "pan": 0.6,
+      "voices": 4
+    },
+    "why": "一排火枪同时响会削波，光靠 0.55 压不住；4 声部 + 1/√N 补偿才稳。"
+  },
+  {
+    "key": "explosion",
+    "label": "爆炸",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/explosion_1.aud", "/sfx/explosion_2.aud", "/sfx/explosion_3.aud", "/sfx/explosion_4.aud", "/sfx/explosion_5.aud", "/sfx/explosion_6.aud"],
+      "note": "6 条 · 0.65 音量 · 200ms 冷却",
+      "gain": 0.65,
+      "cooldownMs": 200
+    },
+    "recommend": {
+      "urls": ["/sfx/explosion_1.aud", "/sfx/explosion_2.aud", "/sfx/explosion_3.aud", "/sfx/explosion_4.aud", "/sfx/explosion_5.aud", "/sfx/explosion_6.aud"],
+      "note": "素材不动 · 3 声部 · ±3% 音高 · 按落点定位",
+      "gain": 0.62,
+      "cooldownMs": 200,
+      "pitch": 0.03,
+      "pan": 0.7,
+      "voices": 3
+    },
+    "why": "爆炸是低频大户，叠三层以上就糊且吃动态；限 3 声部比降音量更有效。"
+  },
+  {
+    "key": "siege_impact",
+    "label": "攻城砸击",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/siege_impact_1.aud", "/sfx/siege_impact_2.aud", "/sfx/siege_impact_3.aud", "/sfx/siege_impact_4.aud", "/sfx/siege_impact_de.aud"],
+      "note": "5 条 · 0.62 音量 · 260ms 冷却",
+      "gain": 0.62,
+      "cooldownMs": 260
+    },
+    "recommend": {
+      "urls": ["/sfx/siege_impact_1.aud", "/sfx/siege_impact_2.aud", "/sfx/siege_impact_3.aud", "/sfx/siege_impact_4.aud", "/sfx/siege_impact_de.aud"],
+      "note": "素材不动 · ±3% 音高 · 3 声部 · 按距离衰减并加低通",
+      "gain": 0.6,
+      "cooldownMs": 260,
+      "pitch": 0.03,
+      "pan": 0.6,
+      "voices": 3
+    },
+    "why": "砸在城墙根和砸在屏幕外应该是两个声音；距离低通比单纯调小音量真实。"
+  },
+  {
+    "key": "death_infantry",
+    "label": "步兵阵亡",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/death_infantry_1.aud", "/sfx/death_infantry_2.aud", "/sfx/death_infantry_3.aud", "/sfx/death_infantry_4.aud", "/sfx/death_infantry_5.aud", "/sfx/death_infantry_6.aud"],
+      "note": "6 条 · 0.32 音量 · 2400ms 冷却",
+      "gain": 0.32,
+      "cooldownMs": 2400
+    },
+    "recommend": {
+      "urls": ["/sfx/death_infantry_1.aud", "/sfx/death_infantry_2.aud", "/sfx/death_infantry_3.aud", "/sfx/death_infantry_4.aud", "/sfx/death_infantry_5.aud", "/sfx/death_infantry_6.aud"],
+      "note": "素材不动 · 700ms 冷却 · 4 声部 · ±4% 音高",
+      "gain": 0.3,
+      "cooldownMs": 700,
+      "pitch": 0.04,
+      "pan": 0.8,
+      "voices": 4
+    },
+    "why": "2.4 秒才准响一次，乱战时几乎听不到阵亡；放到 700ms + 4 声部，既有存在感又不会满屏惨叫。"
+  },
+  {
+    "key": "elephant_attack",
+    "label": "战象攻击",
+    "status": "params",
+    "current": {
+      "urls": ["/sfx/elephant_attack_1.aud", "/sfx/elephant_attack_2.aud", "/sfx/elephant_attack_3.aud", "/sfx/elephant_attack_4.aud", "/sfx/elephant_attack_5.aud"],
+      "note": "5 条 · 0.65 音量 · 1200ms 冷却",
+      "gain": 0.65,
+      "cooldownMs": 1200
+    },
+    "recommend": {
+      "urls": ["/sfx/elephant_attack_1.aud", "/sfx/elephant_attack_2.aud", "/sfx/elephant_attack_3.aud", "/sfx/elephant_attack_4.aud", "/sfx/elephant_attack_5.aud"],
+      "note": "素材不动 · 600ms 冷却 · 2 声部 · ±3% 音高 · 距离低通",
+      "gain": 0.62,
+      "cooldownMs": 600,
+      "pitch": 0.03,
+      "pan": 0.6,
+      "voices": 2
+    },
+    "why": "象吼是低频长音，两头以上就必须限声部，否则整段低频糊住其他所有音效。"
+  },
+  {
+    "key": "battle_horn",
+    "label": "开战号角",
+    "status": "keep",
+    "current": {
+      "urls": ["/sfx/battle_horn.aud"],
+      "note": "1 条 · 0.60 音量 · 3000ms 冷却",
+      "gain": 0.6,
+      "cooldownMs": 3000
+    },
+    "recommend": {
+      "urls": ["/sfx/battle_horn.aud"],
+      "note": "不动。号角是叙事信号，不该随机、不该定位",
+      "gain": 0.6,
+      "cooldownMs": 3000
+    },
+    "why": "这类「一次性事件音」保持原样最好，别为了统一而乱加处理。"
+  }
+]

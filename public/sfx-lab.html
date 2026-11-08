@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>音效试听台 · MAPWARSJ</title>
+<style>
+  :root{
+    --bg:#0f0d0a; --panel:#181510; --panel2:#211d16; --line:#332c21;
+    --ink:#ece0c8; --dim:#9a8f7b; --gold:#d8b95e; --gold2:#f0d38a;
+    --red:#d5523f; --green:#7fbf6a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:
+      radial-gradient(1200px 600px at 50% -10%, #2a2113 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, #1d1710 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font:14px/1.6 "Segoe UI","Microsoft YaHei",-apple-system,sans-serif;
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  header{
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    padding:14px 20px 12px; border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#1a1610cc,#0f0d0acd); backdrop-filter:blur(6px);
+    position:sticky; top:0; z-index:10;
+  }
+  h1{font-size:17px; margin:0; letter-spacing:.08em; color:var(--gold2); font-weight:600}
+  h1 small{color:var(--dim); font-weight:400; letter-spacing:0; margin-left:10px; font-size:12px}
+  .tabs{display:flex; gap:6px; margin-left:auto}
+  .tab{
+    padding:6px 14px; border:1px solid var(--line); border-radius:6px; cursor:pointer;
+    background:#16130e; color:var(--dim); font-size:13px; user-select:none;
+  }
+  .tab.on{background:#2a2216; color:var(--gold2); border-color:#5a4826}
+  .master{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--dim)}
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:#3a3124; outline:none; width:130px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:12px; height:12px; border-radius:50%;
+    background:var(--gold); border:1px solid #6b5423; cursor:pointer;
+  }
+  main{flex:1; display:flex; min-height:0; gap:0}
+  .pane{overflow:auto; padding:16px 20px 120px; flex:1}
+  .pane[hidden]{display:none}
+  .searchbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap}
+  .searchbar input[type=text]{
+    flex:1; min-width:200px; background:#13100c; border:1px solid var(--line); color:var(--ink);
+    padding:8px 12px; border-radius:6px; outline:none; font-size:13px;
+  }
+  .searchbar input[type=text]:focus{border-color:#5a4826}
+  .hint{color:var(--dim); font-size:12px}
+  .group{margin:18px 0 8px}
+  .group h2{
+    font-size:12px; letter-spacing:.14em; color:var(--gold); margin:0 0 8px;
+    text-transform:uppercase; display:flex; align-items:center; gap:8px; font-weight:600;
+  }
+  .group h2::after{content:""; flex:1; height:1px; background:linear-gradient(90deg,#3a3124,transparent)}
+  .group h2 span{color:var(--dim); letter-spacing:0; font-weight:400; font-size:11px}
+  .rows{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:4px 12px}
+  .row{
+    display:grid; grid-template-columns:26px 1fr auto; gap:10px; align-items:center;
+    padding:6px 8px; border-radius:5px; cursor:pointer; border:1px solid transparent;
+  }
+  .row:hover{background:#1c1811; border-color:#2c2519}
+  .row.sel{background:#241d12; border-color:#5a4826}
+  .row .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px}
+  .row .meta{color:var(--dim); font-size:11px; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .badge{
+    display:inline-block; font-size:10px; padding:0 5px; border-radius:3px; margin-left:6px;
+    border:1px solid #4a3d24; color:#c8a962; vertical-align:1px;
+  }
+  .badge.loop{border-color:#2f4a2b; color:var(--green)}
+  .playdot{
+    width:22px; height:22px; border-radius:50%; border:1px solid #4a3d24; display:grid; place-items:center;
+    font-size:9px; color:var(--gold); background:#1a150e;
+  }
+  .row:hover .playdot{background:#3a2e19}
+  .row.err .meta{color:var(--red)}
+
+  /* ------- 工作台 ------- */
+  .bench{display:grid; grid-template-columns:minmax(300px,380px) 1fr; gap:18px; align-items:start}
+  @media (max-width:900px){ .bench{grid-template-columns:1fr} }
+  .card{
+    background:linear-gradient(180deg,#1b1710,#14110c); border:1px solid var(--line);
+    border-radius:10px; padding:14px 16px 16px;
+  }
+  .card h3{margin:0 0 12px; font-size:13px; color:var(--gold2); letter-spacing:.06em; font-weight:600}
+  .ctl{display:grid; grid-template-columns:96px 1fr 62px; gap:10px; align-items:center; margin:9px 0; font-size:12px; color:var(--dim)}
+  .ctl output{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums}
+  .ctl input[type=range]{width:100%}
+  .btns{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  button{
+    background:#241d13; color:var(--ink); border:1px solid #4a3d24; border-radius:6px;
+    padding:7px 13px; font-size:12.5px; cursor:pointer; font-family:inherit;
+  }
+  button:hover{background:#2f2618; border-color:#6b5423}
+  button.primary{background:linear-gradient(180deg,#4a3a1d,#372b16); color:var(--gold2); border-color:#6b5423}
+  button.ghost{background:transparent; color:var(--dim)}
+  button:disabled{opacity:.4; cursor:default}
+  .statline{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px}
+  .stat{background:#13100c; border:1px solid var(--line); border-radius:6px; padding:8px 10px}
+  .stat b{display:block; font-size:18px; color:var(--gold2); font-variant-numeric:tabular-nums; font-weight:600}
+  .stat span{font-size:11px; color:var(--dim)}
+  .scope{width:100%; height:110px; display:block; background:#0c0a07; border:1px solid var(--line); border-radius:6px}
+  .meter{height:8px; background:#0c0a07; border:1px solid var(--line); border-radius:4px; overflow:hidden; margin-top:8px}
+  .meter i{display:block; height:100%; width:0; background:linear-gradient(90deg,#3f7a34,#c9b458,#d5523f); transition:width .06s linear}
+  .log{
+    margin-top:12px; height:132px; overflow:auto; font:11.5px/1.5 ui-monospace,Consolas,monospace;
+    color:var(--dim); background:#0c0a07; border:1px solid var(--line); border-radius:6px; padding:8px 10px;
+  }
+  .log div{white-space:pre}
+  .log .hl{color:var(--gold2)}
+  .note{color:var(--dim); font-size:12px; margin-top:10px; line-height:1.7}
+  .note code{color:#c8a962; background:#1a150e; padding:1px 4px; border-radius:3px}
+
+  /* ------- 底部播放条 ------- */
+  footer{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    display:grid; grid-template-columns:minmax(160px,260px) 1fr auto; gap:16px; align-items:center;
+    padding:10px 20px; border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#16130ed9,#0d0b08f2); backdrop-filter:blur(8px);
+  }
+  .now{min-width:0}
+  .now .t{font-size:12px; color:var(--gold2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .now .s{font-size:11px; color:var(--dim); font-variant-numeric:tabular-nums}
+  #wave{width:100%; height:56px; display:block; background:#0b0906; border:1px solid var(--line); border-radius:5px}
+  .footctl{display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--dim)}
+  .footctl label{display:flex; align-items:center; gap:6px}
+  .toggle{
+    border:1px solid #3a3124; border-radius:5px; padding:4px 9px; cursor:pointer; user-select:none;
+    background:#16130e; font-size:11.5px; color:var(--dim);
+  }
+  .toggle.on{color:var(--gold2); border-color:#6b5423; background:#2a2216}
+  .empty{color:var(--dim); font-size:12px}
+
+  /* ------- 对照与替换 ------- */
+  .cmpGrid{display:grid; gap:12px}
+  .cmp{
+    background:linear-gradient(180deg,#1b1710,#14110c); border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px 14px;
+  }
+  .cmp.adopted{border-color:#6b5423; box-shadow:inset 0 0 0 1px #3a2e19}
+  .cmpHead{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:9px}
+  .cmpTitle{font-size:14px; color:var(--gold2)}
+  .cmpKey{font:11px ui-monospace,Consolas,monospace; color:#6f6656}
+  .chip{font-size:10.5px; padding:1px 8px; border-radius:10px; border:1px solid; letter-spacing:.02em}
+  .chip.replace{border-color:#6b5423; color:#f0d38a; background:#2a2216}
+  .chip.add{border-color:#2f4a2b; color:#9ad487; background:#17210f}
+  .chip.params{border-color:#3a3f55; color:#a9b6e0; background:#161a24}
+  .chip.keep{border-color:#3a3124; color:#9a8f7b; background:#171410}
+  .cmpBody{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width:820px){ .cmpBody{grid-template-columns:1fr} }
+  .side{background:#13100c; border:1px solid #2a2419; border-radius:8px; padding:9px 11px 10px}
+  .side.rec{border-color:#3d3220; background:#151108}
+  .side h4{margin:0 0 5px; font-size:11.5px; color:var(--dim); font-weight:600; letter-spacing:.04em}
+  .side.rec h4{color:#c9b462}
+  .side p{margin:0 0 9px; font-size:12px; color:var(--ink); line-height:1.55; min-height:36px}
+  .side .n{font-size:11px; color:var(--dim); margin-bottom:8px}
+  .side button{padding:5px 10px; font-size:11.5px}
+  .cmpFoot{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .why{font-size:12px; color:var(--dim); line-height:1.65; margin-top:9px; border-left:2px solid #3a3124; padding-left:10px}
+  .adopt{font-size:12px; color:var(--dim); display:flex; gap:6px; align-items:center; cursor:pointer; user-select:none}
+  .adopt input{accent-color:#d8b95e}
+  .playState{font-size:11px; color:var(--gold2); min-width:52px}
+</style>
+</head>
+<body>
+<header>
+  <h1>音效试听台 <small>MAPWARSJ · 独立页面，不改游戏</small></h1>
+  <div class="tabs">
+    <div class="tab on" data-tab="library">音效库</div>
+    <div class="tab" data-tab="compare">对照与替换</div>
+    <div class="tab" data-tab="bench">射箭工作台</div>
+  </div>
+  <div class="master">
+    <span>主音量</span>
+    <input id="masterVol" type="range" min="0" max="1" step="0.01" value="0.8">
+    <output id="masterVolOut">80%</output>
+  </div>
+</header>
+
+<main>
+  <!-- ================= 音效库 ================= -->
+  <section class="pane" id="pane-library">
+    <div class="searchbar">
+      <input id="q" type="text" placeholder="搜索文件名 / 分组（例：arrow、melee、weather）">
+      <span class="hint" id="countHint"></span>
+      <button class="ghost" id="stopAll">全部停止</button>
+    </div>
+    <div id="groups"></div>
+    <div class="note">
+      点任意一行试听；底部可调音高、单次音量、循环。文件名后缀 <code>_1…_n</code> 是同一逻辑音效的多个变奏。
+      <br>素材就是游戏里那批 <code>.aud</code>（ogg 改后缀），解码走 <code>decodeAudioData</code>，不解码的东西不占内存。
+    </div>
+  </section>
+
+  <!-- ================= 射箭工作台 ================= -->
+  <section class="pane" id="pane-bench" hidden>
+    <div class="bench">
+      <div class="card">
+        <h3>齐射参数</h3>
+        <div class="ctl"><span>弓手人数</span><input id="pArchers" type="range" min="1" max="24" step="1" value="12"><output id="oArchers"></output></div>
+        <div class="ctl"><span>单发音量</span><input id="pGain" type="range" min="0" max="1.5" step="0.01" value="0.55"><output id="oGain"></output></div>
+        <div class="ctl"><span>音高随机</span><input id="pPitch" type="range" min="0" max="0.15" step="0.005" value="0.06"><output id="oPitch"></output></div>
+        <div class="ctl"><span>射速冷却</span><input id="pCd" type="range" min="40" max="400" step="10" value="100"><output id="oCd"></output></div>
+        <div class="ctl"><span>并发上限</span><input id="pVoices" type="range" min="1" max="12" step="1" value="6"><output id="oVoices"></output></div>
+        <div class="ctl"><span>命中声概率</span><input id="pHit" type="range" min="0" max="1" step="0.05" value="0.55"><output id="oHit"></output></div>
+        <div class="ctl"><span>左右声像</span><input id="pPan" type="range" min="0" max="1" step="0.05" value="0.8"><output id="oPan"></output></div>
+        <div class="ctl"><span>齐射层</span><input id="pLayer" type="range" min="0" max="1" step="1" value="1"><output id="oLayer"></output></div>
+
+        <div class="btns">
+          <button class="ghost" id="playOld">试听「现状」5 秒</button>
+          <button class="primary" id="playNew">试听「新方案」5 秒</button>
+          <button id="stopSim" disabled>停止</button>
+        </div>
+        <div class="btns">
+          <button class="ghost" id="copyJson">复制参数 JSON</button>
+        </div>
+        <div class="statline">
+          <div class="stat"><b id="sShots">0</b><span>发出箭数</span></div>
+          <div class="stat"><b id="sDrop">0</b><span>被限流</span></div>
+          <div class="stat"><b id="sPeak">0</b><span>峰值并发</span></div>
+          <div class="stat"><b id="sRate">0</b><span>发/秒</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>实时电平 / 事件</h3>
+        <canvas id="scope" class="scope" width="1200" height="220"></canvas>
+        <div class="meter"><i id="meterBar"></i></div>
+        <div class="log" id="log"></div>
+        <div class="note">
+          「现状」＝游戏里现在那条 <code>arrow_fire</code>：0.48 音量、700ms 全局限流、每次重放整段 1.97s 箭雨。
+          <br>「新方案」＝从同一批素材切出的 75ms 单发 + 音高抖动 + 左右定位 + 并发上限 + 命中层，齐射人数多时才叠一层原箭雨。
+          <br>参数调好后点「复制参数 JSON」，把那段发我，我按它写进 <code>AudioManager</code>。
+        </div>
+      </div>
+    </div>
+  </section>  <!-- ================= 对照与替换 ================= -->
+  <section class="pane" id="pane-compare" hidden>
+    <div class="searchbar">
+      <span class="hint">左「现有」＝游戏里现在这条；右「推荐」＝建议替换的素材或参数。可逐条 A/B 试听，勾「采用」后导出清单。</span>
+      <span class="hint" id="cmpStatus"></span>
+      <button class="ghost" id="adoptAll">全部采用（保留项除外）</button>
+      <button class="primary" id="exportAdopt">导出采用清单</button>
+    </div>
+    <div class="cmpGrid" id="cmpList"></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="now">
+    <div class="t" id="nowName">未选择</div>
+    <div class="s" id="nowStat">—</div>
+  </div>
+  <canvas id="wave" width="1600" height="120"></canvas>
+  <div class="footctl">
+    <button class="primary" id="replay">重播</button>
+    <div class="toggle" id="loopBtn">循环</div>
+    <label>音高 <input id="rate" type="range" min="0.5" max="1.6" step="0.01" value="1"><output id="rateOut">1.00</output></label>
+    <label>音量 <input id="gain" type="range" min="0" max="1.5" step="0.01" value="1"><output id="gainOut">100%</output></label>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------------- 基础状态 ----------------
+  const S = {
+    ctx: null, master: null, comp: null, analyser: null, meterBuf: null,
+    buffers: new Map(),        // url -> AudioBuffer
+    decoding: new Map(),       // url -> Promise
+    manifest: [],
+    selected: null,
+    loopTimer: 0,
+    liveSources: new Set(),
+    masterVol: 0.8,
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function ensureAudio() {
+    if (S.ctx) {
+      if (S.ctx.state === 'suspended') void S.ctx.resume();
+      return S.ctx;
+    }
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new Ctx({ latencyHint: 'interactive' });
+    const master = ctx.createGain();
+    master.gain.value = S.masterVol;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -6;
+    comp.knee.value = 6;
+    comp.ratio.value = 8;
+    comp.attack.value = 0.003;
+    comp.release.value = 0.25;
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.6;
+    master.connect(comp);
+    comp.connect(analyser);
+    analyser.connect(ctx.destination);
+    S.ctx = ctx; S.master = master; S.comp = comp; S.analyser = analyser;
+    S.meterBuf = new Float32Array(analyser.fftSize);
+    return ctx;
+  }
+
+  // ---------------- 解码 ----------------
+  function loadBuffer(url) {
+    const ctx = ensureAudio();
+    if (S.buffers.has(url)) return Promise.resolve(S.buffers.get(url));
+    if (S.decoding.has(url)) return S.decoding.get(url);
+    const p = fetch(url, { cache: 'force-cache' })
+      .then((r) => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.arrayBuffer();
+      })
+      .then((ab) => new Promise((res, rej) => {
+        // 老 Safari 只接受回调形式
+        const ret = ctx.decodeAudioData(ab, res, rej);
+        if (ret && typeof ret.then === 'function') ret.then(res, rej);
+      }))
+      .then((buf) => {
+        S.buffers.set(url, buf);
+        S.decoding.delete(url);
+        return buf;
+      })
+      .catch((err) => {
+        S.decoding.delete(url);
+        throw err;
+      });
+    S.decoding.set(url, p);
+    return p;
+  }
+
+  function statsOf(buf) {
+    let peak = 0, sum = 0, n = 0;
+    for (let c = 0; c < buf.numberOfChannels; c++) {
+      const d = buf.getChannelData(c);
+      for (let i = 0; i < d.length; i += 7) {
+        const v = Math.abs(d[i]);
+        if (v > peak) peak = v;
+        sum += v * v; n++;
+      }
+    }
+    const rms = Math.sqrt(sum / Math.max(1, n));
+    const db = (v) => (v > 0 ? 20 * Math.log10(v) : -Infinity);
+    return { dur: buf.duration, peakDb: db(peak), rmsDb: db(rms) };
+  }
+
+  // ---------------- 播放 ----------------
+  function playBuffer(buf, opts = {}) {
+    const ctx = ensureAudio();
+    const t0 = opts.when ?? (ctx.currentTime + 0.005);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = opts.rate ?? 1;
+    if (opts.loop) src.loop = true;
+    const g = ctx.createGain();
+    g.gain.value = Math.max(0, opts.gain ?? 1);
+    src.connect(g);
+    let out = g;
+    if (ctx.createStereoPanner) {
+      const p = ctx.createStereoPanner();
+      p.pan.value = Math.max(-1, Math.min(1, opts.pan ?? 0));
+      g.connect(p);
+      out = p;
+    }
+    out.connect(S.master);
+    src.start(t0);
+    if (!opts.loop) src.stop(t0 + buf.duration / Math.max(0.01, src.playbackRate.value) + 0.05);
+    S.liveSources.add(src);
+    src.onended = () => { S.liveSources.delete(src); try { src.disconnect(); } catch (_) {} };
+    return src;
+  }
+
+  function stopAllSources() {
+    for (const s of S.liveSources) { try { s.stop(); } catch (_) {} }
+    S.liveSources.clear();
+    clearInterval(S.loopTimer); S.loopTimer = 0;
+  }
+
+  // ---------------- 波形 ----------------
+  function drawWave(canvas, buf) {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = canvas.clientWidth || 600;
+    const h = canvas.clientHeight || 56;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    const c = canvas.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#0b0906';
+    c.fillRect(0, 0, w, h);
+    c.strokeStyle = '#2e2820';
+    c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w, h / 2); c.stroke();
+    if (!buf) return;
+    const step = Math.max(1, Math.floor(buf.length / w));
+    const ch = buf.getChannelData(0);
+    const mid = h / 2;
+    c.fillStyle = '#c8a962';
+    for (let x = 0; x < w; x++) {
+      let mn = 1, mx = -1;
+      const start = x * step;
+      for (let i = 0; i < step; i += 4) {
+        const v = ch[start + i] || 0;
+        if (v < mn) mn = v;
+        if (v > mx) mx = v;
+      }
+      const y1 = mid - mx * mid * 0.92;
+      const y2 = mid - mn * mid * 0.92;
+      c.fillRect(x, y1, 1, Math.max(1, y2 - y1));
+    }
+  }
+
+  // ---------------- 音效库 ----------------
+  function fmtDb(v) { return Number.isFinite(v) ? v.toFixed(1) + ' dB' : '—'; }
+  function fmtDur(v) { return v >= 1 ? v.toFixed(2) + 's' : Math.round(v * 1000) + 'ms'; }
+
+  function renderLibrary() {
+    const q = $('q').value.trim().toLowerCase();
+    const list = S.manifest.filter((it) => {
+      if (!q) return true;
+      return (it.name + ' ' + it.key + ' ' + it.group).toLowerCase().includes(q);
+    });
+    $('countHint').textContent = `${list.length} / ${S.manifest.length} 个文件`;
+    const byGroup = new Map();
+    for (const it of list) {
+      if (!byGroup.has(it.group)) byGroup.set(it.group, []);
+      byGroup.get(it.group).push(it);
+    }
+    const root = $('groups');
+    root.textContent = '';
+    for (const [group, items] of byGroup) {
+      const sec = document.createElement('section');
+      sec.className = 'group';
+      const h = document.createElement('h2');
+      h.innerHTML = '';
+      h.append(document.createTextNode(group));
+      const sp = document.createElement('span');
+      sp.textContent = ' ' + items.length;
+      h.append(sp);
+      sec.append(h);
+      const rows = document.createElement('div');
+      rows.className = 'rows';
+      for (const it of items) rows.append(makeRow(it));
+      sec.append(rows);
+      root.append(sec);
+    }
+    if (!list.length) {
+      const p = document.createElement('div');
+      p.className = 'empty';
+      p.textContent = '没有匹配的文件';
+      root.append(p);
+    }
+  }
+
+  function makeRow(it) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.dataset.url = it.url;
+    const dot = document.createElement('div');
+    dot.className = 'playdot';
+    dot.textContent = '▶';
+    const nm = document.createElement('div');
+    nm.className = 'nm';
+    nm.textContent = it.name;
+    if (it.loop) {
+      const b = document.createElement('span');
+      b.className = 'badge loop';
+      b.textContent = 'loop';
+      nm.append(b);
+    }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = '—';
+    row.append(dot, nm, meta);
+    row.addEventListener('click', () => selectAndPlay(it, row));
+    return row;
+  }
+
+  async function selectAndPlay(it, row) {
+    document.querySelectorAll('.row.sel').forEach((el) => el.classList.remove('sel'));
+    if (row) row.classList.add('sel');
+    S.selected = it;
+    $('nowName').textContent = it.name;
+    $('nowStat').textContent = '解码中…';
+    stopSim();
+    stopAllSources();
+    try {
+      const buf = await loadBuffer(it.url);
+      const st = statsOf(buf);
+      if (row) row.querySelector('.meta').textContent =
+        `${fmtDur(st.dur)} · 峰${st.peakDb.toFixed(1)}dB`;
+      $('nowStat').textContent =
+        `${fmtDur(st.dur)} · 峰 ${fmtDb(st.peakDb)} · RMS ${fmtDb(st.rmsDb)} · ${(it.bytes / 1024).toFixed(0)}KB`;
+      drawWave($('wave'), buf);
+      startSelectedPlayback(buf);
+    } catch (err) {
+      if (row) { row.classList.add('err'); row.querySelector('.meta').textContent = '解码失败'; }
+      $('nowStat').textContent = '解码失败：' + (err && err.message ? err.message : err);
+    }
+  }
+
+  function startSelectedPlayback(buf) {
+    stopAllSources();
+    const rate = Number($('rate').value);
+    const gain = Number($('gain').value);
+    const loop = $('loopBtn').classList.contains('on');
+    playBuffer(buf, { rate, gain, loop });
+    if (loop) {
+      // 循环就交给 BufferSource.loop，这里不再重复调度
+    }
+  }
+
+  // ---------------- 射箭工作台 ----------------
+  const SIM = {
+    running: false,
+    mode: 'B',
+    endAt: 0,
+    archers: [],
+    lastFireAt: -1,
+    voices: [],
+    shots: 0, dropped: 0, peakVoices: 0,
+    startedAt: 0,
+    recent: [],       // 最近开火时间，用于判断齐射层
+    lastLayerAt: -1,
+    timer: 0,
+    raf: 0,
+  };
+
+  const ARROW = {
+    singles: ['/sfx-lab/assets/single_1.wav', '/sfx-lab/assets/single_2.wav', '/sfx-lab/assets/single_3.wav', '/sfx-lab/assets/single_4.wav'],
+    impacts: ['/sfx-lab/assets/impact_1.wav', '/sfx-lab/assets/impact_2.wav', '/sfx-lab/assets/impact_3.wav'],
+    volley: ['/sfx/naval_arrow_fire_1.aud', '/sfx/naval_arrow_fire_2.aud', '/sfx/naval_arrow_fire_3.aud', '/sfx/naval_arrow_fire_4.aud'],
+    cache: new Map(),
+  };
+
+  async function preloadArrows() {
+    $('log').textContent = '预载射箭素材…';
+    const urls = [...ARROW.singles, ...ARROW.impacts, ...ARROW.volley];
+    const bufs = await Promise.all(urls.map((u) => loadBuffer(u).catch(() => null)));
+    urls.forEach((u, i) => { if (bufs[i]) ARROW.cache.set(u, bufs[i]); });
+    const ok = urls.filter((u) => ARROW.cache.has(u)).length;
+    log(`预载完成 ${ok}/${urls.length}`);
+  }
+
+  function pick(urls) { return urls[Math.floor(Math.random() * urls.length)]; }
+
+  function log(msg, cls) {
+    const el = document.createElement('div');
+    if (cls) el.className = cls;
+    el.textContent = msg;
+    const box = $('log');
+    box.append(el);
+    while (box.childElementCount > 120) box.firstElementChild.remove();
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function ctl() {
+    return {
+      archers: Number($('pArchers').value),
+      gain: Number($('pGain').value),
+      pitch: Number($('pPitch').value),
+      cd: Number($('pCd').value) / 1000,
+      voices: Number($('pVoices').value),
+      hit: Number($('pHit').value),
+      pan: Number($('pPan').value),
+      layer: Number($('pLayer').value),
+    };
+  }
+
+  function syncCtlLabels() {
+    const c = ctl();
+    $('oArchers').textContent = c.archers + ' 人';
+    $('oGain').textContent = c.gain.toFixed(2);
+    $('oPitch').textContent = '±' + Math.round(c.pitch * 100) + '%';
+    $('oCd').textContent = Math.round(c.cd * 1000) + 'ms';
+    $('oVoices').textContent = c.voices;
+    $('oHit').textContent = Math.round(c.hit * 100) + '%';
+    $('oPan').textContent = Math.round(c.pan * 100) + '%';
+    $('oLayer').textContent = c.layer ? '开' : '关';
+  }
+
+  async function startSim(mode) {
+    ensureAudio();
+    if (!ARROW.cache.size) await preloadArrows();
+    stopSim();
+    const c = ctl();
+    const now = S.ctx.currentTime + 0.06;
+    SIM.running = true;
+    SIM.mode = mode;
+    SIM.startedAt = now;
+    SIM.endAt = now + 5;
+    SIM.shots = 0; SIM.dropped = 0; SIM.peakVoices = 0;
+    SIM.voices = []; SIM.recent = []; SIM.lastFireAt = -1; SIM.lastLayerAt = -1;
+    SIM.archers = [];
+    for (let i = 0; i < c.archers; i++) {
+      const side = c.archers === 1 ? 0 : (-1 + 2 * i / (c.archers - 1));
+      SIM.archers.push({ side, nextAt: now + Math.random() * 0.6, reload: 0.95 + Math.random() * 0.4 });
+    }
+    $('playOld').disabled = true;
+    $('playNew').disabled = true;
+    $('stopSim').disabled = false;
+    log(`—— 开始：${mode === 'A' ? '现状（700ms 全局限流）' : '新方案'} ——`, 'hl');
+    SIM.timer = setInterval(tickSim, 40);
+    startScope();
+  }
+
+  function stopSim() {
+    clearInterval(SIM.timer);
+    SIM.timer = 0;
+    if (SIM.running) log('—— 停止 ——', 'hl');
+    SIM.running = false;
+    $('playOld').disabled = false;
+    $('playNew').disabled = false;
+    $('stopSim').disabled = true;
+  }
+
+  function tickSim() {
+    if (!SIM.running || !S.ctx) return;
+    const c = ctl();
+    const now = S.ctx.currentTime;
+    const windowEnd = Math.min(now + 0.15, SIM.endAt);
+
+    if (SIM.mode === 'A') {
+      if (SIM.lastFireAt < 0) SIM.lastFireAt = SIM.startedAt - 0.7;
+      while (SIM.lastFireAt + 0.7 < windowEnd) {
+        SIM.lastFireAt += 0.7;
+        const key = pick(ARROW.volley);
+        const buf = ARROW.cache.get(key);
+        if (!buf) continue;
+        playBuffer(buf, { when: SIM.lastFireAt, gain: 0.48, rate: 1, pan: 0 });
+        SIM.voices.push(SIM.lastFireAt + buf.duration);
+        SIM.voices = SIM.voices.filter((v) => v > SIM.lastFireAt);
+        SIM.peakVoices = Math.max(SIM.peakVoices, SIM.voices.length);
+        SIM.shots++;
+        $('sShots').textContent = SIM.shots;
+        $('sPeak').textContent = SIM.peakVoices;
+      }
+    } else {
+      for (const a of SIM.archers) {
+        while (a.nextAt < windowEnd) {
+          let fireAt = a.nextAt;
+          a.nextAt += a.reload * (0.9 + Math.random() * 0.2);
+          if (fireAt < SIM.startedAt) continue;
+          // 全局限流：撞冷却就顺延到冷却结束（而不是直接丢掉，否则人一多就听不出密度）
+          if (SIM.lastFireAt >= 0 && fireAt < SIM.lastFireAt + c.cd) {
+            fireAt = SIM.lastFireAt + c.cd;
+            if (fireAt > SIM.endAt + 0.4) { SIM.dropped++; continue; }
+          }
+          // 并发预算
+          SIM.voices = SIM.voices.filter((v) => v > fireAt);
+          if (SIM.voices.length >= c.voices) { SIM.dropped++; continue; }
+          SIM.lastFireAt = fireAt;
+          fireArrow(a, fireAt, c);
+        }
+      }
+    }
+
+    // 结束判定
+    if (now > SIM.endAt + 1.2) {
+      stopSim();
+      const dur = Math.max(0.001, SIM.endAt - SIM.startedAt);
+      $('sRate').textContent = (SIM.shots / dur).toFixed(1);
+      log(`结束：${SIM.shots} 发 / ${dur.toFixed(1)}s＝${(SIM.shots / dur).toFixed(1)} 发每秒，限流丢 ${SIM.dropped}，峰值并发 ${SIM.peakVoices}`, 'hl');
+    }
+  }
+
+  function fireArrow(archer, at, c) {
+    const key = pick(ARROW.singles);
+    const buf = ARROW.cache.get(key);
+    if (!buf) return;
+    const rate = 1 + (Math.random() * 2 - 1) * c.pitch;
+    const gain = c.gain * Math.pow(10, (Math.random() * 4 - 2) / 20) * (1 / Math.sqrt(1 + SIM.voices.length * 0.35));
+    const pannerSide = archer.side * c.pan;
+    playBuffer(buf, { when: at, gain, rate, pan: pannerSide });
+    SIM.voices.push(at + buf.duration / rate);
+    SIM.peakVoices = Math.max(SIM.peakVoices, SIM.voices.length);
+    SIM.shots++;
+    SIM.recent.push(at);
+    SIM.recent = SIM.recent.filter((t) => t > at - 0.1);
+
+    // 命中层
+    if (Math.random() < c.hit) {
+      const ibuf = ARROW.cache.get(pick(ARROW.impacts));
+      if (ibuf) {
+        playBuffer(ibuf, {
+          when: at + 0.28 + Math.random() * 0.18,
+          gain: 0.30 * c.gain,
+          rate: 1 + (Math.random() * 2 - 1) * 0.08,
+          pan: pannerSide * 0.8,
+        });
+      }
+    }
+
+    // 齐射层：0.1 秒内 ≥4 发才叠一层
+    if (c.layer && SIM.recent.length >= 4 && (SIM.lastLayerAt < 0 || at - SIM.lastLayerAt > 0.8)) {
+      SIM.lastLayerAt = at;
+      const vbuf = ARROW.cache.get(pick(ARROW.volley));
+      if (vbuf) playBuffer(vbuf, { when: at, gain: 0.18, rate: 1, pan: 0 });
+    }
+
+    // 数字面板
+    $('sShots').textContent = SIM.shots;
+    $('sDrop').textContent = SIM.dropped;
+    $('sPeak').textContent = SIM.peakVoices;
+  }
+
+  let scopeOn = false;
+  function startScope() { if (!scopeOn) { scopeOn = true; requestAnimationFrame(drawScope); } }
+
+  function drawScope() {
+    if (!S.analyser) { scopeOn = false; return; }
+    const cvs = $('scope');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = cvs.clientWidth || 600, h = cvs.clientHeight || 110;
+    if (cvs.width !== Math.floor(w * dpr)) { cvs.width = Math.floor(w * dpr); cvs.height = Math.floor(h * dpr); }
+    const c = cvs.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#0c0a07'; c.fillRect(0, 0, w, h);
+    c.strokeStyle = '#241f17'; c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w, h / 2); c.stroke();
+
+    const data = S.meterBuf;
+    S.analyser.getFloatTimeDomainData(data);
+    let peak = 0, sum = 0;
+    for (let i = 0; i < data.length; i++) { const v = data[i]; sum += v * v; const a = Math.abs(v); if (a > peak) peak = a; }
+    const rms = Math.sqrt(sum / data.length);
+
+    c.strokeStyle = '#d8b95e';
+    c.lineWidth = 1.2;
+    c.beginPath();
+    const step = data.length / w;
+    for (let x = 0; x < w; x++) {
+      const v = data[Math.floor(x * step)] || 0;
+      const y = h / 2 - v * h * 0.46;
+      if (x === 0) c.moveTo(x, y); else c.lineTo(x, y);
+    }
+    c.stroke();
+
+    const db = rms > 0 ? 20 * Math.log10(rms) : -100;
+    const pct = Math.max(0, Math.min(100, (db + 60) / 60 * 100));
+    $('meterBar').style.width = pct.toFixed(0) + '%';
+
+    if (SIM.running) requestAnimationFrame(drawScope); else scopeOn = false;
+  }
+
+  function copyJson() {
+    const c = ctl();
+    const payload = {
+      source: 'sfx-lab',
+      arrow: {
+        gain: Number(c.gain.toFixed(2)),
+        pitchJitter: Number(c.pitch.toFixed(2)),
+        cooldownMs: Math.round(c.cd * 1000),
+        maxVoices: c.voices,
+        impactChance: Number(c.hit.toFixed(2)),
+        panWidth: Number(c.pan.toFixed(2)),
+        volleyLayer: !!c.layer,
+        archers: c.archers,
+      },
+    };
+    const txt = JSON.stringify(payload, null, 2);
+    navigator.clipboard?.writeText(txt).then(
+      () => log('参数 JSON 已复制：\n' + txt, 'hl'),
+      () => log('剪贴板不可用，参数：\n' + txt)
+    );
+  }
+
+  // ---------------- 对照与替换 ----------------
+  let RECS = [];
+  const ADOPT = new Set();
+  const STATUS_TEXT = {
+    replace: '建议替换素材',
+    add: '建议新增',
+    params: '素材保留 · 改播放参数',
+    keep: '保留原样',
+  };
+
+  async function loadRecs() {
+    try {
+      const r = await fetch('/sfx-lab/recommendations.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      RECS = await r.json();
+      renderCompare();
+    } catch (err) {
+      $('cmpList').innerHTML = `<div class="empty">推荐表读取失败：${err.message}</div>`;
+    }
+  }
+
+  function renderCompare() {
+    const root = $('cmpList');
+    root.textContent = '';
+    if (!RECS.length) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = '推荐表为空';
+      root.append(d);
+      return;
+    }
+    for (const e of RECS) root.append(makeCmpCard(e));
+  }
+
+  function makeCmpCard(e) {
+    const card = document.createElement('article');
+    card.className = 'cmp';
+    card.dataset.key = e.key;
+
+    const head = document.createElement('div');
+    head.className = 'cmpHead';
+    const title = document.createElement('span');
+    title.className = 'cmpTitle';
+    title.textContent = e.label;
+    const key = document.createElement('span');
+    key.className = 'cmpKey';
+    key.textContent = e.key;
+    const chip = document.createElement('span');
+    chip.className = 'chip ' + e.status;
+    chip.textContent = STATUS_TEXT[e.status] || e.status;
+    const state = document.createElement('span');
+    state.className = 'playState';
+    head.append(title, key, chip, state);
+
+    const body = document.createElement('div');
+    body.className = 'cmpBody';
+
+    const cur = document.createElement('div');
+    cur.className = 'side';
+    const curN = (e.current && e.current.urls) ? e.current.urls.length : 0;
+    cur.innerHTML = `<h4>现有 · 游戏内</h4><div class="n">${curN ? curN + ' 个文件' : '现库没有这条'}</div>`;
+    const curP = document.createElement('p');
+    curP.textContent = (e.current && e.current.note) || '—';
+    const curBtn = document.createElement('button');
+    curBtn.className = 'ghost';
+    curBtn.textContent = curN ? '试听 A（现有）' : '无可试听';
+    curBtn.disabled = !curN;
+    curBtn.addEventListener('click', () => void audition(e, 'current', state));
+    cur.append(curP, curBtn);
+
+    const rec = document.createElement('div');
+    rec.className = 'side rec';
+    const recN = (e.recommend && e.recommend.urls) ? e.recommend.urls.length : 0;
+    rec.innerHTML = `<h4>推荐 · 建议换成</h4><div class="n">${recN ? recN + ' 个文件' : '无'}</div>`;
+    const recP = document.createElement('p');
+    recP.textContent = (e.recommend && e.recommend.note) || '—';
+    const recBtn = document.createElement('button');
+    recBtn.className = 'primary';
+    recBtn.textContent = '试听 B（推荐）';
+    recBtn.disabled = !recN;
+    recBtn.addEventListener('click', () => void audition(e, 'recommend', state));
+    rec.append(recP, recBtn);
+
+    body.append(cur, rec);
+
+    const foot = document.createElement('div');
+    foot.className = 'cmpFoot';
+    const bothBtn = document.createElement('button');
+    bothBtn.textContent = 'A → B 连着听';
+    bothBtn.disabled = !curN || !recN;
+    bothBtn.addEventListener('click', () => void audition(e, 'both', state));
+    const adopt = document.createElement('label');
+    adopt.className = 'adopt';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = ADOPT.has(e.key);
+    cb.addEventListener('change', () => {
+      if (cb.checked) ADOPT.add(e.key); else ADOPT.delete(e.key);
+      card.classList.toggle('adopted', cb.checked);
+    });
+    adopt.append(cb, document.createTextNode('采用这条'));
+    foot.append(bothBtn, adopt);
+
+    const why = document.createElement('div');
+    why.className = 'why';
+    why.textContent = e.why || '';
+
+    card.append(head, body, foot, why);
+    return card;
+  }
+
+  let AUD_SEQ = 0;
+  async function audition(e, mode, stateEl) {
+    const token = ++AUD_SEQ;
+    const setState = (txt) => { if (stateEl) { stateEl._tok = token; stateEl.textContent = txt; } };
+    const ctx = ensureAudio();
+    stopSim();
+    stopAllSources();
+    let when = ctx.currentTime + 0.08;
+    const hasCur = !!(e.current && e.current.urls && e.current.urls.length);
+    const hasRec = !!(e.recommend && e.recommend.urls && e.recommend.urls.length);
+
+    if (mode === 'current' || mode === 'both') {
+      if (!hasCur) { setState('现库无'); return; }
+      setState('A…');
+      when = (await playVariant(e, 'current', when)) + (mode === 'both' ? 0.5 : 0);
+    }
+    if (mode === 'recommend' || mode === 'both') {
+      if (!hasRec) { setState(''); return; }
+      setState(mode === 'both' ? 'A→B…' : 'B…');
+      when = (await playVariant(e, 'recommend', when)) + 0.2;
+    }
+    const ms = Math.max(400, (when - ctx.currentTime) * 1000);
+    setTimeout(() => { if (stateEl && stateEl._tok === token) stateEl.textContent = ''; }, ms);
+  }
+
+  async function playVariant(e, mode, when) {
+    const isCur = mode === 'current';
+    const cfg = isCur ? e.current : e.recommend;
+    if (!cfg || !cfg.urls || !cfg.urls.length) return when;
+    const allUrls = [...cfg.urls, ...(cfg.impact ? cfg.impact.urls : [])];
+    const loaded = new Map();
+    await Promise.all(allUrls.map(async (u) => {
+      const b = await loadBuffer(u).catch(() => null);
+      if (b) loaded.set(u, b);
+    }));
+    const bufs = cfg.urls.map((u) => loaded.get(u)).filter(Boolean);
+    const ibufs = cfg.impact ? cfg.impact.urls.map((u) => loaded.get(u)).filter(Boolean) : [];
+    if (!bufs.length) return when;
+
+    const count = isCur ? 4 : 6;
+    const step = Math.max(0.07, Math.min(0.8, (cfg.cooldownMs ?? 300) / 1000));
+    let t = when;
+    for (let i = 0; i < count; i++) {
+      const b = bufs[i % bufs.length];
+      const rate = 1 + (Math.random() * 2 - 1) * (isCur ? 0 : (cfg.pitch || 0));
+      const gain = (cfg.gain ?? 1) * (isCur ? 1 : Math.pow(10, (Math.random() * 4 - 2) / 20));
+      const pan = isCur ? 0 : (cfg.pan || 0) * (i % 2 ? 0.6 : -0.6);
+      playBuffer(b, { when: t, gain, rate, pan });
+      if (!isCur && cfg.impact && ibufs.length && Math.random() < cfg.impact.chance) {
+        const ibuf = ibufs[Math.floor(Math.random() * ibufs.length)];
+        playBuffer(ibuf, {
+          when: t + 0.28 + Math.random() * 0.16,
+          gain: cfg.impact.gain,
+          rate: 1 + (Math.random() * 2 - 1) * 0.08,
+          pan: pan * 0.8,
+        });
+      }
+      t += step;
+    }
+    return t;
+  }
+
+  function exportAdopt() {
+    const adopted = RECS.filter((e) => ADOPT.has(e.key)).map((e) => ({
+      key: e.key,
+      status: e.status,
+      label: e.label,
+      recommend: e.recommend,
+      why: e.why,
+    }));
+    const payload = { source: 'sfx-lab/compare', adopted };
+    const txt = JSON.stringify(payload, null, 2);
+    const done = () => {
+      $('cmpStatus').textContent = `已导出 ${adopted.length} 条采用项（已复制到剪贴板）`;
+      $('log').textContent = `已复制 ${adopted.length} 条采用项到剪贴板`;
+    };
+    navigator.clipboard?.writeText(txt).then(done, () => {
+      $('cmpStatus').textContent = `已导出 ${adopted.length} 条（剪贴板不可用，见控制台）`;
+      console.log(txt);
+    });
+    console.log(txt);
+    return payload;
+  }
+
+  // ---------------- 事件绑定 ----------------
+  document.querySelectorAll('.tab').forEach((t) => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === t));
+      ['library', 'compare', 'bench'].forEach((name) => {
+        $('pane-' + name).hidden = name !== t.dataset.tab;
+      });
+    });
+  });
+
+  $('adoptAll').addEventListener('click', () => {
+    for (const e of RECS) {
+      if (e.status === 'keep') continue;
+      ADOPT.add(e.key);
+    }
+    document.querySelectorAll('.cmp').forEach((c) => {
+      const on = ADOPT.has(c.dataset.key);
+      c.classList.toggle('adopted', on);
+      const cb = c.querySelector('.adopt input');
+      if (cb) cb.checked = on;
+    });
+  });
+  $('exportAdopt').addEventListener('click', exportAdopt);
+
+
+  $('masterVol').addEventListener('input', (e) => {
+    S.masterVol = Number(e.target.value);
+    $('masterVolOut').textContent = Math.round(S.masterVol * 100) + '%';
+    if (S.master) S.master.gain.value = S.masterVol;
+  });
+
+  $('q').addEventListener('input', renderLibrary);
+  $('stopAll').addEventListener('click', () => { stopAllSources(); stopSim(); });
+
+  $('replay').addEventListener('click', () => {
+    if (!S.selected) return;
+    loadBuffer(S.selected.url).then((buf) => { drawWave($('wave'), buf); startSelectedPlayback(buf); }).catch(() => {});
+  });
+
+  $('loopBtn').addEventListener('click', () => {
+    const on = $('loopBtn').classList.toggle('on');
+    $('loopBtn').textContent = on ? '循环开' : '循环';
+    if (S.selected) loadBuffer(S.selected.url).then(startSelectedPlayback).catch(() => {});
+  });
+
+  $('rate').addEventListener('input', () => {
+    $('rateOut').textContent = Number($('rate').value).toFixed(2);
+  });
+  $('gain').addEventListener('input', () => {
+    $('gainOut').textContent = Math.round(Number($('gain').value) * 100) + '%';
+  });
+
+  // 滑杆统一刷新读数
+  ['pArchers', 'pGain', 'pPitch', 'pCd', 'pVoices', 'pHit', 'pPan', 'pLayer'].forEach((id) => {
+    $(id).addEventListener('input', syncCtlLabels);
+  });
+
+  $('playOld').addEventListener('click', () => { void startSim('A'); });
+  $('playNew').addEventListener('click', () => { void startSim('B'); });
+  $('stopSim').addEventListener('click', () => { stopSim(); });
+  $('copyJson').addEventListener('click', copyJson);
+
+  window.addEventListener('resize', () => {
+    if (S.selected && S.buffers.has(S.selected.url)) drawWave($('wave'), S.buffers.get(S.selected.url));
+  });
+
+  // ---------------- 启动 ----------------
+  syncCtlLabels();
+  void loadRecs();
+  fetch('/sfx-lab/manifest.json', { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then((list) => {
+      S.manifest = list;
+      renderLibrary();
+      // 默认选中第一条箭矢
+      const first = list.find((x) => x.url.includes('naval_arrow_fire_1')) || list[0];
+      if (first) {
+        const row = document.querySelector(`.row[data-url="${first.url}"]`);
+        row?.scrollIntoView({ block: 'center' });
+      }
+      $('log').textContent = '切到「射箭工作台」点「试听新方案」即可对比现状。';
+    })
+    .catch((err) => {
+      $('groups').innerHTML = `<div class="empty">清单读取失败：${err.message}<br>请用 Vite 开发服务器打开
+        <code>http://localhost:5173/sfx-lab/</code>，不要直接双击 html。</div>`;
+    });
+})();
+</script>
+</body>
+</html>

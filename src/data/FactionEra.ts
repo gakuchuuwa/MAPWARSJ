@@ -723,7 +723,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yue': [{ from: -9999, era: 'antiquity' }], // 越国｜按现存名将成名年推定：–∞起古典 → 560起封建
     'zhao': [{ from: -9999, era: 'antiquity' }], // 赵国｜按现存名将成名年推定：–∞起古典 → 621起封建
     'zhuluo': [{ from: -9999, era: 'feudal' }], // 朱罗｜按现存名将成名年推定：–∞起古典 → 993起封建
-    'pattani': [{ from: -9999, era: 'imperial' }], // 北大年｜16-17世纪北大年苏丹国（帝国）    'chalkidike': [{ from: -9999, era: 'antiquity' }], // 卡尔基季基同盟
+    'pattani': [{ from: -9999, era: 'imperial' }], // 北大年｜16-17世纪北大年苏丹国（帝国）
+    'chalkidike': [{ from: -9999, era: 'antiquity' }], // 卡尔基季基同盟
     'naxos': [{ from: -9999, era: 'antiquity' }], // 纳克索斯
     'phokis': [{ from: -9999, era: 'antiquity' }], // 福基斯
     'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部

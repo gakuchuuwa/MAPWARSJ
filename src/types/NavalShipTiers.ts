@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 文化战船：每个文化圈一种代表战舰，按**史实**定，不为用光素材硬凑。
  *
  * 🔴 [2026-09-01 主人裁决] 定这张表只问一句话：**这个文化历史上开什么船**。
@@ -107,8 +107,11 @@ export function getNavalShipDrawScale(shipId?: string): number {
 }
 
 /**
- * 文化圈 → 代表战舰。每条都写清史实依据；严禁使用无帆残骸/空壳船（如 HULK/CARRACK/GALLEON/WAR_HULK）。
+ * 文化圈 → 代表战舰。每条都写清史实依据。
  * 顺序 = 查表顺序，命中即返回。
+ * 🔴 [2026-11-08 主人令「霍克船（hulk）…按历史套用给军团」] 原「严禁使用 HULK/CARRACK/GALLEON/WAR_HULK」
+ *    一句已删：这四型现均在用（HULK＝城堡日耳曼、CARRACK＝城堡拉丁/西班牙、GALLEON 多区、WAR_HULK＝尼德兰/英格兰）。
+ *    模型本身无帆面的船由 `NavalSails.ts` 的 `SAIL_DELTAS_BY_SHIP` 补帆（HULK 补 `boat_4` 一张），不是空壳。
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
@@ -216,7 +219,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
         'INDIA_FEUDAL', 'INDIA_IMPERIAL',
     ] },
     { ship: 'DEMO_RAFT', why: '沿用内陆高原与绿洲各区当前实际使用的渡河木筏，补显式登记，不改变现用模型', regions: ['TIBET_CASTLE', 'TIBET_IMPERIAL', 'WESTERN_FEUDAL', 'WESTERN_CASTLE', 'WESTERN_IMPERIAL'] },
-    { ship: 'TRADE_COG', why: '🔴 [2026-11-07] 城堡日耳曼（北海—波罗的海）＝柯克船（cog），改用有帆的柯克船模型（原 HULK 是 DE 无帆空壳，项目本就禁用它当战船）', regions: ['GERMANIC_CASTLE'] },
+    { ship: 'HULK', why: '🔴 [2026-11-08 主人令「霍克船（hulk）…按历史套用给军团」] 城堡日耳曼（北海—波罗的海）＝霍克船（hulk）：12–15 世纪北欧大型单桅帆船，汉萨同盟 14–15 世纪的武装商船／战船主力（吕贝克、汉堡、不来梅），与条顿骑士团国同处此海域；模型无帆面由 NavalSails 补 boat_4 帆。原 2026-11-07「改用柯克船 TRADE_COG、HULK 禁用」旧判据本次作废（柯克船仍归城堡时代易北河军团）', regions: ['GERMANIC_CASTLE'] },
     { ship: 'CARRACK', why: '沿用城堡拉丁当前军团绑定的卡拉克帆船，补显式登记，不改变现用模型', regions: ['LATIN_CASTLE'] },
     { ship: 'ANT_ELITE_GALLEY', why: '沿用古典孟加拉当前军团绑定的高级古典桨帆船，补显式登记，不改变现用模型', regions: ['BENGALIS_ANTIQUITY'] },
     { ship: 'ELITE_CANNON_GALLEON', why: '沿用帝国奥斯曼当前军团绑定的高级炮舰，补显式登记，不改变现用模型', regions: ['OTTOMAN_IMPERIAL'] },

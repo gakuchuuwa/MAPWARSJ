@@ -2703,7 +2703,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/JAPAN/jibei2_qingshuizongzhi.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -10786,6 +10786,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/JAPAN/oda_kukiyoshitaka.png": {
+            "scale": 1.22,
+            "offsetX": 29,
+            "offsetY": 10
         }
     },
     "folderGuides": {
