@@ -3522,6 +3522,66 @@ export class TerritorySystem {
         });
 
         labelsMap.set(city.id, label);
+        this.scheduleCityLabelLayout();
+    }
+
+    private cityLabelLayoutScheduled = false;
+
+    /** 据点标注去重叠（同一帧多次调用合并成一次 rAF） */
+    private scheduleCityLabelLayout(): void {
+        if (this.cityLabelLayoutScheduled) return;
+        this.cityLabelLayoutScheduled = true;
+        requestAnimationFrame(() => {
+            this.cityLabelLayoutScheduled = false;
+            this.relayoutCityLabels();
+        });
+    }
+
+    /**
+     * 🔴 [2026-11-08 主人令「据点标注不要重叠」]
+     * 据点标签（.city-label-content）互不重叠：逐个测量屏幕包围盒，若与已放置的据点标注相交则自动偏移避让。
+     */
+    private relayoutCityLabels(): void {
+        const labelsPane = this.map.getLeafletMap().getPane('labelsPane');
+        if (!labelsPane || labelsPane.style.display === 'none') return;
+        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number }
+        const boxes: LabelBox[] = [];
+        for (const label of this.cityLabels.values()) {
+            const el = label.getElement()?.querySelector<HTMLElement>('.city-label-content');
+            if (!el) continue;
+            el.style.transform = '';
+            boxes.push({ el, w: 0, h: 0, x: 0, y: 0 });
+        }
+        for (const b of boxes) {
+            const r = b.el.getBoundingClientRect();
+            b.w = r.width; b.h = r.height; b.x = r.left; b.y = r.top;
+        }
+        const GAP = 2;
+        const placed: LabelBox[] = [];
+        const blocked = (x: number, y: number, w: number, h: number): boolean =>
+            placed.some((p) => x < p.x + p.w + GAP && x + w + GAP > p.x && y < p.y + p.h + GAP && y + h + GAP > p.y);
+        for (const b of boxes) {
+            if (b.w < 1 || b.h < 1) continue;
+            const row = b.h + GAP * 2;
+            const col = Math.min(b.w, 80) + GAP * 2;
+            const cands: Array<[number, number]> = [[0, 0]];
+            for (let ring = 1; ring <= 4; ring++) {
+                cands.push(
+                    [0, ring * row], [0, -ring * row],
+                    [ring * col, 0], [-ring * col, 0],
+                    [ring * col, ring * row], [-ring * col, ring * row],
+                    [ring * col, -ring * row], [-ring * col, -ring * row],
+                );
+            }
+            let dx = 0, dy = 0, found = false;
+            for (const [cx, cy] of cands) {
+                if (!blocked(b.x + cx, b.y + cy, b.w, b.h)) { dx = cx; dy = cy; found = true; break; }
+            }
+            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy });
+            if (found && (dx !== 0 || dy !== 0)) {
+                b.el.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+            }
+        }
     }
 
     /** 取消进行中的异步全图重绘，避免过期的分块结果覆盖最新占城旗号 */

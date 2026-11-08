@@ -270,6 +270,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代燕晋军团",
         legionType: "sub",
     },
+    // 🔴 [2026-11-08 主人令] 燕（靖难·朱棣 1399–1402）：帝国时代 × 首府北京（WEI 河朔）＝帝国时代燕晋军团
+    "ning_wang": {
+        legionName: "帝国时代两江军团",
+        legionType: "sub",
+    },
+    "yanjingnan": {
+        legionName: "帝国时代燕晋军团",
+        legionType: "sub",
+    },
     // 🔴 [2026-10-25 主人令] 格皮德（5–6 世纪＝封建段）｜首府布达佩斯＝马扎尔 MAGYAR 建筑（2026-10-24 按史定）
     //    → 封建时代马扎尔军团。原无条目、回落文化区默认「城堡时代匈牙利王国军团」，比势力时代晚一档。
     "gepids": {

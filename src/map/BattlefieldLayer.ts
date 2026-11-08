@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldSamePointCityId, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
@@ -155,6 +155,8 @@ export class BattlefieldLayer {
             //    改之前是 2026-09-16 那条「未到发生年份的战场不上图」，与「武将触发」相冲：
             //    玩家在 -334 年就可能跟着某位武将奔赴一场史实战役，战场却因为年份没到压根不在图上。
             //    `bf.scriptYear` 字段**保留**（数据里照旧填），只是不再参与显示判定。
+            // 🔴 [2026-11-08 主人令「50KM以内的战场，和据点属于同一个点，不用设计。之前就是这个判定，不要重复。」]
+            if (battlefieldSamePointCityId(bf.id)) continue;
             if (this.visibilityFilter && !this.visibilityFilter(bf.id)) continue;
             visibleBfs.set(bf.id, bf);
         }

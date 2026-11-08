@@ -235,6 +235,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'menggu_d': 'city_karakorum',
 'manzhou_d': 'city_shenyang',
 'ming_d': 'city_beijing',
+'yanjingnan': 'city_beijing',
+'ning_wang': 'city_hongzhou',   // 宁（宁王）以豫章（南昌）为据点   // 燕（靖难）以燕王府所在北京为据点
 'liao_d': 'city_linhuang',
 'houliao': 'city_xianping',
 'xiliao': 'city_suiye',

@@ -368,6 +368,10 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'ming_d', name: '大明' },
+    // 🔴 [2026-11-08 主人令「铁铉的知名战中，挂明旗，朱棣挂旗帜这场战斗中，暂时挂燕」] 靖难之役的燕王一方
+    { id: 'yanjingnan', name: '燕' },
+    // 🔴 [2026-11-08 主人令「朱宸濠旗帜挂宁」] 正德十四年宁王朱宸濠之乱（1519）
+    { id: 'ning_wang', name: '宁' },
 
     { id: 'liao_d', name: '大辽' },
     { id: 'houliao', name: '耶律东辽' },

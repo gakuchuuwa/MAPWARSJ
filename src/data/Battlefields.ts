@@ -743,6 +743,33 @@ export function battlefieldMergedCityId(bfId: string): string | null {
 }
 
 /**
+ * 🔴 [2026-11-08 主人令「50KM以内的战场，和据点属于同一个点，不用设计。之前就是这个判定，不要重复。」]
+ * 每个据点代表周围 50 公里（AGENTS.md §二.2 / §五.0）：50 km 以内的战场与该据点属于同一个点，
+ * 战略地图上不重复单独设计/绘制战场标记与标牌。
+ */
+export const BATTLEFIELD_SAME_POINT_KM = 50;
+
+const samePointCityCache = new Map<string, string | null>();
+/** 这个战场是否在 50 km 内与某座据点属于同一个点（返回据点 id；>50 km 返回 null） */
+export function battlefieldSamePointCityId(bfId: string): string | null {
+    if (samePointCityCache.has(bfId)) return samePointCityCache.get(bfId)!;
+    const bf = getBattlefield(bfId);
+    let best: string | null = null;
+    if (bf) {
+        const r = Math.PI / 180;
+        let bestKm = BATTLEFIELD_SAME_POINT_KM;
+        for (const c of CITIES_V2) {
+            const h = Math.sin((c.lat - bf.lat) * r / 2) ** 2
+                + Math.cos(bf.lat * r) * Math.cos(c.lat * r) * Math.sin((c.lng - bf.lng) * r / 2) ** 2;
+            const km = 12742 * Math.asin(Math.sqrt(h));
+            if (km <= bestKm) { bestKm = km; best = c.id; }
+        }
+    }
+    samePointCityCache.set(bfId, best);
+    return best;
+}
+
+/**
  * 🔴 [2026-09-19 主人定] 某位武将的史实战役 → 它对应的战场（战役**打在哪**）。
  *
  * 主人原话：「每个武将一个真实的历史事件」。战役条目上新增的 `generalId` 就是「这一仗是谁的」，

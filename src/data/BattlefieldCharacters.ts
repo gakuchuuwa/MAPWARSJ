@@ -59,6 +59,59 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-11-08] 马哈木（瓦剌，顺宁王）已升级为正式据点武将（FactionGenerals 瓦剌块／科布多／瓦剌骑兵 T1），
     //    按 2026-10-25 口径本表不再保留其条目；朱棣「忽兰忽失温之战」的 enemyGeneralId 照旧解析到他本人。
 
+    // 🔴 [2026-11-08 补知名战·第三批] 只在这一战出场的实名敌帅
+    bfe_harold_godwinson: {
+        generalId: 'bfe_harold_godwinson',
+        generalName: '哈罗德二世',
+        factionId: 'yinggelan',
+        portraitProposedPath: '/assets/BRITONS/bfe_harold_godwinson.png',
+        note: '史有其人：英格兰末代盎格鲁-撒克逊国王哈罗德·戈德温森（1066 年 1 月即位）；同年 9 月破挪威军于斯坦福桥，10 月 14 日于黑斯廷斯为诺曼底公爵威廉所败、战死（《盎格鲁-撒克逊编年史》1066 年条）。立绘留空。',
+    },
+    bfe_mstislav_kiev: {
+        generalId: 'bfe_mstislav_kiev',
+        generalName: '姆斯季斯拉夫',
+        factionId: 'luosi',
+        portraitProposedPath: '/assets/SLAVIC/bfe_mstislav_kiev.png',
+        note: '史有其人：基辅大公姆斯季斯拉夫·罗曼诺维奇，1223 年迦勒迦河之战为罗斯-钦察联军三主帅之一（另两位为加利奇的姆斯季斯拉夫、切尔尼戈夫的姆斯季斯拉夫），联军大败，他被蒙古军俘杀。立绘留空。',
+    },
+    bfe_galdan_tseren: {
+        generalId: 'bfe_galdan_tseren',
+        generalName: '噶尔丹策零',
+        factionId: 'oirat_ming',
+        portraitProposedPath: '/assets/MONGOL/bfe_galdan_tseren.png',
+        note: '史有其人：准噶尔浑台吉噶尔丹策零（1727–1745 在位），雍正九年（1731）和通泊大破清军，同年于光显寺（额尔德尼召）为喀尔喀亲王策棱所败（《清史稿·策棱传》）。立绘留空。',
+    },
+
+    // 🔴 [2026-11-08 补知名战·第四批]
+    bfe_xiaotalin: {
+        generalId: 'bfe_xiaotalin',
+        generalName: '萧挞凛',
+        factionId: 'liao_d',
+        portraitProposedPath: '/assets/HEXI/bfe_xiaotalin.png',
+        note: '史有其人：辽统军使萧挞凛（萧挞览），辽圣宗与承天太后南征的前线统军；统和十七年（999）率军攻宋遂城，二十二年（1004）澶州城下被宋军床子弩射死（《辽史·萧挞凛传》《宋史·真宗纪》）。立绘留空。',
+    },
+    bfe_fu_rui: {
+        generalId: 'bfe_fu_rui',
+        generalName: '苻叡',
+        factionId: 'fushi',
+        portraitProposedPath: '/assets/CENTRAL/bfe_fu_rui.png',
+        note: '史有其人：前秦苻坚之子、巨鹿公苻叡，前秦建元二十年（384）与姚苌战于北地，兵败被杀（《晋书·苻坚载记》《晋书·姚苌载记》）。立绘留空。',
+    },
+    bfe_alutai: {
+        generalId: 'bfe_alutai',
+        generalName: '阿鲁台',
+        factionId: 'dada_ming',
+        portraitProposedPath: '/assets/MONGOL/bfe_alutai.png',
+        note: '史有其人：鞑靼（东蒙古）太师阿鲁台，永乐间屡与瓦剌争雄，宣德九年（1434）为瓦剌脱欢所袭杀（《明史·鞑靼传》）。立绘留空。',
+    },
+    bfe_yao_shao: {
+        generalId: 'bfe_yao_shao',
+        generalName: '姚绍',
+        factionId: 'hou_qin',
+        portraitProposedPath: '/assets/CENTRAL/bfe_yao_shao.png',
+        note: '史有其人：后秦东平公姚绍，义熙十二年（416）晋军北伐，他与姚洸等守洛阳、潼关拒之，兵败（《晋书·姚泓载记》《宋书·檀道济传》）。立绘留空。',
+    },
+
     // 🔴 [2026-10-25 经典战敌将复核 → 同日升级] 原本登记为战场人物的 58 位「该战真实对方指挥官」，
     //    已按主人令「新增武将要符合标准」升级为**正式据点武将**（进 FactionGenerals / profiles / GeneralEra / GeneralLifeYears / GeneralCenturies，
     //    配据点＋势力＋时代＋名将/普将＋精锐 T0–T4，立绘留空），本表不再保留他们的条目。

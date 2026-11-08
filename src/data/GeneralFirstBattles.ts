@@ -2286,8 +2286,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.75,
         targetLng: 114.98,
         myTroops: 50000,
-        enemyFactionId: 'jin',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '西晋',
+        // 🔴 [2026-11-08 修] 原写 jin（＝春秋晋国，先轸那支），311 年的对手是司马氏晋朝 → dongjin（司马晋，含西晋）
+        enemyFactionId: 'dongjin',
+        enemyFactionName: '司马晋',
         enemyGeneralId: 'bfe_wangyan',   // 🔴 [2026-10-25 按史] 311 宁平城行台元帅＝太尉王衍（祖逖不在该军）
         enemyTroops: 50000,
         introLines: [
@@ -5320,8 +5321,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.6525,
         targetLng: 66.9714,
         myTroops: 50000,
-        enemyFactionId: 'xiliao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '西喀喇汗国',
+        // 🔴 [2026-11-08 修] 1212 年的对手是西喀喇汗国（喀喇汗国西支，id kala），不是哈剌契丹／西辽；
+        //    敌将乌思蛮（末王奥斯曼）档案本就挂 kala，此处对齐。
+        enemyFactionId: 'kala',
+        enemyFactionName: '喀喇汗国',
         enemyGeneralId: 'xiliao_uthman',   // 🔴 [2026-10-20 经典战规则] 1212 撒马尔罕西喀喇汗末王奥斯曼
         enemyTroops: 40000,
         introLines: [
@@ -11045,8 +11048,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.67,
         targetLng: 117.00,
         myTroops: 10000,
-        enemyFactionId: 'ming_d',
-        enemyFactionName: '大明',
+        enemyFactionId: 'yanjingnan',
+        enemyFactionName: '燕',
         enemyGeneralId: 'ming_d_zhudi',
         enemyTroops: 20000,
         introLines: [
@@ -11068,8 +11071,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 28.95,
         targetLng: 116.40,
         myTroops: 30000,
-        enemyFactionId: 'ming_d',
-        enemyFactionName: '大明',
+        // 🔴 [2026-11-08 主人令「朱宸濠旗帜挂宁」] 王守仁挂明旗（我方），朱宸濠这一场挂「宁」
+        //    （宁王朱宸濠 1519 起兵，势力 id ning_wang，旗号宁，首府豫章）
+        enemyFactionId: 'ning_wang',
+        enemyFactionName: '宁',
         enemyGeneralId: 'bfe_zhu_chenhao',
         enemyTroops: 60000,
         introLines: [
@@ -11099,6 +11104,226 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '朱梁以王景仁率八万众结阵柏乡，甲光耀日，欲以势压我河东。他阵严而不整、步骑不相救，正可诱其离阵。壮士可愿随我纵铁骑冲之？' },
             { speaker: 'player', text: '愿随晋王出击柏乡，破梁军八万！' },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔴 [2026-11-08 主人令「逐个补全，要符合历史」] 名将缺知名战 · 第二批 5 条
+    //    口径同第一批：史实最知名一战／敌将已在库／锚城文化贴敌方／兵力按史、悬殊 ≤2 倍
+    // ═══════════════════════════════════════════════════════════════════
+
+    // #494 刘曜 (? ~ 329) — 328 洛阳之战（金墉被围，石勒自襄国来援，两军决战于洛阳城西）
+    // 兵力：《晋书·刘曜载记》曜率步骑十余万围金墉；《资治通鉴》卷九四石勒率步骑八万七千救洛阳
+    // 结局按史：曜兵败被擒（本条不预设胜负，战果由战术层决定）
+    han_zhao_liuyao: {
+        generalId: 'han_zhao_liuyao',
+        battleName: '洛阳之战',
+        battleYear: 328,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '洛阳城西',
+        targetCityId: 'city_luoyang',
+        targetLat: 34.62,
+        targetLng: 112.45,
+        myTroops: 100000,
+        enemyFactionId: 'hou_zhao',
+        enemyFactionName: '石赵',
+        enemyGeneralId: 'cai_lishuo',
+        enemyTroops: 87000,
+        introLines: [
+            { speaker: 'general', text: '石勒自立赵王、与我汉赵分庭抗礼。我已困金墉，他必自襄国来救——正好在洛阳城西一并破之。壮士可愿随我列阵待其援军？' },
+            { speaker: 'player', text: '愿随大单于决战洛阳城西，破石勒援军！' },
+        ],
+    },
+
+    // #495 石虎 (295 ~ 349) — 338 棘城之战（赵军十余万攻前燕，慕容皝闭城固守、乘其惰归反击）
+    // 兵力：《晋书·慕容皝载记》赵军动辄十余万；前燕守军数万，按不可比缩放取守方二万
+    shizhao_d_shihu: {
+        generalId: 'shizhao_d_shihu',
+        battleName: '棘城之战',
+        battleYear: 338,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '棘城',
+        targetCityId: 'city_jicheng',
+        targetLat: 41.52,
+        targetLng: 121.23,
+        // 兵力：《晋书·慕容皝载记》赵军动辄十余万；按「悬殊不超过 2 倍」记作四万，守方二万（夹取后 2万:1万）
+        myTroops: 40000,
+        enemyFactionId: 'murong',
+        enemyFactionName: '慕容燕',
+        enemyGeneralId: 'yingzhou_ying_d_muronghuang',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '慕容皝只据辽西一隅，却敢不奉我赵号令。我十余万众已至棘城之下，城小兵寡，壮士可愿随我四面并攻，一举拔之？' },
+            { speaker: 'player', text: '愿随赵王攻棘城，破慕容皝！' },
+        ],
+    },
+
+    // #496 崔乾祐 (? ~ 759) — 756 灵宝之战（燕军据灵宝西原险要设伏，唐军二十万出潼关大溃）
+    // 兵力：《资治通鉴》卷二一八：哥舒翰率兵二十万出关；崔乾祐所部数千据险，按规则抬到一万
+    dayan_cuiqianyou: {
+        generalId: 'dayan_cuiqianyou',
+        battleName: '灵宝之战',
+        battleYear: 756,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '灵宝西原',
+        targetCityId: 'city_hanguguan',
+        targetLat: 34.52,
+        targetLng: 110.87,
+        myTroops: 10000,
+        enemyFactionId: 'tang',
+        enemyFactionName: '李唐',
+        enemyGeneralId: 'gaoliang_geshuhan',
+        enemyTroops: 200000,
+        introLines: [
+            { speaker: 'general', text: '哥舒翰守潼关不出，杨国忠逼他出战——二十万唐军已沿崤函道挤进灵宝西原。此处南阻山、北临河，路窄数十里，正是死地。壮士可愿随我伏于险要，等他半渡半行而击？' },
+            { speaker: 'player', text: '愿随崔将军据灵宝西原，伏击唐军！' },
+        ],
+    },
+
+    // #497 曹景宗 (457 ~ 508) — 507 钟离之战（魏军围钟离，梁援军至淮上，决战破之）
+    // 兵力：《梁书·曹景宗传》《资治通鉴》卷一四六：魏元英众号数十万围钟离，梁遣韦叡、曹景宗率二十万众救之
+    ying_caojingzong: {
+        generalId: 'ying_caojingzong',
+        battleName: '钟离之战',
+        battleYear: 507,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '钟离淮上',
+        targetCityId: 'city_bengbu',
+        targetLat: 32.87,
+        targetLng: 117.56,
+        myTroops: 200000,
+        enemyFactionId: 'tuoba',
+        enemyFactionName: '拓跋魏',
+        enemyGeneralId: 'tuoba_yuanying',
+        enemyTroops: 300000,
+        introLines: [
+            { speaker: 'general', text: '元英以数十万众围钟离，淮水为城、昼夜急攻。我与韦叡已率二十万援军抵岸，舟舰蔽江。壮士可愿随我登岸列阵，破他淮上连营？' },
+            { speaker: 'player', text: '愿随曹将军决战钟离，破拓跋魏大军！' },
+        ],
+    },
+
+    // #498 札木合 (1161? ~ 1204) — 约 1190 十三翼之战（札答兰十三部与铁木真十三翼战于答阑巴勒主惕）
+    // 兵力：拉施特《史集》《元朝秘史》记札木合合十三部约三万骑，铁木真分十三翼约一万三千
+    zhadalan_zhamuhe: {
+        generalId: 'zhadalan_zhamuhe',
+        battleName: '十三翼之战',
+        battleYear: 1190,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '答阑巴勒主惕',
+        targetCityId: 'city_guyanshan',
+        targetLat: 48.80,
+        targetLng: 110.50,
+        myTroops: 30000,
+        enemyFactionId: 'menggu_d',
+        enemyFactionName: '蒙古',
+        enemyGeneralId: 'menggu_d_chengjisihan',
+        enemyTroops: 13000,
+        introLines: [
+            { speaker: 'general', text: '铁木真羽翼渐成，再纵他几年，草原上就没人制得住他。我已合札答兰十三部三万骑，就在答阑巴勒主惕等他——壮士可愿随我趁他未合诸部，先破其十三翼？' },
+            { speaker: 'player', text: '愿随札木合迎战铁木真，于答阑巴勒主惕破其十三翼！' },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔴 [2026-11-08 主人令「继续补知名战」] 名将缺知名战 · 第三批 4 条
+    //    口径不变：史实最知名一战／敌将实名且已在库（或在战场人物表）／锚城文化贴敌方／兵力按史、悬殊 ≤2 倍
+    // ═══════════════════════════════════════════════════════════════════
+
+    // #499 征服者威廉 (1028 ~ 1087) — 1066 黑斯廷斯之战（诺曼底军渡海，一日决战取英格兰）
+    // 兵力：《盎格鲁-撒克逊编年史》1066 年条与诺曼史料各记七八千；夹取后 1 万:1 万
+    gaolu_conqueror: {
+        generalId: 'gaolu_conqueror',
+        battleName: '黑斯廷斯之战',
+        battleYear: 1066,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '黑斯廷斯',
+        targetCityId: 'city_winchester',
+        targetLat: 50.911,
+        targetLng: 0.489,
+        myTroops: 8000,
+        enemyFactionId: 'yinggelan',
+        enemyFactionName: '英格兰王国',
+        enemyGeneralId: 'bfe_harold_godwinson',
+        enemyTroops: 8000,
+        introLines: [
+            { speaker: 'general', text: '爱德华无嗣而崩，哈罗德背誓窃位。我已得教皇之旗，全军渡海登陆佩文西，就在黑斯廷斯这条山脊上与他一日决胜——壮士可愿随我冲击那面王旗？' },
+            { speaker: 'player', text: '愿随诺曼底公爵决战黑斯廷斯，夺下英格兰王冠！' },
+        ],
+    },
+
+    // #500 速不台 (1176 ~ 1248) — 1223 迦勒迦河之战（蒙古军佯退诱敌，击破罗斯-钦察联军）
+    // 兵力：罗斯-钦察联军号称八万，蒙古军约二万至三万；按「悬殊 ≤2 倍」记 四万:八万
+    wuliangha_subutai: {
+        generalId: 'wuliangha_subutai',
+        battleName: '迦勒迦河之战',
+        battleYear: 1223,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '迦勒迦河',
+        targetCityId: 'city_zhapoluore',
+        targetLat: 47.30,
+        targetLng: 35.40,
+        myTroops: 40000,
+        enemyFactionId: 'luosi',
+        enemyFactionName: '罗斯',
+        enemyGeneralId: 'bfe_mstislav_kiev',
+        enemyTroops: 80000,
+        introLines: [
+            { speaker: 'general', text: '罗斯诸王公与钦察人合兵八万，连日追我九日不退。我已遣轻骑佯北，把他们都引到迦勒迦河边这条窄地上——壮士可愿随我回身合击，一战打散他们？' },
+            { speaker: 'player', text: '愿随速不台回军迦勒迦河，大破罗斯联军！' },
+        ],
+    },
+
+    // #501 策棱 (1672 ~ 1750) — 1731 光显寺之战（额尔德尼召，清军破准噶尔）
+    // 兵力：《清史稿·策棱传》记清军约二万、准噶尔三万余
+    wuli_d_celeng: {
+        generalId: 'wuli_d_celeng',
+        battleName: '光显寺之战',
+        battleYear: 1731,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '光显寺',
+        targetCityId: 'city_woluduocheng',
+        targetLat: 47.50,
+        targetLng: 102.80,
+        myTroops: 20000,
+        enemyFactionId: 'oirat_ming',
+        enemyFactionName: '瓦剌',
+        enemyGeneralId: 'bfe_galdan_tseren',
+        enemyTroops: 30000,
+        introLines: [
+            { speaker: 'general', text: '噶尔丹策零既胜和通泊，势必东掠喀尔喀。我已据光显寺水源，背河列阵、以逸待劳——壮士可愿随我迎头冲击准噶尔中军？' },
+            { speaker: 'player', text: '愿随策棱亲王决战光显寺，破噶尔丹策零！' },
+        ],
+    },
+
+    // #502 冷酷者塞利姆 (1470 ~ 1520) — 1514 查尔迪兰之战（奥斯曼火器破萨法维骑兵）
+    // 兵力：奥斯曼约六万（含近卫军与火炮）、萨法维约四万
+    // 锚定城：战场在伊朗西北（查尔迪兰），最近的波斯文化据点是打耳班 480km —— 按「先看据点文化」取它，不取 98km 外的亚美尼亚城
+    osman_selim: {
+        generalId: 'osman_selim',
+        battleName: '查尔迪兰之战',
+        battleYear: 1514,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '查尔迪兰',
+        targetCityId: 'city_daerban',
+        targetLat: 39.00,
+        targetLng: 44.30,
+        myTroops: 60000,
+        enemyFactionId: 'safawei_d',
+        enemyFactionName: '萨法维',
+        enemyGeneralId: 'yilihanguo_yisimeier',
+        enemyTroops: 40000,
+        introLines: [
+            { speaker: 'general', text: '伊斯玛仪以十二伊玛目之号煽动安纳托利亚，又杀我使节不敬。我以战车环列、火铳火炮居中，正待他红头骑兵来冲——壮士可愿随我守住这阵，看他的骑兵在炮火前折戟？' },
+            { speaker: 'player', text: '愿随塞利姆苏丹会战查尔迪兰，破萨法维骑兵！' },
         ],
     },
 };

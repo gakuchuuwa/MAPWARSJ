@@ -51,6 +51,7 @@ export class MonumentLayer {
     private markers: Map<string, L.Marker> = new Map();
     private browseMonuments: PlacedMonument[] = [];
     private initialized = false;
+    private labelLayoutScheduled = false;
 
     constructor(map: L.Map) {
         this.map = map;
@@ -85,6 +86,7 @@ export class MonumentLayer {
         const scale = Math.max(0, 1.0 + (zoom - 9) * 0.5);
         const pane = this.map.getPane('monumentPane');
         if (pane) pane.style.setProperty('--monument-scale', String(scale));
+        this.scheduleLabelLayout();
     }
 
     /**
