@@ -10668,9 +10668,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/PERSIAN/safawei_d_tahmasp.png": {
-            "scale": 0.92,
+            "scale": 0.86,
             "offsetX": 13,
-            "offsetY": -40
+            "offsetY": -35
         },
         "/assets/SPANISH/xibanya_hurtado_mendoza.png": {
             "scale": 1.08,

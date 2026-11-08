@@ -229,7 +229,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ewenki_gentemuer': 'imperial',
     'fang_guozhen_fangguozhen': 'imperial',
     'fangla_fangla': 'castle',
-    'fanyanna_xieer': 'imperial',
+    'fanyanna_xieer': 'feudal',   // 梵衍那·谢尔｜按 7 世纪推定（见 GeneralLifeYears）
     'faqiang_niechizanpu': 'feudal',
     'feiyaka_cemutehe': 'imperial',
     'fengzhou_wujie': 'castle',

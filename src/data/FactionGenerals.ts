@@ -1696,9 +1696,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     zhayan: [
         { generalId: 'gen_yaghmurasen', cityId: 'city_teleimusen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png', eliteName: '扎扬骑手', eliteTier: 4 },
-        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：库萨伊拉＝奥雷巴柏柏尔王，阿尔塔瓦王国（今特莱姆森一带）；丹吉尔从未是他的驻地 → 放特莱姆森（zhayan，风格 BERBER）；仍挂本政权 talike
-        { generalId: 'gen_kusaila', cityId: 'city_kailuwan', factionId: 'mulabite', generalName: '库萨伊拉', portrait: '/assets/BERBER/gen_kusaila.png', eliteName: '柏柏尔轻骑', eliteTier: 2 },
     ],
+
+    awraba: { generalId: 'gen_kusaila', cityId: 'city_khenchela', factionId: 'awraba', generalName: '库萨伊拉', portrait: '/assets/BERBER/gen_kusaila.png', eliteName: '柏柏尔轻骑', eliteTier: 2 },   // 🔴 [2026-11-08 主人批立] 奥雷巴（Awraba）｜库萨伊拉（670–688 柏柏尔之王；683 塔胡达伏击乌克巴后取凯鲁万为都，688 马姆之战阵亡，法文维基 Koceïla）｜据点 肯切拉（奥雷斯山，其葬地）｜精锐 柏柏尔轻骑 T2
 
 
 

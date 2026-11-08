@@ -408,7 +408,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     if (r && r[0] === 'RESOURCE') {
                         const rsx = (ob.x - 0.5 - 60) * TAC_TILE_W + VW / 2;
                         const rsy = (ob.y - 0.5 - 60) * TAC_TILE_H + VH / 2;
-                        if (glLayer.isIce || isSnowBase || !glLayer.isWaterAt(rsx, rsy, VW, VH)) continue;
+                        if (glLayer.isIce || isSnowBase || isSnowGround || !glLayer.isWaterAt(rsx, rsy, VW, VH)) continue;
                         if (r[1] === 'BOX_TURTLES' && Math.abs(mapLat) >= 42) continue;
                         const rh = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
                         this.ensureNatureAsset('RESOURCE:' + r[1]);
@@ -859,10 +859,10 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
 
     const relicRadiusOf = (asset: string): { r: number; isBld: boolean; isFarm: boolean } => {
         if (/^(?:DECAL_|RESOURCE:SALT_|RESOURCE:SULFUR_CRATER)/.test(asset)) return { r: 0, isBld: false, isFarm: false };
-        if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
+        if (/CASTLE|SIEGE_WORKSHOP|MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
             return { r: 128, isBld: true, isFarm: false };
         }
-        if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
+        if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|ARCHERY_RANGE|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
             return { r: 98, isBld: true, isFarm: false };
         }
         if (/^RESOURCE:(?:FARM|RFARM|PASTURE)/.test(asset)) {
@@ -1189,10 +1189,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     ? ['BUILDING:SCEN_FLAG_R']
                     : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_S', 'BUILDING:SCEN_FLAG_U'];
     const culturalHousePool = isAmericas
-        ? ['BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:DARK_HOUSE_AGE1']
-        : isNomad
-            ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
-            : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:DARK_HOUSE_AGE1', 'BUILDING:HUT_A', 'BUILDING:HUT_B'];
+        ? [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C']
+        : isTibet
+            ? ['BUILDING:PURU_HOUSE_AGE2', 'BUILDING:PURU_HOUSE_AGE3']
+            : isNomad
+                ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
+                : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`];
 
     // ── 0. 野战远翼大山（高地/山地在远翼高台摆 1 座 DE 大山，避开中央交战区） ──
     if (elevM >= 350 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') {
@@ -1376,11 +1378,13 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             : (isRiceRegion ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
         const millPool = isAmericas
             ? ['BUILDING:SETTLEMENT', 'BUILDING:DARK_SETTLEMENT_AGE1']
-            : isNomad
-                ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A']
-                : deStyle === 'SLAV'
-                    ? ['BUILDING:FOLWARK', `BUILDING:${deStyle}_MILL_AGE2`, 'BUILDING:DARK_MILL_AGE1']
-                    : [`BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`, 'BUILDING:DARK_MILL_AGE1'];
+            : isTibet
+                ? ['BUILDING:PURU_MILL_AGE2', 'BUILDING:PURU_MILL_AGE3']
+                : isNomad
+                    ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A']
+                    : deStyle === 'SLAV'
+                        ? ['BUILDING:FOLWARK', `BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`]
+                        : [`BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`];
 
         for (let attempt = 0; attempt < 12; attempt++) {
             const villageSpot = pickRandomScatterSpot(620, 520, 350);
@@ -1677,26 +1681,35 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         pushRelic(merchAsset, merchSpot.x, merchSpot.y, rnd() < 0.5, 0.84, 0, 0, false);
                     }
                 } else if (cKind === 'military_outpost_compound') {
-                    // DE 要塞/城堡军营配套组合：主堡（城堡/木堡/要塞）+ 驻军兵营/军帐 + 哨塔/军械铺 + 弧形木栅拒马防线 + 军需木桶/辎重车 + 战旗与火把
-                    const fortPool = isNomad
-                        ? ['BUILDING:OUTPOST']
-                        : (deStyle === 'SLAV' || deStyle === 'EAST')
-                            ? ['BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST']
-                            : ['BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST'];
-                    const garrisonBarracksAsset = isGrecoRoman
-                        ? 'BUILDING:GREEK_WAR_TENT'
+                    // DE 要塞/城堡军营配套组合：主堡（本文明专属城堡/塔楼/攻城器厂；木堡 WOODEN_FORT 严格仅限斯拉夫/东欧/北欧林地）+ 本文化驻军兵营/靶场 + 军械铁匠铺/箭塔 + 弧形木栅拒马防线 + 军需木桶/辎重车 + 战旗与火把
+                    const civCastleAsset = `BUILDING:${this.castleAssetFor(deStyle, defRec?.id ?? null)}`;
+                    const fortPool = isTibet
+                        ? ['BUILDING:TIBET_CASTLE_AGE3', 'BUILDING:PURU_TOWER_AGE3', 'BUILDING:PURU_SIEGE_WORKSHOP_AGE3']
                         : isNomad
-                            ? 'BUILDING:YURT_A'
+                            ? ['BUILDING:YURT_A', 'BUILDING:YURT_E', 'BUILDING:OUTPOST']
                             : isAmericas
-                                ? 'BUILDING:HUT_A'
-                                : (rnd() < 0.5 ? `BUILDING:${deStyle}_BARRACKS_AGE2` : 'BUILDING:CAMP_BARRACKS');
-                    const garrisonAuxAsset = isNomad
-                        ? 'BUILDING:YURT_B'
-                        : isAmericas
-                            ? 'BUILDING:OUTPOST'
-                            : (rnd() < 0.55 ? 'BUILDING:FORTIFIED_OUTPOST' : `BUILDING:${deStyle}_BLACKSMITH_AGE2`);
+                                ? [civCastleAsset, `BUILDING:${deStyle}_TOWER_AGE3`, `BUILDING:${deStyle}_SIEGE_WORKSHOP_AGE3`, 'BUILDING:SETTLEMENT']
+                                : (deStyle === 'SLAV' || deStyle === 'EAST' || isPaganNorth)
+                                    ? [civCastleAsset, 'BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST', `BUILDING:${deStyle}_TOWER_AGE3`]
+                                    : [civCastleAsset, `BUILDING:${deStyle}_TOWER_AGE3`, `BUILDING:${deStyle}_SIEGE_WORKSHOP_AGE3`, `BUILDING:${deStyle}_BARRACKS_AGE3`];
+                    const garrisonBarracksAsset = isTibet
+                        ? (rnd() < 0.5 ? 'BUILDING:PURU_BARRACKS_AGE2' : 'BUILDING:PURU_ARCHERY_RANGE_AGE2')
+                        : isNomad
+                            ? 'BUILDING:YURT_B'
+                            : isAmericas
+                                ? (rnd() < 0.5 ? `BUILDING:${deStyle}_BARRACKS_AGE2` : `BUILDING:${deStyle}_ARCHERY_RANGE_AGE2`)
+                                : (isGrecoRoman && rnd() < 0.4)
+                                    ? 'BUILDING:GREEK_WAR_TENT'
+                                    : (rnd() < 0.5 ? `BUILDING:${deStyle}_BARRACKS_AGE2` : `BUILDING:${deStyle}_ARCHERY_RANGE_AGE2`);
+                    const garrisonAuxAsset = isTibet
+                        ? (rnd() < 0.5 ? 'BUILDING:PURU_BLACKSMITH_AGE2' : 'BUILDING:PURU_TOWER_AGE2')
+                        : isNomad
+                            ? 'BUILDING:YURT_C'
+                            : isAmericas
+                                ? (rnd() < 0.5 ? `BUILDING:${deStyle}_BLACKSMITH_AGE2` : `BUILDING:${deStyle}_TOWER_AGE2`)
+                                : (rnd() < 0.5 ? `BUILDING:${deStyle}_BLACKSMITH_AGE2` : (rnd() < 0.5 ? `BUILDING:${deStyle}_TOWER_AGE2` : `BUILDING:${deStyle}_STABLE_AGE2`));
                     const mainFort = pickUniqueFromPool(fortPool);
-                    const mainScale = mainFort === 'BUILDING:POENARI_CASTLE' ? 0.74 : 0.80;
+                    const mainScale = mainFort.includes('CASTLE') ? 0.72 : 0.78;
                     pushRelic('DECAL_PATH_2', sx, sy + 24, false, 0.95, -6, 0, false);
                     pushRelic(mainFort, sx, sy, rnd() < 0.5, mainScale, 0, 0, true);
 
@@ -1828,7 +1841,8 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         //    1) 严禁在江河/内湖岸边摆放搁浅海鲸鱼（BEACHED_WHALE）或活鲸（RESOURCE:WHALE）：
         //       两者仅在濒临远岸深海（canSpawnDeepSeaWhaleOrNessie 为真）的海洋战场（waterKind === 'sea'）才允许出现；
         //    2) 严禁孤零零单摆一个搁浅物/船坞：一律按 DE 战役海岸/河滩组合造景成套摆放。
-        const allowOceanWhale = isSeaBattle && WHALE_OFFSHORE_DIRS.some(([dy, dx]) =>
+        const isFrozenWater = glLayer.isIce || isSnow || /^(ic2|ic3|ice)/i.test(String(this.environmentPlan?.groundTiles?.water ?? ''));
+        const allowOceanWhale = !isFrozenWater && isSeaBattle && WHALE_OFFSHORE_DIRS.some(([dy, dx]) =>
             canSpawnDeepSeaWhaleOrNessie(mapLat + dy * 0.65, mapLng + (dx * 0.65) / cosMapLat),
         );
 
@@ -1898,21 +1912,23 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     glLayer.carveFoundation(ferrySpot.landX, ferrySpot.landY, VW, VH, 1.3);
                     pushRelic(culturalHousePool[Math.floor(rnd() * culturalHousePool.length)], ferrySpot.landX, ferrySpot.landY, rnd() < 0.5, 0.74, 0, 0, false);
                 }
-                // 浅水岸线植被（河岸芦苇 REEDS / 海岸海带 KELP_SEAWEEDS）+ 成簇鱼群
-                pushRelic(
-                    isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
-                    (ferrySpot.x + ferrySpot.waterX) * 0.5 - 38,
-                    (ferrySpot.y + ferrySpot.waterY) * 0.5 + 18,
-                    rnd() < 0.5,
-                    0.84,
-                    -1,
-                    Math.floor(rnd() * 8),
-                    false,
-                );
-                const fish1 = pickUniqueFromPool(aquaticPool);
-                pushRelic(fish1, ferrySpot.waterX, ferrySpot.waterY, false, fish1 === 'RESOURCE:WHALE' ? 0.72 : 0.85, fish1 === 'RESOURCE:WATER_LILY' || fish1 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
-                const fish2 = pickUniqueFromPool(aquaticPool);
-                pushRelic(fish2, ferrySpot.waterX - 42, ferrySpot.waterY + 20, false, fish2 === 'RESOURCE:WHALE' ? 0.72 : 0.82, fish2 === 'RESOURCE:WATER_LILY' || fish2 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
+                // 浅水岸线植被（河岸芦苇 REEDS / 海岸海带 KELP_SEAWEEDS）+ 成簇鱼群（封冻冰面绝不放跃水鱼群与水草）
+                if (!isFrozenWater) {
+                    pushRelic(
+                        isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
+                        (ferrySpot.x + ferrySpot.waterX) * 0.5 - 38,
+                        (ferrySpot.y + ferrySpot.waterY) * 0.5 + 18,
+                        rnd() < 0.5,
+                        0.84,
+                        -1,
+                        Math.floor(rnd() * 8),
+                        false,
+                    );
+                    const fish1 = pickUniqueFromPool(aquaticPool);
+                    pushRelic(fish1, ferrySpot.waterX, ferrySpot.waterY, false, fish1 === 'RESOURCE:WHALE' ? 0.72 : 0.85, fish1 === 'RESOURCE:WATER_LILY' || fish1 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
+                    const fish2 = pickUniqueFromPool(aquaticPool);
+                    pushRelic(fish2, ferrySpot.waterX - 42, ferrySpot.waterY + 20, false, fish2 === 'RESOURCE:WHALE' ? 0.72 : 0.82, fish2 === 'RESOURCE:WATER_LILY' || fish2 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
+                }
             }
 
             // (5b) DE 海岸/河滩浅滩组合造景（严格区分海洋与内陆江河，且成组配套摆放，绝不单摆一只鲸鱼或一截残骸）
@@ -2038,7 +2054,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         Math.floor(rnd() * 5),
                         false,
                     );
-                    // 肇事浅滩暗礁 + 岸边芦苇/海藻
+                    // 肇事浅滩暗礁 + 岸边芦苇/海藻（封冻冰面不长水草）
                     pushRelic(
                         rnd() < 0.5 ? 'RESOURCE:SEA_ROCK1' : 'RESOURCE:SEA_ROCK2',
                         ws.waterX,
@@ -2049,29 +2065,33 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         Math.floor(rnd() * 4),
                         false,
                     );
+                    if (!isFrozenWater) {
+                        pushRelic(
+                            isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
+                            (ws.x + ws.waterX) * 0.5 - tx * 58,
+                            (ws.y + ws.waterY) * 0.5 - ty * 28,
+                            rnd() < 0.5,
+                            0.84,
+                            -1,
+                            Math.floor(rnd() * 8),
+                            false,
+                        );
+                    }
+                }
+
+                if (!isFrozenWater) {
+                    const aqAsset = pickUniqueFromPool(aquaticPool);
                     pushRelic(
-                        isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
-                        (ws.x + ws.waterX) * 0.5 - tx * 58,
-                        (ws.y + ws.waterY) * 0.5 - ty * 28,
-                        rnd() < 0.5,
-                        0.84,
-                        -1,
-                        Math.floor(rnd() * 8),
+                        aqAsset,
+                        ws.waterX + 36,
+                        ws.waterY + 16,
+                        false,
+                        aqAsset === 'RESOURCE:WHALE' ? 0.72 : 0.84,
+                        aqAsset === 'RESOURCE:WATER_LILY' || aqAsset === 'RESOURCE:OYSTERS' ? -6 : -1,
+                        Math.floor(rnd() * 12),
                         false,
                     );
                 }
-
-                const aqAsset = pickUniqueFromPool(aquaticPool);
-                pushRelic(
-                    aqAsset,
-                    ws.waterX + 36,
-                    ws.waterY + 16,
-                    false,
-                    aqAsset === 'RESOURCE:WHALE' ? 0.72 : 0.84,
-                    aqAsset === 'RESOURCE:WATER_LILY' || aqAsset === 'RESOURCE:OYSTERS' ? -6 : -1,
-                    Math.floor(rnd() * 12),
-                    false,
-                );
                 wrecksPlaced++;
             }
         }
@@ -2383,7 +2403,7 @@ function spawnTacticalNessie(this: Scene13WarLayer, glLayer: Scene13GroundLayerG
     // 🔴 [2026-11-01 主人令「这里有鲸鱼吗，如果没有的话，也不能有海怪」]
     //    海怪与战略图鲸鱼同源：仅在濒临远岸深海（有鲸鱼分布）的海域战场才允许生成；
     //    内陆河湖、爱琴海等群岛浅海（无鲸鱼）一概不出海怪。
-    if (this.environmentPlan?.waterKind !== 'sea') return;
+    if (this.environmentPlan?.waterKind !== 'sea' || glLayer.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(String(this.environmentPlan?.baseTerrain ?? ''))) return;
     const defRec = this.defenderCityRecord();
     const lat = defRec?.lat ?? this.centerLat ?? 30;
     const lng = defRec?.lng ?? this.centerLng ?? 110;

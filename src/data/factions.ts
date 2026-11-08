@@ -63,6 +63,7 @@ export const FACTIONS: Faction[] = [
   { id: 'bosiniya', name: '波斯尼亚' },
 
   { id: 'mulabite', name: '穆拉比特' },
+    { id: 'awraba', name: '奥雷巴' },
   { id: 'malin', name: '马林苏丹国' },   // 🔴 [2026-10-28 主人批修] 阿布哈桑＝马林王朝苏丹（1340 里奥萨拉多）；原挂穆拉比特错（马林≠穆拉比特、晚约 3 个世纪）；主人定「武将历史是哪个政权就是哪个势力」
 
 

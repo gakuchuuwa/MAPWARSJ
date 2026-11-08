@@ -64,6 +64,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'bosiniya': 'city_sarajevo',
 
   'mulabite': 'city_malajiashen',
+    'awraba': 'city_khenchela',
 
   'zhayan': 'city_teleimusen',
   'hamade': 'city_bujiaya',

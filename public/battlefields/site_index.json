@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-05T05:06:32.594Z",
+ "generatedAt": "2026-11-08T08:15:31.305Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -17070,6 +17070,20 @@
    "reliefM": 96,
    "cliffs": 0,
    "top": "Dry Grass 50.5% · Water, Shallow 38% · Forest, Autumn 5% · Beach 3%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_khenchela",
+   "file": "site_city_khenchela.json",
+   "bytes": 233347,
+   "koppen": "BSk",
+   "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 269,
+   "cliffs": 0,
+   "top": "Desert 91.6% · Palm Desert 6% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
   }
  ],

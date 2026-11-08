@@ -465,7 +465,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'baha_gaiwamu': 15,                                  // 盖瓦姆 · baha · 泰巴德
     'delan_sulun': -1,                                   // 苏伦 · delan · 法拉
     'dulan_d_aihamaide': 18,                             // 艾哈迈德 · dulan_d · 坎大哈
-    'fanyanna_xieer': 16,                                // 谢尔 · fanyanna · 巴米扬
+    'fanyanna_xieer': 7,                                // 谢尔 · fanyanna · 巴米扬
     'gelujiya_tamaer': 12,                               // 塔玛尔 · gelujiya · 第比利斯
     'guishuang_qiujiuque': 1,                           // 丘就却 · guishuang · 蓝氏城
     'guzgan_abuhalisi': 10,                              // 阿布哈里斯 · guzgan · 法里亚布
@@ -657,7 +657,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_theodoric_great': 5,                           // 狄奥多里克 · donggete · 拉文纳
     'donggete_berig': 1,                     // 贝里格 · donggete · 维斯比
     'gen_ugolino': 13,                                   // 乌戈里诺 · anuo · 比萨
-    'gen_uqba': 7,                                      // 乌克巴 · aguelabu · 凯鲁万
+    'gen_uqba': 7,                                      // 乌克巴 · womaya · 凯鲁万
     'gen_basil_ii': 10,                                  // 巴西尔二世 · baizanting · 君士坦丁堡
     'gen_wifred_hairy': 9,                              // 威弗雷德 · jiatailuoniya · 巴塞罗那
     'gen_yaghmurasen': 13,                               // 亚格姆拉森 · zhayan · 特莱姆森

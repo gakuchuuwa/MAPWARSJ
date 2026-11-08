@@ -1029,7 +1029,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     shi_clan_moheduotutun: { birth: 680, death: 740, kaoju: '推定' },  // 莫贺咄吐屯
     mamon_mameng: { birth: 950, death: 997, kaoju: '推定' },  // 马蒙
     khoja_apakehezhuo: { birth: 1626, death: 1694 },  // 阿帕克和卓
-    fanyanna_xieer: { birth: 1486, death: 1545, kaoju: '推定' },  // 谢尔
+    fanyanna_xieer: { birth: 620, death: 690, kaoju: '推定' },  // 谢尔｜梵衍那 4–8 世纪佛教小国、8 世纪亡于阿拉伯，生卒按 7 世纪重定
     kangju_chebishi: { birth: 690, death: 752, kaoju: '推定' },  // 车鼻施
     qiepantuo_luozhentan: { birth: 700, death: 755, kaoju: '推定' },  // 罗真檀
     jie_sijinti: { birth: 610, death: 660, kaoju: '推定' },  // 斯谨提

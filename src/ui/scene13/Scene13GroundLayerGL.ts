@@ -3495,7 +3495,7 @@ export class Scene13GroundLayerGL {
     ]);
 
     const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img, dirt.img, dry.img, grass.tile);
-    layer.isIce = water.tile === 'ic2' || water.tile === 'ice';
+    layer.isIce = water.tile === 'ic2' || water.tile === 'ice' || water.tile === 'ic3';
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
     if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);

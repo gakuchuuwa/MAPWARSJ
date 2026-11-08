@@ -18434,10 +18434,12 @@ export class Scene13WarLayer {
                     m.slashed = true;
 
                     // 🔴 [2026-11-08 主人令「这几个的声音更重，可以用来近战士兵打击城墙城门，建筑等音效」]
-                    //    近战兵砍的是建筑（城墙/城门/箭塔/城内建筑，都带 sprite）→ 播 sword_clank 重击声。
-                    //    与刀光同相（ph>=3）触发，每轮出手一声；限流交给 AudioManager（120ms）。
-                    //    攻城器械不在本分支（它们走上面的 siege_impact），所以这里只剩刀剑/长兵砸墙。
-                    if ('sprite' in foe) audioManager.play('sword_clank');
+                    // 🔴 [2026-11-08 主人令「士兵打建筑的音效改为只用来打城门才响」]
+                    //    只有目标是**城门**（STONE_GATE / FORTIFIED_GATE）才播 sword_clank；
+                    //    砍城墙、箭塔、城内建筑一律静音。与刀光同相（ph>=3）触发，每轮出手一声；
+                    //    限流仍由 AudioManager 管（450ms）。攻城器械不在本分支（走上面的 siege_impact）。
+                    const isGateTarget = 'sprite' in foe && (foe.key === 'STONE_GATE' || foe.key === 'FORTIFIED_GATE');
+                    if (isGateTarget) audioManager.play('sword_clank');
 
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
 

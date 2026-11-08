@@ -1102,6 +1102,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代摩尔军团",
         legionType: "sub",
     },
+    "awraba": {
+        legionName: "封建时代柏柏尔军团",
+        legionType: "sub",
+    },
     // 🔴 [2026-10-28 主人批修] 马林王朝（新势力）：指针＝主将阿布·哈桑的实际军团（城堡×摩尔格；仅作无该格时兜底）
     "malin": {
         legionName: "城堡时代摩尔军团",

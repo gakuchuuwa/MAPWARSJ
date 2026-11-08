@@ -208,7 +208,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ewenki': [{ from: -9999, era: 'imperial' }], // 鄂温克
     'fangguozhen': [{ from: -9999, era: 'castle' }], // 方国珍
     'fangla': [{ from: -9999, era: 'castle' }], // 圣公
-    'fanyanna': [{ from: -9999, era: 'imperial' }], // 梵衍那
+    'fanyanna': [{ from: -9999, era: 'feudal' }], // 梵衍那｜4–8 世纪佛教小国（巴米扬），8 世纪为阿拉伯所并 → 封建时代（476–1050）；🔴 [2026-11-08 主人令「改时代＋改人物年份」]
     'feierganna': [{ from: -9999, era: 'castle' }], // 费尔干纳
     'feilisidin': [{ from: -9999, era: 'antiquity' }], // 非利士
     'feiyaka': [{ from: -9999, era: 'imperial' }], // 费雅喀
@@ -689,7 +689,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'maerta_qishi': [{ from: -9999, era: 'castle' }], // 圣约翰｜按现存名将成名年推定：–∞起城堡 → 1565起帝国
     'mosike_gongguo': [{ from: -9999, era: 'castle' }], // 莫斯公国｜按现存名将成名年推定：–∞起城堡 → 1514起帝国
     'muisca': [{ from: -9999, era: 'castle' }], // 穆伊斯卡｜按现存名将成名年推定：–∞起城堡 → 1520起帝国
-    'mulabite': [{ from: -9999, era: 'castle' }], // 穆拉比特｜按现存名将成名年推定：–∞起封建 → 1086起城堡
+    'mulabite': [{ from: -9999, era: 'castle' }],
+    'awraba': [{ from: -9999, era: 'feudal' }], // 奥雷巴｜670–688 库萨伊拉（法文维基 Koceïla）→ 封建时代 // 穆拉比特｜按现存名将成名年推定：–∞起封建 → 1086起城堡
     'malin': [{ from: -9999, era: 'castle' }], // 🔴 [2026-10-28 主人批修] 马林王朝｜1244 立国、1331–1348 阿布·哈桑在位，1340 里奥萨拉多＝城堡时代
     'oirat_ming': [{ from: -9999, era: 'imperial' }], // 卫拉特｜按现存名将成名年推定：–∞起城堡 → 1690起帝国
     'panyao': [{ from: -9999, era: 'castle' }], // 盘瑶｜按现存名将成名年推定：–∞起城堡 → 1750起帝国

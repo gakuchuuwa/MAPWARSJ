@@ -1,4 +1,4 @@
-﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 
 
@@ -2055,8 +2055,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
     // 🔴 [2026-11-08 主人令「这几个的声音更重，可以用来近战士兵打击城墙城门，建筑等音效」]
     //    近战兵（步兵/骑兵，不含攻城器械）砍城墙、城门、建筑时播这一条：每轮出手一声，重击质感。
-    //    限流 120ms（人多时约 8 声/秒），音量 0.45；素材峰值 -2 ~ -3dBFS，本身就比 melee_hit 重。
-    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.45, 120),
+    // 🔴 [2026-11-08 主人令「士兵打建筑的音效太频繁了。降低」] 冷却 120ms → 450ms（约 2.2 声/秒），音量 0.45 → 0.40。
+    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.40, 450),
 
 
 

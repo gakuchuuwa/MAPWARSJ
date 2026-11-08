@@ -75,10 +75,26 @@ export function getFactionEliteConfig(factionId: string | null | undefined): Eli
   const entry = FACTION_GENERALS[factionId as keyof typeof FACTION_GENERALS] as any;
   if (!entry) return null;
   const list = Array.isArray(entry) ? entry : [entry];
+  // 🔴 [2026-11-08 主人报「薛仁贵的精锐怎么还是黄头军」] 旧逻辑取「数组里第一个有精锐的将」，
+  //    唐这种将多号杂的势力就会把陈敬瑄的「西川黄头军」当成整个唐的兜底精锐，
+  //    凡是没带将/没带自身精锐的唐军单位都顶这个名。
+  //    现改为**只在该势力精锐基本统一时**才给兜底（同一番号占 ≥60% 且至少 2 人），否则返回 null：
+  //    宁可没有兜底名，也不许张冠李戴。
+  const counts = new Map<string, { n: number; tier: EliteTier }>();
+  let total = 0;
   for (const g of list) {
-    if (g?.eliteName) return { name: g.eliteName, tier: (g.eliteTier ?? 2) as EliteTier };
+    if (!g?.eliteName) continue;
+    total++;
+    const hit = counts.get(g.eliteName);
+    if (hit) hit.n++;
+    else counts.set(g.eliteName, { n: 1, tier: (g.eliteTier ?? 2) as EliteTier });
   }
-  return null;
+  if (total < 2) return null;
+  let bestName = '';
+  let best = { n: 0, tier: 2 as EliteTier };
+  for (const [name, v] of counts) if (v.n > best.n) { best = v; bestName = name; }
+  if (!bestName || best.n < 2 || best.n / total < 0.6) return null;
+  return { name: bestName, tier: best.tier };
 }
 
 /**

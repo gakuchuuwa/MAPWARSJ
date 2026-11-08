@@ -58,6 +58,7 @@ export class CityAssetManager {
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
         'sesali': '色萨',
+        'awraba': '奥雷',
         'handong': '汉东',   // 2026-10-25 补登记（刘黑闼·汉东王，邯郸）
         'douxia': '夏',   // 2026-10-25 补登记（窦建德·夏）
         'mari_ancient': '马里',   // 2026-10-25 补登记（幼发拉底马里）
