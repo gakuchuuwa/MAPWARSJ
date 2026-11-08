@@ -68,7 +68,7 @@ export function getGeneralEliteLegionName(generalId: string | null | undefined):
 
 /**
  * 势力级精锐：只用于「这支势力没有带将部队」时的显示兜底。
- * 取该势力**武将自己的精锐**（首个有条目的将），不是另编的势力番号；势力无将 → null。
+ * 取该势力**武将自己的精锐**（单将势力直接取该将；多将势力仅在同一番号占 ≥60% 时才作为势力兜底），势力无将 → null。
  */
 export function getFactionEliteConfig(factionId: string | null | undefined): EliteLegionConfig | null {
   if (!factionId) return null;
@@ -76,10 +76,10 @@ export function getFactionEliteConfig(factionId: string | null | undefined): Eli
   if (!entry) return null;
   const list = Array.isArray(entry) ? entry : [entry];
   // 🔴 [2026-11-08 主人报「薛仁贵的精锐怎么还是黄头军」] 旧逻辑取「数组里第一个有精锐的将」，
-  //    唐这种将多号杂的势力就会把陈敬瑄的「西川黄头军」当成整个唐的兜底精锐，
-  //    凡是没带将/没带自身精锐的唐军单位都顶这个名。
-  //    现改为**只在该势力精锐基本统一时**才给兜底（同一番号占 ≥60% 且至少 2 人），否则返回 null：
-  //    宁可没有兜底名，也不许张冠李戴。
+  //    唐这种将多号杂的势力就会把陈敬瑄的「西川黄头军」当成整个唐的兜底精锐。
+  //    正确口径：
+  //      · 单将势力（total === 1）：该将的精锐即本势力唯一精锐，直接返回；
+  //      · 多将势力（total >= 2）：仅当同一番号占 ≥60% 时才给势力级兜底，否则返回 null（各将用各将自己的番号，绝不张冠李戴）。
   const counts = new Map<string, { n: number; tier: EliteTier }>();
   let total = 0;
   for (const g of list) {
@@ -89,11 +89,12 @@ export function getFactionEliteConfig(factionId: string | null | undefined): Eli
     if (hit) hit.n++;
     else counts.set(g.eliteName, { n: 1, tier: (g.eliteTier ?? 2) as EliteTier });
   }
-  if (total < 2) return null;
+  if (total === 0) return null;
   let bestName = '';
   let best = { n: 0, tier: 2 as EliteTier };
   for (const [name, v] of counts) if (v.n > best.n) { best = v; bestName = name; }
-  if (!bestName || best.n < 2 || best.n / total < 0.6) return null;
+  if (!bestName) return null;
+  if (total >= 2 && best.n / total < 0.6) return null;
   return { name: bestName, tier: best.tier };
 }
 
@@ -157,13 +158,15 @@ export type LegionEliteLookup = {
 
 /**
  * 按军团将领/出兵据点查精锐（一个武将一支精锐）：
- * eliteOverride → 该将自带精锐 → 该将所属势力的武将精锐 → 出兵据点的武将精锐。
+ * 该将自带精锐 → eliteOverride（无将/拟名事件部队） → 该将所属势力的武将精锐 → 出兵据点的武将精锐。
  */
 export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig | null {
-  if (army.eliteOverride) return army.eliteOverride;
   if (army.generalId) {
     const genElite = getGeneralEliteConfig(army.generalId);
     if (genElite) return genElite;
+  }
+  if (army.eliteOverride) return army.eliteOverride;
+  if (army.generalId) {
     // 🔴 [2026-10-24 修「精锐跨势力外溢」（AGENTS 二-4：别国武将精锐不许随城错配）]
     //    有将却查不到专属精锐（典型：经典战拟名／战场人物不在将领档）→ 取**本军势力**的将精锐；
     //    不再按 homeCityId/sourceCityId 的据点兜底，否则攻方会顶替被攻城（守方）的精锐。

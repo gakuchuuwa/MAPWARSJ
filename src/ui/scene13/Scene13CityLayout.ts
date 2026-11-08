@@ -1481,8 +1481,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     'BUILDING:HUT_E', 'BUILDING:HUT_F', 'BUILDING:HUT_G', 'BUILDING:DARK_HOUSE_AGE1',
                 ]
                 : useAge3
-                    ? [`BUILDING:${deStyle}_HOUSE_AGE3`, `BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:HUT_A']
-                    : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE2`, 'BUILDING:DARK_HOUSE_AGE1']);
+                    ? [`BUILDING:${deStyle}_HOUSE_AGE3`, `BUILDING:${deStyle}_HOUSE_AGE2`]
+                    : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`]);
         const villageCartAsset = isAmericasOutskirts
             ? 'TRADE:TRADE_CART_MESO_EMPTY/move_2'
             : isNomadOutskirts || deStyle === 'ORIE' || deStyle === 'PERSIAN'
@@ -1581,10 +1581,10 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const placedOutskirtsItems: Array<{ x: number; y: number; r: number; isBld: boolean; isFarm: boolean }> = [];
         const outskirtsRadiusOf = (asset: string): { r: number; isBld: boolean; isFarm: boolean } => {
             if (/^DECAL_PATH/.test(asset)) return { r: 0, isBld: false, isFarm: false };
-            if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
+            if (/CASTLE|SIEGE_WORKSHOP|MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
                 return { r: 135, isBld: true, isFarm: false };
             }
-            if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
+            if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|ARCHERY_RANGE|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
                 return { r: 105, isBld: true, isFarm: false };
             }
             if (/^RESOURCE:(?:FARM|RFARM|PASTURE)/.test(asset)) {
@@ -2062,23 +2062,33 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         // ── (E) 城郊要塞/前哨军营组合（主堡/木堡/哨岗 + 驻军兵营/军帐 + 附属哨塔/军械铁匠铺 + 拒马防线 + 军需木桶 + 战旗，绝不单摆） ──
         outpostCandidates.sort(() => mRnd() - 0.5);
         const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
-        const outpostPool = isNomadOutskirts
-            ? ['BUILDING:OUTPOST']
-            : ((deStyle === 'SLAV' || deStyle === 'EAST') && this.defenderCityType !== 'stockade')
-                ? ['BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST']
-                : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
-        const campTentOutskirts = isGrecoRomanOutskirts
-            ? 'BUILDING:GREEK_WAR_TENT'
+        const outpostPool = isTibetOutskirts
+            ? ['BUILDING:PURU_TOWER_AGE3', 'BUILDING:PURU_SIEGE_WORKSHOP_AGE3', 'BUILDING:PURU_TOWER_AGE2']
             : isNomadOutskirts
-                ? 'BUILDING:YURT_A'
+                ? ['BUILDING:YURT_A', 'BUILDING:YURT_E', 'BUILDING:OUTPOST']
                 : isAmericasOutskirts
-                    ? 'BUILDING:HUT_A'
-                    : (this.defenderCityType === 'stockade' ? 'BUILDING:CAMP_BARRACKS' : `BUILDING:${deStyle}_BARRACKS_AGE2`);
-        const outpostAuxAsset = isNomadOutskirts
-            ? 'BUILDING:YURT_B'
-            : isAmericasOutskirts
-                ? 'BUILDING:OUTPOST'
-                : (this.defenderCityType === 'stockade' ? 'BUILDING:OUTPOST' : `BUILDING:${deStyle}_BLACKSMITH_AGE2`);
+                    ? [`BUILDING:${deStyle}_TOWER_AGE3`, `BUILDING:${deStyle}_SIEGE_WORKSHOP_AGE3`, 'BUILDING:SETTLEMENT']
+                    : (this.defenderCityType === 'stockade')
+                        ? [`BUILDING:${deStyle}_TOWER_AGE2`, 'BUILDING:OUTPOST']
+                        : (deStyle === 'SLAV' || deStyle === 'EAST')
+                            ? ['BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST', `BUILDING:${deStyle}_TOWER_AGE3`]
+                            : [`BUILDING:${deStyle}_TOWER_AGE3`, `BUILDING:${deStyle}_SIEGE_WORKSHOP_AGE3`, `BUILDING:${deStyle}_BARRACKS_AGE3`];
+        const campTentOutskirts = isTibetOutskirts
+            ? 'BUILDING:PURU_BARRACKS_AGE2'
+            : isNomadOutskirts
+                ? 'BUILDING:YURT_B'
+                : isAmericasOutskirts
+                    ? `BUILDING:${deStyle}_BARRACKS_AGE2`
+                    : (isGrecoRomanOutskirts && mRnd() < 0.4)
+                        ? 'BUILDING:GREEK_WAR_TENT'
+                        : `BUILDING:${deStyle}_BARRACKS_AGE2`;
+        const outpostAuxAsset = isTibetOutskirts
+            ? 'BUILDING:PURU_BLACKSMITH_AGE2'
+            : isNomadOutskirts
+                ? 'BUILDING:YURT_C'
+                : isAmericasOutskirts
+                    ? `BUILDING:${deStyle}_BLACKSMITH_AGE2`
+                    : (this.defenderCityType === 'stockade' ? `BUILDING:${deStyle}_TOWER_AGE2` : `BUILDING:${deStyle}_BLACKSMITH_AGE2`);
         let outpostsPlaced = 0;
         for (const oc of outpostCandidates) {
             if (outpostsPlaced >= targetOutposts) break;
@@ -2097,7 +2107,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (validOutpostWings < 2) continue;
 
             const chosenOp = pickUniqueOutskirts(outpostPool);
-            const opScale = chosenOp === 'BUILDING:POENARI_CASTLE' ? 0.74 : 0.80;
+            const opScale = chosenOp.includes('CASTLE') ? 0.72 : 0.78;
             if (!pushOutskirtsSprite(chosenOp, oc.x, oc.y, opScale, 0, mRnd() < 0.5, 0)) continue;
             placedCenters.push({ x: oc.x, y: oc.y });
             clearTreesInRadius(oc.x, oc.y, 260);

@@ -380,6 +380,7 @@ export class LegionManager {
                 }
             }
             if (army.generalId) {
+                if (army.isElite) { const canonicalEliteName = getLegionEliteLegionName(army); if (canonicalEliteName) army.name = canonicalEliteName; }
                 const anchoredCityId = getRawGeneralByGeneralId(army.generalId)?.general.cityId;
                 const c = anchoredCityId ? this.cityManager.getCity(anchoredCityId) : undefined;
                 if (c) {

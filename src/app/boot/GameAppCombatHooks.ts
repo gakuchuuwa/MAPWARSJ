@@ -9,7 +9,7 @@ import { getFactionCultureRegion } from '../../config/portrait_defaults';
 //    —— 缺它俩会让 tsc 报 TS2304，运行到那行直接抛错。
 import { getCityRegion, getRegion } from '../../systems/RegionSystem';
 import { readSiegeGarrisonElite, readSiegeGarrisonEliteName } from '../../combat/SiegeGarrisonTier';
-import { getLegionEliteLegionName, getCityEliteLegionName, getFactionEliteConfig } from '../../data/ExpeditionLegions';
+import { getLegionEliteLegionName, getCityEliteLegionName, getGeneralEliteLegionName, getFactionEliteConfig } from '../../data/ExpeditionLegions';
 import {
     setGeneralSkillLegionManager,
     setOnTacticalSkillTriggered,
@@ -49,6 +49,7 @@ function battleSceneTarget(unit: { id: string; getPosition(): { lat: number; lng
  */
 function unitRegion(unit: {
     factionId: string | null;
+    generalId?: string | null;
     unitType?: string;
     getEntity?(): any;
 }): string | null {
@@ -121,10 +122,15 @@ function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene
  */
 function resolveUnitEliteName(unit: {
     factionId: string | null;
+    generalId?: string | null;
     unitType?: string;
     getEntity?(): any;
 } | null | undefined): string | null {
     if (!unit) return null;
+    if (unit.generalId) {
+        const byUnitGen = getGeneralEliteLegionName(unit.generalId);
+        if (byUnitGen) return byUnitGen;
+    }
     const entity = unit.getEntity?.();
     if (unit.unitType === 'city') {
         const garrison = readSiegeGarrisonEliteName(entity);

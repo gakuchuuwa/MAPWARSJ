@@ -1933,7 +1933,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    elephant_attack: sounds('battle', ['elephant_attack_1', 'elephant_attack_2', 'elephant_attack_3', 'elephant_attack_4', 'elephant_attack_5'], 0.65, 1200),
+    // 🔴 [2026-11-08 主人令「大象的声音…音量有点小」] 素材本身只有 -24.7～-30.3 LUFS，太轻；
+    //    已把 5 条攻击音归一到 **-20 LUFS**（真峰 ≤ -13dBFS，原件备份 scratch/sfx_elephant_orig_20261108），
+    //    音量 0.65 → **0.80**。折算约 -22.4 LUFS，高过 land_contact 底噪（-24.5）约 2dB，象吼能压住战场。
+    elephant_attack: sounds('battle', ['elephant_attack_1', 'elephant_attack_2', 'elephant_attack_3', 'elephant_attack_4', 'elephant_attack_5'], 0.80, 1200),
 
 
 
@@ -1949,7 +1952,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    elephant_die: sounds('battle', ['elephant_die_1', 'elephant_die_2', 'elephant_die_3', 'elephant_die_4', 'elephant_die_5'], 0.75, 800),
+    // 🔴 [2026-11-08 同上] 死亡音 5 条归一到 **-21 LUFS**，音量 0.75 → **0.85**（折算约 -22.4 LUFS）。
+    elephant_die: sounds('battle', ['elephant_die_1', 'elephant_die_2', 'elephant_die_3', 'elephant_die_4', 'elephant_die_5'], 0.85, 800),
 
 
 
