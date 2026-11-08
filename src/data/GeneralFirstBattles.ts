@@ -113,8 +113,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '卡拉塔菲米',
-        targetLat: 37.9,
-        targetLng: 12.85,
+        // 🔴 [2026-11-08 按史改坐标] 战场在卡拉塔菲米镇西北约 3 km 的皮安托罗马诺丘（Pianto Romano），37.8972,12.8364。
+        targetLat: 37.8972,
+        targetLng: 12.8364,
         myTroops: 10000,
         enemyFactionId: 'liangxixili',
         enemyFactionName: '两西西里',
@@ -154,12 +155,13 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '达拉',
-        // 🔴 [2026-11-08 按史改锚] 达拉（今土耳其马尔丁省达拉，37.18,40.56）城库无据点 → 锚最近的【尼西比斯】60km。
+        // 🔴 [2026-11-08 按史改锚+坐标] 达拉＝今土耳其马尔丁省奥乌兹村达拉古城遗址（37.1778,40.9411），城库无据点 → 锚最近的【尼西比斯】约 40km。
+        //    原坐标 37.18,40.56 落在尼西比斯附近，偏西约 33 km（英文维基 Dara (Mesopotamia)）。
         //    敌手是萨珊波斯，锚定城决定野战敌军军团的编制文化：尼西比斯是 ORIE（近东），贴萨珊；
         //    原锚特拉布宗（BYZANTINE，431km 外）会让波斯军挂上拜占庭编制。
         targetCityId: 'city_nixibisi',
-        targetLat: 37.18,
-        targetLng: 40.56,
+        targetLat: 37.1778,
+        targetLng: 40.9411,
         myTroops: 25000,
         enemyFactionId: 'sashan',
         enemyFactionName: '萨珊',
@@ -178,8 +180,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '奥尔沙',
-        targetLat: 54.5,
-        targetLng: 30.4,
+        // 🔴 [2026-11-08 按史改坐标] 奥尔沙之战战场在奥尔沙以东克拉皮夫纳河畔「克拉皮夫诺战场」（今白俄哈季卡夫希纳村南），54.5421,30.5861；
+        //    原 54.5,30.4 是奥尔沙城西，偏西约 12 km（白俄维基 Гацькаўшчына：Крапівенскае поле）。
+        targetLat: 54.5421,
+        targetLng: 30.5861,
         myTroops: 30000,
         enemyFactionId: 'mosike_gongguo',
         enemyFactionName: '莫斯科',
@@ -198,8 +202,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '曾塔',
-        targetLat: 45.38,
-        targetLng: 20.25,
+        // 🔴 [2026-11-08 按史改坐标] 曾塔＝今塞尔维亚森塔（Senta）蒂萨河西岸渡口，45.9261,20.0981；
+        //    原 45.38,20.25 偏南约 60 km（英文维基 Battle of Zenta：45°55′34″N 20°05′53″E）。
+        targetLat: 45.9261,
+        targetLng: 20.0981,
         myTroops: 50000,
         enemyFactionId: 'osman',
         enemyFactionName: '奥斯曼',
@@ -219,8 +225,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '黄水',
-        targetLat: 48.35,
-        targetLng: 33.5,
+        // 🔴 [2026-11-08 按史改坐标] 黄水＝克尼亚日拜拉克沟谷（今乌克兰基洛沃格勒州波佩利纳斯泰以南），48.6253,33.7259；
+        //    原 48.35,33.5 是苏联时期命名的若夫季沃德市区，距战场 40–50 km（乌克兰维基：Княжі Байраки біля с. Попельнасте）。
+        targetLat: 48.6253,
+        targetLng: 33.7259,
         myTroops: 5000,
         enemyFactionId: 'bolan',
         enemyFactionName: '波兰',
@@ -313,8 +321,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '城濮',
         targetCityId: 'city_puyang',
-        targetLat: 35.7621,
-        targetLng: 115.0291,
+        // 🔴 [2026-11-08 按史改坐标] 城濮＝春秋卫地，今山东鄄城县西南临濮集一带（中文维基／百度百科均作鄄城西南），35.4692,115.3770；
+        //    原 35.7621,115.0291 是濮阳城，偏西北约 40 km（濮阳为另一说，非主流）。
+        targetLat: 35.4692,
+        targetLng: 115.377,
         myTroops: 30000,
         enemyFactionId: 'chuguo',
         enemyFactionName: '楚国',
@@ -870,10 +880,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: -260,
         battleType: 'field',
         role: 'attacker',
-        targetName: '长子长平',
+        targetName: '长平',
         targetCityId: 'city_shangdang',
-        targetLat: 36.148974,
-        targetLng: 113.008118,
+        // 🔴 [2026-11-08 按史改坐标] 长平之战战场在今山西高平市丹河两岸（长平村、永录尸坑一带），35.80,112.90；
+        //    原 36.148974,113.008118 是长子县城，偏北约 40 km；同役另一条（bfe3_9）本就用 35.80,112.90，两边归一。
+        targetLat: 35.8,
+        targetLng: 112.9,
         myTroops: 50000,
         enemyFactionId: 'zhao',
         enemyFactionName: '赵国',
@@ -1140,8 +1152,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '坎尼',
         targetCityId: 'city_meierfei',
-        targetLat: 40.99,
-        targetLng: 15.65,
+        // 🔴 [2026-11-08 按史改坐标] 坎尼＝今意大利巴列塔市坎内德拉巴塔利亚（Canne della Battaglia）遗址，41.2966,16.1513；
+        //    原 40.99,15.65 是梅尔菲，偏西南约 60 km（中文维基坎尼會戰 41°18′23″N 16°7′57″E）。
+        targetLat: 41.2966,
+        targetLng: 16.1513,
         myTroops: 50000,
         enemyFactionId: 'luoma_diguo',
         enemyFactionName: '罗马共和国',
@@ -1184,8 +1198,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '巨鹿漳水',
         targetCityId: 'city_handan',
-        targetLat: 36.61,
-        targetLng: 114.49,
+        // 🔴 [2026-11-08 按史改坐标] 巨鹿＝秦钜鹿郡，在今河北平乡县一带（项羽救巨鹿、破釜沉舟于漳水），37.0563,115.0239；
+        //    原 36.61,114.49 是邯郸城，偏西南约 70 km。
+        targetLat: 37.0563,
+        targetLng: 115.0239,
         myTroops: 30000,
         enemyFactionId: 'qin',
         enemyFactionName: '秦国',
@@ -1812,10 +1828,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 200,
         battleType: 'field',
         role: 'attacker',
-        targetName: '开封',
+        targetName: '官渡',
         targetCityId: 'city_bianliang',
-        targetLat: 34.8,
-        targetLng: 114.31,
+        // 🔴 [2026-11-08 按史改坐标] 官渡＝今河南中牟县官渡镇一带（鸿沟、官渡水间），34.7337,114.0831；
+        //    原 34.8,114.31 是开封城心，偏东约 22 km。
+        targetLat: 34.7337,
+        targetLng: 114.0831,
         myTroops: 40000,
         enemyFactionId: 'yuan_shao',
         enemyFactionName: '袁绍军',
@@ -1990,10 +2008,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 208,
         battleType: 'field',
         role: 'defender',
-        targetName: '柴桑',
+        targetName: '赤壁',
         targetCityId: 'city_chaisang',
-        targetLat: 29.6802,
-        targetLng: 115.9964,
+        // 🔴 [2026-11-08 按史改坐标] 赤壁之战战场在蒲圻赤壁（今湖北赤壁市西北赤壁镇长江南岸），29.8740,113.6268；
+        //    原 29.6802,115.9964 是柴桑（今九江），偏东约 230 km——柴桑是周瑜出兵地，不是战场。
+        targetLat: 29.874,
+        targetLng: 113.6268,
         myTroops: 30000,
         enemyFactionId: 'caowei',
         enemyFactionName: '曹魏',
@@ -5139,8 +5159,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '哈丁角丘陵',
         targetCityId: 'city_damasikusi',
-        targetLat: 32.53,
-        targetLng: 35.44,
+        // 🔴 [2026-11-08 按史改坐标] 哈丁角（Horns of Hattin，下加利利）32.7983,35.4596；
+        //    原 32.53,35.44 偏南约 30 km，且与阿音贾鲁特（1260）同一坐标（中文维基哈丁战役／GeoHack 32.7983N 35.4596E）。
+        targetLat: 32.7983,
+        targetLng: 35.4596,
         myTroops: 35000,
         enemyFactionId: 'saipulusi',
         enemyFactionName: '耶路撒冷王国',
@@ -9099,11 +9121,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '塔胡达',
-        targetCityId: 'city_bujiaya',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 布佳亚（约 189 km）
-        // 🔴 [2026-10-24 主人令] 塔胡达（35.5,6.5）50km 内无据点；野战不锚 189km 外的布佳亚，按史实坐标打。
-
-        targetLat: 35.5,
-        targetLng: 6.5,
+        targetCityId: 'city_bujiaya',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 布佳亚（约 220 km）
+        // 塔胡达（34.8025,5.8954）50 km 内无据点（最近的布佳亚约 229 km）；野战按史实战场坐标打。
+        // 🔴 [2026-11-08 按史改坐标] 塔胡达＝今阿尔及利亚比斯克拉省西迪奥克巴北侧的塔布达（Thabudeos）遗址，34.8025,5.8954；
+        //    原文 35.5,6.5 落在巴特纳一带，偏南约 95 km（法文维基 Bataille de Tahouda：à Tahouda, actuelle Sidi Okba）。
+        targetLat: 34.8025,
+        targetLng: 5.8954,
         myTroops: 40000,
         enemyFactionId: 'aguelabu',
         enemyFactionName: '阿拉伯',
@@ -9181,11 +9204,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '莫哈奇原野',
-        targetCityId: 'city_saigede',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 塞格德（约 122 km）
-        // 🔴 [2026-10-24 主人令] 莫哈奇（45.87,18.66）50km 内无据点；野战不锚 123km 外的塞格德，按史实坐标打。
-
-        targetLat: 45.87,
-        targetLng: 18.66,
+        targetCityId: 'city_saigede',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 塞格德（约 120 km）
+        // 莫哈奇（45.9416,18.6471）50 km 内无据点（最近的塞格德约 121 km）；野战按史实战场坐标打。
+        // 🔴 [2026-11-08 按史改坐标] 莫哈奇主战场在今萨托尔海伊村（Sátorhely）莫哈奇国家纪念地，45.9416,18.6471；
+        //    原 45.87,18.66 偏南约 8 km（匈文维基：a mai Sátorhely közelében）。
+        targetLat: 45.9416,
+        targetLng: 18.6471,
         myTroops: 50000,
         enemyFactionId: 'mazhaer',
         enemyFactionName: '匈牙利',
@@ -9226,8 +9250,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'defender',
         targetName: '印度河畔',
         targetCityId: 'city_baishawa',
-        targetLat: 33.5,
-        targetLng: 71.5,
+        // 🔴 [2026-11-08 按史改坐标] 1221 印度河之战在印度河边（今巴基斯坦阿托克一带），33.77,72.18；
+        //    原 33.5,71.5 偏西南约 75 km（英文维基 Battle of the Indus：coordinates 33.77 N, 72.18 E）。
+        targetLat: 33.77,
+        targetLng: 72.18,
         myTroops: 30000,
         enemyFactionId: 'menggu_d',
         enemyFactionName: '蒙古',
@@ -9413,8 +9439,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '伊普苏斯平原',
         targetCityId: 'city_kailaina',
-        targetLat: 38.5,
-        targetLng: 30.5,
+        // 🔴 [2026-11-08 按史改坐标] 伊普苏斯＝今土耳其阿菲永卡拉希萨尔省恰伊尔巴（Çayırbağ，旧名 Sipsin）土丘，38.8562,30.5492；
+        //    原 38.5,30.5 落在辛那达（今 Şuhut）一带，偏南约 35 km（Pleiades／Barrington Atlas；中文维基「确切位置有争议」）。
+        targetLat: 38.8562,
+        targetLng: 30.5492,
         myTroops: 50000,
         enemyFactionId: 'sailiugu',
         enemyFactionName: '塞琉古',
@@ -9454,8 +9482,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '伊普苏斯平原',
         targetCityId: 'city_kailaina',
-        targetLat: 38.5,
-        targetLng: 30.5,
+        // 🔴 [2026-11-08 按史改坐标] 伊普苏斯＝今土耳其阿菲永卡拉希萨尔省恰伊尔巴（Çayırbağ，旧名 Sipsin）土丘，38.8562,30.5492；
+        //    原 38.5,30.5 落在辛那达（今 Şuhut）一带，偏南约 35 km（Pleiades／Barrington Atlas；中文维基「确切位置有争议」）。
+        targetLat: 38.8562,
+        targetLng: 30.5492,
         myTroops: 50000,
         enemyFactionId: 'antigonid',
         enemyFactionName: '安提柯',
@@ -9632,9 +9662,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '乌兰布通',
-        targetCityId: 'city_yingchang',   // 已核：应昌距乌兰布通约 119 km，库内最近同文化（XIANBEI）据点
-        targetLat: 42.40,
-        targetLng: 117.35,
+        targetCityId: 'city_yingchang',   // 已核：应昌距乌兰布通约 100 km，库内最近同文化（XIANBEI）据点
+        // 🔴 [2026-11-08 按史改坐标] 乌兰布通＝今内蒙古克什克腾旗乌兰布统苏木将军泡子（乌兰布统峰前），42.5908,117.1509；
+        //    原 42.40,117.35 偏南约 25 km（赤峰市政府／新华社「乌兰布统古战场…峰前有将军泡子」）。
+        targetLat: 42.5908,
+        targetLng: 117.1509,
         // 清军约 4 万，噶尔丹军约 2 万（驼城）；守方 ≤ 攻方×2 ✓
         myTroops: 40000,
         enemyFactionId: 'oirat_ming',   // 已核
@@ -10396,8 +10428,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '塔拉因',
         targetCityId: 'city_deli',
-        targetLat: 29.9,
-        targetLng: 76.6,
+        // 🔴 [2026-11-08 按史改坐标] 塔拉因＝今印度哈里亚纳邦塔拉奥里（Taraori），29.8005,76.9274；
+        //    原 29.9,76.6 偏西约 33 km（英文维基 Second Battle of Tarain：near Tarain, modern Taraori）。
+        targetLat: 29.8005,
+        targetLng: 76.9274,
         myTroops: 50000,
         enemyFactionId: 'zhelouqi',
         enemyFactionName: '乔汉',
@@ -10418,8 +10452,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'defender',
         targetName: '楚德湖',
         targetCityId: 'city_pusikefu',
-        targetLat: 58.7,
-        targetLng: 27.5,
+        // 🔴 [2026-11-08 按史改坐标] 冰上之战战场在楚德湖南端「乌兹门」水道（Тёплое озеро）北段、沃罗尼石一带，58.2978,27.6475；
+        //    原 58.7,27.5 是楚德湖湖心偏北，偏北约 45 km（俄文维基 Ледовое побоище：на Узмени, у Воронѣя камени）。
+        targetLat: 58.2978,
+        targetLng: 27.6475,
         myTroops: 5000,
         enemyFactionId: 'baojian_qishi',
         enemyFactionName: '宝剑骑士团',
@@ -10556,8 +10592,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '街亭',
         targetCityId: 'city_tianshui',
-        targetLat: 35.02,
-        targetLng: 106.1,
+        // 🔴 [2026-11-08 按史改坐标] 街亭＝今甘肃秦安县陇城镇（主流说），35.0020,105.9719；原 35.02,106.1 偏东约 12 km。
+        targetLat: 35.002,
+        targetLng: 105.9719,
         myTroops: 20000,
         enemyFactionId: 'shu',
         enemyFactionName: '蜀国',
@@ -10691,8 +10728,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'defender',
         targetName: '塔拉因',
         targetCityId: 'city_deli',
-        targetLat: 29.9,
-        targetLng: 76.6,
+        // 🔴 [2026-11-08 按史改坐标] 塔拉因＝今印度哈里亚纳邦塔拉奥里（Taraori），29.8005,76.9274；
+        //    原 29.9,76.6 偏西约 33 km（英文维基 Second Battle of Tarain：near Tarain, modern Taraori）。
+        targetLat: 29.8005,
+        targetLng: 76.9274,
         myTroops: 50000,
         enemyFactionId: 'huluo',
         enemyFactionName: '乔汉',
@@ -10899,8 +10938,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '切拉米',
         targetCityId: 'city_palermo',
-        targetLat: 37.82,
-        targetLng: 14.13,
+        // 🔴 [2026-11-08 按史改坐标] 切拉米＝今西西里恩纳省切拉米镇（Cerami），37.8167,14.5000；
+        //    原 37.82,14.13 偏西约 33 km（意文维基 Battaglia di Cerami：战场在镇区与镇南谷地）。
+        targetLat: 37.8167,
+        targetLng: 14.5,
         myTroops: 10000,
         enemyFactionId: 'kalbids',
         enemyFactionName: '卡尔比德',
@@ -10923,8 +10964,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '阿苏夫',
         targetCityId: 'city_ake',
-        targetLat: 32.06,
-        targetLng: 34.75,
+        // 🔴 [2026-11-08 按史改坐标] 阿苏夫＝阿波罗尼亚-阿苏夫遗址东北旷野（今以色列海尔兹利亚以北），32.2025,34.8125；
+        //    原 32.06,34.75 实为雅法一带，偏南约 19 km（英文维基 Battle of Arsuf：32°12′09″N 34°48′45″E）。
+        targetLat: 32.2025,
+        targetLng: 34.8125,
         myTroops: 20000,
         enemyFactionId: 'ayoubu',
         enemyFactionName: '阿尤布王朝',
@@ -11267,8 +11310,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '迦勒迦河',
         targetCityId: 'city_zhapoluore',
-        targetLat: 47.30,
-        targetLng: 35.40,
+        // 🔴 [2026-11-08 按史改坐标] 迦勒迦河＝卡利奇克河（Кальчик）下游、今乌克兰顿涅茨克州马里乌波尔以北，47.2508,37.4956；
+        //    原 47.30,35.40 在扎波罗热一侧，偏西约 160 km（中文维基：战役在顿涅茨克州卡尔卡河畔；英文维基定 Kalchyk）。
+        targetLat: 47.2508,
+        targetLng: 37.4956,
         myTroops: 40000,
         enemyFactionId: 'luosi',
         enemyFactionName: '罗斯',
@@ -11314,8 +11359,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '查尔迪兰',
         targetCityId: 'city_daerban',
-        targetLat: 39.00,
-        targetLng: 44.30,
+        // 🔴 [2026-11-08 按史改坐标] 查尔迪兰战场＝伊朗西阿塞拜疆省查尔迪兰平原 Gal Ashaqi 村旁（2003 年战场纪念碑处），39.0889,44.3269；
+        //    原 39.00,44.30 偏南约 10 km（英文维基 Battle of Chaldiran：near Gal Ashaqi, 6 km west of Siah Cheshmeh）。
+        targetLat: 39.0889,
+        targetLng: 44.3269,
         myTroops: 60000,
         enemyFactionId: 'safawei_d',
         enemyFactionName: '萨法维',
@@ -11460,8 +11507,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '阿尔塔河',
         targetCityId: 'city_peilieyasilafu',
-        targetLat: 50.20,
-        targetLng: 32.50,
+        // 🔴 [2026-11-08 按史改坐标] 阿尔塔河＝阿列塔河（Альта），特鲁别日河右支流、基辅与佩列亚斯拉夫之间，50.0642,31.4615；
+        //    原 50.20,32.50 落在波尔塔瓦州乌代河一带，偏东约 70 km（俄文维基 Битва на Альте：между Киевом и Переяславлем）。
+        targetLat: 50.0642,
+        targetLng: 31.4615,
         myTroops: 10000,
         enemyFactionId: 'luosi',
         enemyFactionName: '罗斯',
