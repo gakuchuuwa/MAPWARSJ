@@ -2247,7 +2247,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'crescent',
         shipId: 'CARRACK',
-        commanderUnit: 'hero_radenwijaya',
+        commanderUnit: 'hero_bernardarmagnac',
         slots: [
             { type: 'condottiero', count: 3 },
             { type: 'knight', count: 2 },
@@ -2342,7 +2342,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_tariqibnziyad',
+        commanderUnit: 'hero_bohemond',
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'elite_skirmisher', count: 3 },

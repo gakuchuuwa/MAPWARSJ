@@ -240,6 +240,12 @@ const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
     BULGARIANS: ['POENARI_CASTLE', 'ARCH_OF_CONSTANTINE'],
 };
 
+/** 本城是否已建成（按史实年份）以该素材为主/附加奇观的建筑——战术侧 buildDeCityGridHtml 会单独摆出来 */
+function cityHasFoundedWonder(cityId: string, dir: string): boolean {
+    if (CITY_WONDER[cityId] === dir && isWonderFounded(dir)) return true;
+    return !!CITY_WONDER_EXTRA[cityId]?.some((ex) => ex.asset === dir && isWonderFounded(ex.asset));
+}
+
 function pickCityCulturalLandmark(cityId: string, buildingStyle?: string): string | null {
     if (!buildingStyle) return null;
     const list = CULTURAL_LANDMARK_BY_STYLE[buildingStyle];
@@ -706,6 +712,17 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     }
     if (ring.length > 9) ring.length = 9;   // ⚠️ 掺入蒙古包后必须截到 9 栋（主人：总体不能超过 9 个）
     const rotation = rnd() * 360;
+    // 混入 1 座 67 文化专属地标特征件（鸟居、佛塔、桑奇大塔、宣礼塔、战神像、木堡等），替换城心以外的一栋。
+    // 🔴 [2026-11-09 主人问「战术模式是不是应该和战略模式对齐」] 原先只在战略地图混入（`!native`），违反 10-11 定的
+    //    「战术攻城城池＝战略据点放大版、样式一致」；改为在分支前替换 ring，战略与战术取同一座、换掉同一栋（战略输出逐像素不变）。
+    if (!isMobei && !(buildingStyle && STEPPE_SMALL_CITY_MIX.has(buildingStyle)) && ring.length > 1) {
+        const landmark = pickCityCulturalLandmark(cityId, buildingStyle);
+        // 战术侧会额外摆本城已建成的奇观；地标若与奇观同一件素材就不再重复放
+        if (landmark && !(native && cityHasFoundedWonder(cityId, landmark))) {
+            const surroundLen = Math.min(8, ring.length - 1);
+            ring[1 + deHashString(cityId + '|small_lm_slot') % surroundLen] = landmark;
+        }
+    }
 
     // 🔴 [2026-10-12 主人报件数等级反了 → 改 B 方案；同日又报「城内建筑摆放还是不对」→ 固定骨架]
     //    战术侧（传了原生尺寸表）走**按 DE 格子摆放**：墙圈 seg=9 ⇒ 角到角 **23 格**（严格小于中城 25、大城 27）；
@@ -815,15 +832,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 周围建筑散布：一律取 8 栋（45° 扇区，9 建筑满配）
     const surroundCount = 8;
-    const surround = ring.slice(1, 1 + surroundCount);
-    // 战略地图：混入 1 座 67 文化专属地标特征件（如鸟居、佛塔、桑奇大塔、宣礼塔、战神像、木堡等），增强同风格文化辨识度
-    if (!native && !isMobei && !(buildingStyle && STEPPE_SMALL_CITY_MIX.has(buildingStyle))) {
-        const landmark = pickCityCulturalLandmark(cityId, buildingStyle);
-        if (landmark && surround.length > 0) {
-            const lmSlot = deHashString(cityId + '|small_lm_slot') % surround.length;
-            surround[lmSlot] = landmark;
-        }
-    }
+    const surround = ring.slice(1, 1 + surroundCount);   // 文化地标已在上面混入 ring
     surround.forEach((b, i) => {
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
@@ -1487,6 +1496,14 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                 const swapIdx = Math.floor(rnd() * 6);
                 [chosenEight[millIdx], chosenEight[swapIdx]] = [chosenEight[swapIdx], chosenEight[millIdx]];
             }
+            // 🔴 [2026-11-09 与战略地图对齐] 混入与战略中城同一座文化地标（同一个 pickCityCulturalLandmark），
+            //    替换一栋非磨坊建筑（磨坊带「磨坊＋3 民居」田字组合，不动）；只换前 6 栋——本城有奇观时奇观占位，
+            //    排在最后的建筑会被挤掉（磨坊也按同一理由限在前 6）。与本城奇观同一件素材时不放，免得重复。
+            const medTacLandmark = pickCityCulturalLandmark(cityId, buildingStyle);
+            if (medTacLandmark && !cityHasFoundedWonder(cityId, medTacLandmark)) {
+                const nonMill = chosenEight.map((b, k) => (b === 'MILL' || k >= 6 ? -1 : k)).filter((k) => k >= 0);
+                if (nonMill.length > 0) chosenEight[nonMill[deHashString(cityId + '|med_lm_slot') % nonMill.length]] = medTacLandmark;
+            }
             medRingEight = chosenEight.map((b): [string, string] => [b, 'AGE3']);
         }
         const LATTICE_PITCH = 4 + 2;
@@ -1771,6 +1788,8 @@ const DE_ISO_TILE_W = 96, DE_ISO_TILE_H = 48;
  *  城镇中心/市场/大学/攻城武器厂/城堡 2.0→4×4；兵营/靶场/马厩/铁匠铺/修道院 1.5→3×3；房屋/磨坊 1.0→2×2；箭塔 0.5→1×1。
  *  蒙古包取 2×2；表里没有的取 3×3。 */
 function deBuildingFootprint(b: string): number {
+    // 文化地标：大件（原生框宽 ≥ 400，如圆形剧场、大教堂、宣礼塔、木堡）按 4×4，其余按 3×3
+    if (CULTURAL_LANDMARK_SET.has(b) && !b.includes('CASTLE')) return (DE_SPRITE_BOX_W[b] ?? 0) >= 400 ? 4 : 3;
     if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY')) return 4;
     if (b.includes('WONDER')) return 5;
     if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY') || b.includes('SIEGE_WORKSHOP')) return 3;

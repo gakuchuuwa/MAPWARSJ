@@ -360,7 +360,14 @@ body:has(#event-display.event-panel.is-collapsed) {
     border-color: var(--map-hud-line);
     background: #d4b57d0d;
 }
+#event-display .event-header button.feed-tab--on { color: var(--map-hud-gold); border-color: rgba(232, 199, 126, 0.65); background: rgba(232, 199, 126, 0.18); box-shadow: inset 0 0 8px rgba(232, 199, 126, 0.12); }
 #event-display .event-item { border-bottom: 1px solid #d4b57d1c; padding: 12px 0; }
+#event-display .event-item.feed-tier-s { border-left: 3px solid var(--map-hud-gold); background: linear-gradient(90deg, rgba(232, 199, 126, 0.12), rgba(232, 199, 126, 0.02)); padding-left: 8px; }
+#event-display .life-head { border-bottom-color: var(--map-hud-line); color: var(--map-hud-text); }
+#event-display .life-head-name { color: var(--map-hud-gold); }
+#event-display .life-head-sub { color: #d8c7a7; }
+#event-display .life-head-stat { color: var(--map-hud-muted); }
+#event-display .life-text { color: var(--map-hud-text); }
 #event-display .event-title,
 #event-display .feed-faction { color: var(--map-hud-text); }
 #event-display .event-desc,

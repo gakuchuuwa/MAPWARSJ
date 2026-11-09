@@ -971,6 +971,8 @@ export class GameApp {
     /** 🔴 [2026-10-27] YouTube 单平台：官方聊天流、Super Chat 与持久账务。 */
     private readonly liveLink: YouTubeOfficialBridge | null = this.live ? new YouTubeOfficialBridge(this.live) : null;
     private readonly livePanel: ViewerLivePanel | null = this.live && this.liveLink ? new ViewerLivePanel(this.live, this.liveLink) : null;
+    /** 当前连着的 YouTube 直播（视频网址或编号；没连为空）——一生履历每条都记下它，资料包靠它认出是哪一场直播 */
+    public getLiveVideo(): string { return this.liveLink?.getVideo() ?? ''; }
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
@@ -1072,7 +1074,7 @@ export class GameApp {
         }, spawnPos);
         this.playerHero = hero;
         // 🔴 [2026-11-09] 右侧面板「履历」页签接上主角一生履历（面板先建好时在这里接；面板后建则由面板 init 自己接）
-        this.brawlFeedPanel?.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name }));
+        this.brawlFeedPanel?.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name, peakRank: hero.getPeakRank().name }));
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
         // （`syncHistoricalOwners` 已提到上面「打完一场」回调之前定义 —— 那里也要重跑）

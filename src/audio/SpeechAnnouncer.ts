@@ -646,10 +646,11 @@ export class SpeechAnnouncer {
     if (!this.enabled) return;
     this.clearSkillQueue();
     this.sTierBusyUntilMs = 0;
+    // 🔴 [2026-11-09 主人「XX据点开城归附的时候，前面用的是势力……应该用据点」] 开城归附的主语是据点名，不是守方势力名
     const att = getFactionNameForSpeech(opts.attackerFactionId);
-    const def = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
-    const text = def
-      ? `${att}军，兵临城下，${def}开城归附`
+    const city = (opts.cityName ?? "").trim();
+    const text = city
+      ? `${att}军，兵临城下，${city}开城归附`
       : `${att}军，兵临城下，开城归附`;
     console.log("[Speech] 不战而下:", text);
     if (opts.regionLabel) {

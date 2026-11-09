@@ -28,6 +28,8 @@ export interface LifeEvent {
     season: number;
     /** 现实时间（毫秒时间戳），用于换算直播录像时间点 */
     realMs: number;
+    /** 记这条时连着的 YouTube 直播（视频网址或编号；没连直播为空），用来认出是哪一场直播 */
+    video?: string;
     /** 当时年龄 */
     age: number;
     /** 当时官职名 */
@@ -59,6 +61,7 @@ export class PlayerLifeLog {
     constructor(
         private readonly getYear: () => number,
         private readonly getSeason: () => number,
+        private readonly getStreamVideo: () => string = () => '',
     ) {}
 
     /** 当前年龄（还没起家时按 16 岁算） */
@@ -130,6 +133,7 @@ export class PlayerLifeLog {
             year: this.getYear(),
             season: this.getSeason(),
             realMs: Date.now(),
+            video: this.getStreamVideo() || undefined,
             age: this.getAge(),
             rank,
             kind,

@@ -5,6 +5,7 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { StreamModeToggle } from './StreamModeToggle';
 import type { PlayerLifeLog, LifeEvent } from '../player/PlayerLifeLog';
+import { downloadLifeStoryPack } from '../player/PlayerLifeStoryPack';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
@@ -142,7 +143,7 @@ export class BrawlFeedPanel {
     private tab: 'life' | 'feed' = 'life';
     private tabBtns: Partial<Record<'life' | 'feed', HTMLButtonElement>> = {};
     private lifeLog: PlayerLifeLog | null = null;
-    private lifeSummary: (() => { name: string; rank: string }) | null = null;
+    private lifeSummary: (() => { name: string; rank: string; peakRank: string }) | null = null;
     private lifeUnsub: (() => void) | null = null;
     private lifeTimer: number | null = null;
 
@@ -203,6 +204,13 @@ export class BrawlFeedPanel {
         outer.innerHTML = '';
         this.lifeEl = document.createElement('div');
         this.lifeEl.className = 'life-pane';
+        this.lifeEl.addEventListener('click', (ev) => {
+            const btn = (ev.target as HTMLElement | null)?.closest?.('[data-act="export-life"]');
+            if (!btn || !this.lifeLog) return;
+            const sum = this.lifeSummary?.() ?? { name: '主角', rank: '', peakRank: '' };
+            const file = downloadLifeStoryPack(this.lifeLog, sum);
+            (window as any).game?.playerHUD?.notify?.(`📜 已导出资料包：${file}（在「下载」文件夹）`);
+        });
         this.feedPaneEl = document.createElement('div');
         this.feedPaneEl.className = 'feed-pane';
         outer.append(this.lifeEl, this.feedPaneEl);
@@ -224,7 +232,7 @@ export class BrawlFeedPanel {
         }
         this.setTab('life');
         const hero = (window as any).game?.playerHero;
-        if (hero?.lifeLog) this.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name }));
+        if (hero?.lifeLog) this.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name, peakRank: hero.getPeakRank().name }));
 
         this.toggleBtn = document.getElementById('toggle-event-list-btn');
         if (this.toggleBtn) {
@@ -271,7 +279,7 @@ export class BrawlFeedPanel {
     }
 
     /** 接上主角的一生履历（主角创建后由 GameApp 调；重复调只换绑定） */
-    public attachLifeLog(log: PlayerLifeLog, summary: () => { name: string; rank: string }): void {
+    public attachLifeLog(log: PlayerLifeLog, summary: () => { name: string; rank: string; peakRank: string }): void {
         this.lifeUnsub?.();
         this.lifeLog = log;
         this.lifeSummary = summary;
@@ -293,12 +301,13 @@ export class BrawlFeedPanel {
             el.innerHTML = '<div class="event-item event-item--hint">等待主角登场…</div>';
             return;
         }
-        const sum = this.lifeSummary?.() ?? { name: '主角', rank: '' };
+        const sum = this.lifeSummary?.() ?? { name: '主角', rank: '', peakRank: '' };
         const t = log.getBattleTotals();
         const patron = log.getPatron();
         const rival = log.getRival();
         const head = `<div class="life-head">`
-            + `<div class="life-head-name">${escapeHtml(sum.name)}<span class="life-head-sub">${log.getAge()}岁 · ${escapeHtml(sum.rank)}</span></div>`
+            + `<div class="life-head-name">${escapeHtml(sum.name)}<span class="life-head-sub">${log.getAge()}岁 · ${escapeHtml(sum.rank)}</span>`
+            + `<button type="button" class="life-export-btn" data-act="export-life" title="把这一生的记录存成文件，剪视频、让 AI 写故事用">导出资料包</button></div>`
             + `<div class="life-head-stat">大战 ${t.battles} · 胜 ${t.wins} · 败 ${t.losses} · 斩敌 ${t.killed}</div>`
             + ((patron || rival)
                 ? `<div class="life-head-stat">${patron ? `恩主 ${escapeHtml(patron.name)}` : ''}${patron && rival ? ' · ' : ''}${rival ? `宿敌 ${escapeHtml(rival.name)}` : ''}</div>`

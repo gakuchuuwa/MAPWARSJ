@@ -1767,18 +1767,20 @@ path.vector-river-water {
 .map-fade-in {
     animation: mapFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
-/* 🔴 [2026-11-09] 右侧面板：履历 / 军情 两个页签 */
+/* 🔴 [2026-11-09] 右侧面板：履历 / 军情 两个页签（统一深褐鎏金 HUD 色调） */
 .event-header .feed-tabs { display: inline-flex; gap: 6px; }
-.event-header .feed-tab { opacity: 0.6; }
-.event-header .feed-tab.feed-tab--on { opacity: 1; background: rgba(156, 48, 47, 0.12); color: #9c302f; border-color: rgba(156, 48, 47, 0.45); }
-.life-head { padding: 6px 4px 8px; margin-bottom: 6px; border-bottom: 1px dashed rgba(125, 111, 90, 0.35); color: #1d3326; }
-.life-head-name { font-size: 18px; font-weight: 700; }
-.life-head-sub { font-size: 14px; font-weight: 600; margin-left: 8px; color: #7d6f5a; }
-.life-head-stat { font-size: 13px; color: #5a4e3c; margin-top: 2px; }
-.life-badge { display: inline-block; min-width: 1.4em; padding: 0 3px; margin-right: 6px; border-radius: 3px; text-align: center; font-weight: 700; color: #fff; background: #7d6f5a; }
-.life-badge--win { background: #2f6b46; }
-.life-badge--loss { background: #9c302f; }
-.life-badge--promote, .life-badge--title { background: #b8860b; }
-.life-badge--demote { background: #6b2b2b; }
-.life-badge--join { background: #2d4f6b; }
-.life-text { margin-left: 6px; }
+.event-header .feed-tab { opacity: 0.72; transition: all 0.15s ease; }
+.event-header .feed-tab.feed-tab--on { opacity: 1; background: rgba(232, 199, 126, 0.18); color: #e8c77e; border-color: rgba(232, 199, 126, 0.65); }
+.life-head { padding: 6px 4px 10px; margin-bottom: 6px; border-bottom: 1px dashed rgba(204, 174, 116, 0.35); color: #eee3ce; }
+.life-head-name { font-size: 18px; font-weight: 700; color: #e8c77e; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65); }
+.life-head-sub { font-size: 14px; font-weight: 600; margin-left: 8px; color: #d8c7a7; }
+.life-head-stat { font-size: 13px; color: #b9ab95; margin-top: 3px; }
+.life-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-right: 6px; border-radius: 4px; font-size: 12px; font-weight: 700; color: #f5f0e6; background: #6b5d47; border: 1px solid rgba(232, 199, 126, 0.25); flex-shrink: 0; }
+.life-badge--win { background: #2e6b4f; border-color: rgba(167, 196, 161, 0.4); }
+.life-badge--loss { background: #9c302f; border-color: rgba(239, 163, 151, 0.4); }
+.life-badge--promote, .life-badge--title { background: #b08530; border-color: rgba(232, 199, 126, 0.55); }
+.life-badge--demote { background: #6e3a32; border-color: rgba(239, 163, 151, 0.3); }
+.life-badge--join { background: #39557e; border-color: rgba(165, 197, 213, 0.4); }
+.life-text { margin-left: 6px; color: #eee3ce; }
+.life-export-btn { float: right; font-size: 12px; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(125, 111, 90, 0.4); background: rgba(125, 111, 90, 0.1); color: #1d3326; cursor: pointer; }
+.life-export-btn:hover { color: #9c302f; background: rgba(125, 111, 90, 0.2); }

@@ -60,6 +60,7 @@ import {
 import { moderateLiveName } from '../live/LiveNameModeration';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { PlayerLifeLog, type LifeEventKind, type LifeLogSave } from './PlayerLifeLog';
+import { downloadLifeStoryPack } from './PlayerLifeStoryPack';
 
 /** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
 export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
@@ -531,7 +532,8 @@ export class PlayerHero {
     public onHostLost: ((lastHostId: string) => void) | null = null;
 
     constructor(private deps: PlayerHeroDeps, startPos: { lat: number; lng: number }) {
-        this.lifeLog = new PlayerLifeLog(deps.getYear, deps.getSeason);
+        this.lifeLog = new PlayerLifeLog(deps.getYear, deps.getSeason,
+            () => String((window as any).game?.getLiveVideo?.() ?? ''));
         this.horses = new HorseStable({
             getYear: deps.getYear,
             getSeason: deps.getSeason,
@@ -1286,6 +1288,15 @@ export class PlayerHero {
             this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
             this.deps.notify(`🎖️ ${this.name}晋升为【${after.name}】`);
             this.recordLife('promote', `晋升【${after.name}】`, { from: before.name, to: after.name, merit: this.merit });
+            // 🔴 [2026-11-09] 升到皇帝＝这一生到顶：自动导出一份故事资料包（面板「履历」页也能随时手动导出）
+            if (after.id === 'emperor') {
+                try {
+                    const file = downloadLifeStoryPack(this.lifeLog, { name: this.name, rank: after.name, peakRank: this.getPeakRank().name });
+                    this.deps.notify(`📜 登基称帝，已自动导出一生资料包：${file}`);
+                } catch (err) {
+                    console.error('[PlayerHero] 导出一生资料包失败', err);
+                }
+            }
             gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（功勋 ${this.merit}）`);
             // 晋升：入伍中则同步军团第九环战力乘数 + 官阶名
             const host = this.getHostLegion();
