@@ -230,7 +230,9 @@ export class PerfDoctor {
             let scale = 1;
             if (!label) {
                 // 匿名回调每次都是新函数，取栈太贵 → 每 32 次抽一次，按比例放大计入
-                if (++self.rafAnonSeq % ANON_SAMPLE === 0) {
+                // 🔴 随机抽，不按序号：每帧固定注册 K 个匿名回调时「每第 32 次」会锁死在同一个回调上
+                //    （11-09 主人局实测 GameAppLoop 被算成 2 倍，超过每帧 JS 总量）
+                if (++self.rafAnonSeq && Math.random() < 1 / ANON_SAMPLE) {
                     const line = (new Error().stack || '').split('\n')[2] || '';
                     const m = line.match(/\/src\/[^?:)]+(?:\?[^:)]*)?:(\d+)/);
                     label = m ? m[0].replace(/\?[^:]*/, '') : '(anon)';

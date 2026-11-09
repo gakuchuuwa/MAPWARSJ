@@ -2099,15 +2099,24 @@ export class CombatUI {
         } else {
             box.style.left = `calc(50vw + ${innerOffset}px)`;
         }
+        box.style.transform = 'none';
+
+        const chipsWrap = box.querySelector('.combat-tech-chips-wrap') as HTMLDivElement | null;
+        const unitStackWrap = box.querySelector('.combat-unit-stack-wrap') as HTMLDivElement | null;
+        if (!chipsWrap) return;
+
         const vw = window.innerWidth || document.documentElement.clientWidth || 1920;
-        const availWidth = Math.max(120, vw * 0.5 - innerOffset - outerReserve);
-        const naturalWidth = box.scrollWidth || box.offsetWidth || 0;
-        box.style.transformOrigin = isLeftBox ? 'right bottom' : 'left bottom';
-        if (naturalWidth > availWidth && naturalWidth > 0) {
-            const scale = Math.max(0.62, Math.min(1, availWidth / naturalWidth));
-            box.style.transform = `scale(${scale.toFixed(3)})`;
+        const totalAvailWidth = Math.max(120, vw * 0.5 - innerOffset - outerReserve);
+        const unitStackWidth = unitStackWrap ? (unitStackWrap.offsetWidth || 84) : 0;
+        const chipsAvailWidth = Math.max(80, totalAvailWidth - unitStackWidth - 6);
+        const chipsNaturalWidth = chipsWrap.scrollWidth || chipsWrap.offsetWidth || 0;
+
+        chipsWrap.style.transformOrigin = isLeftBox ? 'right bottom' : 'left bottom';
+        if (chipsNaturalWidth > chipsAvailWidth && chipsNaturalWidth > 0) {
+            const scale = Math.max(0.45, Math.min(1, chipsAvailWidth / chipsNaturalWidth));
+            chipsWrap.style.transform = `scale(${scale.toFixed(3)})`;
         } else {
-            box.style.transform = 'scale(1)';
+            chipsWrap.style.transform = 'scale(1)';
         }
     }
 
@@ -2198,6 +2207,7 @@ export class CombatUI {
         const totalSummary = summarizeTechEffects(own).join(' · ');
         tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '暂无已研发科技'}`;
 
+        const isDense = own.length >= 7;
         const makeTechChip = (t: MilitaryTech): HTMLDivElement => {
             const effText = summarizeSingleTechEffect(t);
             const theme = getTechCardTheme(t.id);
@@ -2208,7 +2218,7 @@ export class CombatUI {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 1.5px 5px;
+                padding: 1.5px ${isDense ? '4px' : '5px'};
                 border-radius: 4px;
                 border: 1px solid ${theme.border};
                 background: ${theme.bg};
@@ -2216,7 +2226,7 @@ export class CombatUI {
                 -webkit-backdrop-filter: blur(2px);
                 box-shadow: 0 1px 2px rgba(0,0,0,0.04);
                 gap: 0px;
-                min-width: 32px;
+                min-width: ${isDense ? '28px' : '32px'};
                 min-height: 27px;
                 box-sizing: border-box;
                 flex-shrink: 0;
@@ -2247,62 +2257,23 @@ export class CombatUI {
             return chip;
         };
 
-        // 科技列表：当科技较多（≥4项）时自动分为上下两行（与旁侧「上军团/下精锐」双行等高对齐），
-        // 避免城堡/帝国时代 10+ 项科技单行横向暴涨撞进左下/右下武将立绘。
+        // 科技卡片列表（单行不换行；超出可用横向空间时由 fitScene13TechBox 自动等比缩放本行）
         const chipsWrap = document.createElement('div');
-        if (own.length >= 4) {
-            chipsWrap.style.cssText = `
-                display: flex;
-                flex-direction: column;
-                gap: 3px;
-                align-items: ${isLeftBox ? 'flex-end' : 'flex-start'};
-                justify-content: flex-end;
-            `;
-            const topRow = document.createElement('div');
-            topRow.style.cssText = `
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 3px;
-                align-items: center;
-                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
-            `;
-            const bottomRow = document.createElement('div');
-            bottomRow.style.cssText = `
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 3px;
-                align-items: center;
-                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
-            `;
-            // 上行放置标签 + 前半部分科技，下行放置后半部分科技，使上下两行宽度均衡且紧贴内侧军团列
-            const topTechCount = Math.max(1, Math.floor((own.length - 1) / 2));
-            const topTechs = own.slice(0, topTechCount);
-            const bottomTechs = own.slice(topTechCount);
-            if (isLeftBox) {
-                topRow.appendChild(tag);
-                for (const t of topTechs) topRow.appendChild(makeTechChip(t));
-            } else {
-                for (const t of topTechs) topRow.appendChild(makeTechChip(t));
-                topRow.appendChild(tag);
-            }
-            for (const t of bottomTechs) bottomRow.appendChild(makeTechChip(t));
-            chipsWrap.appendChild(topRow);
-            chipsWrap.appendChild(bottomRow);
+        chipsWrap.className = 'combat-tech-chips-wrap';
+        chipsWrap.style.cssText = `
+            display: flex;
+            flex-wrap: nowrap;
+            gap: ${isDense ? '2.5px' : '3px'};
+            align-items: center;
+            justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
+            flex-shrink: 0;
+        `;
+        if (isLeftBox) {
+            chipsWrap.appendChild(tag);
+            for (const t of own) chipsWrap.appendChild(makeTechChip(t));
         } else {
-            chipsWrap.style.cssText = `
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 3px;
-                align-items: center;
-                justify-content: ${isLeftBox ? 'flex-end' : 'flex-start'};
-            `;
-            if (isLeftBox) {
-                chipsWrap.appendChild(tag);
-                for (const t of own) chipsWrap.appendChild(makeTechChip(t));
-            } else {
-                for (const t of own) chipsWrap.appendChild(makeTechChip(t));
-                chipsWrap.appendChild(tag);
-            }
+            for (const t of own) chipsWrap.appendChild(makeTechChip(t));
+            chipsWrap.appendChild(tag);
         }
 
         // 🔴 [2026-10-18 主人定] 军团（上）与精锐（下）上下叠成一列，与旁侧六技能面板高度对齐，节省横向空间
@@ -2320,8 +2291,9 @@ export class CombatUI {
         unitStackWrap.appendChild(legionChip);
         if (eliteChip) unitStackWrap.appendChild(eliteChip);
 
-        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [科技双行组] -> [上军团/下精锐]
-        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [上军团/下精锐] -> [科技双行组]
+        // 🔴 [2026-10-18 主人定] 从中间向外依次排布：六技能面板 -> [上军团/下精锐] -> 科技（单行不换行）
+        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [⚔️ 攻方科技] -> [科技单行] -> [上军团/下精锐]
+        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [上军团/下精锐] -> [科技单行] -> [守方科技 🛡️]
         if (isLeftBox) {
             box.appendChild(chipsWrap);
             box.appendChild(unitStackWrap);

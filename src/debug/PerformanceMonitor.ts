@@ -299,6 +299,7 @@ export class PerformanceMonitor {
     /** 结束帧计时 — 在 gameLoop 最后调用，计算该帧总耗时 */
     public endFrame(): void {
         const elapsed = performance.now() - this.currentFrameStart;
+        if (import.meta.env.DEV) perfDoctor.note('主循环:整帧', elapsed, 'src/app/GameAppLoop.ts:tickGameAppFrame');
         this.frameTimes.push(elapsed);
         if (elapsed > PerformanceMonitor.HITCH_THRESHOLD_MS) {
             this.hitchFrames++;
@@ -337,7 +338,10 @@ export class PerformanceMonitor {
     public endTimer(system: string): void {
         const start = this.timers[system];
         if (start !== undefined) {
-            this.timerResults[system] = performance.now() - start;
+            const d = performance.now() - start;
+            this.timerResults[system] = d;
+            // [2026-11-09 查掉帧] 主循环各段也进 PerfDoctor（此前只有 F3 面板看得到，落盘里没有）
+            if (import.meta.env.DEV) perfDoctor.note(`主循环:${system}`, d, 'src/app/GameAppLoop.ts');
         }
     }
 

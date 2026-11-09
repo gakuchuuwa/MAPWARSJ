@@ -45,6 +45,8 @@ const MAX_EVENTS = 40;
 const RESUME_GAP_MS = 2000;
 /** 一个上报窗口内命中 ≥ 此数就自动 perfDoctor.dump（带热点归因），免得主人再按 Shift+F3 */
 const AUTO_DUMP_MIN_HITS = 3;
+/** 窗口跟拍帧率低于此值也自动 dump（掉帧：持续低帧率但没有大顿，2026-11-09） */
+const LOW_FPS_DUMP = 45;
 /** 自动 dump 最短间隔 */
 const AUTO_DUMP_INTERVAL_MS = 60_000;
 
@@ -203,13 +205,16 @@ export class MarchStutterProbe {
 
         // 即使一次都没顿也照常上报：统计段能证明探针在跑、并给出分支占比基线
         if (this.frames > 0 && now - this.lastReportAt >= REPORT_INTERVAL_MS) {
-            this.report();
+            this.report(now - this.lastReportAt);
             this.lastReportAt = now;
         }
     }
 
     /** 攒够一批就落盘（复用 /api/stuck-legion，不新增 vite 中间件——改 vite.config 会整页刷新） */
-    private report(): void {
+    private report(windowMs = REPORT_INTERVAL_MS): void {
+        // 窗口内跟拍帧率：只有一直在跟拍（采样帧够多）才算，避免暂停/切走的窗口误判
+        const framesInWindow = this.frames;
+        const windowFps = framesInWindow / (windowMs / 1000);
         const body = {
             probe: 'march-stutter',
             at: new Date().toISOString(),
@@ -230,9 +235,12 @@ export class MarchStutterProbe {
         }).catch(() => { /* 诊断失败不影响玩法 */ });
         // 顿得够多 → 自动落一份 PerfDoctor（热点函数 where/fix + 长任务 + 缓存），窗口只含最近 20s
         const now = performance.now();
-        if (hitsTotal >= AUTO_DUMP_MIN_HITS && now - this.lastDumpAt >= AUTO_DUMP_INTERVAL_MS) {
+        // 🔴 [2026-11-09 主人：「是掉帧不是卡住」] 持续 30~40fps 没有 >120ms 的大顿，原条件永远不触发 →
+        //    另加「窗口跟拍帧率 < 45 且采样 ≥ 200 帧」也落盘。
+        const lowFps = framesInWindow >= 200 && windowFps < LOW_FPS_DUMP;
+        if ((hitsTotal >= AUTO_DUMP_MIN_HITS || lowFps) && now - this.lastDumpAt >= AUTO_DUMP_INTERVAL_MS) {
             this.lastDumpAt = now;
-            void perfDoctor.dump({ trigger: 'march-stutter', 窗口统计: body.统计 }).catch(() => { /* 同上 */ });
+            void perfDoctor.dump({ trigger: lowFps && hitsTotal < AUTO_DUMP_MIN_HITS ? 'march-lowfps' : 'march-stutter', 窗口统计: body.统计, 窗口跟拍fps: +windowFps.toFixed(1) }).catch(() => { /* 同上 */ });
         }
         perfDoctor.reset();
     }

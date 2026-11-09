@@ -8,7 +8,8 @@
  *      两河与叙利亚沙漠商路（巴格达、帕尔米拉、阿勒颇、霍姆斯、大马士革）→ 黎凡特海岸（贝鲁特、拉塔基亚、安提俄基亚）→
  *      安纳托利亚大道（阿达纳、科尼亚、戈尔迪乌姆、尼凯亚、君士坦丁堡）→ 巴尔干与多瑙河走廊（埃迪尔内、索非亚、贝尔格莱德、布达佩斯、维也纳）→
  *      北意大利与南法走廊（威尼斯、维罗纳、米兰、热那亚、阿维尼翁、纳博讷）→ 伊比利亚大道（巴塞罗那、巴伦西亚、马德里、托莱多、科尔多瓦、塞维利亚、加的斯）→
- *      西属宝船大西洋航线（加那利特尔德、百慕大、哈瓦那、韦拉克鲁斯）→ 墨西哥皇家内陆道（特诺奇提特兰、钦聪灿、阿卡普尔科）→
+ *      西属印度宝船西行信风航线（加那利特尔德、佛得角里贝拉、小安的列斯马提尼克、圣多明各、皇家港、哈瓦那、韦拉克鲁斯）→
+ *      墨西哥亚洲皇家陆道（韦拉克鲁斯、特诺奇提特兰/墨西哥城、阿卡普尔科）→
  *      马尼拉大帆船太平洋航线（关岛、帕拉帕格、马尼拉、台湾大员 → 回长崎成环）。
  *
  *  · 航行（sail）：严格由东向西沿海上丝绸之路与大航海时代航线推进（共 67 座不重复港口，67/67 全部为海路一跳直连）：
@@ -77,10 +78,11 @@ export const GLOBE_CHAIN: TourStop[] = [
     L('city_venice'), L('city_verona'), L('city_milan'), L('city_genoa'), L('city_avignon'),
     L('city_nabone'), L('city_barcelona'), L('city_valencia'), L('city_madeli'), L('city_toledo'),
     L('city_cordoba'), L('city_seville'), L('city_jiadisi'),
-    // 西属宝船大西洋航线（加的斯 → 特尔德 → 百慕大 → 哈瓦那 → 韦拉克鲁斯）
-    S('city_telde'), S('city_bermuda'), S('city_havana'), S('city_veracruz'),
-    // 墨西哥皇家内陆道（韦拉克鲁斯 → 特诺奇提特兰 → 钦聪灿 → 阿卡普尔科）
-    L('city_tenochtitlan'), L('city_tzintzuntzan'), L('city_acapulco'),
+    // 西属印度宝船大西洋西行信风航线（加的斯 → 加那利特尔德 → 佛得角里贝拉 → 小安的列斯马提尼克 → 圣多明各 → 皇家港 → 哈瓦那 → 韦拉克鲁斯）
+    S('city_telde'), S('city_ribeira'), S('city_martinique'), S('city_shengduomingge'), S('city_portroyal'),
+    S('city_havana'), S('city_veracruz'),
+    // 墨西哥亚洲皇家大道 Camino Real（韦拉克鲁斯 → 特诺奇提特兰/墨西哥城 → 阿卡普尔科）
+    L('city_tenochtitlan'), L('city_acapulco'),
     // 太平洋马尼拉大帆船航线（阿卡普尔科 → 关岛 → 帕拉帕格 → 马尼拉 → 台湾大员 → 回长崎成环）
     ...GALLEON_SEA_TAIL,
 ];

@@ -10806,6 +10806,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 2,
             "offsetY": 0
+        },
+        "/assets/PERSIAN/jiazini_khusrau_malik.png": {
+            "scale": 1.04,
+            "offsetX": 6,
+            "offsetY": 1
         }
     },
     "folderGuides": {

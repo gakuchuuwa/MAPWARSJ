@@ -718,3 +718,12 @@ zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `Veg
 ⚠️ LoAF（`longFrames`）只收 >50ms 的帧，30fps 掉帧（33ms/帧）它**收不到**；掉帧要在主人机器上录时间线。
 **11-09 补：PerfDoctor 新增 `frameCost`**（包住 rAF/setTimeout/setInterval，常驻 DEV）——掉帧专用：按帧给「游戏JS / 其余（渲染侧+GC）」，
 另列 rAF 回调每帧 ms。无头验证一次：掉帧帧平均 35.4ms = 游戏JS 14.4 + 其余 20.9；`GameAppLoop` 7.1ms/帧居首。等主人局落盘看真机比例。
+**11-09 主人局 frameCost 首批（环球，6 份）**：掉帧帧平均 27～69ms，其中**游戏 JS 20～36ms（占 60～75%）**，其余 6～33ms →
+**掉帧主要是 JS，不是渲染侧**。JS 几乎全在 `GameAppLoop` 主循环 rAF 里，而已登记热点合计每帧 <1ms（逻辑段 ~10 帧才跑一次）。
+已补计时：`主循环:<段>`（PerformanceMonitor.endTimer 转记）、`主循环:整帧`、`主循环:部队渲染调度`、`跟拍:move/moveend 监听器合计`、
+`move监听:<函数名>`（DEV 下逐个计时，等同 Leaflet fire）。rAF 匿名回调抽样改随机（原按序号会锁死同一回调，GameAppLoop 被算 2 倍）。
+无头参考：主循环整帧 8.3ms/帧 = 部队渲染调度 2.4 / camera 2.3（moveend 2.0）/ ai 1.5 / historicalEvent 1.4。等主人局第二批数据。
+**11-09 第二批只落了 1 份**：MarchStutterProbe 的自动 dump 要求 20s 内 ≥3 次 >120ms 大顿 —— 持续 30~40fps 的掉帧**永远不触发**。
+已加「窗口跟拍 fps <45 且 ≥200 帧」也 dump（`trigger:'march-lowfps'`，仍 ≥60s 一份）。
+那 1 份（08:51，fps 44）：掉帧帧 30.1ms = 游戏 JS 10.7 + 其余 19.4；JS 里 `GlobalUnitRenderer.animate` 4.1ms/帧（峰值 120ms）居首，
+行军 0.9、AI 0.7、camera 0.6（moveend 0.46）、move 监听 0.02。与第一批（JS 20~36ms）差很大，样本不足，不下结论。

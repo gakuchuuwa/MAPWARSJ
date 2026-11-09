@@ -144,6 +144,35 @@ let lastMoveEndFiredAt = 0;
 let panPxSinceMoveEnd = 0;
 let moveEndTrailingTimer: ReturnType<typeof setTimeout> | null = null;
 
+/**
+ * DEV 专用：等同 `map.fire('move')`（Leaflet 1.9 Events.fire 同序、同 event 结构、同 once 处理），
+ * 只是逐个监听器计时记进 PerfDoctor，查「掉帧时主循环里没登记的 JS 在哪」（2026-11-09）。
+ */
+function fireMoveTimed(map: L.Map): void {
+    type Lsn = { fn: (e: unknown) => void; ctx?: unknown; once?: boolean };
+    const m = map as unknown as { _events?: Record<string, Lsn[]>; _firingCount?: number; off(t: string, f: unknown, c?: unknown): unknown };
+    const listeners = m._events?.move;
+    if (!listeners || listeners.length === 0) return;
+    const event = { type: 'move', target: map, sourceTarget: map };
+    m._firingCount = (m._firingCount ?? 0) + 1;
+    try {
+        for (let i = 0, len = listeners.length; i < len; i++) {
+            const l = listeners[i];
+            if (!l) continue;
+            const fn = l.fn;
+            if (l.once) m.off('move', fn, l.ctx);
+            const s = performance.now();
+            fn.call(l.ctx || map, event);
+            const d = performance.now() - s;
+            const ctxName = (l.ctx as { constructor?: { name?: string } } | undefined)?.constructor?.name;
+            const label = `${ctxName && ctxName !== 'Object' ? ctxName + '.' : ''}${fn.name || '(anon)'}`;
+            perfDoctor.note(`move监听:${label}`, d, 'Leaflet map.on(\'move\')');
+        }
+    } finally {
+        m._firingCount--;
+    }
+}
+
 /** 按亚像素平移（不取整，见 followPanState 的说明），并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
 function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     const now = performance.now();
@@ -172,7 +201,18 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
             // 等同 panBy({animate:false}) 的非动画分支，只是不把 offset 取整
             map.fire('movestart');
             (map as unknown as { _rawPanBy(offset: L.Point): void })._rawPanBy(pt);
-            map.fire('move').fire('moveend');
+            if (import.meta.env.DEV) {
+                // [2026-11-09 查掉帧] 主人真机：掉帧帧里游戏 JS 20~36ms/帧，几乎全在主循环里却不在已登记热点 →
+                //   怀疑每帧 move 的监听器。逐个计时（与 Leaflet fire 同序同参），moveend 整体计时。
+                const t0 = performance.now();
+                fireMoveTimed(map);
+                const t1 = performance.now();
+                map.fire('moveend');
+                perfDoctor.note('跟拍:move 监听器合计', t1 - t0, 'src/app/GameAppLoop.ts:panByThrottledMoveEnd');
+                if (due) perfDoctor.note('跟拍:moveend 监听器合计', performance.now() - t1, 'src/app/GameAppLoop.ts:panByThrottledMoveEnd');
+            } else {
+                map.fire('move').fire('moveend');
+            }
         } else {
             map.panBy(pt, { animate: false });   // 超过一屏：交给 Leaflet 走 _resetView
         }
@@ -746,7 +786,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             app.battleScene.tick();
         }
         // 在本帧玩家/军团位移与镜头跟随全部完成后同步驱动战略画布重绘，消除双 rAF 逆序导致的 1 帧滞后与抖动
-        getGlobalUnitRenderer()?.tickFromGameLoop(timestamp);
+        if (import.meta.env.DEV) {
+            perfDoctor.measure('主循环:部队渲染调度', () => getGlobalUnitRenderer()?.tickFromGameLoop(timestamp),
+                'src/map/GlobalUnitRenderer.ts:tickFromGameLoop');
+        } else {
+            getGlobalUnitRenderer()?.tickFromGameLoop(timestamp);
+        }
     } catch (error) {
         console.error('❌ Game Loop Error:', error);
     }
