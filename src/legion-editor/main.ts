@@ -476,7 +476,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'war_dog', name: '战犬', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/WARDOG/' },
     { id: 'war_wagon', name: '高丽战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WARWAGON/' },
     { id: 'warrior_priest', name: '亚美尼亚修士战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/WARRIORPRIEST/' },
-    { id: 'winged_hussar', name: '波兰翼骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
+    { id: 'winged_hussar', name: '翼骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
     { id: 'woad_raider', name: '凯尔特靛蓝突袭者', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/WOADRAIDER/' },
     { id: 'xolotl_warrior', name: '阿兹特克索洛特尔骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
     { id: 'longswordsman', name: '重装剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },

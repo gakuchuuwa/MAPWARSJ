@@ -356,7 +356,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 42, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 48, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     warrior_priest: { name: '亚美尼亚修士战士高级', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 34, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
-    winged_hussar: { name: '波兰翼骑兵高级', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 60, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
+    winged_hussar: { name: '翼骑兵高级', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 60, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
     woad_raider: { name: '凯尔特靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     xolotl_warrior: { name: '阿兹特克索洛特尔骑兵高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
     longswordsman: {name:"重装剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:38,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},

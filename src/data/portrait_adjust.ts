@@ -10901,6 +10901,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 23
+        },
+        "/assets/JIANGNAN/bfe2_ziyu.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/han_d_pengyue.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 2
         }
     },
     "folderGuides": {
