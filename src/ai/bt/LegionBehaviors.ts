@@ -273,6 +273,13 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         ctx.army.stopMovement?.(false);
         return null;
     }
+    // 🔴 [2026-11-09 主人令「只找交战中的，不要找移动中的」] 追到一半对方已脱战（又走起来了）就不追了
+    if (!isEnemyFightingMyFaction(enemy, ctx.army.getFactionId())) {
+        markTargetCooldown(ctx, `army:${huntId}`, 'hunt_left_combat');
+        clearHuntTarget(ctx);
+        ctx.army.stopMovement?.(false);
+        return null;
+    }
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
     const isFollowedTarget = enemy === ctx.legionManager?.getFollowedLegion?.();
@@ -358,7 +365,31 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
 }
 
 /**
+ * 🔴 [2026-11-09 主人令「改成只找交战中的」] 这支敌军是否**正在和我方势力交战**。
+ *    只找交战中的、不追移动中的；而且对手必须是我方——援军编入（BattleReinforcementPoll）只认同势力，
+ *    敌军若在跟第三方打，我方赶过去也编不进去，只会站在旁边等到 hunt_blocked_timeout。
+ */
+function isEnemyFightingMyFaction(other: Army, myFaction: string): boolean {
+    if (!other.getIsInCombat?.()) return false;
+    const cs = typeof window !== 'undefined' ? (window as any).game?.combatSystem : null;
+    if (!cs) return false;
+    for (const bf of cs.getActiveBattleFields?.() ?? []) {
+        if (!bf.hasParticipant(other.id)) continue;
+        const otherIsAtt = bf.getAttackerUnits().some((u: { id: string }) => u.id === other.id);
+        const oppFaction: string = otherIsAtt ? bf.getDefenderFactionId() : bf.getAttackerFactionId();
+        const oppUnits: { factionId?: string | null }[] = otherIsAtt ? bf.getDefenderUnits() : bf.getAttackerUnits();
+        if (oppFaction === myFaction || oppUnits.some((u) => u.factionId === myFaction)) return true;
+    }
+    for (const b of cs.getActiveBattles?.() ?? []) {
+        if (b.attacker?.id === other.id && b.defender?.factionId === myFaction) return true;
+        if (b.defender?.id === other.id && b.attacker?.factionId === myFaction) return true;
+    }
+    return false;
+}
+
+/**
  * 在寻敌半径内找最近可野战敌军团（排除冷却中的目标）。
+ * 🔴 [2026-11-09] 只找正在和我方交战的敌军（见 isEnemyFightingMyFaction），移动中的一律不追。
  * 收复本城优先于本函数；本函数优先于方向池抽签。
  */
 function pickNearbyEnemyLegion(
@@ -381,6 +412,7 @@ function pickNearbyEnemyLegion(
             !followed.isDestroyed &&
             followed.getTroops() > 0 &&
             followed.getFactionId() !== myFaction &&
+            isEnemyFightingMyFaction(followed, myFaction) &&
             !excludeTargetIds.has(`army:${followed.id}`) &&
             followed.getTroops() <= myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO
         ) {
@@ -412,6 +444,7 @@ function pickNearbyEnemyLegion(
         if (other.getFactionId() === myFaction) continue;
         const key = `army:${other.id}`;
         if (excludeTargetIds.has(key)) continue;
+        if (!isEnemyFightingMyFaction(other, myFaction)) continue;
 
         // 「打不打得过」闸门（2026-08-12）：修前只判死没死/同不同阵营/距离，
         // 5 千残兵会去追 3 万大军 —— 追击的前提本来就是我打得过。

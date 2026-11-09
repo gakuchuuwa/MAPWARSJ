@@ -1664,12 +1664,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代大亚美尼亚军团', civ: '亚美尼亚', age: 'antiquity', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'crescent',
+        formationMode: 'triangle',
         shipId: 'BIREME',
         commanderUnit: 'hero_perdiccas',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_thoros（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'antiquity_spearman', count: 3 },
             { type: 'cataphract', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
             { type: 'composite_bowman', count: 4 },
         ],
     },
@@ -1681,13 +1681,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代巴格拉图尼军团', civ: '亚美尼亚', age: 'feudal', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'GALLEY',
         commanderUnit: 'hero_stephan',
         slots: [
+            { type: 'warrior_priest', count: 2 },
             { type: 'knight', count: 3 },
             { type: 'elite_composite_bowman', count: 4 },
-            { type: 'warrior_priest', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 城堡时代 · 城堡时代奇里乞亚军团　（本次新建）────────────────
@@ -1698,13 +1698,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代奇里乞亚军团', civ: '亚美尼亚', age: 'castle', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_emperorsigismund',
         slots: [
+            { type: 'warrior_priest', count: 2 },
             { type: 'frankish_paladin', count: 3 },
             { type: 'composite_bowman', count: 4 },
-            { type: 'warrior_priest', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 帝国时代 · 帝国时代亚美尼亚军团　（本次新建）────────────────
@@ -1715,13 +1715,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代亚美尼亚军团', civ: '亚美尼亚', age: 'imperial', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'DROMON',
         commanderUnit: 'hero_thoros',
         slots: [
+            { type: 'warrior_priest', count: 2 },
             { type: 'paladin', count: 3 },
             { type: 'elite_composite_bowman', count: 4 },
-            { type: 'warrior_priest', count: 2 },
         ],
     },
 

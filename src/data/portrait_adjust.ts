@@ -10841,6 +10841,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 6,
             "offsetY": 2
+        },
+        "/assets/VARANGIANS/gen_rurik.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 26
         }
     },
     "folderGuides": {

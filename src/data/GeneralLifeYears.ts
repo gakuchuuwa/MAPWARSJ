@@ -505,6 +505,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     habusibao_eugene: { birth: 1663, death: 1736 },  // 欧根亲王
     gesake_khmelnytsky: { birth: 1595, death: 1657 },  // 赫梅利尼茨基
     bfe_vetilius: { birth: -200, death: -147, kaoju: '推定' },  // 维特里乌斯
+    bfe_triarius: { birth: -110, death: -55, kaoju: '推定' },  // 特里阿里乌斯：前 78–67 年任职有载，生卒无载
     bfe_chelyadnin: { birth: 1450, death: 1514, kaoju: '推定' },  // 切利亚德宁
     bfe_mustafa_ii: { birth: 1664, death: 1703 },  // 穆斯塔法二世
     bfe_perozes: { birth: 500, death: 530, kaoju: '推定' },  // 佩罗泽斯

@@ -221,6 +221,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_umar': 'JIANGNAN',   // 蒙古｜乌马儿｜据点 海陵
     'bfe_vahan': 'BYZANTINE',   // 拜占庭｜瓦汉｜据点 君士坦丁堡
     'bfe_vetilius': 'ROMA',   // 罗马帝国｜维特里乌斯｜据点 罗马
+    'bfe_triarius': 'ROMA',   // 罗马共和国｜特里阿里乌斯｜据点 罗马
     'bfe_vitalian': 'THRACIAN',   // 拜占庭｜维塔利安｜据点 普罗夫迪夫
     'bfe_wanggao': 'NORTHEAST',   // 大清｜王杲｜据点 赫图阿拉
     'bfe_wanggeon': 'KOREA',   // 高丽｜松岳王建｜据点 开城

@@ -297,6 +297,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'habusibao_eugene': 'imperial',
     'gesake_khmelnytsky': 'imperial',
     'bfe_vetilius': 'antiquity',
+    'bfe_triarius': 'antiquity',
     'bfe_chelyadnin': 'castle',
     'bfe_mustafa_ii': 'imperial',
     'bfe_perozes': 'antiquity',

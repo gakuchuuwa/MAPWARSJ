@@ -208,7 +208,19 @@ export class SpeechAnnouncer {
     onStart?: () => void;
     /** 战术模式六计：大字与技效同刻已亮，这句不再等 Cut-in 闸门，当场开口 */
     syncNow?: boolean;
+    /** 入队时刻：直播间观众提示排队超过 VIEWER_NOTICE_STALE_MS 还没轮到就丢弃 */
+    enqueuedAt?: number;
   }[] = [];
+  /**
+   * 🔴 [2026-11-09 主人定「不掐半句，按优先级排队，过时的丢掉」]
+   *    正在念的那一句。有它在：大事（sTier）排队等它念完，普通播报直接丢弃，谁也不打断它。
+   *    until 是兜底：语音引擎出错没回调时，过了这个时刻就当它念完了，防止整条播报永久卡死。
+   */
+  private currentSpeech: { seq: number; until: number } | null = null;
+  /** 等着开口的大事播报（一级）：排队超过 PENDING_STIER_STALE_MS 还没轮到就丢弃 */
+  private pendingSTier: { text: string; opts?: SpeakOptions; at: number }[] = [];
+  private static readonly PENDING_STIER_STALE_MS = 30_000;
+  private static readonly VIEWER_NOTICE_STALE_MS = 10_000;
   private skillSpeaking = false;
   /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
   private speechDuckSession = false;
@@ -465,6 +477,8 @@ export class SpeechAnnouncer {
     if (!on) {
       // 立即静音：停掉正在播的 Web Speech 与云健直连 Audio，清空技能队列（GAKU 2026-08-04 全局总开关）
       this.clearSkillQueue();
+      this.pendingSTier.length = 0;
+      this.currentSpeech = null;
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
       }
@@ -914,6 +928,7 @@ export class SpeechAnnouncer {
       skipGlobalNameReplace: true,
       voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
       gapMs: 350,
+      enqueuedAt: Date.now(),
     });
     this.drainSkillQueue();
   }
@@ -935,6 +950,7 @@ export class SpeechAnnouncer {
       skipGlobalNameReplace: true,
       voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
       gapMs: 350,
+      enqueuedAt: Date.now(),
     });
     this.drainSkillQueue();
   }
@@ -957,7 +973,7 @@ export class SpeechAnnouncer {
     //    同时若当前正在播 S 级旁白或另一句语音，直播间晓晓提示也稍候再出队，既不打断旁白、也不会被 sTier 静默吞掉。
     // 🔴 [2026-11-04] 战术模式六计（syncNow）的大字是和这句同刻弹出的，闸门正是它自己刚占的，不能再等自己。
     const gateWait = (this.skillCutInGate && !this.skillSpeakQueue[0]?.syncNow) ? this.skillCutInGate() : 0;
-    const busyWait = gateWait > 0 ? gateWait : (this.isSTierBusy() || this.activeEdgeAudio !== null ? 450 : 0);
+    const busyWait = gateWait > 0 ? gateWait : (this.isSTierBusy() || this.activeEdgeAudio !== null || this.isSpeechBusy() ? 450 : 0);
     if (busyWait > 0) {
       if (!this.skillGateTimer) {
         const gateGen = this.skillQueueGen;
@@ -968,6 +984,15 @@ export class SpeechAnnouncer {
         }, busyWait);
       }
       return;
+    }
+    // 观众提示排太久（仗都打完了）就别念了；技能句带大字 Cut-in，不丢
+    while (
+      this.skillSpeakQueue.length > 0
+      && this.skillSpeakQueue[0].voice === SpeechAnnouncer.VIEWER_LIVE_VOICE
+      && !this.skillSpeakQueue[0].onStart
+      && Date.now() - (this.skillSpeakQueue[0].enqueuedAt ?? Date.now()) > SpeechAnnouncer.VIEWER_NOTICE_STALE_MS
+    ) {
+      this.skillSpeakQueue.shift();
     }
     const next = this.skillSpeakQueue.shift();
     if (next === undefined) return;
@@ -1055,10 +1080,45 @@ export class SpeechAnnouncer {
       });
   }
 
+  /** 是否有话正在念（兜底时刻过了就当念完，防卡死） */
+  private isSpeechBusy(): boolean {
+    if (!this.currentSpeech) return false;
+    if (Date.now() > this.currentSpeech.until) {
+      this.currentSpeech = null;
+      return false;
+    }
+    return true;
+  }
+
+  /** 上一句念完：按到达顺序放排队的大事，排太久的丢掉 */
+  private drainPendingSTier(): void {
+    while (this.pendingSTier.length > 0 && !this.isSpeechBusy()) {
+      const item = this.pendingSTier.shift()!;
+      if (Date.now() - item.at > SpeechAnnouncer.PENDING_STIER_STALE_MS) {
+        item.opts?.onStart?.();
+        item.opts?.onDone?.();
+        continue;
+      }
+      this.speak(item.text, item.opts);
+      return;
+    }
+  }
+
   private speak(text: string, opts?: SpeakOptions): void {
     const now = Date.now();
     // 播报总开关关闭：直接丢弃（不排队不开口；回调仍释放，避免技能队列卡死）
     if (!this.enabled) {
+      opts?.onStart?.();
+      opts?.onDone?.();
+      return;
+    }
+    // 🔴 [2026-11-09 主人定「不掐半句，按优先级排队，过时的丢掉」]
+    //    有话正在念：大事排队等它念完；普通播报直接丢弃。谁也不从半句掐断谁。
+    if (this.isSpeechBusy()) {
+      if (opts?.sTier && this.pendingSTier.length < 8) {
+        this.pendingSTier.push({ text, opts, at: now });
+        return;
+      }
       opts?.onStart?.();
       opts?.onDone?.();
       return;
@@ -1116,6 +1176,11 @@ export class SpeechAnnouncer {
     // 旧句 synthesize 迟到 resolve 时凭此判定「已被取代」而放弃播放，杜绝新旧两句声音重叠。
     const mySeq = ++this.speechSeq;
     const isCurrent = () => this.speechSeq === mySeq;
+    // 占住「正在念」：兜底时长 = 本句最长等待 + 合成与语音表就绪的余量
+    this.currentSpeech = {
+      seq: mySeq,
+      until: now + Math.min(opts?.maxWaitMs ?? 15000, 1500 + text.length * 400) + 4000,
+    };
 
     // 🔴 [2026-10-02 主人定] 确定播报立即开启 duckSession（通知 AudioManager 避让），杜绝 Edge TTS 合成期间的重叠
     this.beginSpeechDuckSession();
@@ -1194,8 +1259,10 @@ export class SpeechAnnouncer {
               const minLeft = opts.bannerMinMs ? opts.bannerMinMs - (Date.now() - bannerShownAt) : 0;
               window.setTimeout(() => { if (isCurrent()) SubtitleBanner.hide(); }, Math.max(1200, minLeft));
             }
+            if (this.currentSpeech?.seq === mySeq) this.currentSpeech = null;
             opts?.onDone?.();
             this.endSpeechDuckSessionIfIdle();
+            this.drainPendingSTier();
           };
 
           // 🔴 [2026-09-16 主人定]「主要是播报，字幕是辅助」

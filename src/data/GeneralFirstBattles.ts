@@ -1474,25 +1474,30 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #73 密特里达梯 (-135 ~ -63) — 公元前89年阿姆尼亚斯河之战（本城就地开战）
+    // #73 密特里达梯 (-135 ~ -63) — 公元前67年泽拉之战
+    // 🔴 [2026-11-09 按史改] 原条目「前89 阿姆尼亚斯河之战，敌将凯撒」两处都错：
+    //    ① 阿姆尼亚斯河之战本都方统帅是阿尔克劳斯、涅俄普托勒摩斯兄弟，对手是比提尼亚王尼科美德四世，史料未载密特里达梯亲临；
+    //    ② 凯撒前89年才十一岁，不可能领兵。
+    //    改为他本人亲自指挥的泽拉之战：前67年春密特里达梯突然打回本都，在泽拉大破卢库卢斯部将特里阿里乌斯，
+    //    罗马军折兵约七千、军团长二十四人、百夫长一百五十人，罗马被迫撤出本都（阿庇安《米特拉达梯战争》）。
+    //    敌将特里阿里乌斯 2026-11-09 新建为罗马共和国普将（bfe_triarius）。
     bendou_d_mitelidati: {
         generalId: 'bendou_d_mitelidati',
-        battleName: '阿姆尼亚斯河之战',
-        battleYear: -89,
+        battleName: '泽拉之战',
+        battleYear: -67,
         battleType: 'field',
-        role: 'defender',
-        targetName: '阿马西亚',
-        targetCityId: 'city_amaxiya',
-        targetLat: 40.65,
-        targetLng: 35.83,
+        role: 'attacker',
+        targetName: '泽拉',
+        targetLat: 40.30,
+        targetLng: 35.89,
         myTroops: 20000,
         enemyFactionId: 'luoma_diguo',
         enemyFactionName: '罗马共和国',
-        enemyGeneralId: 'gen_julius_caesar',
+        enemyGeneralId: 'bfe_triarius',
         enemyTroops: 18000,
         introLines: [
-            { speaker: 'general', text: '罗马贪得无厌侵吞小亚细亚，各邦早已苦不堪言！勇士，随我的铁骑与重甲步兵在阿姆尼亚斯河重创罗马军团！' },
-            { speaker: 'player', text: '愿随密特里达梯国王就地出击，用镰刀战车粉碎罗马与比提尼亚联军！' },
+            { speaker: 'general', text: '卢库卢斯夺我本都，留下特里阿里乌斯据守泽拉。趁他主力未到，我今日就要打回故土！勇士，随我直扑泽拉罗马营寨！' },
+            { speaker: 'player', text: '愿随密特里达梯国王杀回本都，在泽拉一战击溃特里阿里乌斯！' },
         ],
     },
 

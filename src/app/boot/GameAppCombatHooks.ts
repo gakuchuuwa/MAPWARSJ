@@ -223,6 +223,34 @@ function startScene13War(
     if (attackerGeneralId && defenderGeneralId && attackerGeneralId === defenderGeneralId) {
         defenderGeneralId = null;
     }
+    // 🔴 [2026-11-09] 一生履历：主角随军上阵的这一仗，开战时记下双方兵力、对手和恩主
+    //    （区域战不走 Army.onBattleStart，不在这里记，履历就只剩「攻打【某某守军】」）
+    {
+        const heroHostId = app.playerHero?.getHostLegionId?.() ?? null;
+        if (heroHostId) {
+            const attEnt = attacker.getEntity?.();
+            const defEnt = defender.getEntity?.();
+            const followedIsHero = app.cameraFollowUI?.getFollowedArmyId?.() === heroHostId;
+            const heroOnAtt = attEnt?.id === heroHostId || (followedIsHero && !followedOnDefenderSide && defEnt?.id !== heroHostId);
+            const heroOnDef = defEnt?.id === heroHostId || (followedIsHero && !!followedOnDefenderSide && attEnt?.id !== heroHostId);
+            if (heroOnAtt || heroOnDef) {
+                const me = heroOnAtt ? attacker : defender;
+                const foe = heroOnAtt ? defender : attacker;
+                const foeEnt = heroOnAtt ? defEnt : attEnt;
+                const foeGeneralId = (heroOnAtt ? defenderGeneralId : attackerGeneralId)
+                    ?? foeEnt?._siegeGarrisonGeneralId ?? foeEnt?._firstBattleDefenderGeneralId ?? null;
+                app.playerHero?.noteTacticalBattleStart?.({
+                    myTroops: me.troops,
+                    enemyTroops: foe.troops,
+                    enemyName: String(foeEnt?.name ?? '敌军'),
+                    enemyGeneralId: foeGeneralId,
+                    battleType: battleType ?? 'field',
+                    isCity: foe.unitType === 'city',
+                    patronId: me.generalId ?? null,
+                });
+            }
+        }
+    }
 
     // 双方战略地图来向解析：距中心不足 2km 时沿 lastPath 倒查历史路点；攻城战守方即据点
     const resolveOrigin = (u: any, isDefenderSiege: boolean, ref?: { lat: number; lng: number }): { lat: number; lng: number } | undefined => {

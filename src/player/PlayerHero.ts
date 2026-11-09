@@ -441,7 +441,7 @@ export class PlayerHero {
     /** 这一仗开战时记下的双方情况（结算时写进履历） */
     private pendingLifeBattle: {
         myTroops: number; enemyTroops: number; enemyName: string; enemyGeneralId: string | null;
-        battleType: string; patronId: string | null; patronName: string | null;
+        battleType: string; patronId: string | null; patronName: string | null; isCity?: boolean;
     } | null = null;
     public merit = 0;
     /** 本场仗已记的功（封顶 PLAYER_BATTLE_MERIT_CAP；进战术战和战后结算时清零） */
@@ -2263,13 +2263,33 @@ export class PlayerHero {
         };
     }
 
+    /**
+     * 进战术模式时由 startScene13War 调：区域战（攻城、多军团野战）不走 Army.onBattleStart，
+     * 开战双方兵力、对手、恩主只能在这里记，否则履历里只剩「攻打【某某守军】」没有兵力和随谁出战。
+     */
+    public noteTacticalBattleStart(info: {
+        myTroops: number; enemyTroops: number; enemyName: string; enemyGeneralId: string | null;
+        battleType: string; isCity: boolean; patronId: string | null;
+    }): void {
+        this.pendingLifeBattle = {
+            myTroops: Math.round(info.myTroops || 0),
+            enemyTroops: Math.round(info.enemyTroops || 0),
+            enemyName: info.enemyName || '敌军',
+            enemyGeneralId: info.enemyGeneralId,
+            battleType: info.battleType,
+            patronId: info.patronId,
+            patronName: this.generalNameOf(info.patronId),
+            isCity: info.isCity,
+        };
+    }
+
     private recordLifeBattle(result: 'victory' | 'defeat', enemyKilled: number, opponent: any): void {
         const p = this.pendingLifeBattle;
         const ent = typeof opponent?.getEntity === 'function' ? opponent.getEntity() : null;
         const enemyGeneralId: string | null = p?.enemyGeneralId ?? opponent?.generalId ?? null;
         const enemyGeneralName = this.generalNameOf(enemyGeneralId);
         const enemyName = p?.enemyName ?? String(opponent?.name ?? ent?.name ?? '敌军');
-        const isCity = opponent?.unitType === 'city' || ent?.type === 'city';
+        const isCity = p?.isCity ?? (opponent?.unitType === 'city' || ent?.type === 'city');
         const fmt = (n: number) => (n >= 10000 ? `${(n / 10000).toFixed(1).replace(/\.0$/, '')}万` : String(n));
         const hostNow = this.getHostLegion();
         const patronId = p?.patronId ?? hostNow?.generalId ?? this.hostGeneralId ?? null;

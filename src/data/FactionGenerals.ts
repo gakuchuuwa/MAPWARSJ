@@ -2730,6 +2730,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'luoma_catulus', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '卡图卢斯', portrait: '/assets/ROMA/luoma_catulus.png', eliteName: '罗马接舷水兵', eliteTier: 2 },
         // 🔴 [2026-10-25 补B] 维特里乌斯（Vetilius，前 2 世纪罗马将领；前 147 被维里亚图斯伏击杀）｜势力 罗马帝国｜据点 罗马城（ROMA 文化）｜普将（实败）｜精锐「罗马军团兵」T4｜立绘留空
         { generalId: 'bfe_vetilius', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '维特里乌斯', portrait: '/assets/ROMA/bfe_vetilius.png', eliteName: '罗马军团兵', eliteTier: 4 },
+        // 🔴 [2026-11-09 主人令「新建一个武将，尽量符合历史」] 特里阿里乌斯（Gaius Valerius Triarius，卢库卢斯麾下副将；前 67 年泽拉之战被密特里达梯六世击败）｜势力 罗马共和国｜据点 罗马城（ROMA 文化）｜普将（实败）｜精锐「罗马军团兵」T4（挂第 8 人，到上限）｜立绘留空
+        { generalId: 'bfe_triarius', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '特里阿里乌斯', portrait: '/assets/ROMA/bfe_triarius.png', eliteName: '罗马军团兵', eliteTier: 4 },
         { generalId: 'bfe3_4', cityId: 'city_luoma', generalName: '拉维利乌斯', portrait: '/assets/ROMA/bfe3_4.png', eliteName: '罗马军团兵', eliteTier: 4 },
         { generalId: 'bfe3_63', cityId: 'city_luoma', generalName: '霍尔多尼乌斯', portrait: '/assets/ROMA/bfe3_63.png', eliteName: '罗马军团兵', eliteTier: 4 },
         { generalId: 'bfe3_51', cityId: 'city_luoma', generalName: '佩特罗尼乌斯', portrait: '/assets/ROMA/bfe3_51.png', eliteName: '罗马军团兵', eliteTier: 4 },
