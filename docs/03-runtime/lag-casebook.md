@@ -765,3 +765,20 @@ Edge CPU 采样（renderUnit 内）：`renderInfo` 自身最大——每军团�
 - 最重一份（21:56:01，450 个长任务/36.7s）发生在**战术战斗**里：`主循环:combat`（含 scene13War.tick）每帧均 18.4ms、最长 171ms；
   进战斗一次性 `Scene13GroundSetup` getMapData().then 同步建地面 **2039ms** + `Scene13CityLayout` **934ms** ≈ 进战斗冻 3 秒。未处理。
 - 名字颤抖：无头按「入伍→随军战败→停顿」复现不出（120 帧名字/地图层不动；测试 dpr=1，主人 4K 150%）。已加 `src/debug/LabelJitterProbe.ts`（DEV 每帧量中心 6 个城名 Y，30 帧内 ≤4px 来回翻 ≥6 次即落 stuck_legion_log，probe:'label-jitter'）。自测：静止 0 误报、人为 ±0.6px 抖动 1 条。
+
+**11-09 22:20 真凶：「玩家离开军团就卡」= 直播面板选去处候选列表**
+主人局 13:18:47 落盘 LoAF：`ViewerLivePanel.ts ← setInterval` 32 次合计 **86s、单次最长 5157ms**（窗口长任务 458 个 / 123s）。
+链路：ViewerLivePanel 每 300ms render → ViewerLive.snapshot → `PlayerQuestSystem.getLiveJoinCandidates`。玩家无归属（离队）时才有候选（截图「共 671 位」），
+缓存校验对**每条势力随机项**调 `liveJoinFactionPool`（扫 1255 城×武将，逐武将 `isGeneralSortieReady`→`armyOfGeneral` 全扫军团 + `getGeneralRecordByGeneralId` 新建记录）。
+修：`makeSortieReadyChecker`（武将→军团表一次建好，取 getArmies 首个 = 原 find）+ `liveJoinPoolCounts`（一遍扫出 势力|文化 / 势力|* 计数），缓存校验逐项查表；整体重算也用批量判定器。
+无头验：1431 组 城×武将 判定 0 差异；1680 组 势力×文化（含 null/''）池非空 0 差异；旧单池 0.95ms×百余项/300ms → 新全量计数 9.7ms/300ms。
+- LabelJitterProbe 改为纯 JS 读 pane.y + 标记 _leaflet_pos.y，不再每帧 getBoundingClientRect（6 分钟自身吃 279ms）。13:14 抓到一次：跟拍行军中名字在 575 ↔ 574.34 间来回（亚像素平移 → 文字贴像素行），dpr=1。
+- 进战术 1~2.3s 冻结（另案，未改）：`generateDeElevationGrid/generateFieldBattleTerrain` 的 `growCohesiveClump`（count5x5/inGrowthGuard/inProtect）≈0.9~1.2s + `mkProgram` 着色器每场重编 ~300ms。
+
+**11-09 22:40 进战术冻结修复**（`Scene13GroundLayerGL.ts`）
+- `GridSet extends Set<number>`：插入序/迭代/size 全走父类，has 读字节数组（团块 count5x5 每格 25 次 has + 每团全图 5×5 平滑扫）。
+- `memoGrid`：城池 `inGrowthGuard`（atan2/sin/cos）与野战 `inProtect`（逐地基 hypot）按格记忆；依赖变量在建表前已定、之后不变。rnd() 调用序不动。
+- 着色器 `getProgram` 按 GL 上下文 WeakMap 缓存（glCanvas 由幂等 attach 只建一次），destroy 不再 deleteProgram；上下文丢失/失效自动重编。
+- 等价：页面内对拍 GridSet≡Set 60 万次随机增删查清（含越界）0 差异、迭代序一致；memoGrid≡原函数 107 万点（含越界/小数）0 差异。
+- 前后（5~6 分钟无头随机局，>700ms 长任务）：前 2329/938/1012ms 里 growCohesiveClump ~0.9~1.2s + mkProgram ~0.3s；后 749/974/710/706ms 里两者都不再出现，进战术那次剩 828ms 原生（贴图上传等）。非同一场对比。
+- 新看到的战略侧尖峰：`CityLifeAmbientLayer.drawHuntingTree` 单帧 222ms、`TerritorySystem.relayoutCityLabels` 130ms（未处理）。

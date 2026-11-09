@@ -688,7 +688,9 @@ export class PlayerQuestSystem {
             return;
         }
         const original = getFactionIdOfGeneral(g.generalId) ?? this.initialFaction.get(city.id) ?? city.factionId;
-        const factionName = this.deps.cityManager.getFactionName(city.factionId);
+        // 🔴 [2026-11-09 主人令「吕文焕的势力是萧梁…应该是赵宋」] 对话横幅上的势力名＝武将本人的政权（§二.1 势力＝武将所在政权），
+        //    不取据点本局城主归属（襄阳默认归萧梁，会把吕文焕顶成萧梁）。
+        const factionName = this.deps.cityManager.getFactionName(original);
         const portrait = resolveGeneralPortraitPath(g.portrait, {
             factionId: original,
             region: getCityRegion(city),
@@ -2301,13 +2303,18 @@ export class PlayerQuestSystem {
             }
         } else if (targetCity) {
             this.deps.legionManager.abortCitySiege?.(targetCity.id);
-            const nextEnemyFaction = targetCity.factionId === myFactionId ? enemyFactionId : targetCity.factionId;
-            this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: enemyTroops }, { skipCaptureLog: true });
+            // 🔴 [2026-11-09 主人令「吕文焕的势力是萧梁，旗号是梁…应该是赵宋」] 首战攻城：被攻的城战事期间按史
+            //    改归首战登记的敌势力（吕文焕守襄阳＝赵宋，`fb.enemyFactionId`），不保留本局城主归属——
+            //    襄阳按当家名将优先默认划给萧衍的萧梁，守将的势力和旗号就被顶成了萧梁。
+            //    战前原主记 `_firstBattlePrevFactionId`，结算 `cleanupFirstBattleState` 里未被攻占时还原原主。
+            const prevEnemyCityFactionId = targetCity.factionId;
+            this.deps.cityManager.updateCity(targetCity.id, { factionId: enemyFactionId, troops: enemyTroops }, { skipCaptureLog: true });
             const updatedTargetCity = this.deps.cityManager.getCity(targetCity.id) ?? targetCity;
             if (enemyGeneralId) {
                 (updatedTargetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemyGeneralId;
             }
             (updatedTargetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+            (updatedTargetCity as { _firstBattlePrevFactionId?: string })._firstBattlePrevFactionId = prevEnemyCityFactionId;
             if (isOnTheSpot) {
                 const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
                 host.setPosition(targetCity.latitude, targetCity.longitude + ring);
@@ -2458,14 +2465,17 @@ export class PlayerQuestSystem {
         } else if (fbState.targetCityId) {
             const targetCity = this.deps.cityManager.getCity(fbState.targetCityId);
             if (targetCity) {
-                const nextEnemyFaction = targetCity.factionId === host.getFactionId() ? fbState.enemyFactionId : targetCity.factionId;
+                // 🔴 [2026-11-09 主人令] 同 `startFirstBattle`：抵达战场时也按首战登记的敌势力接管城归属，
+                //    战前原主记档，结算未攻占时还原。
+                const prevEnemyCityFactionId = targetCity.factionId;
                 const nextEnemyTroops = Math.max(targetCity.troops || 0, fbState.enemyTroops);
-                this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: nextEnemyTroops }, { skipCaptureLog: true });
+                this.deps.cityManager.updateCity(targetCity.id, { factionId: fbState.enemyFactionId, troops: nextEnemyTroops }, { skipCaptureLog: true });
                 const updatedTargetCity = this.deps.cityManager.getCity(targetCity.id) ?? targetCity;
                 if (fbState.enemyGeneralId) {
                     (updatedTargetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemyGeneralId;
                 }
                 (updatedTargetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+                (updatedTargetCity as { _firstBattlePrevFactionId?: string })._firstBattlePrevFactionId = prevEnemyCityFactionId;
                 host.setTargetCity(updatedTargetCity);
                 const cPos = { lat: updatedTargetCity.latitude, lng: updatedTargetCity.longitude };
                 const d = getEuclideanDistance(host.getPosition(), cPos);
@@ -2576,6 +2586,13 @@ export class PlayerQuestSystem {
             if (tc) {
                 delete (tc as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
                 delete (tc as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero;
+                // 🔴 [2026-11-09 首战攻城换旗的还原] 战事期间城被改归首战敌势力（吕文焕→赵宋）；
+                //    未被攻占（还挂着当时写入的敌旗）→ 还原战前原主；已被攻占／被第三方易主的不动。
+                const prevFaction = (tc as { _firstBattlePrevFactionId?: string })._firstBattlePrevFactionId;
+                delete (tc as { _firstBattlePrevFactionId?: string })._firstBattlePrevFactionId;
+                if (prevFaction && tc.factionId === q.firstBattle.enemyFactionId) {
+                    this.deps.cityManager.updateCity(tc.id, { factionId: prevFaction }, { skipCaptureLog: true });
+                }
             }
         }
         this.deps.hero.setTravelPointLabel(null);
@@ -3847,7 +3864,9 @@ export class PlayerQuestSystem {
         this.rememberVisit(city, gid);
         const rec = getGeneralRecordByGeneralId(gid);
         const generalName = rec?.generalName ?? '将军';
-        const factionId = army.getFactionId() || city.factionId;
+        // 🔴 [2026-11-09 主人令「吕文焕的势力是萧梁…应该是赵宋」] 对话与立绘的势力＝武将本人的政权（§二.1），
+        //    军团/据点势力只在查不到武将势力时兜底（乱斗城被占后军团归占领者，仍按武将原政权显示）。
+        const factionId = getFactionIdOfGeneral(gid) ?? (army.getFactionId() || city.factionId);
         const factionName = this.deps.cityManager.getFactionName(factionId);
         const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
             factionId,

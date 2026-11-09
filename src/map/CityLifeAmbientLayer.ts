@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { decodeThen } from '../utils/imageDecode';
 import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
@@ -2050,7 +2051,8 @@ export class CityLifeAmbientLayer {
                 let loaded = 0;
                 for (let d = 0; d < numDirs; d++) {
                     const img = new Image();
-                    img.onload = () => {
+                    // 🔴 [2026-11-09 查尖峰] 先后台 decode 再标就绪：否则首次 drawImage 在主线程同步解码整张雪碧图
+                    img.onload = () => decodeThen(img, () => {
                         loaded++;
                         if (loaded === numDirs) {
                             if (numDirs === 1) {
@@ -2058,7 +2060,7 @@ export class CityLifeAmbientLayer {
                             }
                             asset.ready = true;
                         }
-                    };
+                    });
                     img.onerror = () => {
                         loaded++;
                         if (loaded === numDirs) asset.ready = true;
@@ -2111,7 +2113,9 @@ export class CityLifeAmbientLayer {
                 st.anchorY = treeMeta?.anchorY ?? meta.anchor_y ?? Math.floor(st.boxH / 2);
                 const img = new Image();
                 let triedFallback = false;
-                img.onload = () => { st.ready = true; };
+                // 🔴 [2026-11-09 查尖峰] 树/建筑长条图（最宽上万像素）首次 drawImage 会在主线程同步解码：
+                //    Edge 无头实测 drawHuntingTree 单帧 222ms。先后台 decode，解完才标就绪（未就绪时本来就跳过不画）。
+                img.onload = () => decodeThen(img, () => { st.ready = true; });
                 img.onerror = () => {
                     // 部分 DE 小屋只保留单帧 preview.png，SUCAI_FX 备用 frames.png
                     if (folder === 'SUCAI_BUILDING' && !triedFallback) {

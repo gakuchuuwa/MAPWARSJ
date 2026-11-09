@@ -480,9 +480,35 @@ export function pickCycleSkill(
 
 const CAM_HOLD_SEC = 4.5;
 
-/** 放计后镜头先看计策落点的秒数，看完回到跟随目标（玩家） */
+/**
+
+ * 计策「演完」的**真实秒数**：技能特效（spawnSkillVfx 的 dur）与配乐截取都以它为长，别拿它当镜头计时。
+
+ */
 
 const SKILL_CAM_SEC = 4.5;
+
+/**
+
+ * 放计后镜头停在落点的时长，单位是**场景秒**（tick 收到的 dt 已乘 SCENE13_TIME_SCALE）：
+
+ * 换算成真实时间正好等于 SKILL_CAM_SEC —— 镜头、特效、配乐三者同进同出，不再提前跑掉。
+
+ */
+
+const SKILL_CAM_HOLD_SEC = SKILL_CAM_SEC * GameConfig.COMBAT.SCENE13_TIME_SCALE;
+
+/** 放计去程的收敛速度（场景秒单位）：实时约 3.1/s，90% 到位约 0.72 秒，不再是「唰一下就没了」 */
+
+const SKILL_CAM_SPEED = 1.8;
+
+/** 放计回程曲线时长（场景秒，与 CAM_HOLD_SEC 同步）：速度自 1.4 缓收至 0.53，收尾接回平时跟拍 */
+
+const SKILL_CAM_RETURN_SEC = CAM_HOLD_SEC;
+
+/** 镜头平移的最大屏幕速度（真实像素/秒）：再远的落点也按这个速度飞过去，不许一帧窜出去 */
+
+const CAM_MAX_PX_PER_SEC = 1400;
 
 
 
@@ -759,6 +785,10 @@ export class Scene13WarLayer {
      */
 
     private skillCamTimer = 0;
+
+    /** 放计镜头已结束、正在归位的剩余场景秒（0 = 不在归位）：走 1.4→0.53 的 ease-out，只放计回程用 */
+
+    private skillCamReturn = 0;
 
     /** 镜头刚切回跟随目标或刚换锁新目标后的 4.5 秒保底计时（期间不响应新技能切镜） */
 
@@ -3282,7 +3312,9 @@ export class Scene13WarLayer {
 
             if (!nearHero) {
 
-                this.skillCamTimer = SKILL_CAM_SEC;
+                this.skillCamTimer = SKILL_CAM_HOLD_SEC;
+
+                this.skillCamReturn = 0;
 
                 this.skillCamX = vfxX;
 
@@ -5058,6 +5090,8 @@ export class Scene13WarLayer {
 
                 this.skillCamTimer = 0;
 
+                this.skillCamReturn = 0;
+
             }
 
             this.tacticalPanX += e.clientX - lastX;
@@ -5453,7 +5487,7 @@ export class Scene13WarLayer {
 
         this.tacticalZoom = 1.0;
 
-        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = []; this.skillCamFollowUnits = []; this.camSwitchLockTimer = 0; this.hasLastCamFocus = false;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = []; this.skillCamFollowUnits = []; this.camSwitchLockTimer = 0; this.hasLastCamFocus = false; this.skillCamReturn = 0;
 
         this.resetCamFollow();
 
@@ -7547,7 +7581,7 @@ export class Scene13WarLayer {
 
         this.tacticalZoom = 1.0;
 
-        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = [];
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = []; this.skillCamReturn = 0;
 
         this.resetCamFollow();
 
@@ -18930,6 +18964,12 @@ export class Scene13WarLayer {
 
             }
 
+            if (this.skillCamReturn > 0) {
+
+                this.skillCamReturn = Math.max(0, this.skillCamReturn - dt);
+
+            }
+
             if (this.userInteractingTimer > 0) {
 
                 this.userInteractingTimer -= dt;
@@ -18938,7 +18978,7 @@ export class Scene13WarLayer {
 
                 if (this.skillCamTimer > 0) {
 
-                    // 放计后先看计策落点 SKILL_CAM_SEC 秒（优先于六档跟随），看完回到跟随目标并进入 4.5 秒保底锁定。
+                    // 放计后先看计策落点 SKILL_CAM_HOLD_SEC 场景秒（真实 4.5 秒，与特效/配乐同长，优先于六档跟随），看完回到跟随目标并进入 4.5 秒保底锁定。
 
                     // 敌战计伏兵从斜后方冲锋时，镜头实时跟随存活伏兵的重心一起推进。
 
@@ -18965,6 +19005,8 @@ export class Scene13WarLayer {
                         this.skillCamFollowUnits = [];
 
                         this.camSwitchLockTimer = CAM_HOLD_SEC;
+
+                        this.skillCamReturn = SKILL_CAM_RETURN_SEC;
 
                     }
 
@@ -19038,17 +19080,46 @@ export class Scene13WarLayer {
 
                     const returnFrac = this.camSwitchLockTimer > 0 ? (1 - this.camSwitchLockTimer / CAM_HOLD_SEC) : 1;
 
+                    // 放计去程 SKILL_CAM_SPEED；放计回程走 1.4→0.53 的 ease-out（只给放计用）；
+                    // 其余（平时跟拍 / 换锁新目标）仍走原曲线，观感不变。
+
+                    const returnRatio = this.skillCamReturn > 0 ? (this.skillCamReturn / SKILL_CAM_RETURN_SEC) : 0;
+
                     const camSpeed = this.skillCamTimer > 0
 
-                        ? 4.2
+                        ? SKILL_CAM_SPEED
 
-                        : (this.camSwitchLockTimer > 0 ? (0.45 + 1.05 * returnFrac * returnFrac) : 1.5);
+                        : (this.skillCamReturn > 0
+
+                            ? (0.53 + 0.87 * returnRatio * returnRatio)
+
+                            : (this.camSwitchLockTimer > 0 ? (0.45 + 1.05 * returnFrac * returnFrac) : 1.5));
 
                     const smooth = Math.min(1.0, camSpeed * dt);
 
-                    this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;
+                    // 最大屏幕速度按**真实像素/秒**算：dt 已乘场景倍速，先换算回真实秒再限
 
-                    this.tacticalPanY += (desiredPanY - this.tacticalPanY) * smooth;
+                    const maxStep = CAM_MAX_PX_PER_SEC * dt / GameConfig.COMBAT.SCENE13_TIME_SCALE;
+
+                    let stepX = (desiredPanX - this.tacticalPanX) * smooth;
+
+                    let stepY = (desiredPanY - this.tacticalPanY) * smooth;
+
+                    const stepLen = Math.hypot(stepX, stepY);
+
+                    if (maxStep > 0 && stepLen > maxStep) {
+
+                        const k = maxStep / stepLen;
+
+                        stepX *= k;
+
+                        stepY *= k;
+
+                    }
+
+                    this.tacticalPanX += stepX;
+
+                    this.tacticalPanY += stepY;
 
                     this.clampTacticalPan();
 

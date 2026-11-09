@@ -388,6 +388,20 @@ void main() {
   gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
 }`;
 
+/**
+ * 🔴 [2026-11-09 主人报进战术卡] 着色器程序按 GL 上下文缓存：战术地面画布只建一次（Scene13WarLayer.attach 幂等），
+ *    原来每场 new 图层都 mkProgram 重编（实测 ~300ms 主线程 + 更多驱动侧）、destroy 时删掉。VS/FS 是常量，复用结果相同；
+ *    上下文丢失或程序失效时自动重编。
+ */
+const PROGRAM_CACHE = new WeakMap<WebGLRenderingContext, WebGLProgram>();
+function getProgram(gl: WebGLRenderingContext): WebGLProgram {
+  const hit = PROGRAM_CACHE.get(gl);
+  if (hit && !gl.isContextLost() && gl.isProgram(hit)) return hit;
+  const p = mkProgram(gl);
+  PROGRAM_CACHE.set(gl, p);
+  return p;
+}
+
 function mkProgram(gl: WebGLRenderingContext): WebGLProgram {
   const mk = (t: number, s: string) => {
     const sh = gl.createShader(t)!;
@@ -521,6 +535,36 @@ function blurGrid2D(src: Float32Array, N: number): Float32Array {
 
 const FLOATS_PER_VERT = 7;
 const STRIDE = FLOATS_PER_VERT * 4;
+
+/**
+ * 🔴 [2026-11-09 主人报进战术卡] 团块生长（growCohesiveClump）用的格子集合：行为与 Set<number> 完全相同
+ * （插入序、迭代、size 全走父类），只是 has 读字节数组。原来 count5x5 每格 25 次 Set.has，
+ * 加上每长完一团全图扫一遍，进战术实测 0.9~1.2 秒。
+ */
+class GridSet extends Set<number> {
+  private readonly m: Uint8Array;
+  constructor(n: number) { super(); this.m = new Uint8Array(n); }
+  override add(v: number): this { if (v >= 0 && v < this.m.length) this.m[v] = 1; return super.add(v); }
+  override delete(v: number): boolean { if (v >= 0 && v < this.m.length) this.m[v] = 0; return super.delete(v); }
+  override clear(): void { this.m.fill(0); super.clear(); }
+  override has(v: number): boolean { return (v >= 0 && v < this.m.length) ? this.m[v] === 1 : super.has(v); }
+}
+
+/** 网格上的纯判定函数按格记忆（同一组参数下结果不变；越界坐标照常现算） */
+function memoGrid(N: number, fn: (gx: number, gy: number) => boolean): (gx: number, gy: number) => boolean {
+  const memo = new Int8Array(N * N).fill(-1);
+  return (gx, gy) => {
+    if (gx >= 0 && gx < N && gy >= 0 && gy < N && Number.isInteger(gx) && Number.isInteger(gy)) {
+      const i = gy * N + gx;
+      const v = memo[i];
+      if (v !== -1) return v === 1;
+      const r = fn(gx, gy);
+      memo[i] = r ? 1 : 0;
+      return r;
+    }
+    return fn(gx, gy);
+  };
+}
 
 export class Scene13GroundLayerGL {
   public readonly gl: WebGLRenderingContext;
@@ -727,7 +771,7 @@ export class Scene13GroundLayerGL {
     if (!gl) throw new Error('WebGL 不可用');
     this.gl = gl;
 
-    this.prog = mkProgram(gl);
+    this.prog = getProgram(gl);
     gl.useProgram(this.prog);
 
     const A = (n: string) => gl.getAttribLocation(this.prog, n);
@@ -1966,13 +2010,13 @@ export class Scene13GroundLayerGL {
     // 生长边界：在 rProtect 外留 1.0~2.4 格随方位角自然起伏的缓冲，既让 100% 视野外圈能看到高地，又杜绝连成环形墙
     const wobPhase1 = rnd() * Math.PI * 2;
     const wobPhase2 = rnd() * Math.PI * 2;
-    const inGrowthGuard = (gx: number, gy: number): boolean => {
+    const inGrowthGuard = memoGrid(N, (gx: number, gy: number): boolean => {
       const dx = gx - cx, dy = gy - cy;
       const dist = cityDist(gx, gy);
       const ang = Math.atan2(dy, dx);
       const guardR = rProtect + 1.1 + 1.1 * Math.sin(3 * ang + wobPhase1) + 0.8 * Math.cos(2 * ang + wobPhase2);
       return dist < guardR;
-    };
+    });
 
     const isBig = category === 'big_city';
     const isPass = category === 'pass';
@@ -1993,7 +2037,7 @@ export class Scene13GroundLayerGL {
       axisAngle: number,
       aniso: number
     ): Set<number> => {
-      const clump = new Set<number>();
+      const clump: Set<number> = new GridSet(N * N);
       if (seedX < 3 || seedX >= N - 3 || seedY < 3 || seedY >= N - 3) return clump;
       if (inGrowthGuard(seedX, seedY) || isWet(seedX, seedY)) return clump;
 
@@ -3023,12 +3067,12 @@ export class Scene13GroundLayerGL {
       const c = this.screenToCell(fd.x, fd.y, W, H);
       if (c) cellFoundations.push({ gx: c.gx, gy: c.gy, r: Math.max(2.6, fd.r + 0.6) });
     }
-    const inProtect = (gx: number, gy: number): boolean => {
+    const inProtect = memoGrid(N, (gx: number, gy: number): boolean => {
       for (const f of cellFoundations) {
         if (Math.hypot(gx - f.gx, gy - f.gy) < f.r) return true;
       }
       return false;
-    };
+    });
     const isWet = (gx: number, gy: number): boolean =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
@@ -3045,7 +3089,7 @@ export class Scene13GroundLayerGL {
       axisAngle: number,
       aniso: number
     ): Set<number> => {
-      const clump = new Set<number>();
+      const clump: Set<number> = new GridSet(N * N);
       if (seedX < 3 || seedX >= N - 3 || seedY < 3 || seedY >= N - 3) return clump;
       if (inProtect(seedX, seedY) || isWet(seedX, seedY)) return clump;
 
@@ -3464,7 +3508,7 @@ export class Scene13GroundLayerGL {
     if (this.moatWaterTex) gl.deleteTexture(this.moatWaterTex);
     if (this.dirtTex) gl.deleteTexture(this.dirtTex);
     if (this.dryTex) gl.deleteTexture(this.dryTex);
-    gl.deleteProgram(this.prog);
+    // 程序不删：按上下文缓存给下一场复用（见 getProgram）
   }
 
   /**
@@ -3510,3 +3554,6 @@ export class Scene13GroundLayerGL {
     return layer;
   }
 }
+
+/** 对照测试用（GridSet ≡ Set、memoGrid ≡ 原函数），游戏逻辑不调用 */
+export const __clumpPrimitivesForTest = { GridSet, memoGrid };

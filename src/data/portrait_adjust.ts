@@ -10976,6 +10976,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/JIANGNAN/chuguo_yangyouji.png": {
+            "scale": 1.02,
+            "offsetX": -9,
+            "offsetY": -47
+        },
+        "/assets/CENTRAL/zhuozhou_anshouzhong.png": {
+            "scale": 1.01,
+            "offsetX": 12,
+            "offsetY": 3
+        },
+        "/assets/CENTRAL/han_d_sunang.png": {
+            "scale": 1.29,
+            "offsetX": 22,
+            "offsetY": 10
         }
     },
     "folderGuides": {

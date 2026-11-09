@@ -453,7 +453,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'balance_yoke',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_zhangfei',
+        commanderUnit: 'hero_whitetigeryan',
         slots: [
             { type: 'jian_swordsman', count: 4 },
             { type: 'chukonu', count: 2 },
@@ -579,7 +579,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_guanyu',
+        commanderUnit: 'hero_luunhanchu',
         slots: [
             { type: 'fire_lancer', count: 3 },
             { type: 'jian_swordsman', count: 4 },
@@ -3432,7 +3432,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
         formationMode: 'balance_yoke',
         shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'hero_luunhanchu',
+        commanderUnit: 'hero_zhangfei',
         slots: [
             { type: 'white_feather_guard', count: 4 },
             { type: 'elite_chukonu', count: 2 },
@@ -4615,7 +4615,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'balance_yoke',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_whitetigeryan',
+        commanderUnit: 'hero_liubiao',
         slots: [
             { type: 'jian_swordman_unshielded', count: 4 },
             { type: 'tiger_rider', count: 2 },

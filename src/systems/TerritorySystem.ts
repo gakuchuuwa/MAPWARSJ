@@ -2225,6 +2225,9 @@ function splitCityStackGroundHtml(stackHtml: string): { groundHtml: string; buil
     return { groundHtml, buildingHtml };
 }
 
+/** relayoutCityLabels 上次写给每个城名的避让位移（量位置时减掉它，免得先清空再量触发全量重排） */
+const CITY_LABEL_SHIFT = new WeakMap<HTMLElement, [number, number]>();
+
 export class TerritorySystem {
     private map: GameMap;
     private factionManager: FactionManager;
@@ -3711,17 +3714,19 @@ export class TerritorySystem {
     private relayoutCityLabels(): void {
         const labelsPane = this.map.getLeafletMap().getPane('labelsPane');
         if (!labelsPane || labelsPane.style.display === 'none') return;
-        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number }
+        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number; prev: [number, number] }
         const boxes: LabelBox[] = [];
+        // 🔴 [2026-11-09 查尖峰，无头实测单次 130ms] 原来先把所有名字 transform 清空再量：写一遍 → 读时强制把全部名字重排一遍。
+        //    translate 不改布局盒，只平移外框 ⇒「清空后的位置」= 当前外框 − 本函数上次写入的位移（记在 CITY_LABEL_SHIFT）。
+        //    不写就量，量完只给位移真的变了的名字写回。落位结果与原来逐个相同。
         for (const label of this.cityLabels.values()) {
             const el = label.getElement()?.querySelector<HTMLElement>('.city-label-content');
             if (!el) continue;
-            el.style.transform = '';
-            boxes.push({ el, w: 0, h: 0, x: 0, y: 0 });
+            boxes.push({ el, w: 0, h: 0, x: 0, y: 0, prev: CITY_LABEL_SHIFT.get(el) ?? [0, 0] });
         }
         for (const b of boxes) {
             const r = b.el.getBoundingClientRect();
-            b.w = r.width; b.h = r.height; b.x = r.left; b.y = r.top;
+            b.w = r.width; b.h = r.height; b.x = r.left - b.prev[0]; b.y = r.top - b.prev[1];
         }
         const GAP = 2;
         const placed: LabelBox[] = [];
@@ -3744,9 +3749,13 @@ export class TerritorySystem {
             for (const [cx, cy] of cands) {
                 if (!blocked(b.x + cx, b.y + cy, b.w, b.h)) { dx = cx; dy = cy; found = true; break; }
             }
-            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy });
-            if (found && (dx !== 0 || dy !== 0)) {
-                b.el.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy, prev: [0, 0] });
+            // 原规则：找到非零落位才写位移，否则（含全被占的兜底）就是原位
+            const sx = found ? +dx.toFixed(1) : 0;
+            const sy = found ? +dy.toFixed(1) : 0;
+            if (sx !== b.prev[0] || sy !== b.prev[1]) {
+                b.el.style.transform = (sx !== 0 || sy !== 0) ? `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)` : '';
+                CITY_LABEL_SHIFT.set(b.el, [sx, sy]);
             }
         }
     }
