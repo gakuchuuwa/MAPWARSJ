@@ -20,6 +20,9 @@ export interface HistoricalStreakRecord {
     factionId: string;
 }
 
+/** 军团列表每行上次写入的样式与内容（差分更新用，见 refreshList） */
+const ROW_SIG = new WeakMap<HTMLElement, { css: string; html: string }>();
+
 export class CameraFollowUI {
     /** 全局历史最高连胜纪录（即使军团阵亡依然永久保留） */
     public static historicalMaxStreak: HistoricalStreakRecord | null = null;
@@ -471,9 +474,10 @@ export class CameraFollowUI {
         const factionTotals = this.computeFactionTotals();
         this.updateTopStats(armies, factionTotals);
 
-        container.innerHTML = '';
-
+        // 🔴 [2026-11-09 主人「特别卡」，DD 实测] 原来每 500ms 清空容器、24 行逐行 innerHTML 重建（每次约 480 个元素），
+        //    是跟拍时尾部尖峰的主要来源。改为逐行差分：同一位置的行 HTML/样式不变就不碰 DOM，变了只改那一行。
         if (armies.length === 0) {
+            container.innerHTML = '';
             const empty = document.createElement('div');
             empty.style.cssText = `
                 padding: 20px 14px;
@@ -505,9 +509,33 @@ export class CameraFollowUI {
             return fidA.localeCompare(fidB);
         });
 
+        // 空列表占位（无 dataset.row）要先清掉，避免和新行混在一起
+        if (container.firstElementChild && !(container.firstElementChild as HTMLElement).dataset.row) container.innerHTML = '';
+
         for (let idx = 0; idx < armies.length; idx++) {
             const army = armies[idx];
-            const item = document.createElement('div');
+            let item = container.children[idx] as HTMLDivElement | undefined;
+            if (!item) {
+                item = document.createElement('div');
+                item.dataset.row = '1';
+                const el = item;
+                // 悬停只绑一次，跟随/精锐状态从 dataset 读（行会被复用）
+                el.addEventListener('mouseenter', () => {
+                    if (el.dataset.followed !== '1') {
+                        el.style.background = 'rgba(255, 255, 255, 0.06)';
+                        el.style.transform = 'translateX(2px)';
+                    }
+                });
+                el.addEventListener('mouseleave', () => {
+                    if (el.dataset.followed !== '1') {
+                        el.style.background = el.dataset.elite === '1'
+                            ? 'linear-gradient(to right, rgba(220, 90, 40, 0.08), transparent)'
+                            : 'transparent';
+                        el.style.transform = 'none';
+                    }
+                });
+                container.appendChild(el);
+            }
             const troops = army.getTroops?.() || 0;
             const name = army.name || army.id;
             const isFollowed = army.id === this.followedArmyId;
@@ -541,7 +569,7 @@ export class CameraFollowUI {
                 }
             }
 
-            item.style.cssText = `
+            const itemCss = `
                 padding: 10px 12px;
                 margin: 0;
                 border-radius: 4px;
@@ -564,7 +592,7 @@ export class CameraFollowUI {
 
             // 第一行：名次 + 军团名 + 连胜 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             // 🔴 连胜徽章移出 ellipsis span：长名军团的徽章曾被 overflow:hidden 裁掉（2026-09-03 修复「有的军团不显示连胜」）
-            item.innerHTML = `
+            const itemHtml = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; min-width:0; display:flex; align-items:center; ${nameStyle}">
                         <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
@@ -587,24 +615,21 @@ export class CameraFollowUI {
                 </div>
             `;
 
-            item.addEventListener('mouseenter', () => {
-                if (!isFollowed) {
-                    item.style.background = 'rgba(255, 255, 255, 0.06)';
-                    item.style.transform = 'translateX(2px)';
-                }
-            });
-            item.addEventListener('mouseleave', () => {
-                if (!isFollowed) {
-                    item.style.background = isEliteAndGeneral 
-                        ? 'linear-gradient(to right, rgba(220, 90, 40, 0.08), transparent)' 
-                        : 'transparent';
-                    item.style.transform = 'none';
-                }
-            });
-
-            container.appendChild(item);
+            // 样式变了（跟随/精锐底色）才重设 cssText；鼠标悬停中的临时底色因此不会每 500ms 被打断
+            // 上次写入的内容记在 JS 里（不写进 DOM 属性，免得属性变更本身又触发样式重算）
+            const last = ROW_SIG.get(item);
+            if (!last || last.css !== itemCss) item.style.cssText = itemCss;
+            if (!last || last.html !== itemHtml) item.innerHTML = itemHtml;
+            ROW_SIG.set(item, { css: itemCss, html: itemHtml });
+            const fFlag = isFollowed ? '1' : '0', eFlag = isEliteAndGeneral ? '1' : '0';
+            if (item.dataset.followed !== fFlag) item.dataset.followed = fFlag;
+            if (item.dataset.elite !== eFlag) item.dataset.elite = eFlag;
         }
+        // 军团变少：删掉多出来的行
+        while (container.children.length > armies.length) container.lastElementChild!.remove();
     }
+
+    private lastTopStatsHtml = '';
 
     /** 更新顶部高亮栏：历史最高连胜武将 + 据点最多势力 */
     private updateTopStats(armies: any[], factionTotals: Map<string, { troops: number; cities: number }>): void {
@@ -707,7 +732,11 @@ export class CameraFollowUI {
         }
 
         this.topStatsContainer.style.display = 'flex';
-        this.topStatsContainer.innerHTML = `${streakCardHtml}${factionCardHtml}`;
+        // [2026-11-09] 内容没变就不重写（原来每 500ms 整块 innerHTML + 重新绑悬停）
+        const topHtml = `${streakCardHtml}${factionCardHtml}`;
+        if (this.lastTopStatsHtml === topHtml) return;
+        this.lastTopStatsHtml = topHtml;
+        this.topStatsContainer.innerHTML = topHtml;
 
         if (isStreakClickable) {
             const streakCard = this.topStatsContainer.querySelector('#top-streak-card') as HTMLDivElement | null;

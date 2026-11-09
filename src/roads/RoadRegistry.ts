@@ -199,6 +199,7 @@ export class RoadRegistry {
     }
 
     private addNode(node: GraphNode): void {
+        this.cityGrid = null;
         this.nodes.set(node.id, node);
         if (!this.adjacencyList.has(node.id)) {
             this.adjacencyList.set(node.id, []);
@@ -206,6 +207,7 @@ export class RoadRegistry {
     }
 
     private addEdge(edge: GraphEdge): void {
+        this.cityGrid = null;
         this.edges.set(edge.id, edge);
 
         // 双向边 (道路是双向的)
@@ -1322,6 +1324,7 @@ export class RoadRegistry {
      * 重建整个图
      */
     private rebuildGraph(): void {
+        this.cityGrid = null;
         this.clearDistanceCache();
         this.edges.clear();
         this.adjacencyList.clear();
@@ -1337,7 +1340,66 @@ export class RoadRegistry {
 
     // ===== 工具方法 =====
 
+    /**
+     * 🔴 [2026-11-09 主人报「特别卡」，DD 实测 findNearestCityId 281ms/8s] 接路据点 1° 格网（惰性建，路网一改即作废）。
+     *    order = 在 this.nodes 里的遍历序，等距时取序小者，与全扫「先遇到者胜（严格 <）」一致。
+     */
+    private cityGrid: { key: string; cells: Map<number, Array<{ id: string; node: GraphNode; order: number }>> } | null = null;
+    private getCityGrid() {
+        const key = `${this.nodes.size}|${this.edges.size}`;   // 兜底：万一有别处改了图而没置 null
+        if (this.cityGrid && this.cityGrid.key === key) return this.cityGrid.cells;
+        const cells = new Map<number, Array<{ id: string; node: GraphNode; order: number }>>();
+        let order = 0;
+        for (const [id, node] of this.nodes) {
+            const o = order++;
+            if (node.type !== 'city') continue;
+            const edges = this.adjacencyList.get(id);
+            if (!edges || edges.length === 0) continue;
+            const k = RoadRegistry.gridKey(Math.floor(node.lat), Math.floor(node.lng));
+            let arr = cells.get(k);
+            if (!arr) { arr = []; cells.set(k, arr); }
+            arr.push({ id, node, order: o });
+        }
+        this.cityGrid = { key, cells };
+        return cells;
+    }
+    private static gridKey(latCell: number, lngCell: number): number {
+        return (latCell + 100) * 1000 + (((lngCell % 360) + 360) % 360);
+    }
+
     private findNearestCityId(lat: number, lng: number, maxDistDeg: number): string | undefined {
+        // 格网只服务常用小半径；大半径 / 近极点（经向外扩太宽）退回全扫，结果口径不变
+        const cosLat = Math.cos(lat * Math.PI / 180);
+        const lngPad = cosLat > 1e-6 ? maxDistDeg / cosLat : Infinity;
+        if (maxDistDeg <= 10 && lngPad <= 60 && !(import.meta.env.DEV && (globalThis as { __nearestCityFullScan?: boolean }).__nearestCityFullScan)) {
+            const cells = this.getCityGrid();
+            let best: { id: string; order: number } | undefined;
+            let minDist = Infinity;
+            const la0 = Math.floor(lat - maxDistDeg), la1 = Math.floor(lat + maxDistDeg);
+            const lo0 = Math.floor(lng - lngPad), lo1 = Math.floor(lng + lngPad);
+            for (let la = la0; la <= la1; la++) {
+                for (let lo = lo0; lo <= lo1; lo++) {
+                    const arr = cells.get(RoadRegistry.gridKey(la, lo));
+                    if (!arr) continue;
+                    for (const c of arr) {
+                        const dLat = c.node.lat - lat;
+                        const dLng = shortestLongitudeDelta(lng, c.node.lng) * cosLat;
+                        const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+                        if (dist >= maxDistDeg) continue;
+                        if (dist < minDist || (dist === minDist && best && c.order < best.order)) {
+                            minDist = dist;
+                            best = c;
+                        }
+                    }
+                }
+            }
+            return best?.id;
+        }
+        return this.findNearestCityIdFullScan(lat, lng, maxDistDeg);
+    }
+
+    /** 原全扫实现（大半径兜底；也是格网版的对照口径） */
+    private findNearestCityIdFullScan(lat: number, lng: number, maxDistDeg: number): string | undefined {
         let nearest: string | undefined;
         let minDist = Infinity;
 

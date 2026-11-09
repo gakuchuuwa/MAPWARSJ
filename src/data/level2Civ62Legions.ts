@@ -254,8 +254,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_kotyankhan',
         slots: [
-            { type: 'keshik', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_kipchak', count: 4 },
         ],
     },
@@ -490,8 +490,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'JUNK',
         commanderUnit: 'hero_sunjian',
         slots: [
-            { type: 'liao_dao', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'elite_fire_lancer', count: 3 },
+            { type: 'liao_dao', count: 4 },
             { type: 'elite_chukonu', count: 2 },
         ],
     },
@@ -564,8 +564,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_sudingfang',
         slots: [
-            { type: 'jian_swordman_unshielded', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'elite_fire_lancer', count: 3 },
+            { type: 'jian_swordman_unshielded', count: 4 },
             { type: 'chukonu', count: 2 },
         ],
     },
@@ -581,8 +581,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_guanyu',
         slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'fire_lancer', count: 4 },
+            { type: 'fire_lancer', count: 3 },
+            { type: 'jian_swordsman', count: 4 },
             { type: 'elite_chukonu', count: 2 },
         ],
     },
@@ -636,8 +636,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_dongzhuo',
         slots: [
-            { type: 'elite_keshik', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_keshik', count: 3 },
             { type: 'chukonu', count: 4 },
         ],
     },
@@ -709,8 +709,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_kotyankhan',
         slots: [
-            { type: 'elite_iron_pagoda', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_iron_pagoda', count: 3 },
             { type: 'kipchak', count: 4 },
         ],
     },
@@ -726,8 +726,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_tamerlane',
         slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'iron_pagoda', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
     },
@@ -749,8 +749,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_subotai',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'tarkan', count: 2 },
-            { type: 'khan', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 4 },
+            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'khan', count: 4 },
         ],
     },
     // ── 漠北 · 封建时代 · 封建时代突厥军团　（三级升二级）────────────────
@@ -765,8 +765,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_ibrahimlodi',
         slots: [
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'scythian_axe_cavalry', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'steppe_lancer', count: 3 },
             { type: 'khan', count: 4 },
         ],
     },
@@ -784,8 +784,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_kotyankhan',
         slots: [
-            { type: 'keshik', count: 2 },
-            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'mangudai', count: 4 },
         ],
     },
@@ -935,8 +935,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_charlesmartel',
         slots: [
-            { type: 'teutonic_knight', count: 3 },
-            { type: 'pikeman', count: 4 },
+            { type: 'pikeman', count: 3 },
+            { type: 'teutonic_knight', count: 4 },
             { type: 'arbalest', count: 2 },
         ],
     },
@@ -1143,8 +1143,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_robinhood',
                 slots: [
-            { type: 'huskarl', count: 3 },
-            { type: 'spearman', count: 4 },
+            { type: 'spearman', count: 3 },
+            { type: 'huskarl', count: 4 },
             { type: 'bowman', count: 2 },
         ],
     },
@@ -1307,8 +1307,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_LONGBOAT',
         commanderUnit: 'hero_finnarnason',
         slots: [
-            { type: 'berserk', count: 3 },
-            { type: 'elite_varangian_guard', count: 4 },
+            { type: 'elite_varangian_guard', count: 3 },
+            { type: 'berserk', count: 4 },
             { type: 'crossbowman', count: 2 },
         ],
     },
@@ -1432,8 +1432,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRADE_COG',
         commanderUnit: 'hero_kalfarnason',
         slots: [
-            { type: 'elite_hearth_troop', count: 3 },
-            { type: 'varangian_guard', count: 4 },
+            { type: 'varangian_guard', count: 3 },
+            { type: 'elite_hearth_troop', count: 4 },
             { type: 'throwing_axeman', count: 2 },
         ],
     },
@@ -1449,8 +1449,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRADE_COG',
         commanderUnit: 'hero_frederickbarbarossa',
         slots: [
-            { type: 'hearth_troop', count: 3 },
-            { type: 'elite_varangian_guard', count: 4 },
+            { type: 'elite_varangian_guard', count: 3 },
+            { type: 'hearth_troop', count: 4 },
             { type: 'throwing_axeman', count: 2 },
         ],
     },
@@ -1466,8 +1466,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_STOERTEBEKER',
         commanderUnit: 'hero_henryii',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'champion', count: 4 },
+            { type: 'champion', count: 3 },
+            { type: 'heavy_pikeman', count: 4 },
             { type: 'heavy_crossbowman', count: 2 },
         ],
     },
@@ -1554,8 +1554,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_DREKI',
         commanderUnit: 'hero_hrolftheganger',
         slots: [
-            { type: 'elite_jomsviking', count: 3 },
-            { type: 'varangian_guard', count: 4 },
+            { type: 'varangian_guard', count: 3 },
+            { type: 'elite_jomsviking', count: 4 },
             { type: 'throwing_axeman', count: 2 },
         ],
     },
@@ -1567,13 +1567,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代卡尔马军团', civ: '丹麦', age: 'castle', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'THE_MIDDLEBROOK',
         commanderUnit: 'hero_erikthered',
         slots: [
-            { type: 'jomsviking', count: 2 },
-            { type: 'teutonic_knight', count: 3 },
-            { type: 'elite_varangian_guard', count: 4 },
+            { type: 'elite_varangian_guard', count: 3 },
+            { type: 'jomsviking', count: 4 },
+            { type: 'arbalest', count: 2 },
         ],
     },
     // ── 日德兰 · 帝国时代 · 帝国时代丹麦军团　（本次新建）────────────────
@@ -1990,8 +1990,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_vytautasthegreat',
         slots: [
-            { type: 'elite_magyar_huszar', count: 2 },
-            { type: 'hussar', count: 3 },
+            { type: 'hussar', count: 2 },
+            { type: 'elite_magyar_huszar', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
     },
@@ -2007,8 +2007,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
         commanderUnit: 'hero_miklostoldi',
         slots: [
-            { type: 'magyar_huszar', count: 3 },
-            { type: 'hussar', count: 4 },
+            { type: 'hussar', count: 3 },
+            { type: 'magyar_huszar', count: 4 },
             { type: 'hand_cannoneer', count: 2 },
         ],
     },
@@ -2102,8 +2102,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_algirdas',
         slots: [
-            { type: 'elite_leitis', count: 3 },
-            { type: 'winged_hussar', count: 4 },
+            { type: 'winged_hussar', count: 3 },
+            { type: 'elite_leitis', count: 4 },
             { type: 'pagan_priest', count: 2 },
         ],
     },
@@ -2119,8 +2119,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANNON_GALLEON',
         commanderUnit: 'hero_kestutis',
         slots: [
-            { type: 'leitis', count: 3 },
-            { type: 'winged_hussar', count: 4 },
+            { type: 'winged_hussar', count: 3 },
+            { type: 'leitis', count: 4 },
             { type: 'hand_cannoneer', count: 2 },
         ],
     },
@@ -2429,8 +2429,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_tariqibnziyad',
         slots: [
             { type: 'light_cavalry', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'cav_archer', count: 4 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'genitour', count: 4 },
         ],
     },
     // ── 安达卢斯 · 城堡时代 · 城堡时代卡斯蒂利亚军团　（本次新建）────────────────
@@ -2446,8 +2446,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_elcidcampeador',
         slots: [
             { type: 'crusader_knight', count: 2 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'mounted_crossbowman_heavy', count: 4 },
+            { type: 'mounted_crossbowman_heavy', count: 3 },
+            { type: 'elite_genitour', count: 4 },
         ],
     },
     // ── 安达卢斯 · 帝国时代 · 帝国时代西班牙方阵军团　（本次新建）────────────────
@@ -2669,8 +2669,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_bledathehun',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         // 🔴 [2026-10-16 主人令] 匈人只有古典一档：4 档＝城堡精锐【匈奴答剌罕骑兵精锐】；无封建军团，普通档不另放。
         slots: [
-            { type: 'elite_tarkan', count: 2 },
-            { type: 'scythian_scout', count: 3 },
+            { type: 'scythian_scout', count: 2 },
+            { type: 'elite_tarkan', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -2730,8 +2730,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_SHIP',
         commanderUnit: 'hero_cumanchief',
         slots: [
-            { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'light_cavalry', count: 3 },
+            { type: 'light_cavalry', count: 2 },
+            { type: 'elite_steppe_lancer', count: 3 },
             { type: 'kipchak', count: 4 },
         ],
     },
@@ -2858,8 +2858,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_tamerlane',
         slots: [
-            { type: 'elite_keshik', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_keshik', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -2875,8 +2875,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_qutlugh',
         slots: [
-            { type: 'keshik', count: 2 },
-            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'mangudai_elite', count: 4 },
         ],
     },
@@ -3198,16 +3198,16 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代普鲁战象军团', civ: '普鲁', age: 'antiquity', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         shipId: 'MONOREME',
         commanderUnit: 'porus_elephant',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝普鲁（PURU）城堡兵【帕提尤达长弓兵精锐】。
         // 🔴 [2026-10-16 主人令·回退] 我曾擅自把 3 档改成「帕提尤达长弓兵」（那是它的城堡兵、普通档按规则在
         //    封建沙希军团 3 档，不该塞回本军团）→ 恢复原状（库曼钦察弓骑精锐）。
         slots: [
-            { type: 'elite_sannahya', count: 3 },
+            { type: 'elite_sannahya', count: 2 },
             { type: 'indian_tribesman', count: 4 },
-            { type: 'elite_pattiyoda_longbowman', count: 2 },
+            { type: 'elite_pattiyoda_longbowman', count: 3 },
         ],
     },
     // ── 旁遮普 · 封建时代 · 封建时代沙希军团　（本次新建）────────────────
@@ -3218,15 +3218,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代沙希军团', civ: '普鲁', age: 'feudal', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         shipId: 'INCENDIARY_RAFT',
         commanderUnit: 'hero_mihirabhoja',
         // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：帕提尤达长弓兵在编；
         //    ②按「象兵只能安排在 2 档」：战斗象压到 2 档，古拉姆离队。
         slots: [
-            { type: 'sannahya', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     // ── 旁遮普 · 城堡时代 · 城堡时代五河军团　（本次新建）────────────────
@@ -3813,8 +3813,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_tariqibnziyad',
         slots: [
             { type: 'camel_heavy', count: 2 },
-            { type: 'elite_camel_archer', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
+            { type: 'elite_camel_archer', count: 4 },
         ],
     },
     // ── 马格里布 · 城堡时代 · 城堡时代摩尔军团　（本次新建）────────────────
@@ -4483,8 +4483,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_ibrahimlodi',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'elite_tiger_cavalry', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 4 },
+            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
         ],
     },
     // ── 漠南 · 封建时代 · 封建时代漠南军团　（本次新建）────────────────

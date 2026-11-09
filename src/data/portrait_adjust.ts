@@ -1283,7 +1283,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/KOREA/joseon_lichenggui.png": {
-            "scale": 1.11,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -10971,6 +10971,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/JAPAN/bfe_ajibaldo.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 12
         }
     },
     "folderGuides": {

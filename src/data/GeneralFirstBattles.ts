@@ -6193,7 +6193,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.9652,
         targetLng: 127.4991,
         myTroops: 16700,
-        enemyFactionId: 'haikou',
+        enemyFactionId: 'early_wokou',   // 🔴 [2026-11-09 连锁修正] 1380 荒山之战倭寇＝前期倭寇；阿只拔都已按主人令挪入新建势力 early_wokou，此处原写 haikou（嘉靖大倭寇，1540–1559）年代不符
         enemyFactionName: '日本倭寇联军',
         enemyGeneralId: 'bfe_ajibaldo',
         enemyTroops: 20000,

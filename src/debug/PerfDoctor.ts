@@ -180,7 +180,9 @@ export class PerfDoctor {
             this.frameTimer = requestAnimationFrame(loop);
         };
         this.frameTimer = requestAnimationFrame(loop);
-        this.wrapJsEntryPoints();
+        // 🔴 [2026-11-09] 不再常驻包 rAF/定时器：包了之后 LoAF 把所有回调都记成 PerfDoctor.ts（主人局落盘里
+        //    长帧归因第一名变成 PerfDoctor 自己），且每个回调多两次计时。要量「每帧游戏 JS」时控制台手动开：
+        //    perfDoctor.wrapJsEntryPoints()（开了之后 longFrames.按脚本 失真，二者别同时看）。
 
         // 长任务（>50ms 阻塞主线程）——GC 与同步大计算都会在这里现形
         try {
@@ -219,7 +221,7 @@ export class PerfDoctor {
     private rafAnonSeq = 0;
     private jsWrapped = false;
 
-    private wrapJsEntryPoints(): void {
+    public wrapJsEntryPoints(): void {
         if (this.jsWrapped || typeof window === 'undefined') return;
         this.jsWrapped = true;
         const self = this;

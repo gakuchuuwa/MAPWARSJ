@@ -14863,5 +14863,32 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "淡马锡-尼科巴",
+                type: "sea",
+                id: "sea_city_danmaxi_city_nikoba_1794228223089",
+                startConnection: "city_danmaxi",
+                endConnection: "city_nikoba"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [103.85, 1.29],
+                    [103.6, 1.1],
+                    [102, 2],
+                    [101.3128, 2.58917],
+                    [100.6, 3.2],
+                    [99.76381, 4.08452],
+                    [98.12813, 5.81173],
+                    [94.32645, 6.15712],
+                    [94.16667, 6.41667],
+                    [94.25, 7.66667],
+                    [93.91667, 8],
+                    [93.53, 8.03],
+                ]
+            }
+        },
     ]
 };
