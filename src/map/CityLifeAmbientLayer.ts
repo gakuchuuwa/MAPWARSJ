@@ -134,7 +134,7 @@ interface CityLifeActor {
     peaceAlpha: number;        // 和平期季节出勤透明度 0..1
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
     damageBlend: number;       // 战火破坏渐变系数：0=和平劳作，1=战火被毁废墟/尸体/沉船
-    recoveryYear?: number;     // 完全战毁后允许恢复的年份；仍须等到该年或更晚年份的春季
+    recoverAtSec?: number;     // 停战后允许恢复的时刻（tSec + 15 秒，无论过不过年）
     combatStartSec: number;    // 本轮进入战火状态的起始秒数
     presentAtCombat: boolean;  // 本轮是否经历过战火；恢复完成后才复位
     inCombatVisual: boolean;   // 当前是否处于战争交叉渐变阶段
@@ -213,6 +213,8 @@ const FOREST_ZONES_FALLBACK: ReadonlySet<string> = new Set(['WEU', 'CEU', 'NEB',
 const FADE_TO_DAMAGE_SEC = 1.1;
 /** 生产方式（农田、牧场、猎场、渔场等）出现时的渐显时长（秒） */
 const PRODUCTION_FADE_IN_SEC = 1.5;
+/** 战后废墟、余火与浓烟保留时长（秒）：2026-11-09 主人令「一律持续 15 秒就行，无论过不过年」 */
+const WAR_DAMAGE_LINGER_SEC = 15;
 const FADE_RECOVER_PEACE_SEC = 2.4;
 const SEASON_TRANSITION_SEC = 5;
 const HUNT_CYCLE_SEC = 30;
@@ -714,11 +716,6 @@ export class CityLifeAmbientLayer {
     private getSeason(): number {
         const s = (window as any).game?.timeSystem?.getSeason?.();
         return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
-    }
-
-    private getYear(): number {
-        const year = (window as any).game?.timeSystem?.getYear?.();
-        return typeof year === 'number' && Number.isFinite(year) ? year : 0;
     }
 
     /** 每季 15 秒，季末最后 5 秒平滑进入下一季；smoothstep 让起手与收尾更柔。 */
@@ -1851,7 +1848,7 @@ export class CityLifeAmbientLayer {
             actor.peaceAlpha = prev.peaceAlpha;
             actor.actionAlpha = prev.actionAlpha;
             actor.damageBlend = prev.damageBlend;
-            actor.recoveryYear = prev.recoveryYear;
+            actor.recoverAtSec = prev.recoverAtSec;
             actor.combatStartSec = prev.combatStartSec;
             actor.presentAtCombat = prev.presentAtCombat;
             actor.inCombatVisual = prev.inCombatVisual;
@@ -2453,20 +2450,21 @@ export class CityLifeAmbientLayer {
                     actor.combatStartSec = tSec;
                     actor.presentAtCombat = true;
                     actor.peaceAtCombat = actor.peaceAlpha;
-                    actor.recoveryYear = undefined;
                 }
+                actor.recoverAtSec = undefined;
                 actor.damageBlend = Math.min(1, actor.damageBlend + dt / FADE_TO_DAMAGE_SEC);
                 actor.peaceAlpha = actor.peaceAtCombat * (1 - actor.damageBlend);
-                if (actor.damageBlend >= 1 && actor.recoveryYear === undefined) {
-                    actor.recoveryYear = this.getYear() + 1;
+                if (!inCombat && actor.damageBlend >= 1) {
+                    actor.inCombatVisual = false;
+                    actor.recoverAtSec = tSec + WAR_DAMAGE_LINGER_SEC;
                 }
-                if (!inCombat && actor.damageBlend >= 1) actor.inCombatVisual = false;
             } else if (actor.damageBlend > 0) {
-                // 第一阶段：完全战毁后保留残骸，到第二年或更晚年份的春季才渐隐；生产始终保持隐藏。
+                // 第一阶段：完全战毁后保留残骸与余火 15 秒（无论过不过年），到期即渐隐；生产始终保持隐藏。
                 actor.peaceAlpha = 0;
-                const canRecover = season === 0
-                    && actor.recoveryYear !== undefined
-                    && this.getYear() >= actor.recoveryYear;
+                if (actor.recoverAtSec === undefined) {
+                    actor.recoverAtSec = tSec + WAR_DAMAGE_LINGER_SEC;
+                }
+                const canRecover = tSec >= actor.recoverAtSec;
                 if (canRecover) {
                     actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
                     if (actor.damageBlend <= 0 && actor.presentAtCombat) {
@@ -2480,7 +2478,7 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        // 第二阶段：战损残骸在春季完全消散后，该据点递增重建代数并清空旧缓存，下一帧重新生成新一批生产组合并从 0 渐显。
+        // 第二阶段：战损残骸 15 秒到期并完全消散后，该据点递增重建代数并清空旧缓存，下一帧重新生成新一批生产组合并从 0 渐显。
         if (citiesToRebuildAfterWar.size > 0) {
             for (const cityId of citiesToRebuildAfterWar) {
                 this.cityRebuildGen.set(cityId, (this.cityRebuildGen.get(cityId) ?? 0) + 1);

@@ -696,7 +696,7 @@ export class ViewerLive {
         if (/^目标\s*\S*$/.test(word)) {
             const list = this.marshalTargetList();
             if (list.length === 0) return this.note(`${name}：当前没有可选的敌方目标（要先随军、且身边有敌城）`);
-            const lines = list.map((t) => `目标${t.index}${t.name}(${t.factionName}·${t.distKm}km·兵${t.troops})`).join(' ');
+            const lines = list.map((t) => `目标${t.index}${t.name}(${t.factionName})`).join(' ');
             return this.note(`${name}：发「目标编号 出价」选定军团下一个攻击目标（${MARSHAL_TARGET_MIN_BID}分起，整场只准改一次）。${lines}`);
         }
         const portraitCultureCmd = parsePortraitCultureCommand(word);
@@ -955,7 +955,7 @@ export class ViewerLive {
         /** 元帅两权（2026-11-07 主人令）：按资历曾达元帅开启；目标竞价、立绘两段候选 */
         marshal: {
             unlocked: boolean;
-            targets: { index: number; name: string; factionName: string; distKm: number; troops: number }[];
+            targets: { index: number; name: string; factionName: string }[];
             targetBid: number;
             targetLabel: string;
             targetLocked: boolean;
@@ -1068,8 +1068,9 @@ export class ViewerLive {
             },
             marshal: {
                 unlocked: this.marshalUnlocked(),
-                targets: this.marshalUnlocked()
-                    ? this.marshalTargetList().map((t) => ({ index: t.index, name: t.name, factionName: t.factionName, distKm: t.distKm, troops: t.troops }))
+                // 🔴 [2026-11-09 主人令] 选攻击目标只在战略地图显示；战术模式不显示目标面板，候选也不必每帧排序
+                targets: this.marshalUnlocked() && !this.battleOn()
+                    ? this.marshalTargetList().map((t) => ({ index: t.index, name: t.name, factionName: t.factionName }))
                     : [],
                 targetBid: this.marshalTarget?.bid ?? 0,
                 targetLabel: this.marshalTarget?.cityName ?? '',
@@ -1564,7 +1565,7 @@ export class ViewerLive {
         this.save();
         const refund = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
         this.notifyViewerVoice(id, `感谢${name}出${bid}积分，军团下一个攻打${hit.name}`, true);
-        return this.note(`${name} 出 ${bid} 积分，军团下一个攻击目标定为【${hit.name}】（${hit.factionName}·${hit.distKm}km·驻军${hit.troops}）${refund}`);
+        return this.note(`${name} 出 ${bid} 积分，军团下一个攻击目标定为【${hit.name}】（${hit.factionName}）${refund}`);
     }
 
     /** 开战后才锁定：军团**到达该目标城发起攻城**后不再受理改选；半路野战或尚未抵达前允许更高价改选 */

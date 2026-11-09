@@ -2838,7 +2838,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/BASHU/guizhou_lidingguo.png": {
-            "scale": 0.87,
+            "scale": 0.85,
             "offsetX": 4,
             "offsetY": -1
         },
@@ -3088,9 +3088,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/JIANGNAN/ketagalan_huangqingyun.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 33
+            "scale": 0.94,
+            "offsetX": 7,
+            "offsetY": 28
         },
         "/assets/CENTRAL_ASIA/chuyue_shatuonasu.png": {
             "scale": 1.34,
@@ -4338,14 +4338,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/JIANGNAN/wenzhou_fangguozhen.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 9,
             "offsetY": -5
-        },
-        "/assets/JIANGNAN/kejia_huangfeng.png": {
-            "scale": 1.18,
-            "offsetX": 12,
-            "offsetY": -1
         },
         "/assets/TIBET/gaxa_zhashenduanzhubu.png": {
             "scale": 0.81,
@@ -5636,11 +5631,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 3
-        },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_25.png": {
-            "scale": 1.2,
-            "offsetX": 0,
-            "offsetY": -22
         },
         "/assets/JIANGNAN/__闲置__JIANGNAN_27.png": {
             "scale": 0.99,
@@ -10911,6 +10901,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 2
+        },
+        "/assets/JIANGNAN/wu_taohuang.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/JIANGNAN/song_xielin.png": {
+            "scale": 1.2,
+            "offsetX": 29,
+            "offsetY": 8
+        },
+        "/assets/JIANGNAN/taiping_yangxiuqing.png": {
+            "scale": 1.08,
+            "offsetX": 6,
+            "offsetY": -10
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_32.png": {
+            "scale": 1.02,
+            "offsetX": 6,
+            "offsetY": 1
+        },
+        "/assets/JIANGNAN/ming_d_wuweizhong.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_35.png": {
+            "scale": 1.18,
+            "offsetX": 12,
+            "offsetY": -1
+        },
+        "/assets/JIANGNAN/kejia_wentianxiang.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {

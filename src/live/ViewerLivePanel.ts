@@ -340,31 +340,29 @@ export class ViewerLivePanel {
         }
 
         // 🔴 [2026-11-07 主人令] 元帅两权：竞价选军队攻击目标 / 挑立绘（先选文化，再从凑出的 10 张里挑）
+        // 🔴 [2026-11-09 主人令「先把选立绘清除」「选目标设计为一行，固定好」] 面板里去掉挑立绘那两行（口令仍受理，只是不显示）；
+        //    选攻击目标固定成一行 8 格等宽、不换行。
         let marshalGrid = '';
         if (s.marshal.unlocked && !this.duel) {
             const rows: string[] = [];
-            if (s.marshal.targets.length > 0 || s.marshal.targetLabel) {
-                const cells = s.marshal.targets.map((t) =>
-                    `<span title="发 目标${t.index} 出分" style="display:inline-flex;align-items:center;gap:3px;background:rgba(46,36,24,0.94);border:1px solid rgba(212,175,55,0.48);border-radius:4px;padding:1px 5px;font-size:${f.small}px;color:#f7ebd2;white-space:nowrap;">`
-                    + `<b style="color:#ffd700;">目标${t.index}</b>${esc(t.name)}<span style="color:#c9b382;">${esc(t.factionName)}·${t.distKm}km·兵${t.troops}</span></span>`,
-                ).join('');
+            // 🔴 [2026-11-09 主人令] 选攻击目标只在战略地图显示，战术模式不显示
+            if (!s.on && (s.marshal.targets.length > 0 || s.marshal.targetLabel)) {
+                const SLOTS = 8;
+                const cellOf = (t: { index: number; name: string; factionName: string }): string =>
+                    `<span title="发 目标${t.index} 出分" style="display:flex;align-items:center;gap:3px;min-width:0;overflow:hidden;background:rgba(46,36,24,0.94);border:1px solid rgba(212,175,55,0.48);border-radius:4px;padding:1px 5px;font-size:${f.small}px;color:#f7ebd2;">`
+                    + `<b style="flex:0 0 auto;color:#ffd700;">目标${t.index}</b>`
+                    + `<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.name)}</span>`
+                    + `<span style="flex:0 0 auto;color:#c9b382;">${esc(t.factionName)}</span></span>`;
+                const cells = Array.from({ length: SLOTS }, (_, i) => {
+                    const t = s.marshal.targets[i];
+                    return t ? cellOf(t) : '<span></span>';
+                }).join('');
                 const badge = s.marshal.targetLabel
                     ? `<span style="color:#7cd4a0;font-weight:700;">（已定：${esc(s.marshal.targetLabel)} ${s.marshal.targetBid}分${s.marshal.targetLocked ? '·执行中' : '·待执行'}）</span>`
                     : '';
-                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">选攻击目标${badge}：</span>${cells}`);
-            }
-            if (s.marshal.pool.length === 0 && s.marshal.cultureList.length > 0) {
-                const cells = s.marshal.cultureList.map((c) =>
-                    `<span title="发 像${c.index}" style="background:rgba(46,36,24,0.94);border:1px solid rgba(212,175,55,0.48);border-radius:4px;padding:1px 5px;font-size:${f.small}px;color:#f7ebd2;white-space:nowrap;"><b style="color:#ffd700;">像${c.index}</b>${esc(c.culture)}<span style="color:#c9b382;">(${c.count}张)</span></span>`,
-                ).join('');
-                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">挑立绘·先选文化（不花钱）：</span>${cells}`);
-            } else if (s.marshal.pool.length > 0) {
-                const cells = s.marshal.pool.map((p, i) =>
-                    `<span style="display:inline-flex;flex-direction:column;align-items:center;" title="发 图${i + 1} 出分">`
-                    + `<img src="${esc(p)}" alt="" style="width:30px;height:30px;object-fit:cover;object-position:center top;border-radius:3px;border:1px solid ${s.marshal.pickIndex === i + 1 ? '#7cd4a0' : 'rgba(212,175,55,0.5)'};display:block;" />`
-                    + `<b style="font-size:10px;color:#ffd700;line-height:11px;">图${i + 1}</b></span>`,
-                ).join('');
-                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">挑立绘·${esc(s.marshal.culture ?? '')}（${s.marshal.pickBid > 0 ? `现价${s.marshal.pickBid}分` : '10分起'}）：</span>${cells}`);
+                rows.push(`<div style="flex:0 0 100%;width:100%;box-sizing:border-box;display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap;">`
+                    + `<span style="flex:0 0 auto;font-size:${f.small}px;color:#dfc28c;">选攻击目标${badge}：</span>`
+                    + `<div style="flex:1 1 auto;min-width:0;display:grid;grid-template-columns:repeat(${SLOTS},minmax(0,1fr));gap:4px;">${cells}</div></div>`);
             }
             if (s.duke.unlocked) {
                 const fiefInfo = s.duke.fiefCityName ? `根据地【${esc(s.duke.fiefCityName)}】` : '未封地';

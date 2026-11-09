@@ -5316,7 +5316,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'kejia_wentianxiang', factionId: 'song', cityId: 'city_tingzhou', generalName: '黄凤', portrait: '/assets/JIANGNAN/kejia_huangfeng.png', eliteName: '赵宋禁军', eliteTier: 4 },
+        { generalId: 'kejia_wentianxiang', factionId: 'song', cityId: 'city_tingzhou', generalName: '黄凤', portrait: '/assets/JIANGNAN/kejia_wentianxiang.png', eliteName: '赵宋禁军', eliteTier: 4 },
 
 
 

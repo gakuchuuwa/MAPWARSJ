@@ -366,7 +366,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-25 北宋辽金势力 ──
 'goryeo': '高丽',
-'nongzhigao': '邕',
+    // 🔴 [2026-11-09 主人令] 侬智高 1052 年破邕州称帝，国号「大南国」（《宋史·广源州蛮传》「僭号仁惠皇帝…号其国曰大南国」）→ 旗号写国号「大南」（国号两字不截字，原写地名「邕」不合旗号规则）
+    'nongzhigao': '大南',
 'fangla': '圣公',  // 🔴 [2026-11-03] 方腊自号圣公，不用姓
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
@@ -405,8 +406,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dashun': '大顺',
 'daxi_ming': '大西',
 'chenghan': '成',
-'longwu': '隆武',
-    'lujian': '婺',
+    // 🔴 [2026-11-09 主人令] 隆武（南明，朱聿键）国号仍是「明」，隆武只是年号 → 旗号写国号「明」
+    'longwu': '明',
+    // 🔴 [2026-11-09 主人令] 鲁监（鲁王朱以海监国，奉明正朔）→ 旗号写国号「明」（原「婺」是地名简称，无依据）
+    'lujian': '明',
 'dzungar': '绰罗',
     'khoshut': '和硕',
     'yarkand': '叶尔',
@@ -472,7 +475,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hantawadi': '汉达',
     'pyu': '骠',
     'mon': '孟族',
-'ming_zheng': '明郑',
+    // 🔴 [2026-11-09 主人令] 明郑旗号改为「明」（与大明同国号同字重旗，靠势力色＋旗形区分）
+    'ming_zheng': '明',
     'xiou': '西瓯',
     'paiwan': '排湾',
 
