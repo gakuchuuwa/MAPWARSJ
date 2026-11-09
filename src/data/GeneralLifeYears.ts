@@ -505,6 +505,15 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     habusibao_eugene: { birth: 1663, death: 1736 },  // 欧根亲王
     gesake_khmelnytsky: { birth: 1595, death: 1657 },  // 赫梅利尼茨基
     bfe_vetilius: { birth: -200, death: -147, kaoju: '推定' },  // 维特里乌斯
+    bfe_garcilaso: { birth: 1501, death: 1536 },  // 加西拉索
+    bfe_michael_epirus: { birth: 1170, death: 1215, kaoju: '推定' },  // 米海尔一世
+    bfe_siyaj_kak: { birth: 340, death: 402, kaoju: '推定' },  // 西亚赫卡克
+    bfe_dewawarman: { birth: 100, death: 168, kaoju: '推定' },  // 德瓦瓦尔曼
+    bfe_erekle_ii: { birth: 1720, death: 1798 },  // 赫拉克留二世
+    bfe_joseph_brant: { birth: 1743, death: 1807 },  // 约瑟夫布兰特
+    bfe_divico: { birth: -160, death: -58, kaoju: '推定' },  // 迪维科
+    bfe_zizka: { birth: 1360, death: 1424, kaoju: '推定' },  // 杰士卡
+    bfe_arminius: { birth: -18, death: 21 },  // 阿米尼乌斯
     bfe_kinizsi: { birth: 1432, death: 1494 },  // 基尼日
     bfe_jezzar: { birth: 1720, death: 1804, kaoju: '推定' },  // 贾扎尔
     bfe_narses: { birth: 478, death: 573, kaoju: '推定' },  // 纳尔塞斯

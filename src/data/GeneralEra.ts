@@ -297,6 +297,15 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'habusibao_eugene': 'imperial',
     'gesake_khmelnytsky': 'imperial',
     'bfe_vetilius': 'antiquity',
+    'bfe_garcilaso': 'imperial',   // 加西拉索
+    'bfe_michael_epirus': 'castle',   // 米海尔一世
+    'bfe_siyaj_kak': 'antiquity',   // 西亚赫卡克
+    'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼
+    'bfe_erekle_ii': 'imperial',   // 赫拉克留二世
+    'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
+    'bfe_divico': 'antiquity',   // 迪维科
+    'bfe_zizka': 'castle',   // 杰士卡
+    'bfe_arminius': 'antiquity',   // 阿米尼乌斯
     'bfe_kinizsi': 'castle',   // 基尼日
     'bfe_jezzar': 'imperial',   // 贾扎尔
     'bfe_narses': 'feudal',   // 纳尔塞斯

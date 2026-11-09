@@ -546,6 +546,67 @@ desheng: '#2E6B7A', // 德胜·刘通
     'daqiya': '#3E2E6B', // 达契亚
     'qiajia': '#5C3E2E', // 恺加
     'arevaci': '#7A4A3E', // 阿雷瓦西
+    'epirus_despotate': '#7A3A6A', // 伊庇鲁斯专制国
+    'teotihuacan': '#7A5A3A', // 特奥蒂瓦坎
+    'salakanagara': '#3A6A6A', // 萨拉卡那加拉
+    'kartli_kakheti': '#8A3A3A', // 卡特利-卡赫季
+    'helvetii': '#5A6A3A', // 赫尔维蒂
+    'hussites': '#6A2E2E', // 胡斯派
+    'cherusci': '#4A5A2E', // 切鲁西
+    'sweden_medieval': '#2E5A8A', // 中世纪瑞典
+    'rus_khaganate': '#4A3A6A', // 罗斯汗国
+    'byzantium_late': '#6A2E6A', // 晚期拜占庭
+    'bulgaria_second': '#2E6A2E', // 第二保加利亚帝国
+    'poland_duchy': '#B83A4A', // 波兰公国
+    'saxony_electorate': '#3A5A2E', // 萨克森选侯国
+    'portugal_medieval': '#2E6A3A', // 中世纪葡萄牙
+    'denmark_norway': '#B83A3A', // 丹麦-挪威
+    'denmark_medieval': '#9A2E2E', // 中世纪丹麦
+    'scotland_stuart': '#2E3A6A', // 斯图亚特苏格兰
+    'england_modern': '#8A2E3A', // 近代英格兰
+    'rashtrakuta': '#6A3A6A', // 拉什特拉库塔
+    'andean_rebellion': '#7A4A3A', // 安第斯起义军
+    'abkhazia_kingdom': '#3A6A3A', // 阿布哈兹王国
+    'early_wokou': '#3A3A3A', // 前期倭寇
+    'mac_dynasty': '#5A2E2E', // 莫朝
+    'restored_hanthawaddy': '#7A3A2E', // 复兴汉达瓦底
+    'mamunid': '#6A5A4A', // 马蒙王朝
+    'jianzhou': '#2E4A3A', // 建州女真
+    'bashkir': '#3A6A5A', // 巴什基尔
+    'drevlians': '#4A5A3A', // 德列夫利安人
+    'mongol_ancient': '#5A6A7A', // 蒙兀室韦
+    'marcomanni': '#5A4A2E', // 马科曼尼
+    'serbia_revolution': '#8A2E3A', // 塞尔维亚革命
+    'caledonia': '#3A4A5A', // 喀里多尼亚
+    'goths_migration': '#4A3A5A', // 哥特人
+    'syracuse': '#2E5A8A', // 叙拉古
+    'hamdanid': '#6A2E4A', // 哈姆丹王朝
+    'wiman_joseon': '#3A5A6A', // 卫满朝鲜
+    'gusiluo': '#6A5A2E', // 唃厮啰
+    'yarlung': '#7A6A3A', // 雅砻部落
+    'old_saxons': '#5A5A3A', // 古撒克逊
+    'alamanni': '#4A4A2E', // 阿勒曼尼
+    'magyar_tribes': '#6A3A2E', // 马扎尔部落联盟
+    'taifa_toledo': '#4A6A2E', // 托莱多泰法
+    'florence': '#8A3A2E', // 佛罗伦萨共和国
+    'tuitonga': '#7A2E5A', // 汤加帝国
+    'rapanui': '#2E7A7A', // 拉帕努伊
+    'later_baekje': '#6A4A8A', // 后百济
+    'arverni': '#5A3A2E', // 阿维尔尼
+    'france_modern': '#2E3A8A', // 近代法兰西
+    'imro': '#8A2E2E', // 内马其顿革命组织
+    'bulgaria_third': '#3A7A3A', // 保加利亚公国
+    'later_le': '#B8862E', // 后黎朝
+    'aksum': '#7A5A2E', // 阿克苏姆
+    'castile_county': '#8A6A2E', // 卡斯蒂利亚伯国
+    'milan_duchy': '#2E4A8A', // 米兰公国
+    'lombard_league': '#2E6A5A', // 伦巴第联盟
+    'cilicia_armenia': '#9A3A3A', // 奇里乞亚亚美尼亚
+    'armenia_arsacid': '#6E3A5A', // 阿萨息斯亚美尼亚
+    'syunik_bek': '#8A5A2E', // 休尼克
+    'northumbria': '#3E5A7A', // 诺森布里亚
+    'wessex': '#7A2E2E', // 威塞克斯
+    'subroman_britain': '#5A6B3A', // 后罗马不列颠
     'xinmeiliyan': '#6B4E2E', // 辛梅里安
     'aixini': '#5E7A3A', // 爱西尼
     'taluma': '#2E5A3E', // 塔鲁玛迦拉

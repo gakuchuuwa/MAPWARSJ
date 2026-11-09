@@ -747,6 +747,15 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'habusibao_eugene': 17,                  // 欧根亲王 · habusibao · 塞格德
     'gesake_khmelnytsky': 17,                // 赫梅利尼茨基 · gesake · 谢缅杰尔
     'bfe_vetilius': -2,                      // 维特里乌斯 · luoma_diguo · 罗马城
+    'bfe_garcilaso': 16,                      // 加西拉索
+    'bfe_michael_epirus': 13,                      // 米海尔一世
+    'bfe_siyaj_kak': 4,                      // 西亚赫卡克
+    'bfe_dewawarman': 2,                      // 德瓦瓦尔曼
+    'bfe_erekle_ii': 18,                      // 赫拉克留二世
+    'bfe_joseph_brant': 18,                      // 约瑟夫布兰特
+    'bfe_divico': -2,                      // 迪维科
+    'bfe_zizka': 15,                      // 杰士卡
+    'bfe_arminius': 1,                      // 阿米尼乌斯
     'bfe_kinizsi': 15,                      // 基尼日
     'bfe_jezzar': 18,                      // 贾扎尔
     'bfe_narses': 6,                      // 纳尔塞斯

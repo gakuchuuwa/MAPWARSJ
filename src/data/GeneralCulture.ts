@@ -221,6 +221,15 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_umar': 'JIANGNAN',   // 蒙古｜乌马儿｜据点 海陵
     'bfe_vahan': 'BYZANTINE',   // 拜占庭｜瓦汉｜据点 君士坦丁堡
     'bfe_vetilius': 'ROMA',   // 罗马帝国｜维特里乌斯｜据点 罗马
+    'bfe_garcilaso': 'GOTHS',   // 加西拉索｜据点 city_toledo
+    'bfe_michael_epirus': 'GREECE',   // 米海尔一世｜据点 city_anbulajiya
+    'bfe_siyaj_kak': 'MAYANS',   // 西亚赫卡克｜据点 city_tikal
+    'bfe_dewawarman': 'MALAY',   // 德瓦瓦尔曼｜据点 city_wandan
+    'bfe_erekle_ii': 'GEORGIANS',   // 赫拉克留二世｜据点 city_dibilisi
+    'bfe_joseph_brant': 'AMERICA',   // 约瑟夫布兰特｜据点 city_onondaga
+    'bfe_divico': 'BURGUNDIANS',   // 迪维科｜据点 city_geneva
+    'bfe_zizka': 'BOHEMIANS',   // 杰士卡｜据点 city_bulage
+    'bfe_arminius': 'SAXONS',   // 阿米尼乌斯｜据点 city_bulunruike
     'bfe_kinizsi': 'HUNS',   // 基尼日｜据点 city_saigede
     'bfe_jezzar': 'ORIE',   // 贾扎尔｜据点 city_beirut
     'bfe_narses': 'ROMA',   // 纳尔塞斯｜据点 city_luoma

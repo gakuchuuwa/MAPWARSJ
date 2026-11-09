@@ -10896,6 +10896,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 26
+        },
+        "/assets/ROMA/__闲置__WEST_ASIA_09.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 23
         }
     },
     "folderGuides": {

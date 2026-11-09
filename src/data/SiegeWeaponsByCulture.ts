@@ -507,6 +507,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
+    // 🔴 [2026-11-09 主人令「67 个文化×4 个时代，除非此时代没有政权和武将，不然就要补上」]
+    '帝国时代伊比利亚军团': {
+        age: 'imperial',
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+    },
     '古典时代撒克逊军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
@@ -642,10 +647,6 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     '帝国时代俄罗斯军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
-    },
-    '封建时代立陶宛部族军团': {
-        age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '城堡时代立陶宛大公国军团': {
         age: 'castle',
@@ -814,10 +815,6 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     '帝国时代鲁米利亚军团': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
-    },
-    '封建时代奇穆军团': {
-        age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'mangonel', 'mangonel'],
     },
     '帝国时代希腊轻骑军团': {
         age: 'imperial',
@@ -1198,6 +1195,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '帝国时代希腊国民军团': {
         age: 'imperial',
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+    },
+    // 🔴 [2026-11-09 主人令「67 个文化×4 个时代，除非此时代没有政权和武将，不然就要补上」]
+    '城堡时代伊庇鲁斯军团': {
+        age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '先秦军团': {

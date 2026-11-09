@@ -135,6 +135,67 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'daqiya': 'city_sofia',
     'qiajia': 'city_kamanniya',
     'arevaci': 'city_numantia',
+    'epirus_despotate': 'city_anbulajiya',   // 登记用，不改据点归属
+    'teotihuacan': 'city_tikal',   // 登记用，不改据点归属
+    'salakanagara': 'city_wandan',   // 登记用，不改据点归属
+    'kartli_kakheti': 'city_dibilisi',   // 登记用，不改据点归属
+    'helvetii': 'city_geneva',   // 登记用，不改据点归属
+    'hussites': 'city_bulage',   // 登记用，不改据点归属
+    'cherusci': 'city_bulunruike',   // 登记用，不改据点归属
+    'sweden_medieval': 'city_sidedegelmo',   // 登记用，不改据点归属
+    'rus_khaganate': 'city_ladoga',   // 登记用，不改据点归属
+    'byzantium_late': 'city_junshitandingbao',   // 登记用，不改据点归属
+    'bulgaria_second': 'city_delusitaer',   // 登记用，不改据点归属
+    'poland_duchy': 'city_poznan',   // 登记用，不改据点归属
+    'saxony_electorate': 'city_magedebao',   // 登记用，不改据点归属
+    'portugal_medieval': 'city_lisiben',   // 登记用，不改据点归属
+    'denmark_norway': 'city_gebenhagen',   // 登记用，不改据点归属
+    'denmark_medieval': 'city_gebenhagen',   // 登记用，不改据点归属
+    'scotland_stuart': 'city_yinfeineisi',   // 登记用，不改据点归属
+    'england_modern': 'city_portroyal',   // 登记用，不改据点归属
+    'rashtrakuta': 'city_hengbi',   // 登记用，不改据点归属
+    'andean_rebellion': 'city_diyawanake',   // 登记用，不改据点归属
+    'abkhazia_kingdom': 'city_kutayixi',   // 登记用，不改据点归属
+    'early_wokou': 'city_tsushima',   // 登记用，不改据点归属
+    'mac_dynasty': 'city_sanpu',   // 登记用，不改据点归属
+    'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
+    'mamunid': 'city_urgench',   // 登记用，不改据点归属
+    'jianzhou': 'city_tongjiajiang',   // 登记用，不改据点归属
+    'bashkir': 'city_kashan',   // 登记用，不改据点归属
+    'drevlians': 'city_zhytomyr',   // 登记用，不改据点归属
+    'mongol_ancient': 'city_burhan',   // 登记用，不改据点归属
+    'marcomanni': 'city_bulage',   // 登记用，不改据点归属
+    'serbia_revolution': 'city_nis',   // 登记用，不改据点归属
+    'caledonia': 'city_scone',   // 登记用，不改据点归属
+    'goths_migration': 'city_weishibi',   // 登记用，不改据点归属
+    'syracuse': 'city_syracuse',   // 登记用，不改据点归属
+    'hamdanid': 'city_alepo',   // 登记用，不改据点归属
+    'wiman_joseon': 'city_pyongyang',   // 登记用，不改据点归属
+    'gusiluo': 'city_ledu',   // 登记用，不改据点归属
+    'yarlung': 'city_jiamachikang',   // 登记用，不改据点归属
+    'old_saxons': 'city_magedebao',   // 登记用，不改据点归属
+    'alamanni': 'city_meiyinci',   // 登记用，不改据点归属
+    'magyar_tribes': 'city_budapeisi',   // 登记用，不改据点归属
+    'taifa_toledo': 'city_cordoba',   // 登记用，不改据点归属
+    'florence': 'city_florence',   // 登记用，不改据点归属
+    'tuitonga': 'city_mua',   // 登记用，不改据点归属
+    'rapanui': 'city_rapanui',   // 登记用，不改据点归属
+    'later_baekje': 'city_jeonju',   // 登记用，不改据点归属
+    'arverni': 'city_bali',   // 登记用，不改据点归属
+    'france_modern': 'city_bali',   // 登记用，不改据点归属
+    'imro': 'city_skopje',   // 登记用，不改据点归属
+    'bulgaria_third': 'city_sofia',   // 登记用，不改据点归属
+    'later_le': 'city_xidu',   // 登记用，不改据点归属
+    'aksum': 'city_aksum',   // 登记用，不改据点归属
+    'castile_county': 'city_burgos',   // 登记用，不改据点归属
+    'milan_duchy': 'city_milan',   // 登记用，不改据点归属
+    'lombard_league': 'city_milan',   // 登记用，不改据点归属
+    'cilicia_armenia': 'city_waka',   // 登记用，不改据点归属
+    'armenia_arsacid': 'city_ailiwen',   // 登记用，不改据点归属
+    'syunik_bek': 'city_ailiwen',   // 登记用，不改据点归属
+    'northumbria': 'city_york',   // 登记用，不改据点归属
+    'wessex': 'city_winchester',   // 登记用，不改据点归属
+    'subroman_britain': 'city_winchester',   // 登记用，不改据点归属
     'xinmeiliyan': 'city_oleshky',   // 登记用，不改据点归属
     'aixini': 'city_norwich',   // 登记用，不改据点归属
     'taluma': 'city_batavia',

@@ -1384,6 +1384,21 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cav_archer_heavy', count: 3 },
         ],
     },
+    // ── 哥特 · 帝国时代 · 帝国时代伊比利亚军团 🔴 [2026-11-09 主人令「67 个文化×4 个时代，除非此时代没有政权和武将，不然就要补上」]（托莱多等哥特风格据点的帝国时代：西班牙帝国）
+    //    🔴 兵种编制暂照「城堡时代伊比利亚军团」复制，待主人统一配兵种
+    {
+        name: '帝国时代伊比利亚军团', civ: '哥特', age: 'imperial', deStyle: 'WEST', region: 'GOTHS' as RegionType,
+        buildingStyle: 'GOTHS',
+        castleId: 'GOTH_CASTLE_AGE3', castleName: '哥特 早期蛮族石砌据点',
+        formationMode: 'balance_yoke',
+        shipId: 'WAR_GALLEY',
+        commanderUnit: 'hero_theodoricthegoth',
+        slots: [
+            { type: 'huskarl', count: 4 },
+            { type: 'cavalier', count: 2 },
+            { type: 'cav_archer_heavy', count: 3 },
+        ],
+    },
 
     // ═══════════════════════════════════════════════════════════════════
     // 萨克森　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
@@ -2074,23 +2089,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 立陶宛　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 立陶宛 · 封建时代 · 封建时代立陶宛部族军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：重步兵为主
-    //    描述正文（主人原文，一字未改）：（克尔纳韦；克尔纳韦五大防卫土丘山堡要塞、陡峭多重土壕栅栏；双手破甲粗铁战斧、波罗的生铁圆盾刺矛、高台土木壁障阻击维京长船大阵）
-    //    英雄队（第 10 队·主将队）：hero_algirdas / hero_jogaila / hero_kestutis / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '封建时代立陶宛部族军团', civ: '立陶宛', age: 'feudal', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
-        buildingStyle: 'LITHUANIANS',
-        castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
-        formationMode: 'balance_yoke',
-        shipId: 'GALLEY',
-        commanderUnit: 'hero_kestutis',
-                slots: [
-            { type: 'pikeman', count: 4 },
-            { type: 'leitis', count: 2 },
-            { type: 'elite_skirmisher', count: 3 },
-        ],
-    },
+    // 🔴 [2026-11-09 主人令「不要有多余的军团，每个军团都要套武将和势力」] 「封建时代立陶宛部族军团」已删：该文化此时代没有公认政权的具名武将（传说人物也查过）
     // ── 立陶宛 · 城堡时代 · 城堡时代立陶宛大公国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（特拉凯、维尔纽斯；特拉凯水上红砖城堡、盖迪米纳斯红砖石砌塔楼；格伦瓦德破阵骑射标枪骑兵、东欧紧密锁甲鳞甲、抵御条顿十字军水上要塞铁骑大阵）
@@ -3679,20 +3678,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 印加　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
-    // ── 印加 · 封建时代 · 封建时代奇穆军团　（2026-10-25 恢复：塔卡伊纳莫 为带名将）────────────────
-    {
-        name: '封建时代奇穆军团', civ: '印加', age: 'feudal', deStyle: 'ANDE', region: 'INCA' as RegionType,
-        buildingStyle: 'INCA',
-        castleId: 'INCA_CASTLE_AGE3', castleName: '印加 库斯科萨克萨瓦曼巨石堡',
-        formationMode: 'fish_scale',
-        shipId: 'CANOE',
-        commanderUnit: 'hero_cusiyupanqui',
-        slots: [
-            { type: 'elite_kamayuk', count: 3 },
-            { type: 'champi_runner', count: 4 },
-            { type: 'slinger', count: 2 },
-        ],
-    },
+    // 🔴 [2026-11-09 主人令「不要有多余的军团，每个军团都要套武将和势力」] 「封建时代奇穆军团」已删：该文化此时代没有公认政权的具名武将（传说人物也查过）
     // ═══════════════════════════════════════════════════════════════════
     // ── 印加 · 城堡时代 · 城堡时代印加军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：重步兵、远程（标枪）为主
@@ -4594,6 +4580,21 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将古典马其顿统帅样→白袍高帽火枪样（奥斯曼时代爱琴海）
     {
         name: '帝国时代希腊国民军团', civ: '希腊', age: 'imperial', deStyle: 'GREEK', region: 'GREECE' as RegionType,
+        buildingStyle: 'GREECE',
+        castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
+        formationMode: 'echelon',
+        shipId: 'FAST_FIRE_SHIP',
+        commanderUnit: 'hero_mustafapasha',
+        slots: [
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'cavalier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+        ],
+    },
+    // ── 希腊 · 城堡时代 · 城堡时代伊庇鲁斯军团 🔴 [2026-11-09 主人令「67 个文化×4 个时代，除非此时代没有政权和武将，不然就要补上」]（伊庇鲁斯专制国 1205–1479，都阿尔塔＝安布拉基亚）
+    //    🔴 兵种编制暂照「帝国时代希腊国民军团」复制，待主人统一配兵种
+    {
+        name: '城堡时代伊庇鲁斯军团', civ: '希腊', age: 'castle', deStyle: 'GREEK', region: 'GREECE' as RegionType,
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'echelon',
