@@ -739,3 +739,14 @@ Edge CPU 采样（renderUnit 内）：`renderInfo` 自身最大——每军团�
 修法：① `drawUnitLabel` 改收显式样式 `UnitLabelStyle`，键 = 文字 + 样式 id，命中只剩查表 + drawImage（四种样式新旧离屏图逐像素 0 差异）；
 ② 标签武将名 1 秒缓存；③ `PlayerTourSpriteDrawer.findPassingCity` 1° 格网（22 万次随机含日界线与全扫 0 差异，25→0.8µs/次）。
 前→后：逐军团绘制 1.03/2.31/2.10 → **0.75/0.78/0.79 ms/帧**（同为每帧 ~2 支）。
+
+**11-09 继续优化（主人：「继续优化」）**——Edge 有头，欧洲林区（START=city_weiyeena，`scratch/_probe_edge_all_20261109.mjs`）
+① **海陆瓦片解码搬进 Worker**（`src/workers/TileDecodeWorker.ts` + `TileDecoder.decodeTileInWorker`）：主线程原每帧 1.8~6.9ms（逐帧预算队列只能摊平）。
+   三采样器（高程/水域掩膜/影像）有 Worker 走后台，否则退回原路径。6 块×3 种瓦片与主线程解码**逐字节 0 差异**（掩膜含全海/全陆/海岸）。改后 rAF 列表里该项消失。
+② **小地图 setView 门槛 0.02°→小图 1px**（`WorldMiniMap.applyView`，纬度乘 cos）：30s 内 setView 219→99、耗时 945→379ms、单次最长 21→7.6ms。
+   另 `requestMiniSync(true)` 也守 10Hz（不足 100ms 排补发，停稳仍对准）。
+③ **植被**：树贴图到达的重画合并到下一帧；换季渐变重画 30→15fps（`BLEND_PAINT_MIN_INTERVAL_MS` 33→66，**画面待主人看**）；
+   视野内无换季树时渐变期不重画。30s 重画 248→198 次（其中渐变 159→107）。
+   实测整层重画一次（2000~3000 棵）显卡忙 25~45ms（读 1 像素强制同步量出；JS 只 4.5ms）——这才是林区「其余」时间的大头。
+🔴 **已证伪，别重走**：「frames.png 长条太宽（最宽 24012px）超显卡纹理上限导致慢」。单独基准（小数坐标、单树种）里拼图快 2~4 倍，
+   但真实植被层（整数坐标、10 种树交替）拼图——画布或 ImageBitmap——都**更慢**（旧 24~36ms vs 新 43~61ms），已完整撤回。

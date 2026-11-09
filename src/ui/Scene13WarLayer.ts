@@ -8957,7 +8957,8 @@ export class Scene13WarLayer {
                         return;
                     }
                     const deStyle = this.buildingStyleFor(1);
-                    const sailGroup = species === 'TRADE_COG' ? 'west' : ((deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west');
+                    const rawGroup = (deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west';
+                    const sailGroup = species === 'TRADE_COG' ? 'west' : (species === 'TRANSPORT_SHIP' && rawGroup === 'meso' ? 'medi' : rawGroup);
                     void Promise.all(deltas.map(dl => loadSailPartAsync(getSailPartDir(dl.part, sailGroup)))).then((parts) => {
                         const fw = finalMeta.box_w;
                         const fh = finalMeta.box_h;

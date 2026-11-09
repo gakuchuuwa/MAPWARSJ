@@ -268,22 +268,22 @@ export class ViewerLivePanel {
         let joinGrid = '';
         if (this.duel) {
             const [stakeA, stakeD, stakeT] = s.bet.stakes;
-            const betState = s.bet.open ? '押注中' : '交战中';
-            const betLine = `<span style="font-size:${f.main}px;">默认${b('维序者')} · 发${b('投1')}成${b('乱入者')} · ${b('押1')}/${b('押2')}/${b('押平')} (${betState})`
+            const betState = s.bet.open ? `${b('押1')}/${b('押2')}/${b('押平')} 押注中` : '交战中';
+            const betLine = `<span style="font-size:${f.main}px;">发${b('1')}助${b('乱入者')} · 发${b('2')}助${b('维序者')} 随机放计 (${betState})`
                 + `<span style="font-size:${f.sub}px;color:#e0cfa9;"> 乱${b(String(stakeA))} 维${b(String(stakeD))} 平${b(String(stakeT))}</span></span>`;
-            const castLine = `<span style="font-size:${f.main}px;">${b('攻 胜 敌 混 并 败')} 放计`
+            const castLine = `<span style="font-size:${f.main}px;">或发 ${b('攻 胜 敌 混 并 败')} 指定计`
                 + `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${betLine}${sep}${castLine}${liveInfoPart}</div>`;
         } else if (s.on) {
             const [stakeA, stakeD, stakeT] = s.bet.stakes;
             const phaseText = s.bet.open
-                ? `⏳ 押注 ${b(`${Math.max(1, s.bet.remainSec)}秒`)}：默认维序者(发 ${b('投1')} 成乱入者) · ${b('押1 分')}/${b('押2 分')}/${b('押平 分')}`
+                ? `⏳ 押注 ${b(`${Math.max(1, s.bet.remainSec)}秒`)}：${b('押1 分')}/${b('押2 分')}/${b('押平 分')}`
                 : `⚔️ 乱入者(${s.counts[0]}人·押${b(String(stakeA))}) VS 维序者(${s.counts[1]}人·押${b(String(stakeD))})${stakeT > 0 ? `·平(押${b(String(stakeT))})` : ''}`;
             if (this.inScene13Bar) {
-                const castCompact = `<span style="font-size:${f.main}px;">${phaseText} ｜ 放计 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b(`名 名字 ${nextRename}`)}</span>`;
+                const castCompact = `<span style="font-size:${f.main}px;">${phaseText} ｜ 发 ${b('1')}/${b('2')} 或 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span>放计 · ${b(`名 名字 ${nextRename}`)}</span>`;
                 mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;">${castCompact}${liveInfoPart}</div>`;
             } else {
-                const castCmd = `<span style="font-size:${f.main}px;">${phaseText}${sep}放计 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
+                const castCmd = `<span style="font-size:${f.main}px;">${phaseText}${sep}发 ${b('1')}/${b('2')} 或 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span>放计</span>`;
                 mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
             }
         } else {
@@ -407,7 +407,7 @@ export class ViewerLivePanel {
         const cmdInput = document.createElement('input');
         cmdInput.placeholder = this.duel
             ? '输入弹幕口令回车发送（如：1 / 2 / 押1 5 / 攻）'
-            : '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 攻）';
+            : '输入弹幕口令回车发送（如：1 / 2 / 名 龙骧 4 / 投1 3 / 攻）';
         cmdInput.style.cssText = name.style.cssText;
         cmdInput.addEventListener('keydown', (e) => {
             e.stopPropagation();
@@ -466,7 +466,7 @@ export class ViewerLivePanel {
             doConnect();
         });
         ytRow.append(ytVideo, ytBtn);
-        const modeRows: (HTMLElement | Node)[] = [row([...WORDS], send)];
+        const modeRows: (HTMLElement | Node)[] = [row(['1', '2', ...WORDS], send)];
         if (this.duel) {
             const sideLabel = document.createElement('div');
             sideLabel.textContent = '即时战斗选边（1攻方 / 2守方）：';

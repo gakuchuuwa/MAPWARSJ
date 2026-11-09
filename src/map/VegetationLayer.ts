@@ -171,46 +171,12 @@ function treeImage(asset: string, onReady: () => void): HTMLImageElement | null 
     return null;
 }
 
-/**
- * 🔴 [2026-11-09 查掉帧] frames.png 是横向长条，宽得离谱（雨林 24012px、橡树 13944px，29 张 > 4096px），
- *    超过显卡单张纹理上限后浏览器只能拆块反复上传 / 退回 CPU：Edge 欧洲林区实测整层重画一次显卡要 30~45ms，
- *    每秒好几次 → 就是「其余」那一大块掉帧时间。这里在贴图到达时把**实际用到的帧**（meta.frames）原样
- *    1:1 拷进一张 ≤4096 宽的小图（帧间留透明缝防缩小时串色），绘制改从小图取。像素来源不变、不缩放。
- */
-const ATLAS_MAX_W = 4096;
-const ATLAS_GUTTER = 4;
-const TREE_FRAMES_ATLAS = new Map<string, { canvas: CanvasImageSource; pos: Map<number, [number, number]> }>();
-
-function buildFramesAtlas(asset: string, img: HTMLImageElement): void {
-    const meta = TREE_METAS[asset];
-    // 不只超宽的：Edge 对照 4968px 的 GREEN_OAK 也快一倍多（93→43ms/3000 棵），只含用到帧的小图一律更小
-    if (!meta) return;
-    const cellW = meta.boxW + ATLAS_GUTTER, cellH = meta.boxH + ATLAS_GUTTER;
-    const cols = Math.max(1, Math.floor(ATLAS_MAX_W / cellW));
-    const n = meta.frames.length;
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.min(n, cols) * cellW;
-    canvas.height = Math.ceil(n / cols) * cellH;
-    const c = canvas.getContext('2d');
-    if (!c) return;
-    c.imageSmoothingEnabled = false;   // 1:1 整数拷贝，不让任何插值介入
-    const pos = new Map<number, [number, number]>();
-    meta.frames.forEach((f, i) => {
-        const x = (i % cols) * cellW, y = Math.floor(i / cols) * cellH;
-        c.drawImage(img, f * meta.boxW, 0, meta.boxW, meta.boxH, x, y, meta.boxW, meta.boxH);
-        pos.set(f, [x, y]);
-    });
-    // 画布当贴图源时，一层里十来种树来回切换比图片贵得多（Edge 实测反而更慢）→ 转成不可变 ImageBitmap 再用；
-    // 转好之前照旧画原长条。
-    void createImageBitmap(canvas).then((bmp) => { TREE_FRAMES_ATLAS.set(asset, { canvas: bmp, pos }); }).catch(() => { /* 退回原长条 */ });
-}
-
 function treeFramesImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_FRAMES_FAILED.has(asset)) return null;
     const hit = TREE_FRAMES_IMG.get(asset);
     if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
     const img = new Image();
-    img.onload = () => { buildFramesAtlas(asset, img); onReady(); };
+    img.onload = () => onReady();
     img.onerror = () => { TREE_FRAMES_IMG.delete(asset); TREE_FRAMES_FAILED.add(asset); };
     img.src = `/SUCAI_NATURE/${asset}/frames.png`;
     TREE_FRAMES_IMG.set(asset, img);
@@ -1009,12 +975,6 @@ export class VegetationLayer {
 
                 if (framesImg) {
                     const frameIdx = meta.frames[variant % meta.frames.length];
-                    const atlas = TREE_FRAMES_ATLAS.get(asset);
-                    const p = atlas?.pos.get(frameIdx);
-                    if (p && !(import.meta.env.DEV && (window as unknown as { __vegNoAtlas?: boolean }).__vegNoAtlas)) {
-                        ctx.drawImage(atlas!.canvas, p[0], p[1], meta.boxW, meta.boxH, dx, dy, w, h);
-                        return asset;
-                    }
                     const sx = frameIdx * meta.boxW;
                     ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, h);
                     return asset;

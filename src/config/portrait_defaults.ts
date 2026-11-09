@@ -20,6 +20,7 @@
  */
 import type { IBattleUnit } from '../core/CombatSystem';
 import { CITIES_V2 } from '../data/cities_v2';
+import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import {
     resolveCityCulture66,
     resolveUnitCultureRegion,
@@ -694,19 +695,24 @@ export function getFactionCultureRegion(factionId: string): RegionType | undefin
     if (_factionCultureRegionCache.has(factionId)) {
         return _factionCultureRegionCache.get(factionId);
     }
-    const city = CITIES_V2.find(c => c.factionId === factionId);
+    const capId = STARTING_CAPITALS[factionId];
+    const city = (capId ? CITIES_V2.find(c => c.id === capId) : undefined)
+        ?? CITIES_V2.find(c => c.factionId === factionId);
     if (!city) {
         _factionCultureRegionCache.set(factionId, undefined);
         return undefined;
     }
-    // 据点已有 region 时直接用，避免坐标多边形判定
-    const region = city.region && REGION_ORDER.includes(city.region as RegionType)
-        ? (city.region as RegionType)
-        : getCityRegion({
-            latitude: city.lat,
-            longitude: city.lng,
-            region: city.region,
-        });
+    // 优先取据点 67 建筑文化 buildingStyle，再回退 region / 坐标多边形判定
+    const candidate = city.buildingStyle || city.region;
+    const region = candidate && REGION_ORDER.includes(candidate as RegionType)
+        ? (candidate as RegionType)
+        : (city.region && REGION_ORDER.includes(city.region as RegionType)
+            ? (city.region as RegionType)
+            : getCityRegion({
+                latitude: city.lat,
+                longitude: city.lng,
+                region: city.region,
+            }));
     _factionCultureRegionCache.set(factionId, region);
     return region;
 }

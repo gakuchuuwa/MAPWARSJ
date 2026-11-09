@@ -81,6 +81,7 @@ const SIX_BY_WORD: Record<string, TacticalSixSet> = {
     攻: 'gongzhan', 胜: 'shengzhan', 敌: 'dizhan', 混: 'hunzhan', 并: 'bingzhan', 败: 'baizhan',
     攻战: 'gongzhan', 胜战: 'shengzhan', 敌战: 'dizhan', 混战: 'hunzhan', 并战: 'bingzhan', 败战: 'baizhan',
 };
+const SIX_WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
 const TRAD_TO_SIMP: Record<string, string> = {
     勝: '胜', 敵: '敌', 並: '并', 併: '并', 敗: '败', 戰: '战', 選: '选', 號: '号',
     莊: '庄', 閒: '闲', 註: '注',
@@ -642,7 +643,9 @@ export class ViewerLive {
             return this.note(`${name}：改名格式为「名 新名字 积分」，当前需出 ${this.renameFloor() + 1} 积分以上`);
         }
 
-        // 1.5 观众阵营选择（默认维序者；发「投1 / 1 / 乱入者」永久成为乱入者，发「投2 / 2 / 维序者」切回维序者，投一次以后都是）
+        // 1.5 🔴 [2026-11-09 主人定「按1，加入乱入者，随机放六计，按2，加入维序者，随机放六计」]
+        //   · 发「1 / 2」（或 投1 / 乱入者 / 维序者）＝ 加入该阵营（投一次以后都是）；打仗时同时随机放一计（1 积分）
+        //   · 发「1攻 / 2混」＝ 加入该阵营并放指定的那一计
         const campCombo = word.match(/^(?:投|选)?\s*(1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/);
         if (campCombo && SIX_BY_WORD[campCombo[2]]) {
             if (meta?.staleForBattle) {
@@ -663,16 +666,16 @@ export class ViewerLive {
             const choice: '1' | '2' = /^(?:投|选)?\s*(?:1|乱)/.test(word) ? '1' : '2';
             this.setViewerCampChoice(id, choice);
             const repLabel = choice === '1' ? '乱入者' : '维序者';
-            this.notifyViewerVoice(id, `${name}，已成为${repLabel}，以后每场自动助${repLabel}`);
-            if (this.battleOn() || this.duel) {
-                const side: 0 | 1 = this.repSideOfChoice(choice);
-                return this.note(`${name} 已成为【${repLabel}】（${this.sideName(side)}，投一次永久有效），开局9秒可发「押${choice} 分」押注，开战发六字（攻 胜 敌 混 并 败）放计`);
+            // 打仗时：加入阵营的同时随机放一计（积分不够、排队等都交给 request 照常处理）
+            if (this.battleOn() && !meta?.staleForBattle) {
+                const randWord = SIX_WORDS[Math.floor(Math.random() * SIX_WORDS.length)];
+                return this.request(id, name, randWord, eventId, pubMs);
             }
-            return this.note(`${name} 已成为【${repLabel}】（投一次永久有效，之后每场战斗自动助【${repLabel}】）`);
+            this.notifyViewerVoice(id, `${name}，已成为${repLabel}，以后每场自动助${repLabel}`);
+            return this.note(`${name} 已成为【${repLabel}】（投一次以后都是，打仗时发 ${choice} 随机放一计）`);
         }
 
-        // 2. 离职后战略地图投靠竞价（择落点永远是武将：斥候＝同文化势力→武将随机、探马＝同文化武将、
-        //    先锋＝同文化武将＋全势力武将随机、将军起＝全图武将）
+        // 2. 离职后战略地图投靠竞价
         const joinCmd = parseJoinCommand(word);
         if (joinCmd) {
             return this.handleJoinCommand(id, name, joinCmd.query ?? joinCmd.index, joinCmd.bid, eventId, pubMs);
@@ -2521,7 +2524,7 @@ export class ViewerLive {
             }
         }
         this.save();
-        this.note(`⚔️ 乱入者 VS 维序者（默认维序者，发 投1 成为乱入者，投一次永久有效；9秒押注：发「押1 分」「押2 分」「押平 分」）`);
+        this.note(`⚔️ 乱入者 VS 维序者（发「1」助乱入者、「2」助维序者，每发一次随机放一计；9秒押注：发「押1 分」「押2 分」「押平 分」）`);
     }
 
     /** 9 秒倒计时结束，开战封盘：之后不再接注，进入交战放计阶段 */
@@ -2531,7 +2534,7 @@ export class ViewerLive {
         const [a, d, t] = this.betStakes;
         this.save();
         if (a + d + t <= 0) return;
-        this.note(`押注截止：乱入者 ${a} / 维序者 ${d} / 平局 ${t} 积分，发六字（攻 胜 敌 混 并 败）助阵！`);
+        this.note(`押注截止：乱入者 ${a} / 维序者 ${d} / 平局 ${t} 积分，发「1」「2」或六字（攻 胜 敌 混 并 败）放计助阵！`);
         speechAnnouncer.announceViewerNotice(`押注截止，乱入者${a}分，维序者${d}分，平局${t}分`);
     }
 
@@ -2563,6 +2566,8 @@ export class ViewerLive {
             this.notifyViewerVoice(id, `${name}，可用积分${avail}，不够押${amount}分`);
             return this.note(`${name}：押【${sideName}】需 ${amount} 积分，现有可用 ${avail} 积分`);
         }
+        if (side === 'att') this.sides.set(id, 1);
+        else if (side === 'def') this.sides.set(id, 0);
         a.n -= amount;
         list.push({ name, side, amount });
         this.bets.set(id, list);

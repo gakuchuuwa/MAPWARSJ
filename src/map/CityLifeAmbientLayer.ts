@@ -537,21 +537,22 @@ export class CityLifeAmbientLayer {
     /** 本次生成某据点时，有地皮因高程瓦片未到而被拒（见 isPlotCellFlatLand） */
     private plotElevPending = false;
     /** 已定案的所有地皮（农田 / 水田 / 草场）的 zoom 9 像素落点，新地皮不许与之重叠 */
-    private placedPlots: { x: number; y: number }[] = [];
+    private placedPlots: { cityId: string; x: number; y: number }[] = [];
     /** 陆海瓦片重排期间保留的上一版布局：新布局暂时算不出来（数据没到）时继续用它，不让地块凭空消失 */
     private prevActorsByCity = new Map<string, CityLifeActor[]>();
     private retireSeq = 0;
     private forestByCity = new Map<string, CityForestProp[]>();
+    private forestKindByCity = new Map<string, 'forest_hunting' | 'forest_logging'>();
     private geoByCity = new Map<string, LivelihoodGeo>();
-    /** 树林几何按「据点｜狩猎或伐木」缓存（同一据点同一种林场年年同一位置）；forestByCity 只放本年布局实际要画的 */
+    /** 树林几何按「据点｜狩猎或伐木」缓存（同一据点同一种林场固定同一位置）；forestByCity 只放当前布局实际要画的 */
     private groveCache = new Map<string, CityForestProp[]>();
     private activeActors = new Map<string, CityLifeActor>();
     private endangeredCities = new Set<string>();
     private lastCombatScanMs = 0;
     private clearedWhileHidden = false;
     private layerVisible = true;
-    /** 当前布局所属的游戏年份；年份一变就整体轮回 */
-    private layoutYear: number | null = null;
+    /** 各据点战毁重建代数：和平期固定为 0（位置与类型常年不变），仅在战火摧毁并于次年春季恢复时 +1 重新选址生成 */
+    private cityRebuildGen = new Map<string, number>();
     private visibleCitiesKey = '';
     private visibleCitiesCache: CityDataV2[] = [];
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
@@ -599,13 +600,15 @@ export class CityLifeAmbientLayer {
         map.on('resize', () => this.resize());
         if (!hasWorldBaseData()) {
             void loadWorldBaseData('/world/world-base.png').then((ok) => {
-                // 冬雪数据到了：树丛四季树种要按雪线重取。树丛缓存清掉，已排好的布局按年度轮回同一套淡出重排
+                // 冬雪数据到了：树丛四季树种要按雪线重取；只刷新树丛缓存，不改动已生成的农田与村民落点
                 if (ok) {
                     this.groveCache.clear();
-                    for (const a of this.activeActors.values()) a.retiring = true;
-                    this.prevActorsByCity.clear();
-                    this.actorsByCity.clear();
-                    this.placedPlots = [];
+                    for (const [cityId, kind] of this.forestKindByCity.entries()) {
+                        const city = CITIES_V2.find((c) => c.id === cityId);
+                        if (city) {
+                            this.forestByCity.set(cityId, this.getOrCreateCityForest(city, kind));
+                        }
+                    }
                 }
             });
         }
@@ -1072,9 +1075,9 @@ export class CityLifeAmbientLayer {
         let list = this.actorsByCity.get(city.id);
         if (list) return list;
         list = [];
-        // 🔴 年度轮回：哪些据点有生产方式、放几组、落在哪、养什么，全按「据点＋年份」取随机数；
-        //    年份一变整套重排（update 里 rotateYearLayout），旧的淡出、新的淡入。
-        const yk = `${city.id}@${this.getYear()}`;
+        // 和平期固定位置与类型（rebuildGen = 0），仅在战火摧毁并于次年春季恢复重建时递增代数重新生成。
+        const rebuildGen = this.cityRebuildGen.get(city.id) ?? 0;
+        const yk = rebuildGen === 0 ? city.id : `${city.id}@rebuild${rebuildGen}`;
         this.plotElevPending = false;
 
         const cityType = String(city.type);
@@ -1124,7 +1127,7 @@ export class CityLifeAmbientLayer {
         let forestKind: 'forest_hunting' | 'forest_logging' | null = null;
         let forestNodes: CityForestProp[] = [];
 
-        const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
+        const newPlots: { cityId: string; x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
         // 🔴 2026-10-31「每田一只，随机，不要重复」：本据点本年已用过的农田畜种，各套农田之间不重样
         const usedFarmLivestock = new Set<string>();
         // 🔴 2026-11-01 主人令「无论随机出几个渔业，最多出一个渔港」：同一据点最多只生成 1 座船坞/渔港
@@ -1397,7 +1400,7 @@ export class CityLifeAmbientLayer {
                 }
             }
             if (!homePos) continue;
-            if (plotKind) newPlots.push(this.plotPx(homePos));
+            if (plotKind) newPlots.push({ cityId: city.id, ...this.plotPx(homePos) });
             // 平原能铺满四块时也只留本组抽到的块数：南块（主人）必留，其余按哈希挑。
             if (plotCells && plotCells.length > unitCount) {
                 const others = plotCells
@@ -1669,8 +1672,13 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        // 本年要画的树丛：只有抽到狩猎 / 伐木的年份才有
+        // 当前要画的树丛：只有抽到狩猎 / 伐木的组合才有
         this.forestByCity.set(city.id, forestNodes);
+        if (forestKind) {
+            this.forestKindByCity.set(city.id, forestKind);
+        } else {
+            this.forestKindByCity.delete(city.id);
+        }
 
         // 民生组合：1 个牧羊人固定带 4 只牲畜（四块草场一块一只）；1 个猎人固定带 1 只本地猎物。
         // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
@@ -1682,7 +1690,7 @@ export class CityLifeAmbientLayer {
             const isShepherd = leader.dir === 'VIL_MALE_SHEPHERD';
             // 牧羊组合草场实际铺了几块就放几只，一块一只；牧羊人所在的南块也放一只陪着他。
             // 猎场按哈希出 1~4 只同种猎物：0 号是猎人正在猎的那只（走倒地／腐烂流程），其余是同群活兽。
-            const preyCount = 1 + Math.floor(strHash01(`${leader.cityId}@${this.getYear()}`, leader.slotIdx * 17 + 9) * 4);
+            const preyCount = 1 + Math.floor(strHash01(yk, leader.slotIdx * 17 + 9) * 4);
             const cellList = isShepherd
                 ? (leader.plotCells ?? [PLOT_LEADER_CELL])
                 : Array.from({ length: preyCount }, (_, k) => k);
@@ -1832,6 +1840,7 @@ export class CityLifeAmbientLayer {
             this.activeActors.set(actor.id, actor);
         }
 
+        this.placedPlots = this.placedPlots.filter((p) => p.cityId !== city.id);
         this.placedPlots.push(...newPlots);
         this.actorsByCity.set(city.id, list);
         return list;
@@ -2158,18 +2167,8 @@ export class CityLifeAmbientLayer {
     }
 
     private update(dt: number): void {
-        const year = this.getYear();
-        if (this.layoutYear === null) {
-            this.layoutYear = year;
-        } else if (year !== this.layoutYear) {
-            // 年度轮回：旧角色标记退场渐隐，布局缓存与地皮登记清空，下一帧各据点按新年份重抽
-            this.layoutYear = year;
-            for (const a of this.activeActors.values()) a.retiring = true;
-            this.prevActorsByCity.clear();
-            this.actorsByCity.clear();
-            this.placedPlots = [];
-        }
-        // 已定案据点在同一年份内锁定落点，未定案据点不入缓存、下一帧自动重算，不再定时清空已定案据点
+        // 和平期各据点生产方式位置与组成常年固定（只做春耕→夏长→秋收→冬休的季节贴图过渡，不跨年重抽）；
+        // 仅当据点遭战火摧毁、残骸在次年春季消散后，才按据点重新选址重建一批新的生产组合。
 
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest();
@@ -2275,6 +2274,7 @@ export class CityLifeAmbientLayer {
             }
         }
 
+        const citiesToRebuildAfterWar = new Set<string>();
         for (const [id, actor] of this.activeActors.entries()) {
             if (actor.retiring) {
                 actor.viewAlpha -= dt / PRODUCTION_FADE_IN_SEC;
@@ -2344,17 +2344,31 @@ export class CityLifeAmbientLayer {
                     && this.getYear() >= actor.recoveryYear;
                 if (canRecover) {
                     actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
+                    if (actor.damageBlend <= 0 && actor.presentAtCombat) {
+                        citiesToRebuildAfterWar.add(actor.cityId);
+                    }
                 }
             } else if (actor.presentAtCombat) {
-                // 第二阶段：残骸全部消失后，原生产组合才渐显并恢复持续生产。
-                actor.peaceAlpha = Math.min(1, actor.peaceAlpha + dt / FADE_RECOVER_PEACE_SEC);
-                if (actor.peaceAlpha >= 1) {
-                    actor.presentAtCombat = false;
-                    actor.peaceAtCombat = 1;
-                    actor.recoveryYear = undefined;
-                }
+                citiesToRebuildAfterWar.add(actor.cityId);
             } else {
                 actor.peaceAlpha = 1;
+            }
+        }
+
+        // 第二阶段：战损残骸在春季完全消散后，该据点递增重建代数并清空旧缓存，下一帧重新生成新一批生产组合并从 0 渐显。
+        if (citiesToRebuildAfterWar.size > 0) {
+            for (const cityId of citiesToRebuildAfterWar) {
+                this.cityRebuildGen.set(cityId, (this.cityRebuildGen.get(cityId) ?? 0) + 1);
+                this.actorsByCity.delete(cityId);
+                this.prevActorsByCity.delete(cityId);
+                this.forestByCity.delete(cityId);
+                this.forestKindByCity.delete(cityId);
+                this.placedPlots = this.placedPlots.filter((p) => p.cityId !== cityId);
+                for (const [aid, a] of this.activeActors.entries()) {
+                    if (a.cityId === cityId) {
+                        this.activeActors.delete(aid);
+                    }
+                }
             }
         }
     }

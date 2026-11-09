@@ -78,7 +78,7 @@ export const DE_STYLE_TO_SAIL_GROUP: Record<string, SailGroup> = {
     AFRI: 'afri',
     MESO: 'meso',
     INDI: 'asia',
-    PURU: 'meso',
+    PURU: 'asia',
     ANDE: 'meso',
     GREEK: 'medi',
     THRACIAN: 'medi',

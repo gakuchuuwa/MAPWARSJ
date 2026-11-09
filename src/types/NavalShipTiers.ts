@@ -234,6 +234,7 @@ for (const row of CULTURE_SHIP) {
 }
 
 import { CITIES_V2 } from '../data/cities_v2';
+import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { getCityRegion } from '../systems/RegionSystem';
 import { getLegionCompositionByName, CULTURE_LEGION_NAMES } from './CultureFormations';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
@@ -242,12 +243,14 @@ const _factionRegionCache = new Map<string, string>();
 
 export function getFactionCultureRegion(factionId: string): string | undefined {
     if (_factionRegionCache.has(factionId)) return _factionRegionCache.get(factionId) || undefined;
-    const city = CITIES_V2.find((c) => c.factionId === factionId);
+    const capId = STARTING_CAPITALS[factionId];
+    const city = (capId ? CITIES_V2.find((c) => c.id === capId) : undefined)
+        ?? CITIES_V2.find((c) => c.factionId === factionId);
     if (!city) {
         _factionRegionCache.set(factionId, '');
         return undefined;
     }
-    const region = city.region || getCityRegion({ latitude: city.lat, longitude: city.lng });
+    const region = city.buildingStyle || city.region || getCityRegion({ latitude: city.lat, longitude: city.lng });
     _factionRegionCache.set(factionId, region);
     return region;
 }

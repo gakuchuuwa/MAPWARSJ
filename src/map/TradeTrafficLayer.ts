@@ -59,6 +59,7 @@ interface Caravan {
     count: number;         // 3-6 个单位
     cartDir: string;       // 陆路商队皮肤目录
     shipDir: string;       // 商船皮肤目录
+    sailGroup: SailGroup;  // 商船帆文化组（发航时按起锚港锁定，不随中途路过据点变帆）
     phase: number;         // 动画相位（帧偏移）
     ageMs: number;
     lastDirIdx: number[];  // 每单位上一帧朝向 index（迟滞用）
@@ -311,12 +312,14 @@ export function playerTourMerchantShipDir(lat: number, lng: number): string {
     return 'MERCHANT_SHIP';
 }
 
-/** 按所在地文化映射 DE 船帆文化组（欧洲柯克船固定用欧洲帆组） */
+/** 按所在地文化映射 DE 船帆文化组（欧洲柯克船固定用欧洲帆组；双桅木板渡运船在美洲原住民海域属伊比利亚殖民海船，用十字方帆 medi，不用阿兹特克倒三角帆 meso） */
 export function tradeShipSailGroupAt(lat: number, lng: number, shipId?: string): SailGroup {
     if (shipId === 'TRADE_COG') return 'west';
     const style = resolveLocalCulture(lat, lng);
     const deStyle = (REGION_TO_DE_STYLE as Record<string, string>)[style];
-    return (deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west';
+    const group = (deStyle && DE_STYLE_TO_SAIL_GROUP[deStyle]) || 'west';
+    if (shipId === 'TRANSPORT_SHIP' && group === 'meso') return 'medi';
+    return group;
 }
 
 export class TradeTrafficLayer {
@@ -602,6 +605,7 @@ export class TradeTrafficLayer {
 
         const cartDir = landAssetDir(anchor.lat, anchor.lng);
         const shipDirName = shipDir(anchor.lat, anchor.lng);
+        const sailGroup = tradeShipSailGroupAt(anchor.lat, anchor.lng, shipDirName);
         this.loadAsset(cartDir);
         this.loadAsset(shipDirName);
 
@@ -610,7 +614,7 @@ export class TradeTrafficLayer {
         this.caravans.push({
             id: `trade_${this.idSeq++}`,
             path, cumLen: cum, totalLen: total,
-            dist: initialDist, count, cartDir, shipDir: shipDirName,
+            dist: initialDist, count, cartDir, shipDir: shipDirName, sailGroup,
             phase: Math.floor(Math.random() * 30), ageMs: 0,
             lastDirIdx: new Array(count).fill(-1), lastDirDeg: new Array(count).fill(NaN),
         });
@@ -786,7 +790,7 @@ export class TradeTrafficLayer {
                     shipRot = resDeg * Math.PI / 180;
                 }
                 const sails = sea && needsSail(asset.dir)
-                    ? buildSailLayers(asset.dir, dirIdx, sprScale, tradeShipSailGroupAt(pos.lat, pos.lng, asset.dir))
+                    ? buildSailLayers(asset.dir, dirIdx, sprScale, c.sailGroup)
                     : undefined;
                 pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * sprScale, oy: -hy * sprScale, rot: shipRot, alpha, scale: sprScale, sails });
                 if (sea) {
