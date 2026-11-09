@@ -13,6 +13,7 @@ import { FACTION_ERA, getGeneralEra } from '../data/FactionEra';
 import { FACTIONS } from '../data/factions';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { getGeneralCulture } from '../data/GeneralCulture';
 import { BATTLEFIELD_CHARACTERS } from '../data/BattlefieldCharacters';
 import { PORTRAIT_CANONICAL_MAP } from '../config/portrait_canonical';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
@@ -2157,16 +2158,20 @@ async function collectAllGeneralPortraitIssues(): Promise<ValidationIssue[]> {
     const catalog = new Set((await loadPortraitCatalog()).map(normalizePortraitPath));
     const catalogLoaded = catalog.size > 0;
     const seen = new Set<string>();
-    const check = (fid: string, gid: string, name: string, portrait: string, kind: string): void => {
+    // 🔴 [2026-11-09 主人令「报告武将错误的时候，要写上势力，不然 AI 不知道这个武将的立绘应该按什么势力，也就不知道什么文化」]
+    //    写明：势力中文名（武将自己的 factionId，不是名单块的键）＋ 文化（据点文化）＋ 据点，立绘就放进该文化文件夹。
+    const factionNameOf = (id: string): string => (FACTIONS as Array<{ id: string; name: string }>).find((f) => f.id === id)?.name ?? id;
+    const check = (fid: string, gid: string, name: string, portrait: string, kind: string, cityId?: string): void => {
         if (!gid || seen.has(gid)) return;
         seen.add(gid);
-        const who = `${kind} ${name}（${gid} / ${fid}）`;
+        const culture = getGeneralCulture(gid) ?? '未知文化';
+        const who = `${kind} ${name}（${gid}｜势力 ${factionNameOf(fid)}（${fid}）｜文化 ${culture}${cityId ? `｜据点 ${cityId}` : ''}）`;
         const pp = normalizePortraitPath(portrait ?? '');
         if (!pp.trim()) { out.push({ level: 'error', factionId: fid, msg: `${who} 没有立绘` }); return; }
         if (catalogLoaded && !catalog.has(pp)) out.push({ level: 'error', factionId: fid, msg: `${who} 立绘文件不存在：${pp}（被挪走／改名／删了？）` });
     };
     for (const [fid, raw] of Object.entries(FACTION_GENERALS as Record<string, any>)) {
-        for (const g of (Array.isArray(raw) ? raw : [raw])) if (g) check(fid, g.generalId, g.generalName, g.portrait, '武将');
+        for (const g of (Array.isArray(raw) ? raw : [raw])) if (g) check(g.factionId ?? fid, g.generalId, g.generalName, g.portrait, '武将', g.cityId);
     }
     for (const c of Object.values(BATTLEFIELD_CHARACTERS)) check(c.factionId, c.generalId, c.generalName, c.portrait ?? '', '战场人物');
     return out;

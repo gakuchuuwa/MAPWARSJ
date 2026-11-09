@@ -168,9 +168,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代易洛魁军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'iroquois_warrior', count: 3 },
-            { type: 'ibirapema_warrior', count: 4 },
-            { type: 'blackwood_archer', count: 2 },
+            { type: 'champi_scout', count: 3 },
+            { type: 'iroquois_warrior', count: 4 },
+            { type: 'slinger', count: 2 },
         ],
         regions: ['IROQUOIS'],
         parentLegion: '城堡时代阿兹特克军团',

@@ -1596,9 +1596,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'duonaobaojia_tzimiskes', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '齐米斯基', portrait: '/assets/BYZANTINE/duonaobaojia_tzimiskes.png', eliteName: '拜占庭铁甲', eliteTier: 2 },
-        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
-        //    纳尔塞斯（约 478–573，东罗马统帅；552 塔吉那大破托提拉、553 拉克塔里乌斯山灭东哥特、554 卡西利努姆歼法兰克—阿勒曼尼军，此后坐镇罗马治理意大利）｜势力 拜占庭｜据点 罗马（ROMA）｜名将｜精锐「东罗马甲骑」T3｜立绘留空
-        { generalId: 'bfe_narses', factionId: 'baizanting', cityId: 'city_luoma', generalName: '纳尔塞斯', portrait: '/assets/BYZANTINE/bfe_narses.png', eliteName: '东罗马甲骑', eliteTier: 3 },
         { generalId: 'duonaobaojia_samuel', factionId: 'baojialiya', cityId: 'city_sofia', generalName: '萨穆伊尔', portrait: '/assets/BULGARIANS/duonaobaojia_samuel.png', eliteName: '保加卫队', eliteTier: 2 },
 
 
@@ -2117,9 +2114,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
-        //    阿方索六世是莱昂—卡斯蒂利亚国王（1085 攻取托莱多），原无 factionId 落进西哥特块被判成封建；改挂卡斯蒂利亚＝城堡时代，托莱多 GOTHS → 城堡时代伊比利亚军团
-        { generalId: 'gen_alfonso_vi', factionId: 'kasidiliya', cityId: 'city_toledo', generalName: '阿方索六世', portrait: '/assets/GOTHS/gen_alfonso_vi.png', eliteName: '托莱多骑', eliteTier: 3 },
 
 
 
@@ -4215,6 +4209,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    纳尔塞斯（约 478–573，东罗马统帅；552 塔吉那大破托提拉、553 拉克塔里乌斯山灭东哥特、554 卡西利努姆歼法兰克—阿勒曼尼军，此后坐镇罗马治理意大利）｜势力 拜占庭｜据点 罗马（ROMA）｜名将｜精锐「东罗马甲骑」T3｜立绘留空
+        { generalId: 'bfe_narses', factionId: 'baizanting', cityId: 'city_luoma', generalName: '纳尔塞斯', portrait: '/assets/BYZANTINE/bfe_narses.png', eliteName: '东罗马甲骑', eliteTier: 3 },
     { generalId: 'baizanting_peiteluonasi', factionId: 'baizanting', cityId: 'city_heersongniesi', generalName: '佩特罗纳斯', portrait: '/assets/BYZANTINE/baizanting_peiteluonasi.png', eliteName: '克里米亚骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 约833 首任赫尔松军区将军（strategos）
         // 🔴 [2026-10-25 补B] 巴列奥略（1409–1465，摩里亚专制君；君士坦丁十一世之弟，守摩里亚）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将｜精锐「摩里亚守军」T4｜立绘留空
         // 🔴 [2026-10-25 补B] 阿波卡夫（10 世纪末拜占庭摩里亚军区长官；997 年保加利亚沙皇撒慕尔南侵时坐镇斯巴达组织防务）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，拉科尼亚）｜普将｜精锐「拉科尼亚守军」T4｜立绘留空
@@ -9915,6 +9912,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     kasidiliya: [
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    阿方索六世是莱昂—卡斯蒂利亚国王（1085 攻取托莱多），原无 factionId 落进西哥特块被判成封建；改挂卡斯蒂利亚＝城堡时代，托莱多 GOTHS → 城堡时代伊比利亚军团
+        { generalId: 'gen_alfonso_vi', factionId: 'kasidiliya', cityId: 'city_toledo', generalName: '阿方索六世', portrait: '/assets/GOTHS/gen_alfonso_vi.png', eliteName: '托莱多骑', eliteTier: 3 },
 
 
 

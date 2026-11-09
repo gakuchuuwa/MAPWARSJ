@@ -185,8 +185,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         commanderUnit: 'hero_itzcoatl',
         slots: [
-            { type: 'elite_jaguar_warrior', count: 3 },
-            { type: 'eagle_warrior', count: 4 },
+            { type: 'eagle_warrior', count: 3 },
+            { type: 'elite_jaguar_warrior', count: 4 },
             { type: 'priest', count: 2 },
         ],
     },
@@ -220,8 +220,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_topayupanqui',
         // 🔴 [2026-10-16 主人令] 印加的城堡兵＝印加枪兵长：精锐进城堡军团 4 档（与 3 档对调）。
         slots: [
-            { type: 'elite_kamayuk', count: 3 },
-            { type: 'champi_runner', count: 4 },
+            { type: 'champi_runner', count: 3 },
+            { type: 'elite_kamayuk', count: 4 },
             { type: 'slinger', count: 2 },
         ],
     },
@@ -2649,7 +2649,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈奴/匈人 简易木石混合要塞',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_tristan',
                 slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'magyar_huszar', count: 3 },
@@ -3573,8 +3573,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_huaynacapac',
         slots: [
             { type: 'eagle_scout', count: 4 },
-            { type: 'plumed_archer', count: 3 },
-            { type: 'priest', count: 2 },
+            { type: 'jaguar_warrior', count: 3 },
+            { type: 'plumed_archer', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -3590,9 +3590,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         commanderUnit: 'hero_cuauhtemoc',
         slots: [
-            { type: 'eagle_scout', count: 4 },
-            { type: 'plumed_archer', count: 3 },
-            { type: 'priest', count: 2 },
+            { type: 'eagle_warrior', count: 4 },
+            { type: 'jaguar_warrior', count: 3 },
+            { type: 'elite_plumed_archer', count: 2 },
         ],
     },
     // ── 玛雅 · 城堡时代 · 城堡时代玛雅潘军团　（本次新建）────────────────
@@ -3603,13 +3603,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代玛雅潘军团', civ: '玛雅', age: 'castle', deStyle: 'MESO', region: 'MAYANS' as RegionType,
         buildingStyle: 'MAYANS',
         castleId: 'MAYA_CASTLE_AGE3', castleName: '玛雅 奇琴伊察阶梯神庙堡',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         shipId: 'CANOE',
         commanderUnit: 'hero_pacalii',
         slots: [
-            { type: 'jaguar_warrior', count: 3 },
-            { type: 'eagle_warrior', count: 4 },
-            { type: 'elite_plumed_archer', count: 2 },
+            { type: 'jaguar_warrior', count: 4 },
+            { type: 'elite_plumed_archer', count: 3 },
+            { type: 'priest', count: 2 },
         ],
     },
     // ── 玛雅 · 帝国时代 · 帝国时代玛雅军团　（本次新建）────────────────
@@ -3620,13 +3620,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代玛雅军团', civ: '玛雅', age: 'imperial', deStyle: 'MESO', region: 'MAYANS' as RegionType,
         buildingStyle: 'MAYANS',
         castleId: 'MAYA_CASTLE_AGE3', castleName: '玛雅 奇琴伊察阶梯神庙堡',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'CANOE',
         commanderUnit: 'hero_cusiyupanqui',
         slots: [
+            { type: 'elite_eagle_warrior', count: 2 },
             { type: 'jaguar_warrior', count: 3 },
-            { type: 'elite_eagle_warrior', count: 4 },
-            { type: 'plumed_archer', count: 2 },
+            { type: 'elite_plumed_archer', count: 4 },
         ],
     },
 
@@ -3641,13 +3641,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代托尔特克军团', civ: '阿兹特克', age: 'feudal', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'CANOE',
         commanderUnit: 'hero_itzcoatl',
         slots: [
-            { type: 'jaguar_warrior', count: 2 },
-            { type: 'eagle_warrior', count: 3 },
-            { type: 'eagle_scout', count: 4 },
+            { type: 'eagle_scout', count: 3 },
+            { type: 'jaguar_warrior', count: 4 },
+            { type: 'plumed_archer', count: 2 },
         ],
     },
     // ── 阿兹特克 · 城堡时代 · 城堡时代阿兹特克军团　（同名已在二级（重复→替换保留））────────────────
@@ -3664,15 +3664,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代特诺奇军团', civ: '阿兹特克', age: 'imperial', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         shipId: 'CANOE',
         // 🔴 [2026-10-26 主人令「看样子，不要看名字」] 易洛魁战士(北美林地赤膊战棍样)→阿兹特克豹勇士(豹皮木棍样)；
         //    主将昆汉贝贝(南美羽披战棍样)→瓜特穆斯(兵模 ELITEEAGLEWARRIOR，阿兹特克鹰武士样)。
         commanderUnit: 'hero_cuauhtemoc',
         slots: [
             { type: 'elite_eagle_warrior', count: 4 },
-            { type: 'xolotl_warrior', count: 2 },
             { type: 'plumed_archer', count: 3 },
+            { type: 'xolotl_warrior', count: 2 },
         ],
     },
 
@@ -3698,8 +3698,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_pachacuti',
         // 🔴 [2026-10-16 主人令] 印加城堡兵＝印加枪兵长：普通档进帝国军团 3 档。
         slots: [
-            { type: 'kamayuk', count: 3 },
-            { type: 'elite_champi_warrior', count: 4 },
+            { type: 'elite_champi_warrior', count: 3 },
+            { type: 'kamayuk', count: 4 },
             { type: 'slinger', count: 2 },
         ],
     },
@@ -4548,7 +4548,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'balance_yoke',
         shipId: 'DROMON',
-        commanderUnit: 'hero_mordred',
+        commanderUnit: 'hero_basileus',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'greek_noble_cavalry', count: 2 },
@@ -4599,7 +4599,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'balance_yoke',
         shipId: 'FAST_FIRE_SHIP',
-        commanderUnit: 'hero_basileus',
+        commanderUnit: 'hero_mordred',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'cataphract', count: 2 },
