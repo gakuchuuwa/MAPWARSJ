@@ -1071,6 +1071,8 @@ export class GameApp {
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
+        // 🔴 [2026-11-09] 右侧面板「履历」页签接上主角一生履历（面板先建好时在这里接；面板后建则由面板 init 自己接）
+        this.brawlFeedPanel?.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name }));
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
         // （`syncHistoricalOwners` 已提到上面「打完一场」回调之前定义 —— 那里也要重跑）

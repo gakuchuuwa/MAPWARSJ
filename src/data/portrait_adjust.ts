@@ -798,7 +798,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -33
         },
         "/assets/BASHU/langzhou_zhangfei.png": {
-            "scale": 0.89,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": -15
         },
@@ -10811,6 +10811,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 6,
             "offsetY": 1
+        },
+        "/assets/BASHU/shu_zhangyi.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/KHMER/siam_zhengxin.png": {
+            "scale": 1.04,
+            "offsetX": 4,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL/bfe_zhanghe.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/BASHU/qianshu_wangzongshou.png": {
+            "scale": 1.08,
+            "offsetX": 11,
+            "offsetY": -4
         }
     },
     "folderGuides": {

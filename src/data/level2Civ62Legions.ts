@@ -2230,7 +2230,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'crescent',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_bohemond',
+        commanderUnit: 'hero_guglielmoembriaco',
         slots: [
             { type: 'pikeman', count: 3 },
             { type: 'knight', count: 2 },
@@ -2247,10 +2247,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'crescent',
         shipId: 'CARRACK',
-        commanderUnit: 'hero_guglielmoembriaco',
+        commanderUnit: 'hero_radenwijaya',
         slots: [
             { type: 'condottiero', count: 3 },
-            { type: 'cavalier', count: 2 },
+            { type: 'knight', count: 2 },
             { type: 'elite_genoese_crossbowman', count: 4 },
         ],
     },

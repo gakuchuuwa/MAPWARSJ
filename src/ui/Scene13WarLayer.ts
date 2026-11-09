@@ -11594,7 +11594,8 @@ export class Scene13WarLayer {
 
 
 
-    /** 攻城武器的目标：尚未打下任何城门时只取还立着的城门（优先打离自己近的城门）；打下一座城门后，周围的城墙、建筑和其他城门一档并列，由调用方取离自己最近的那个。
+    /** 攻城武器的目标（严格分档，2026-11-09）：还有立着的城门只给城门 → 城门全倒才给城墙段 → 城墙也倒完才给城内建筑（含箭塔）；
+     *  同档内由调用方取离自己最近的那个；三档全空返回 []，调用方转去打兵。
 
      *  🔴 [2026-10-15 主人令「有坍塌动画的都是建筑」] 营寨也进了 `defBuildings` ⇒ 这里**必须按阵营过滤**，
 
@@ -11606,27 +11607,15 @@ export class Scene13WarLayer {
 
         const enemy = (b: WarBuilding): boolean => b.f !== attackerF;
 
-        // 🔴 [2026-10-15 主人令「攻城武器优先攻击离自己近的城门，当打下一个城门后，就攻击周围的城墙和建筑和其他城门，这些并列。」]
-
-        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE' && enemy(b));
-
-        const anyGateDown = gates.some(b => !bldOk(b) || b.sprite.obstructionDisabled);
-
-        if (!anyGateDown) {
-
-            const standingGates = gates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
-
-            if (standingGates.length > 0) return standingGates;
-
-        }
-
-        return [
-
-            ...this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled && enemy(b)),
-
-            ...this.defBuildings.filter(b => bldOk(b) && enemy(b)),
-
-        ];
+        // 🔴 [2026-11-09 主人令「战术模式中，攻城武器优先打城门，城墙，建筑，最后才是兵。」]
+        //    取代 10-15「打下一座城门后城墙/建筑/其他城门并列」：改为严格分档，前一档还有立着的就只给前一档
+        //    （城门 → 城墙段 → 城内建筑含箭塔）；三档全空才返回空数组，由调用方转去打兵。
+        const standing = (b: WarBuilding): boolean => bldOk(b) && !b.sprite.obstructionDisabled && enemy(b);
+        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE' && standing(b));
+        if (gates.length > 0) return gates;
+        const walls = this.wallGates.filter(b => b.key !== 'STONE_GATE' && standing(b));
+        if (walls.length > 0) return walls;
+        return this.defBuildings.filter(b => bldOk(b) && enemy(b));
 
     }
 
@@ -12472,13 +12461,15 @@ export class Scene13WarLayer {
 
                 }
 
-                // 进攻途中（建筑尚在射程外）：远程攻城器遇敌兵即停步远射；近战冲车被敌兵贴脸阻拦时撞击开路
+                // 进攻途中（建筑尚在射程外）：
+                // 🔴 [2026-11-09 主人令「攻城武器……最后才是兵」] 远程攻城器不再半路停下打兵，继续走向城门/城墙/建筑；
+                //    只留近战冲车被敌兵贴脸挡住（reach + 18px 内）时撞开一条路，否则会被人墙顶死在原地。
 
-                if (manChosen) {
+                if (manChosen && rng <= 65) {
 
                     const md2 = (manChosen.x - m.x) ** 2 + (manChosen.y - m.y) ** 2;
 
-                    if (rng > 65 ? (minR2 === 0 || md2 >= minR2) : (md2 <= (reach + 18) ** 2)) {
+                    if (md2 <= (reach + 18) ** 2) {
 
                         if (reserve) manChosen.claims++;
 

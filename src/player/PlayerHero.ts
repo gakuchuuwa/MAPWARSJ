@@ -58,6 +58,8 @@ import {
     type PlayerRank,
 } from './PlayerConfig';
 import { moderateLiveName } from '../live/LiveNameModeration';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { PlayerLifeLog, type LifeEventKind, type LifeLogSave } from './PlayerLifeLog';
 
 /** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
 export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
@@ -384,6 +386,8 @@ export interface PlayerSaveState {
     customLegionName?: string;
     customRowUnits?: [string, string, string] | null;
     mergedGenerals?: string[];
+    /** 🔴 [2026-11-09] 一生履历（军旅日记） */
+    lifeLog?: LifeLogSave;
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -431,6 +435,13 @@ export class PlayerHeroArmy extends Army {
 
 export class PlayerHero {
     public readonly army: PlayerHeroArmy;
+    /** 🔴 [2026-11-09 主人定] 一生履历：右侧面板「履历」页签、传记旁白、局后资料包都从这里取 */
+    public readonly lifeLog: PlayerLifeLog;
+    /** 这一仗开战时记下的双方情况（结算时写进履历） */
+    private pendingLifeBattle: {
+        myTroops: number; enemyTroops: number; enemyName: string; enemyGeneralId: string | null;
+        battleType: string; patronId: string | null; patronName: string | null;
+    } | null = null;
     public merit = 0;
     /** 本场仗已记的功（封顶 PLAYER_BATTLE_MERIT_CAP；进战术战和战后结算时清零） */
     private battleMerit = 0;
@@ -520,6 +531,7 @@ export class PlayerHero {
     public onHostLost: ((lastHostId: string) => void) | null = null;
 
     constructor(private deps: PlayerHeroDeps, startPos: { lat: number; lng: number }) {
+        this.lifeLog = new PlayerLifeLog(deps.getYear, deps.getSeason);
         this.horses = new HorseStable({
             getYear: deps.getYear,
             getSeason: deps.getSeason,
@@ -566,10 +578,15 @@ export class PlayerHero {
         //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（白身=古典斥候骑兵）。
         return this.getSelectedUnit()?.unitKey ?? heroKeyForRank(this.getRank().id);
     }
-    public rename(newName: string): void {
+    public rename(newName: string, byViewer?: string): void {
         const trimmed = newName.trim();
         if (!trimmed) return;
+        const prevName = this.playerName;
         this.playerName = trimmed;
+        if (this.lifeLog && prevName !== trimmed) {
+            this.recordLife('rename', byViewer ? `观众${byViewer}为他改名「${trimmed}」` : `改名「${trimmed}」`,
+                { prevName, newName: trimmed, byViewer: byViewer ?? null });
+        }
         this.army.name = trimmed;
         // renderer.name 是 getter（返回 army.name），改了 army.name 即自动生效，无需给 renderer 赋值
         this.emitChange();
@@ -1268,6 +1285,7 @@ export class PlayerHero {
             this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
             this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
             this.deps.notify(`🎖️ ${this.name}晋升为【${after.name}】`);
+            this.recordLife('promote', `晋升【${after.name}】`, { from: before.name, to: after.name, merit: this.merit });
             gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（功勋 ${this.merit}）`);
             // 晋升：入伍中则同步军团第九环战力乘数 + 官阶名
             const host = this.getHostLegion();
@@ -1316,6 +1334,7 @@ export class PlayerHero {
         if (prevMerit > 0 || before.id !== 'civilian') {
             this.holdAfterDefeat?.();
             const peak = this.getPeakRank();
+            this.recordLife('demote', `${reason}，功劳归零，从【${before.name}】回到平民`, { reason, from: before.name, merit: prevMerit });
             this.deps.notify(`💥 ${reason}！功劳归零、官职回平民，资历【${peak.name}】保留（战略权限不变）`);
             gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} → 0、当前官职【${before.name}】→ 平民，资历【${peak.name}】保留`);
         }
@@ -1372,6 +1391,8 @@ export class PlayerHero {
         // 这一仗主角有没有亲身上战术战场（进 13 时由 buildScene13Setup 记下），结算后作废
         const fought = this.battleArmed;
         this.battleArmed = false;
+        if (fought) this.recordLifeBattle(result, enemyKilled, opponent);
+        this.pendingLifeBattle = null;
         if (result === 'defeat') {
             this.battleMerit = 0;
             // 战败立即回战略地图，从退场完成开始等待 9 秒，再走脱军清场流程。
@@ -1443,6 +1464,7 @@ export class PlayerHero {
         this.learnedUnits.push({ unitKey: pickKey, unitName: name, factionId: oppFactionId, row: 0 });
         this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pickKey);
         this.deps.notify(`🎁 公侯战利品：击败敌军缴获新兵模【${name}】`);
+        this.recordLife('unit', `击败敌军，缴获兵模【${name}】`, { unitKey: pickKey, source: 'spoil' });
         this.emitChange();
     }
 
@@ -1601,6 +1623,7 @@ export class PlayerHero {
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
+                this.recordLife('unit', `获得兵模【${name}】`, { unitKey: pick.key, source: 'legion' });
                 this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pick.key);
                 // 🔴 [2026-10-24 主人令「加入势力给一个本势力中三排兵模之一，自动换上；升为探马再给…自动换上；
                 //    升为先锋再给…自动换上」] 三排陆地兵模：入伍与升阶（斥候/探马/先锋）每学到一张**立刻换上**。
@@ -1716,6 +1739,12 @@ export class PlayerHero {
         this.cancelChase();
         this.cancelTravel();
         this.hostLegionId = host.id;
+        {
+            const gName = this.generalNameOf(host.generalId);
+            const fName = this.deps.cityManager.getFactionName(host.getFactionId()) || '';
+            this.recordLife('join', `投奔${gName ? `【${gName}】` : `【${host.name}】`}麾下${fName ? `，归属${fName}` : ''}`,
+                { generalId: host.generalId ?? null, generalName: gName, legionName: host.name, factionId: host.getFactionId() || null, factionName: fName || null });
+        }
         // 第九环·玩家官阶：入伍时把官阶战力乘数 + 4 字官阶名写到军团
         host.playerHostPowerMult = this.getRank().powerMult;
         host.playerHostRankName = this.getRank().name;
@@ -1732,6 +1761,11 @@ export class PlayerHero {
 
     public detach(): void {
         if (!this.hostLegionId) return;
+        {
+            const leaving = this.getHostLegion();
+            const gName = this.generalNameOf(leaving?.generalId);
+            this.recordLife('leave', `离开${gName ? `【${gName}】` : '原军团'}麾下`, { generalId: leaving?.generalId ?? null, generalName: gName });
+        }
         // 统一铁律：玩家脱离军团 = 功勋归零降职（无论战败覆灭还是主动离队，一律清零）
         this.holdAfterDefeat();
         this.resetMerit('脱离军团');
@@ -2174,6 +2208,63 @@ export class PlayerHero {
     }
 
     // ── 存档 ──────────────────────────────────────────────
+    // ── 一生履历 ────────────────────────────────────────
+    /** 记一条履历（当前官职自动带上） */
+    public recordLife(kind: LifeEventKind, text: string, data?: Record<string, string | number | boolean | null>): void {
+        this.lifeLog?.record(kind, text, this.getRank().name, data);
+    }
+
+    private generalNameOf(id: string | null | undefined): string | null {
+        if (!id) return null;
+        return getGeneralRecordByGeneralId(id)?.generalName ?? null;
+    }
+
+    /** 所在军团开战时由 Army.onBattleStart 调：记下开战那一刻的双方兵力与对手 */
+    public noteHostBattleStart(opponent: any, battleType: string): void {
+        const host = this.getHostLegion();
+        if (!host) return;
+        const ent = typeof opponent?.getEntity === 'function' ? opponent.getEntity() : null;
+        const enemyGeneralId: string | null = opponent?.generalId ?? ent?.generalId ?? ent?._siegeGarrisonGeneralId ?? null;
+        this.pendingLifeBattle = {
+            myTroops: Math.round(host.troops ?? 0),
+            enemyTroops: Math.round(opponent?.troops ?? 0),
+            enemyName: String(opponent?.name ?? ent?.name ?? '敌军'),
+            enemyGeneralId,
+            battleType,
+            patronId: host.generalId ?? null,
+            patronName: this.generalNameOf(host.generalId),
+        };
+    }
+
+    private recordLifeBattle(result: 'victory' | 'defeat', enemyKilled: number, opponent: any): void {
+        const p = this.pendingLifeBattle;
+        const ent = typeof opponent?.getEntity === 'function' ? opponent.getEntity() : null;
+        const enemyGeneralId: string | null = p?.enemyGeneralId ?? opponent?.generalId ?? null;
+        const enemyGeneralName = this.generalNameOf(enemyGeneralId);
+        const enemyName = p?.enemyName ?? String(opponent?.name ?? ent?.name ?? '敌军');
+        const isCity = opponent?.unitType === 'city' || ent?.type === 'city';
+        const fmt = (n: number) => (n >= 10000 ? `${(n / 10000).toFixed(1).replace(/\.0$/, '')}万` : String(n));
+        const who = p?.patronName ? `随【${p.patronName}】` : '';
+        const target = isCity ? `攻打【${enemyName}】` : `迎战${enemyGeneralName ? `【${enemyGeneralName}】` : `【${enemyName}】`}`;
+        const troops = p && p.myTroops > 0 && p.enemyTroops > 0 ? `，我军${fmt(p.myTroops)}对${fmt(p.enemyTroops)}` : '';
+        const killed = Math.max(0, Math.round(enemyKilled || 0));
+        const outcome = result === 'victory' ? '获胜' : '战败';
+        this.recordLife('battle', `${who}${target}${troops}，${outcome}${killed > 0 ? `，斩敌${fmt(killed)}` : ''}`, {
+            result,
+            battleType: p?.battleType ?? null,
+            myTroops: p?.myTroops ?? null,
+            enemyTroops: p?.enemyTroops ?? null,
+            ratio: p && p.enemyTroops > 0 ? Math.round((p.myTroops / p.enemyTroops) * 100) / 100 : null,
+            enemyKilled: killed,
+            enemyName,
+            enemyGeneralId,
+            enemyGeneralName,
+            isCity,
+            patronId: p?.patronId ?? null,
+            patronName: p?.patronName ?? null,
+        });
+    }
+
     public toSaveState(): PlayerSaveState {
         const p = this.army.getPosition();
         return {
@@ -2204,10 +2295,12 @@ export class PlayerHero {
             customLegionName: this.customLegionName,
             customRowUnits: this.customRowUnits ? [...this.customRowUnits] : null,
             mergedGenerals: [...this.mergedGenerals],
+            lifeLog: this.lifeLog.toSave(),
         };
     }
 
     public restoreSaveState(s: PlayerSaveState): void {
+        this.lifeLog.setMuted(true);   // 读档会重放改名、入伙等，不能当成新经历记
         this.hostLegionId = null;
         this.cancelChase();
         this.cancelTravel();
@@ -2257,6 +2350,8 @@ export class PlayerHero {
             this.syncMoveProfile();
         }
         if (Number.isFinite(s.lat) && Number.isFinite(s.lng)) this.army.setPosition(s.lat, s.lng);
+        this.lifeLog.restore(s.lifeLog);
+        this.lifeLog.setMuted(false);
         this.emitChange();
     }
 
@@ -2268,6 +2363,7 @@ export class PlayerHero {
         if (this.learnedUnits.some((u) => u.unitKey === unitKey)) return null;
         const name = WAR_TYPES[unitKey]?.name ?? unitKey;
         this.learnedUnits.push({ unitKey, unitName: name, factionId, row: 0 });
+        this.recordLife('unit', `通灵所得，获得兵模【${name}】`, { unitKey, source: 'memory' });
         this.peakStats = mergePlayerPeakFromUnit(this.peakStats, unitKey);
         this.syncMoveProfile();
         this.emitChange();

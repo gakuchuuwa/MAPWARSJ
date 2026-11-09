@@ -46,8 +46,6 @@ import {
     clearCompletedFirstBattles,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
-// 🔴 [2026-11-09 主人令] 知名战历史背景播报（接取任务那一刻念，念完之前/之后本场不再播其他播报）
-import { getFirstBattleBackground } from '../data/GeneralFirstBattleBackgrounds';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -820,7 +818,6 @@ export class PlayerQuestSystem {
                 this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== generalId);
             }
             this.headingToEventGeneralId = null;
-            this.spokenFirstBattleBgGenerals.delete(generalId);
             const fieldArmy = this.armyOfGeneral(generalId);
             if (fieldArmy && !fieldArmy.isScriptArmy && fieldArmy.id !== this.quest?.legionId) {
                 delete (fieldArmy as { __scriptPinned?: boolean }).__scriptPinned;
@@ -2068,8 +2065,6 @@ export class PlayerQuestSystem {
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
             return;
         }
-        // 🔴 [2026-11-09 主人令「战前可以和武将对话的时候，就开始播报」]
-        this.playFirstBattleBackgroundOnce(g.generalId);
         // 经典战的史实台词并到这一段里讲完：到了前线不再弹第二段对话（见 onArriveFirstBattleFront）
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const gather = `某已传令三军向【${spot.label}】集结，壮士先往【${spot.label}】与某会合，同赴此战。`;
@@ -2089,21 +2084,6 @@ export class PlayerQuestSystem {
         });
     }
 
-    /** 已在战前武将对话时播报过背景的武将（接任务／抵达前线开打时不再重复念第二遍） */
-    private spokenFirstBattleBgGenerals = new Set<string>();
-
-    private playFirstBattleBackgroundOnce(generalId: string | null | undefined): void {
-        if (!generalId || this.spokenFirstBattleBgGenerals.has(generalId)) return;
-        if (!this.hasPendingFirstBattle(generalId)) return;
-        const bg = getFirstBattleBackground(generalId);
-        if (!bg) return;
-        for (const prevId of [...this.spokenFirstBattleBgGenerals]) {
-            if (!isFirstBattleCompleted(prevId)) this.spokenFirstBattleBgGenerals.delete(prevId);
-        }
-        this.spokenFirstBattleBgGenerals.add(generalId);
-        this.deps.announceBriefing?.(bg);
-    }
-
     /** 玩家出发去远距经典战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
     private travelToFirstBattleFront(generalId: string): void {
         this.deps.closeDialogue();
@@ -2120,7 +2100,7 @@ export class PlayerQuestSystem {
                 () => this.onArriveFirstBattleFront(generalId),
             );
         if (ok) {
-            this.playFirstBattleBackgroundOnce(generalId);
+
             this.emitChange();
             return;
         }
@@ -2136,8 +2116,6 @@ export class PlayerQuestSystem {
         existingArmy: Army | null,
         opts?: { metAtFront?: boolean },
     ): void {
-        // 🔴 [2026-11-09 主人令「战前可以和武将对话的时候，就开始播报」]
-        this.playFirstBattleBackgroundOnce(g.generalId);
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const playerLine = fb.introLines.find((l) => l.speaker === 'player')?.text;
         const text = generalLines.length > 0
@@ -2173,9 +2151,6 @@ export class PlayerQuestSystem {
         this.pendingFrontGeneralId = null;
         const metAtFront = !!opts?.metAtFront;
         if (!isGeneralOnStage(g.generalId)) return;
-        // 🔴 [2026-11-09 主人令「等玩家找到武将后，对话开始的时候播报知名战」「战后结果语音播报不要关闭」]
-        //    找到武将弹战前对话时已开口念该战的历史背景；此处放在 markFirstBattleCompleted 前兜底（如前线直接会合）。
-        this.playFirstBattleBackgroundOnce(g.generalId);
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
 

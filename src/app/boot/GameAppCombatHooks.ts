@@ -15,6 +15,7 @@ import {
     setOnTacticalSkillTriggered,
 } from '../../combat/GeneralSkillCombat';
 import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
+import { getFirstBattleBackground } from '../../data/GeneralFirstBattleBackgrounds';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
@@ -284,7 +285,13 @@ function startScene13War(
     const attackerFrom = resolveOrigin(attacker, false, originRef);
     const defenderFrom = resolveOrigin(defender, battleType === 'siege', center);
 
-    const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
+    // 🔴 [2026-11-09 主人令「把经典战的背景介绍改为进入战术模式就播报」]
+    //    经典战（带 isFirstBattleHero 的名将军团参战）：进战术模式时念这一战的历史背景，
+    //    走战役播报同一条链（等行军播报念完再开口）。接任务、对话时不再念。
+    const classicHeroGeneralId = [attacker, defender]
+        .find((u) => u.getEntity?.()?.isFirstBattleHero === true)?.generalId ?? null;
+    const classicBackground = classicHeroGeneralId ? (getFirstBattleBackground(classicHeroGeneralId) || null) : null;
+    const resolvedBattleBriefing = battleBriefing || classicBackground || resolveHistoricalBattleBriefing(title, null);
     app.scene13War.onDecision = (winner, survivors) => { (app as any).live?.onTacticalBattleDecision?.(winner); onDecision(winner, survivors); };   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,

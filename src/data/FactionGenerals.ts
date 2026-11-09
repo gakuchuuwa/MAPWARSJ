@@ -5851,7 +5851,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'langzhou_zhangfei', factionId: 'shu', cityId: 'city_langzhong_gucheng', generalName: '张飞', portrait: '/assets/BASHU/langzhou_zhangfei.png', eliteName: '巴西突骑', eliteTier: 3 },
+        { generalId: 'langzhou_zhangfei', factionId: 'shu', cityId: 'city_langzhong_gucheng', generalName: '张飞', portrait: '/assets/BASHU/langzhou_zhangfei.png', eliteName: '巴西精卒', eliteTier: 3 },
 
 
 

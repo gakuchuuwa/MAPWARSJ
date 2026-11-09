@@ -1182,7 +1182,7 @@ export class ViewerLive {
         this.renameHighestBid = bid;
         this.renameHistory.push({ uid: id, viewer: name, bid, prevName, appliedName: mod.name, at: now });
         if (this.renameHistory.length > 50) this.renameHistory.shift();
-        hero.rename(mod.name);
+        hero.rename(mod.name, name);
         this.recordCmd(eventId, id, name, 'rename', mod.name, bid, pubMs, now, 'executed');
         this.save();
         this.notifyViewerVoice(id, `感谢${name}，主角改名为${mod.name}`, true);
@@ -1900,6 +1900,8 @@ export class ViewerLive {
         this.recordCmd(eventId, id, name, 'duke_fief', hit.cityId, bid, pubMs, now, 'executed');
         this.save();
         const allyName = hero.alliedFactionId ? (cm.getFactionName(hero.alliedFactionId) || hero.alliedFactionId) : '原主公';
+        hero.recordLife('title', `以【${hit.name}】为根据地封侯建藩【${hero.ownFactionName}】，与${allyName}结盟`,
+            { titleKind: 'fief', cityId: hit.cityId, cityName: hit.name, byViewer: name });
         const refund = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
         this.notifyViewerVoice(id, `感谢${name}出${bid}积分，以${hit.name}为根据地封侯建藩，与${allyName}结盟`, true);
         return this.note(`${name} 出 ${bid} 积分，择【${hit.name}】为根据地，立独立同盟藩镇【${hero.ownFactionName}】（与【${allyName}】同盟互不侵犯）${refund}`);
@@ -1951,6 +1953,7 @@ export class ViewerLive {
         const oneChar = [...modFlag.name.trim()][0] || [...modName.name][0] || '王';
         hero.ownFactionName = modName.name;
         hero.ownFlagChar = oneChar;
+        hero.recordLife('title', `立国号【${modName.name}】，旗号「${oneChar}」`, { titleKind: 'kingdom', factionName: modName.name, flagChar: oneChar, byViewer: name });
         this.ensurePlayerOwnFactionRegistered();
         this.recordCmd(eventId, id, name, 'king_faction_name', `${modName.name}(${oneChar})`, bid, pubMs, now, 'executed');
         this.save();
@@ -2159,6 +2162,7 @@ export class ViewerLive {
         if (!hero.mergedGenerals.includes(hit.generalId)) {
             hero.mergedGenerals.push(hit.generalId);
         }
+        hero.recordLife('title', `征召名将【${hit.generalName}】率${addedTroops}兵合入大军`, { titleKind: 'summon', generalId: hit.generalId, generalName: hit.generalName, troops: addedTroops, byViewer: name });
         this.kingSummonPicked = { uid: id, viewer: name, bid, generalId: hit.generalId, generalName: hit.generalName };
         this.recordCmd(eventId, id, name, 'king_summon', `${hit.generalName}(+${addedTroops})`, bid, pubMs, now, 'executed');
         this.save();
@@ -2379,6 +2383,8 @@ export class ViewerLive {
             host.setTroops(Math.round(host.getTroops()) + mergedTroops);
         }
 
+        hero.recordLife('title', `天子诏书威压，${target.factionName}举国${targetCities.length}城臣服归附`,
+            { titleKind: 'coerce', factionId: target.factionId, factionName: target.factionName, cities: targetCities.length, troops: mergedTroops });
         this.lastCoerceSuccessAt = now;
         this.emperorCoercePool = null;
         this.save();

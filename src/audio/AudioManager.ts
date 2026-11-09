@@ -1436,6 +1436,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 🔴 [2026-11-09 主人选 A] 声画对齐：素材截 **0–4.5s + 0.5s 淡出**，与六计特效 SKILL_CAM_SEC = 4.5s 同长。
     //    现文件 skill_baizhan_v2.aud = 4.50s / -13.8 LUFS / 真峰 -6.7dBFS；10 秒原件备份在
     //    scratch/sfx_baizhan_orig_20261109/skill_baizhan_v2_10s.aud（要回退直接拷回）。
+    // 🔴 [2026-11-09 主人令「渐隐时长请加长」] 淡出 0.5s → **1.5s**（3.0s 起收、4.5s 归零），总长仍 4.50s 对齐 SKILL_CAM_SEC；
+    //    -13.4 LUFS / 真峰 -6.4 dBFS。0.5s 淡出那版备份在同目录 skill_baizhan_v2_4.5s_fade0.5.aud。
     skill_baizhan: sounds('battle', ['skill_baizhan_v2'], 1.0, 600),
 
 

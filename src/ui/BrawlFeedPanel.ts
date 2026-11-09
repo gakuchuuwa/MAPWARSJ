@@ -4,6 +4,7 @@ import { CityManager } from '../world/CityManager';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { StreamModeToggle } from './StreamModeToggle';
+import type { PlayerLifeLog, LifeEvent } from '../player/PlayerLifeLog';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
@@ -135,6 +136,15 @@ export class BrawlFeedPanel {
     private expanded = false; // 默认收起划入右侧
     private passSiegeCooldowns: Map<string, number> = new Map();
     private preScene13Expanded = false;
+    /** 🔴 [2026-11-09 主人定] 面板分两页：履历（默认）／军情 */
+    private lifeEl: HTMLElement | null = null;
+    private feedPaneEl: HTMLElement | null = null;
+    private tab: 'life' | 'feed' = 'life';
+    private tabBtns: Partial<Record<'life' | 'feed', HTMLButtonElement>> = {};
+    private lifeLog: PlayerLifeLog | null = null;
+    private lifeSummary: (() => { name: string; rank: string }) | null = null;
+    private lifeUnsub: (() => void) | null = null;
+    private lifeTimer: number | null = null;
 
     constructor(
         private timeSystem: TimeSystem,
@@ -188,10 +198,33 @@ export class BrawlFeedPanel {
 
         this.root.classList.add('event-panel--brawl');
 
+        // 内容区拆成两页：军情原样往 feedPane 里推，履历单独一页
+        const outer = this.contentEl;
+        outer.innerHTML = '';
+        this.lifeEl = document.createElement('div');
+        this.lifeEl.className = 'life-pane';
+        this.feedPaneEl = document.createElement('div');
+        this.feedPaneEl.className = 'feed-pane';
+        outer.append(this.lifeEl, this.feedPaneEl);
+        this.contentEl = this.feedPaneEl;
+
         const headerTitle = this.root.querySelector('.event-header span');
         if (headerTitle) {
-            headerTitle.textContent = '军情';
+            headerTitle.textContent = '';
+            headerTitle.classList.add('feed-tabs');
+            for (const [key, label] of [['life', '履历'], ['feed', '军情']] as const) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'feed-tab';
+                b.textContent = label;
+                b.addEventListener('click', () => this.setTab(key));
+                headerTitle.appendChild(b);
+                this.tabBtns[key] = b;
+            }
         }
+        this.setTab('life');
+        const hero = (window as any).game?.playerHero;
+        if (hero?.lifeLog) this.attachLifeLog(hero.lifeLog, () => ({ name: hero.name, rank: hero.getRank().name }));
 
         this.toggleBtn = document.getElementById('toggle-event-list-btn');
         if (this.toggleBtn) {
@@ -226,6 +259,59 @@ export class BrawlFeedPanel {
 
         this.root.style.display = 'block';
         this.renderEmpty();
+    }
+
+    /** 切换页签 */
+    public setTab(tab: 'life' | 'feed'): void {
+        this.tab = tab;
+        if (this.lifeEl) this.lifeEl.style.display = tab === 'life' ? '' : 'none';
+        if (this.feedPaneEl) this.feedPaneEl.style.display = tab === 'feed' ? '' : 'none';
+        for (const [k, b] of Object.entries(this.tabBtns)) b?.classList.toggle('feed-tab--on', k === tab);
+        if (tab === 'life') this.renderLife();
+    }
+
+    /** 接上主角的一生履历（主角创建后由 GameApp 调；重复调只换绑定） */
+    public attachLifeLog(log: PlayerLifeLog, summary: () => { name: string; rank: string }): void {
+        this.lifeUnsub?.();
+        this.lifeLog = log;
+        this.lifeSummary = summary;
+        this.lifeUnsub = log.onChange(() => this.renderLife());
+        // 年龄随游戏年份走、官职名随时会变：履历页开着时每 5 秒刷新一次抬头
+        if (this.lifeTimer === null) {
+            this.lifeTimer = window.setInterval(() => {
+                if (this.tab === 'life' && this.expanded) this.renderLife();
+            }, 5000);
+        }
+        this.renderLife();
+    }
+
+    private renderLife(): void {
+        const el = this.lifeEl;
+        if (!el) return;
+        const log = this.lifeLog;
+        if (!log) {
+            el.innerHTML = '<div class="event-item event-item--hint">等待主角登场…</div>';
+            return;
+        }
+        const sum = this.lifeSummary?.() ?? { name: '主角', rank: '' };
+        const t = log.getBattleTotals();
+        const patron = log.getPatron();
+        const rival = log.getRival();
+        const head = `<div class="life-head">`
+            + `<div class="life-head-name">${escapeHtml(sum.name)}<span class="life-head-sub">${log.getAge()}岁 · ${escapeHtml(sum.rank)}</span></div>`
+            + `<div class="life-head-stat">大战 ${t.battles} · 胜 ${t.wins} · 败 ${t.losses} · 斩敌 ${t.killed}</div>`
+            + ((patron || rival)
+                ? `<div class="life-head-stat">${patron ? `恩主 ${escapeHtml(patron.name)}` : ''}${patron && rival ? ' · ' : ''}${rival ? `宿敌 ${escapeHtml(rival.name)}` : ''}</div>`
+                : '')
+            + `</div>`;
+        const events = log.getEvents();
+        if (events.length === 0) {
+            el.innerHTML = head + '<div class="event-item event-item--hint">一生尚未开始…</div>';
+            return;
+        }
+        const rows: string[] = [];
+        for (let i = events.length - 1, n = 0; i >= 0 && n < 300; i--, n++) rows.push(formatLifeLine(events[i]));
+        el.innerHTML = head + rows.join('');
     }
 
     static isEliminableFaction(factionId: string | undefined): boolean {
@@ -388,6 +474,23 @@ export class BrawlFeedPanel {
         if (!this.contentEl) return;
         this.contentEl.innerHTML = '<div class="event-item event-item--hint">等待军情…</div>';
     }
+}
+
+const LIFE_BADGE: Record<string, string> = {
+    start: '起', join: '投', leave: '离', promote: '升', demote: '贬', unit: '兵', rename: '名', title: '封',
+};
+
+function formatLifeLine(e: LifeEvent): string {
+    const isBattle = e.kind === 'battle';
+    const won = isBattle && e.data?.result === 'victory';
+    const badge = isBattle ? (won ? '胜' : '败') : (LIFE_BADGE[e.kind] ?? '记');
+    const badgeCls = isBattle ? (won ? 'life-badge--win' : 'life-badge--loss') : `life-badge--${e.kind}`;
+    const big = e.kind === 'promote' || e.kind === 'title' || e.kind === 'start' || (isBattle && !won) || e.kind === 'demote';
+    return `<div class="event-item life-item${big ? ' feed-tier-s' : ''}"><div class="event-desc event-desc--feed">`
+        + `<span class="life-badge ${badgeCls}">${badge}</span>`
+        + `<span class="feed-time">${escapeHtml(formatFeedTime(e.year, e.season))} ${e.age}岁</span>`
+        + `<span class="life-text">${escapeHtml(e.text)}</span>`
+        + `</div></div>`;
 }
 
 function escapeHtml(text: string): string {

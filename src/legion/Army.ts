@@ -1840,6 +1840,11 @@ export class Army implements IBattleUnit {
         const opponentPos = _opponent.getPosition();
         this.setCombatState(true, battleType, opponentPos);
         this.lockBattleSeaForm([(_opponent as { getEntity?: () => unknown }).getEntity?.() ?? _opponent]);
+        // 🔴 [2026-11-09] 主角随军：记下开战那一刻的双方兵力与对手，结算时写进一生履历
+        const game = (window as any).game;
+        if (game?.playerHero && game.playerHero.getHostLegionId() === this.id) {
+            game.playerHero.noteHostBattleStart(_opponent, battleType);
+        }
         // 停步与路径存档由 LegionManager/SiegeManager 开战前完成；勿再 stopMovement 以免空队列覆写 savedPathQueue
     };
 

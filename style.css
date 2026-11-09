@@ -1767,3 +1767,18 @@ path.vector-river-water {
 .map-fade-in {
     animation: mapFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
+/* 🔴 [2026-11-09] 右侧面板：履历 / 军情 两个页签 */
+.event-header .feed-tabs { display: inline-flex; gap: 6px; }
+.event-header .feed-tab { opacity: 0.6; }
+.event-header .feed-tab.feed-tab--on { opacity: 1; background: rgba(156, 48, 47, 0.12); color: #9c302f; border-color: rgba(156, 48, 47, 0.45); }
+.life-head { padding: 6px 4px 8px; margin-bottom: 6px; border-bottom: 1px dashed rgba(125, 111, 90, 0.35); color: #1d3326; }
+.life-head-name { font-size: 18px; font-weight: 700; }
+.life-head-sub { font-size: 14px; font-weight: 600; margin-left: 8px; color: #7d6f5a; }
+.life-head-stat { font-size: 13px; color: #5a4e3c; margin-top: 2px; }
+.life-badge { display: inline-block; min-width: 1.4em; padding: 0 3px; margin-right: 6px; border-radius: 3px; text-align: center; font-weight: 700; color: #fff; background: #7d6f5a; }
+.life-badge--win { background: #2f6b46; }
+.life-badge--loss { background: #9c302f; }
+.life-badge--promote, .life-badge--title { background: #b8860b; }
+.life-badge--demote { background: #6b2b2b; }
+.life-badge--join { background: #2d4f6b; }
+.life-text { margin-left: 6px; }
