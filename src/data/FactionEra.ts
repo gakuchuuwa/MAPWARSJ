@@ -183,7 +183,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'rashtrakuta': [{ from: -9999, era: 'feudal' }], // 拉什特拉库塔王朝（阿目佉跋沙）｜存续 753–982 大部分年份
     'andean_rebellion': [{ from: -9999, era: 'imperial' }], // 1780 年安第斯大起义（托马斯·卡塔里）｜存续 1780–1783 大部分年份
     'abkhazia_kingdom': [{ from: -9999, era: 'feudal' }], // 阿布哈兹王国（巴格拉特三世）｜存续 778–1008 大部分年份
-    'early_wokou': [{ from: -9999, era: 'castle' }], // 前期倭寇（阿只拔都）｜存续 1350–1400 大部分年份
     'mac_dynasty': [{ from: -9999, era: 'imperial' }], // 莫朝｜存续 1527–1677 大部分年份
     'restored_hanthawaddy': [{ from: -9999, era: 'imperial' }], // 复兴汉达瓦底（彬尼亚达拉）｜存续 1740–1757 大部分年份
     'mamunid': [{ from: -9999, era: 'feudal' }], // 马蒙王朝（花剌子模）｜存续 995–1017 大部分年份
@@ -309,7 +308,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gulaishi': [{ from: -9999, era: 'feudal' }], // 古莱什部落
     'gurkha': [{ from: -9999, era: 'imperial' }], // 廓喀
     'habusibao': [{ from: -9999, era: 'imperial' }], // 哈布斯堡｜城堡 → 1500 起帝国
-    'haikou': [{ from: -9999, era: 'imperial' }], // 海寇
+    'haikou': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 海贼倭寇（旗号倭）｜🔴 [2026-11-09 主人令「这种势力统一就行」] 前期倭寇并入后按史分段：倭寇 1350 起（1350–1499 城堡，阿只拔都 1380 荒山之战在此段）／嘉靖大倭寇 1500 起帝国（汪直、徐海）
     'haixi_nvzhen': [{ from: -9999, era: 'imperial' }], // 海西
     'hamade': [{ from: -9999, era: 'castle' }], // 哈马德王朝 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → castle｜存续 1014–1152 大部分年份]
     'han': [{ from: -9999, era: 'antiquity' }], // 韩国

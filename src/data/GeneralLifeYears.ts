@@ -159,7 +159,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe_sonom: { birth: 1740, death: 1776, kaoju: '推定' },
     bfe3_43: { birth: -80, death: -40, kaoju: '推定' },
     bfe3_44: { birth: -80, death: -40, kaoju: '推定' },
-    bfe_ajibaldo: { birth: 1330, death: 1380, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 阿只拔都：1380 荒山之战倭寇首领，战死（原 1500–1555 误）
+    bfe_ajibaldo: { birth: 1365, death: 1380, kaoju: '推定' },  // 🔴 [2026-11-09 按史] 《高丽史》《高丽史节要》：「贼将年才十五六」（1380 荒山之战战殁）→ 约 1365 生；原 1330 推定无据，再前 1500–1555 误
     bfe2_dhanananda: { birth: -350, death: -321, kaoju: '推定' },
     bfe3_27: { birth: -230, death: -149, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 婆苏密多罗：约前185–149 在位（原 -180 误）
     bfe_rasul_khan: { birth: 1480, death: 1510, kaoju: '推定' },

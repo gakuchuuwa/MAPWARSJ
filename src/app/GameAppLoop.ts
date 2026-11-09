@@ -3,6 +3,7 @@ import { GameTime } from './GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { marchStutterProbe } from '../debug/MarchStutterProbe';
+import { labelJitterProbe } from '../debug/LabelJitterProbe';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { GameConfig } from '../config/GameConfig';
 import { resolveFactionCulture66 } from '../systems/CultureRegion';
@@ -803,6 +804,9 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
         }
         // 在本帧玩家/军团位移与镜头跟随全部完成后同步驱动战略画布重绘，消除双 rAF 逆序导致的 1 帧滞后与抖动
         if (import.meta.env.DEV) {
+            // [2026-11-09 主人报「战败后人物静止时据点名字轻微上下颤抖」] 自动侦测并落盘现场（见 LabelJitterProbe）
+            const lMapJ = app.map.getLeafletMap();
+            if (lMapJ.getContainer().style.visibility !== 'hidden') labelJitterProbe.tick(lMapJ);
             perfDoctor.measure('主循环:部队渲染调度', () => getGlobalUnitRenderer()?.tickFromGameLoop(timestamp),
                 'src/map/GlobalUnitRenderer.ts:tickFromGameLoop');
         } else {

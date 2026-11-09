@@ -6189,11 +6189,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '全罗道云峰荒山',
-        targetCityId: 'city_suncheon_k',
-        targetLat: 34.9652,
-        targetLng: 127.4991,
+        targetCityId: 'city_jeonju',   // 🔴 [2026-11-09 主人令「确认无误后请修复」] 锚点改最近据点：完山（全州）距战场 50.1km＜顺天 55.1km（原锚顺天会偏 55km）
+        targetLat: 35.45778,   // 🔴 [2026-11-09 按史修坐标] 荒山大捷碑址（史迹第104号）：全北南原市云峰邑华水里 35°27′28″N 127°33′42″E；原 34.9652/127.4991 落在顺天城内，偏 55.1km
+        targetLng: 127.56167,
         myTroops: 16700,
-        enemyFactionId: 'early_wokou',   // 🔴 [2026-11-09 连锁修正] 1380 荒山之战倭寇＝前期倭寇；阿只拔都已按主人令挪入新建势力 early_wokou，此处原写 haikou（嘉靖大倭寇，1540–1559）年代不符
+        enemyFactionId: 'haikou',   // 🔴 [2026-11-09 主人令「可以继续用海贼倭寇。这种势力统一就行，旗号用倭」] 1380 荒山之战倭寇并入统一势力海贼倭寇（旗号倭）；阿只拔都 1380 落该势力城堡段，军团/兵种按城堡时代
         enemyFactionName: '日本倭寇联军',
         enemyGeneralId: 'bfe_ajibaldo',
         enemyTroops: 20000,

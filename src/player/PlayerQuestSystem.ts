@@ -4343,6 +4343,49 @@ export class PlayerQuestSystem {
         this.onLiveJoinResolved?.({ ok: true, factionId, generalId });
     }
 
+    /**
+     * 与 isGeneralSortieReady 同判据的批量版：「武将 → 带兵军团」只建一次表（按 getArmies 顺序取第一支，
+     * 与 armyOfGeneral 的 find 同一结果），供一次调用里成百上千次判定复用。
+     */
+    private makeSortieReadyChecker(): (city: City, generalId: string) => boolean {
+        let armyByGeneral: Map<string, Army> | null = null;
+        return (city, generalId) => {
+            if (!isGeneralOnStage(generalId)) return false;
+            if (this.hasPendingFirstBattle(generalId)) return true;
+            if (!armyByGeneral) {
+                armyByGeneral = new Map();
+                for (const a of this.deps.legionManager.getArmies()) {
+                    if (a.isDestroyed || !(a.getTroops() > 0) || a.isScriptArmy || !a.generalId) continue;
+                    if (!armyByGeneral.has(a.generalId)) armyByGeneral.set(a.generalId, a);
+                }
+            }
+            const army = armyByGeneral.get(generalId);
+            if (army) return !army.isRetreatingHome && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE;
+            return Math.floor((city.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE;
+        };
+    }
+
+    /**
+     * 一遍扫出每个「势力|文化」与「势力|*」下可出征武将数（口径同 liveJoinFactionPool：
+     * 有势力、有 62 文化的城；武将势力 = getFactionIdOfGeneral || 武将记录 || 城势力）。
+     */
+    private liveJoinPoolCounts(ready: (city: City, generalId: string) => boolean): Map<string, number> {
+        const counts = new Map<string, number>();
+        const bump = (k: string) => counts.set(k, (counts.get(k) ?? 0) + 1);
+        for (const c of this.deps.cityManager.getCities()) {
+            if (!c.factionId) continue;
+            const ck = style62OfCity(c);
+            if (!ck) continue;
+            for (const g of getCityAnchoredGenerals(c.id)) {
+                if (!ready(c, g.generalId)) continue;
+                const fid = getFactionIdOfGeneral(g.generalId) || getGeneralRecordByGeneralId(g.generalId)?.factionId || c.factionId;
+                bump(`${fid}|${ck}`);
+                bump(`${fid}|*`);
+            }
+        }
+        return counts;
+    }
+
     private isGeneralSortieReady(city: City, generalId: string): boolean {
         if (!isGeneralOnStage(generalId)) return false;
         if (this.hasPendingFirstBattle(generalId)) return true;
@@ -4410,12 +4453,20 @@ export class PlayerQuestSystem {
         if (sameCultureOnly && !lastCulture) return [];
         const cacheKey = `${rankId}|${lastCulture ?? '*'}`;
         if (this.cachedLiveCandidatesKey === cacheKey && this.cachedLiveCandidates.length > 0) {
+            // 🔴 [2026-11-09 主人报「玩家离开军团就卡」] 直播面板每 300ms 调本函数；原来对缓存里**每条势力随机项**
+            //    各调一次 liveJoinFactionPool（扫全部 1255 城 × 武将，每位武将再全扫军团找带兵 + 新建整条武将记录），
+            //    主人局实测 ViewerLivePanel 定时器单次最长 5157ms。改为一遍扫出「势力|文化 → 可出征武将数」，
+            //    逐项查表；判定条件与 liveJoinFactionPool(...).length > 0 完全相同。
+            const ready = this.makeSortieReadyChecker();
+            let poolCounts: Map<string, number> | null = null;
             const stillValid = this.cachedLiveCandidates.filter((item) => {
                 if (item.randomPick) {
-                    return this.liveJoinFactionPool(item.factionId, item.randomScope === 'sameCulture' ? item.culture : null).length > 0;
+                    poolCounts ??= this.liveJoinPoolCounts(ready);
+                    const culture = item.randomScope === 'sameCulture' ? item.culture : null;
+                    return (poolCounts.get(`${item.factionId}|${culture || '*'}`) ?? 0) > 0;
                 }
                 const c = this.deps.cityManager.getCity(item.cityId);
-                return !!c && this.isGeneralSortieReady(c, item.generalId);
+                return !!c && ready(c, item.generalId);
             });
             if (stillValid.length > 0) return stillValid;
         }
@@ -4437,6 +4488,7 @@ export class PlayerQuestSystem {
             famous: boolean;
         };
         const all: Raw[] = [];
+        const readyAll = this.makeSortieReadyChecker();   // 同判据批量版（军团表只建一次）
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const ck = style62OfCity(c);
@@ -4445,7 +4497,7 @@ export class PlayerQuestSystem {
                 ? PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })
                 : 0;
             for (const g of getCityAnchoredGenerals(c.id)) {
-                if (!this.isGeneralSortieReady(c, g.generalId)) continue;
+                if (!readyAll(c, g.generalId)) continue;
                 const rec = getGeneralRecordByGeneralId(g.generalId);
                 const factionId = getFactionIdOfGeneral(g.generalId) || rec?.factionId || c.factionId;
                 const factionName = this.deps.cityManager.getFactionName(factionId) || factionId;

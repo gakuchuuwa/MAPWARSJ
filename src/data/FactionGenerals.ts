@@ -3491,9 +3491,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'keerjisi_bagelate', factionId: 'abkhazia_kingdom', cityId: 'city_kutayixi', generalName: '巴格拉特', portrait: '/assets/GEORGIANS/keerjisi_bagelate.png', eliteName: '科尔基斯步兵', eliteTier: 4 },
     ],
-    early_wokou: [
-        // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
-        { generalId: 'bfe_ajibaldo', factionId: 'early_wokou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '高丽倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },
+    haikou: [
+        // 🔴 [2026-11-09 主人令「可以继续用海贼倭寇。这种势力统一就行，旗号用倭」] 前期倭寇不再单立势力：阿只拔都并回海贼倭寇（同「倭寇」一股），势力名沿用「海贼倭寇」、旗号「倭」；势力时代按史分段（1350–1499 城堡／1500 起帝国），此人 1380 荒山之战→城堡时代
+        { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '高丽倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },
     ],
     mac_dynasty: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）

@@ -155,7 +155,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'rashtrakuta': 'city_hengbi',   // 登记用，不改据点归属
     'andean_rebellion': 'city_diyawanake',   // 登记用，不改据点归属
     'abkhazia_kingdom': 'city_kutayixi',   // 登记用，不改据点归属
-    'early_wokou': 'city_tsushima',   // 登记用，不改据点归属
     'mac_dynasty': 'city_sanpu',   // 登记用，不改据点归属
     'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
     'mamunid': 'city_urgench',   // 登记用，不改据点归属

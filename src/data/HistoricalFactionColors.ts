@@ -560,7 +560,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'rashtrakuta': '#6A3A6A', // 拉什特拉库塔
     'andean_rebellion': '#7A4A3A', // 安第斯起义军
     'abkhazia_kingdom': '#3A6A3A', // 阿布哈兹王国
-    'early_wokou': '#3A3A3A', // 前期倭寇
+    // 🔴 [2026-11-09 主人令「这种势力统一就行，旗号用倭」] 'early_wokou'（前期倭寇）#3A3A3A 已删，并入 haikou 海贼倭寇（旗号倭）
     'mac_dynasty': '#5A2E2E', // 莫朝
     'restored_hanthawaddy': '#7B3A2E', // 复兴汉达瓦底
     'mamunid': '#6A5A4A', // 马蒙王朝

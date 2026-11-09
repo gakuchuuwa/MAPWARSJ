@@ -793,7 +793,6 @@ export class CityAssetManager {
         'rashtrakuta': '拉什',
         'andean_rebellion': '安起',
         'abkhazia_kingdom': '阿布',
-        'early_wokou': '倭寇',
         'mac_dynasty': '莫朝',
         'restored_hanthawaddy': '复汉',
         'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 原「马蒙」＝武将名，改取都城玉龙杰赤

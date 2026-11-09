@@ -758,3 +758,10 @@ Edge CPU 采样（renderUnit 内）：`renderInfo` 自身最大——每军团�
 - **DD ① 军团列表差分更新**（`CameraFollowUI.refreshList`）：原每 500ms 清空容器重建 24 行；改为逐行比对样式/HTML（签名存 WeakMap，不写 DOM 属性），只改变了的行，悬停只绑一次。
   表头「最高连胜/据点最多」卡同样内容不变不重写。无头验：22 军团 22 行、无空行，10s 内新增节点 1175（仅兵力变化的行）。
 - **DD ③ `RoadRegistry.findNearestCityId` 1° 格网**（路网增点/增边/重建即作废，另以节点数|边数兜底）：12 万次随机查询（含日界线、半径 0.02~10°）与全扫 **0 差异**，88→4.8µs/次。半径 >10° 或近极点退回全扫。
+
+**11-09 22:00 主人「突然又出现严重卡顿」**
+- F3「旗号(按需) 24018ms」是 processStandardFaction 的**异步全程墙钟**（含让步等待），不是主线程阻塞，别当成 24 秒冻结。
+- 21:36~22:04 游戏重载 9 次（boot_timing_log）；21:59 起几次与 CC 改 GameAppLoop.ts 时间重合 → 开发服 HMR 整页刷新 → 重开后旗号/素材预热期很卡。主人在玩时改主循环文件会刷掉局。
+- 最重一份（21:56:01，450 个长任务/36.7s）发生在**战术战斗**里：`主循环:combat`（含 scene13War.tick）每帧均 18.4ms、最长 171ms；
+  进战斗一次性 `Scene13GroundSetup` getMapData().then 同步建地面 **2039ms** + `Scene13CityLayout` **934ms** ≈ 进战斗冻 3 秒。未处理。
+- 名字颤抖：无头按「入伍→随军战败→停顿」复现不出（120 帧名字/地图层不动；测试 dpr=1，主人 4K 150%）。已加 `src/debug/LabelJitterProbe.ts`（DEV 每帧量中心 6 个城名 Y，30 帧内 ≤4px 来回翻 ≥6 次即落 stuck_legion_log，probe:'label-jitter'）。自测：静止 0 误报、人为 ±0.6px 抖动 1 条。

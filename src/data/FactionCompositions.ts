@@ -169,10 +169,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "封建时代巴格拉特铁骑军团",
     legionType: "region",
 },   // 阿布哈兹王国｜主将 巴格拉特
-"early_wokou": {
-    legionName: "海贼倭寇军团",
-    legionType: "sub",   // 三级军团（LEVEL_3_LEGIONS 自建军团），编辑器判型用 sub
-},   // 前期倭寇｜主将 阿只拔都
 "mac_dynasty": {
     legionName: "帝国时代洛韦克军团",
     legionType: "region",

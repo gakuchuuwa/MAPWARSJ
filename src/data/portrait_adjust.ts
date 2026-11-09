@@ -3757,11 +3757,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/JAPAN/__闲置__JAPAN_33.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
-        },
         "/assets/ORIE/yashu_saergong.png": {
             "scale": 1,
             "offsetX": 0,
@@ -10972,10 +10967,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/JAPAN/bfe_ajibaldo.png": {
+        "/assets/JAPAN/__闲置__JAPAN_37.png": {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 12
+        },
+        "/assets/JAPAN/bfe_ajibaldo.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {

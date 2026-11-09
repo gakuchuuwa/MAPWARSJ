@@ -116,7 +116,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_achaemenes': 'ORIE',   // 阿契美尼德｜阿凯门尼斯｜据点 拉塔基亚
     'bfe_achish': 'ORIE',   // 非利士｜亚吉｜据点 加沙
     'bfe_agha_mohammad': 'PERSIAN',   // 恺加｜阿迦穆罕默德｜据点 卡曼尼亚
-    'bfe_ajibaldo': 'JAPAN',   // 吴越｜阿只拔都｜据点 金石馆
+    'bfe_ajibaldo': 'JAPAN',   // 海贼倭寇｜阿只拔都｜据点 对马·金石馆（JAPAN）｜按史：1380 荒山之战倭寇首领
     'bfe_albert_lombard': 'LATIN',   // 伦巴第｜比安德拉泰｜据点 米兰
     'bfe_alexios_branas': 'THRACIAN',   // 拜占庭｜布拉纳斯｜据点 普罗夫迪夫
     'bfe_andragoras': 'SASANIAN',   // 塞琉古帝国｜安德拉戈拉斯｜据点 尼萨

@@ -180,7 +180,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'rashtrakuta': '拉什',
     'andean_rebellion': '安起',
     'abkhazia_kingdom': '阿布',
-    'early_wokou': '倭寇',
     'mac_dynasty': '莫朝',
     'restored_hanthawaddy': '复汉',
     'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 马蒙王朝＝花剌子模 Ma'munids（995–1017），都玉龙杰赤；原旗号「马蒙」与旗下武将名同字（播报叠念），且「花剌」已被花剌子模帝国(huarazim)占用 → 取都城名「玉龙」
