@@ -68,8 +68,63 @@ const MOVE_ANIM_FPS = 18;
 const PASS_CITY_RADIUS_DEG = 0.08;
 const PASS_CITY_RADIUS_SQ = PASS_CITY_RADIUS_DEG * PASS_CITY_RADIUS_DEG;
 
+/**
+ * 🔴 [2026-11-09 查掉帧] 原来每帧把 CITIES_V2 全部一千多座城逐一算到线段距离。玩家每帧只挪极小一段，
+ *    改为按 1° 分格只查线段外包框（外扩判定半径）覆盖的格子；结果与全扫逐点一致（同公式、同「等距取数组靠后者」）。
+ *    线段异常长（瞬移/跨日界线）时退回全扫。
+ */
+const PASS_GRID = new Map<string, number[]>();
+function passGrid(): Map<string, number[]> {
+    if (PASS_GRID.size === 0) {
+        for (let i = 0; i < CITIES_V2.length; i++) {
+            const c = CITIES_V2[i];
+            const k = `${Math.floor(c.lat)},${((Math.floor(c.lng) % 360) + 360) % 360}`;
+            let arr = PASS_GRID.get(k);
+            if (!arr) { arr = []; PASS_GRID.set(k, arr); }
+            arr.push(i);
+        }
+    }
+    return PASS_GRID;
+}
+
 /** 检查本帧移动线段 from→to 是否正处于或穿过某座据点；在路上返回 null */
 function findPassingCity(from: Pt, to: Pt): { id: string; lat: number; lng: number } | null {
+    const abLat = to.lat - from.lat;
+    const abLng = ((((to.lng - from.lng) % 360) + 540) % 360) - 180;
+    const abLenSq = abLat * abLat + abLng * abLng;
+    if (abLenSq > 4) return findPassingCityFullScan(from, to);
+    const grid = passGrid();
+    const r = PASS_CITY_RADIUS_DEG;
+    const lat0 = Math.floor(Math.min(from.lat, from.lat + abLat) - r), lat1 = Math.floor(Math.max(from.lat, from.lat + abLat) + r);
+    const lng0 = Math.floor(Math.min(from.lng, from.lng + abLng) - r), lng1 = Math.floor(Math.max(from.lng, from.lng + abLng) + r);
+    let bestIdx = -1;
+    let bestD2 = PASS_CITY_RADIUS_SQ;
+    for (let la = lat0; la <= lat1; la++) {
+        for (let lo = lng0; lo <= lng1; lo++) {
+            const arr = grid.get(`${la},${((lo % 360) + 360) % 360}`);
+            if (!arr) continue;
+            for (const i of arr) {
+                const c = CITIES_V2[i];
+                const apLat = c.lat - from.lat;
+                const apLng = ((((c.lng - from.lng) % 360) + 540) % 360) - 180;
+                let t = 0;
+                if (abLenSq > 1e-12) t = Math.max(0, Math.min(1, (apLat * abLat + apLng * abLng) / abLenSq));
+                const dLat = apLat - t * abLat;
+                const dLng = apLng - t * abLng;
+                const d2 = dLat * dLat + dLng * dLng;
+                // 与全扫同口径：`<=` 让数组里靠后的同距城胜出 → 等距时取下标更大的
+                if (d2 < bestD2 || (d2 === bestD2 && i > bestIdx)) {
+                    bestD2 = d2;
+                    bestIdx = i;
+                }
+            }
+        }
+    }
+    return bestIdx >= 0 ? CITIES_V2[bestIdx] : null;
+}
+
+/** 原全扫实现（线段过长时兜底，也是格网版的对照口径） */
+function findPassingCityFullScan(from: Pt, to: Pt): { id: string; lat: number; lng: number } | null {
     const abLat = to.lat - from.lat;
     const abLng = ((((to.lng - from.lng) % 360) + 540) % 360) - 180;
     const abLenSq = abLat * abLat + abLng * abLng;
@@ -387,3 +442,6 @@ export class PlayerTourSpriteDrawer {
         return { idx, deg: mathDeg };
     }
 }
+
+/** 对照测试用（格网版 vs 全扫版逐点一致），不在游戏逻辑里调用 */
+export const __passingCityForTest = { findPassingCity, findPassingCityFullScan };

@@ -238,3 +238,11 @@ export const PLAYER_PLAIN_SPEED_SCALE = 1.0;
 export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.0;
 // 🔴 [2026-10-30 主人问「玩家在海上的航行速度可以增加吗」] 1.30 → 2.0：海上 1.2×2.0=2.4，略快于陆上骑兵 2.0（原 1.56 比陆上还慢）
 export const PLAYER_SEA_SPEED_SCALE = 2.0;
+/**
+ * 🔴 [2026-11-09 主人令] 信风航段（马尼拉大帆船 阿卡普尔科 → 关岛）顺风加速。
+ *    史料：西行乘东北信风日行约 150~180km，比同期其他远洋航线快一些但不是数倍 → 取 1.5（1.3~1.5 属史实范围）。
+ *    只乘在海上那一项；到站即恢复。画面风纹与风声见 src/map/TradeWindEffect.ts。
+ */
+export const PLAYER_TRADE_WIND_SEA_MULT = 1.5;
+/** 信风航段的起止据点 */
+export const TRADE_WIND_LEG = { from: 'city_acapulco', to: 'city_hagatna' } as const;

@@ -20,6 +20,7 @@ import { getCultureNavalShip } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getTourChain } from './TourRoutes';
+import { tradeWindEffect } from '../map/TradeWindEffect';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
@@ -48,6 +49,8 @@ import {
     PLAYER_PLAIN_SPEED_SCALE,
     PLAYER_MOUNTAIN_SPEED_SCALE,
     PLAYER_SEA_SPEED_SCALE,
+    PLAYER_TRADE_WIND_SEA_MULT,
+    TRADE_WIND_LEG,
     PLAYER_RANKS,
     PLAYER_KILL_MERIT,
     PLAYER_BATTLE_MERIT_CAP,
@@ -599,8 +602,22 @@ export class PlayerHero {
         this.army.terrainSpeedScale = {
             plain: PLAYER_PLAIN_SPEED_SCALE * horse,
             mountain: PLAYER_MOUNTAIN_SPEED_SCALE * horse,
-            sea: PLAYER_SEA_SPEED_SCALE,
+            sea: PLAYER_SEA_SPEED_SCALE * (this.tradeWindLeg ? PLAYER_TRADE_WIND_SEA_MULT : 1),
         };
+    }
+
+    /** 正在走信风航段（阿卡普尔科 → 关岛）：海上加速 + 风纹风声，到站或改道即结束 */
+    private tradeWindLeg = false;
+    private setTradeWindLeg(on: boolean): void {
+        if (this.tradeWindLeg === on) return;
+        this.tradeWindLeg = on;
+        this.syncMoveProfile();
+        if (on) {
+            tradeWindEffect.start();
+            this.deps.notify('⛵ 乘东北信风西航：马尼拉大帆船航线一路顺风，航速 ×1.5');
+        } else {
+            tradeWindEffect.stop();
+        }
     }
 
     /** 故事跑腿的行军快慢系数（StoryletEngine 跑腿时设，走完回 1） */
@@ -886,6 +903,7 @@ export class PlayerHero {
         this.rememberTourTrail(path);
         this.travelCityId = dest.id;
         this.travelPointLabel = null;
+        this.setTradeWindLeg(res.nodes[0] === TRADE_WIND_LEG.from && dest.id === TRADE_WIND_LEG.to);
         this.army.setTargetCity(dest);
         this.army.setOnArriveCallback(() => this.handleArrive(dest.id));
         this.army.moveAlongPath(path.map((p) => ({ lat: p.lat, lng: p.lng, sea: forceSea ? true : (p as any).sea })));
@@ -2000,6 +2018,8 @@ export class PlayerHero {
 
     /** 每帧（大战略未暂停时）：入伍则贴军团，否则自己走路 */
     public update(dt: number): void {
+        // 信风航段收尾：到站、入伍、改道、切模式——只要不再是「正驶向关岛」就结束加速与风纹风声
+        if (this.tradeWindLeg && (this.travelCityId !== TRADE_WIND_LEG.to || this.hostLegionId)) this.setTradeWindLeg(false);
         const r = this.army.getRenderer();
         if (this.hostLegionId) {
             const host = this.getHostLegion();

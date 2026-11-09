@@ -1,4 +1,10 @@
-import { drawUnitLabel } from './UnitLabelCache';
+import { drawUnitLabel, type UnitLabelStyle } from './UnitLabelCache';
+
+/** 军团标签三行字的样式（与 2026-11-09 之前逐行设到 ctx 上的值完全一致） */
+const LABEL_STYLE_GENERAL: UnitLabelStyle = { id: 'gen', font: 'bold 13px Arial', stroke: 'black', lineWidth: 3, fill: '#00FFFF' };
+const LABEL_STYLE_NAME: UnitLabelStyle = { id: 'name', font: 'bold 13px Arial', stroke: 'rgba(0, 0, 0, 0.85)', lineWidth: 3, fill: '#ffffff' };
+const LABEL_STYLE_PLAYER_NAME: UnitLabelStyle = { id: 'pname', font: "bold 13px 'Noto Serif SC', 'SimSun', serif", stroke: 'rgba(0, 0, 0, 0.85)', lineWidth: 3, fill: '#ffd27a' };
+const LABEL_STYLE_TROOPS: UnitLabelStyle = { id: 'troops', font: 'bold 12px Arial', stroke: 'black', lineWidth: 3, fill: '#ffd700' };
 import { PLAYER_FALLBACK_HERO_KEY } from '../player/PlayerConfig';
 import L from 'leaflet';
 import { GameMap } from './GameMap';
@@ -1043,6 +1049,7 @@ export class GlobalUnitRenderer {
             return;
         }
 
+        const _tSort0 = performance.now();
         // 1. Maintain Sorted Cache
         let rebuilt = false;
         if (this.needsSort) {
@@ -1073,6 +1080,7 @@ export class GlobalUnitRenderer {
             });
         }
 
+        const _tSort1 = performance.now();
         let hasActiveAnimation = false;
         const corpseMs = GameConfig.LEGION.CORPSE_DISPLAY_MS;
         let hasVisibleCorpses = false;
@@ -1124,6 +1132,7 @@ export class GlobalUnitRenderer {
             }
         }
 
+        const _tState1 = performance.now();
         const projectilesActive = this.projectileSystem.hasActive();
         const hasArmyEditorPreview = this.hasArmyEditorPreview();
         // 外推收推未完成时必须继续重绘，否则 idle 跳帧会卡住半截再突然到位
@@ -1168,7 +1177,9 @@ export class GlobalUnitRenderer {
         // 屏外单位不进 drawList，但仍要推进离战收推，否则半截 push 会冻住
         this.tickOffscreenSiegePushCaches();
 
+        const _tCollect0 = performance.now();
         const visibleInView = this.collectVisibleUnitsInView();
+        const _tCollect1 = performance.now();
         const useBatch =
             this.mapNeedsRedraw &&
             !hasActiveAnimation &&
@@ -1297,6 +1308,11 @@ export class GlobalUnitRenderer {
         if (import.meta.env.DEV) {
             perfDoctor.note('GlobalUnitRenderer.animate(绘制)', this.lastFrameDrawMs,
                 'src/map/GlobalUnitRenderer.ts:animate', this.lastFrameDrawnUnits);
+            // [2026-11-09 查掉帧] 每帧分段（原来只在 >100ms 才分段，平时看不到稳态成本在哪）
+            perfDoctor.note('GUR段:排序', _tSort1 - _tSort0, 'animate 1. sortedUnitsCache', this.sortedUnitsCache.length);
+            perfDoctor.note('GUR段:更新状态', _tState1 - _tSort1, 'animate 2. updateUnitState 循环', this.sortedUnitsCache.length);
+            perfDoctor.note('GUR段:收集可见', _tCollect1 - _tCollect0, 'collectVisibleUnitsInView', visibleInView.length);
+            perfDoctor.note('GUR段:逐军团绘制', performance.now() - drawLoopStart, 'animate drawList 循环', drawnUnits);
             // 🔴 [2026-09-09 卡顿探针] 只在这一帧确实卡了（>100ms）时落一条，平时零开销。
             //    分「准备段」和「绘制段」两截，直接指出是排序/剔除慢还是画军团慢。
             const totalMs = performance.now() - frameStart;
@@ -2920,49 +2936,28 @@ export class GlobalUnitRenderer {
         let eliteText = unit.name || '';
 
         if (unit.generalId) {
-            const genRec = getGeneralRecordByGeneralId(unit.generalId);
-            if (genRec && genRec.generalName) {
-                generalText = genRec.generalName;
-            }
+            generalText = this.getLabelGeneralName(unit.generalId);
         }
 
         // [MATCH CITY STYLE] Position label BELOW the unit
         const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
         let currentY = center.y + (useNavalVisual ? 75 : 45) * scale;
 
-        ctx.textAlign = 'center'; 
-        ctx.textBaseline = 'top';
+        // 🔴 [2026-11-09 查掉帧] 字体/描边不再逐行设到 ctx 上：文字图已缓存，样式随 LABEL_STYLE_* 进缓存键（见 UnitLabelCache）。
+        //    原来 elite 行前会把 shadowBlur 清 0（影响 drawImage），这里保留同样的保证。
+        if (ctx.shadowBlur !== 0) ctx.shadowBlur = 0;
 
         // 1. Draw General (if exists, Cyan)
         if (generalText) {
-            const genFontSize = 13;
-            ctx.font = `bold ${genFontSize}px Arial`;
-            
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 3;
-            ctx.lineJoin = 'round';
-            ctx.fillStyle = '#00FFFF'; // Bright Cyan
-            drawUnitLabel(ctx, generalText, center.x, currentY, '#00FFFF');
-            
-            currentY += genFontSize + 4;
+            drawUnitLabel(ctx, generalText, center.x, currentY, LABEL_STYLE_GENERAL);
+            currentY += 13 + 4;
         }
 
         // 2. Draw Elite / Unit Name (White, Player Gold Serif)
         if (eliteText) {
             const isPlayer = !!((unit as any).isPlayerHero || (unit as any).playerHero);
-            const nameFontSize = 13;
-            ctx.font = isPlayer
-                ? `bold ${nameFontSize}px 'Noto Serif SC', 'SimSun', serif`
-                : `bold ${nameFontSize}px Arial`;
-            
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
-            ctx.lineWidth = 3;
-            ctx.lineJoin = 'round';
-            ctx.fillStyle = isPlayer ? '#ffd27a' : '#ffffff';
-            ctx.shadowBlur = 0;
-            drawUnitLabel(ctx, eliteText, center.x, currentY, isPlayer ? '#ffd27a' : '#ffffff');
-            
-            currentY += nameFontSize + 4;
+            drawUnitLabel(ctx, eliteText, center.x, currentY, isPlayer ? LABEL_STYLE_PLAYER_NAME : LABEL_STYLE_NAME);
+            currentY += 13 + 4;
         }
 
         // 3. Draw Troops（虚张声势 ×2；与其他视野技同步——非战移动时生效）
@@ -2973,14 +2968,22 @@ export class GlobalUnitRenderer {
         const rawTroops = Math.floor(unit.getTroops());
         const bluffMult = getBluffMagnitude(unit.generalId);
         const displayTroops = (bluffCount && isMoving) ? Math.floor(rawTroops * bluffMult) : rawTroops;
-        const troopsFontSize = 12;
-        const troopsText = `${displayTroops}`;
-        ctx.font = `bold ${troopsFontSize}px Arial`;
+        drawUnitLabel(ctx, `${displayTroops}`, center.x, currentY, LABEL_STYLE_TROOPS);
+    }
 
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.fillStyle = '#ffd700'; // Gold
-        drawUnitLabel(ctx, troopsText, center.x, currentY, '#ffd700');
+    /**
+     * 军团标签用的武将名（1 秒缓存）。`getGeneralRecordByGeneralId` 每次都新建整条记录、解析立绘路径，
+     * 而这里每帧每军团只要一个名字；名字会随年份变（在场判定），1 秒刷新足够跟上。
+     */
+    private labelNameCache = new Map<string, { name: string; at: number }>();
+    private getLabelGeneralName(generalId: string): string {
+        const now = performance.now();
+        const hit = this.labelNameCache.get(generalId);
+        if (hit && now - hit.at < 1000) return hit.name;
+        const name = getGeneralRecordByGeneralId(generalId)?.generalName || '';
+        if (this.labelNameCache.size > 2000) this.labelNameCache.clear();
+        this.labelNameCache.set(generalId, { name, at: now });
+        return name;
     }
 
     public destroy(): void {

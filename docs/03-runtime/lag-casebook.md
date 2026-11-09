@@ -727,3 +727,7 @@ zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `Veg
 已加「窗口跟拍 fps <45 且 ≥200 帧」也 dump（`trigger:'march-lowfps'`，仍 ≥60s 一份）。
 那 1 份（08:51，fps 44）：掉帧帧 30.1ms = 游戏 JS 10.7 + 其余 19.4；JS 里 `GlobalUnitRenderer.animate` 4.1ms/帧（峰值 120ms）居首，
 行军 0.9、AI 0.7、camera 0.6（moveend 0.46）、move 监听 0.02。与第一批（JS 20~36ms）差很大，样本不足，不下结论。
+**11-09 有头 Edge（真显卡，2538×1302，新开局环球 zoom9，10 分钟每分钟一份，`scratch/_edge_globe_20261109.json`）**：
+fps 30~60；掉帧帧 25~42ms = 游戏 JS 10~18ms + 其余 14~24ms（⚠️ 其余含等下一个 vsync 的时间，会高估渲染侧）。
+主循环每帧 6~7ms：部队渲染调度（GlobalUnitRenderer.animate）2.0~3.7 居首，AI 1.1~2.4，行军 0.9~1.6，camera 0.5~1.9；
+主循环外的独立 rAF（海浪 1.0~1.5、植被 0~1.3、民生等）另占 ~4~11ms。植被不是主因，与主人局结论一致。

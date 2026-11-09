@@ -522,6 +522,7 @@ export type SoundKey =
 
 
     | 'weather_wind_loop'
+    | 'tradewind_sail_loop'
 
 
 
@@ -2192,6 +2193,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
     weather_wind_loop: sound('battle', 'weather_wind_loop', 0.75, 0),
+    // [2026-11-09 主人令] 信风航段（阿卡普尔科→关岛）持续风声：复用风声素材，独立于天气声道，不与天气互抢
+    tradewind_sail_loop: sound('battle', 'weather_wind_loop', 0.6, 0),
 
 
 
@@ -7655,6 +7658,11 @@ export class AudioManager {
 
 
 
+    /** 信风航段风声开关（TradeWindEffect 调）：开=淡入循环，关=淡出后停；不经天气声道 */
+    public setTradeWindLoop(on: boolean): void {
+        if (on) this.startLoop('tradewind_sail_loop');
+        else this.stopLoop('tradewind_sail_loop');
+    }
     public syncWeatherAudio(loopKey: SoundKey | null, strength: number): void {
 
 

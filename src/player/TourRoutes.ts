@@ -12,13 +12,13 @@
  *      墨西哥亚洲皇家陆道（韦拉克鲁斯、特诺奇提特兰/墨西哥城、阿卡普尔科）→
  *      马尼拉大帆船太平洋航线（关岛、帕拉帕格、马尼拉、台湾大员 → 回长崎成环）。
  *
- *  · 航行（sail）：严格由东向西沿海上丝绸之路与大航海时代航线推进（共 67 座不重复港口，67/67 全部为海路一跳直连）：
+ *  · 航行（sail）：严格由东向西沿海上丝绸之路与大航海时代航线推进（共 64 座不重复港口，全部为海路一跳直连）：
  *      长崎 → 浙闽粤沿海（宁波、台州、福州、漳州、澎湖、泉州、广州、雷州、崖州）→ 交趾占城 → 昆仑岛 → 淡马锡 →
  *      马六甲海峡 → 尼科巴 → 锡兰加勒 → 印度西岸（小葛兰、古里、孟买、卡拉奇）→ 霍尔木兹 → 亚丁 →
  *      东非斯瓦希里海岸（泽拉、摩加迪沙、蒙巴萨、莫桑比克、索法拉）→ 好望角 → 圣赫勒拿 →
  *      巴西沿岸（萨尔瓦多、卡布弗里乌、圣维森特）→ 布宜诺斯艾利斯 → 圣胡利安 → 麦哲伦海峡 →
  *      南美与中美西岸（瓦尔迪维亚、康塞普西翁、瓦尔帕莱索、阿里卡、利马、瓜亚基尔、巴拿马、雷亚莱霍、阿卡普尔科）→
- *      横渡太平洋（檀香山、汤加、南马都尔、关岛、菲律宾、台湾、琉球、九州 → 回长崎成环）。
+ *      马尼拉大帆船航线横渡太平洋（阿卡普尔科直航关岛、菲律宾、台湾、琉球、九州 → 回长崎成环）。
  */
 export interface TourStop {
     id: string;
@@ -87,7 +87,7 @@ export const GLOBE_CHAIN: TourStop[] = [
     ...GALLEON_SEA_TAIL,
 ];
 
-/** 航行：严格由东向西的海上丝绸之路与大航海环线（67 港全唯一，逐港一跳直连） */
+/** 航行：严格由东向西的海上丝绸之路与大航海环线（64 港全唯一，逐港一跳直连） */
 export const SAIL_CHAIN: TourStop[] = [
     // 东海与南海西行主航道（长崎 → 庆元/宁波 → 台州 → 福州 → 漳州 → 澎湖 → 刺桐/泉州 → 番禺/广州 → 海康 → 崖州 → 乂安 → 云屯 → 占城 → 昆仑岛 → 淡马锡 → 亚齐 → 满剌加）
     S('city_nagasaki'), S('city_qingyuan_zj'), S('city_taizhou_zj'), S('city_fuzhou'), S('city_zhangzhou'),
@@ -105,8 +105,9 @@ export const SAIL_CHAIN: TourStop[] = [
     // 南美与中美太平洋岸北上至阿卡普尔科（瓦尔迪维亚 → 康塞普西翁 → 瓦尔帕莱索 → 阿里卡 → 利马 → 瓜亚基尔 → 巴拿马 → 雷亚莱霍 → 阿卡普尔科）
     S('city_valdivia'), S('city_concepcion'), S('city_valparaiso'), S('city_arica'), S('city_lima'),
     S('city_guayaquil'), S('city_banama'), S('city_realejo'), S('city_acapulco'),
-    // 横渡太平洋西行回长崎（檀香山 → 汤加 → 南马都尔 → 关岛 → 帕拉帕格 → 马尼拉 → 台湾大员 → 艋舺 → 钓鱼岛 → 琉球首里 → 萨摩 → 府内 → 赤间关 → 原之辻 → 太宰府 → 五岛 → 长崎）
-    S('city_honolulu'), S('city_mua'), S('city_nanmadol'), S('city_hagatna'), S('city_palapag'),
+    // 横渡太平洋西行回长崎：马尼拉大帆船航线（阿卡普尔科 → 关岛 → 帕拉帕格 → 马尼拉）→ 台湾大员 → 艋舺 → 钓鱼岛 → 琉球首里 → 萨摩 → 府内 → 赤间关 → 原之辻 → 太宰府 → 五岛 → 长崎
+    // 🔴 [2026-11-09 主人令] 拿掉檀香山、汤加、南马都尔：大帆船阿卡普尔科西行直航关岛，历史上不经这三处（汤加、波纳佩更是南绕一大圈）
+    S('city_hagatna'), S('city_palapag'),
     S('city_manila'), S('city_tainan'), S('city_mengjia'), S('city_diaoyudao'), S('city_gugudao'),
     S('city_shuri'), S('city_akakinagusuku'), S('city_akaogicheng'), S('city_satsuma'), S('city_funei'),
     S('city_songshan'), S('city_chijianguan'), S('city_yuanzhishi'), S('city_taizaifu'), S('city_goto'),
