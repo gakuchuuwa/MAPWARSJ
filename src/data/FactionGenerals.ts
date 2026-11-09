@@ -3507,10 +3507,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'mamon_mameng', factionId: 'mamunid', cityId: 'city_urgench', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '花剌骑兵', eliteTier: 4 },
     ],
-    jianzhou: [
-        // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
-        { generalId: 'jianzhou_nvzhen_limanzhu', factionId: 'jianzhou', cityId: 'city_tongjiajiang', generalName: '李满住', portrait: '/assets/NORTHEAST/jianzhou_nvzhen_limanzhu.png', eliteName: '建州卫兵', eliteTier: 4  },   // 按史：李满住为建州卫首领，八旗未建（《明史·朝鲜传》《清史稿·太祖纪》追述）
-    ],
     bashkir: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'gen_karasakal', factionId: 'bashkir', cityId: 'city_kashan', generalName: '卡拉萨卡尔', portrait: '/assets/CENTRAL_ASIA/gen_karasakal.png', eliteName: '保加尔骑兵', eliteTier: 4 },
@@ -7152,6 +7148,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     manzhou_d: [
+    { generalId: 'jianzhou_nvzhen_limanzhu', factionId: 'manzhou_d', cityId: 'city_tongjiajiang', generalName: '李满住', portrait: '/assets/NORTHEAST/jianzhou_nvzhen_limanzhu.png', eliteName: '建州卫兵', eliteTier: 4  },   // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原势力 jianzhou 并入大清；按史：李满住为建州卫首领，八旗未建（《明史·朝鲜传》《清史稿·太祖纪》追述）
     { generalId: 'manzhou_d_sabusu', factionId: 'manzhou_d', cityId: 'city_bukui', generalName: '萨布素', portrait: '/assets/NORTHEAST/manzhou_d_sabusu.png', eliteName: '黑龙江戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 黑龙江将军 1683—1703，1699 移驻齐齐哈尔
     { generalId: 'manzhou_d_dongtianbi', factionId: 'manzhou_d', cityId: 'city_meinuozhai', generalName: '董天弼', portrait: '/assets/BASHU/manzhou_d_dongtianbi.png', eliteName: '松潘镇兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 乾隆三十八年屯美诺，自美诺驰底木达战死（《清史稿》329）
         // 🔴 [2026-10-20 经典战规则] 明瑞＝清云贵总督（1768 新街之战败于缅军，自尽）→ 沈阳（NORTHEAST）；帝国时代八旗军团；立绘留空
@@ -12860,7 +12857,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    dong: { generalId: 'dong_nangqianjiabo', cityId: 'city_nangqian', generalName: '囊谦', portrait: '/assets/TIBET/dong_nangqianjiabo.png', eliteName: '囊谦骑兵', eliteTier: 4 },
+    // 🔴 [2026-11-09 主人令「没名字的武将删除」] 原 dong: { generalId: 'dong_nangqianjiabo', generalName: '囊谦' } 已删——「囊谦」是囊谦王（Nangchen Gyalpo）的称号，不是本名；旗号「囊谦」照旧（地名／王系，非人名）
 
 
 

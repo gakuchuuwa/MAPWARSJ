@@ -2610,7 +2610,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dong_nangqianjiabo: { generalId: 'dong_nangqianjiabo', tier: 'ordinary', tacticalSkillId: 'ts_082', advantageSkillId: 'ts_082', balanceSkillId: 'ts_137', disadvantageSkillId: 'ts_674', atkBalanceSkillId: 'ts_137', atkAdvantageSkillId: 'ts_082', atkDisadvantageSkillId: 'ts_674', defAdvantageSkillId: 'ts_500', defBalanceSkillId: 'ts_1115', defDisadvantageSkillId: 'ts_226', aptitude: 'leverage' , attackStyle: 'defense'},
+    // dong_nangqianjiabo（囊谦）🔴 [2026-11-09 主人令「没名字的武将删除」] 无本名（＝囊谦王称号），档案整条已删
 
 
 

@@ -165,12 +165,12 @@ export class CityAssetManager {
 'da_qin': '秦',   // 🔴 [2026-10-28] 大秦（朱泚）｜与 SandboxDisplayNames 同口径
 'shatuo': '沙陀',
 'bohai': '渤海',
-'dangxiang': '大夏',
+'dangxiang': '夏',   // 2026-11-09 同步正表（国号本字）
 'menggu_d': '蒙古',
 'manzhou_d': '清',
 'ming_d': '明',
-'jianwen': '建文',   // 建文（靖难中的建文朝廷 1399–1402；铁铉济南之战）
-'shunde': '顺德',   // 顺德（宁王朱宸濠 1519 改元；王守仁鄱阳湖之战）
+'jianwen': '明',   // 🔴 [2026-11-09 主人令「建文是明」] 建文＝年号，国号明（铁铉济南之战 1400）
+'shunde': '明',   // 🔴 [2026-11-09 主人令] 朱宸濠只改元顺德、国号仍是明（王守仁鄱阳湖之战 1519）
 'liao_d': '辽',
 'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
@@ -181,7 +181,7 @@ export class CityAssetManager {
 'tubo': '吐蕃',
 'guge': '吐蕃',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'tujue': '突厥',
-'dayue': '大越',
+'dayue': '越',   // 2026-11-09 同步正表
         'ryukyu': '琉球',
         'so': '对马',
         'kakizaki': '松前',
@@ -209,7 +209,7 @@ export class CityAssetManager {
 'qiuci': '龟兹',
 'yanqi': '焉耆',
 'qifu_d': '秦',
-'murong': '慕容',
+'murong': '燕',   // 2026-11-09 同步正表（慕容燕国号燕）
         'erzhu': '尔朱',
 
         'ouyue': '台',
@@ -252,7 +252,7 @@ export class CityAssetManager {
         'tatar': '塔塔',
 'ongut': '汪古',
 'xushouhui': '天完',
-        'zhangshicheng': '大周',
+        'zhangshicheng': '周',   // 2026-11-09 同步正表（大周，「大」是尊称）
 
         'dengmaoqi': '铲平',
 'dada_ming': '鞑靼',
@@ -278,7 +278,7 @@ export class CityAssetManager {
         'yarkand': '叶尔',
 'khoja': '和卓',
 'jinchuan_g': '金川',
-'shuntian': '天地',
+'shuntian': '顺天',   // 🔴 [2026-11-09 主人令] 林爽文无国号、只有年号顺天 → 旗号写「顺天」（旧值「天地」是会社名，错）
         'gurkha': '廓喀',
 'xiadun': '夏顿',
         'kazakh': '哈萨',
@@ -286,7 +286,7 @@ export class CityAssetManager {
         'badakhshan': '达克',
 'taiping': '太平',
         'zhangchu': '张楚',
-        'desheng': '德胜',
+        'desheng': '汉',   // 2026-11-09 刘通称汉王（国号汉）
         // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun'（婺州义军）已并入隋国，旗面登记删除
         'hulumusi': '忽鲁',          // 2026-11-03 补登记（旧登记表缺口）
         'bolinixiya': '波利',
@@ -316,7 +316,7 @@ export class CityAssetManager {
 
 'gaoche': '高车',
 
-'kala': '喀汗',
+'kala': '喀喇',   // 2026-11-09 同步正表（喀喇汗国）
 'sogdian': '粟特',
         'geluolu': '葛逻',
         'yuchi': '于阗',
@@ -491,7 +491,7 @@ export class CityAssetManager {
 'konbaung': '贡榜',
 'tianxiong': '魏博',
 'huaixi': '淮西',
-'gengshi': '更始',
+'gengshi': '汉',   // 2026-11-09 刘玄复汉（国号汉）
 'shierShijun': '使君',
 'xishan': '西山',
 'malla': '玛拉',
@@ -647,7 +647,7 @@ export class CityAssetManager {
     'kushi': '库施',
     'aolisha': '东恒',
     'kanata': '维查',
-    'adile': '阿迪',
+    'adile': '比贾',   // 2026-11-09 同步正表（比贾普尔城）
     'yilisi': '埃利',
     'nuowei': '挪威',
     'keernuwaye': '康沃',
@@ -697,7 +697,7 @@ export class CityAssetManager {
 'yuan_shao': '冀',
 'hou_jin': '晋',
 'hou_zhao': '赵',
-'da_yan': '大燕',
+'da_yan': '燕',   // 2026-11-09 同步正表（安禄山国号燕）
 'hou_liang': '梁',
 'han_zhao': '汉',
 'dongjin': '晋',
@@ -716,8 +716,8 @@ export class CityAssetManager {
 'machu': '楚',
 'nanhan': '汉',
 'fangguozhen': '浙东',
-'liang_shuofang': '鸣凤',
-'liangshidu': '永隆',
+'liang_shuofang': '梁',   // 2026-11-09 同步正表：萧铣国号梁（势力名「鸣凤」是年号）
+'liangshidu': '梁',   // 2026-11-09 同步正表：梁师都国号梁（势力名「永隆」是年号）
 'qianliang': '凉',
 'liangzhou': '凉',
 'dangchang_guo': '宕昌',
@@ -738,8 +738,8 @@ export class CityAssetManager {
 'oda': '织田',
 'hojo': '北条',
 'mahan': '马韩',
-'daquyue': '瞿越',
-'yuenan': '越南',
+'daquyue': '越',   // 2026-11-09 同步正表（越南系按 11-04 令统一「越」，靠势力色区分）
+'yuenan': '越',   // 2026-11-09 同步正表
     // 🔴 [2026-10-25 主人令「旗帜要按势力来，一个势力一个旗帜，不要重复」] 补登记缺旗势力（旗号＝SANDBOX_DISPLAY_NAMES）
         'aboerleiya': '阿尔',
         'aguelabu': '阿格',
@@ -796,8 +796,8 @@ export class CityAssetManager {
         'early_wokou': '倭寇',
         'mac_dynasty': '莫朝',
         'restored_hanthawaddy': '复汉',
-        'mamunid': '马蒙',
-        'jianzhou': '建州',
+        'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 原「马蒙」＝武将名，改取都城玉龙杰赤
+                // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 'jianzhou' 旗面登记删除（势力并入 manzhou_d，旗号「清」）
         'bashkir': '巴什',
         'drevlians': '德列',
         'mongol_ancient': '蒙兀',
@@ -807,7 +807,7 @@ export class CityAssetManager {
         'goths_migration': '哥特',
         'syracuse': '叙拉',
         'hamdanid': '哈姆',
-        'wiman_joseon': '卫满',
+        'wiman_joseon': '卫',   // 🔴 [2026-11-09 主人令「改成卫」] 旗号不许用人名（原「卫满」＝武将名）
         'gusiluo': '唃厮',
         'yarlung': '雅砻',
         'old_saxons': '古撒',
@@ -856,7 +856,7 @@ export class CityAssetManager {
         'lagoniya': '斯巴',
         'lagusa': '拉古',
         'leangongguo': '莱昂',
-        'luoma_diguo': '罗马',
+        'luoma_diguo': '罗马',   // 🔴 [2026-11-09 主人令「罗马不要用大秦。罗马不是符号吗」] 罗马挂符号旗 EAGLE（军团鹰），旗面不画字 → 旗号恢复「罗马」（11-01「改大秦」那条前提对符号旗不成立，已撤）
         'maixiya': '麦西',
         'moerdaweiya': '摩尔',
         'mosike_gongguo': '莫斯',

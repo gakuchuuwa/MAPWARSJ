@@ -564,7 +564,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'mac_dynasty': '#5A2E2E', // 莫朝
     'restored_hanthawaddy': '#7B3A2E', // 复兴汉达瓦底
     'mamunid': '#6A5A4A', // 马蒙王朝
-    'jianzhou': '#2E4A3A', // 建州女真
+    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 'jianzhou': '#2E4A3A' 已删（并入大清，色随 manzhou_d）
     'bashkir': '#3B6A5A', // 巴什基尔
     'drevlians': '#4A5A3A', // 德列夫利安人
     'mongol_ancient': '#5A6A7A', // 蒙兀室韦

@@ -1389,7 +1389,7 @@ buildingStyle: 'BASHU', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 明大方城（今大方），贵州；大方城；罗甸小城；推算：城居 1 万（大方＝罗甸水西土司治所，同期 1 万）→ 小城',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：晋兴（广西南宁）：晋置晋兴郡，汉地州郡
-    { id: 'city_yongzhou', name: '晋兴', factionId: 'nongzhigao', lat: 22.81, lng: 108.31, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 晋晋兴郡（今南宁）；侬智高破邕州建南天国；按 2026-10-25 标准：城居 1–2 → 小城' },
+    { id: 'city_yongzhou', name: '晋兴', factionId: 'nongzhigao', lat: 22.81, lng: 108.31, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 晋晋兴郡（今南宁）；侬智高破邕州称帝、国号大南国并改邕州为南天府（《宋史·广源州蛮传》）；按 2026-10-25 标准：城居 1–2 → 小城' },
 
     { id: 'city_qingxi', name: '帮源洞', factionId: 'fangla', lat: 29.6, lng: 119.04, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '🔴 [2026-11-07 按史补依据] 方腊帮源洞（今淳安）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 

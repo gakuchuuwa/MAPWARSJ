@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴🔴 [2026-11-09 主人令「按大部分年份改」——取代下面所有「分段」说法] **每个势力只有一个时代＝它存续年份大部分落在哪个时代**
@@ -187,7 +187,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mac_dynasty': [{ from: -9999, era: 'imperial' }], // 莫朝｜存续 1527–1677 大部分年份
     'restored_hanthawaddy': [{ from: -9999, era: 'imperial' }], // 复兴汉达瓦底（彬尼亚达拉）｜存续 1740–1757 大部分年份
     'mamunid': [{ from: -9999, era: 'feudal' }], // 马蒙王朝（花剌子模）｜存续 995–1017 大部分年份
-    'jianzhou': [{ from: -9999, era: 'imperial' }], // 建州女真｜存续 1403–1616 大部分年份
+    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 'jianzhou': [{ from: -9999, era: 'imperial' }] 已删（并入大清）
     'bashkir': [{ from: -9999, era: 'imperial' }], // 巴什基尔起义（卡拉萨卡尔）｜存续 1550–1798 大部分年份
     'drevlians': [{ from: -9999, era: 'feudal' }], // 德列夫利安人｜存续 600–946 大部分年份
     'mongol_ancient': [{ from: -9999, era: 'feudal' }], // 蒙兀室韦（孛端察儿）｜存续 700–1130 大部分年份

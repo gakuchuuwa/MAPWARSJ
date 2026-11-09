@@ -482,7 +482,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dixiang_wangmang': 'CENTRAL',   // 新国｜王莽｜据点 长安
     'dizhou_wangyanzhang': 'CENTRAL',   // 朱梁｜王彦章｜据点 曲阜
     'don_vorontsov': 'SLAVIC',   // 俄罗斯帝国｜沃隆佐夫｜据点 圣彼得堡
-    'dong_nangqianjiabo': 'TIBET',   // 囊谦土司｜囊谦｜据点 囊谦宗
+    // 'dong_nangqianjiabo': 'TIBET',   // 🔴 [2026-11-09 主人令「没名字的武将删除」] 无本名（＝囊谦王称号）已删
     'dongdan_yelvbei': 'XIANBEI',   // 大辽｜耶律倍｜据点 临潢府
     'donggete_berig': 'VIKINGS',   // 东哥特｜贝里格｜据点 维斯比
     'donghu_tuiyin': 'XIANBEI',   // 拓跋魏｜推寅｜据点 巴彦乌拉
@@ -1276,7 +1276,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mojietuo_pinbisuoluo': 'MUGHAL',   // 摩揭陀王国｜频毗娑罗｜据点 王舍城
     'mombasa_yusuf': 'ETHIOPIANS',   // 蒙巴萨苏丹国｜优素福｜据点 蒙巴萨
     'mon_monuhe': 'BURMESE',   // 孟族｜摩奴诃｜据点 直通
-    'monong_anong': 'VIETNAMESE',   // 南天国｜阿侬｜据点 广源
+    'monong_anong': 'VIETNAMESE',   // 大南国｜阿侬｜据点 广源
     'monpa_meire': 'TIBET',   // 甘丹颇章｜洛珠嘉措｜据点 错那
     'montereau_pressy': 'BURGUNDIANS',   // 勃艮第公国｜普雷西｜据点 蒙特罗
     'mowoer_akeba': 'MUGHAL',   // 莫卧儿帝国｜阿克巴｜据点 阿格拉
@@ -1313,8 +1313,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ningkou_liling': 'HEXI',   // 刘汉｜李陵｜据点 张掖
     'ningwu_zhouyuji': 'WEI',   // 大明｜周遇吉｜据点 宁武关
     'nogai_votkhovsky': 'SLAVIC',   // 俄罗斯帝国｜沃特霍夫斯基｜据点 萨马拉
-    'nong2_nongzhigao': 'VIETNAMESE',   // 南天国｜侬智高｜据点 广源
-    'nongzhigao_huangshimi': 'HUGUANG',   // 南天国｜黄师宓｜据点 晋兴
+    'nong2_nongzhigao': 'VIETNAMESE',   // 大南国｜侬智高｜据点 广源
+    'nongzhigao_huangshimi': 'HUGUANG',   // 大南国｜黄师宓｜据点 晋兴
     'nuergan_kangwang': 'NORTHEAST',   // 大明｜康旺｜据点 特林
     'nuowei_einar': 'VIKINGS',   // 挪威｜神射手埃纳尔｜据点 博尔贡
     'nuowei_erikred': 'VIKINGS',   // 挪威｜红胡子艾里克｜据点 博尔贡

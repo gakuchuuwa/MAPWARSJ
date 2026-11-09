@@ -183,8 +183,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'early_wokou': '倭寇',
     'mac_dynasty': '莫朝',
     'restored_hanthawaddy': '复汉',
-    'mamunid': '马蒙',
-    'jianzhou': '建州',
+    'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 马蒙王朝＝花剌子模 Ma'munids（995–1017），都玉龙杰赤；原旗号「马蒙」与旗下武将名同字（播报叠念），且「花剌」已被花剌子模帝国(huarazim)占用 → 取都城名「玉龙」
+        // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 'jianzhou': '建州' 已删除（原违规：旗号含「州」；势力并入大清，旗号随大清「清」）
     'bashkir': '巴什',
     'drevlians': '德列',
     'mongol_ancient': '蒙兀',
@@ -194,7 +194,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'goths_migration': '哥特',
     'syracuse': '叙拉',
     'hamdanid': '哈姆',
-    'wiman_joseon': '卫满',
+    'wiman_joseon': '卫',   // 🔴 [2026-11-09 主人令「改成卫」] 原「卫满」是武将名（旗下有卫满、卫右渠），人名不许当旗号 → 取国号「朝鲜」的家族称首字「卫」（史称卫氏朝鲜）
     'gusiluo': '唃厮',
     'yarlung': '雅砻',
     'old_saxons': '古撒',
@@ -233,10 +233,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   huohengsuolun: '勃普',
   ruishi: '瑞士',
   damolaweiya: '摩拉',
-  // 🔴 [2026-11-01 主人令「expedition:triple-check 拉丁/罗马 旗号＝据点名逐字相同，请处理」]
-  //    旗号「罗马」与首府据点名「罗马」逐字相同（播报会念成「罗马 罗马军团」），按汉籍史称改「大秦」
-  //    （《后汉书·西域传》大秦即罗马；与势力名「罗马帝国」并存，如大明旗号「明」）。据点名、番号不动。
-  luoma_diguo: '大秦',
+  // 🔴 [2026-11-09 主人令「罗马不要用大秦。罗马不是符号吗」] 罗马帝国挂符号旗 `FACTION_EMBLEM['luoma_diguo'] = 'EAGLE'`（军团鹰），
+  //    旗面上不画字 —— 原 2026-11-01 那条「旗号与首府据点名『罗马』逐字相同，改『大秦』」的前提（播报会念成「罗马 罗马军团」）
+  //    对符号旗不成立，故按主人令撤回：旗号恢复势力简称「罗马」，盖 11-09 令优先于 11-01 令。
+  luoma_diguo: '罗马',
   xiongren: '匈人',
     'awaer': '瓦尔',   // 阿瓦尔
 
@@ -287,8 +287,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'menggu_d': '蒙古',
 'manzhou_d': '清',
 'ming_d': '明',
-'jianwen': '建',   // 建文（靖难中的建文朝廷 1399–1402）
-'shunde': '顺',   // 顺德（宁王朱宸濠 1519 改元「顺德」）
+'jianwen': '明',   // 🔴 [2026-11-09 主人令「建文是明」] 建文只是年号，国号仍是明（靖难中的建文朝廷 1399–1402）
+'shunde': '明',   // 🔴 [2026-11-09 主人令] 宁王朱宸濠 1519 只改元「顺德」，从未改国号，国号仍是明（原旗号「顺」不截年号首字）
 'liao_d': '辽',
 'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
@@ -415,11 +415,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yarkand': '叶尔',
 'khoja': '和卓',
 'jinchuan_g': '金川',
-'shuntian': '顺',   // 🔴 [2026-11-04 主人令「按历史修复」] 势力改名「顺天」（林爽文建元顺天），旗号取年号首字「顺」
+'shuntian': '顺天',   // 🔴 [2026-11-09 主人令「哪有顺这个旗号，有历史出处吗」] 林爽文只有年号「顺天」、没有国号 → 旗号照年号全写「顺天」，不截首字（旧值「顺」无出处）
 'bailian': '白莲',
 'chimei': '赤眉',
         'zhangchu': '张楚',   // 张楚·陈胜
-        'desheng': '德胜',
+        'desheng': '汉',   // 🔴 [2026-11-09 主人令] 刘通称汉王（《明史·刘通传》），国号汉；德胜只是年号 → 旗号写国号「汉」
         // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun' 已并入隋国，旗号登记删除
     'gurkha': '廓喀',
 'xiadun': '夏顿',
@@ -662,7 +662,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'konbaung': '贡榜',
 'tianxiong': '魏博',
 'huaixi': '淮西',
-'gengshi': '更始',
+'gengshi': '汉',   // 🔴 [2026-11-09 主人令] 刘玄汉室宗亲复汉，国号汉；更始只是年号 → 旗号写国号「汉」
 'shierShijun': '使君',
 'xishan': '西山',  // 🔴 [2026-11-04 主人「用西不太好，太泛指；不行就用西山」] 西山朝国号虽亦称大越，但与阮福映（越）同场内战，旗号用西山区分
 'malla': '玛拉',
@@ -704,7 +704,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
 'dulan_d': '杜兰',
-'xisi': '锡斯',
+'xisi': '萨法',   // 🔴 [2026-11-09 主人令] 861 年雅库布据锡斯坦建萨法尔王朝（صفاریان）；「锡斯坦」是地区名 → 势力正名「萨法尔」，旗号「萨法」
   huluo: '呼罗',
 'wuyue': '吴越',
   'minyue': '闽越',
@@ -935,7 +935,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'anjou': '安茹',   // 安茹
     'pisa': '比萨',
     'yaqi': '亚齐',
-    'zhamolin': '古里',   // 比萨共和国
+    'zhamolin': '古里',   // 卡利卡特（古里＝明代汉籍对 Calicut 的称呼；原文误抄「比萨共和国」，2026-11-09 修正）
 };
 
 // @ts-ignore

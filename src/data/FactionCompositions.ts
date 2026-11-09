@@ -29,6 +29,318 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+// 🔴 [2026-11-09 主人令「建议没问题就改」] 补齐「缺编制」77 家：这些势力此前在表里没有条目（运行时会回落到
+//    「势力时代 × 据点文化」自动格，打仗不受影响；缺的只是这条登记指针——面板/编辑器军团名、征兵取军团名、
+//    军团被删后的重指向会落空）。下面每条 legionName＝该势力主将的自动格军团（与带将部队实战同源），
+//    legionType＝region（文化军团）；本类型不含兵种，slots 仍由军团定义给，改文化/时代后自动跟着变。
+"hulumusi": {
+    legionName: "城堡时代法尔斯军团",
+    legionType: "region",
+},   // 忽鲁谟斯｜主将 阿塔
+"bolinixiya": {
+    legionName: "帝国时代马六甲军团",
+    legionType: "region",
+},   // 波利尼西亚｜主将 伊索克勒克尔
+"latin_empire": {
+    legionName: "城堡时代法兰西骑士军团",
+    legionType: "region",
+},   // 拉丁帝国｜主将 鲍德温九世
+"anjou": {
+    legionName: "城堡时代法兰西骑士军团",
+    legionType: "region",
+},   // 安茹｜主将 路易三世
+"pisa": {
+    legionName: "城堡时代意大利雇兵军团",
+    legionType: "region",
+},   // 比萨共和国｜主将 乌戈里诺
+"chalkidike": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 卡尔基季基同盟｜主将 拉斯特涅斯
+"naxos": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 纳克索斯｜主将 吕格达米斯
+"phokis": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 福基斯｜主将 菲洛墨洛斯
+"wuguobu": {
+    legionName: "封建时代渤海军团",
+    legionType: "region",
+},   // 五国部｜主将 浑敞
+"balti": {
+    legionName: "帝国时代卫藏军团",
+    legionType: "region",
+},   // 巴尔蒂｜主将 阿里谢尔汗
+"zhenghe_yijun": {
+    legionName: "城堡时代湘楚军团",
+    legionType: "region",
+},   // 头陀军｜主将 黄华
+"desheng": {
+    legionName: "城堡时代湘楚军团",
+    legionType: "region",
+},   // 德胜｜主将 刘通
+"zhangchu": {
+    legionName: "古典时代华夏军团",
+    legionType: "region",
+},   // 张楚｜主将 陈胜
+"epirus_despotate": {
+    legionName: "城堡时代伊庇鲁斯军团",
+    legionType: "region",
+},   // 伊庇鲁斯专制国｜主将 米海尔一世
+"teotihuacan": {
+    legionName: "古典时代佩滕军团",
+    legionType: "region",
+},   // 特奥蒂瓦坎｜主将 西亚赫卡克
+"salakanagara": {
+    legionName: "古典时代巽他军团",
+    legionType: "region",
+},   // 萨拉卡那加拉｜主将 德瓦瓦尔曼
+"kartli_kakheti": {
+    legionName: "帝国时代高加索军团",
+    legionType: "region",
+},   // 卡特利-卡赫季｜主将 赫拉克留二世
+"helvetii": {
+    legionName: "古典时代萨波迪亚军团",
+    legionType: "region",
+},   // 赫尔维蒂｜主将 迪维科
+"hussites": {
+    legionName: "城堡时代胡斯军团",
+    legionType: "region",
+},   // 胡斯派｜主将 杰士卡
+"cherusci": {
+    legionName: "古典时代撒克逊军团",
+    legionType: "region",
+},   // 切鲁西｜主将 阿米尼乌斯
+"sweden_medieval": {
+    legionName: "城堡时代北欧军团",
+    legionType: "region",
+},   // 中世纪瑞典｜主将 比尔格雅尔
+"rus_khaganate": {
+    legionName: "封建时代瓦良格军团",
+    legionType: "region",
+},   // 罗斯汗国｜主将 留里克
+"byzantium_late": {
+    legionName: "城堡时代拜占庭军团",
+    legionType: "region",
+},   // 晚期拜占庭｜主将 伊萨克
+"bulgaria_second": {
+    legionName: "城堡时代默西亚军团",
+    legionType: "region",
+},   // 第二保加利亚帝国｜主将 伊瓦伊洛
+"poland_duchy": {
+    legionName: "封建时代波兰尼军团",
+    legionType: "region",
+},   // 波兰公国｜主将 勇者波列
+"saxony_electorate": {
+    legionName: "帝国时代萨克森军团",
+    legionType: "region",
+},   // 萨克森选侯国｜主将 约翰腓特烈
+"portugal_medieval": {
+    legionName: "城堡时代葡萄牙王国军团",
+    legionType: "region",
+},   // 中世纪葡萄牙｜主将 恩里克
+"denmark_norway": {
+    legionName: "帝国时代丹麦皇家军团",
+    legionType: "region",
+},   // 丹麦-挪威｜主将 克里斯蒂安四世
+"denmark_medieval": {
+    legionName: "城堡时代卡尔马军团",
+    legionType: "region",
+},   // 中世纪丹麦｜主将 阿布萨隆
+"scotland_stuart": {
+    legionName: "帝国时代苏格兰高地军团",
+    legionType: "region",
+},   // 斯图亚特苏格兰｜主将 格雷厄姆
+"england_modern": {
+    legionName: "帝国时代大不列颠军团",
+    legionType: "region",
+},   // 近代英格兰｜主将 萨默斯
+"rashtrakuta": {
+    legionName: "封建时代朱罗军团",
+    legionType: "region",
+},   // 拉什特拉库塔｜主将 阿目佉跋沙
+"andean_rebellion": {
+    legionName: "帝国时代塔万廷军团",
+    legionType: "region",
+},   // 安第斯起义军｜主将 卡塔里
+"abkhazia_kingdom": {
+    legionName: "封建时代巴格拉特铁骑军团",
+    legionType: "region",
+},   // 阿布哈兹王国｜主将 巴格拉特
+"early_wokou": {
+    legionName: "海贼倭寇军团",
+    legionType: "sub",   // 三级军团（LEVEL_3_LEGIONS 自建军团），编辑器判型用 sub
+},   // 前期倭寇｜主将 阿只拔都
+"mac_dynasty": {
+    legionName: "帝国时代洛韦克军团",
+    legionType: "region",
+},   // 莫朝｜主将 区大任
+"restored_hanthawaddy": {
+    legionName: "帝国时代缅甸军团",
+    legionType: "region",
+},   // 复兴汉达瓦底｜主将 彬尼亚达拉
+"mamunid": {
+    legionName: "封建时代图兰军团",
+    legionType: "region",
+},   // 马蒙王朝｜主将 马蒙
+"bashkir": {
+    legionName: "帝国时代突厥斯坦军团",
+    legionType: "region",
+},   // 巴什基尔｜主将 卡拉萨卡尔
+"drevlians": {
+    legionName: "封建时代基辅罗斯军团",
+    legionType: "region",
+},   // 德列夫利安人｜主将 日托米尔
+"mongol_ancient": {
+    legionName: "封建时代突厥军团",
+    legionType: "region",
+},   // 蒙兀室韦｜主将 孛端察儿
+"marcomanni": {
+    legionName: "古典时代马科曼尼军团",
+    legionType: "region",
+},   // 马科曼尼｜主将 马罗博杜斯
+"serbia_revolution": {
+    legionName: "帝国时代骠骑先锋军团",
+    legionType: "region",
+},   // 塞尔维亚革命｜主将 辛格利奇
+"caledonia": {
+    legionName: "古典时代皮克特军团",
+    legionType: "region",
+},   // 喀里多尼亚｜主将 卡尔加库斯
+"goths_migration": {
+    legionName: "古典时代北欧日耳曼军团",
+    legionType: "region",
+},   // 哥特人｜主将 贝里格
+"syracuse": {
+    legionName: "古典时代叙拉古军团",
+    legionType: "region",
+},   // 叙拉古｜主将 阿加索克利
+"hamdanid": {
+    legionName: "封建时代哈里发军团",
+    legionType: "region",
+},   // 哈姆丹王朝｜主将 赛弗道莱
+"wiman_joseon": {
+    legionName: "古典时代高句丽军团",
+    legionType: "region",
+},   // 卫满朝鲜｜主将 卫满
+"gusiluo": {
+    legionName: "城堡时代萨迦军团",
+    legionType: "region",
+},   // 唃厮啰｜主将 木征
+"yarlung": {
+    legionName: "古典时代发羌军团",
+    legionType: "region",
+},   // 雅砻部落｜主将 聂赤
+"old_saxons": {
+    legionName: "封建时代奥斯特法伦军团",
+    legionType: "region",
+},   // 古撒克逊｜主将 亨吉斯特
+"alamanni": {
+    legionName: "古典时代日耳曼尼亚军团",
+    legionType: "region",
+},   // 阿勒曼尼｜主将 克诺多马尔
+"magyar_tribes": {
+    legionName: "封建时代马扎尔军团",
+    legionType: "region",
+},   // 马扎尔部落联盟｜主将 阿尔帕德
+"taifa_toledo": {
+    legionName: "封建时代哈里发军团",
+    legionType: "region",
+},   // 托莱多泰法｜主将 卡迪尔
+"florence": {
+    legionName: "城堡时代意大利雇兵军团",
+    legionType: "region",
+},   // 佛罗伦萨共和国｜主将 洛伦佐
+"tuitonga": {
+    legionName: "城堡时代爪哇军团",
+    legionType: "region",
+},   // 汤加帝国｜主将 莫莫
+"rapanui": {
+    legionName: "城堡时代爪哇军团",
+    legionType: "region",
+},   // 拉帕努伊｜主将 霍图玛图阿
+"later_baekje": {
+    legionName: "封建时代新罗军团",
+    legionType: "region",
+},   // 后百济｜主将 神剑
+"arverni": {
+    legionName: "古典时代高卢军团",
+    legionType: "region",
+},   // 阿维尔尼｜主将 维钦托利
+"france_modern": {
+    legionName: "帝国时代法兰西军团",
+    legionType: "region",
+},   // 近代法兰西｜主将 乌里希
+"imro": {
+    legionName: "帝国时代塞拉尼克军团",
+    legionType: "region",
+},   // 内马其顿革命组织｜主将 代尔切夫
+"bulgaria_third": {
+    legionName: "帝国时代里拉军团",
+    legionType: "region",
+},   // 保加利亚公国｜主将 列夫斯基
+"later_le": {
+    legionName: "帝国时代安南军团",
+    legionType: "region",
+},   // 后黎朝｜主将 黎来
+"aksum": {
+    legionName: "封建时代拉利贝拉军团",
+    legionType: "region",
+},   // 阿克苏姆｜主将 埃扎纳
+"castile_county": {
+    legionName: "封建时代摩尔游骑军团",
+    legionType: "region",
+},   // 卡斯蒂利亚伯国｜主将 费尔南·冈萨雷斯
+"milan_duchy": {
+    legionName: "帝国时代意大利皇家军团",
+    legionType: "region",
+},   // 米兰公国｜主将 斯福尔扎
+"lombard_league": {
+    legionName: "城堡时代意大利雇兵军团",
+    legionType: "region",
+},   // 伦巴第联盟｜主将 比安德拉泰
+"cilicia_armenia": {
+    legionName: "城堡时代奇里乞亚军团",
+    legionType: "region",
+},   // 奇里乞亚亚美尼亚｜主将 托罗斯二世
+"armenia_arsacid": {
+    legionName: "古典时代大亚美尼亚军团",
+    legionType: "region",
+},   // 阿萨息斯亚美尼亚｜主将 瓦尔丹
+"syunik_bek": {
+    legionName: "帝国时代亚美尼亚军团",
+    legionType: "region",
+},   // 休尼克｜主将 达维德
+"northumbria": {
+    legionName: "封建时代盎格鲁撒克逊军团",
+    legionType: "region",
+},   // 诺森布里亚｜主将 艾特尔弗里思
+"wessex": {
+    legionName: "封建时代盎格鲁撒克逊军团",
+    legionType: "region",
+},   // 威塞克斯｜主将 阿尔弗雷德
+"subroman_britain": {
+    legionName: "封建时代盎格鲁撒克逊军团",
+    legionType: "region",
+},   // 后罗马不列颠｜主将 兰斯洛特
+"xinmeiliyan": {
+    legionName: "古典时代萨尔马提亚军团",
+    legionType: "region",
+},   // 辛梅里安｜主将 图格达梅
+"aixini": {
+    legionName: "古典时代布立吞军团",
+    legionType: "region",
+},   // 爱西尼｜主将 布狄卡
+"yinduxila": {
+    legionName: "古典时代普鲁战象军团",
+    legionType: "region",
+},   // 印度希腊王国｜主将 米南德
+"asakaini": {
+    legionName: "古典时代普鲁战象军团",
+    legionType: "region",
+},   // 阿萨凯尼｜主将 阿夫里凯斯
     // 🔴 [2026-10-25 主人令「全面修复」] 势力编制指针按「该势力主将的实际军团（势力时代 × 据点文化）」对齐；
     //    跨多文化的势力一个指针表达不了全部，以主将为准。该指针只作「该格没有军团」时的兜底，不给带将部队用。
     //    · 第一批（旧 STARTING_CAPITALS 首府过时）：色雷斯/苻秦/乌桓/肃慎/骆越/冉魏/杜尔伯特/瞿折罗/荷东印/巽伽/后梁/汉赵。

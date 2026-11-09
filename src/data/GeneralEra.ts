@@ -200,7 +200,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'disidelusi_disidelusi': 'antiquity',
     'dixiang_wangmang': 'antiquity',
     'dizhou_wangyanzhang': 'feudal',
-    'dong_nangqianjiabo': 'castle',
+    // 'dong_nangqianjiabo': 'castle',   // 🔴 [2026-11-09 主人令「没名字的武将删除」] 无本名（＝囊谦王称号）已删
     'dongdan_yelvbei': 'feudal',
     'donghu_tuiyin': 'feudal',
     'donghui_nanlv': 'antiquity',

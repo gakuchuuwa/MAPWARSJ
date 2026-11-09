@@ -152,7 +152,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     mac_dynasty: { start: 1527, end: 1677, source: 'Wikipedia「Mạc dynasty」：1527–1677' },
     restored_hanthawaddy: { start: 1740, end: 1757, source: 'Wikipedia「Restored Hanthawaddy Kingdom」：1740–1757' },
     mamunid: { start: 995, end: 1017, source: 'Wikipedia「Ma\'munids」：995–1017 花剌子模沙' },
-    jianzhou: { start: 1403, end: 1616, source: '《明实录》：1403 设建州卫，1616 努尔哈赤建后金' },
+    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 1403–1616 已删（并入大清 manzhou_d）
     bashkir: { start: 1550, end: 1798, source: 'Wikipedia「Bashkir uprisings」：1550 年代归附莫斯科，1704–1740 多次起义' },
     drevlians: { start: 600, end: 946, source: 'Wikipedia「Drevlians」：6–10 世纪东斯拉夫部族，946 为奥尔加所灭' },
     mongol_ancient: { start: 700, end: 1130, source: '《旧唐书·北狄传》蒙兀室韦；1130 年代合不勒汗立合木黑蒙古' },

@@ -1243,7 +1243,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/JIANGNAN/xie_xiefangde.png": {
-            "scale": 1.15,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -1766,11 +1766,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 0
-        },
-        "/assets/TIBET/dong_nangqianjiabo.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": 26
         },
         "/assets/TIBET/dulan_dashibatuer.png": {
             "scale": 0.94,
@@ -10936,6 +10931,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/CENTRAL/bfe3_88.png": {
+            "scale": 1.13,
+            "offsetX": 16,
+            "offsetY": 6
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_52.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/NORTHEAST/bfe_fuquan.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

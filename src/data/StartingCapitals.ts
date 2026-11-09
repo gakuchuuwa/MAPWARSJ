@@ -159,7 +159,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'mac_dynasty': 'city_sanpu',   // 登记用，不改据点归属
     'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
     'mamunid': 'city_urgench',   // 登记用，不改据点归属
-    'jianzhou': 'city_tongjiajiang',   // 登记用，不改据点归属
+    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 'jianzhou': 'city_tongjiajiang' 已删（浑江本属 manzhou_d）
     'bashkir': 'city_kashan',   // 登记用，不改据点归属
     'drevlians': 'city_zhytomyr',   // 登记用，不改据点归属
     'mongol_ancient': 'city_burhan',   // 登记用，不改据点归属

@@ -253,7 +253,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'daca_dacajilong': 18,                               // 达擦济咙 · daca · 八宿宗
     'dafeichuan_nuohebo': 7,                            // 诺曷钵 · dafeichuan · 大非川
     'dalung_sangjiwen': 13,                              // 桑吉温 · dalung · 类乌齐
-    'dong_nangqianjiabo': 12,                            // 囊谦 · dong · 囊谦宗
+    // 'dong_nangqianjiabo': 12,   // 🔴 [2026-11-09 主人令「没名字的武将删除」] 无本名（＝囊谦王称号）已删
     'dulan_dashibatuer': 18,                             // 达什巴图尔 · dulan · 台吉乃尔
     'duomi_lunkongre': 9,                               // 论恐热 · duomi · 白海堡
     'faqiang_niechizanpu': -2,                           // 聂赤 · faqiang · 萨噶
@@ -521,7 +521,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'hejian_gongsunzan': 2,                             // 公孙瓒 · hejian · 文安
     'heng1_yangye': 10,                                  // 杨业 · heng1 · 雁门关
     'huo_songlaosheng': 7,                              // 宋老生 · huo · 灵石关
-    'jianzhou_nvzhen_limanzhu': 15,                      // 李满住 · jianzhou_nvzhen · 浑江
+    'jianzhou_nvzhen_limanzhu': 15,                      // 李满住 · 大清（原建州女真，2026-11-09 并入大清）· 浑江
     'jinzhou_lichengliang': 16,                          // 李成梁 · jinzhou · 徒河
     'liangshidu_longjia': -4,                            // 龙贾 · liangshidu · 绥德
     'lingqiu_zhaowuling': -4,                            // 赵雍 · lingqiu · 平型关
