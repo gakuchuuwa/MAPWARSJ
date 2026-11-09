@@ -17,7 +17,6 @@ import {
     moderateLiveName,
 } from './LiveNameModeration';
 import { PLAYER_HERO_NAME, PLAYER_RANKS } from '../player/PlayerConfig';
-import { sixUnlockBlockReason } from '../player/PlayerLiveSkill';
 import { CULTURE66_PORTRAIT_POOLS } from '../config/portrait_defaults';
 import { style62OfCity } from '../player/PlayerQuestSystem';
 import { PlayerHero } from '../player/PlayerHero';
@@ -88,19 +87,6 @@ const TRAD_TO_SIMP: Record<string, string> = {
 };
 function normalizeCommand(text: string): string {
     return text.normalize('NFKC').trim().replace(/[勝敵並併敗戰選號莊閒註]/g, (c) => TRAD_TO_SIMP[c] ?? c);
-}
-
-/** 玩家爆发技口令：技3 / 技 3；数字就是这次出的积分。 */
-export function scoutBidOf(word: string): number | null {
-    const m = word.match(/^技\s*([1-9]\d*)$/);
-    if (!m) return null;
-    const bid = Number(m[1]);
-    return Number.isSafeInteger(bid) && bid > 0 ? bid : null;
-}
-
-/** 预留折算函数（供后续付费实验扩展与兼容校验使用；初期不参与技能扣款）。 */
-export function scoutBidCents(bid: number): number {
-    return Math.ceil(bid * PRICE_PER_CAST / ORDERS_PER_CAST);
 }
 
 /** 玩家改名竞拍口令：名 新名字 / 名 新名字 5 / 改名 新名字 10（省略积分时默认在当前最高价上 +1） */
@@ -348,16 +334,6 @@ export interface ViewerQueuedCast {
     /** 是否已在入队时预扣积分（false＝释放时再扣，未放出不扣分） */
     deducted?: boolean;
 }
-export interface ViewerQueuedScoutCast {
-    uid: string;
-    viewer: string;
-    bid: number;
-    seq: number;
-    ordersCost: number;
-    centsCost: number;
-    /** 是否已在入队时预扣积分（false＝释放时再扣，未放出不扣分） */
-    deducted?: boolean;
-}
 export interface ViewerRenameRecord {
     uid: string;
     viewer: string;
@@ -386,7 +362,6 @@ export interface LiveCommandRecord {
     uid: string;
     viewer: string;
     commandType:
-        | 'skill_burst'
         | 'skill_six'
         | 'rename'
         | 'join_choice'
@@ -423,10 +398,8 @@ export interface ViewerLedger {
     orders: Record<string, { name: string; n: number; seen?: number; day?: string; earned?: number; earnDay?: string }>;
     handled: string[];
     queue?: ViewerQueuedCast[];
-    scoutQueue?: ViewerQueuedScoutCast[];
     sides?: [string, 0 | 1][];
     wanted?: [string, string][];
-    scoutSeq?: number;
     renameHighestBid?: number;
     renameHistory?: ViewerRenameRecord[];
     blockedNames?: string[];
@@ -447,7 +420,6 @@ export interface ViewerCastResult {
     skillName?: string;
 }
 type QueuedCast = ViewerQueuedCast;
-type QueuedScoutCast = ViewerQueuedScoutCast;
 interface OrderAcct {
     name: string;
     n: number;
@@ -493,8 +465,6 @@ export class ViewerLive {
     private wanted = new Map<string, string>();
     private handled = new Set<string>();
     private queue: QueuedCast[] = [];
-    private scoutQueue: QueuedScoutCast[] = [];
-    private scoutSeq = 0;
     private commandSeq = 0;
     private revision = 0;
     private readonly sessionId = `live-${Date.now()}`;
@@ -613,7 +583,7 @@ export class ViewerLive {
         this.save();
     }
 
-    /** 普通聊天刷新在场（在场才吃每 3 分钟的分）；统一命令层解析查分、改名、投靠、玩家爆发技与玩家六计。 */
+    /** 普通聊天刷新在场（在场才吃每 3 分钟的分）；统一命令层解析查分、改名、投靠与玩家六计。 */
     public onChat(
         viewer: string,
         text: string,
@@ -779,26 +749,6 @@ export class ViewerLive {
 
         if (word === '像' || word === '图') { return this.note(this.portraitHint(name));
         }
-        if (false) {
-        }
-
-        // 3. 玩家爆发技（技3 / 技4…，高价先放，同价 FIFO）
-        const scoutBid = scoutBidOf(word);
-        if (scoutBid !== null) {
-            if (meta?.staleForBattle) {
-                this.recordCmd(eventId, id, name, 'skill_burst', `技${scoutBid}`, scoutBid, pubMs, now, 'rejected', '迟到于上一场战斗');
-                this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
-                return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
-            }
-            const blocked = this.playerSkillBlockReason();
-            if (blocked) {
-                this.recordCmd(eventId, id, name, 'skill_burst', `技${scoutBid}`, scoutBid, pubMs, now, 'rejected', blocked);
-                this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
-                return this.note(`${name}：${blocked}`);
-            }
-            return this.requestScout(id, name, scoutBid, eventId, pubMs);
-        }
-
         // 4. 战术模式六计释放（固定 1 积分，按观众所属阵营：默认维序者，投过 1 则为乱入者，两边独立队列 FIFO）
         if (!SIX_BY_WORD[word]) return '';
         if (meta?.staleForBattle) {
@@ -1075,7 +1025,6 @@ export class ViewerLive {
             names: [this.sideName(pSide), this.sideName(kSide)],
             counts: [a, d],
             queue: [
-                ...this.scoutQueue.map((q) => `${q.viewer} 玩家技 ${q.bid}分`),
                 ...this.queue.map((q) => `${q.viewer} 【${q.word}】 ${ORDERS_PER_CAST}分`),
             ],
             log: [...this.log],
@@ -1089,7 +1038,6 @@ export class ViewerLive {
             yt: this.ytStatus,
             lastChatAgo: this.lastChatAt > 0 ? Math.floor((Date.now() - this.lastChatAt) / 1000) : -1,
             queueBrief: [
-                ...this.scoutQueue.map((q) => ({ name: q.viewer, paid: false, label: `技${q.bid}` })),
                 ...this.queue.map((q) => ({ name: q.viewer, paid: false, label: q.word })),
             ],
             renameHighestBid: this.renameFloor(),
@@ -1191,9 +1139,6 @@ export class ViewerLive {
     /** 统计该观众已在队列中排队、尚未扣分的预留积分（避免连点刷队列超支，同时保证没放出前不扣账面积分） */
     private reservedOrders(uid: string): number {
         let sum = 0;
-        for (const q of this.scoutQueue) {
-            if (q.uid === uid && q.deducted === false) sum += q.ordersCost;
-        }
         for (const q of this.queue) {
             if (q.uid === uid && !q.paid && q.deducted === false) sum += ORDERS_PER_CAST;
         }
@@ -2490,11 +2435,6 @@ export class ViewerLive {
         const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
         return side === pSide ? '乱入者' : '维序者';
     }
-    private playerSkillBlockReason(): string | null {
-        if (!this.battleOn()) return '现在没在打仗，等下一仗';
-        // 🔴 [2026-11-07 主人定「探马者和捣乱者（乱入者与维序者）都是其中一名士兵，属性同兵模属性，并无特殊能力」]
-        return '战术模式为乱入者VS维序者对决，无个人特技，请发六字（攻 胜 敌 混 并 败）或开局9秒押注';
-    }
     private playerSixBlockReason(_six: TacticalSixSet): string | null {
         if (!this.battleOn()) return '现在没在打仗，等下一仗';
         // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」] 双方观众皆可用 1 积分释放六计（攻 胜 敌 混 并 败）
@@ -2757,14 +2697,6 @@ export class ViewerLive {
     private fulfillWanted(id: string, name: string): void {
         const word = this.wanted.get(id);
         if (!word || !this.battleOn()) return;
-        const scoutBid = scoutBidOf(word);
-        if (scoutBid !== null) {
-            if (this.playerSkillBlockReason()) return;
-            if ((this.orders.get(id)?.n ?? 0) < scoutBid) return;
-            this.wanted.delete(id);
-            this.requestScout(id, name, scoutBid, `wanted:${++this.commandSeq}`, Date.now());
-            return;
-        }
         if (this.playerSixBlockReason(SIX_BY_WORD[word]) || !this.canAffordSix(id)) return;
         this.wanted.delete(id);
         this.request(id, name, word, `wanted:${++this.commandSeq}`, Date.now());
@@ -2772,39 +2704,6 @@ export class ViewerLive {
     private canAffordSix(id: string): boolean {
         const avail = (this.orders.get(id)?.n ?? 0) - this.reservedOrders(id);
         return avail >= ORDERS_PER_CAST && !this.hasFreeQueued(id);
-    }
-    private requestScout(id: string, name: string, rawBid: number, eventId = '', pubMs = Date.now()): string {
-        const now = Date.now();
-        // 超过单次上限直接拒绝、分文不扣（原先悄悄按上限扣：手滑打「技999」会一下扣掉 100 积分）
-        if (rawBid > MAX_SKILL_BID) {
-            this.recordCmd(eventId, id, name, 'skill_burst', `技${rawBid}`, rawBid, pubMs, now, 'rejected', `超过单次上限${MAX_SKILL_BID}`);
-            this.notifyViewerVoice(id, `${name}，单次最多出${MAX_SKILL_BID}积分，未扣积分`);
-            return this.note(`${name}：单次最多出 ${MAX_SKILL_BID} 积分，未扣积分`);
-        }
-        const bid = rawBid;
-        const a = this.acct(id, name);
-        const avail = a.n - this.reservedOrders(id);
-        if (avail < bid) {
-            this.wanted.set(id, `技${bid}`);
-            this.recordCmd(eventId, id, name, 'skill_burst', `技${bid}`, bid, pubMs, now, 'rejected', '积分不足，已挂起等待积分到账');
-            this.save();
-            this.notifyViewerVoice(id, `${name}，放玩家技需要${bid}积分，现有${avail}分，攒够自动释放`);
-            return this.note(`${name}：这次要 ${bid} 积分，现有积分 ${avail}/${bid}（在场每 ${PRESENCE_PAY_MS / 60_000} 分钟 +1，够了自动放）`);
-        }
-        // 入队时不提前扣分，等技能真正释放时再扣，避免排队等待或战斗收尾白扣积分
-        const item: QueuedScoutCast = { uid: id, viewer: name, bid, seq: ++this.scoutSeq, ordersCost: bid, centsCost: 0, deducted: false };
-        const beforeLowerBid = this.scoutQueue.findIndex((q) => q.bid < bid);
-        if (beforeLowerBid < 0) this.scoutQueue.push(item);
-        else this.scoutQueue.splice(beforeLowerBid, 0, item);
-        this.recordCmd(eventId, id, name, 'skill_burst', `技${bid}`, bid, pubMs, now, 'queued');
-        this.save();
-        // 当场尝试释放一次：若因冷却/重整尚在排队，立即用晓晓语音告知观众「已排队，释放时再扣积分」
-        this.tickScoutQueue();
-        if (this.scoutQueue.includes(item)) {
-            const pos = this.scoutQueue.indexOf(item) + 1;
-            this.notifyViewerVoice(id, `${name}，玩家技已排第${pos}位，冷却结束后释放再扣积分`, true);
-        }
-        return this.note(`${name} 出 ${bid} 积分放玩家技，排第 ${Math.max(1, this.scoutQueue.indexOf(item) + 1)}`);
     }
     private hasFreeQueued(id: string): boolean {
         return this.queue.some((q) => q.uid === id);
@@ -2864,7 +2763,7 @@ export class ViewerLive {
             }
             return true;
         }
-        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0;
+        const hasBattleState = this.wasActive || this.queue.length > 0 || this.wanted.size > 0;
         if (hasBattleState && !active) {
             this.endBattle();
         }
@@ -2882,7 +2781,6 @@ export class ViewerLive {
         if (!this.duel && this.betOpen && (this.war()?.getDeployRemainingSec?.() ?? 0) <= 0) {
             this.sealBetRound();
         }
-        this.tickScoutQueue();
         this.tickCastQueue();
     }
     /**
@@ -2924,28 +2822,6 @@ export class ViewerLive {
             this.fulfillWanted(head.uid, head.viewer);
         }
     }
-    private tickScoutQueue(): void {
-        const head = this.scoutQueue[0];
-        if (!head) return;
-        const r = this.war()!.castPlayerLiveSkill();
-        if (r === 'wait' || r === 'closed') return;
-        this.scoutQueue.shift();
-        if (head.ordersCost > 0 && head.deducted === false) {
-            const a = this.acct(head.uid, head.viewer);
-            a.n = Math.max(0, a.n - head.ordersCost);
-            head.deducted = true;
-        }
-        this.recentBattleCasts.push({
-            uid: head.uid,
-            viewer: head.viewer,
-            cost: head.ordersCost,
-            label: '玩家技',
-            castAtMs: Date.now(),
-        });
-        this.save();
-        this.note(`${head.viewer} 出 ${head.bid} 积分，玩家技已释放`);
-        this.fulfillWanted(head.uid, head.viewer);
-    }
     private endBattle(): void {
         const now = Date.now();
         const foughtMs = this.battleStartedAtMs > 0 ? now - this.battleStartedAtMs : 0;
@@ -2963,8 +2839,6 @@ export class ViewerLive {
             }
         }
         this.recentBattleCasts = [];
-        for (const q of this.scoutQueue) this.voidScoutCast(q);
-        this.scoutQueue = [];
         for (const q of this.queue) this.voidCast(q);
         this.queue = [];
         this.lastFreeCastAt = 0;
@@ -2981,15 +2855,6 @@ export class ViewerLive {
             if (k > 0) this.note(`本场战术战结束，在场 ${k} 人各 +1 积分`);
         }
         this.save();
-    }
-    private voidScoutCast(q: QueuedScoutCast): void {
-        if (q.centsCost > 0) this.credit(q.uid, q.viewer, q.centsCost);
-        if (q.ordersCost > 0 && q.deducted !== false) {
-            const a = this.acct(q.uid, q.viewer);
-            a.n = Math.min(ORDER_CAP, a.n + q.ordersCost);
-        }
-        this.note(`${q.viewer} 的玩家技没轮到，${q.bid} 积分未扣`);
-        this.notifyViewerVoice(q.uid, `${q.viewer}，战斗结束，排队的玩家技未扣积分`, true);
     }
     private voidCast(q: QueuedCast): void {
         if (q.paid) this.credit(q.uid, q.viewer, PRICE_PER_CAST);
@@ -3044,10 +2909,8 @@ export class ViewerLive {
             }])),
             handled: [...this.handled],
             queue: this.queue.map((q) => ({ ...q })),
-            scoutQueue: this.scoutQueue.map((q) => ({ ...q })),
             sides: [...this.sides],
             wanted: [...this.wanted],
-            scoutSeq: this.scoutSeq,
             renameHighestBid: this.renameHighestBid,
             renameHistory: this.renameHistory.map((r) => ({ ...r })),
             blockedNames: getBlockedLiveNames(),
@@ -3138,24 +3001,13 @@ export class ViewerLive {
             q && typeof q.uid === 'string' && (q.side === 0 || q.side === 1)
             && typeof q.word === 'string' && SIX_BY_WORD[q.word] === q.six && typeof q.paid === 'boolean',
         ).slice(0, 1000).map((q) => ({ ...q, viewer: cleanViewerName(String(q.viewer || '观众')) }));
-        this.scoutQueue = (Array.isArray(ledger.scoutQueue) ? ledger.scoutQueue : []).filter((q) =>
-            q && typeof q.uid === 'string' && Number.isSafeInteger(q.bid) && q.bid > 0
-            && ((q.ordersCost > 0) !== (q.centsCost > 0)),
-        ).slice(0, 1000).map((q) => ({
-            uid: q.uid, viewer: cleanViewerName(String(q.viewer || '观众')), bid: q.bid,
-            seq: Number.isSafeInteger(q.seq) ? q.seq : 0,
-            ordersCost: q.ordersCost > 0 ? q.bid : 0,
-            centsCost: q.centsCost > 0 ? scoutBidCents(q.bid) : 0,
-            ...(typeof q.deducted === 'boolean' ? { deducted: q.deducted } : {}),
-        }));
         this.sides = new Map((Array.isArray(ledger.sides) ? ledger.sides : []).filter((x) =>
             Array.isArray(x) && typeof x[0] === 'string' && (x[1] === 0 || x[1] === 1),
         ));
         this.wanted = new Map((Array.isArray(ledger.wanted) ? ledger.wanted : []).filter((x) =>
             Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string'
-            && (SIX_BY_WORD[x[1]] || scoutBidOf(x[1]) !== null),
+            && !!SIX_BY_WORD[x[1]],
         ));
-        this.scoutSeq = Number.isSafeInteger(ledger.scoutSeq) ? Math.max(0, Number(ledger.scoutSeq)) : 0;
         // 下注筹码（第二本账）：跨页/刷新保留；注单只在本局有效，不进账本
         this.chips.clear();
         for (const [id, c] of Object.entries(ledger.chips ?? {})) {

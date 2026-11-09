@@ -488,7 +488,12 @@ export class WorldMiniMap {
         const last = this.lastMiniView;
         // [PERF 2026-10-26] 0.02° ≈ 小图 0.18px（级别 5 时 1px≈0.09°）：低于这个量不重设视口，
         // 否则镜头一有微小漂移就每拍 setView 一次，小图整层矢量跟着重算。
-        if (last && last.zoom === zoom && Math.abs(last.lat - c.lat) < 0.02 && Math.abs(last.lng - c.lng) < 0.02) return;
+        // 🔴 [2026-11-09 查掉帧] 0.02° 只有小图 0.18px，跟拍时几乎每次同步都越线 → 每秒约 8 次整层重算的 setView
+        //    （Edge 欧洲林区实测 30 秒 219 次、合计 945ms、单次最长 21ms）。门槛改为**小图 1 像素**：
+        //    经度 1px = 360/(256·2^zoom)°，纬度按墨卡托再乘 cos(lat)。中心最多差 1px，肉眼无感；视野框照旧每次精确更新。
+        const pxDeg = 360 / (256 * Math.pow(2, zoom));
+        const latDeg = pxDeg * Math.max(0.2, Math.cos(c.lat * Math.PI / 180));
+        if (last && last.zoom === zoom && Math.abs(last.lat - c.lat) < latDeg && Math.abs(last.lng - c.lng) < pxDeg) return;
         this.lastMiniView = { lat: c.lat, lng: c.lng, zoom };
         this.mini.setView([c.lat, c.lng], zoom, { animate: false });
     }

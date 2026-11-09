@@ -101,7 +101,7 @@ import type { Scene13PlayerSetup } from '../player/PlayerHero';
 
 import { withPlayerPeakStats } from '../player/PlayerGrowth';
 
-import { playerLiveSkillAffects, playerLiveSkillTier } from '../player/PlayerLiveSkill';
+import { playerLiveSkillAffects } from '../player/PlayerLiveSkill';
 
 import { withCommander } from '../data/generalHeroUnits';
 
@@ -1712,9 +1712,7 @@ export class Scene13WarLayer {
 
             || this.playerSixShieldTimer > 0
 
-            || this.playerSixPanicMaxTimer > 0
-
-            || this.playerLiveSkillTimer > 0;
+            || this.playerSixPanicMaxTimer > 0;
 
     }
 
@@ -1724,11 +1722,9 @@ export class Scene13WarLayer {
 
         const affects = this.playerLiveAffects(m);
 
-        const liveSec = affects ? Math.max(0, this.playerLiveSkillTimer) : 0;
-
         return {
 
-            frenzy: Math.max(0, this.skillFrenzyTimer[m.f], affects ? this.playerSixFrenzyTimer : 0, liveSec),
+            frenzy: Math.max(0, this.skillFrenzyTimer[m.f], affects ? this.playerSixFrenzyTimer : 0),
 
             shield: Math.max(0, this.skillShieldTimer[m.f], affects ? this.playerSixShieldTimer : 0),
 
@@ -3396,96 +3392,6 @@ export class Scene13WarLayer {
 
 
 
-    /** 直播玩家技能剩余秒数；与武将六计状态分表，不读也不写技能槽。 */
-
-    private playerLiveSkillTimer = 0;
-
-    /** 距离能放下一发玩家技还有几秒（生效秒数＋这一档要歇的秒数；先锋、将军放完要歇） */
-
-    private playerLiveSkillCooldown = 0;
-
-    public getPlayerLiveSkillSec(): number { return Math.max(0, this.playerLiveSkillTimer); }
-
-
-
-    /**
-
-     * 斥候强化本人；探马起按现有指挥范围强化本队/本排/全军。生效期间与歇息期间返回 'wait' 让后续竞价排队等待。
-
-     * 主角本人始终吃本人档（满血、×4），身边的兵按官职档（见 PLAYER_LIVE_SKILL_BY_CONTROL）。
-
-     */
-
-    public castPlayerLiveSkill(): 'cast' | 'wait' | 'closed' {
-
-        if (!this.active || this.over) return 'closed';
-
-        const m = this.heroMan;
-
-        if (!m || !this.playerSetup || this.deployT > 0 || m.hp <= 0) return 'wait';
-
-        if (this.playerLiveSkillTimer > 0 || this.playerLiveSkillCooldown > 0) return 'wait';
-
-        const control = this.playerSetup.control;
-
-        const affected: WarMan[] = [];
-
-        for (const unit of (this.men ?? [m])) {
-
-            if (unit.hp <= 0 || !this.playerLiveAffects(unit)) continue;
-
-            const isHero = unit === m;
-
-            const maxHp = unit.hero || isHero ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
-
-            const heal = playerLiveSkillTier(control, isHero).healFrac;
-
-            unit.hp = Math.min(maxHp, Math.max(unit.hp, unit.hp + maxHp * heal));
-
-            affected.push(unit);
-
-        }
-
-        const tier = playerLiveSkillTier(control, false);
-
-        this.playerLiveSkillTimer = tier.durationSec;
-
-        this.playerLiveSkillCooldown = tier.durationSec + tier.restSec;
-
-        if (this.advanceVec?.[this.playerSetup.side]) {
-
-            let vx = m.x ?? 0, vy = m.y ?? 0;
-
-            if (affected.length > 0) {
-
-                [vx, vy] = this.denseClusterCenter(affected, vx, vy);
-
-            }
-
-            if (this.useGroundGL && this.userInteractingTimer <= 0 && !(m && m.hp > 0 && Math.hypot(vx - m.x, vy - m.y) < 150)) {
-
-                this.skillCamTimer = SKILL_CAM_SEC;
-
-                this.skillCamX = vx;
-
-                this.skillCamY = vy;
-
-                this.skillCamFollowUnits = [];
-
-            }
-
-            audioManager.playScene13SkillSfx('gongzhan', true);
-
-            this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', vx, vy, true, affected, []);
-
-        }
-
-        return 'cast';
-
-    }
-
-
-
     /** 玩家在战术模式内临阵晋升（如斥候→探马）时，当场刷新指挥编队与直播技能范围 */
 
     public syncPlayerRankFromHero(control: Scene13PlayerSetup['control'], unitKey: string | null): void {
@@ -3779,10 +3685,6 @@ export class Scene13WarLayer {
         this.heroStranded = false;
 
         this.keeperStranded = false;
-
-        this.playerLiveSkillTimer = 0;
-
-        this.playerLiveSkillCooldown = 0;
 
         this.playerSixFrenzyTimer = 0;
 
@@ -4372,34 +4274,6 @@ export class Scene13WarLayer {
 
     }
 
-    /** 这个单位正在吃哪一档玩家技；没在生效或不在范围内返回 null */
-
-    private playerLiveTierOf(m: WarMan) {
-
-        if (this.playerLiveSkillTimer <= 0 || !this.playerSetup || !this.playerLiveAffects(m)) return null;
-
-        return playerLiveSkillTier(this.playerSetup.control, m === this.heroMan);
-
-    }
-
-    private playerLiveDamageMul(m: WarMan): number {
-
-        return this.playerLiveTierOf(m)?.damageMult ?? 1;
-
-    }
-
-    private playerLiveAttackMul(m: WarMan): number {
-
-        return this.playerLiveTierOf(m)?.attackSpeedMult ?? 1;
-
-    }
-
-    private playerLiveTakenMul(m: WarMan): number {
-
-        return this.playerLiveTierOf(m)?.damageTakenMult ?? 1;
-
-    }
-
     private unitHasFrenzy(m: WarMan): boolean {
 
         return (this.skillFrenzyTimer?.[m.f] ?? 0) > 0 || (this.playerSixFrenzyTimer > 0 && this.playerLiveAffects(m));
@@ -4475,12 +4349,6 @@ export class Scene13WarLayer {
         this.pushCorpse(m);
 
         this.heroRespawnTimer = 10;
-
-        // [2026-10-30 主人令「复活直接放」] 阵亡即免掉玩家技剩下的歇息期，只留正在生效的余效；
-
-        // 排队的玩家技复活那一刻就能放，不再多等歇息
-
-        this.playerLiveSkillCooldown = Math.min(this.playerLiveSkillCooldown, this.playerLiveSkillTimer);
 
         this.heroInput = null;
 
@@ -7827,10 +7695,6 @@ export class Scene13WarLayer {
         this.heroRespawnTimer = 0;
 
         this.keeperRespawnTimer = 0;
-
-        this.playerLiveSkillTimer = 0;
-
-        this.playerLiveSkillCooldown = 0;
 
         this.playerSixFrenzyTimer = 0;
 
@@ -13591,7 +13455,7 @@ export class Scene13WarLayer {
 
             const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
 
-            const skillMul = frenzy * this.panicTakenMul(foe) * this.shieldTakenMul(foe) * this.playerLiveTakenMul(foe);
+            const skillMul = frenzy * this.panicTakenMul(foe) * this.shieldTakenMul(foe);
 
             foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * skillMul
 
@@ -13757,9 +13621,9 @@ export class Scene13WarLayer {
 
                     // 范围伤：近战（战象踩踏）计入围攻并吃围殴加成；远程（投石车等）都不吃（见 isRangedWeapon）
 
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul * this.playerLiveDamageMul(m) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul / shooter.reload;
 
-                    const takenSkillMul = this.shieldTakenMul(o) * this.panicTakenMul(o) * this.playerLiveTakenMul(o);
+                    const takenSkillMul = this.shieldTakenMul(o) * this.panicTakenMul(o);
 
                     if (!isRangedWeapon(shooter)) o.atkNext++;
 
@@ -16305,10 +16169,6 @@ export class Scene13WarLayer {
 
         if (this.over) return;
 
-        if (this.playerLiveSkillTimer > 0) this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer - dt);
-
-        if (this.playerLiveSkillCooldown > 0) this.playerLiveSkillCooldown = Math.max(0, this.playerLiveSkillCooldown - dt);
-
         // 近战接触音景：每帧重新数，本帧的计数在下面的兵种循环里累加，循环跑完在 tickContactSfx 里结账
 
         this.meleeContactCount = 0;
@@ -17941,7 +17801,7 @@ export class Scene13WarLayer {
 
                 // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速加成
 
-                const heroRate = (m.hero ? HERO_ATTACK_RATE : 1) * this.playerLiveAttackMul(m);
+                const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
 
                 const frenzyAtkSpd = this.frenzyAtkSpdMul(m);
 
@@ -18277,7 +18137,7 @@ export class Scene13WarLayer {
 
                 const frenzyDmgMul = this.frenzyDmgMul(m) * this.frenzyAtkSpdMul(m);
 
-                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul * this.playerLiveDamageMul(m) / shooter.reload;
+                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul / shooter.reload;
 
                 if ('sprite' in foe) {
 
@@ -18376,8 +18236,6 @@ export class Scene13WarLayer {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
 
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
-
-                            * (!('sprite' in foe) ? this.playerLiveTakenMul(foe) : 1)
 
                             * ('sprite' in foe ? 1 : this.passWallTaken(foe));
 

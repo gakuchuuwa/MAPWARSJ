@@ -171,12 +171,46 @@ function treeImage(asset: string, onReady: () => void): HTMLImageElement | null 
     return null;
 }
 
+/**
+ * 🔴 [2026-11-09 查掉帧] frames.png 是横向长条，宽得离谱（雨林 24012px、橡树 13944px，29 张 > 4096px），
+ *    超过显卡单张纹理上限后浏览器只能拆块反复上传 / 退回 CPU：Edge 欧洲林区实测整层重画一次显卡要 30~45ms，
+ *    每秒好几次 → 就是「其余」那一大块掉帧时间。这里在贴图到达时把**实际用到的帧**（meta.frames）原样
+ *    1:1 拷进一张 ≤4096 宽的小图（帧间留透明缝防缩小时串色），绘制改从小图取。像素来源不变、不缩放。
+ */
+const ATLAS_MAX_W = 4096;
+const ATLAS_GUTTER = 4;
+const TREE_FRAMES_ATLAS = new Map<string, { canvas: CanvasImageSource; pos: Map<number, [number, number]> }>();
+
+function buildFramesAtlas(asset: string, img: HTMLImageElement): void {
+    const meta = TREE_METAS[asset];
+    // 不只超宽的：Edge 对照 4968px 的 GREEN_OAK 也快一倍多（93→43ms/3000 棵），只含用到帧的小图一律更小
+    if (!meta) return;
+    const cellW = meta.boxW + ATLAS_GUTTER, cellH = meta.boxH + ATLAS_GUTTER;
+    const cols = Math.max(1, Math.floor(ATLAS_MAX_W / cellW));
+    const n = meta.frames.length;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.min(n, cols) * cellW;
+    canvas.height = Math.ceil(n / cols) * cellH;
+    const c = canvas.getContext('2d');
+    if (!c) return;
+    c.imageSmoothingEnabled = false;   // 1:1 整数拷贝，不让任何插值介入
+    const pos = new Map<number, [number, number]>();
+    meta.frames.forEach((f, i) => {
+        const x = (i % cols) * cellW, y = Math.floor(i / cols) * cellH;
+        c.drawImage(img, f * meta.boxW, 0, meta.boxW, meta.boxH, x, y, meta.boxW, meta.boxH);
+        pos.set(f, [x, y]);
+    });
+    // 画布当贴图源时，一层里十来种树来回切换比图片贵得多（Edge 实测反而更慢）→ 转成不可变 ImageBitmap 再用；
+    // 转好之前照旧画原长条。
+    void createImageBitmap(canvas).then((bmp) => { TREE_FRAMES_ATLAS.set(asset, { canvas: bmp, pos }); }).catch(() => { /* 退回原长条 */ });
+}
+
 function treeFramesImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_FRAMES_FAILED.has(asset)) return null;
     const hit = TREE_FRAMES_IMG.get(asset);
     if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
     const img = new Image();
-    img.onload = () => onReady();
+    img.onload = () => { buildFramesAtlas(asset, img); onReady(); };
     img.onerror = () => { TREE_FRAMES_IMG.delete(asset); TREE_FRAMES_FAILED.add(asset); };
     img.src = `/SUCAI_NATURE/${asset}/frames.png`;
     TREE_FRAMES_IMG.set(asset, img);
@@ -642,7 +676,10 @@ const TREE_GRID_STEP = 46;
 /** 采样窗对齐粒度（格距整数倍）：跟拍平移每走这么远才整层重采样一次 */
 const RESAMPLE_CHUNK_PX = TREE_GRID_STEP * 4;
 /** 换季渐变期 paint 的最短间隔（≈30fps）：原来每帧整层重画 5000 棵树×2 */
-const BLEND_PAINT_MIN_INTERVAL_MS = 33;
+// 🔴 [2026-11-09 查掉帧] 33 → 66（≈15fps）：每季 15 秒里末 5 秒都在渐变（占全部时间 1/3），
+//    期间整层 3000+ 棵树每秒重画 30 次、每次约 10ms（Edge 欧洲林区 30 秒内 248 次重画里 159 次来自这里）。
+//    每帧算出的透明度不变，只是刷新密度减半：5 秒淡变每步约 2% 透明度。嫌不顺改回 33 即可（画面由主人判）。
+const BLEND_PAINT_MIN_INTERVAL_MS = 66;
 /** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
 const MAX_TREES_PER_RENDER = 5000;
 /** 采样格缓存上限（格数）：一屏 2560×1440 约 3000~6000 格，留几屏余量 */
@@ -846,7 +883,8 @@ export class VegetationLayer {
                 const now = performance.now();
                 if (now - lastBlendPaintAt >= BLEND_PAINT_MIN_INTERVAL_MS) {
                     lastBlendPaintAt = now;
-                    this.paint();
+                    // 视野里没有一棵树这次换季会换样（如全是常绿针叶林）→ 渐变画出来与上一帧逐像素相同，不必重画
+                    if (this.treesHaveSeasonalChange()) this.paint();
                 }
                 this.rafId = requestAnimationFrame(rafLoop);
             } else {
@@ -876,6 +914,16 @@ export class VegetationLayer {
     private paintDeferred = false;
 
     private trees: TreeDrawCommand[] = [];
+    /** 当前 trees 里是否有树本季→下季会换贴图（按 trees 数组身份缓存，重新采样后重算） */
+    private seasonalCheckedFor: TreeDrawCommand[] | null = null;
+    private seasonalChange = true;
+    private treesHaveSeasonalChange(): boolean {
+        if (this.seasonalCheckedFor !== this.trees) {
+            this.seasonalCheckedFor = this.trees;
+            this.seasonalChange = this.trees.some((c) => c.assetNext !== c.asset);
+        }
+        return this.seasonalChange;
+    }
 
     /**
      * 绘制树木：
@@ -961,6 +1009,12 @@ export class VegetationLayer {
 
                 if (framesImg) {
                     const frameIdx = meta.frames[variant % meta.frames.length];
+                    const atlas = TREE_FRAMES_ATLAS.get(asset);
+                    const p = atlas?.pos.get(frameIdx);
+                    if (p && !(import.meta.env.DEV && (window as unknown as { __vegNoAtlas?: boolean }).__vegNoAtlas)) {
+                        ctx.drawImage(atlas!.canvas, p[0], p[1], meta.boxW, meta.boxH, dx, dy, w, h);
+                        return asset;
+                    }
                     const sx = frameIdx * meta.boxW;
                     ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, h);
                     return asset;
@@ -1025,8 +1079,19 @@ export class VegetationLayer {
         }
     }
 
+    /**
+     * 🔴 [2026-11-09 查掉帧] 树贴图到了要补画，但**每张图到一次就整层重画一次**（实测一次约 10ms）：
+     *    进入新地区时一批树种的 frames.png / preview.png 接连到达，Edge 欧洲林区实测 paint 次数比采样多出四成。
+     *    合并到下一帧只画一次——画面结果相同，最多晚一帧出现。
+     */
+    private treeReadyPaintPending = false;
     private onTreeImageReady = (): void => {
-        this.paint();
+        if (this.treeReadyPaintPending) return;
+        this.treeReadyPaintPending = true;
+        requestAnimationFrame(() => {
+            this.treeReadyPaintPending = false;
+            this.paint();
+        });
     };
 
     private scheduleRender(delay = 0): void {

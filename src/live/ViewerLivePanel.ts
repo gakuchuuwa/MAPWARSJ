@@ -6,7 +6,6 @@
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
 import { HowToPlayCard } from './HowToPlayCard';
-import { allowedSixWordsForRank } from '../player/PlayerLiveSkill';
 
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
