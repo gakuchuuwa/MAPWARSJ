@@ -1,5 +1,5 @@
 import { latLngToTilePixel } from './ElevationSampler';
-import { decodeTileRGBA, decodeOnFrameBudget } from './TileDecoder';
+import { decodeTileRGBA, decodeOnFrameBudget, tileWorkerAvailable, decodeTileInWorker } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -174,6 +174,11 @@ export class ImagerySampler {
                 .replace('{y}', String(y))
                 .replace('{x}', String(x));
 
+            let data: Uint8ClampedArray | null;
+            if (tileWorkerAvailable()) {
+                // 🔴 [2026-11-09] 下载 + 解码整段在后台线程（见 TileDecoder.ts 末段）。原路径无超时，这里给 30s 防挂死
+                data = await decodeTileInWorker(url, IMAGERY_TILE_SIZE, 'rgba', 30000);
+            } else {
             const img = await new Promise<HTMLImageElement>((resolve, reject) => {
                 const el = new Image();
                 el.crossOrigin = 'Anonymous';
@@ -184,7 +189,8 @@ export class ImagerySampler {
 
             // [2026-09-05] 同 ElevationSampler：共享画布 + willReadFrequently（原来是裸 getContext）
             // [2026-09-16] 同上：解码排进逐帧预算队列，避免整屏预取的 onload 扎堆冻整帧
-            const data = await decodeOnFrameBudget(() => decodeTileRGBA(img, IMAGERY_TILE_SIZE));
+            data = await decodeOnFrameBudget(() => decodeTileRGBA(img, IMAGERY_TILE_SIZE));
+            }
             if (!data) return false;
             this.cache.set(key, data);
             this.touchCache(key);

@@ -132,6 +132,8 @@ export class ZoomPerfProbe {
                     }
                 };
                 h.__zpWrapped = true;
+                // 供 GameAppLoop.fireMoveTimed 逐监听器计时时认出被包住的原函数（2026-11-09）
+                h.fn.__zpOrig = orig;
             });
         }
     }

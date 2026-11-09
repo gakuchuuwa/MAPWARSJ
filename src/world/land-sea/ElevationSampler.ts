@@ -7,7 +7,7 @@ import {
     decodeTerrariumElevation,
 } from './TerrariumCodec';
 import { computeSlopeFromTile, type SlopeSample } from './TerrainSlope';
-import { decodeTileRGBA, decodeOnFrameBudget } from './TileDecoder';
+import { decodeTileRGBA, decodeOnFrameBudget, tileWorkerAvailable, decodeTileInWorker } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -207,6 +207,11 @@ export class ElevationSampler {
                 .replace('{x}', String(x))
                 .replace('{y}', String(y));
 
+            let data: Uint8ClampedArray | null;
+            if (tileWorkerAvailable()) {
+                // 🔴 [2026-11-09] 下载 + 解码整段在后台线程（见 TileDecoder.ts 末段）；超时同下 12s
+                data = await decodeTileInWorker(url, TERRARIUM_TILE_SIZE, 'rgba', 12000);
+            } else {
             const img = await new Promise<HTMLImageElement>((resolve, reject) => {
                 const el = new Image();
                 el.crossOrigin = 'Anonymous';
@@ -224,7 +229,8 @@ export class ElevationSampler {
             //    独占 36% CPU（12 秒采样 4287ms），是「玩家移动时战略画面卡」的最大单项。
             //    详见 TileDecoder.ts 文件头。
             //    🔴 [2026-09-16] 再排进逐帧预算队列：整屏预取的 onload 扎堆在同一帧才是「一顿一顿」的来源。
-            const data = await decodeOnFrameBudget(() => decodeTileRGBA(img, TERRARIUM_TILE_SIZE));
+            data = await decodeOnFrameBudget(() => decodeTileRGBA(img, TERRARIUM_TILE_SIZE));
+            }
             if (!data) return false;
             this.cache.set(key, data);
             this.touchCache(key);

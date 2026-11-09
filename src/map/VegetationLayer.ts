@@ -884,6 +884,14 @@ export class VegetationLayer {
      * - 对称 Cross-Fade 交叉淡出，彻底消除换季跳闪与树木消失。
      */
     private paint(): void {
+        if (!import.meta.env.DEV) { this.paintInner(); return; }
+        const t0 = performance.now();
+        this.paintInner();
+        // [2026-11-09 查掉帧] 与 VegetationLayer.render（采样+重画）分开看：重画单独占多少
+        perfDoctor.note('VegetationLayer.paint(整层重画)', performance.now() - t0, 'src/map/VegetationLayer.ts:paint', this.trees.length);
+    }
+
+    private paintInner(): void {
         // 战略地图被独立战场覆盖时，换季渐变不再反复重画屏下的整层树木。
         if (this.map.getContainer().style.visibility === 'hidden') { this.paintDeferred = true; return; }
         this.paintDeferred = false;

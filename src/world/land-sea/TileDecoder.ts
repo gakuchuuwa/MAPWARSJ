@@ -134,3 +134,64 @@ export function decodeOnFrameBudget<T>(job: () => T): Promise<T> {
 export function pendingTileDecodeJobs(): number {
     return jobQueue.length;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 🔴 [2026-11-09 查掉帧] 后台线程解码。有头 Edge 实测上面这条逐帧预算队列每帧仍占主线程 1.8~6.9ms：
+//    预算只能摊平，不能免掉——跟拍镜头一直在动，新瓦片源源不断。现在「下载 + 解码 + 读像素 + 建掩膜」
+//    整段挪进 TileDecodeWorker，主线程只收字节。Worker 建不起来 / 崩溃时自动退回上面的主线程路径。
+// ─────────────────────────────────────────────────────────────────────────────
+type TileWorkerKind = 'rgba' | 'watermask';
+type Waiter = { resolve: (v: Uint8ClampedArray | Uint8Array | null) => void; reject: (e: Error) => void };
+
+let tileWorker: Worker | null | undefined;   // undefined = 还没试；null = 不可用
+let nextJobId = 1;
+const waiters = new Map<number, Waiter>();
+
+function failAllWaiters(msg: string): void {
+    for (const w of waiters.values()) w.reject(new Error(msg));
+    waiters.clear();
+}
+
+function getTileWorker(): Worker | null {
+    if (tileWorker !== undefined) return tileWorker;
+    try {
+        if (typeof Worker === 'undefined' || typeof OffscreenCanvas === 'undefined') { tileWorker = null; return null; }
+        const w = new Worker(new URL('../../workers/TileDecodeWorker.ts', import.meta.url), { type: 'module' });
+        w.onmessage = (ev: MessageEvent) => {
+            const msg = ev.data as { id: number; ok: boolean; data?: Uint8ClampedArray | Uint8Array | null; error?: string };
+            const waiter = waiters.get(msg.id);
+            if (!waiter) return;
+            waiters.delete(msg.id);
+            if (msg.ok) waiter.resolve(msg.data ?? null);
+            else waiter.reject(new Error(msg.error || 'tile worker error'));
+        };
+        w.onerror = () => {
+            // Worker 本身坏了（不是单块瓦片失败）：停用，后续全走主线程路径
+            tileWorker = null;
+            failAllWaiters('tile worker crashed');
+            try { w.terminate(); } catch { /* ignore */ }
+        };
+        tileWorker = w;
+    } catch {
+        tileWorker = null;
+    }
+    return tileWorker;
+}
+
+/** 后台解码是否可用（三个采样器据此选路径） */
+export function tileWorkerAvailable(): boolean {
+    return getTileWorker() !== null;
+}
+
+/** 在后台线程下载并解码一块瓦片。rgba → Uint8ClampedArray；watermask → Uint8Array 或 null（坏瓦片） */
+export function decodeTileInWorker(url: string, size: number, kind: 'rgba', timeoutMs: number): Promise<Uint8ClampedArray>;
+export function decodeTileInWorker(url: string, size: number, kind: 'watermask', timeoutMs: number): Promise<Uint8Array | null>;
+export function decodeTileInWorker(url: string, size: number, kind: TileWorkerKind, timeoutMs: number): Promise<Uint8ClampedArray | Uint8Array | null> {
+    const w = getTileWorker();
+    if (!w) return Promise.reject(new Error('tile worker unavailable'));
+    const id = nextJobId++;
+    return new Promise((resolve, reject) => {
+        waiters.set(id, { resolve, reject });
+        w.postMessage({ id, url, size, kind, timeoutMs });
+    });
+}

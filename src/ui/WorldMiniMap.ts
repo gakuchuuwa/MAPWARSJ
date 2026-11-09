@@ -427,7 +427,10 @@ export class WorldMiniMap {
      * `moveend/zoomend/resize` 传 true 立即同步。
      */
     private requestMiniSync(immediate = false): void {
-        if (immediate) {
+        // 🔴 [2026-11-09 查掉帧] 「立即」也守同一个 10Hz 上限：跟拍时镜头约每 100ms 发一次 moveend，
+        //    原来每次都绕过节流直接同步，叠上 move 的 10Hz 就是每秒约 20 次（Edge 实测均摊每帧 0.6~1.1ms）。
+        //    距上次同步不足 100ms 时排一次补发：停稳后最晚 0.1 秒内仍对准最终视野（「松手即准」不变）。
+        if (immediate && performance.now() - this.miniSyncAt >= WorldMiniMap.MINI_SYNC_MIN_INTERVAL_MS) {
             this.flushMiniSync();
             return;
         }

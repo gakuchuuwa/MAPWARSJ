@@ -148,25 +148,38 @@ let moveEndTrailingTimer: ReturnType<typeof setTimeout> | null = null;
  * DEV 专用：等同 `map.fire('move')`（Leaflet 1.9 Events.fire 同序、同 event 结构、同 once 处理），
  * 只是逐个监听器计时记进 PerfDoctor，查「掉帧时主循环里没登记的 JS 在哪」（2026-11-09）。
  */
-function fireMoveTimed(map: L.Map): void {
+/** 匿名监听器认不出是谁：取源码开头几十字当名字（按函数缓存，只算一次） */
+const anonLabels = new WeakMap<object, string>();
+function anonLabel(fn: (...a: never[]) => unknown): string {
+    let s = anonLabels.get(fn);
+    if (!s) {
+        s = '(anon)' + Function.prototype.toString.call(fn).replace(/\s+/g, ' ').slice(0, 90);
+        anonLabels.set(fn, s);
+    }
+    return s;
+}
+
+function fireMoveTimed(map: L.Map, type: 'move' | 'moveend' = 'move'): void {
     type Lsn = { fn: (e: unknown) => void; ctx?: unknown; once?: boolean };
     const m = map as unknown as { _events?: Record<string, Lsn[]>; _firingCount?: number; off(t: string, f: unknown, c?: unknown): unknown };
-    const listeners = m._events?.move;
+    const listeners = m._events?.[type];
     if (!listeners || listeners.length === 0) return;
-    const event = { type: 'move', target: map, sourceTarget: map };
+    const event = { type, target: map, sourceTarget: map };
     m._firingCount = (m._firingCount ?? 0) + 1;
     try {
         for (let i = 0, len = listeners.length; i < len; i++) {
             const l = listeners[i];
             if (!l) continue;
             const fn = l.fn;
-            if (l.once) m.off('move', fn, l.ctx);
+            if (l.once) m.off(type, fn, l.ctx);
             const s = performance.now();
             fn.call(l.ctx || map, event);
             const d = performance.now() - s;
             const ctxName = (l.ctx as { constructor?: { name?: string } } | undefined)?.constructor?.name;
-            const label = `${ctxName && ctxName !== 'Object' ? ctxName + '.' : ''}${fn.name || '(anon)'}`;
-            perfDoctor.note(`move监听:${label}`, d, 'Leaflet map.on(\'move\')');
+            // ZoomPerfProbe 会把 zoom/moveend 监听器包一层：认名字时剥开看原函数
+            const real = (fn as unknown as { __zpOrig?: (e: unknown) => void }).__zpOrig ?? fn;
+            const label = `${ctxName && ctxName !== 'Object' ? ctxName + '.' : ''}${real.name || anonLabel(real)}`;
+            perfDoctor.note(`${type}监听:${label}`, d, `Leaflet map.on('${type}')`);
         }
     } finally {
         m._firingCount--;
@@ -207,7 +220,10 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
                 const t0 = performance.now();
                 fireMoveTimed(map);
                 const t1 = performance.now();
-                map.fire('moveend');
+                // 到点：逐个监听器计时发 moveend；未到点：仍须走 map.fire 让吞 moveend 的替身置 swallowed，
+                //   下面的 trailing 补发全靠它（漏了 → 镜头停稳后下游拿不到最终视口）
+                if (due) fireMoveTimed(map, 'moveend');
+                else map.fire('moveend');
                 perfDoctor.note('跟拍:move 监听器合计', t1 - t0, 'src/app/GameAppLoop.ts:panByThrottledMoveEnd');
                 if (due) perfDoctor.note('跟拍:moveend 监听器合计', performance.now() - t1, 'src/app/GameAppLoop.ts:panByThrottledMoveEnd');
             } else {
