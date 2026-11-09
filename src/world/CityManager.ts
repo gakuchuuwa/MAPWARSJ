@@ -526,7 +526,7 @@ export class CityManager {
         data: Partial<City>,
         options?: CityUpdateOptions
     ): void {
-        const cityIndex = this.cities.findIndex(c => c.id === id);
+        const cityIndex = this.cityIndexById.get(id) ?? -1;
         if (cityIndex !== -1) {
             const oldCity = this.cities[cityIndex];
             this.cities[cityIndex] = { ...oldCity, ...data };

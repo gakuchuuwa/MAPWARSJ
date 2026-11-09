@@ -89,6 +89,11 @@ export class CoastalWaveLayer extends L.Layer {
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
         if (!this.map || !this.ctx || !this.visible || now - this.lastRenderAt < FRAME_MS) return;
+        if (
+            this.map.getContainer().style.visibility === 'hidden'
+            || (window as any).game?.scene13War?.isActive?.() === true
+            || (window as any).game?.battleScene?.isLingering?.() === true
+        ) return;
         this.lastRenderAt = now;
 
         const _t0 = performance.now();

@@ -3902,20 +3902,22 @@ export class TerritorySystem {
             // 🔴 [2026-11-01] 旗面 `<div class="city-flag-host">` 挂在 labelOriginal 内（与 `.city-label-content` 并列）：
             //    切模式（剧本 1 个 span ⇄ 乱斗/百岁 2 个 span）时只替换 `.city-label-content`，严禁整颗 setIcon 抹掉 `.city-flag-host`！
             const el = labelOriginal.getElement();
-            const nextContentHtml = TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city));
             if (el) {
                 const contentEl = el.querySelector('.city-label-content');
                 const spans = contentEl?.querySelectorAll('span');
                 if (!isScriptPeriod() && spans && spans.length >= 2) {
-                    spans[0].textContent = city.name;
-                    spans[1].textContent = TerritorySystem.formatTroopsLabel(city.troops ?? 0);
+                    const nextTroopText = TerritorySystem.formatTroopsLabel(city.troops ?? 0);
+                    if (spans[0].textContent !== city.name) spans[0].textContent = city.name;
+                    if (spans[1].textContent !== nextTroopText) spans[1].textContent = nextTroopText;
                     return;
                 }
                 if (contentEl) {
+                    const nextContentHtml = TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city));
                     contentEl.outerHTML = nextContentHtml;
                     return;
                 }
             }
+            const nextContentHtml = TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city));
             const prevHtml = String((labelOriginal.options.icon as L.DivIcon | undefined)?.options?.html ?? '');
             const contentIdx = prevHtml.indexOf('<div class="city-label-content');
             const preservedFlagHtml = contentIdx > 0 ? prevHtml.slice(0, contentIdx) : '';

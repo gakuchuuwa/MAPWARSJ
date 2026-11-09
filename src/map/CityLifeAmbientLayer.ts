@@ -728,11 +728,11 @@ export class CityLifeAmbientLayer {
 
     private isHiddenNow(): boolean {
         if (!this.layerVisible) return true;
-        // scene13War 在自动乱斗时也会短暂激活；只有真正进入 13 战术画面才遮挡战略民生层。
-        const tacticalCovered = this.map.getZoom() >= 13 && (
-            (window as any).game?.scene13War?.isActive?.() === true
-            || (window as any).game?.battleScene?.isLingering?.() === true
-        );
+        // 独立战术画面（13 战斗模式）遮盖战略地图期间（此时 Leaflet 仍停在 zoom 8~9），暂停三层全屏画布重绘。
+        const tacticalCovered =
+            this.map.getContainer().style.visibility === 'hidden'
+            || (window as any).game?.scene13War?.isActive?.() === true
+            || (window as any).game?.battleScene?.isLingering?.() === true;
         if (tacticalCovered) return true;
         // 开局地图尚未 setView 时 getZoom() 为 NaN，getBounds() 会抛错，此时先当作隐藏。
         if (!(this.map as any)._loaded) return true;

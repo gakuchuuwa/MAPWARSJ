@@ -536,7 +536,6 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.endTimer('calendar');
 
             if (app.historicalEventManager) {
-                perfMonitor.startTimer('historicalEvent');
                 perfMonitor.startTimer('legion');
                 // [2026-09-03 查行军卡] 军团行军单帧成本 —— 主人报「行军还是卡」，
                 //   而此前 PerfDoctor 只测了 AI，行军与绘制两段全是黑的。
@@ -548,6 +547,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     app.historicalEventManager.updateLegions(gameDelta);
                 }
                 perfMonitor.endTimer('legion');
+                perfMonitor.startTimer('historicalEvent');
                 app.historicalEventManager.updateEvents(gameDelta);
             // [2026-09-05 玩家] 单骑行军 / 入伍贴军团（大战略未暂停才动；13 期间冻结）
             app.playerHero?.update(gameDelta);
@@ -604,13 +604,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             //   途中撞敌因其他战斗冻结傻站。彻底定格 = 大战略 100% 冻结、时钟不再割裂。
             // 战术层走**真实秒**，不乘游戏倍速：开 4x 倍速时战术演出也按正常速度播放。
             const sceneDelta = deltaTime * GameConfig.COMBAT.SCENE13_TIME_SCALE;
+            perfMonitor.startTimer('combat');
             if (app.combatSystem) {
-                perfMonitor.startTimer('combat');
                 app.combatSystem.update(sceneDelta, app.battleScene.getFollowUnitId());
-                perfMonitor.endTimer('combat');
             }
             // [2026-08-11 13 v2] 出兵口互攻演出推进（引擎已冻结，胜负由演出判负写回）
             app.scene13War?.tick(sceneDelta);
+            perfMonitor.endTimer('combat');
         }
 
         if (app.combatUI) {

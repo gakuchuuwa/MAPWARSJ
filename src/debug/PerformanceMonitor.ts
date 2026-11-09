@@ -669,7 +669,7 @@ ${content.innerText}`;
         const flash = (ok: boolean) => {
             this.bgmCopyFlashOk = ok;
             this.bgmCopyFlashUntil = performance.now() + 1500;
-            this.renderOverlay();
+            this.renderOverlay(true);
         };
         const fallback = () => {
             try {
@@ -790,9 +790,14 @@ ${content.innerText}`;
         }
     }
 
-    /** 渲染叠加层内容 */
-    private renderOverlay(): void {
+    private lastOverlayRenderAt = 0;
+
+    /** 渲染叠加层内容（节流至 200ms 一次，避免开着 F3 面板时每帧全量重写 innerHTML 造成额外布局开销） */
+    private renderOverlay(force = false): void {
         if (!this.contentEl || !this.visible) return;
+        const now = performance.now();
+        if (!force && now - this.lastOverlayRenderAt < 200 && now >= this.bgmCopyFlashUntil) return;
+        this.lastOverlayRenderAt = now;
 
         const s = this.buildSnapshot();
 
@@ -941,9 +946,10 @@ ${content.innerText}`;
         const calendarTime = this.timerResults['calendar'] ?? 0;
         const combatUITime = this.timerResults['combatUI'] ?? 0;
         const cameraTime = this.timerResults['camera'] ?? 0;
+        const renderTime = this.counts['renderDrawMs'] ?? 0;
         const accounted =
             aiTime + combatTime + recruitmentTime + historicalEventTime + legionTime +
-            calendarTime + combatUITime + cameraTime;
+            calendarTime + combatUITime + cameraTime + renderTime;
         const frameTime = this.frameTimes.length > 0 ? this.frameTimes[this.frameTimes.length - 1] : 0;
         const unaccountedTime = Math.max(0, frameTime - accounted);
         return {
@@ -959,7 +965,8 @@ ${content.innerText}`;
         // 慢帧归因（>50ms）：快照这一帧各系统耗时 + 邻近 200ms 内的异步事件（旗号/占城/寻路）
         if (frameTime >= PerformanceMonitor.HITCH_THRESHOLD_MS) {
             const breakdown = ([
-                ['AI', t.aiTime], ['战斗', t.combatTime], ['镜头跟随', t.cameraTime],
+                ['AI', t.aiTime], ['战斗', t.combatTime], ['战斗UI', t.combatUITime],
+                ['镜头跟随', t.cameraTime],
                 ['历史事件', t.historicalEventTime], ['军团逻辑', t.legionTime],
                 ['征兵', t.recruitmentTime], ['日历', t.calendarTime],
                 ['画布绘制', renderTime], ['主循环未计入', t.unaccountedTime],

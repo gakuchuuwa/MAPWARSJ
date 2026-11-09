@@ -861,7 +861,8 @@ export class VegetationLayer {
 
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
-            if (this.paintDeferred && this.map.getContainer().style.visibility !== 'hidden') this.paint();
+            if (this.isCoveredByTactical()) return;
+            if (this.paintDeferred) this.paint();
             const gameSeason = currentGameSeason();
             if (this.sampledGameSeason !== gameSeason) {
                 this.lastRenderKey = '';
@@ -878,6 +879,14 @@ export class VegetationLayer {
     private rafId: number | null = null;
     private sampledGameSeason = -1;
     private paintDeferred = false;
+
+    private isCoveredByTactical(): boolean {
+        return (
+            this.map.getContainer().style.visibility === 'hidden'
+            || (window as any).game?.scene13War?.isActive?.() === true
+            || (window as any).game?.battleScene?.isLingering?.() === true
+        );
+    }
 
     private trees: TreeDrawCommand[] = [];
     /** 当前 trees 里是否有树本季→下季会换贴图（按 trees 数组身份缓存，重新采样后重算） */
@@ -907,7 +916,7 @@ export class VegetationLayer {
 
     private paintInner(): void {
         // 战略地图被独立战场覆盖时，换季渐变不再反复重画屏下的整层树木。
-        if (this.map.getContainer().style.visibility === 'hidden') { this.paintDeferred = true; return; }
+        if (this.isCoveredByTactical()) { this.paintDeferred = true; return; }
         this.paintDeferred = false;
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

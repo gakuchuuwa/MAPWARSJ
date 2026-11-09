@@ -2094,6 +2094,11 @@ export class CombatUI {
         const skillBarHidden = !skillBar || skillBar.style.display === 'none';
         // 若该侧无武将（六技能面板隐藏），内侧起点前移至双剑徽记外侧（50vw + 26px），否则紧贴六技能面板外缘（50vw + 238px）
         const innerOffset = skillBarHidden ? 26 : 238;
+        const vw = window.innerWidth || document.documentElement.clientWidth || 1920;
+        const fitSig = `${box.dataset.sig ?? ''}|${isLeftBox ? 'L' : 'R'}|${vw}|${outerReserve}|${innerOffset}`;
+        if (box.dataset.fitSig === fitSig) return;
+        box.dataset.fitSig = fitSig;
+
         if (isLeftBox) {
             box.style.right = `calc(50vw + ${innerOffset}px)`;
         } else {
@@ -2104,8 +2109,6 @@ export class CombatUI {
         const chipsWrap = box.querySelector('.combat-tech-chips-wrap') as HTMLDivElement | null;
         const unitStackWrap = box.querySelector('.combat-unit-stack-wrap') as HTMLDivElement | null;
         if (!chipsWrap) return;
-
-        const vw = window.innerWidth || document.documentElement.clientWidth || 1920;
         const totalAvailWidth = Math.max(120, vw * 0.5 - innerOffset - outerReserve);
         const unitStackWidth = unitStackWrap ? (unitStackWrap.offsetWidth || 84) : 0;
         const chipsAvailWidth = Math.max(80, totalAvailWidth - unitStackWidth - 6);
@@ -2142,6 +2145,7 @@ export class CombatUI {
             return;   // 每帧调用，内容没变就不重绘 DOM
         }
         box.dataset.sig = sig;
+        box.dataset.fitSig = '';
         box.textContent = '';
 
         box.style.display = 'flex';
@@ -2931,15 +2935,21 @@ export class CombatUI {
             opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
         ) => {
-            if (multBadge) multBadge.style.display = 'none'; // 底部总×不再显示
+            if (multBadge && multBadge.style.display !== 'none') multBadge.style.display = 'none'; // 底部总×不再显示
             if (!unit) {
-                if (totalBadge) totalBadge.style.display = 'none';
+                if (totalBadge && totalBadge.style.display !== 'none') {
+                    totalBadge.style.display = 'none';
+                    totalBadge.dataset.sig = '';
+                }
                 return;
             }
             const { totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
 
             if (totalBadge) {
                 const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
+                const totalSig = `${side}|${fmtTotalStr}|${totalTitle}`;
+                if (totalBadge.dataset.sig === totalSig && totalBadge.style.display !== 'none') return;
+                totalBadge.dataset.sig = totalSig;
                 totalBadge.title = totalTitle;
                 const isBuff = totalMult > 1.001;
                 const isAtt = side === 'attacker';
@@ -3000,8 +3010,8 @@ export class CombatUI {
 
             const bf = this.boundRegionalBattleField;
             if (!bf || bf.isOver) {
-                rowEl.style.display = 'none';
-                joinBadgeEl.style.display = 'none';
+                if (rowEl.style.display !== 'none') rowEl.style.display = 'none';
+                if (joinBadgeEl.style.display !== 'none') joinBadgeEl.style.display = 'none';
                 return;
             }
 
@@ -3009,7 +3019,7 @@ export class CombatUI {
             const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
 
             // 主力乘区行绝不展示援军合兵标签，统一强制隐藏
-            joinBadgeEl.style.display = 'none';
+            if (joinBadgeEl.style.display !== 'none') joinBadgeEl.style.display = 'none';
 
             // 第三行只剔除「第二行文字主位」（pickSideNameUnit），不剔立绘主位——
             // 援军将可占立绘/标签，名字与兵力仍留在援军行（2026-08-06）。
@@ -3042,7 +3052,11 @@ export class CombatUI {
                 const more = `<span style="opacity: 0.65; color: rgba(255, 235, 200, 0.9);">余 ${extra} 部</span>`;
                 lines.push(`<div style="display: flex; align-items: center; justify-content: ${isLeft ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35; margin-top: 1px;">${more}</div>`);
             }
-            nameEl.innerHTML = lines.join('');
+            const nextLinesHtml = lines.join('');
+            if (nameEl.dataset.sig !== nextLinesHtml) {
+                nameEl.dataset.sig = nextLinesHtml;
+                nameEl.innerHTML = nextLinesHtml;
+            }
 
             // 全局查找该侧任意有合兵记录的存活单位（无论是主力还是援军），统一在援军行对齐展示标签
             const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
@@ -3075,18 +3089,21 @@ export class CombatUI {
                     bg = 'rgba(30, 30, 30, 0.85)';
                 }
                 applyBadgeStyleToElement(badgeEl, label, fmtVal, borderColor, color, bg, `援军合兵：×${fmtVal}`);
-            } else {
+            } else if (badgeEl.style.display !== 'none') {
                 badgeEl.style.display = 'none';
+                badgeEl.dataset.sig = '';
             }
 
-            if (reinfUnits.length > 0 || luckUnit) {
-                rowEl.style.display = 'flex';
-            } else {
-                rowEl.style.display = 'none';
+            const wantRowDisplay = (reinfUnits.length > 0 || luckUnit) ? 'flex' : 'none';
+            if (rowEl.style.display !== wantRowDisplay) {
+                rowEl.style.display = wantRowDisplay;
             }
         };
 
         const applyBadgeStyleToElement = (badge: HTMLSpanElement, shortName: string, fmtVal: string, borderColor: string, color: string, bg: string, title: string) => {
+            const bSig = `${shortName}|${fmtVal}|${borderColor}|${color}|${bg}|${title}`;
+            if (badge.dataset.sig === bSig && badge.style.display !== 'none') return;
+            badge.dataset.sig = bSig;
             badge.textContent = `${shortName}×${fmtVal}`;
             badge.title = title;
             badge.style.cssText = `
@@ -3304,9 +3321,15 @@ export class CombatUI {
 
             const applyCenterBadge = (el: HTMLSpanElement, char: string | null, isAtt: boolean) => {
                 if (!char) {
-                    el.style.display = 'none';
+                    if (el.style.display !== 'none') {
+                        el.style.display = 'none';
+                        el.dataset.sig = '';
+                    }
                     return;
                 }
+                const cSig = `${isAtt ? 'A' : 'D'}|${char}`;
+                if (el.dataset.sig === cSig && el.style.display !== 'none') return;
+                el.dataset.sig = cSig;
                 const SIX_STYLES: Record<string, { color: string; bg: string; border: string; glow: string }> = {
                     攻: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(140, 60, 10, 0.95), rgba(50, 15, 5, 0.95))', border: 'rgba(249, 115, 22, 0.85)', glow: 'rgba(249, 115, 22, 0.5)' },
                     胜: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(20, 100, 45, 0.95), rgba(5, 40, 15, 0.95))', border: 'rgba(34, 197, 94, 0.85)', glow: 'rgba(34, 197, 94, 0.5)' },
@@ -3513,8 +3536,6 @@ export class CombatUI {
         // 此前各调用点传进来的单位各挑各的，才会出现「技能条有技、中央角标空」。
         if (attacker) attacker = this.resolvePowerBadgeUnit(attacker, 'attacker');
         if (defender) defender = this.resolvePowerBadgeUnit(defender, 'defender');
-        this.leftSkillsBox.innerHTML = '';
-        this.rightSkillsBox.innerHTML = '';
 
         const createSkillTag = (
             name: string,
@@ -3707,24 +3728,27 @@ export class CombatUI {
             return tag;
         };
 
+        type SkillTagKind = 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' | 'player_rank';
         const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
-            if (!unit) return;
-            const pending: HTMLDivElement[] = [];
+            if (!unit) {
+                if (box.dataset.sig !== '') {
+                    box.dataset.sig = '';
+                    box.innerHTML = '';
+                }
+                return;
+            }
+            const items: Array<{ name: string; effect: string; famous: boolean; skillType: SkillTagKind; spent: boolean }> = [];
             const sideKey = isAttacker ? 'attacker' : 'defender';
+            const nowMs = Date.now();
             const add = (
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' | 'player_rank' = 'other'
+                skillType: SkillTagKind = 'other'
             ) => {
-                const el = createSkillTag(name, effect, famous, isAttacker, skillType);
-                // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
-                // 标签每帧重建，必须按 skillSpentAt 在创建时补挂
                 const spentAt = this.skillSpentAt.get(`${sideKey}-${name}`);
-                if (spentAt !== undefined && Date.now() - spentAt >= 600) {
-                    el.classList.add('skill-tag-spent');
-                }
-                pending.push(el);
+                const spent = spentAt !== undefined && nowMs - spentAt >= 600;
+                items.push({ name, effect, famous, skillType, spent });
             };
 
             const fmtMult = (m: number): string => {
@@ -3834,7 +3858,15 @@ export class CombatUI {
                 addPlayerRank();
             }
 
-            for (const tag of pending) box.appendChild(tag);
+            const sig = `${isAttacker ? 'A' : 'D'}|` + items.map((it) => `${it.name}\x1f${it.effect}\x1f${it.famous ? 1 : 0}\x1f${it.skillType}\x1f${it.spent ? 1 : 0}`).join('\x1e');
+            if (box.dataset.sig === sig) return;
+            box.dataset.sig = sig;
+            box.innerHTML = '';
+            for (const it of items) {
+                const el = createSkillTag(it.name, it.effect, it.famous, isAttacker, it.skillType);
+                if (it.spent) el.classList.add('skill-tag-spent');
+                box.appendChild(el);
+            }
         };
         renderSide(this.sideElement('attacker', this.leftSkillsBox, this.rightSkillsBox), attacker, true);
         renderSide(this.sideElement('defender', this.leftSkillsBox, this.rightSkillsBox), defender, false);
@@ -4038,18 +4070,26 @@ export class CombatUI {
         const isLeft = this.isSideOnLeft(side);
         const t = Math.max(0, Math.floor(regularTroops));
         const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-        const nameHtml = `<span style="white-space: nowrap; color: #f6eedc; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${name}</span>`;
-        const troopHtml = `<span style="display: inline-block; padding: 1px ${uiPx(7)}; border-radius: 3px; background: linear-gradient(180deg, rgba(255, 215, 0, 0.2) 0%, rgba(180, 125, 20, 0.14) 100%); border: 1px solid rgba(255, 215, 0, 0.45); font-weight: 800; font-size: 0.92em; color: #ffe47a; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);">${troopStr}</span>`;
-        nameEl.innerHTML = isLeft
-            ? `${nameHtml}<span style="margin-left: 8px;">${troopHtml}</span>`
-            : `<span style="margin-right: 8px;">${troopHtml}</span>${nameHtml}`;
+        const sideSig = `${isLeft ? 'L' : 'R'}|${name}|${troopStr}`;
+        if (nameEl.dataset.sig !== sideSig) {
+            nameEl.dataset.sig = sideSig;
+            const nameHtml = `<span style="white-space: nowrap; color: #f6eedc; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${name}</span>`;
+            const troopHtml = `<span style="display: inline-block; padding: 1px ${uiPx(7)}; border-radius: 3px; background: linear-gradient(180deg, rgba(255, 215, 0, 0.2) 0%, rgba(180, 125, 20, 0.14) 100%); border: 1px solid rgba(255, 215, 0, 0.45); font-weight: 800; font-size: 0.92em; color: #ffe47a; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);">${troopStr}</span>`;
+            nameEl.innerHTML = isLeft
+                ? `${nameHtml}<span style="margin-left: 8px;">${troopHtml}</span>`
+                : `<span style="margin-right: 8px;">${troopHtml}</span>${nameHtml}`;
+        }
 
         if (barTroopsBadge) {
             const tot = Math.max(0, Math.floor(totalTroops ?? regularTroops));
             const totStr = tot >= 10000 ? `${(tot / 10000).toFixed(2)}万` : `${tot}`;
-            barTroopsBadge.innerHTML = totStr;
-            barTroopsBadge.title = `${side === 'attacker' ? '攻方' : '守方'}全军总兵力：${tot} 人（含各路援军）`;
-            barTroopsBadge.style.display = 'inline-block';
+            const totSig = `${side}|${totStr}|${tot}`;
+            if (barTroopsBadge.dataset.sig !== totSig) {
+                barTroopsBadge.dataset.sig = totSig;
+                barTroopsBadge.textContent = totStr;
+                barTroopsBadge.title = `${side === 'attacker' ? '攻方' : '守方'}全军总兵力：${tot} 人（含各路援军）`;
+                barTroopsBadge.style.display = 'inline-block';
+            }
         }
     }
 
@@ -4069,7 +4109,10 @@ export class CombatUI {
 
     /** 战斗 HUD 叠在深色地图上：势力名一律浅色字，不用旗面色（浅旗会变黑字看不见） */
     private applyFactionName(factionId: string | null, nameSpan: HTMLSpanElement): void {
-        nameSpan.textContent = this.resolveFactionLabel(factionId);
+        const label = this.resolveFactionLabel(factionId);
+        if (nameSpan.dataset.sig === label) return;
+        nameSpan.dataset.sig = label;
+        nameSpan.textContent = label;
         nameSpan.style.color = '#fff6dc';
         nameSpan.style.textShadow = '0 0 4px rgba(0,0,0,0.98), 0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(255, 215, 110, 0.22)';
     }
@@ -6467,20 +6510,24 @@ export class CombatUI {
             el.style.display = 'none';
         };
 
-        setInactive(this.indicatorLeftYou);
-        setInactive(this.indicatorLeftLie);
-        setInactive(this.indicatorRightYou);
-        setInactive(this.indicatorRightLie);
-        setInactive(this.indicatorJun);
+        const indSig = `${this.scene13LayoutOn ? 1 : 0}|${this.scene13SidesFlipped ? 1 : 0}|${attAdvantage ? 'A' : attDisadvantage ? 'D' : 'J'}`;
+        if (this.indicatorJun.dataset.indSig !== indSig) {
+            this.indicatorJun.dataset.indSig = indSig;
+            setInactive(this.indicatorLeftYou);
+            setInactive(this.indicatorLeftLie);
+            setInactive(this.indicatorRightYou);
+            setInactive(this.indicatorRightLie);
+            setInactive(this.indicatorJun);
 
-        if (attAdvantage) {
-            setActive(this.sideElement('attacker', this.indicatorLeftYou, this.indicatorRightYou), 'you');
-            setActive(this.sideElement('defender', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
-        } else if (attDisadvantage) {
-            setActive(this.sideElement('attacker', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
-            setActive(this.sideElement('defender', this.indicatorLeftYou, this.indicatorRightYou), 'you');
-        } else {
-            setActive(this.indicatorJun, 'jun');
+            if (attAdvantage) {
+                setActive(this.sideElement('attacker', this.indicatorLeftYou, this.indicatorRightYou), 'you');
+                setActive(this.sideElement('defender', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
+            } else if (attDisadvantage) {
+                setActive(this.sideElement('attacker', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
+                setActive(this.sideElement('defender', this.indicatorLeftYou, this.indicatorRightYou), 'you');
+            } else {
+                setActive(this.indicatorJun, 'jun');
+            }
         }
 
     }

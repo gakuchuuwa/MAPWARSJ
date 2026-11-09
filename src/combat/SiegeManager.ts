@@ -1200,10 +1200,20 @@ export class SiegeManager {
                 siegeLog(`[Siege] Defender Defeat!`);
             },
             undefined,
-            // Update city label when troops change
-            (newTroops: number) => {
-                this.cityManager.updateCityLabel(targetCity.id);
-            }
+            // Update city label when troops change（16x 倍速下节流，避免每秒近 30 次刷据点 DOM 标签）
+            (() => {
+                let lastLabelTroops = -1;
+                let lastLabelAt = 0;
+                return (newTroops: number) => {
+                    const rounded = Math.max(0, Math.floor(newTroops));
+                    if (rounded === lastLabelTroops) return;
+                    const now = performance.now();
+                    if (rounded > 0 && now - lastLabelAt < 120) return;
+                    lastLabelTroops = rounded;
+                    lastLabelAt = now;
+                    this.cityManager.updateCityLabel(targetCity.id);
+                };
+            })()
         );
 
         // [EFFECT] 守军从据点向进攻军团射箭（须在 battleField 创建并挂回调之后启动，避免异常泄漏）
