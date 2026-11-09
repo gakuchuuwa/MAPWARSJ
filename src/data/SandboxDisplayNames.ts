@@ -390,7 +390,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 明朝势力 ──
     'dengmaoqi': '铲平',
 'dada_ming': '鞑靼',
-'oirat_ming': '卫拉',
+'oirat_ming': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」] 卫拉特＝瓦剌（Oyirad 明清两种译名），旗号统一写「瓦剌」，靠势力色区分（原「卫拉」）
 'haixi_nvzhen': '海西',
 'yeren_nvzhen': '萨哈',
     'jilimi': '吉里',
@@ -410,7 +410,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'longwu': '明',
     // 🔴 [2026-11-09 主人令] 鲁监（鲁王朱以海监国，奉明正朔）→ 旗号写国号「明」（原「婺」是地名简称，无依据）
     'lujian': '明',
-'dzungar': '绰罗',
+'dzungar': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」] 绰罗斯部（准噶尔汗国）同属卫拉特，旗号统一「瓦剌」，靠势力色区分（原「绰罗」）
     'khoshut': '和硕',
     'yarkand': '叶尔',
 'khoja': '和卓',

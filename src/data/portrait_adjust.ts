@@ -487,11 +487,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/NORTHEAST/manzhou_nuerhachi.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -55
-        },
         "/assets/MONGOL/pugu_ashinaguduolu.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -2343,7 +2338,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/JIANGNAN/wuling_xiangdancheng.png": {
-            "scale": 0.97,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -22
         },
@@ -8568,9 +8563,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/MALAY/bfe_rajah_sulayman.png": {
-            "scale": 1.18,
+            "scale": 1.12,
             "offsetX": 0,
-            "offsetY": 19
+            "offsetY": 21
         },
         "/assets/JIANGNAN/dayu_liqianshi.png": {
             "scale": 1.1,
@@ -10937,15 +10932,45 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 16,
             "offsetY": 6
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_52.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -24
-        },
         "/assets/NORTHEAST/bfe_fuquan.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_53.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -55
+        },
+        "/assets/NORTHEAST/manzhou_nuerhachi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/NORTHEAST/dajin_wanyan_zhongde.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -29
+        },
+        "/assets/NORTHEAST/dajin_wanyaneke.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/CENTRAL/bfe_liu_shang.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/MALAY/sumuroyi_sumuroy.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/MALAY/gen_gajah_mada.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

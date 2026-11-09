@@ -256,7 +256,7 @@ export class CityAssetManager {
 
         'dengmaoqi': '铲平',
 'dada_ming': '鞑靼',
-'oirat_ming': '卫拉',
+        'oirat_ming': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」]
 'haixi_nvzhen': '海西',
 'yeren_nvzhen': '萨哈',
         'jilimi': '吉里',
@@ -273,7 +273,7 @@ export class CityAssetManager {
         'longwu': '明',
         // 🔴 [2026-11-09 主人令] 鲁监（鲁王朱以海监国）→ 旗号「明」（原「婺」是地名简称，无依据）
         'lujian': '明',
-'dzungar': '绰罗',
+        'dzungar': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」]
         'khoshut': '和硕',
         'yarkand': '叶尔',
 'khoja': '和卓',
