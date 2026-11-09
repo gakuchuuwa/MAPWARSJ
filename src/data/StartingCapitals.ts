@@ -135,6 +135,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'daqiya': 'city_sofia',
     'qiajia': 'city_kamanniya',
     'arevaci': 'city_numantia',
+    'xinmeiliyan': 'city_oleshky',   // 登记用，不改据点归属
+    'aixini': 'city_norwich',   // 登记用，不改据点归属
     'taluma': 'city_batavia',
 'mazhaer': 'city_budapeisi',
   'falanji': 'city_kelong',

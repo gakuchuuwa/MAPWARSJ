@@ -138,7 +138,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_chen_dong': 'JIANGNAN',   // 赵宋｜陈东｜据点 上海
     'bfe_chengong': 'HUGUANG',   // 赵宋｜陈珙｜据点 晋兴
     'bfe_chuzi': 'CENTRAL',   // 齐国｜触子｜据点 临淄
-    'bfe_cimmerian_king': 'CUMAN',   // 库曼｜图格达梅｜据点 奥列什基
+    'bfe_cimmerian_king': 'CUMAN',   // 辛梅里安｜图格达梅｜据点 奥列什基
     'bfe_cleombrotus': 'SPARTANS',   // 斯巴达｜克里奥姆布罗图斯｜据点 斯巴达
     'bfe_coyett': 'JIANGNAN',   // 尼德兰｜揆一｜据点 承天
     'bfe_crassus': 'ROMA',   // 罗马帝国｜克拉苏｜据点 罗马
@@ -221,6 +221,12 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_umar': 'JIANGNAN',   // 蒙古｜乌马儿｜据点 海陵
     'bfe_vahan': 'BYZANTINE',   // 拜占庭｜瓦汉｜据点 君士坦丁堡
     'bfe_vetilius': 'ROMA',   // 罗马帝国｜维特里乌斯｜据点 罗马
+    'bfe_kinizsi': 'HUNS',   // 基尼日｜据点 city_saigede
+    'bfe_jezzar': 'ORIE',   // 贾扎尔｜据点 city_beirut
+    'bfe_narses': 'ROMA',   // 纳尔塞斯｜据点 city_luoma
+    'bfe_stilicho': 'LATIN',   // 斯提利科｜据点 city_milan
+    'bfe_gleb_beloozero': 'VARANGIANS',   // 格列布｜据点 city_baihu
+    'bfe_boudica': 'BRITONS',   // 布狄卡｜据点 city_norwich
     'bfe_triarius': 'ROMA',   // 罗马共和国｜特里阿里乌斯｜据点 罗马
     'bfe_vitalian': 'THRACIAN',   // 拜占庭｜维塔利安｜据点 普罗夫迪夫
     'bfe_wanggao': 'NORTHEAST',   // 大清｜王杲｜据点 赫图阿拉
@@ -585,7 +591,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
     'gen_alexander_nef': 'SLAVIC',   // 罗斯｜亚历山大涅夫斯基｜据点 诺夫哥罗德
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
-    'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多
+    'gen_alfonso_vi': 'GOTHS',   // 卡斯蒂利亚｜阿方索六世｜据点 托莱多
     'gen_alfred_great': 'BRITONS',   // 英格兰｜阿尔弗雷德｜据点 温彻斯特
     'gen_algirdas': 'LITHUANIANS',   // 立陶宛｜阿尔吉尔达斯｜据点 维捷布斯克
     'gen_ali_ibn_yusuf': 'BERBER',   // 穆拉比特｜阿里优素福｜据点 马拉喀什

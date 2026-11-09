@@ -546,6 +546,8 @@ desheng: '#2E6B7A', // 德胜·刘通
     'daqiya': '#3E2E6B', // 达契亚
     'qiajia': '#5C3E2E', // 恺加
     'arevaci': '#7A4A3E', // 阿雷瓦西
+    'xinmeiliyan': '#6B4E2E', // 辛梅里安
+    'aixini': '#5E7A3A', // 爱西尼
     'taluma': '#2E5A3E', // 塔鲁玛迦拉
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）

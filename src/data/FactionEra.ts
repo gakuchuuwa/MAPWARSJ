@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴 2026-10-25 主人令：「武将有生卒登场年，势力有时代」「按史分年段」「这样能保证一个势力的人，都是一个军团」。
@@ -48,22 +48,22 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'houliao': [{ from: -9999, era: 'castle' }], // 东辽
     'xiliao': [{ from: -9999, era: 'castle' }], // 西辽
     'manzhou_d': [{ from: -9999, era: 'imperial' }], // 大清｜大清（1616–1912，含建州女真）＝帝国时代八旗军团
-    'xixiliwangguo': [{ from: -9999, era: 'castle' }], // 西西里｜古典＝叙拉古城邦（阿加索克利）；476 后＝城堡时代诺曼军团
+    'xixiliwangguo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }], // 西西里｜古典＝叙拉古城邦（阿加索克利）；476 后＝城堡时代诺曼军团
     'liangxixili': [{ from: -9999, era: 'imperial' }], // 两西西里王国（1816–1861）
     'abasi': [{ from: -9999, era: 'feudal' }], // 阿拔斯｜阿拔斯（750–1258）：封建＝哈里发军团（四大哈里发—阿拔斯黄金时代）；1050 塞尔柱入主巴格达 → 城堡时代撒拉森军团
     'womaya': [{ from: -9999, era: 'feudal' }], // 倭马亚｜倭马亚（661–1031）：封建＝哈里发军团；1050 后泰法/穆拉比特 → 城堡时代撒拉森军团
     'sashan': [{ from: -9999, era: 'antiquity' }], // 萨珊｜萨珊（224–476）：古典时代萨珊军团；476 后（卑路斯一世起）→ 封建时代霍拉桑军团
-    'baizanting': [{ from: -9999, era: 'feudal' }], // 拜占庭｜东罗马早期（–476）＝古典时代拜占庭军团；军区制（476–1071）＝封建时代拜占庭军区军团；1071 曼齐克特后普罗尼亚制 → 城堡时代拜占庭军团
+    'baizanting': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1071, era: 'castle' }], // 拜占庭｜东罗马早期（–476）＝古典时代拜占庭军团；军区制（476–1071）＝封建时代拜占庭军区军团；1071 曼齐克特后普罗尼亚制 → 城堡时代拜占庭军团
     'luoma_diguo': [{ from: -9999, era: 'antiquity' }], // 罗马帝国｜罗马帝国（–476）＝古典时代罗马军团
     'aqimeinide': [{ from: -9999, era: 'antiquity' }], // 阿契美尼德｜阿契美尼德（前550–前330）＝古典时代阿契美尼德军团
     'seljuq': [{ from: -9999, era: 'castle' }], // 塞尔柱｜塞尔柱（1037–1194）＝城堡时代加齐突骑军团（桑贾尔）
-    'luosi': [{ from: -9999, era: 'feudal' }], // 罗斯｜基辅罗斯（862–1240）＝封建时代基辅罗斯军团；1240 蒙古西征后（诺夫哥罗德/莫斯科）→ 城堡时代博亚尔重骑军团；1500 后莫斯科沙皇国 → 帝国时代俄罗斯军团
+    'luosi': [{ from: -9999, era: 'feudal' }, { from: 1240, era: 'castle' }, { from: 1500, era: 'imperial' }], // 罗斯｜基辅罗斯（862–1240）＝封建时代基辅罗斯军团；1240 蒙古西征后（诺夫哥罗德/莫斯科）→ 城堡时代博亚尔重骑军团；1500 后莫斯科沙皇国 → 帝国时代俄罗斯军团
     'osman': [{ from: -9999, era: 'imperial' }], // 奥斯曼｜奥斯曼（1299–1453）＝城堡时代加齐突骑军团；1453 攻陷君士坦丁堡 → 帝国时代苏丹亲兵军团
-    'bolan': [{ from: -9999, era: 'castle' }], // 波兰｜皮雅斯特早期（–1138）＝封建时代波兰尼军团；1138 分裂后—1569 → 城堡时代波兰王国军团；1569 卢布林联合 → 帝国时代波兰立陶宛军团
-    'mazhaer': [{ from: -9999, era: 'castle' }], // 匈牙利｜阿尔帕德（–1000）＝封建时代马扎尔骑射军团；1000 圣斯蒂芬受洗—1526 → 城堡时代匈牙利王国军团；1526 莫哈奇之战后 → 帝国时代匈牙利军团
+    'bolan': [{ from: -9999, era: 'feudal' }, { from: 1138, era: 'castle' }, { from: 1569, era: 'imperial' }], // 波兰｜皮雅斯特早期（–1138）＝封建时代波兰尼军团；1138 分裂后—1569 → 城堡时代波兰王国军团；1569 卢布林联合 → 帝国时代波兰立陶宛军团
+    'mazhaer': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1526, era: 'imperial' }], // 匈牙利｜阿尔帕德（–1000）＝封建时代马扎尔骑射军团；1050—1526 → 城堡时代匈牙利王国军团；1526 莫哈奇之战后 → 帝国时代匈牙利军团（段界按四时代年段，2026-11-09）
     'yinggelan': [{ from: -9999, era: 'feudal' }, { from: 1067, era: 'castle' }, { from: 1500, era: 'imperial' }], // 英格兰｜盎格鲁-撒克逊（–1066）＝封建时代盎格鲁撒克逊军团；1067 诺曼征服—1500 → 城堡时代英格兰军团；1500 都铎以后 → 帝国时代英格兰军团 🔴 [2026-11-07 按注释军制史落地：原只挂一段 castle，与注释和史实都不符，艾特尔弗里思（617）、阿尔弗雷德（899）被错算成城堡时代]
     'falanji': [{ from: -9999, era: 'feudal' }], // 法兰克｜晚期古典（–476）＝古典军团；墨洛温—加洛林（476–1100）＝封建时代法兰克军团；1100 后卡佩骑士 → 城堡时代法兰西骑士军团
-    'gaolu': [{ from: -9999, era: 'castle' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
+    'gaolu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
     'menggu_d': [{ from: -9999, era: 'castle' }], // 蒙古｜蒙古（含 10 世纪孛端察儿—元—北元）＝城堡时代漠南蒙古军团；1500 后（达延汗—喀尔喀/卫拉特）→ 帝国时代漠南蒙古军团
     // ══════ 二、单时代势力（整段一个时代）══════
     'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼哈桑
@@ -119,13 +119,13 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'bendou': [{ from: -9999, era: 'castle' }], // 特拉布宗
     'bendou_d': [{ from: -9999, era: 'antiquity' }], // 本都
     'bogendigongguo': [{ from: -9999, era: 'castle' }], // 勃艮第公国
-    'bogendi_wangguo': [{ from: -9999, era: 'feudal' }], // 勃艮第王国（411–534：古典 411–476 → 封建 476–534）
+    'bogendi_wangguo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 勃艮第王国（411–534：古典 411–476 → 封建 476–534）
     'bohai': [{ from: -9999, era: 'feudal' }], // 渤海
     'boootiya': [{ from: -9999, era: 'antiquity' }], // 底比斯
     'boren': [{ from: -9999, era: 'imperial' }], // 都掌蛮
     'bosi_puluosi': [{ from: -9999, era: 'antiquity' }], // 博斯普鲁斯
     'bosiniya': [{ from: -9999, era: 'castle' }], // 波斯尼亚
-    'boximiya': [{ from: -9999, era: 'castle' }], // 波西米亚｜城堡 → 1500 起帝国
+    'boximiya': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 波西米亚｜城堡 → 1500 起帝国
     'bulabante': [{ from: -9999, era: 'castle' }], // 布拉班特
     'bulu': [{ from: -9999, era: 'antiquity' }], // 波鲁斯
     'buni': [{ from: -9999, era: 'antiquity' }], // 迦太基
@@ -150,7 +150,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xisa': [{ from: -9999, era: 'antiquity' }], // 西萨特拉普（1–2 世纪）
     'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1832 起）
     'ante': [{ from: -9999, era: 'antiquity' }], // 安特（4 世纪）
-    'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建
+    'suweihui': [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
     'yicha': [{ from: -9999, era: 'imperial' }], // 伊察（16 世纪）
     'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
@@ -158,6 +158,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
     'qiajia': [{ from: -9999, era: 'imperial' }], // 恺加王朝（1796 起）
     'arevaci': [{ from: -9999, era: 'antiquity' }], // 阿雷瓦西（凯尔特伊比利亚部落，努曼提亚）
+    'xinmeiliyan': [{ from: -9999, era: 'antiquity' }], // 辛梅里安（黑海北岸游牧民，图格达梅）
+    'aixini': [{ from: -9999, era: 'antiquity' }], // 爱西尼（不列颠东部凯尔特部族，布狄卡）
     'taluma': [{ from: -9999, era: 'antiquity' }], // 塔鲁玛迦拉（西爪哇，5 世纪）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
@@ -226,7 +228,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gaoqi_d': [{ from: -9999, era: 'feudal' }], // 北齐
     'gar_kham': [{ from: -9999, era: 'imperial' }], // 德司
     'gaya': [{ from: -9999, era: 'antiquity' }], // 伽倻
-    'gelujiya': [{ from: -9999, era: 'castle' }], // 格鲁吉亚｜城堡 → 1500 起帝国
+    'gelujiya': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 格鲁吉亚｜城堡 → 1500 起帝国
     'geluolu': [{ from: -9999, era: 'feudal' }], // 葛逻禄
     'genji': [{ from: -9999, era: 'castle' }], // 源氏
     'genji_iyo': [{ from: -9999, era: 'castle' }], // 伊予源氏
@@ -363,7 +365,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mapuche': [{ from: -9999, era: 'imperial' }], // 马普切
     'maqidun': [{ from: -9999, era: 'antiquity' }],
     'sesali': [{ from: -9999, era: 'antiquity' }], // 色萨利（古典）
-    'maya': [{ from: -9999, era: 'feudal' }], // 玛雅｜按史分段：古典期 → 476 起封建
+    'maya': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 玛雅｜按史分段：古典期 → 476 起封建
     'maynila': [{ from: -9999, era: 'imperial' }], // 马尼拉土邦
     'medang': [{ from: -9999, era: 'feudal' }], // 马打蓝
     'meikelunbao': [{ from: -9999, era: 'castle' }], // 文德
@@ -411,7 +413,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'pajiama': [{ from: -9999, era: 'antiquity' }], // 帕加马
     'pandiya': [{ from: -9999, era: 'castle' }], // 潘地亚
     'peilieya_gongguo': [{ from: -9999, era: 'castle' }], // 佩列公国
-    'piketai': [{ from: -9999, era: 'feudal' }], // 皮克特｜–∞起古典（罗马时期喀里多尼亚/皮克特）→ 476起封建（皮克特王国） // 皮克特
+    'piketai': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 皮克特｜–∞起古典（罗马时期喀里多尼亚/皮克特）→ 476起封建（皮克特王国） // 皮克特
     'pisha': [{ from: -9999, era: 'feudal' }], // 毗沙
     'pishan': [{ from: -9999, era: 'antiquity' }], // 皮山
     'pomeilaniya': [{ from: -9999, era: 'castle' }], // 波美拉尼亚
@@ -419,7 +421,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'puluowangsi': [{ from: -9999, era: 'castle' }], // 普罗旺斯
     'pusikefu_gongheguo': [{ from: -9999, era: 'castle' }], // 伟利卡亚
     // 🔴 [2026-11-01 补缺格] 骠族｜按史分段：古典＝骠国城邦期（毗湿奴城前 200–室利差罗 4–5 世纪为都）→ 476 起封建（室利差罗盛期至骠国 9 世纪）
-    'pyu': [{ from: -9999, era: 'feudal' }],
+    'pyu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 骠族｜骠国城邦（室利差罗 2–9 世纪）：古典（–476）→ 476 起封建
     'qi': [{ from: -9999, era: 'antiquity' }], // 齐国
     'qianhui': [{ from: -9999, era: 'imperial' }], // 回军
     'qianliang': [{ from: -9999, era: 'antiquity' }], // 前凉
@@ -428,7 +430,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'qiepantuo': [{ from: -9999, era: 'feudal' }], // 护密
     'qiernigeweifu_gongguo': [{ from: -9999, era: 'feudal' }], // 杰斯纳
     'qifu_d': [{ from: -9999, era: 'antiquity' }], // 乞伏
-    'qimu': [{ from: -9999, era: 'castle' }], // 奇穆｜按史分段：900–1050 封建 → 1050 起城堡
+    'qimu': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 奇穆｜按史分段：900–1050 封建 → 1050 起城堡
     'qin': [{ from: -9999, era: 'antiquity' }], // 秦国
     'qiong': [{ from: -9999, era: 'antiquity' }], // 邛谷
     'qiuchi': [{ from: -9999, era: 'antiquity' }], // 仇池
@@ -448,7 +450,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'samtskhe': [{ from: -9999, era: 'castle' }], // 萨姆茨赫
     'sanada': [{ from: -9999, era: 'imperial' }], // 真田
     'sanfoqi': [{ from: -9999, era: 'feudal' }], // 三佛齐
-    'scotland': [{ from: -9999, era: 'castle' }], // 苏格兰｜–∞起城堡 → 1500起帝国（高地时代/詹姆斯党起义） // 苏格兰
+    'scotland': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 苏格兰｜–∞起城堡 → 1500起帝国（高地时代/詹姆斯党起义） // 苏格兰
     'shache': [{ from: -9999, era: 'antiquity' }], // 莎车
     'shang': [{ from: -9999, era: 'antiquity' }], // 商国
     'shanshan': [{ from: -9999, era: 'antiquity' }], // 鄯善
@@ -647,7 +649,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ayoubu': [{ from: -9999, era: 'castle' }], // 阿尤布｜按现存名将成名年推定：–∞起封建 → 1187起城堡
     'bafaliya': [{ from: -9999, era: 'feudal' }], // 巴伐利亚｜按现存名将成名年推定：–∞起封建 → 1388起城堡
     'baojiaer': [{ from: -9999, era: 'castle' }], // 保加尔｜按现存名将成名年推定：–∞起城堡 → 1720起帝国
-    'baojialiya': [{ from: -9999, era: 'castle' }], // 保加利亚｜封建→1190 城堡→1500 帝国
+    'baojialiya': [{ from: -9999, era: 'feudal' }, { from: 1190, era: 'castle' }, { from: 1500, era: 'imperial' }], // 保加利亚｜封建→1190 城堡→1500 帝国
     'baojian_qishi': [{ from: -9999, era: 'castle' }], // 宝剑骑士团｜按现存名将成名年推定：–∞起城堡 → 1470起帝国
     'boluo': [{ from: -9999, era: 'feudal' }], // 波罗帝国｜按现存名将成名年推定：–∞起古典 → 618起封建
     'bulietani': [{ from: -9999, era: 'castle' }], // 布列塔尼｜按现存名将成名年推定：–∞起封建 → 1425起城堡
@@ -656,7 +658,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'da_yan': [{ from: -9999, era: 'feudal' }], // 大燕｜按现存名将成名年推定：–∞起古典 → 720起封建
     'dali': [{ from: -9999, era: 'castle' }], // 大理｜按现存名将成名年推定：–∞起封建 → 1065起城堡
     'da_qin': [{ from: -9999, era: 'feudal' }], // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 大秦（朱泚）｜783 据长安称帝、国号秦（应天），784 改国号汉 → 封建时代
-    'danmai': [{ from: -9999, era: 'feudal' }], // 丹麦｜–∞起封建 → 1184起城堡 → 1500起帝国
+    'danmai': [{ from: -9999, era: 'feudal' }, { from: 1184, era: 'castle' }, { from: 1500, era: 'imperial' }], // 丹麦｜–∞起封建 → 1184起城堡 → 1500起帝国
     'xinbuli': [{ from: -9999, era: 'antiquity' }], // 辛布里（金布里）｜前 113–前 101 辛布里战争
     'daquyue': [{ from: -9999, era: 'feudal' }], // 大瞿越｜按现存名将成名年推定：–∞起封建 → 1405起城堡
     'deli': [{ from: -9999, era: 'castle' }], // 德里苏丹国｜按现存名将成名年推定：–∞起城堡 → 1526起帝国
@@ -668,20 +670,20 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ganden': [{ from: -9999, era: 'imperial' }], // 甘丹｜按现存名将成名年推定：–∞起城堡 → 1638起帝国
     'gurjara': [{ from: -9999, era: 'feudal' }], // 瞿折罗｜按现存名将成名年推定：–∞起封建 → 1620起帝国
     'hansa': [{ from: -9999, era: 'castle' }], // 汉萨｜按现存名将成名年推定：–∞起封建 → 1380起城堡
-    'inca': [{ from: -9999, era: 'castle' }], // 印加｜按现存名将成名年推定：–∞起城堡 → 1532起帝国
+    'inca': [{ from: -9999, era: 'castle' }, { from: 1532, era: 'imperial' }], // 印加｜按现存名将成名年推定：–∞起城堡 → 1532起帝国
     'jialixiya': [{ from: -9999, era: 'castle' }], // 哈尔公国｜按现存名将成名年推定：–∞起封建 → 1221起城堡
     'jiazini': [{ from: -9999, era: 'castle' }], // 伽色尼｜按现存名将成名年推定：–∞起封建 → 1110起城堡
     'jilimi': [{ from: -9999, era: 'castle' }], // 吉里｜按现存名将成名年推定：–∞起城堡 → 1620起帝国
     'joseon': [{ from: -9999, era: 'imperial' }], // 朝鲜｜按现存名将成名年推定：–∞起古典 → 1380起城堡 → 1515起帝国
     'kasidiliya': [{ from: -9999, era: 'castle' }], // 卡斯蒂利亚｜按现存名将成名年推定：–∞起城堡 → 1491起帝国
     'kelimiya': [{ from: -9999, era: 'castle' }], // 热那亚共和国｜按现存名将成名年推定：–∞起城堡 → 1486起帝国
-    'kelite': [{ from: -9999, era: 'castle' }], // 威尼斯共和国｜按现存名将成名年推定：–∞起城堡 → 1639起帝国
+    'kelite': [{ from: -9999, era: 'castle' }, { from: 1639, era: 'imperial' }], // 威尼斯共和国｜按现存名将成名年推定：–∞起城堡 → 1639起帝国
     'kongque': [{ from: -9999, era: 'antiquity' }], // 孔雀帝国｜按现存名将成名年推定：–∞起古典 → 435起封建
     'kuman_oleshky': [{ from: -9999, era: 'castle' }], // 库曼｜库曼人 11–13 世纪 → 城堡（2026-11-03 主人定「库曼算城堡」）
     'kumoxi': [{ from: -9999, era: 'feudal' }], // 库莫奚｜按现存名将成名年推定：–∞起封建 → 1095起城堡
-    'leangongguo': [{ from: -9999, era: 'castle' }], // 莱昂｜按现存名将成名年推定：–∞起封建 → 1191起城堡
+    'leangongguo': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 莱昂｜阿斯图里亚斯—莱昂（718 起）封建 → 1050 起城堡
     'liren': [{ from: -9999, era: 'feudal' }], // 俚族｜按现存名将成名年推定：–∞起封建 → 1480起帝国
-    'litaowan': [{ from: -9999, era: 'castle' }], // 立陶宛｜按现存名将成名年推定：–∞起城堡 → 1470起帝国
+    'litaowan': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 立陶宛｜–∞起城堡 → 1500 起帝国
     'lunbadi': [{ from: -9999, era: 'feudal' }], // 伦巴第｜按现存名将成名年推定：–∞起封建 → 1070起城堡 → 1513起帝国
     'gepids': [{ from: -9999, era: 'feudal' }], // 革皮德（5–6 世纪）
     'kalbids': [{ from: -9999, era: 'feudal' }], // 卡尔比德（948–1053 西西里埃米尔）
@@ -694,9 +696,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'malin': [{ from: -9999, era: 'castle' }], // 🔴 [2026-10-28 主人批修] 马林王朝｜1244 立国、1331–1348 阿布·哈桑在位，1340 里奥萨拉多＝城堡时代
     'oirat_ming': [{ from: -9999, era: 'imperial' }], // 卫拉特｜按现存名将成名年推定：–∞起城堡 → 1690起帝国
     'panyao': [{ from: -9999, era: 'castle' }], // 盘瑶｜按现存名将成名年推定：–∞起城堡 → 1750起帝国
-    'putaoya': [{ from: -9999, era: 'castle' }], // 葡萄牙｜按现存名将成名年推定：–∞起城堡 → 1520起帝国
+    'putaoya': [{ from: -9999, era: 'castle' }, { from: 1520, era: 'imperial' }], // 葡萄牙｜按现存名将成名年推定：–∞起城堡 → 1520起帝国
     'rouran': [{ from: -9999, era: 'antiquity' }], // 柔然｜按现存名将成名年推定：–∞起古典 → 500起封建
-    'ruidian_si': [{ from: -9999, era: 'imperial' }], // 瑞典｜按现存名将成名年推定：–∞起封建 → 1230起城堡 → 1570起帝国
+    'ruidian_si': [{ from: -9999, era: 'feudal' }, { from: 1230, era: 'castle' }, { from: 1570, era: 'imperial' }], // 瑞典｜按现存名将成名年推定：–∞起封建 → 1230起城堡 → 1570起帝国
     'ryukyu': [{ from: -9999, era: 'castle' }], // 琉球｜按现存名将成名年推定：–∞起城堡 → 1490起帝国
     'safawei_d': [{ from: -9999, era: 'imperial' }], // 萨法维｜按现存名将成名年推定：–∞起城堡 → 1510起帝国
     'yinduxila': [{ from: -9999, era: 'antiquity' }], // 印度希腊王国（约前 180–前 10）＝古典时代
@@ -713,8 +715,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'talasike': [{ from: -9999, era: 'castle' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'tubo': [{ from: -9999, era: 'feudal' }], // 吐蕃｜按现存名将成名年推定：–∞起古典 → 530起封建 → 1050起城堡
     'guge': [{ from: -9999, era: 'feudal' }], // 古格
-    'wende': [{ from: -9999, era: 'feudal' }], // 萨克森｜–∞起古典（罗马时期撒克逊人）→ 476起封建 → 993起城堡 → 1500起帝国
-    'wulaertu': [{ from: -9999, era: 'castle' }], // 亚美尼亚｜古典→953 封建→1140 城堡→1500 帝国
+    'wende': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜–∞起古典（罗马时期撒克逊人）→ 476起封建 → 1050起城堡 → 1500起帝国（段界按四时代年段，2026-11-09）
+    'wulaertu': [{ from: -9999, era: 'antiquity' }, { from: 884, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 亚美尼亚｜古典 → 884 巴格拉图尼王朝封建 → 1050 城堡（奇里乞亚）→ 1500 帝国
     'xigete': [{ from: -9999, era: 'feudal' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡
     'xijue': [{ from: -9999, era: 'feudal' }], // 十箭｜按现存名将成名年推定：–∞起古典 → 660起封建
     'xisi': [{ from: -9999, era: 'feudal' }], // 萨法尔王朝｜按现存名将成名年推定：–∞起古典 → 860起封建
@@ -797,5 +799,7 @@ export function getGeneralEra(generalId: string | null | undefined, factionIdHin
     }
     return GENERAL_ERA[generalId];
 }
+
+
 
 

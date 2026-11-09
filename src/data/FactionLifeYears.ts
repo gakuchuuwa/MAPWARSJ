@@ -128,6 +128,8 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     daqiya: { start: -82, end: 106, source: 'Wikipedia「达契亚」：前82年布雷比斯塔统一达契亚诸部，106年图拉真灭达契亚设行省。' },
     qiajia: { start: 1789, end: 1925, source: 'Wikipedia「恺加王朝」：1789年阿迦·穆罕默德汗起兵，1925年礼萨汗废王朝。' },
     arevaci: { start: -400, end: -133, source: 'Wikipedia「Arevaci」：前4世纪称雄凯尔特伊比利亚，前133年努曼提亚陷落。' },
+    xinmeiliyan: { start: -900, end: -600, source: 'Wikipedia「Cimmerians」：黑海北岸游牧民，前 8–7 世纪南下小亚细亚，约前 7 世纪末被吕底亚击溃后消散。' },
+    aixini: { start: -60, end: 61, source: 'Wikipedia「Iceni」：不列颠东部（今诺福克）凯尔特部族，前 1 世纪见于史载，61 年布狄卡起义失败后并入罗马行省。' },
     taluma: { start: 358, end: 669, source: 'Wikipedia「Tarumanagara」：西爪哇印度化王国，最早铭文约358年，7世纪为巽他王国取代。', note: '普尔纳跋摩约5世纪在位。' },
     mazhaer: { start: 1000, end: 1918, source: 'Wikipedia「匈牙利王国」：1000年斯蒂芬一世加冕，1918年奥匈解体。', note: '895年阿尔帕德立国，1526年后哈布斯堡兼领。' },
     falanji: { start: 481, end: 843, source: 'Wikipedia「法兰克王国」：481年克洛维即位，843年《凡尔登条约》三分。', note: '800年查理曼称帝，帝国843年分治。' },

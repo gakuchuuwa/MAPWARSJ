@@ -8553,7 +8553,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/ROMA/bfe_vetilius.png": {
-            "scale": 1.14,
+            "scale": 1.08,
             "offsetX": 2,
             "offsetY": 14
         },
@@ -9048,7 +9048,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/ROMA/bfe_crassus.png": {
-            "scale": 0.9,
+            "scale": 0.89,
             "offsetX": 5,
             "offsetY": 13
         },
@@ -10633,7 +10633,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/ROMA/bfe_gaius_livius.png": {
-            "scale": 1.08,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 41
         },
@@ -10793,7 +10793,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/ROMA/aitiliusi.png": {
-            "scale": 1.22,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 26
         },
@@ -10844,6 +10844,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/VARANGIANS/gen_rurik.png": {
             "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/ROMA/yidali_wangguo_garibaldi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/ROMA/waluo.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/ROMA/jiaohuangguo_leoi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -37
+        },
+        "/assets/ROMA/luoma_catulus.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/ROMA/bfe3_79.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 47
+        },
+        "/assets/ROMA/bfe3_77.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/ROMA/bfe3_63.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/ROMA/bfe3_51.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 48
+        },
+        "/assets/ROMA/bfe3_4.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/ROMA/baolusi.png": {
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 26
         }

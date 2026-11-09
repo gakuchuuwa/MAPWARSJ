@@ -614,7 +614,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_afonso_henriques': 12,                          // 阿方索一世 · putaoya · 里斯本
     'gen_alain_i': 9,                                   // 阿兰 · bulietani · 雷恩
     'gen_alfonso_ix': 13,                                // 阿方索九世 · leangongguo · 萨拉曼卡
-    'gen_alfonso_vi': 11,                                // 阿方索六世 · xigete · 托莱多
+    'gen_alfonso_vi': 11,                                // 阿方索六世 · kasidiliya · 托莱多
     'gen_andrea_doria': 16,                              // 安德烈亚 · liguliya · 热那亚
     'gen_barbarossa': 16,                                // 巴巴罗萨 · babali · 阿尔及尔
     'gen_basarab_i': 14,                                 // 巴萨拉布 · kuertaiya · 库尔泰亚
@@ -747,6 +747,12 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'habusibao_eugene': 17,                  // 欧根亲王 · habusibao · 塞格德
     'gesake_khmelnytsky': 17,                // 赫梅利尼茨基 · gesake · 谢缅杰尔
     'bfe_vetilius': -2,                      // 维特里乌斯 · luoma_diguo · 罗马城
+    'bfe_kinizsi': 15,                      // 基尼日
+    'bfe_jezzar': 18,                      // 贾扎尔
+    'bfe_narses': 6,                      // 纳尔塞斯
+    'bfe_stilicho': 5,                      // 斯提利科
+    'bfe_gleb_beloozero': 13,                      // 格列布
+    'bfe_boudica': 1,                      // 布狄卡
     'bfe_triarius': -1,                      // 特里阿里乌斯 · luoma_diguo · 罗马城
     'bfe_chelyadnin': 16,                    // 切利亚德宁 · mosike_gongguo · 莫斯科
     'bfe_mustafa_ii': 17,                    // 穆斯塔法二世 · osman · 埃迪尔内

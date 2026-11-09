@@ -931,7 +931,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_cimmerian_king', cityId: 'city_oleshky', generalName: '图格达梅', portrait: '/assets/CUMAN/bfe_cimmerian_king.png' , eliteName: '辛梅里安骑', eliteTier: 4},
 
 
 
@@ -1587,6 +1586,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'duonaobaojia_tzimiskes', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '齐米斯基', portrait: '/assets/BYZANTINE/duonaobaojia_tzimiskes.png', eliteName: '拜占庭铁甲', eliteTier: 2 },
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    纳尔塞斯（约 478–573，东罗马统帅；552 塔吉那大破托提拉、553 拉克塔里乌斯山灭东哥特、554 卡西利努姆歼法兰克—阿勒曼尼军，此后坐镇罗马治理意大利）｜势力 拜占庭｜据点 罗马（ROMA）｜名将｜精锐「东罗马甲骑」T3｜立绘留空
+        { generalId: 'bfe_narses', factionId: 'baizanting', cityId: 'city_luoma', generalName: '纳尔塞斯', portrait: '/assets/BYZANTINE/bfe_narses.png', eliteName: '东罗马甲骑', eliteTier: 3 },
         { generalId: 'duonaobaojia_samuel', factionId: 'baojialiya', cityId: 'city_sofia', generalName: '萨穆伊尔', portrait: '/assets/BULGARIANS/duonaobaojia_samuel.png', eliteName: '保加卫队', eliteTier: 2 },
 
 
@@ -2116,7 +2118,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_alfonso_vi', cityId: 'city_toledo', generalName: '阿方索六世', portrait: '/assets/GOTHS/gen_alfonso_vi.png', eliteName: '托莱多骑', eliteTier: 3 },
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    阿方索六世是莱昂—卡斯蒂利亚国王（1085 攻取托莱多），原无 factionId 落进西哥特块被判成封建；改挂卡斯蒂利亚＝城堡时代，托莱多 GOTHS → 城堡时代伊比利亚军团
+        { generalId: 'gen_alfonso_vi', factionId: 'kasidiliya', cityId: 'city_toledo', generalName: '阿方索六世', portrait: '/assets/GOTHS/gen_alfonso_vi.png', eliteName: '托莱多骑', eliteTier: 3 },
 
 
 
@@ -2728,6 +2732,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     luoma_diguo: [
         { generalId: 'luoma_catulus', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '卡图卢斯', portrait: '/assets/ROMA/luoma_catulus.png', eliteName: '罗马接舷水兵', eliteTier: 2 },
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    斯提利科（约 359–408，西罗马大元帅，驻节米兰；402 波伦提亚、403 维罗纳两败阿拉里克，406 菲埃索莱全歼拉达盖苏斯）｜势力 罗马｜据点 米兰（LATIN）｜名将｜精锐「罗马军团」T1（挂第 2 人，到上限）｜立绘留空
+        { generalId: 'bfe_stilicho', factionId: 'luoma_diguo', cityId: 'city_milan', generalName: '斯提利科', portrait: '/assets/ROMA/bfe_stilicho.png', eliteName: '罗马军团', eliteTier: 1 },
         // 🔴 [2026-10-25 补B] 维特里乌斯（Vetilius，前 2 世纪罗马将领；前 147 被维里亚图斯伏击杀）｜势力 罗马帝国｜据点 罗马城（ROMA 文化）｜普将（实败）｜精锐「罗马军团兵」T4｜立绘留空
         { generalId: 'bfe_vetilius', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '维特里乌斯', portrait: '/assets/ROMA/bfe_vetilius.png', eliteName: '罗马军团兵', eliteTier: 4 },
         // 🔴 [2026-11-09 主人令「新建一个武将，尽量符合历史」] 特里阿里乌斯（Gaius Valerius Triarius，卢库卢斯麾下副将；前 67 年泽拉之战被密特里达梯六世击败）｜势力 罗马共和国｜据点 罗马城（ROMA 文化）｜普将（实败）｜精锐「罗马军团兵」T4（挂第 8 人，到上限）｜立绘留空
@@ -3185,6 +3192,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'shaiyue_aerpade', factionId: 'mazhaer', cityId: 'city_budapeisi', generalName: '阿尔帕德', portrait: '/assets/MAGYAR/shaiyue_aerpade.png', eliteName: '胡萨尔', eliteTier: 2 },
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    基尼日·帕尔（1432–1494，马加什一世麾下黑军统帅、蒂米什伯爵，镇守匈牙利南境；1479 面包原之战大破奥斯曼）｜势力 匈牙利｜据点 塞格德（HUNS）｜普将｜精锐「匈牙利黑军」T2（挂第 4 人，到上限）｜立绘留空
+        { generalId: 'bfe_kinizsi', factionId: 'mazhaer', cityId: 'city_saigede', generalName: '基尼日', portrait: '/assets/MAGYAR/bfe_kinizsi.png', eliteName: '匈牙利黑军', eliteTier: 2 },
 
 
 
@@ -3411,6 +3421,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 雷图格诺斯（？–前133，凯尔特伊比利亚阿雷瓦西人统帅；努曼提亚守城抗罗马二十年，前133 城破殉城）｜势力 阿雷瓦西｜据点 努曼提亚（SPANISH 文化，梅塞塔高原）｜普将｜精锐「努曼提亚兵」T4｜立绘留空
         { generalId: 'bfe_rhetogenes', factionId: 'arevaci', cityId: 'city_numantia', generalName: '雷图格诺斯', portrait: '/assets/SPANISH/bfe_rhetogenes.png', eliteName: '努曼提亚剑兵', eliteTier: 4 },
     ],
+    aixini: [
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    布狄卡（？–61，不列颠爱西尼部女王；60–61 年起兵反罗马，焚毁卡姆罗杜努姆、伦迪尼乌姆、维鲁拉米乌姆，最终在惠特灵大道败于苏埃托尼乌斯）｜势力 爱西尼（新增）｜据点 诺里奇（爱西尼故地，BRITONS）｜普将（终败）｜精锐「爱西尼战车」T3｜立绘留空
+        { generalId: 'bfe_boudica', factionId: 'aixini', cityId: 'city_norwich', generalName: '布狄卡', portrait: '/assets/BRITONS/bfe_boudica.png', eliteName: '爱西尼战车', eliteTier: 3 },
+    ],
+    xinmeiliyan: [
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    图格达梅（Lygdamis／Dugdamme，约前 7 世纪辛梅里安王，横扫吕底亚、焚以弗所阿耳忒弥斯神庙）原错挂在库曼（城堡时代）名下，迁入新增势力「辛梅里安」，回到古典时代
+        { generalId: 'bfe_cimmerian_king', factionId: 'xinmeiliyan', cityId: 'city_oleshky', generalName: '图格达梅', portrait: '/assets/CUMAN/bfe_cimmerian_king.png' , eliteName: '辛梅里安骑', eliteTier: 4},
+    ],
     taluma: [
         // 🔴 [2026-10-25 补B] 普尔纳跋摩（395–434 在位，塔鲁玛迦拉极盛期君主；图古、芝阿鲁腾梵文碑铭记其身披重甲统战象水陆大军、攻破摧毁敌国 21 座设防城）｜势力 塔鲁玛迦拉｜据点 巴达维亚（MALAY 文化，西爪哇）｜普将｜精锐「巽他战象」T4｜立绘留空
         { generalId: 'bfe_purnavarman', factionId: 'taluma', cityId: 'city_batavia', generalName: '普尔纳跋摩', portrait: '/assets/MALAY/bfe_purnavarman.png', eliteName: '巽他战象', eliteTier: 3 },
@@ -3530,6 +3550,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     luosi: [
         { generalId: 'bfe_mstislav_kiev', factionId: 'luosi', cityId: 'city_jifu', generalName: '姆斯季斯拉夫', portrait: '/assets/SLAVIC/bfe_mstislav_kiev.png', eliteName: '基辅亲卫重骑', eliteTier: 3 },
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    格列布·瓦西里科维奇（1237–1278，白湖公国首任王公，罗斯托夫系留里克王公）｜势力 罗斯｜据点 白湖（VARANGIANS）｜普将｜精锐「罗斯扈从」T4｜立绘留空
+        { generalId: 'bfe_gleb_beloozero', factionId: 'luosi', cityId: 'city_baihu', generalName: '格列布', portrait: '/assets/VARANGIANS/bfe_gleb_beloozero.png', eliteName: '罗斯扈从', eliteTier: 4 },
     { generalId: 'luosi_siweinieerde', factionId: 'luosi', cityId: 'city_jifu', generalName: '斯维涅尔德', portrait: '/assets/SLAVIC/luosi_siweinieerde.png', eliteName: '德鲁日纳', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 971 多罗斯托隆守将（《列奥执事官史》）｜🔴 [2026-11-07 修错 id] 据点原写 city_kiev，城库里基辅的 id 是 city_jifu（基辅罗斯都城），查无此城→他在游戏里出不了场；改回 city_jifu
         // 🔴 [2026-10-25 按史] 德米特里·亚历山德罗维奇（1250–1294，涅夫斯基之子，诺夫哥罗德王公 1276–1292）｜势力 罗斯｜据点 诺夫哥罗德（其王公驻地，SLAVIC 文化）｜普将｜精锐「诺夫战团」T4｜立绘留空
         { generalId: 'luosi_dmitry_aleksandrovich', factionId: 'luosi', cityId: 'city_nuofugeerdede', generalName: '德米特里', portrait: '/assets/SLAVIC/luosi_dmitry_aleksandrovich.png', eliteName: '诺夫战团', eliteTier: 4 },
@@ -13969,6 +13992,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     osman: [
         { generalId: 'osman_muhtar_pasha', factionId: 'osman', cityId: 'city_erzurum', generalName: '穆赫塔尔帕夏', portrait: '/assets/TURKS/osman_muhtar_pasha.png', eliteName: '埃城守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1877–78 俄土战争奥斯曼安纳托利亚军统帅，退守埃尔祖鲁姆；普将，待核实阿拉贾达格战役胜绩
+        // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
+        //    艾哈迈德·贾扎尔帕夏（约 1720–1804，奥斯曼西顿—阿卡总督；1772 年受命守贝鲁特，1799 阿卡守城击退拿破仑）｜势力 奥斯曼｜据点 贝鲁特（ORIE）｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
+        { generalId: 'bfe_jezzar', factionId: 'osman', cityId: 'city_beirut', generalName: '贾扎尔', portrait: '/assets/ORIE/bfe_jezzar.png', eliteName: '奥斯曼精兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 伊普西兰蒂斯（1792–1828，君士坦丁堡法纳尔希腊贵族、拜占庭政治遗产继承者；1821 率神圣军团打响反奥斯曼第一枪）｜势力 希腊王国｜据点 君士坦丁堡（BYZANTINE 文化，法纳尔区）｜普将｜精锐「神圣军团」T4｜立绘留空
         { generalId: 'bfe_ypsilantis', factionId: 'xilawangguo', cityId: 'city_junshitandingbao', generalName: '伊普西兰蒂斯', portrait: '/assets/BYZANTINE/bfe_ypsilantis.png', eliteName: '神圣军团', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 穆斯塔法二世（1664–1703，奥斯曼苏丹；1697 曾塔惨败）｜势力 奥斯曼｜据点 埃迪尔内（TURKS 文化）｜普将（实败）｜精锐「近卫军」T4｜立绘留空

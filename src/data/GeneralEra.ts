@@ -297,6 +297,12 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'habusibao_eugene': 'imperial',
     'gesake_khmelnytsky': 'imperial',
     'bfe_vetilius': 'antiquity',
+    'bfe_kinizsi': 'castle',   // 基尼日
+    'bfe_jezzar': 'imperial',   // 贾扎尔
+    'bfe_narses': 'feudal',   // 纳尔塞斯
+    'bfe_stilicho': 'antiquity',   // 斯提利科
+    'bfe_gleb_beloozero': 'castle',   // 格列布
+    'bfe_boudica': 'antiquity',   // 布狄卡
     'bfe_triarius': 'antiquity',
     'bfe_chelyadnin': 'castle',
     'bfe_mustafa_ii': 'imperial',
@@ -332,7 +338,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_rurik': 'feudal',
     'gen_sineus': 'feudal',
     'gen_alfonso_ix': 'castle',
-    'gen_alfonso_vi': 'feudal',
+    'gen_alfonso_vi': 'castle',   // 2026-11-09 改挂卡斯蒂利亚
     'gen_alfred_great': 'castle',
     'gen_algirdas': 'castle',
     'gen_andrea_doria': 'castle',
@@ -1607,7 +1613,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_coyett': 'imperial',   // 揆一｜荷兰东印度公司
     'bfe_jaya_prakash': 'imperial',   // 普拉卡什｜马拉
     'bfe_pisa_king': 'antiquity',   // 潘塔琉斯｜皮萨
-    'bfe_cimmerian_king': 'castle',   // 图格达梅｜辛梅里安
+    'bfe_cimmerian_king': 'antiquity',   // 图格达梅｜辛梅里安（2026-11-09 迁出库曼）
     'bfe_prasenajit': 'antiquity',   // 波斯匿｜拘萨罗
     'bfe_kalinga_king': 'antiquity',   // 婆摩｜羯陵伽
     'bfe_anga_king': 'antiquity',   // 达摩婆罗｜鸯伽

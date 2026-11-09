@@ -777,6 +777,8 @@ export class CityAssetManager {
         'daqiya': '达契',
         'qiajia': '恺加',
         'arevaci': '阿雷',
+        'xinmeiliyan': '辛梅',
+        'aixini': '爱西',
         'taluma': '塔鲁',
         'bulietani': '布列',
         'damolaweiya': '摩拉',
