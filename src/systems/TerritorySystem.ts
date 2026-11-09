@@ -155,9 +155,113 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
     HUT_A: 0.25, HUT_B: 0.25, HUT_C: 0.26, HUT_D: 0.25, HUT_E: 0.25, HUT_F: 0.25, HUT_G: 0.25,
     YURT_A: 0.25, YURT_B: 0.25, YURT_C: 0.25, YURT_D: 0.25,
     OUTPOST: 0.26, FORTIFIED_OUTPOST: 0.26,
+    CAMP_BARRACKS: 0.30, CAMP_ARCHERY_RANGE: 0.30, CAMP_STABLE: 0.30, GREEK_WAR_TENT: 0.26,
     DARK_HOUSE_AGE1: 0.26, DARK_MILL_AGE1: 0.30,
     DARK_BARRACKS_AGE1: 0.32, DARK_SETTLEMENT_AGE1: 0.34, DARK_TOWN_CENTER_AGE1: 0.36,
 };
+
+/** 67 文化专属地标特征件集合（用于小城 & 中城环周点缀，打破 16 基础风格同质化） */
+const CULTURAL_LANDMARK_SET = new Set<string>([
+    'SCEN_TORII_GATE',
+    'SCEN_PAGODA_A', 'SCEN_PAGODA_B', 'SCEN_PAGODA_C', 'SCEN_PAGODA_D', 'SCEN_PAGODA_E',
+    'SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE', 'SCEN_BUDDHA_STATUE', 'PAGAN_SHRINE',
+    'AMPHITHEATRE', 'ARCH_OF_CONSTANTINE', 'SCEN_ARCHAIC_THOLOS', 'SCEN_HERO_SHRINE',
+    'SCEN_STATUE_ALEXANDER', 'SCEN_STATUE_ARES_MARBLE', 'SCEN_STATUE_GREEK_HERO',
+    'FOLWARK', 'WOODEN_FORT', 'QUIMPER_CATHEDRAL', 'SCEN_AACHEN_CATHEDRAL',
+    'SCEN_HALL_OF_HEROES', 'POENARI_CASTLE', 'MINARET_OF_JAM', 'SCEN_FIRE_SHRINE',
+    'SCEN_SANKORE_MADRASAH', 'SCEN_DOME_OF_THE_ROCK', 'GOL_GUMBAZ', 'SCEN_CUSHITE_PYRAMIDS',
+]);
+
+/** 67 建筑风格 → 文化地标池（按据点哈希固定抽取 1 座混入小城/中城外环） */
+const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
+    // 东亚各文化分流
+    JAPAN: ['SCEN_TORII_GATE'],
+    CENTRAL: ['SCEN_PAGODA_A', 'SCEN_PAGODA_B', 'SCEN_PAGODA_C'],
+    WEI: ['SCEN_PAGODA_A', 'SCEN_PAGODA_B', 'SCEN_PAGODA_C'],
+    QIN: ['SCEN_PAGODA_A', 'SCEN_PAGODA_C', 'SCEN_BUDDHA_STATUE'],
+    JIANGNAN: ['SCEN_PAGODA_D', 'SCEN_PAGODA_E'],
+    HUGUANG: ['SCEN_PAGODA_D', 'SCEN_PAGODA_E'],
+    SICHUAN: ['SCEN_PAGODA_D', 'SCEN_BUDDHA_STATUE'],
+    MINYUE: ['SCEN_PAGODA_D', 'SCEN_PAGODA_E'],
+    LINGNAN: ['SCEN_PAGODA_D', 'SCEN_PAGODA_E'],
+    YUNGUI: ['SCEN_PAGODA_D', 'PAGAN_SHRINE'],
+    NORTHEAST: ['SCEN_PAGODA_A', 'SCEN_PAGODA_C'],
+    KOREA: ['SCEN_PAGODA_B', 'SCEN_BUDDHA_STATUE'],
+    VIETNAM: ['SCEN_PAGODA_D', 'SCEN_BUDDHA_STATUE'],
+    // 青藏与西域
+    TIBET: ['SCEN_BUDDHA_STATUE', 'SCEN_PAGODA_E'],
+    TANGUT: ['SCEN_PAGODA_A', 'SCEN_BUDDHA_STATUE'],
+    TARIM: ['SCEN_BUDDHA_STATUE', 'MINARET_OF_JAM'],
+    // 东南亚
+    BURMA: ['PAGAN_SHRINE', 'SCEN_BUDDHA_STATUE'],
+    KHMER: ['PAGAN_SHRINE', 'SCEN_REKHADEUL_TEMPLE'],
+    SIAM: ['PAGAN_SHRINE', 'SCEN_BUDDHA_STATUE'],
+    CHAMPA: ['PAGAN_SHRINE', 'SCEN_REKHADEUL_TEMPLE'],
+    MALAY: ['PAGAN_SHRINE'],
+    JAVA: ['PAGAN_SHRINE', 'SCEN_REKHADEUL_TEMPLE'],
+    // 南亚与兴都库什
+    INDIA: ['SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE'],
+    GURJARA: ['SCEN_REKHADEUL_TEMPLE', 'SANCHI_STUPA'],
+    DRAVIDA: ['SCEN_REKHADEUL_TEMPLE', 'GOL_GUMBAZ'],
+    BENGAL: ['SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE'],
+    HINDUKUSH: ['GOL_GUMBAZ', 'MINARET_OF_JAM'],
+    // 波斯、中亚与西亚
+    PERSIA: ['SCEN_FIRE_SHRINE', 'MINARET_OF_JAM'],
+    PARTHIA: ['SCEN_FIRE_SHRINE'],
+    SOGDIA: ['SCEN_FIRE_SHRINE', 'MINARET_OF_JAM'],
+    CENTRAL_ASIA: ['MINARET_OF_JAM'],
+    ARABIA: ['SCEN_DOME_OF_THE_ROCK', 'MINARET_OF_JAM'],
+    LEVANT: ['SCEN_DOME_OF_THE_ROCK', 'ARCH_OF_CONSTANTINE'],
+    SYRIA: ['SCEN_DOME_OF_THE_ROCK', 'AMPHITHEATRE'],
+    MESOPOTAMIA: ['SCEN_DOME_OF_THE_ROCK', 'MINARET_OF_JAM'],
+    TURKS: ['MINARET_OF_JAM', 'SCEN_DOME_OF_THE_ROCK'],
+    CAUCASUS: ['POENARI_CASTLE', 'ARCH_OF_CONSTANTINE'],
+    // 非洲
+    EGYPT: ['SCEN_CUSHITE_PYRAMIDS', 'SCEN_DOME_OF_THE_ROCK'],
+    ETHIOPIA: ['SCEN_CUSHITE_PYRAMIDS'],
+    BERBER: ['SCEN_SANKORE_MADRASAH', 'AMPHITHEATRE'],
+    MALI: ['SCEN_SANKORE_MADRASAH'],
+    HAUSA: ['SCEN_SANKORE_MADRASAH'],
+    BANTU: ['SCEN_SANKORE_MADRASAH'],
+    // 古典地中海与巴尔干
+    GREEK: ['SCEN_ARCHAIC_THOLOS', 'SCEN_HERO_SHRINE', 'SCEN_STATUE_GREEK_HERO'],
+    SPARTANS: ['SCEN_STATUE_ARES_MARBLE', 'SCEN_HERO_SHRINE'],
+    MACEDONIAN: ['SCEN_STATUE_ALEXANDER', 'SCEN_ARCHAIC_THOLOS'],
+    THRACIAN: ['SCEN_HERO_SHRINE', 'SCEN_STATUE_ARES_MARBLE'],
+    ROMAN: ['AMPHITHEATRE', 'ARCH_OF_CONSTANTINE'],
+    BYZANTINE: ['ARCH_OF_CONSTANTINE', 'AMPHITHEATRE'],
+    LATIN: ['AMPHITHEATRE', 'ARCH_OF_CONSTANTINE'],
+    SICILY: ['AMPHITHEATRE', 'ARCH_OF_CONSTANTINE'],
+    IBERIA: ['AMPHITHEATRE', 'QUIMPER_CATHEDRAL'],
+    GEORGIANS: ['ARCH_OF_CONSTANTINE', 'POENARI_CASTLE'],
+    ARMENIANS: ['ARCH_OF_CONSTANTINE', 'SCEN_ARCHAIC_THOLOS'],
+    // 西欧、中欧、北欧与东欧
+    FRANCE: ['QUIMPER_CATHEDRAL'],
+    BRITAIN: ['QUIMPER_CATHEDRAL'],
+    CELTS: ['QUIMPER_CATHEDRAL', 'SCEN_HALL_OF_HEROES'],
+    DUTCH: ['QUIMPER_CATHEDRAL'],
+    AMERICA: ['QUIMPER_CATHEDRAL'],
+    GERMAN: ['SCEN_AACHEN_CATHEDRAL'],
+    SAXONS: ['SCEN_AACHEN_CATHEDRAL', 'SCEN_HALL_OF_HEROES'],
+    BOHEMIANS: ['SCEN_AACHEN_CATHEDRAL', 'POENARI_CASTLE'],
+    NORSE: ['SCEN_HALL_OF_HEROES'],
+    GOTHS: ['SCEN_HALL_OF_HEROES', 'POENARI_CASTLE'],
+    POLAND: ['FOLWARK'],
+    LITHUANIA: ['FOLWARK', 'WOODEN_FORT'],
+    RUS: ['WOODEN_FORT'],
+    VARANGIANS: ['WOODEN_FORT', 'SCEN_HALL_OF_HEROES'],
+    SLAV: ['POENARI_CASTLE', 'WOODEN_FORT'],
+    MAGYAR: ['POENARI_CASTLE', 'FOLWARK'],
+    BULGAR: ['POENARI_CASTLE', 'ARCH_OF_CONSTANTINE'],
+};
+
+function pickCityCulturalLandmark(cityId: string, buildingStyle?: string): string | null {
+    if (!buildingStyle) return null;
+    const list = CULTURAL_LANDMARK_BY_STYLE[buildingStyle];
+    if (!list || list.length === 0) return null;
+    const idx = deHashString(cityId + '|cultural_landmark') % list.length;
+    return list[idx];
+}
 
 /* 🔴 [2026-10-03 主人令「改为 9 个」] 城寨「院内建筑位」三张表**已搬到共享模块**
  *   （`cityWallShared.ts`：`RECT_/OVAL_/TRAPEZOID_STOCKADE_SLOTS`）——游戏与评估页 `public/_citytest.html`
@@ -231,19 +335,39 @@ const STEPPE_STOCKADE_MIX = new Set(['XIANBEI', 'HUNS', 'CUMAN']);
 const MOBEI_GROUND_TILE = 'gr7';
 const cityGroundTile = (buildingStyle: string | undefined, normal: string): string =>
     isMobeiStyle(buildingStyle) ? MOBEI_GROUND_TILE : normal;
-/** 城池内单栋建筑的取图路径（蒙古包/棚屋类无风格前缀） */
+/** 判断建筑名是否已是 SUCAI_BUILDING 下的完整目录名（蒙古包/棚屋/营寨/文化地标/已带时代后缀） */
+function isRawBuildingDir(b: string): boolean {
+    return b.startsWith('YURT_')
+        || b.startsWith('HUT_')
+        || b.startsWith('DARK_')
+        || b.startsWith('CAMP_')
+        || b.startsWith('SCEN_')
+        || b === 'SETTLEMENT'
+        || b === 'OUTPOST'
+        || b === 'FORTIFIED_OUTPOST'
+        || b === 'GREEK_WAR_TENT'
+        || CULTURAL_LANDMARK_SET.has(b)
+        || /_AGE[1234]$/.test(b);
+}
+/** 城池内单栋建筑的取图路径（蒙古包/棚屋/文化地标类无风格前缀） */
 function cityBuildingSrc(style: string, b: string, age: string): string {
-    return isYurtItem(b) ? `/SUCAI_BUILDING/${b}/preview.png` : `/SUCAI_BUILDING/${style}_${b}_${age}/preview.png`;
+    return isRawBuildingDir(b) ? `/SUCAI_BUILDING/${b}/preview.png` : `/SUCAI_BUILDING/${style}_${b}_${age}/preview.png`;
 }
 /** 城池内单栋建筑的相对尺寸（蒙古包按 MONGOL_YURT_SCALE） */
 function cityBuildingScale(b: string, fallback: number): number {
     return isYurtItem(b) ? MONGOL_YURT_SCALE : (DE_BUILDING_SCALES[b] || fallback);
 }
-/** 战略地图据点内单栋建筑统一按 DE 原生框宽 × STRATEGIC_CITY_BUILDING_SCALE（0.10，放大 4 倍后即 0.40） */
+/** 战略地图据点内单栋建筑统一按 DE 原生框宽 × STRATEGIC_CITY_BUILDING_SCALE（0.10，放大 4 倍后即 0.40）；
+ *  文化专属地标特征件框宽夹在 [220, 320]，使小型祭坛/鸟居清晰可见、大型圣堂/佛塔不越出城墙。 */
 function strategicCityBldgWidthFromSrc(src: string, fallbackPx: number): number {
     const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(src);
-    const boxW = m ? DE_SPRITE_BOX_W[m[1]] : undefined;
-    return boxW ? boxW * STRATEGIC_CITY_BUILDING_SCALE : fallbackPx;
+    const dir = m ? m[1] : undefined;
+    const rawBoxW = dir ? DE_SPRITE_BOX_W[dir] : undefined;
+    if (!rawBoxW) return fallbackPx;
+    const boxW = (dir && CULTURAL_LANDMARK_SET.has(dir))
+        ? Math.max(220, Math.min(320, rawBoxW))
+        : rawBoxW;
+    return boxW * STRATEGIC_CITY_BUILDING_SCALE;
 }
 
 /**
@@ -707,6 +831,14 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 周围建筑散布：一律取 8 栋（45° 扇区，9 建筑满配）
     const surroundCount = 8;
     const surround = ring.slice(1, 1 + surroundCount);
+    // 战略地图：混入 1 座 67 文化专属地标特征件（如鸟居、佛塔、桑奇大塔、宣礼塔、战神像、木堡等），增强同风格文化辨识度
+    if (!native && !isMobei && !(buildingStyle && STEPPE_SMALL_CITY_MIX.has(buildingStyle))) {
+        const landmark = pickCityCulturalLandmark(cityId, buildingStyle);
+        if (landmark && surround.length > 0) {
+            const lmSlot = deHashString(cityId + '|small_lm_slot') % surround.length;
+            surround[lmSlot] = landmark;
+        }
+    }
     surround.forEach((b, i) => {
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
@@ -814,9 +946,26 @@ function buildDeStockadeStackHtml(
                     for (let i = yurtPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [yurtPool[i], yurtPool[j]] = [yurtPool[j], yurtPool[i]]; }
                     return [...dePool.slice(0, 4), ...yurtPool.slice(0, 5)];
                 })()
-                : (buildingStyle === 'MAGYAR' || buildingStyle === 'CENTRAL_ASIA'
-                    ? DE_STOCKADE_BUILDING_POOL.filter((b) => !isYurtItem(b))   // 马扎尔定居后、鞑靼中亚绿洲城：不用蒙古包
-                    : [...DE_STOCKADE_BUILDING_POOL]);
+                : (() => {
+                    // 按据点所属文化分流混搭（打破全图城寨千篇一律欧洲茅草屋）：
+                    // 3 栋本文化建筑（民居/磨坊/兵营/哨塔）+ 2 栋边塞军营/哨所 + 4 栋山寨聚落木屋
+                    const cultPool = [
+                        `${style}_HOUSE_AGE2`, `${style}_HOUSE_AGE2`,
+                        `${style}_MILL_AGE2`, `${style}_BARRACKS_AGE2`, `${style}_TOWER_AGE2`,
+                    ].filter((k) => !!DE_SPRITE_BOX_W[k]);
+                    const campPool = [
+                        'CAMP_BARRACKS', 'CAMP_ARCHERY_RANGE', 'OUTPOST', 'FORTIFIED_OUTPOST',
+                        ...(style === 'GREEK' || style === 'THRACIAN' || style === 'MEDI' ? ['GREEK_WAR_TENT'] : []),
+                    ];
+                    const hutPool = [
+                        'SETTLEMENT', 'DARK_TOWN_CENTER_AGE1',
+                        'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
+                    ];
+                    for (let i = cultPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cultPool[i], cultPool[j]] = [cultPool[j], cultPool[i]]; }
+                    for (let i = campPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [campPool[i], campPool[j]] = [campPool[j], campPool[i]]; }
+                    for (let i = hutPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [hutPool[i], hutPool[j]] = [hutPool[j], hutPool[i]]; }
+                    return [...cultPool.slice(0, 3), ...campPool.slice(0, 2), ...hutPool.slice(0, 4)];
+                })();
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -1401,6 +1550,16 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     slots.sort((a, b) => a.y - b.y);
 
     let otherIdx = 0;
+    const medRingIndices: number[] = [];
+    slots.forEach((slot, i) => {
+        if (!slot.isCenter) medRingIndices.push(i);
+    });
+    const medLandmark = (!native && !isMobeiStyle(buildingStyle) && buildingStyle !== 'XIANBEI')
+        ? pickCityCulturalLandmark(cityId, buildingStyle)
+        : null;
+    const medLandmarkSlotIdx = (medLandmark && medRingIndices.length > 0)
+        ? medRingIndices[deHashString(cityId + '|med_lm_slot') % medRingIndices.length]
+        : -1;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
@@ -1411,7 +1570,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                 `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
         } else {
-            const b = centerCastle ? pool[otherIdx++] : pool[i];
+            const rawB = centerCastle ? pool[otherIdx++] : pool[i];
+            const b = (i === medLandmarkSlotIdx && medLandmark) ? medLandmark : rawB;
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
             const bSrc = cityBuildingSrc(style, b, 'AGE3');
             const bW = nativeW(native, b, 'AGE3') ?? strategicCityBldgWidthFromSrc(bSrc, baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO);

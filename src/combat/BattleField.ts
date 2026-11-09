@@ -831,8 +831,28 @@ export class BattleField implements IOpeningPulseSink {
             this.predictedWeakerGroup = this.attackerGroup;
             return;
         }
-        this.applyPredictedSidesFromRoll(rolls.attRoll, rolls.defRoll);
+        // 🔴 [2026-11-09 主人令「经典战应该让历史真实胜利方，赢面更大」]
+        //    经典战（名将成名战）的史实胜方＝带 isFirstBattleHero 的名将军团。它的战力掷点 ×CLASSIC_HISTORIC_WINNER_EDGE；
+        //    只加赢面、不写死胜负（10-27 主人令「成名战战败，应该军队战败」仍然有效）。
+        //    这一步改的是 effectivePowerRatio，战略结算和战术模式（getScene13PowerBonus）都从它取，两边一致。
+        const isHero = (g: FactionGroup) => g.units.some((bu) => bu.unit.getEntity?.()?.isFirstBattleHero === true);
+        const attHero = isHero(this.attackerGroup);
+        const defHero = isHero(this.defenderGroup);
+        let { attRoll, defRoll } = rolls;
+        if (attHero !== defHero) {
+            if (attHero) attRoll *= BattleField.CLASSIC_HISTORIC_WINNER_EDGE;
+            else defRoll *= BattleField.CLASSIC_HISTORIC_WINNER_EDGE;
+            gameLog('battle', `[BattleField] 经典战史实胜方（${attHero ? '攻方' : '守方'}）战力 ×${BattleField.CLASSIC_HISTORIC_WINNER_EDGE}`);
+        }
+        this.applyPredictedSidesFromRoll(attRoll, defRoll);
     }
+
+    /**
+     * 经典战史实胜方的战力倍数。1.5 的依据（10-27～11-08 共 2421 场战术战实测）：
+     * 兵力相当时攻方胜率约 60%–77%，有效战力比 1.3–1.6 时攻方胜 88%；
+     * 乘 1.5 后，兵力相当的经典战史实胜方大约七到九成赢，兵力远少于对手的史实胜方仍可能输。
+     */
+    private static readonly CLASSIC_HISTORIC_WINNER_EDGE = 1.5;
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {
         // 八环乘完后的有效战力比，供时长判定用（兵力比不够准：兵力只是八环之一）

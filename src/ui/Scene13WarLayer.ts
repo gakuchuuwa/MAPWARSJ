@@ -5386,6 +5386,9 @@ export class Scene13WarLayer {
 
             type: init.battleType ?? 'field',
 
+            // [2026-11-09 主人问「悬念要分清是经典战还是跟随武将的仗」] 有剧本标题＝经典战/剧情战，否则＝跟随军团打的普通仗
+            story: !!init.title, title: init.title ?? null,
+
         });
 
         this.attach();

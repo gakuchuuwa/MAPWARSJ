@@ -150,6 +150,16 @@ const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const PLOT_PANE_ZINDEX = 330;  // 生产方式地皮（农田、水田、牧场等）位于矢量河流(335)与水域河流(340)下层，不遮挡河流
 const PANE_ZINDEX = 568;       // 高于陆地动物(560)/植被(565)，低于商队(570)/攻城底层军团(580)/据点(610)/主军团(620)
+const FLIPBOOK_PANE_ZINDEX = 612; // 位于静态据点建筑层(610)之上、行军军团(620)与据点名牌旗帜(660)之下，专绘据点动态 Flipbook
+
+type StripFolder = 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING' | 'SUCAI_FX';
+
+interface CityPortDock {
+    pos: Pt;
+    asset: string;
+    mirror: boolean;
+    variant: number;
+}
 /**
  * 🔴 2026-10-31 ~ 2026-11-01 主人令「把生产方式，陆海空动物的显示比例统一，大小对齐 DE」「让素材的显示大小都和 DE 一致，所有素材显示大小比例一致」：
  *   1. 村民、家畜/猎物、渔船、鱼群、地面采集物/矿石、尸体与沉船残骸一律用同一个 DE 基准（STRATEGIC_SPRITE_SCALE＝0.7）；
@@ -526,6 +536,8 @@ export class CityLifeAmbientLayer {
     private plotCtx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
+    private fxCanvas: HTMLCanvasElement;
+    private fxCtx: CanvasRenderingContext2D;
     private running = false;
     private lastTime = 0;
     /** 限帧闸：静止时 30 帧，缩放/大幅平移立刻重画（见 AmbientFrameGate） */
@@ -553,6 +565,8 @@ export class CityLifeAmbientLayer {
     private layerVisible = true;
     /** 各据点战毁重建代数：和平期固定为 0（位置与类型常年不变），仅在战火摧毁并于次年春季恢复时 +1 重新选址生成 */
     private cityRebuildGen = new Map<string, number>();
+    /** 沿海/沿河据点自动生成的专属港口码头船坞缓存 */
+    private cityPortDockCache = new Map<string, CityPortDock | null>();
     private visibleCitiesKey = '';
     private visibleCitiesCache: CityDataV2[] = [];
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
@@ -596,6 +610,20 @@ export class CityLifeAmbientLayer {
         if (!ctx) throw new Error('CityLifeAmbientLayer: 2d context unavailable');
         this.ctx = ctx;
 
+        let fxPane = map.getPane('cityFlipbookPane');
+        if (!fxPane) {
+            fxPane = map.createPane('cityFlipbookPane');
+            fxPane.style.zIndex = String(FLIPBOOK_PANE_ZINDEX);
+            fxPane.style.pointerEvents = 'none';
+        }
+        this.fxCanvas = document.createElement('canvas');
+        this.fxCanvas.className = 'leaflet-zoom-animated';
+        this.fxCanvas.style.pointerEvents = 'none';
+        fxPane.appendChild(this.fxCanvas);
+        const fxCtx = this.fxCanvas.getContext('2d');
+        if (!fxCtx) throw new Error('CityLifeAmbientLayer: fx 2d context unavailable');
+        this.fxCtx = fxCtx;
+
         this.resize();
         map.on('resize', () => this.resize());
         if (!hasWorldBaseData()) {
@@ -622,6 +650,8 @@ export class CityLifeAmbientLayer {
         this.plotCanvas.height = s.y;
         this.canvas.width = s.x;
         this.canvas.height = s.y;
+        this.fxCanvas.width = s.x;
+        this.fxCanvas.height = s.y;
         this.reposition();
     }
 
@@ -632,6 +662,7 @@ export class CityLifeAmbientLayer {
         const topLeft = L.point(-Math.round(panePos.x), -Math.round(panePos.y));
         L.DomUtil.setPosition(this.plotCanvas, topLeft);
         L.DomUtil.setPosition(this.canvas, topLeft);
+        L.DomUtil.setPosition(this.fxCanvas, topLeft);
     }
 
     /** 精确容器画布坐标：与整数锚点 topLeft 配合，既保持慢速走动牲畜的连续平滑，又让静态树木/竹林在画布上锁定整数像素不闪烁 */
@@ -660,6 +691,7 @@ export class CityLifeAmbientLayer {
         this.layerVisible = v;
         this.plotCanvas.style.display = v ? 'block' : 'none';
         this.canvas.style.display = v ? 'block' : 'none';
+        this.fxCanvas.style.display = v ? 'block' : 'none';
     }
 
     public debugAssetCount(): number {
@@ -2052,8 +2084,8 @@ export class CityLifeAmbientLayer {
         return a.ready ? a : undefined;
     }
 
-    /** 加载单行精灵条资产（支持 SUCAI_BATTLEFIELD / SUCAI_NATURE / SUCAI_RESOURCE） */
-    private loadStripAsset(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING', name: string): void {
+    /** 加载单行精灵条资产（支持 SUCAI_BATTLEFIELD / SUCAI_NATURE / SUCAI_RESOURCE / SUCAI_BUILDING / SUCAI_FX） */
+    private loadStripAsset(folder: StripFolder, name: string): void {
         const key = `${folder}/${name}`;
         if (this.stripAssets.has(key)) return;
         const basePath = `/${folder}/${name}`;
@@ -2081,24 +2113,27 @@ export class CityLifeAmbientLayer {
                 st.anchorX = treeMeta?.anchorX ?? meta.anchor_x ?? Math.floor(st.boxW / 2);
                 st.anchorY = treeMeta?.anchorY ?? meta.anchor_y ?? Math.floor(st.boxH / 2);
                 const img = new Image();
-                let triedPreview = false;
+                let triedFallback = false;
                 img.onload = () => { st.ready = true; };
                 img.onerror = () => {
-                    // 部分 DE 小屋只保留单帧 preview.png，与 frames.png 一样是有效静态素材。
-                    if (folder === 'SUCAI_BUILDING' && !triedPreview) {
-                        triedPreview = true;
+                    // 部分 DE 小屋只保留单帧 preview.png，SUCAI_FX 备用 frames.png
+                    if (folder === 'SUCAI_BUILDING' && !triedFallback) {
+                        triedFallback = true;
                         img.src = `${basePath}/preview.png`;
+                    } else if (folder === 'SUCAI_FX' && !triedFallback) {
+                        triedFallback = true;
+                        img.src = `${basePath}/frames.png`;
                     } else {
                         st.ready = false;
                     }
                 };
-                img.src = `${basePath}/frames.png${bust}`;
+                img.src = folder === 'SUCAI_FX' ? `${basePath}/fly_0.png` : `${basePath}/frames.png${bust}`;
                 st.sheet = img;
             })
             .catch(() => {});
     }
 
-    private stripAssetFor(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING', name: string): StripStaticAsset | undefined {
+    private stripAssetFor(folder: StripFolder, name: string): StripStaticAsset | undefined {
         const key = `${folder}/${name}`;
         let st = this.stripAssets.get(key);
         if (!st) {
@@ -2107,6 +2142,75 @@ export class CityLifeAmbientLayer {
         }
         st.lastUsed = performance.now();
         return st.ready ? st : undefined;
+    }
+
+    /** 沿海/沿河据点自动探测紧邻岸线并生成对应文化的港口码头与船坞 */
+    private getOrCreateCityPortDock(city: CityDataV2, actors: CityLifeActor[]): CityPortDock | null {
+        if (this.cityPortDockCache.has(city.id)) {
+            return this.cityPortDockCache.get(city.id) ?? null;
+        }
+        if (city.buildingStyle === 'MONGOL') {
+            this.cityPortDockCache.set(city.id, null);
+            return null;
+        }
+        // 已由海上渔业组合自带船坞的据点不再重复摆放第二座码头
+        if (actors.some((a) => a.isSeaFishing && !!a.buildingResource)) {
+            this.cityPortDockCache.set(city.id, null);
+            return null;
+        }
+        const h = (Math.floor(strHash01(city.id, 1301) * 0xFFFFFFFF) >>> 0);
+        const cosLat = Math.max(0.25, Math.cos((city.lat * Math.PI) / 180));
+        const radii = [0.048, 0.062, 0.076, 0.092];
+        let bestPos: Pt | null = null;
+        let sawLoadedTile = false;
+
+        for (const r of radii) {
+            for (let step = 0; step < 16; step++) {
+                const dirIdx = (step + (h & 15)) & 15;
+                const ang = (dirIdx / 16) * Math.PI * 2;
+                const dLat = Math.sin(ang) * r;
+                const dLng = (Math.cos(ang) * r) / cosLat;
+                const lat = city.lat + dLat;
+                const lng = city.lng + dLng;
+                const seaVal = this.isSea({ lat, lng });
+                const waterVal = LandSeaSystem.getWaterSampler().isWaterSync(lat, lng);
+                if (waterVal !== null) sawLoadedTile = true;
+                if (seaVal || waterVal === true) {
+                    // 确认据点一侧半程仍在陆地（紧贴城墙外水陆交界岸线）
+                    const midSea = this.isSea({ lat: city.lat + dLat * 0.45, lng: city.lng + dLng * 0.45 });
+                    if (!midSea) {
+                        bestPos = {
+                            lat: city.lat + dLat * 0.82,
+                            lng: city.lng + dLng * 0.82,
+                        };
+                        break;
+                    }
+                }
+            }
+            if (bestPos) break;
+        }
+
+        if (!bestPos) {
+            if (sawLoadedTile) this.cityPortDockCache.set(city.id, null);
+            return null;
+        }
+
+        const rawDe = resolveCityDeBuildingStyle(city.id, city.type, city.region, city.lat, city.lng, city.buildingStyle) || 'ASIA';
+        const deStyle = rawDe === 'YURT' ? 'ASIA' : rawDe;
+        const asset = deStyle === 'GREEK'
+            ? ((h & 1) === 0 ? 'GREEK_SHIPYARD_AGE2' : 'GREEK_DOCK_AGE2')
+            : deStyle === 'THRACIAN'
+                ? ((h & 1) === 0 ? 'THRACIAN_SHIPYARD_AGE2' : 'THRACIAN_DOCK_AGE2')
+                : `${deStyle}_DOCK_AGE2`;
+
+        const dock: CityPortDock = {
+            pos: bestPos,
+            asset,
+            mirror: ((h >>> 4) & 1) === 1,
+            variant: (h >>> 8) & 7,
+        };
+        this.cityPortDockCache.set(city.id, dock);
+        return dock;
     }
 
     /** 预热战时所需的破坏残骸、沉船与尸体贴图 */
@@ -2207,6 +2311,27 @@ export class CityLifeAmbientLayer {
             const citySeason = city.lat < -5 ? (season + 2) % 4 : season;
             const cityNextSeason = (citySeason + 1) % 4;
             const cityActionSeason = seasonBlend > 0 ? cityNextSeason : citySeason;
+
+            // 预热沿海/沿河据点自动生成的专属港口码头船坞与据点动态 Flipbook 序列帧
+            const portDock = this.getOrCreateCityPortDock(city, actors);
+            if (portDock) {
+                this.loadStripAsset('SUCAI_BUILDING', portDock.asset);
+                if (cityInWar) {
+                    this.loadAsset('SUCAI', 'SHIP_SINK_SMALL', 'idle');
+                    this.loadStripAsset('SUCAI_BATTLEFIELD', 'BARRICADE_RUBBLE_A');
+                }
+            }
+            this.loadStripAsset('SUCAI_FX', 'FIRE/FIRE_TORCH');
+            this.loadStripAsset('SUCAI_FX', 'FIRE/FIRE_SMALL');
+            if (city.type === 'pass' || city.type === 'stockade') {
+                this.loadStripAsset('SUCAI_BATTLEFIELD', 'TORCH_A');
+                this.loadStripAsset('SUCAI_BATTLEFIELD', 'TORCH_B');
+            }
+            if (cityInWar) {
+                this.loadStripAsset('SUCAI_FX', 'FIRE/FIRE_MEDIUM');
+                this.loadStripAsset('SUCAI_FX', 'FIRE/FIRE_LARGE');
+                this.loadStripAsset('SUCAI_FX', 'IMPACT_TREBUCHET_SMOKE');
+            }
 
             // 同时预热当前季与下一季，保证季末五秒交叉渐变不会闪空。
             for (const fp of forestProps) {
@@ -2373,9 +2498,9 @@ export class CityLifeAmbientLayer {
         }
     }
 
-    /** 绘制单行精灵条中的指定帧（破坏残骸、灌丛浆果、海鱼群、砍伐树桩等） */
+    /** 绘制单行精灵条中的指定帧（破坏残骸、灌丛浆果、海鱼群、砍伐树桩、据点动态 Flipbook 等） */
     private drawStripSprite(
-        folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING',
+        folder: StripFolder,
         name: string,
         frameIdx: number,
         px: number,
@@ -2542,6 +2667,7 @@ export class CityLifeAmbientLayer {
         const ctx = this.ctx;
         this.plotCtx.clearRect(0, 0, this.plotCanvas.width, this.plotCanvas.height);
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.fxCtx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
 
         const zoom = this.map.getZoom();
         const zoomFactor = Math.pow(2, zoom - 9);
@@ -2875,6 +3001,123 @@ export class CityLifeAmbientLayer {
                 }
             }
         }
+
+        // 3. 沿海/沿河据点专属港口码头船坞（cityLifePane）+ 据点 Flipbook 动态序列帧元素（cityFlipbookPane：城门火把、铁匠炉火、围城烈焰浓烟）
+        const fxScale = 0.28 * zoomFactor;
+        const torchStandScale = 0.34 * zoomFactor;
+        for (const city of this.visibleCitiesCache) {
+            const cPt = this.toContainerPt(city.lat, city.lng);
+            if (cPt.x < -m || cPt.x > this.canvas.width + m || cPt.y < -m || cPt.y > this.canvas.height + m) continue;
+
+            const cityInWar = this.endangeredCities.has(city.id);
+            const st = cityState.get(city.id) ?? {
+                viewAlpha: 1,
+                damageBlend: cityInWar ? 0.85 : 0,
+                peaceAlpha: cityInWar ? 0.15 : 1,
+            };
+            if (st.viewAlpha <= 0.01) continue;
+
+            const peaceAlpha = st.viewAlpha * st.peaceAlpha;
+            const damageAlpha = st.viewAlpha * st.damageBlend;
+            const h = (Math.floor(strHash01(city.id, 1307) * 0xFFFFFFFF) >>> 0);
+
+            // 3A. 沿海/沿河据点自动生成的专属港口码头与船坞
+            const portDock = this.cityPortDockCache.get(city.id);
+            if (portDock) {
+                const dPt = this.toContainerPt(portDock.pos.lat, portDock.pos.lng);
+                if (dPt.x >= -m && dPt.x <= this.canvas.width + m && dPt.y >= -m && dPt.y <= this.canvas.height + m) {
+                    if (damageAlpha > 0.01) {
+                        this.drawDirectionalCorpse('SUCAI', 'SHIP_SINK_SMALL', 'idle', 0, (tSec + (h & 7)) * 0.7, dPt.x, dPt.y + 3 * zoomFactor, SHIP_SCALE_BASE * zoomFactor, damageAlpha * 0.85);
+                        this.drawStripSprite('SUCAI_BATTLEFIELD', 'BARRICADE_RUBBLE_A', portDock.variant, dPt.x, dPt.y, WRECK_SCALE_BASE * zoomFactor, damageAlpha * 0.9, this.ctx);
+                    }
+                    if (peaceAlpha > 0.01) {
+                        this.drawStripSprite(
+                            'SUCAI_BUILDING',
+                            portDock.asset,
+                            portDock.variant,
+                            dPt.x,
+                            dPt.y,
+                            BUILDING_SCALE_BASE * zoomFactor,
+                            peaceAlpha,
+                            this.ctx,
+                            portDock.mirror
+                        );
+                    }
+                }
+            }
+
+            // 3B. 和平期据点 Flipbook 动态细节：
+            //   · 险要关隘（pass）与边塞城寨（stockade）：城门两侧立火把台（TORCH_A/B）+ 30 帧 FIRE_TORCH 迎风跃动火苗；
+            //   · 小城/中城/大城（非漠北纯毡帐）：城内工坊铁匠炉火与门楼火盆（60 帧 FIRE_SMALL + 30 帧 FIRE_TORCH 微光跃动）。
+            if (peaceAlpha > 0.05) {
+                if (city.type === 'pass' || city.type === 'stockade') {
+                    const span = (city.type === 'pass' ? 22 : 16) * zoomFactor;
+                    const gateY = (city.type === 'pass' ? 14 : 11) * zoomFactor;
+                    const torchName = (h & 1) === 0 ? 'TORCH_A' : 'TORCH_B';
+                    const f1 = Math.floor(tSec * 20 + (h & 31));
+                    const f2 = Math.floor(tSec * 20 + ((h >>> 5) & 31));
+                    // 左火把台 + 跃动火苗
+                    this.drawStripSprite('SUCAI_BATTLEFIELD', torchName, 0, cPt.x - span, cPt.y + gateY, torchStandScale, peaceAlpha * 0.92, this.fxCtx);
+                    this.drawStripSprite('SUCAI_FX', 'FIRE/FIRE_TORCH', f1, cPt.x - span, cPt.y + gateY - 8 * zoomFactor, fxScale * 0.95, peaceAlpha * 0.92, this.fxCtx);
+                    // 右火把台 + 跃动火苗
+                    this.drawStripSprite('SUCAI_BATTLEFIELD', torchName, 0, cPt.x + span, cPt.y + gateY, torchStandScale, peaceAlpha * 0.92, this.fxCtx, true);
+                    this.drawStripSprite('SUCAI_FX', 'FIRE/FIRE_TORCH', f2, cPt.x + span, cPt.y + gateY - 8 * zoomFactor, fxScale * 0.95, peaceAlpha * 0.92, this.fxCtx, true);
+                } else if (city.buildingStyle !== 'MONGOL') {
+                    const r = (city.type === 'big_city' ? 18 : city.type === 'medium_city' ? 15 : 12) * zoomFactor;
+                    const ang = ((h & 7) / 8) * Math.PI * 2;
+                    const fxX = cPt.x + Math.cos(ang) * r;
+                    const fxY = cPt.y + Math.sin(ang) * r * 0.58 - 4 * zoomFactor;
+                    const forgeFrame = Math.floor(tSec * 20 + (h & 63));
+                    const torchFrame = Math.floor(tSec * 18 + ((h >>> 6) & 31));
+                    this.drawStripSprite('SUCAI_FX', 'FIRE/FIRE_SMALL', forgeFrame, fxX, fxY, fxScale * 0.85, peaceAlpha * 0.82, this.fxCtx);
+                    this.drawStripSprite('SUCAI_FX', 'FIRE/FIRE_TORCH', torchFrame, cPt.x - Math.cos(ang) * r * 0.65, cPt.y + 10 * zoomFactor, fxScale * 0.80, peaceAlpha * 0.78, this.fxCtx);
+                }
+            }
+
+            // 3C. 战时围城 Flipbook 烈焰与滚滚浓烟（60 帧 FIRE_LARGE / FIRE_MEDIUM / FIRE_SMALL + 10 帧 IMPACT_TREBUCHET_SMOKE）
+            const warAlpha = cityInWar
+                ? Math.max(0.55 * st.viewAlpha, damageAlpha)
+                : damageAlpha * 0.75;
+            if (warAlpha > 0.05) {
+                const spread = (city.type === 'big_city' ? 24 : city.type === 'medium_city' ? 20 : city.type === 'pass' ? 20 : 15) * zoomFactor;
+                const fireSpots: ReadonlyArray<readonly [number, number, 'FIRE/FIRE_LARGE' | 'FIRE/FIRE_MEDIUM' | 'FIRE/FIRE_SMALL', number]> = [
+                    [-0.55, -0.20, 'FIRE/FIRE_MEDIUM', 1.0],
+                    [0.50, 0.18, 'FIRE/FIRE_LARGE', 1.1],
+                    [0.05, -0.38, 'FIRE/FIRE_SMALL', 0.9],
+                    [-0.25, 0.32, 'FIRE/FIRE_MEDIUM', 0.95],
+                ];
+                for (let idx = 0; idx < fireSpots.length; idx++) {
+                    const [ux, uy, fireAsset, sc] = fireSpots[idx];
+                    const dirSign = ((h >>> idx) & 1) === 0 ? 1 : -1;
+                    const sx = cPt.x + ux * spread * dirSign;
+                    const sy = cPt.y + uy * spread;
+                    const smokeFrame = Math.floor(tSec * 10 + idx * 3 + (h & 15));
+                    const fireFrame = Math.floor(tSec * 24 + idx * 11 + (h & 63));
+                    this.drawStripSprite(
+                        'SUCAI_FX',
+                        'IMPACT_TREBUCHET_SMOKE',
+                        smokeFrame,
+                        sx,
+                        sy - 12 * zoomFactor,
+                        fxScale * sc * 1.15,
+                        warAlpha * 0.65,
+                        this.fxCtx,
+                        dirSign < 0
+                    );
+                    this.drawStripSprite(
+                        'SUCAI_FX',
+                        fireAsset,
+                        fireFrame,
+                        sx,
+                        sy,
+                        fxScale * sc,
+                        warAlpha * 0.92,
+                        this.fxCtx,
+                        dirSign < 0
+                    );
+                }
+            }
+        }
     }
 
     private tick(now: number): void {
@@ -2891,6 +3134,7 @@ export class CityLifeAmbientLayer {
             if (!this.clearedWhileHidden) {
                 this.plotCtx.clearRect(0, 0, this.plotCanvas.width, this.plotCanvas.height);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.fxCtx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
                 this.clearedWhileHidden = true;
             }
             requestAnimationFrame(this.tick.bind(this));

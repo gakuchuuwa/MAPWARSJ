@@ -105,7 +105,14 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
     for (const n of ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
         'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
         'ASIA_TOWER_AGE2', 'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
-        'OUTPOST', 'FORTIFIED_OUTPOST']) {
+        'OUTPOST', 'FORTIFIED_OUTPOST', 'CAMP_BARRACKS', 'CAMP_ARCHERY_RANGE', 'CAMP_STABLE', 'GREEK_WAR_TENT',
+        'SCEN_TORII_GATE', 'SCEN_PAGODA_A', 'SCEN_PAGODA_B', 'SCEN_PAGODA_C', 'SCEN_PAGODA_D', 'SCEN_PAGODA_E',
+        'SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE', 'SCEN_BUDDHA_STATUE', 'PAGAN_SHRINE',
+        'AMPHITHEATRE', 'ARCH_OF_CONSTANTINE', 'SCEN_ARCHAIC_THOLOS', 'SCEN_HERO_SHRINE',
+        'SCEN_STATUE_ALEXANDER', 'SCEN_STATUE_ARES_MARBLE', 'SCEN_STATUE_GREEK_HERO',
+        'FOLWARK', 'WOODEN_FORT', 'QUIMPER_CATHEDRAL', 'SCEN_AACHEN_CATHEDRAL', 'SCEN_HALL_OF_HEROES', 'POENARI_CASTLE',
+        'MINARET_OF_JAM', 'SCEN_FIRE_SHRINE', 'SCEN_SANKORE_MADRASAH', 'SCEN_DOME_OF_THE_ROCK', 'GOL_GUMBAZ', 'SCEN_CUSHITE_PYRAMIDS',
+        `${deStyle}_HOUSE_AGE2`, `${deStyle}_MILL_AGE2`, `${deStyle}_BARRACKS_AGE2`, `${deStyle}_TOWER_AGE2`]) {
         for (const key of [`${deStyle}_${n}`, n]) if (DE_SPRITE_BOX_W[key]) spriteW[key] = DE_SPRITE_BOX_W[key];
     }
     if (Object.keys(widths).length === 0 && Object.keys(spriteW).length === 0) return undefined;
