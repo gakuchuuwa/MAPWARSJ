@@ -8247,7 +8247,7 @@ export class Scene13WarLayer {
 
                 //    （types/LegionRowOrder，战略 applyLegionCultureComposition 同读）
 
-                const arranged = arrangeLegionRows(tier.slots);
+                const arranged = arrangeLegionRows(tier.slots, region as string);
 
                 const types = expandCompositionSlots(arranged.formationMode ? arranged.slots : tier.slots);
 
@@ -8319,7 +8319,7 @@ export class Scene13WarLayer {
 
                 ?? getCultureTier(region as any, 50000)?.slots;
 
-            const arrangedMode = srcSlots?.length ? arrangeLegionRows(srcSlots).formationMode : null;
+            const arrangedMode = srcSlots?.length ? arrangeLegionRows(srcSlots, region as string).formationMode : null;
 
             if (arrangedMode) return arrangedMode;
 

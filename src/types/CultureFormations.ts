@@ -1151,7 +1151,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     if (!rawSlots) return;
     // 🔴 [2026-11-04 主人令「战略地图上主将和阵型的位置请和战术一致」] 三排先后与档数一律按占位/档位排序
     //    （types/LegionRowOrder，战术 Scene13WarLayer.slotsOf / formationModeOf 同读）；阵型 = 排好后的人数模式。
-    const arranged = arrangeLegionRows(rawSlots);
+    const arranged = arrangeLegionRows(rawSlots, culture);
     const slots = arranged.formationMode ? arranged.slots : rawSlots;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）

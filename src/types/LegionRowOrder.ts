@@ -12,6 +12,7 @@
  * - 主将队（第 10 队）：站在「2 档那一排」的两队正中；方阵 3-3-3 没有 2 档排，站前排正中再往前（矛头）。
  */
 import { WAR_TYPES } from '../data/WarTypes';
+import { UNIT_GRADE } from '../data/UnitGrade';
 import type { CompositionSlot } from './LegionComposition';
 import type { FormationMode } from './CultureFormations';
 
@@ -26,6 +27,8 @@ export const ROW_PLACEMENT_ORDER: readonly LegionRowClass[] =
 export const ROW_TIER_COUNT_ORDER: readonly LegionRowClass[] =
     ['法术', '战象', '战车', '火器', '骑兵', '弓骑', '投掷', '弩手', '弓手', '步兵'];
 
+/** 🔴 2026-11-09 主人「写着象呢，看样子」：id 里没有 elephant 但兵模是战象的 */
+const ELEPHANT = new Set(['sannahya', 'elite_sannahya']);
 const SPELL = new Set(['monk', 'priest', 'priestess', 'pagan_priest', 'missionary', 'warrior_priest']);
 const GUNPOWDER = new Set(['hand_cannoneer', 'janissary', 'elite_janissary', 'royal_janissary', 'grenadier', 'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun', 'bombard_cannon', 'rocket_cart', 'heavy_rocket_cart', 'houfnice', 'flamethrower']);
 const THROW = /skirmisher|peltast|sling|throwing_axeman|chakram|gbeto|javelin/;
@@ -35,7 +38,7 @@ const BOW = /archer|bowman|longbow|recurve|laminated/;
 /** 兵种归入十类之一（与 2026-11-02 两次落库所用判据一致） */
 export function rowClassOf(unitKey: string): LegionRowClass {
     const t = unitKey;
-    if (t.includes('elephant')) return '战象';
+    if (t.includes('elephant') || ELEPHANT.has(t)) return '战象';
     if (t.includes('chariot') || t.includes('ratha') || t.includes('wagon')) return '战车';
     if (SPELL.has(t)) return '法术';
     if (GUNPOWDER.has(t)) return '火器';
@@ -56,18 +59,43 @@ const PATTERN_TO_FORMATION: Readonly<Record<string, FormationMode>> = {
 };
 
 /**
- * 按两套排序给三排定位、定档：返回重排后的 slots 与对应阵型。
- * 同类兵种并列时保持原先后。不是 3 排的编制原样返回（formationMode = null）。
+ * 同类兵种之间的高低（🔴 2026-11-09 主人）：
+ *   「同兵种中，城堡兵大于高级兵大于特殊兵大于普通兵」「按『拿的档多』办」；
+ *   「占位可以反过来，同兵种，普通兵在前，城堡兵在后。挡位城堡兵高档，普通兵低档」；
+ *   「卡尔马军团是丹麦，当然是本文化优先呀」——同级时本文化的兵算高。
+ *   英雄不参与比较（主人：「英雄不是兵，是英雄」）。等级表见 data/UnitGrade.ts。
+ * 返回值越大越高：档多、站后。不能比较时返回 null（保持原先后）。
  */
-export function arrangeLegionRows(slots: readonly CompositionSlot[]): { slots: CompositionSlot[]; formationMode: FormationMode | null } {
+const GRADE_RANK: Readonly<Record<string, number>> = { 正规兵: 0, 特殊兵: 1, 高级兵: 2, 城堡兵: 3 };
+function sameClassRank(unitKey: string, region?: string): number | null {
+    const g = UNIT_GRADE[unitKey];
+    const r = g ? GRADE_RANK[g.grade] : undefined;
+    if (r === undefined) return null;
+    const own = !!region && !!g.home?.some((h) => isSameCulture(h, region));
+    return r * 2 + (own ? 1 : 0);
+}
+/** 德版文明名（复数，如 DANES）与军团文化键（如 DANES / THRACIAN / SLAVIC）是否同一文化 */
+function isSameCulture(deCiv: string, region: string): boolean {
+    const a = deCiv.toUpperCase(), b = region.toUpperCase();
+    return a === b || a.startsWith(b) || b.startsWith(a.replace(/S$/, ''));
+}
+
+/**
+ * 按两套排序给三排定位、定档：返回重排后的 slots 与对应阵型。
+ * 同类兵种：按等级（含本文化优先）定——高的档多、站后；比不出高低时保持原先后（程序默认处理）。
+ * region＝军团文化键，用于「本文化优先」；不传时只比等级。不是 3 排的编制原样返回（formationMode = null）。
+ */
+export function arrangeLegionRows(slots: readonly CompositionSlot[], region?: string): { slots: CompositionSlot[]; formationMode: FormationMode | null } {
     if (slots.length !== 3) return { slots: slots.map((s) => ({ ...s })), formationMode: null };
-    const rows = slots.map((s, i) => ({ s, i, cls: rowClassOf(s.type) }));
+    const rows = slots.map((s, i) => ({ s, i, cls: rowClassOf(s.type), rank: sameClassRank(s.type, region) }));
+    type Row = typeof rows[number];
+    const tie = (a: Row, b: Row) => (a.rank !== null && b.rank !== null && a.rank !== b.rank ? a.rank - b.rank : a.i - b.i);
     const byTier = [...rows].sort((a, b) =>
-        ROW_TIER_COUNT_ORDER.indexOf(a.cls) - ROW_TIER_COUNT_ORDER.indexOf(b.cls) || a.i - b.i);
+        ROW_TIER_COUNT_ORDER.indexOf(a.cls) - ROW_TIER_COUNT_ORDER.indexOf(b.cls) || tie(a, b));
     const count = new Map<number, number>();
     byTier.forEach((r, k) => count.set(r.i, k + 2));   // 2 / 3 / 4
     const byPlace = [...rows].sort((a, b) =>
-        ROW_PLACEMENT_ORDER.indexOf(a.cls) - ROW_PLACEMENT_ORDER.indexOf(b.cls) || a.i - b.i);
+        ROW_PLACEMENT_ORDER.indexOf(a.cls) - ROW_PLACEMENT_ORDER.indexOf(b.cls) || tie(a, b));
     const out = byPlace.map((r) => ({ ...r.s, count: count.get(r.i)! }));
     return { slots: out, formationMode: PATTERN_TO_FORMATION[out.map((s) => s.count).join('-')] ?? null };
 }
