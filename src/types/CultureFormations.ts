@@ -1717,7 +1717,6 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    却因此拿到中原编制（jian_swordman_shielded / elite_fire_lancer / hei_kuang_heavy），
     //    草原游牧配中原剑士火枪，兵种与史实都不对；且与 CENTRAL 撞名，
     //    直接造成审计第⑨项「【东亚军团】裂成多种编制」。归位到自己母体 STEPPE 的一级军团名。
-    WUSUN: '中亚军团',
     MACEDONIAN: "古典时代马其顿军团",
     SONG: '城堡时代中华军团',
     GORYEO: '城堡时代高丽军团',
@@ -1890,108 +1889,7 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
 
 
 
-/** 🔴 [2026-09-11 主人定：第一层16母体文化军团与第二层时代文明军团彻底分开]
- *  第一层 16 母体文化军团专属编制映射表。与第二层时代军团完全物理隔离，互不影响。 */
-export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[]; shipId: string; commanderUnit?: string }>> = {
-    PURU: {
-        formationMode: 'triangle',
-        tiers: PURU_BASE_TIERS,
-        // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」+ 四时代硬闸]
-        //    本军团在役势力是蒙格（古典普鲁）＝古典时代，古典军团只许用古典船：
-        //    孟加拉楼船是**封建**档（✗越界）。南亚古典在现有 46 艘里没有既古典又像南亚的船，
-        //    故取古典时代**最高档**战船（古典桨帆船高级＝Elite Galley，古典✓）。
-        shipId: 'ANT_ELITE_GALLEY', // 普鲁军团：古典桨帆船高级（南亚古典暂用古典时代最高档战船）
-    },
-    AFRICA: {
-        formationMode: 'triangle',
-        tiers: AFRICA_BASE_TIERS,
-        shipId: 'CANOE', // 非洲军团：独木舟（尼日尔河与大湖区传统战舟）
-    },
-    CENTRAL: {
-        formationMode: 'fish_scale',
-        tiers: CENTRAL_BASE_TIERS,
-        shipId: 'LOU_CHUAN', // 东亚军团：中国楼船（汉唐宋华夏水师旗舰主力）
-    },
-    ANDE: {
-        formationMode: 'triangle',
-        tiers: ANDE_BASE_TIERS,
-        shipId: 'CANOE', // 安第斯军团：独木舟（安第斯与高山湖泊传统轻舟）
-    },
-    PERSIAN: {
-        formationMode: 'fish_scale',
-        tiers: PERSIAN_BASE_TIERS,
-        shipId: 'BIREME', // 波斯军团：双列桨座战船（阿契美尼德/萨珊波斯双列战船）
-    },
-    LATIN: {
-        formationMode: 'fish_scale',
-        tiers: LATIN_BASE_TIERS,
-        shipId: 'TRIREME', // 地中海军团：三列桨座战船（罗马称霸地中海核心主力舰）
-    },
-    MALAY: {
-        formationMode: 'triangle',
-        tiers: MALAY_BASE_TIERS,
-        // 🔴 [2026-09-19 四时代硬闸 + 同族升档] 原为 FAST_FIRE_SHIP（快速喷火船）＝**帝国**档，
-        //    而本军团在役势力是美山（城堡高棉）＝城堡时代，越界。火攻艨艟线里城堡窗内可用的是
-        //    「重型燃烧战船」（燃烧战船 → 重型燃烧战船，同一职能的最高档），高棉/真腊内河重船史实相合。
-        shipId: 'HEAVY_INCENDIARY_SHIP', // 东南亚军团：重型燃烧战船（内河火攻重船，城堡档）
-    },
-    EAST: {
-        formationMode: 'fish_scale',
-        tiers: EAST_BASE_TIERS,
-        shipId: 'DROMON', // 东南欧军团：德罗蒙战舰（拜占庭希腊火王牌战舰）
-    },
-    INDIA: {
-        formationMode: 'triangle',
-        tiers: INDIA_BASE_TIERS,
-        shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
-    },
-    SLAVIC: {
-        formationMode: 'fish_scale',
-        tiers: SLAVIC_BASE_TIERS,
-        shipId: 'MONOREME', // 东北欧军团：单列桨座战船（早期东斯拉夫/罗斯独木长船）
-    },
-    GERMANIC: {
-        formationMode: 'fish_scale',
-        tiers: GERMANIC_BASE_TIERS,
-        // 🔴 [2026-09-19 主人定] ① 素材样貌：MONOREME 是**地中海桨帆船**，配日耳曼/北海不像；
-        //    改挂长船（北海-波罗的海型屈首搭板长船，涅达姆船一脉）。项目已按「维京归日耳曼」
-        //    把维京算在本文化内，苏格兰也早在用长船素材，故日耳曼用长船不算跨界。
-        //    ② 同族升档：长船线两档（维京长船 → 维京长船高级），同属封建档，取高级档。
-        //    ③ 时代闸：本军团在役势力是封建日耳曼（美因茨），落在「封建军团可用古典+封建」窗内 ✓。
-        shipId: 'ELITE_LONGBOAT', // 西欧军团：维京长船高级（长船线最高档，封建档）
-    },
-    STEPPE: {
-        formationMode: 'fish_scale',
-        tiers: STEPPE_BASE_TIERS,
-        shipId: 'DEMO_RAFT', // 中亚军团：渡河木筏（内陆游牧渡河皮筏/木排，史实无远洋水师）
-    },
-    ORIE: {
-        formationMode: 'fish_scale',
-        tiers: ORIE_BASE_TIERS,
-        // 🔴 [2026-09-19 四时代硬闸] 原为 FIRE_SHIP（喷火船）＝**城堡**档，而本军团在役势力是
-        //    巴格达（封建西亚）＝封建时代，越界。火船线里封建窗内可用的只有基础档「喷火桨帆船」
-        //    （喷火桨帆船=封建 → 喷火船=城堡 → 快速喷火船=帝国），此档已是封建窗内的最高档。
-        shipId: 'FIRE_GALLEY', // 中东军团：喷火桨帆船（阿拉伯-黎凡特火攻快船，封建档）
-    },
-    AMERICA: {
-        formationMode: 'triangle',
-        tiers: AMERICA_BASE_TIERS,
-        shipId: 'CANOE', // 中美军团：独木舟（特斯科科湖与玛雅雨林武装战舟）
-    },
-    GREEK: {
-        formationMode: 'crane_wing',
-        tiers: GREEK_BASE_TIERS,
-        shipId: 'TRIREME', // 希腊军团：三列桨座战船（萨拉米斯海战希腊经典战舰）
-    },
-    THRACIAN: {
-        formationMode: 'triangle',
-        tiers: THRACIAN_BASE_TIERS,
-        // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」] 伦博斯线共四档
-        //    （轻型伦博斯 → 战型伦博斯高级 → 重型伦博斯重装 → 旗舰伦博斯重装），同为古典档，
-        //    取最高的旗舰档；色雷斯-黑海沿岸本即以伦博斯快船著称。
-        shipId: 'ELITE_LEMBOS', // 色雷斯军团：希腊旗舰伦博斯重装（伦博斯线最高档，古典档）
-    },
-};
+// 🔴 [2026-11-09 主人令「删除所有的一级军团」] 一级 16 母体军团（BASE_16_TIERS_MAP）已整表删除：军团只剩二级、三级（＋剧本层）。
 
 /* ═══════════════════════════════════════════════════════════════
  * 🔴 [2026-09-14 主人定「所有军团只有一级 16、二级 62，其他都是三级；文化表全部清除」]
@@ -2054,7 +1952,7 @@ export function patchLegionComposition(
 /** 运行时覆盖（编辑器保存后立刻生效，不依赖 HMR）：军团名 → 编制 */
 const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string }>();
 
-/** 按**军团名**取编制：一级 → 二级 → 三级，找不到返回 null */
+/** 按**军团名**取编制：二级 → 三级 → 剧本，找不到返回 null（一级 2026-11-09 已删） */
 export function getLegionCompositionByName(
     name: string | null | undefined,
 ): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
@@ -2062,20 +1960,14 @@ export function getLegionCompositionByName(
     const patched = LEGION_RUNTIME_PATCH.get(name);
     if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })), shipId: patched.shipId, commanderUnit: patched.commanderUnit };
 
-    for (const rg of Object.keys(BASE_16_TIERS_MAP) as RegionType[]) {
-        if (BASE_16_LEGION_NAME_BY_REGION[rg] !== name) continue;
-        const b = BASE_16_TIERS_MAP[rg];
-        if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })), shipId: b.shipId, commanderUnit: b.commanderUnit };
-    }
     const l2 = LEVEL_2_CIV_62_MAP.get(name);
     if (l2) {
-        const l2Ship = l2.shipId ?? (l2.region ? BASE_16_TIERS_MAP[l2.region]?.shipId : undefined);
+        const l2Ship = l2.shipId;
         return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })), shipId: l2Ship, commanderUnit: l2.commanderUnit };
     }
     const l3 = LEVEL_3_LEGION_MAP.get(name);
     if (l3) {
-        const l3Region = l3.regions?.[0] as RegionType | undefined;
-        const l3Ship = l3.shipId ?? (l3Region ? BASE_16_TIERS_MAP[l3Region]?.shipId : undefined);
+        const l3Ship = l3.shipId;
         return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship, commanderUnit: l3.commanderUnit };
     }
     // 第四层：剧本军团（只有剧本事件指名时才会被查到；名字与前三层不重）
@@ -2091,13 +1983,6 @@ export function getRegionLegionComposition(
     return getLegionCompositionByName(culture ? CULTURE_LEGION_NAMES[culture] : null);
 }
 
-/** 一级 16 母体：文化区 → 母体军团名（与 legion-editor 的 BASE_16_LEGION_NAMES 同一份） */
-export const BASE_16_LEGION_NAME_BY_REGION: Record<string, string> = {
-    CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
-    PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '东北欧军团',
-    EAST: '东南欧军团', PERSIAN: '波斯军团', MALAY: '东南亚军团', GREEK: '希腊军团',
-    THRACIAN: '色雷斯军团', ANDE: '安第斯军团', AMERICA: '中美军团', AFRICA: '非洲军团',
-};
 
 
 /* ── 兼容视图（**不是**文化表）─────────────────────────────────────
@@ -2129,19 +2014,6 @@ export const CULTURE_FORMATION_MODE: Readonly<Record<RegionType, FormationMode>>
         set() { throw new Error('CULTURE_FORMATION_MODE 是只读视图；阵型请写进三层军团表'); },
     });
 
-/** 获取第一层母体文化军团的默认配置（与第二层时代军团彻底物理隔离） */
-export function getBase16FormationConfig(region: RegionType): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
-    const custom = BASE_16_TIERS_MAP[region];
-    if (custom && custom.tiers[0]?.slots) {
-        return {
-            formationMode: custom.formationMode,
-            slots: custom.tiers[0].slots.map(s => ({ ...s })),
-            shipId: custom.shipId,
-            commanderUnit: custom.commanderUnit,
-        };
-    }
-    return null;
-}
 
 export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     ACHAEMENIDS: 'PERSIAN',
@@ -2347,12 +2219,11 @@ export function getCultureLegionName(region: RegionType | null | undefined): str
     // ② 建筑风格保底：据点的 buildingStyle → 军团（16 母体→一级 / 62 文明→二级 / 3 三级→三级）
     const style = region ? REGION_TO_BUILDING_STYLE[region] : undefined;
     if (style) return getLegionNameByStyle(style);
-    return '东亚军团';
+    return '';
 }
 
 /** 军团名是否存在（一级母体 / 二级 62 文明 / 三级自定义 之一） */
 function legionNameExists(name: string): boolean {
-    if (Object.values(BASE_16_LEGION_NAME_BY_REGION).includes(name)) return true;
     if (LEVEL_2_CIV_62_MAP.has(name)) return true;
     if (LEVEL_3_LEGION_MAP.has(name)) return true;
     return false;
@@ -2360,9 +2231,7 @@ function legionNameExists(name: string): boolean {
 
 /** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 62 文明→二级军团 / 3 三级→三级军团） */
 export function getLegionNameByStyle(buildingStyle: string): string {
-    // 16 母体 → 一级母体军团（优先，处理重名 ORIE/PURU/PERSIAN/THRACIAN/EAST）
-    const base16 = STYLE_TO_BASE16[buildingStyle];
-    if (base16) return BASE_16_LEGION_NAME_BY_REGION[base16] || '东亚军团';
+    // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 不再落一级母体军团，直接按风格找二级、三级
     // 62 文明 → 二级军团（region 字段匹配；高丽例外：buildingStyle KOREA ↔ region GORYEO）
     if (buildingStyle === 'KOREA') return '城堡时代高丽军团';
     for (const l2 of LEVEL_2_CIV_62_MAP.values()) {
@@ -2372,7 +2241,7 @@ export function getLegionNameByStyle(buildingStyle: string): string {
     for (const l3 of LEVEL_3_LEGION_MAP.values()) {
         if (l3.regions.includes(buildingStyle)) return l3.name;
     }
-    return '东亚军团';
+    return '';
 }
 
 const DEFENSE_AGE_ORDER = ['antiquity', 'feudal', 'castle', 'imperial'] as const;

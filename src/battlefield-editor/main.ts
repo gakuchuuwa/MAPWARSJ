@@ -25,7 +25,7 @@ import { getAllBattlefieldCharacters } from '../data/BattlefieldCharacters';
 import { CITIES_V2 } from '../data/cities_v2';
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
-import { BASE_16_LEGION_NAME_BY_REGION, getCultureLegionName } from '../types/CultureFormations';
+import { getCultureLegionName } from '../types/CultureFormations';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCityRegion } from '../systems/RegionSystem';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
@@ -162,7 +162,7 @@ const GENERAL_BY_ID = new Map(ALL_GENERALS.map((g) => [g.generalId, g]));
 
 // 军团下拉数据源：一级 16 + 二级 62 + 三级 126（军团挂建筑风格 16+62+3 一一对应），按层分组便于挑选
 const LEGION_GROUPS: Array<{ label: string; legions: string[] }> = (() => {
-    const l1 = [...new Set(Object.values(BASE_16_LEGION_NAME_BY_REGION))].sort((a, b) => a.localeCompare(b, 'zh'));
+    const l1: string[] = [];   // 🔴 [2026-11-09 主人令「删除所有的一级军团」]
     const l2 = LEVEL_2_CIV_62_LEGIONS.map((l) => l.name).sort((a, b) => a.localeCompare(b, 'zh'));
     const l3 = [...LEVEL_3_LEGION_MAP.keys()].sort((a, b) => a.localeCompare(b, 'zh'));
     return [

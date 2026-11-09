@@ -27,7 +27,7 @@ import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { hasAvailableCityGeneral } from '../legion/LegionSpawnTier';
 import { armDeploy } from '../legion/DeployGate';
-import { toBase16, BASE_16_LEGION_NAMES, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
+import { toBase16, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
 import { toCulture66 } from '../systems/CultureHierarchy';
 import { resolveCityBase16Style } from '../systems/cityDeStyle';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
@@ -428,7 +428,9 @@ export class RecruitmentSystem {
         const region = this.getCityRegion(city);
         const base16 = this.getCityBase16(city);
         const factionLegion = FACTION_COMPOSITIONS[city.factionId]?.legionName?.trim();
-        const legionName = factionLegion || BASE_16_LEGION_NAMES[base16] || getCultureLegionName(region);
+        // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 不再拿一级母体名兜底
+        void base16;
+        const legionName = factionLegion || getCultureLegionName(region) || '军团';
         const newLegion = this.legionManager.createArmy({
             name: legionName,
             factionId: city.factionId,

@@ -190,7 +190,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     condottiero: { name: '意大利佣兵高级', cls: 'melee', sz: 1, hp: 80, atk: 10, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 1.9, spd: 48, dmgType: 'melee', bonus: { 21: 2, 23: 10 }, armorTags: [1, 19, 31, 32] },
     conquistador: { name: '西班牙征服者', cls: 'cav', sz: 1, hp: 55, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 240, reload: 2.9, spd: 52, dmgType: 'pierce', bonus: { 17: 4 }, armorTags: [15, 8, 19, 23, 28, 31] },
     cretan_archer: { name: '克里特弓手特殊', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.1, spd: 36, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    eagle_scout: { name: '美洲鹰斥候', cls: 'melee', sz: 1, hp: 50, atk: 4, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 44, dmgType: 'melee', bonus: { 20: 3, 25: 8 }, armorTags: [29, 1, 31] },
+    eagle_scout: { name: '鹰斥候', cls: 'melee', sz: 1, hp: 50, atk: 4, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 44, dmgType: 'melee', bonus: { 20: 3, 25: 8 }, armorTags: [29, 1, 31] },
     eagle_warrior: { name: '鹰勇士', cls: 'melee', sz: 1, hp: 55, atk: 7, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 46, dmgType: 'melee', bonus: { 8: 3, 16: 1, 20: 3, 25: 8, 30: 2 }, armorTags: [29, 1, 31] },
     ekdromos: { name: '希腊轻装突击兵特殊', cls: 'melee', sz: 1, hp: 80, atk: 13, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 31] },
     elite_arambai: { name: '缅甸飞镖骑兵精锐', cls: 'cav', sz: 1, hp: 65, atk: 14, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 2.0, spd: 52, dmgType: 'pierce', bonus: { 17: 2 }, armorTags: [19, 28, 15, 8, 31] },

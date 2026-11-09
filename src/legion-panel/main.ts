@@ -180,7 +180,8 @@ function buildRows(): LegionRow[] {
             source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
         });
     };
-    for (const n of Object.values(BASE_16_LEGION_NAMES)) push(n, '一级');
+    // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 不再列一级母体军团
+    void BASE_16_LEGION_NAMES;
     for (const l of LEVEL_2_CIV_62_LEGIONS) push(l.name, '二级');
     for (const l of LEVEL_3_LEGIONS) push(l.name, '三级');
     // 🔴 [2026-10-02 主人令「军团编辑里加四级」] 四级：剧本军团（scriptLegions.ts，只给历史剧本事件用）

@@ -54,11 +54,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         name: '色雷斯军团',
         // 🔴 三排＝骑兵、步兵、远程；谁先接敌：色雷斯人以标枪手（佩尔塔斯特）散兵先战、持长刃的步兵随后近战，
         //    山地作战骑兵最少 → 前＝远程、中＝步兵、后＝骑兵；人数「标枪手最多、步兵次之、骑兵最少」→ 雁行 4-3-2。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'thracian_peltast', count: 4 },          // 前排远程：色雷斯标枪手（素材样貌：持新月盾、投枪的色雷斯轻兵）
-            { type: 'rhomphaia_warrior', count: 3 },         // 中排步兵：色雷斯长刃斩手（素材样貌：双手长刃的色雷斯步兵）
-            { type: 'antiquity_light_cavalry', count: 2 },   // 后排骑兵：古典轻骑兵（素材样貌：无盔饰的部族轻骑）
+            { type: 'rhomphaia_warrior', count: 4 },
+            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'thracian_peltast', count: 3 },
         ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    色雷斯人 —— 骑马、戴盔、披风、持剑的色雷斯骑将（同 §二.5 同代同文化）
         commanderUnit: 'hero_thracian_chieftain',
@@ -71,11 +71,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         name: '伊利里亚军团',
         // 🔴 前＝步兵（据佩利昂要塞与山口高地正面拒敌）、中＝远程（标枪与投石）、后＝骑兵（格劳基亚斯援军中的骑兵最少）；
         //    人数「步兵最多、远程次之、骑兵最少」→ 雁行 4-3-2。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'hoplite', count: 4 },                   // 前排步兵：持盾长矛重步兵（素材样貌：希腊式头盔圆盾——伊利里亚武士同用此式盔盾）
-            { type: 'elite_peltast', count: 3 },             // 中排远程：标枪手（素材样貌：持投枪与轻盾的巴尔干轻兵）
-            { type: 'antiquity_light_cavalry', count: 2 },   // 后排骑兵：古典轻骑兵（部族轻骑）
+            { type: 'hoplite', count: 4 },
+            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'elite_peltast', count: 3 },
         ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    伊利里亚与色雷斯同为巴尔干相邻部族，库中无伊利里亚专属英雄兵模（同 §二.5）
         commanderUnit: 'hero_thracian_chieftain',
@@ -93,11 +93,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    不是**样式**：维奥蒂亚/底比斯的重装步兵本来就是圣队这一路（同一套素材也是三级
         //    「古典时代希腊军团」的前排），公元前335年底比斯军团的样式当然照旧。
         //    旧注「圣队已覆灭，故不入此军」是照**名字**判，已废。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'sacred_band', count: 4 },               // 前排步兵：希腊底比斯圣队高级（素材样貌：希腊重装步兵、圆盾长矛）
-            { type: 'greek_noble_cavalry', count: 3 },       // 中排骑兵：希腊贵族骑兵（素材样貌：希腊盔胸甲骑兵——维奥蒂亚骑兵）
-            { type: 'gastraphetes', count: 2 },              // 后排远程：希腊腹弩手（素材样貌：希腊式轻装弩手）
+            { type: 'sacred_band', count: 4 },
+            { type: 'greek_noble_cavalry', count: 2 },
+            { type: 'gastraphetes', count: 3 },
         ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    持圆盾长矛的希腊重装步兵将领样（底比斯守城主将为重装步兵统领）
         commanderUnit: 'hero_brasidas',
@@ -112,8 +112,8 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         formationMode: 'balance_yoke',   // 鱼鳞 3-4-2：前 3 / 中 4 / 后 2
         slots: [
             { type: 'elite_phalangite', count: 4 },
-            { type: 'cretan_archer', count: 2 },
-            { type: 'elite_companion_cavalry', count: 3 },
+            { type: 'elite_companion_cavalry', count: 2 },
+            { type: 'cretan_archer', count: 3 },
         ],
         // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 舰队模型 = **英雄·地米斯托克利**（旗舰，原 TRIREME）。
         //    ⚠️ 剧本期这一处才是**真正生效**的那一处：`getCultureNavalShip()` 第 1 优先就是「军团自己绑的船」，
@@ -126,11 +126,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
     {
         // 史名：维基只记为阿契美尼德帝国一方、由小亚细亚诸总督统领，无专名 → 按「知名度最大 / 合理推定」称波斯总督军团
         name: '波斯总督军团',
-        formationMode: 'echelon',   // 雁行 4-3-2：前 4 / 中 3 / 后 2
+        formationMode: 'balance_yoke',   // 雁行 4-3-2：前 4 / 中 3 / 后 2
         slots: [
-            { type: 'imperial_cavalry', count: 4 },       // 前排骑兵：波斯骑兵沿河岸列阵在最前（素材样貌：羽饰头盔、披甲战马的波斯贵族骑兵）
-            { type: 'mercenary_hoplite', count: 3 },      // 中排步兵：列于其后高地，有数千希腊雇佣兵
-            { type: 'immortal_ranged', count: 2 },        // 后排远程：素材样貌为波斯弓手（兵名带长生军，按样貌不按名字）
+            { type: 'mercenary_hoplite', count: 4 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'immortal_ranged', count: 3 },
         ],
         shipId: 'BIREME',        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    🔴 [2026-10-02 主人令「hero_datis 可以给其他军团」] 骑马执长矛的**古典波斯统帅**样（英雄·达提斯，公元前490年波斯名将，同代同族）
@@ -142,11 +142,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
     {
         // 史名：阿契美尼德帝国的职业常备军统称 spāda；后世通称「阿契美尼德军团」（与「马其顿军团」同一叫法）
         name: '阿契美尼德军团',
-        formationMode: 'crane_wing',   // 鹤翼 2-4-3：前 2 / 中 4 / 后 3
+        formationMode: 'balance_yoke',   // 鹤翼 2-4-3：前 2 / 中 4 / 后 3
         slots: [
-            { type: 'imperial_cavalry', count: 2 },   // 前排骑兵：伊苏斯波斯骑兵率先渡河冲击（素材样貌：羽饰头盔、披甲战马的波斯贵族骑兵）
-            { type: 'elite_immortal', count: 4 },     // 中排步兵：长生军、希腊雇佣兵、亚美尼亚步兵，人数最多（素材样貌：持矛配金边大盾的波斯步兵）
-            { type: 'immortal_ranged', count: 3 },    // 后排远程：大量轻步兵、弓手（素材样貌：波斯弓手）
+            { type: 'elite_immortal', count: 4 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'immortal_ranged', count: 3 },
         ],
         shipId: 'BIREME',
         // 🔴 [2026-10-02 主人令「换」] 主队（第 10 队）＝ 波斯王的御驾战车：
@@ -171,11 +171,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //   守城／守隘口，**先接敌的是城头与石垒上的弓弩（远程）**，随后步兵登城肉搏/据垒死守，
         //   骑兵最少、只作城内预备或突围，最末 → 前＝远程、中＝步兵、后＝骑兵。
         // 人数按史料比例「步兵最多、远程次之、骑兵最少」→ 鱼鳞阵 3-4-2（前3 / 中4 / 后2）。
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'immortal_ranged', count: 3 },     // 前排远程：城头/石垒的弓手与弩炮（素材样貌：波斯弓手）
-            { type: 'mercenary_hoplite', count: 4 },   // 中排步兵：守城主力＝雇佣重步兵（素材样貌：持矛大盾的重装步兵）
-            { type: 'imperial_cavalry', count: 2 },    // 后排骑兵：城内预备/突围，最少（素材样貌：羽饰头盔、披甲战马的近东骑兵）
+            { type: 'mercenary_hoplite', count: 4 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'immortal_ranged', count: 3 },
         ],
         shipId: 'BIREME',   // 波斯海军由腓尼基人操舟（米利都港外 400 艘、哈利卡纳苏斯泊港策应）        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    城防守将（希腊雇佣兵统领样；本军团 场6／7／10 皆用此兵模）
@@ -199,11 +199,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    掷矛手守在城头与缺口补位。故 前＝远程、中＝步兵、后＝投掷（远程类）。
         //    人数按史料比例取最接近的阵型：守军以步兵为绝对主体（8,000–10,000 正规守军守城），
         //    弓手/弩炮次之，掷矛手最少（腓尼基海岛城邦不产骑兵）→ 鱼鳞阵 3-4-2（前3/中4/后2）。
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'immortal_ranged', count: 3 },       // 前排远程：城墙上的弓手与弩炮（素材样貌：波斯弓手）
-            { type: 'elite_immortal', count: 4 },        // 中排步兵：守城主力（素材样貌：持矛配大盾的波斯系步兵）
-            { type: 'antiquity_skirmisher', count: 2 },  // 后排投掷：要塞城防掷矛手（海岛城邦无战马大象，纯步战城防）
+            { type: 'elite_immortal', count: 4 },
+            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'immortal_ranged', count: 3 },
         ],
         shipId: 'BIREME',   // 腓尼基双层桨座战船（推罗以海军见长，史料载战船约 80 艘）        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    持圆盾长矛的希腊重装步兵将领样（腓尼基海岛城邦的守城统领）
@@ -227,11 +227,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    → 前＝远程（弓手）、中＝步兵（山地部落战士）、后＝远程（第二线弓手）。
         //    人数按英文维基百科 Uxians 所述「半游牧部落、以劫掠为生、被列为西南四大掠夺民族之一」，
         //    弓手为绝对主体、部落步卒次之 → 取最接近的雁行阵 4-3-2（前4/中3/后2）。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'immortal_ranged', count: 4 },     // 前排远程：据山隘射箭的山地弓手（素材样貌：波斯系弓手，与近东同一文化区）
-            { type: 'hill_tribesman', count: 3 },      // 中排步兵：持短兵斧械的山地部落战士（素材样貌：山地部落民，与部落身份名实相符）
-            { type: 'composite_bowman', count: 2 },    // 后排远程：第二线高地弓手（素材样貌：披斗篷的复合弓手，高地样式）
+            { type: 'hill_tribesman', count: 4 },
+            { type: 'immortal_ranged', count: 2 },
+            { type: 'composite_bowman', count: 3 },
         ],
         // 战船留空：乌克西亚是扎格罗斯内陆山地部落，无 naval 传统，按文化默认        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    金甲红披风的波斯贵族骑将样（乌克西亚为波斯治下山地部落联盟，首领马达泰斯）
@@ -254,11 +254,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    塞种（Saka）是游牧骑射民族，锡尔河之战据北岸先以骑射接敌 → 前＝骑兵（骑射手）；
         //    同族近战步卒压阵 → 中＝步兵；中亚邻区步弓掩护 → 后＝远程。
         //    人数按英文维基百科 Battle of Jaxartes：塞种以骑射为主体，取最接近的雁行阵 4-3-2（前4/中3/后2）。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'scythian_horse_archer', count: 4 },
-            { type: 'sakan_axeman', count: 3 },
+            { type: 'sakan_axeman', count: 4 },
             { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'scythian_horse_archer', count: 3 },
         ],
         shipId: 'MONOREME', // 黑海斯基泰单列桨船传统
         // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
@@ -274,11 +274,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         // 三排排法按史料（§二.3 —— 🔴 2026-10-02 主人令取消「三排各一排」，只许照史料排）；前 / 中 / 后按这支军队一贯怎么打、谁先接敌排：
         //   粟特是河中绿洲城邦，武装以**甲胄骑兵**为招牌（素材 SOGDIANCATAPHRACT），步兵与弓手随其后，故前骑兵、中步兵、后远程。
         //   人数按史地比例取最接近的鱼鳞阵 3-4-2（骑兵最少、步兵最多、弓手次之）。
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'sogdian_cataphract', count: 3 },   // 前排骑兵：粟特甲胄骑兵（cls=cav）—— 粟特武装的招牌兵种
-            { type: 'sakan_axeman', count: 4 },         // 中排步兵：塞种萨迦斧兵（cls=melee）—— 同一中亚文化区（挨着的邻族）步卒
-            { type: 'bactrian_archer', count: 2 },      // 后排远程：巴克特里亚弓手（cls=ranged）—— 中亚步弓，掩护主力
+            { type: 'sakan_axeman', count: 4 },
+            { type: 'sogdian_cataphract', count: 2 },
+            { type: 'bactrian_archer', count: 3 },
         ],
         // 战船留空：粟特是河中内陆城邦，无 naval 传统，按文化默认
         // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
@@ -298,11 +298,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         // 三排排法按史料（§二.3 —— 🔴 2026-10-02 主人令取消「三排各一排」，只许照史料排）；前 / 中 / 后按这支军队一贯怎么打、谁先接敌排：
         //   该条目记守军凭城头弓矢、石块与火球拒敌，远程为先；印度河对岸重金雇来的雇佣兵是步战主力居中；
         //   山地部落骑兵最少殿后。取人数最接近的雁行阵 4-3-2。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'laminated_bowman', count: 4 },      // 前排远程：层压复合弓手（cls=ranged）—— 城头弓矢为先
-            { type: 'indian_tribesman', count: 3 },      // 中排步兵：印度部落民（cls=melee）—— 阿斯瓦卡山民与印度河对岸雇佣兵
-            { type: 'shrivamsha_rider', count: 2 },      // 后排骑兵：什里瓦姆沙骑手（cls=cav）—— 山地骑兵最少
+            { type: 'indian_tribesman', count: 4 },
+            { type: 'shrivamsha_rider', count: 2 },
+            { type: 'laminated_bowman', count: 3 },
         ],
         // 战船留空：斯瓦特山谷内陆山民，无 naval 传统，按文化默认
         // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
@@ -321,11 +321,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //   该条目记印度人以战车列于两翼骑兵之前、步兵居中、**战象每隔五十尺列在步兵阵前**；
         //   交锋时先接敌的是两翼骑兵（亚历山大先打的就是他们），战象与步卒随后压上，长弓殿后。
         //   人数按信息框比例：骑兵 2000–4000 最少、步兵 20000–50000 最多、弓手次之 → 取最接近的鹤翼阵 2-4-3。
-        formationMode: 'crane_wing',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'elite_shrivamsha_rider', count: 2 },   // 前排骑兵（cls=cav）：印度西北骑手 —— 两翼骑兵先接敌
-            { type: 'indian_tribesman', count: 4 },         // 中排步兵（cls=melee）：印度本土步兵为主体（信息框步兵20000–50000）
-            { type: 'pattiyoda_longbowman', count: 3 },     // 后排远程（cls=ranged）：印度长弓 —— 弓矢殿后
+            { type: 'indian_tribesman', count: 4 },
+            { type: 'elite_shrivamsha_rider', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
         // 战船留空：保拉瓦是内陆河国，无 naval 传统，按文化默认
         // 🔴 [2026-10-31 主人令「7 个战象英雄只安排给 7 个军团，不能重复」] 主队（第 10 队）留空：
@@ -346,11 +346,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //   同条记马利人退入卫城据墙死守，以弓矢投石拒敌 —— 先接敌的是墙上的弓手；
         //   部落步卒是全军主体居中；同条另记两族结盟时骑兵仅一万、步兵九万，骑兵最少殿后。
         //   取人数最接近的鱼鳞阵 3-4-2。
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'pattiyoda_longbowman', count: 3 },   // 前排远程（cls=ranged）：印度长弓 —— 据卫城墙头先射
-            { type: 'indian_tribesman', count: 4 },       // 中排步兵（cls=melee）：印度部落民 —— 步卒是全军主体
-            { type: 'shrivamsha_rider', count: 2 },       // 后排骑兵（cls=cav）：印度西北骑手 —— 骑兵最少
+            { type: 'indian_tribesman', count: 4 },
+            { type: 'shrivamsha_rider', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
         // 战船留空：马利是旁遮普内陆部落，无 naval 传统，按文化默认
         // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
@@ -374,11 +374,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //   🔴 [2026-10-02 主人令「符合历史就行」] 全条**只记弓矢，从未提及科塞亚骑兵**，
         //   故**后排不再排骑兵排**，改第二线弓手 → 前＝远程、中＝步兵、后＝远程。
         //   与第 8 场乌克西亚同一地区、同一打法，故取同一排法与阵型。
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'immortal_ranged', count: 4 },    // 前排远程（cls=ranged）：波斯系弓手 —— 山地部落善射，据险先射
-            { type: 'hill_tribesman', count: 3 },     // 中排步兵（cls=melee）：山地部落民 —— 持短兵斧械的部落战士
-            { type: 'composite_bowman', count: 2 },   // 后排远程（cls=ranged）：高地复合弓手 —— 第二线弓手（史料无骑兵，不排骑兵排）
+            { type: 'hill_tribesman', count: 4 },
+            { type: 'immortal_ranged', count: 2 },
+            { type: 'composite_bowman', count: 3 },
         ],
         // 战船留空：扎格罗斯内陆山地部落，无 naval 传统，按文化默认        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
         //    史无载其首领之名，按 §二.5 取同代、文化区挨着的波斯系英雄兵模（英雄·阿尔塔弗涅斯，阿契美尼德萨迪斯总督）

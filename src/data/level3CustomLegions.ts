@@ -36,11 +36,11 @@ export interface Level3LegionDef {
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
         name: '先秦军团',
-        formationMode: 'triangle',
+        formationMode: 'crane_wing',
         slots: [
             { type: 'war_chariot_ranged', count: 2 },
-            { type: 'elite_white_feather_guard', count: 3 },
-            { type: 'fire_archer', count: 4 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'fire_archer', count: 3 },
         ],
         regions: ['PRE_QIN'],
         parentLegion: '古典时代华夏军团',
@@ -72,11 +72,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线：原改名来的「封建时代白山黑水军团」已按主人令删除，封建节点归新名单的「封建时代渤海军团」（`MOHE` 指针已改指它）。
     {
         name: '岳家军',
-        formationMode: 'crescent',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'liao_dao', count: 3 },
+            { type: 'liao_dao', count: 4 },
             { type: 'hero_cumanchief', count: 2 },
-            { type: 'hero_sudingfang', count: 4 },
+            { type: 'hero_sudingfang', count: 3 },
         ],
         regions: [],
         parentLegion: '东亚军团',
@@ -106,10 +106,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代葡萄牙风琴军团',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'heavy_crossbowman', count: 3 },
             { type: 'organ_gun', count: 2 },
         ],
         regions: ['PORTUGUESE'],
@@ -120,10 +120,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代安第斯游击军团',
-        formationMode: 'crane_wing',
+        formationMode: 'balance_yoke',
         slots: [
+            { type: 'champi_warrior', count: 4 },
             { type: 'kona', count: 2 },
-            { type: 'slinger', count: 4 },
             { type: 'bolas_rider', count: 3 },
         ],
         regions: ['MAPUCHE'],
@@ -149,11 +149,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     // 🔴 [2026-10-26 主人令「图皮至少要两个军团，建立一个三级帝国图皮军团」] 图皮第二支军团（帝国），父级二级「帝国时代塔莫约军团」
     {
         name: '帝国时代图皮军团',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_ibirapema_warrior', count: 2 },
-            { type: 'champi_scout', count: 3 },
-            { type: 'blackwood_archer', count: 4 },
+            { type: 'champi_warrior', count: 3 },
+            { type: 'elite_ibirapema_warrior', count: 4 },
+            { type: 'blackwood_archer', count: 2 },
         ],
         regions: ['TUPI'],
         parentLegion: '帝国时代塔莫约军团',
@@ -166,11 +166,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    原先他按「城堡时代 × 阿兹特克文化」带阿兹特克军团，样子不对。弓手、战棍兵都是美洲土著样。父级二级「城堡时代阿兹特克军团」。
     {
         name: '城堡时代易洛魁军团',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'iroquois_warrior', count: 2 },
-            { type: 'ibirapema_warrior', count: 3 },
-            { type: 'blackwood_archer', count: 4 },
+            { type: 'iroquois_warrior', count: 3 },
+            { type: 'ibirapema_warrior', count: 4 },
+            { type: 'blackwood_archer', count: 2 },
         ],
         regions: ['IROQUOIS'],
         parentLegion: '城堡时代阿兹特克军团',
@@ -180,11 +180,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '海贼倭寇军团',
-        formationMode: 'crescent',
+        formationMode: 'fish_scale',
         slots: [
             { type: 'bandit', count: 3 },
-            { type: 'ronin', count: 2 },
-            { type: 'outlaw', count: 4 },
+            { type: 'ronin', count: 4 },
+            { type: 'outlaw', count: 2 },
         ],
         regions: [],
         parentLegion: '西欧军团',

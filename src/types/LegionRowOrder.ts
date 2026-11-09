@@ -4,6 +4,7 @@
  * 🔴 主人 2026-11-02：
  *   「战象，战车，步兵，骑兵，投掷，弩手，弓手，弓骑，法术，火器。这是占位排序。前面的靠前站」
  *   「法术，战象，战车，火器，骑兵，弓骑，投掷，步兵，弩手，弓手，这是挡位排序。前面的挡位少」
+ * 🔴 主人 2026-11-09 改档位排序（取代上一行）：「法术，战象，战车，火器，骑兵，弓骑，投掷，弩手，弓手，步兵」——步兵挪到最后，步兵档最多。
  * 🔴 主人 2026-11-04：「战略地图上主将和阵型的位置请和战术一致。主将在2档之间。」
  *
  * - 占位排序：三排从前往后按此表摆（slots[0] 前排 → slots[2] 后排）。
@@ -23,7 +24,7 @@ export const ROW_PLACEMENT_ORDER: readonly LegionRowClass[] =
 
 /** 档位排序：越靠前档越少（第一拿 2 档，最后拿 4 档） */
 export const ROW_TIER_COUNT_ORDER: readonly LegionRowClass[] =
-    ['法术', '战象', '战车', '火器', '骑兵', '弓骑', '投掷', '步兵', '弩手', '弓手'];
+    ['法术', '战象', '战车', '火器', '骑兵', '弓骑', '投掷', '弩手', '弓手', '步兵'];
 
 const SPELL = new Set(['monk', 'priest', 'priestess', 'pagan_priest', 'missionary', 'warrior_priest']);
 const GUNPOWDER = new Set(['hand_cannoneer', 'janissary', 'elite_janissary', 'royal_janissary', 'grenadier', 'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun', 'bombard_cannon', 'rocket_cart', 'heavy_rocket_cart', 'houfnice', 'flamethrower']);

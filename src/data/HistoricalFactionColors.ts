@@ -560,7 +560,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'poland_duchy': '#B83A4A', // 波兰公国
     'saxony_electorate': '#3A5A2E', // 萨克森选侯国
     'portugal_medieval': '#2E6A3A', // 中世纪葡萄牙
-    'denmark_norway': '#B83A3A', // 丹麦-挪威
+    'denmark_norway': '#B93A3A', // 丹麦-挪威
     'denmark_medieval': '#9A2E2E', // 中世纪丹麦
     'scotland_stuart': '#2E3A6A', // 斯图亚特苏格兰
     'england_modern': '#8A2E3A', // 近代英格兰
@@ -569,21 +569,21 @@ desheng: '#2E6B7A', // 德胜·刘通
     'abkhazia_kingdom': '#3A6A3A', // 阿布哈兹王国
     'early_wokou': '#3A3A3A', // 前期倭寇
     'mac_dynasty': '#5A2E2E', // 莫朝
-    'restored_hanthawaddy': '#7A3A2E', // 复兴汉达瓦底
+    'restored_hanthawaddy': '#7B3A2E', // 复兴汉达瓦底
     'mamunid': '#6A5A4A', // 马蒙王朝
     'jianzhou': '#2E4A3A', // 建州女真
-    'bashkir': '#3A6A5A', // 巴什基尔
+    'bashkir': '#3B6A5A', // 巴什基尔
     'drevlians': '#4A5A3A', // 德列夫利安人
     'mongol_ancient': '#5A6A7A', // 蒙兀室韦
-    'marcomanni': '#5A4A2E', // 马科曼尼
-    'serbia_revolution': '#8A2E3A', // 塞尔维亚革命
+    'marcomanni': '#5B4A2E', // 马科曼尼
+    'serbia_revolution': '#8B2E3A', // 塞尔维亚革命
     'caledonia': '#3A4A5A', // 喀里多尼亚
     'goths_migration': '#4A3A5A', // 哥特人
-    'syracuse': '#2E5A8A', // 叙拉古
+    'syracuse': '#2F5A8A', // 叙拉古
     'hamdanid': '#6A2E4A', // 哈姆丹王朝
     'wiman_joseon': '#3A5A6A', // 卫满朝鲜
     'gusiluo': '#6A5A2E', // 唃厮啰
-    'yarlung': '#7A6A3A', // 雅砻部落
+    'yarlung': '#7B6A3A', // 雅砻部落
     'old_saxons': '#5A5A3A', // 古撒克逊
     'alamanni': '#4A4A2E', // 阿勒曼尼
     'magyar_tribes': '#6A3A2E', // 马扎尔部落联盟
@@ -598,7 +598,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'bulgaria_third': '#3A7A3A', // 保加利亚公国
     'later_le': '#B8862E', // 后黎朝
     'aksum': '#7A5A2E', // 阿克苏姆
-    'castile_county': '#8A6A2E', // 卡斯蒂利亚伯国
+    'castile_county': '#8B6A2E', // 卡斯蒂利亚伯国
     'milan_duchy': '#2E4A8A', // 米兰公国
     'lombard_league': '#2E6A5A', // 伦巴第联盟
     'cilicia_armenia': '#9A3A3A', // 奇里乞亚亚美尼亚

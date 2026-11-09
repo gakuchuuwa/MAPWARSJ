@@ -32,7 +32,6 @@ import {
     convertSlotsToMode,
     getCultureLegionName,
     getLegionNameOfGeneral,
-    getBase16FormationConfig,
 } from '../types/CultureFormations';
 import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
@@ -314,7 +313,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'condottiero', name: '意大利佣兵高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CONDOTTIERO/' },
     { id: 'conquistador', name: '西班牙征服者', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CONQUISTADOR/' },
     { id: 'cretan_archer', name: '克里特弓手特殊', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/CRETAN_ARCHER/' },
-    { id: 'eagle_scout', name: '美洲鹰斥候', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EAGLESCOUT/' },
+    { id: 'eagle_scout', name: '鹰斥候', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EAGLESCOUT/' },
     { id: 'eagle_warrior', name: '鹰勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/EAGLEWARRIOR/' },
     { id: 'ekdromos', name: '希腊轻装突击兵特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/EKDROMOS/' },
     { id: 'elite_arambai', name: '缅甸飞镖骑兵精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEARAMBAI/' },
@@ -2465,10 +2464,7 @@ function getRegionDefaultLegion(region: RegionType): EditableLegion {
 
 /** 取一级16母体文化军团专属默认编成（与二层时代军团彻底物理隔离） */
 function getBase16RegionDefaultLegion(region: RegionType): EditableLegion {
-    const base16 = getBase16FormationConfig(region);
-    if (base16) {
-        return { formationMode: base16.formationMode, slots: base16.slots.map(s => ({ ...s })), commanderUnit: base16.commanderUnit };
-    }
+    // 2026-11-09 一级母体军团已删：回落文化区默认（二级）军团的编成
     return getRegionDefaultLegion(region);
 }
 
@@ -2630,12 +2626,13 @@ export const BASE_16_LEGION_NAMES: Record<string, string> = {
 
 /** 取第一层文化军团名（16 母体地区名 + 军团）；未知母体兜底东亚军团 */
 export function getBase16LegionName(region: RegionType | null | undefined): string {
-    return (region && BASE_16_LEGION_NAMES[region]) || BASE_16_LEGION_NAMES.CENTRAL;
+    // 2026-11-09 一级母体军团已删：返回该文化区的默认（二级）军团名
+    return getCultureLegionName(region as RegionType) || '';
 }
 
 /** 判断军团名是否属于「一级：16 母体文化军团」（= 16 母体地区名 + 军团） */
-export function isBase16CultureLegion(name: string): boolean {
-    return Object.values(BASE_16_LEGION_NAMES).includes(name);
+export function isBase16CultureLegion(_name: string): boolean {
+    return false;   // 2026-11-09 一级母体军团已删
 }
 
 /** 地区军团名基（文化区默认军团名的「地区名」部分） */
@@ -2701,13 +2698,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     //    「balance_yoke|camel_heavy,shock_cavalry,cav_archer_heavy」，当场判定编制不一致。
     //    母体是编制的权威（只在 16 母体开键），所以它先写、文化区默认只补空位。
     // 1. 一级：16 母体文化军团（权威，先登记）
-    for (const rg of BASE_16_REGIONS) {
-        const name = getBase16LegionName(rg as RegionType);
-        if (!map.has(name)) {
-            const def = getBase16RegionDefaultLegion(rg as RegionType);
-            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), commanderUnit: def.commanderUnit, fids: [], region: rg as RegionType });
-        }
-    }
+    // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 不再登记一级母体军团
     // 1.5 文化区默认军团（二层时代文明军团）：只补母体没占的名字
     for (const rg of REGION_ORDER) {
         const def = getRegionDefaultLegion(rg);
@@ -2827,7 +2818,8 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
     const options: LayerLegionOption[] = [];
 
     // 🔴 [2026-09-10 主人定] 一级：文化军团（严格只收 16 母体文化军团，名字 = 地区名 + 军团，跨时代母体不带时代）
-    if (layer === 'culture') {
+    // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 一级层不再列军团
+    if (layer === 'culture' && false) {
         for (const rg of BASE_16_REGIONS) {
             const name = getBase16LegionName(rg as RegionType);
             const cultName = name.replace(/军团$/, '');
