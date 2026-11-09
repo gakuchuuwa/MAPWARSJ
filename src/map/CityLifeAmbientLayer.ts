@@ -1,6 +1,5 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
-import { decodeThen } from '../utils/imageDecode';
 import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
@@ -35,9 +34,9 @@ const VILLAGER_SCARE_RADIUS_DEG = 0.10;
  *   3. 渔业严格在海中（绝不在陆地放渔夫）：在沿海海域生成 DE 渔船（SHP_FISHING_SHIP 撒网/往返航行）与海鱼群
  *      （DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH 跃水游弋）；战时渐变为沉没破损渔船（SHP_FISHING_SHIP:sink + SHIP_SINK_SMALL）。
  *   4. 对应四季（每季 15 秒；季末最后 5 秒交叉渐变农田、树林与劳作动作，季首完成衔接）。
- *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.3° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
- *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；完全战毁后保留残骸，
- *      到第二年春季且战斗已结束时，先渐隐残骸，再渐显生产组合。
+ *   5. 战火破坏与尸骸渐变：只有据点被围攻时（siegeCityId；城边野战不算），通过 damageBlend (0 → 1) 平滑渐变为
+ *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；战斗结束后残骸保留 15 秒，
+ *      随后渐隐残骸，生产组合在原位置原样渐显（不重新抽取位置与种类）。
  */
 
 type Pt = { lat: number; lng: number };
@@ -204,9 +203,6 @@ const PLOT_SEARCH_MAX_DEG = 1.05;
 const PLOT_KEEPOUT_X = 170;
 const PLOT_KEEPOUT_Y = 120;
 const CULL_MARGIN_DEG = 0.5;
-// 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
-// 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
-const COMBAT_HIDE_RADIUS_DEG = 0.3;
 /** 潜在森林度达到此值才算「附近有林」，才允许狩猎 / 伐木 */
 const FOREST_POTENTIAL_MIN = 0.5;
 /** 森林掩膜没到时按环境区估「有林」 */
@@ -566,8 +562,6 @@ export class CityLifeAmbientLayer {
     private lastCombatScanMs = 0;
     private clearedWhileHidden = false;
     private layerVisible = true;
-    /** 各据点战毁重建代数：和平期固定为 0（位置与类型常年不变），仅在战火摧毁并于次年春季恢复时 +1 重新选址生成 */
-    private cityRebuildGen = new Map<string, number>();
     /** 沿海/沿河据点自动生成的专属港口码头船坞缓存 */
     private cityPortDockCache = new Map<string, CityPortDock | null>();
     private visibleCitiesKey = '';
@@ -1105,9 +1099,8 @@ export class CityLifeAmbientLayer {
         let list = this.actorsByCity.get(city.id);
         if (list) return list;
         list = [];
-        // 和平期固定位置与类型（rebuildGen = 0），仅在战火摧毁并于次年春季恢复重建时递增代数重新生成。
-        const rebuildGen = this.cityRebuildGen.get(city.id) ?? 0;
-        const yk = rebuildGen === 0 ? city.id : `${city.id}@rebuild${rebuildGen}`;
+        // 位置、类型、组数永远按据点 id 固定；战后原地复耕，不重新抽取（2026-11-09 主人定）。
+        const yk = city.id;
         this.plotElevPending = false;
 
         const cityType = String(city.type);
@@ -1959,8 +1952,8 @@ export class CityLifeAmbientLayer {
         return { action: 'move', cycle: 1 + (phase - HUNT_RETURN_START_SEC) / (HUNT_CYCLE_SEC - HUNT_RETURN_START_SEC) };
     }
 
-    /** 扫描当前处于战斗波及中的据点集合；战后不再按秒数延长战争状态。 */
-    private scanEndangeredCities(nowMs: number, visibleCities: CityDataV2[]): void {
+    /** 扫描当前正被围攻的据点集合（只认 siegeCityId；城边野战不算毁城，2026-11-09 主人定）。 */
+    private scanEndangeredCities(nowMs: number, _visibleCities: CityDataV2[]): void {
         if (nowMs - this.lastCombatScanMs < 200) return;
         this.lastCombatScanMs = nowMs;
         this.endangeredCities.clear();
@@ -1969,7 +1962,6 @@ export class CityLifeAmbientLayer {
         if (!game) return;
 
         const armies: any[] = game.legionManager?.getArmies?.() ?? [];
-        const combatPositions: Pt[] = [];
 
         for (const a of armies) {
             if (!a || a.isDestroyed) continue;
@@ -1983,12 +1975,6 @@ export class CityLifeAmbientLayer {
             if (inFight && a.siegeTargetCityId) {
                 this.endangeredCities.add(a.siegeTargetCityId);
             }
-            if (inFight && typeof a.getPosition === 'function') {
-                const pos = a.getPosition();
-                if (pos && Number.isFinite(pos.lat) && Number.isFinite(pos.lng)) {
-                    combatPositions.push(pos);
-                }
-            }
         }
 
         const activeBattles: any[] = game.combatSystem?.getActiveBattleFields?.() ?? [];
@@ -1996,27 +1982,6 @@ export class CityLifeAmbientLayer {
             if (!bf || bf.isOver) continue;
             if (bf.siegeCityId) {
                 this.endangeredCities.add(bf.siegeCityId);
-            }
-            const p = bf.getReferencePosition?.()
-                ?? bf.position
-                ?? bf.center
-                ?? (Number.isFinite(bf.lat) ? { lat: bf.lat, lng: bf.lng } : null);
-            if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
-                combatPositions.push(p);
-            }
-        }
-
-        if (combatPositions.length > 0) {
-            const r2 = COMBAT_HIDE_RADIUS_DEG * COMBAT_HIDE_RADIUS_DEG;
-            for (const c of visibleCities) {
-                for (const cp of combatPositions) {
-                    const dLat = c.lat - cp.lat;
-                    const dLng = c.lng - cp.lng;
-                    if (dLat * dLat + dLng * dLng <= r2) {
-                        this.endangeredCities.add(c.id);
-                        break;
-                    }
-                }
             }
         }
     }
@@ -2051,8 +2016,7 @@ export class CityLifeAmbientLayer {
                 let loaded = 0;
                 for (let d = 0; d < numDirs; d++) {
                     const img = new Image();
-                    // 🔴 [2026-11-09 查尖峰] 先后台 decode 再标就绪：否则首次 drawImage 在主线程同步解码整张雪碧图
-                    img.onload = () => decodeThen(img, () => {
+                    img.onload = () => {
                         loaded++;
                         if (loaded === numDirs) {
                             if (numDirs === 1) {
@@ -2060,7 +2024,7 @@ export class CityLifeAmbientLayer {
                             }
                             asset.ready = true;
                         }
-                    });
+                    };
                     img.onerror = () => {
                         loaded++;
                         if (loaded === numDirs) asset.ready = true;
@@ -2113,9 +2077,7 @@ export class CityLifeAmbientLayer {
                 st.anchorY = treeMeta?.anchorY ?? meta.anchor_y ?? Math.floor(st.boxH / 2);
                 const img = new Image();
                 let triedFallback = false;
-                // 🔴 [2026-11-09 查尖峰] 树/建筑长条图（最宽上万像素）首次 drawImage 会在主线程同步解码：
-                //    Edge 无头实测 drawHuntingTree 单帧 222ms。先后台 decode，解完才标就绪（未就绪时本来就跳过不画）。
-                img.onload = () => decodeThen(img, () => { st.ready = true; });
+                img.onload = () => { st.ready = true; };
                 img.onerror = () => {
                     // 部分 DE 小屋只保留单帧 preview.png，SUCAI_FX 备用 frames.png
                     if (folder === 'SUCAI_BUILDING' && !triedFallback) {
@@ -2273,7 +2235,7 @@ export class CityLifeAmbientLayer {
 
     private update(dt: number): void {
         // 和平期各据点生产方式位置与组成常年固定（只做春耕→夏长→秋收→冬休的季节贴图过渡，不跨年重抽）；
-        // 仅当据点遭战火摧毁、残骸在次年春季消散后，才按据点重新选址重建一批新的生产组合。
+        // 被围攻战毁后残骸保留 15 秒，消散后原地原样复耕，从不重新选址。
 
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest();
@@ -2400,7 +2362,6 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        const citiesToRebuildAfterWar = new Set<string>();
         for (const [id, actor] of this.activeActors.entries()) {
             if (actor.retiring) {
                 actor.viewAlpha -= dt / PRODUCTION_FADE_IN_SEC;
@@ -2471,31 +2432,15 @@ export class CityLifeAmbientLayer {
                 const canRecover = tSec >= actor.recoverAtSec;
                 if (canRecover) {
                     actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
-                    if (actor.damageBlend <= 0 && actor.presentAtCombat) {
-                        citiesToRebuildAfterWar.add(actor.cityId);
+                    if (actor.damageBlend <= 0) {
+                        actor.damageBlend = 0;
+                        actor.presentAtCombat = false;
                     }
                 }
-            } else if (actor.presentAtCombat) {
-                citiesToRebuildAfterWar.add(actor.cityId);
             } else {
-                actor.peaceAlpha = 1;
-            }
-        }
-
-        // 第二阶段：战损残骸 15 秒到期并完全消散后，该据点递增重建代数并清空旧缓存，下一帧重新生成新一批生产组合并从 0 渐显。
-        if (citiesToRebuildAfterWar.size > 0) {
-            for (const cityId of citiesToRebuildAfterWar) {
-                this.cityRebuildGen.set(cityId, (this.cityRebuildGen.get(cityId) ?? 0) + 1);
-                this.actorsByCity.delete(cityId);
-                this.prevActorsByCity.delete(cityId);
-                this.forestByCity.delete(cityId);
-                this.forestKindByCity.delete(cityId);
-                this.placedPlots = this.placedPlots.filter((p) => p.cityId !== cityId);
-                for (const [aid, a] of this.activeActors.entries()) {
-                    if (a.cityId === cityId) {
-                        this.activeActors.delete(aid);
-                    }
-                }
+                // 第二阶段：残骸消散后原地复耕——位置、种类、组数都不变，生产组合从 0 渐显回原样。
+                actor.presentAtCombat = false;
+                actor.peaceAlpha = Math.min(1, actor.peaceAlpha + dt / PRODUCTION_FADE_IN_SEC);
             }
         }
     }

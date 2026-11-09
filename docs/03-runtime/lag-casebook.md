@@ -782,3 +782,8 @@ Edge CPU 采样（renderUnit 内）：`renderInfo` 自身最大——每军团�
 - 等价：页面内对拍 GridSet≡Set 60 万次随机增删查清（含越界）0 差异、迭代序一致；memoGrid≡原函数 107 万点（含越界/小数）0 差异。
 - 前后（5~6 分钟无头随机局，>700ms 长任务）：前 2329/938/1012ms 里 growCohesiveClump ~0.9~1.2s + mkProgram ~0.3s；后 749/974/710/706ms 里两者都不再出现，进战术那次剩 828ms 原生（贴图上传等）。非同一场对比。
 - 新看到的战略侧尖峰：`CityLifeAmbientLayer.drawHuntingTree` 单帧 222ms、`TerritorySystem.relayoutCityLabels` 130ms（未处理）。
+
+**11-09 23:00 战略单帧尖峰（drawHuntingTree 222ms / relayoutCityLabels 130ms）**
+- `TerritorySystem.relayoutCityLabels`：不再「先全部 transform='' 再量」（写后读 = 全部城名强制重排），改为量当前外框减本函数上次写入位移（`CITY_LABEL_SHIFT`），只给位移变了的写回。
+  合成对拍：40 轮 2392 个城名（1528 个需避让，含连排两次、中途改字宽）与原写法 **0 差异**。理论边界：1/64px 布局单位 vs 0.1px 位移，贴边恰好时可能差千分之几像素。尖峰真机未复测。
+- 🔴 已证伪，别重走：「长条图首次 drawImage 慢是同步解码 → 先 img.decode()」。页面实测首画 decode 前后同量级（雨林 41.9→44.1ms、橡树 18→15.2ms）：贵的是**整条上传显卡**，不是解码。已完整撤回（CityLifeAmbientLayer / VegetationLayer 与 21:22 备份逐字相同）。

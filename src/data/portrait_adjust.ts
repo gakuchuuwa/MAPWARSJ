@@ -1713,7 +1713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 30
         },
         "/assets/MONGOL/yaoluoge_yaoluogepusa.png": {
-            "scale": 1.11,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": -25
         },
@@ -9103,7 +9103,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/MONGOL/tujue_xielikehan.png": {
-            "scale": 1.22,
+            "scale": 1.24,
             "offsetX": 6,
             "offsetY": 0
         },
@@ -9573,7 +9573,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/BURMESE/bfe_mingyiswa.png": {
-            "scale": 0.9,
+            "scale": 0.88,
             "offsetX": -6,
             "offsetY": -20
         },
@@ -10991,6 +10991,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.29,
             "offsetX": 22,
             "offsetY": 10
+        },
+        "/assets/BURMESE/bfe_takayutpi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
         }
     },
     "folderGuides": {

@@ -5,7 +5,6 @@ import { loadWorldBaseData, queryBaseTile, queryWinterSnow } from '../ui/scene13
 import type { TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { perfDoctor } from '../debug/PerfDoctor';
-import { decodeThen } from '../utils/imageDecode';
 import {
     loadStrategicForestMask,
     queryStrategicCanopyDensity,
@@ -160,21 +159,12 @@ const TREE_FRAMES_FAILED = new Set<string>();
 const LAST_DRAWN_ASSET = new Map<string, string>();
 const LAST_DRAWN_MAX = 6000;
 
-/**
- * 🔴 [2026-11-09 查尖峰] 树贴图下载完先后台 decode，解完才算可用（见 utils/imageDecode）：
- *    否则整层重画里首次 drawImage 在主线程同步解码上万像素宽的 frames.png。未解完时与「还没下载完」同样处理
- *    （本季没就绪就画上一次画成的那张、绝不留空的老规矩不变）。
- */
-const TREE_DECODED = new WeakSet<HTMLImageElement>();
-const usable = (img: HTMLImageElement | undefined): img is HTMLImageElement =>
-    !!img && img.complete && img.naturalWidth > 0 && TREE_DECODED.has(img);
-
 function treeImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_IMG_FAILED.has(asset)) return null;
     const hit = TREE_IMG.get(asset);
-    if (hit) return usable(hit) ? hit : null;
+    if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
     const img = new Image();
-    img.onload = () => decodeThen(img, () => { TREE_DECODED.add(img); onReady(); });
+    img.onload = () => onReady();
     img.onerror = () => { TREE_IMG.delete(asset); TREE_IMG_FAILED.add(asset); };
     img.src = `/SUCAI_NATURE/${asset}/preview.png`;
     TREE_IMG.set(asset, img);
@@ -184,9 +174,9 @@ function treeImage(asset: string, onReady: () => void): HTMLImageElement | null 
 function treeFramesImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_FRAMES_FAILED.has(asset)) return null;
     const hit = TREE_FRAMES_IMG.get(asset);
-    if (hit) return usable(hit) ? hit : null;
+    if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
     const img = new Image();
-    img.onload = () => decodeThen(img, () => { TREE_DECODED.add(img); onReady(); });
+    img.onload = () => onReady();
     img.onerror = () => { TREE_FRAMES_IMG.delete(asset); TREE_FRAMES_FAILED.add(asset); };
     img.src = `/SUCAI_NATURE/${asset}/frames.png`;
     TREE_FRAMES_IMG.set(asset, img);
@@ -198,15 +188,15 @@ function isTreeAssetReady(asset: string): boolean {
     const meta = TREE_METAS[asset];
     if (meta) {
         const frames = TREE_FRAMES_IMG.get(asset);
-        if (usable(frames)) return true;
+        if (frames && frames.complete && frames.naturalWidth > 0) return true;
         // 🔴 若该树种第 0 帧被剔除（如 PINE / SNOW_PINE 的 preview.png 是第 0 帧枯木棍），必须等待 frames.png 就绪
         if (!meta.frames.includes(0)) return false;
         const prev = TREE_IMG.get(asset);
-        if (usable(prev)) return true;
+        if (prev && prev.complete && prev.naturalWidth > 0) return true;
         return false;
     }
     const im = TREE_IMG.get(asset);
-    return usable(im);
+    return !!(im && im.complete && im.naturalWidth > 0);
 }
 
 /**
