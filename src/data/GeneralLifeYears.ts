@@ -1267,7 +1267,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     chu_d_lukang: { birth: 126, death: 195 },  // 陆康
     yan_leyi: { birth: -315, death: -245, kaoju: '推定' },  // 乐毅
     zhao_lianpo: { birth: -305, death: -222, kaoju: '异说' },  // 廉颇
-    yang_aner_yangan: { birth: 325, death: 380, kaoju: '推定' },  // 杨安
+    yang_aner_yangan: { birth: 1180, death: 1214, kaoju: '推定' },  // 杨安儿（红袄军，1214 卒）
     xie_xiefangde: { birth: 1226, death: 1289 },  // 谢枋得
     wan_liuyuan: { birth: 1085, death: 1140, kaoju: '推定' },  // 刘源
     huang_d_sunshuao: { birth: 174, death: 228 },  // 贾逵

@@ -77,7 +77,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   maixiya: '麦西',
   nidelan: '尼德',
 'pomeilaniya': '波美',
-  tuosikana: '托斯',
   talanduo: '塔兰',
   safuyi: '萨伏',
   jiatailuoniya: '加泰',
@@ -122,7 +121,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'baizanting': '拜占',
   bosi_puluosi: '博普',
 'kelimiya': '热亚',  // 热那亚共和国（卡法）
-'keluodiya': '克',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'litaowan': '立',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bolan': '波兰',
 'baojian_qishi': '宝剑',
@@ -249,10 +247,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yada': '厌抵',
 'guishuang': '贵霜',
 'juandu': '捐毒',
-  sai: '塞种',
   'sijitai': '斯基',
 
-    'shuizhen': '水真',
     'xiajiasi': '坚昆',
     'shang': '商',
     'zhou': '周',
@@ -298,7 +294,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
 
-    'sushen': '肃慎',
 'rouran': '柔然',
     'baiji': '百济',
 'tubo': '吐蕃',
@@ -454,7 +449,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'kala': '喀喇',   // 🔴 [2026-11-07 主人令「建立一个喀喇汗国」] 旗号＝势力简称前两字（原「喀汗」是截名凑字）
 'sogdian': '粟特',
     'suogediyana': '索格',
-    'kangju': '康居',
     'geluolu': '葛逻',
     'yuchi': '于阗',  // 🔴 [2026-11-03] 国名于阗，不用姓
 'an': '乌兹',
@@ -724,7 +718,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wulaertu_guo': '乌图',
 'gelujiya': '格',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bendou': '特拉',
-    'keerjisi': '金羊',
     'bendou_d': '本都',
     'saipulusi': '塞浦',
     'heti': '赫梯',
@@ -771,9 +764,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'boluo': '波罗',
     'dedan': '德丹',
     'maidina': '拉希',
-    'emesene': '埃梅',
     'gulaishi': '古莱',
-    'xierwan': '希尔',
     'xiemian': '萨维',
     'yidier': '伊蒂',
     'salai': '诺盖',
@@ -824,7 +815,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pandiya': '潘地',
     'liaozu': '寮族',
     'kushi': '库施',
-    'aimala': '艾马',
     'aolisha': '东恒',
     'kanata': '维查',
     'adile': '比贾',

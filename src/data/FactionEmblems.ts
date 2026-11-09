@@ -81,7 +81,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     bulietani: 'BRITTANY_ERMINE',   // 布列塔尼·貂纹
     nuowei: 'NORWAY_LION_AXE',   // 挪威·狮持斧
     // ── 2026-10-25 第二批新增史实纹章（13 种，每家一个专属 KEY）──────────────
-    keluodiya: 'CROATIA_CHECKER',   // 克罗地亚·红白棋盘（šahovnica）
     litaowan: 'LITHUANIA_VYTIS',   // 立陶宛·Vytis 骑士
     luosi: 'RURIK_TRIDENT',   // 罗斯·留里克三叉戟
     mosike_gongguo: 'MOSCOW_GEORGE',   // 莫斯公国·圣乔治屠龙
@@ -115,7 +114,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     deli: 'DELHI_BANNER',   // 德里苏丹国·垂旗新月
     maya: 'MAYA_JAGUAR',   // 玛雅·美洲豹
     chenla: 'KHMER_TOWERS',   // 真腊·吴哥三塔
-    tuosikana: 'TUSCANY_BALLS',   // 托斯卡纳·美第奇六球
     lunbadi: 'LOMBARD_CROWN',   // 伦巴第·铁冠
     amaniyake: 'ARMAGNAC_LION',   // 阿马尼亚克·狮
     jiatailuoniya: 'CATALONIA_BARS',   // 加泰罗尼亚·四竖条
@@ -267,7 +265,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     suzidaer: 'SUZDAL_VLADIMIR_CROWNED_LION',   // 苏兹达尔·弗拉基米尔圣德米特里大教堂浮雕与大公印章的戴冠持十字杖行狮
     dalriada: 'DALRIADA_DUNADD_TRISKELE_CROSS',   // 达尔里阿达·王都敦阿德（Dunadd）与阿尔巴石刻的凯尔特三旋涡纹十字圆盘
     seleisi: 'ODRYSIAN_SEUTHES_STAR_WREATH',   // 色雷斯（奥德里西亚）·塞乌特斯三世钱币的橡叶王冠花环与中央八芒星
-    keerjisi: 'COLCHIS_KOLKHIDKI_BULL_RAM',   // 科尔基斯·前5世纪科尔基斯银币（Kolkhidki）与金羊毛传统的盘角公羊首徽
     damolaweiya: 'GREAT_MORAVIA_MIKULCICE_FALCON',   // 大摩拉维亚·米库尔奇采（Mikulčice）王室镀金饰章的展翅猎鹰（Sokol）
     champa: 'CHAMPA_MY_SON_TRISHULA',   // 占婆·美山圣地（Mỹ Sơn）王室浮雕与金印的湿婆火焰三叉戟配莲座
     dongxu: 'TAUNGOO_SUN_PEACOCK',   // 东吁王朝·光芒日轮环抱左向昂首跃立孔雀（区别于贡榜正面开屏孔雀）

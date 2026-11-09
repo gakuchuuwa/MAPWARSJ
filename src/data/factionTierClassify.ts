@@ -39,7 +39,7 @@ const TIER6_UPRISING = new Set([
 const TIER2_ETHNIC_SEED = new Set([
     'xiongnu', 'xianbei', 'tuoba', 'qidan', 'jurchen', 'menggu_d', 'manzhou',
     'tujue', 'tiele', 'huige', 'rouran', 'chile', 'qiang', 'di', 'jie',
-    'guishuang', 'sogdian', 'donghu', 'sushen', 'wuzhumuqin', 'mohe', 'quanrong',
+    'guishuang', 'sogdian', 'donghu', 'wuzhumuqin', 'mohe', 'quanrong',
     'huimo', 'ashikaga', 'xiyu',
 ]);
 

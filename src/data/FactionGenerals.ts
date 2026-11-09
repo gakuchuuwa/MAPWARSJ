@@ -4415,7 +4415,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    keluodiya: [],   // 2026-11-09 唯一武将 gen_nikola_zrinski 挪往他那个时代的政权
 
 
 
@@ -8305,7 +8304,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-10-25 修] 突地稽＝粟末靺鞨，隋末率部内附、唐置营州（朝阳）安置（史实居住地，据点不动）。
     //    朝阳 2026-10-25 已按主人令改 WEI 河朔 → 他的军团应走「封建 × 河朔＝封建时代河朔军团」自动解；
     //    原来手写的「封建时代漠南军团」是漠南 XIANBEI 那一格的军团，与据点文化不符（文化同一链审计报错），已删掉。
-    sushen: [],   // 2026-11-09 唯一武将 sushen_tudiji 挪往他那个时代的政权
 
 
 
@@ -10285,7 +10283,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kangju: [],   // 2026-11-09 唯一武将 kangju_chebishi 挪往他那个时代的政权
 
 
 
@@ -11106,7 +11103,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    shuizhen: [],   // 2026-11-09 唯一武将 shuizhen_qudaren 挪往他那个时代的政权 // 三菩·水真戍
 
 
 
@@ -11595,7 +11591,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     qiuchi: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
-        { generalId: 'yang_aner_yangan', factionId: 'qiuchi', cityId: 'city_dengzhou', generalName: '杨安', portrait: '/assets/WEI/yang_aner_yangan.png', eliteName: '天顺骑兵', eliteTier: 4 },
 
 
 
@@ -12312,7 +12307,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yang_aner: [],   // 2026-11-09 唯一武将 yang_aner_yangan 挪往他那个时代的政权
+    yang_aner: [
+        // 🔴 [2026-11-09 主人令「哪些势力不是历史上公认的政权或者民族，或者没有武将名字，就删除」] 杨安＝杨安儿（红袄军首领，1214 称帝改元天顺，据登州），早先误判成 4 世纪仇池人挪走，改回
+        { generalId: 'yang_aner_yangan', factionId: 'yang_aner', cityId: 'city_dengzhou', generalName: '杨安', portrait: '/assets/WEI/yang_aner_yangan.png', eliteName: '天顺骑兵', eliteTier: 4 },
+    ],
 
 
 
@@ -13102,7 +13100,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    sai: [],   // 2026-11-09 唯一武将 sai_gaijiayun 挪往他那个时代的政权
 
 
 
@@ -14130,7 +14127,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    keerjisi: [],   // 2026-11-09 唯一武将 keerjisi_bagelate 挪往他那个时代的政权
 
 
 
@@ -16039,7 +16035,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xierwan: [],   // 2026-11-09 唯一武将 xierwan_farukusha 挪往他那个时代的政权
 
 
 
@@ -16771,7 +16766,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    aimala: [],   // 2026-11-09 唯一武将 aimala_katali 挪往他那个时代的政权
 
 
 
@@ -17256,7 +17250,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    emesene: [],   // 2026-11-09 唯一武将 emesene_xierkuhe 挪往他那个时代的政权   // 🔴 [2026-10-04 建埃梅萨] 希尔库赫 Asad ad-Din Shirkuh（萨拉丁之叔、霍姆斯长官、三征埃及）。⚠️ 立绘文件尚未存在，待主人补
 
 
 

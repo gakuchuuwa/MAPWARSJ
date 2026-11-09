@@ -544,7 +544,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xuan_xuda': 14,                                     // 徐达 · xuan · 宣化
     'yan_leyi': -3,                                      // 乐毅 · yan · 古北口
     'yanchuan_d_yuefei': 12,                             // 岳飞 · yanchuan_d · 郾城
-    'yang_aner_yangan': 4,                              // 杨安 · yang_aner · 蓬莱
+    'yang_aner_yangan': 13,                              // 杨安 · yang_aner · 蓬莱
     'yangshe_yangshezhi': -6,                            // 羊舌职 · yangshe · 铜鞮
     'yi_yuqian': 15,                                     // 于谦 · yi · 紫荆关
     'ming_yanghong': 15,                                 // 杨洪 · ming · 宣化（2026-10-24 补）

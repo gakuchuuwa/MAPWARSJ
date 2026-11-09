@@ -87,7 +87,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'aiji': [{ from: -9999, era: 'antiquity' }], // 埃及
     'ailan': [{ from: -9999, era: 'antiquity' }], // 埃兰
     'ailao': [{ from: -9999, era: 'antiquity' }], // 哀牢
-    'aimala': [{ from: -9999, era: 'castle' }], // 艾马拉 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 1150–1477 大部分年份]
     'alagong': [{ from: -9999, era: 'castle' }], // 阿拉贡
     'amago': [{ from: -9999, era: 'imperial' }], // 尼子
     'amaniyake': [{ from: -9999, era: 'castle' }], // 阿马尼亚克
@@ -271,7 +270,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'elunchunzu': [{ from: -9999, era: 'imperial' }], // 鄂伦春
     'eluoke': [{ from: -9999, era: 'imperial' }], // 鄂罗克
     'eluosi_diguo': [{ from: -9999, era: 'imperial' }], // 俄罗斯帝国
-    'emesene': [{ from: -9999, era: 'antiquity' }], // 埃梅塞尼 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }] → antiquity｜存续 -46–78 大部分年份]
     'erzhu': [{ from: -9999, era: 'feudal' }], // 尔朱
     'ewenki': [{ from: -9999, era: 'imperial' }], // 鄂温克
     'fangguozhen': [{ from: -9999, era: 'castle' }], // 方国珍
@@ -370,16 +368,13 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kaliya': [{ from: -9999, era: 'antiquity' }], // 卡里亚
     'kanan': [{ from: -9999, era: 'antiquity' }], // 推罗
     'kanata': [{ from: -9999, era: 'castle' }], // 维查耶纳伽尔 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 1336–1646 大部分年份]
-    'kangju': [{ from: -9999, era: 'antiquity' }], // 康居 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → antiquity｜存续 -200–400 大部分年份]
     'kapaduoxiya': [{ from: -9999, era: 'antiquity' }], // 卡帕多细亚
     'karmapa': [{ from: -9999, era: 'imperial' }], // 噶玛
     'kawusi': [{ from: -9999, era: 'imperial' }], // 卡乌斯
     'kazakh': [{ from: -9999, era: 'imperial' }], // 哈萨
-    'keerjisi': [{ from: -9999, era: 'antiquity' }], // 科尔基斯 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → antiquity｜存续 -1300–-164 大部分年份]
     'keerkezi': [{ from: -9999, era: 'feudal' }], // 柯尔克孜
     'keernuwaye': [{ from: -9999, era: 'feudal' }], // 康沃尔（5 世纪末不列颠地方政权）→ 封建（2026-11-03 主人定）
     'keerqin': [{ from: -9999, era: 'imperial' }], // 科尔沁
-    'keluodiya': [{ from: -9999, era: 'feudal' }], // 克罗地亚 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → feudal｜存续 925–1102 大部分年份]
     'kepantuo': [{ from: -9999, era: 'feudal' }], // 渴盘陀
     'kereyid': [{ from: -9999, era: 'castle' }], // 克烈
     'kesa': [{ from: -9999, era: 'feudal' }], // 可萨
@@ -508,7 +503,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ruoqiang': [{ from: -9999, era: 'antiquity' }], // 婼羌
     'saerbadaer': [{ from: -9999, era: 'castle' }], // 萨尔巴达尔
     'safuyi': [{ from: -9999, era: 'castle' }], // 萨伏伊
-    'sai': [{ from: -9999, era: 'antiquity' }], // 塞种 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → antiquity｜存续 -700–-160 大部分年份]
     'saierweiya': [{ from: -9999, era: 'castle' }], // 塞尔维亚
     'saimien': [{ from: -9999, era: 'feudal' }], // 塞米恩
     'saipulusi': [{ from: -9999, era: 'castle' }], // 塞浦路斯
@@ -534,7 +528,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'shiyuzu': [{ from: -9999, era: 'antiquity' }], // 食鱼族
     'shoni': [{ from: -9999, era: 'castle' }], // 少弐
     'shu': [{ from: -9999, era: 'antiquity' }], // 蜀国
-    'shuizhen': [{ from: -9999, era: 'feudal' }], // 水真 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → feudal｜存续 706–802 大部分年份]
     'shuizu': [{ from: -9999, era: 'imperial' }], // 水族
     'shunga': [{ from: -9999, era: 'antiquity' }], // 巽伽
     'shuntian': [{ from: -9999, era: 'imperial' }], // 天地会
@@ -554,7 +547,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suolun': [{ from: -9999, era: 'imperial' }], // 达斡尔
     'suosuo': [{ from: -9999, era: 'castle' }], // 索索
     'supi': [{ from: -9999, era: 'feudal' }], // 苏毗
-    'sushen': [{ from: -9999, era: 'antiquity' }], // 肃慎 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → antiquity｜存续 -1000–400 大部分年份]
     'sute': [{ from: -9999, era: 'antiquity' }], // 诺塔卡
     'suwa_d': [{ from: -9999, era: 'castle' }], // 诹访 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 1200–1542 大部分年份]
     'suzidaer': [{ from: -9999, era: 'castle' }], // 苏兹达尔
@@ -601,7 +593,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'tuolemi': [{ from: -9999, era: 'antiquity' }], // 托勒密
     'tuomengde': [{ from: -9999, era: 'castle' }], // 托蒙德
     'tuoming': [{ from: -9999, era: 'imperial' }], // 清真
-    'tuosikana': [{ from: -9999, era: 'imperial' }], // 托斯卡纳 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }] → imperial｜存续 1569–1859 大部分年份]
     'tupi': [{ from: -9999, era: 'imperial' }], // 图皮
     'tutul_xiu': [{ from: -9999, era: 'feudal' }], // 休族
     'uesugi': [{ from: -9999, era: 'imperial' }], // 上杉
@@ -648,7 +639,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xideweina': [{ from: -9999, era: 'castle' }], // 波洛公国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → castle｜存续 862–1307 大部分年份]
     'xiemian': [{ from: -9999, era: 'feudal' }], // 萨维尔
     'xierhe': [{ from: -9999, era: 'feudal' }], // 锡尔河
-    'xierwan': [{ from: -9999, era: 'castle' }], // 希尔万王国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 861–1538 大部分年份]
     'xihai_d': [{ from: -9999, era: 'feudal' }], // 吐谷浑
     'xike': [{ from: -9999, era: 'imperial' }], // 锡克帝国
     'xikesuosi': [{ from: -9999, era: 'antiquity' }], // 喜克索斯

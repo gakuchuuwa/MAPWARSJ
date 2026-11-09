@@ -81,7 +81,6 @@ export const FACTIONS: Faction[] = [
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
   { id: 'pomeilaniya', name: '波美拉尼亚' },  // 什切青·格里芬王朝（西波美拉尼亚公国）
-  { id: 'tuosikana', name: '托斯卡纳' },
   { id: 'talanduo', name: '塔兰托' },  // 别名：南意大利希腊殖民城邦（Magna Graecia），首邑塔兰托
   { id: 'safuyi', name: '萨伏伊' },
   { id: 'jiatailuoniya', name: '加泰罗尼亚' },
@@ -322,7 +321,6 @@ export const FACTIONS: Faction[] = [
   { id: 'bosi_puluosi', name: '博斯普鲁斯' },
   { id: 'kelimiya', name: '热那亚共和国' },  // 卡法·热那亚黑海殖民地（Gazaria）
 
-  { id: 'keluodiya', name: '克罗地亚' },
   { id: 'litaowan', name: '立陶宛' },
   { id: 'bolan', name: '波兰' },
 
@@ -374,10 +372,8 @@ export const FACTIONS: Faction[] = [
 
 
 
-  { id: 'sai', name: '塞种' },
 
 
-    { id: 'shuizhen', name: '水真' },
        // 越嶲·焦璜邛都戍
 
 
@@ -576,7 +572,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'sushen', name: '肃慎' },
 
 
     { id: 'rouran', name: '柔然' },
@@ -950,7 +945,6 @@ export const FACTIONS: Faction[] = [
 // 崖壁灰褐 - 奥诺斯岩（Pir Sar 崖顶岩堡）的守方部众；公元前326年奥诺斯岩围城战守方
         // 巧克力色 - 粟特商团(阿弗拉西阿卜/撒马尔罕)
 // 暗苔绿 - 塞种/斯基泰人(特克斯河流域/昭苏石人)
-{ id: 'kangju', name: '康居' },         // 秘鲁黄 - 康居(卑阗城/锡尔河流域)
 { id: 'geluolu', name: '葛逻禄' },      // 高原栗 - 葛逻禄(怛罗斯/中亚名城)
 { id: 'yuchi', name: '尉迟于阗' },          // 于阗紫 - 尉迟氏/伏阇氏(于阗王族/丹丹乌里克)
 // 西域沙金 - 麴氏(高昌汉人王族/柏孜克里克)
@@ -1627,7 +1621,6 @@ export const FACTIONS: Faction[] = [
     { id: 'gelujiya', name: '格鲁吉亚' },
     { id: 'bendou', name: '特拉布宗' },
 
-    { id: 'keerjisi', name: '科尔基斯' },
     { id: 'saipulusi', name: '塞浦路斯' },
   { id: 'bendou_d', name: '本都' },
     { id: 'heti', name: '赫梯' },
@@ -1682,7 +1675,6 @@ export const FACTIONS: Faction[] = [
     { id: 'maidina', name: '拉希顿' }, // 正统哈里发国建都麦地那，武将哈立德为其统帅（原名与据点名相同，违 §266）
     { id: 'gulaishi', name: '古莱什部落' },
     { id: 'jiashi_d', name: '迦尸国' },
-    { id: 'xierwan', name: '希尔万王国' },
     { id: 'xiemian', name: '萨维尔' }, // 达吉斯坦萨维尔人（谢缅杰尔一带突厥语族，后并入可萨）（原名与据点名相同，违 §266）
     { id: 'yidier', name: '伊蒂尔汗国' },
     { id: 'salai', name: '诺盖汗国' }, // 🔴 [2026-11-04 主人令「按历史修复」] 原名「萨莱诺盖」不是史称；埃迪古所建即诺盖汗国（诺盖部，都萨莱楚克）
@@ -1743,7 +1735,6 @@ export const FACTIONS: Faction[] = [
     { id: 'pandiya', name: '潘地亚' },     // 马杜赖·潘地亚王朝（南印度泰米尔，朱罗宿敌）
     { id: 'liaozu', name: '寮族' },
     { id: 'kushi', name: '库施' },
-    { id: 'aimala', name: '艾马拉' },
     { id: 'aolisha', name: '东恒伽' },
     { id: 'kanata', name: '维查耶纳伽尔' },
     { id: 'adile', name: '比贾布尔' },
@@ -1787,7 +1778,6 @@ export const FACTIONS: Faction[] = [
     //    武将窦建德 / 精锐「长枪义军」/ 旗号「窦夏」/ 势力色 / 世纪·时代·技能档案 / 战场人物记录。
     { id: 'dasaleiti', name: '达萨雷提' },
     { id: 'kapaduoxiya', name: '卡帕多细亚' },
-    { id: 'emesene', name: '埃梅塞尼' },   // 🔴 [2026-10-04 主人令建埃梅萨] Emesene＝古代埃梅萨所在地区之名（「势力是片」，大于据点；与据点名「埃梅萨」不逐字相同）
 
 
     { id: 'sute', name: '诺塔卡' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记

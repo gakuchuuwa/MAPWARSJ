@@ -351,7 +351,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'ryukyu': _ribenPortraitPool,
     'zhuang_d': _guangzhouPortraitPool,
     'nanyue': _guangzhouPortraitPool,
-    'shuizhen': _guangzhouPortraitPool,
     'dengmaoqi': _guangzhouPortraitPool,
     'longwu': _guangzhouPortraitPool,
     'paiwan': _guangzhouPortraitPool,
@@ -506,7 +505,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'manzhou_d': _manqingPortraitPool,
     'shuidada': _dongbeiPortraitPool,
     'suolun': _dongbeiPortraitPool,
-    'sushen': _dongbeiPortraitPool,
 
     'wuji': _dongbeiPortraitPool,
     'wure': _dongbeiPortraitPool,
@@ -541,7 +539,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hepan': _zhongyaPortraitPool,
     'jie': _caoyuanPortraitPool,
     'kala': _zhongyaPortraitPool,
-    'kangju': _zhongyaPortraitPool,
     'kawusi': _zhongyaPortraitPool,
     'kazakh': _zhongyaPortraitPool,
     'keerkezi': _zhongyaPortraitPool,

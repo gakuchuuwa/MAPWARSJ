@@ -124,7 +124,6 @@ export class CityAssetManager {
         'fuguo': '附',
 'yada': '厌抵',
 'juandu': '捐毒',
-        'sai': '塞种',
 'xianbei': '鲜卑',
 'wuhuan': '乌桓',
 'sijitai': '斯基',
@@ -176,7 +175,6 @@ export class CityAssetManager {
 'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
-        'sushen': '肃慎',
 'guishuang': '贵霜',
 'rouran': '柔然',
         'baiji': '百济',
@@ -246,7 +244,6 @@ export class CityAssetManager {
 'huarazim': '花剌',
         'pagan': '缅',
         'champa': '占婆',
-        'shuizhen': '水真',
 'dongxia': '东夏',
 'chagatai': '车师',
 'kereyid': '克烈',
@@ -318,7 +315,6 @@ export class CityAssetManager {
 
 'kala': '喀汗',
 'sogdian': '粟特',
-        'kangju': '康居',
         'geluolu': '葛逻',
         'yuchi': '于阗',
 'an': '乌兹',
@@ -549,7 +545,6 @@ export class CityAssetManager {
 'wulaertu_guo': '乌图',
 'gelujiya': '格',
 'bendou': '特拉',
-        'keerjisi': '金羊',
         'bendou_d': '本都',
         'heti': '赫梯',
 'fulijiya': '弗里',
@@ -597,9 +592,7 @@ export class CityAssetManager {
         'boluo': '波罗',
         'dedan': '德丹',
         'maidina': '拉希',
-        'emesene': '埃梅',
         'gulaishi': '古莱',
-        'xierwan': '希尔',
         'xiemian': '萨维',
         'yidier': '伊蒂',
         'salai': '诺盖',
@@ -608,7 +601,6 @@ export class CityAssetManager {
         'baojian_qishi': '宝剑',
         // ── 2026-08-04 新增：大波兰 @ 波兹南 ──
         // ── 2026-08-04 新增：斯洛博达 @ 哈尔科夫 ──
-'keluodiya': '克',
         // ── 2026-08-04 新增：野地 @ 沃罗涅日 ──
         'luosi': '罗斯',
         'meikelunbao': '文德',
@@ -649,7 +641,6 @@ export class CityAssetManager {
         'awaer': '瓦尔',
     'liaozu': '寮族',
     'kushi': '库施',
-    'aimala': '艾马',
     'aolisha': '东恒',
     'kanata': '维查',
     'adile': '阿迪',
@@ -882,7 +873,6 @@ export class CityAssetManager {
         'talanduo': '塔兰',
         'teweier_gongguo': '特维',
         'tiaodun_qishi': '条顿',
-        'tuosikana': '托斯',
         'weijing_york': '约维',
         'xideweina': '波洛',
         'xierhe': '锡尔',
