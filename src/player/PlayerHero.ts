@@ -475,6 +475,9 @@ export class PlayerHero {
     public selectedUnit = -1;
 
     private hostLegionId: string | null = null;
+    private hostGeneralId: string | null = null;
+    private hostGeneralName: string | null = null;
+    private hostLegionName: string | null = null;
     private travelCityId: string | null = null;
     /** 赶往特定坐标目标（如历史战场）的目标显示名 */
     private travelPointLabel: string | null = null;
@@ -586,7 +589,7 @@ export class PlayerHero {
         const prevName = this.playerName;
         this.playerName = trimmed;
         if (this.lifeLog && prevName !== trimmed) {
-            this.recordLife('rename', byViewer ? `观众${byViewer}为他改名「${trimmed}」` : `改名「${trimmed}」`,
+            this.recordLife('rename', byViewer ? `应${byViewer}之请，改名号为「${trimmed}」` : `改名号为「${trimmed}」`,
                 { prevName, newName: trimmed, byViewer: byViewer ?? null });
         }
         this.army.name = trimmed;
@@ -1287,7 +1290,7 @@ export class PlayerHero {
             this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
             this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
             this.deps.notify(`🎖️ ${this.name}晋升为【${after.name}】`);
-            this.recordLife('promote', `晋升【${after.name}】`, { from: before.name, to: after.name, merit: this.merit });
+            this.recordLife('promote', `累功升任【${after.name}】`, { from: before.name, to: after.name, merit: this.merit });
             // 🔴 [2026-11-09] 升到皇帝＝这一生到顶：自动导出一份故事资料包（面板「履历」页也能随时手动导出）
             if (after.id === 'emperor') {
                 try {
@@ -1345,7 +1348,7 @@ export class PlayerHero {
         if (prevMerit > 0 || before.id !== 'civilian') {
             this.holdAfterDefeat?.();
             const peak = this.getPeakRank();
-            this.recordLife('demote', `${reason}，功劳归零，从【${before.name}】回到平民`, { reason, from: before.name, merit: prevMerit });
+            this.recordLife('demote', `${reason}，削职归为白身`, { reason, from: before.name, merit: prevMerit });
             this.deps.notify(`💥 ${reason}！功劳归零、官职回平民，资历【${peak.name}】保留（战略权限不变）`);
             gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} → 0、当前官职【${before.name}】→ 平民，资历【${peak.name}】保留`);
         }
@@ -1475,7 +1478,7 @@ export class PlayerHero {
         this.learnedUnits.push({ unitKey: pickKey, unitName: name, factionId: oppFactionId, row: 0 });
         this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pickKey);
         this.deps.notify(`🎁 公侯战利品：击败敌军缴获新兵模【${name}】`);
-        this.recordLife('unit', `击败敌军，缴获兵模【${name}】`, { unitKey: pickKey, source: 'spoil' });
+        this.recordLife('unit', `破敌缴获【${name.replace(/特殊$/, '')}】军备`, { unitKey: pickKey, source: 'spoil' });
         this.emitChange();
     }
 
@@ -1634,7 +1637,7 @@ export class PlayerHero {
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
-                this.recordLife('unit', `获得兵模【${name}】`, { unitKey: pick.key, source: 'legion' });
+                this.recordLife('unit', `编入【${name.replace(/特殊$/, '')}】`, { unitKey: pick.key, source: 'legion' });
                 this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pick.key);
                 // 🔴 [2026-10-24 主人令「加入势力给一个本势力中三排兵模之一，自动换上；升为探马再给…自动换上；
                 //    升为先锋再给…自动换上」] 三排陆地兵模：入伍与升阶（斥候/探马/先锋）每学到一张**立刻换上**。
@@ -1753,7 +1756,11 @@ export class PlayerHero {
         {
             const gName = this.generalNameOf(host.generalId);
             const fName = this.deps.cityManager.getFactionName(host.getFactionId()) || '';
-            this.recordLife('join', `投奔${gName ? `【${gName}】` : `【${host.name}】`}麾下${fName ? `，归属${fName}` : ''}`,
+            this.hostGeneralId = host.generalId ?? null;
+            this.hostGeneralName = gName;
+            this.hostLegionName = host.name || null;
+            const joinText = gName ? (fName && fName !== gName ? `投效${fName}【${gName}】麾下` : `投效【${gName}】麾下`) : (fName ? `入${fName}【${host.name}】听用` : `入【${host.name}】听用`);
+            this.recordLife('join', joinText,
                 { generalId: host.generalId ?? null, generalName: gName, legionName: host.name, factionId: host.getFactionId() || null, factionName: fName || null });
         }
         // 第九环·玩家官阶：入伍时把官阶战力乘数 + 4 字官阶名写到军团
@@ -1775,7 +1782,13 @@ export class PlayerHero {
         {
             const leaving = this.getHostLegion();
             const gName = this.generalNameOf(leaving?.generalId);
-            this.recordLife('leave', `离开${gName ? `【${gName}】` : '原军团'}麾下`, { generalId: leaving?.generalId ?? null, generalName: gName });
+            if (this.factionId !== null) {
+                const gId = leaving?.generalId ?? this.hostGeneralId;
+                const gN = gName ?? this.hostGeneralName;
+                const lN = leaving?.name ?? this.hostLegionName;
+                const leaveText = gN ? `辞别【${gN}】离营` : (lN ? `脱离【${lN}】` : '离营独行');
+                this.recordLife('leave', leaveText, { generalId: gId ?? null, generalName: gN ?? null });
+            }
         }
         // 统一铁律：玩家脱离军团 = 功勋归零降职（无论战败覆灭还是主动离队，一律清零）
         this.holdAfterDefeat();
@@ -1788,6 +1801,9 @@ export class PlayerHero {
             this.army.setPosition(p.lat, p.lng);
         }
         this.hostLegionId = null;
+        this.hostGeneralId = null;
+        this.hostGeneralName = null;
+        this.hostLegionName = null;
         this.army.setVisible(true);   // 离队：不再跟随军团隐身
         // [2026-09-05 玩家] 退出势力：离队后不再属于该势力，不挂势力旗帜
         this.factionId = null;
@@ -2255,7 +2271,10 @@ export class PlayerHero {
         const enemyName = p?.enemyName ?? String(opponent?.name ?? ent?.name ?? '敌军');
         const isCity = opponent?.unitType === 'city' || ent?.type === 'city';
         const fmt = (n: number) => (n >= 10000 ? `${(n / 10000).toFixed(1).replace(/\.0$/, '')}万` : String(n));
-        const who = p?.patronName ? `随【${p.patronName}】` : '';
+        const hostNow = this.getHostLegion();
+        const patronId = p?.patronId ?? hostNow?.generalId ?? this.hostGeneralId ?? null;
+        const patronName = p?.patronName ?? this.generalNameOf(patronId) ?? this.hostGeneralName ?? null;
+        const who = patronName ? `随【${patronName}】` : '';
         const target = isCity ? `攻打【${enemyName}】` : `迎战${enemyGeneralName ? `【${enemyGeneralName}】` : `【${enemyName}】`}`;
         const troops = p && p.myTroops > 0 && p.enemyTroops > 0 ? `，我军${fmt(p.myTroops)}对${fmt(p.enemyTroops)}` : '';
         const killed = Math.max(0, Math.round(enemyKilled || 0));
@@ -2271,8 +2290,8 @@ export class PlayerHero {
             enemyGeneralId,
             enemyGeneralName,
             isCity,
-            patronId: p?.patronId ?? null,
-            patronName: p?.patronName ?? null,
+            patronId,
+            patronName,
         });
     }
 
@@ -2313,6 +2332,9 @@ export class PlayerHero {
     public restoreSaveState(s: PlayerSaveState): void {
         this.lifeLog.setMuted(true);   // 读档会重放改名、入伙等，不能当成新经历记
         this.hostLegionId = null;
+        this.hostGeneralId = null;
+        this.hostGeneralName = null;
+        this.hostLegionName = null;
         this.cancelChase();
         this.cancelTravel();
         this.merit = Math.max(0, s.merit ?? 0);
@@ -2374,7 +2396,7 @@ export class PlayerHero {
         if (this.learnedUnits.some((u) => u.unitKey === unitKey)) return null;
         const name = WAR_TYPES[unitKey]?.name ?? unitKey;
         this.learnedUnits.push({ unitKey, unitName: name, factionId, row: 0 });
-        this.recordLife('unit', `通灵所得，获得兵模【${name}】`, { unitKey, source: 'memory' });
+        this.recordLife('unit', `习得【${name.replace(/特殊$/, '')}】兵法`, { unitKey, source: 'memory' });
         this.peakStats = mergePlayerPeakFromUnit(this.peakStats, unitKey);
         this.syncMoveProfile();
         this.emitChange();

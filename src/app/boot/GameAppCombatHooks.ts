@@ -216,10 +216,7 @@ function startScene13War(
     if (!defenderEliteName && defenderCityId) {
         defenderEliteName = getCityEliteLegionName(defenderCityId, defender.generalId ?? undefined);
     }
-    // 🔴 同场唯一：攻守双方精锐番号同名时守方避让，禁止同名精锐自己打自己
-    if (attackerEliteName && defenderEliteName && attackerEliteName === defenderEliteName) {
-        defenderEliteName = null;
-    }
+    // 🔴 [2026-11-09 主人令「同名也照样进战术模式」] 精锐按档可挂多名武将，攻守两边各带同名番号是正常的，守方不再避让
     // 🔴 同场唯一：攻守双方武将相同时守方避让，禁止同一武将影分身自己打自己
     const attackerGeneralId = attacker.generalId ?? null;
     let defenderGeneralId = defender.generalId ?? null;
@@ -333,6 +330,7 @@ function startScene13War(
         title,
         // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放）
         battleBriefing: resolvedBattleBriefing,
+        classicBattle: !!classicHeroGeneralId,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });

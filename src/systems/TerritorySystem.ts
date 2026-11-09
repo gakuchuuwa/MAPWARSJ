@@ -186,7 +186,9 @@ const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
     KOREA: ['SCEN_PAGODA_B', 'SCEN_BUDDHA_STATUE'],
     VIETNAMESE: ['SCEN_PAGODA_D', 'SCEN_BUDDHA_STATUE'],
     // 青藏、河西与西域
-    TIBET: ['SCEN_BUDDHA_STATUE', 'SCEN_PAGODA_E'],
+    // 🔴 [2026-11-09 主人「还是保留佛像吧」] 西藏只留大佛：坐佛各地通用，石狮也近藏地雪狮护法；
+    //   汉式楼阁木塔（SCEN_PAGODA_E）藏地没有这种形制，不放。素材库没有藏式佛塔/寺院（唯一藏式的 TIBET_CASTLE_AGE3 已是城心城堡）。
+    TIBET: ['SCEN_BUDDHA_STATUE'],
     HEXI: ['SCEN_PAGODA_A', 'SCEN_BUDDHA_STATUE'],
     WESTERN: ['SCEN_BUDDHA_STATUE', 'MINARET_OF_JAM'],
     // 东南亚

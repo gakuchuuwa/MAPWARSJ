@@ -82,6 +82,10 @@ const SIX_BY_WORD: Record<string, TacticalSixSet> = {
     攻战: 'gongzhan', 胜战: 'shengzhan', 敌战: 'dizhan', 混战: 'hunzhan', 并战: 'bingzhan', 败战: 'baizhan',
 };
 const SIX_WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
+/** 点名语音里念的六计全称 */
+const SIX_FULL_NAME: Record<string, string> = {
+    攻: '攻战计', 胜: '胜战计', 敌: '敌战计', 混: '混战计', 并: '并战计', 败: '败战计',
+};
 const TRAD_TO_SIMP: Record<string, string> = {
     勝: '胜', 敵: '敌', 並: '并', 併: '并', 敗: '败', 戰: '战', 選: '选', 號: '号',
     莊: '庄', 閒: '闲', 註: '注',
@@ -461,6 +465,8 @@ export class ViewerLive {
     private orders = new Map<string, OrderAcct>();
     private lastChatEarnAt = new Map<string, number>();
     private lastVoiceNoticeAt = new Map<string, number>();
+    /** 🔴 [2026-11-09 主人令「做点名语音」] 本场（这次打开游戏页起）已点过名的观众：每人只在第一次参战时念一次 */
+    private greetedThisSession = new Set<string>();
     private recentBattleCasts: { uid: string; viewer: string; cost: number; label: string; castAtMs: number }[] = [];
     private wallets = new Map<string, { name: string; cents: number }>();
     private wanted = new Map<string, string>();
@@ -671,6 +677,7 @@ export class ViewerLive {
                 const randWord = SIX_WORDS[Math.floor(Math.random() * SIX_WORDS.length)];
                 return this.request(id, name, randWord, eventId, pubMs);
             }
+            this.greetFirstJoin(id, name, choice);
             this.notifyViewerVoice(id, `${name}，已成为${repLabel}，以后每场自动助${repLabel}`);
             return this.note(`${name} 已成为【${repLabel}】（投一次以后都是，打仗时发 ${choice} 随机放一计）`);
         }
@@ -1125,6 +1132,18 @@ export class ViewerLive {
                 _unused: 0,
             },
         };
+    }
+
+    /**
+     * 🔴 [2026-11-09 主人令「做点名语音」] 观众本场第一次参战（放计、押注、选阵营）时，晓晓念一句他的名字。
+     *    只念第一次，之后照旧只走底栏文字；排在技能播报队列里，不与战况播报叠在一起。
+     */
+    private greetFirstJoin(uid: string, name: string, choice: '1' | '2', sixWord?: string): void {
+        if (this.greetedThisSession.has(uid)) return;
+        this.greetedThisSession.add(uid);
+        const camp = choice === '1' ? '乱入者' : '维序者';
+        const plot = sixWord ? SIX_FULL_NAME[sixWord.slice(0, 1)] : undefined;
+        speechAnnouncer.announceViewerNotice(plot ? `欢迎${name}加入${camp}，施展${plot}` : `欢迎${name}加入${camp}`);
     }
 
     private notifyViewerVoice(uid: string, text: string, force = false): void {
@@ -2579,6 +2598,7 @@ export class ViewerLive {
         this.bets.set(id, list);
         this.betStakes[side === 'att' ? 0 : side === 'def' ? 1 : 2] += amount;
         this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'queued');
+        if (side !== 'draw') this.greetFirstJoin(id, name, side === 'att' ? '1' : '2');
         this.save();
         this.note(`${name} 押【${sideName}】${amount} 积分（余 ${a.n} 分）`);
         return `${name} 押【${sideName}】${amount} 积分，余 ${a.n} 分`;
@@ -2742,6 +2762,7 @@ export class ViewerLive {
         const item: QueuedCast = { uid: id, viewer: name, side, six: SIX_BY_WORD[word], word, paid: false, deducted: false };
         this.queue.push(item);
         this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'queued');
+        this.greetFirstJoin(id, name, choice, word);
         this.save();
         // 排位按本阵营队列算（乱入者与维序者各排各的）
         const laneQueue = this.queue.filter((q) => q.side === side);

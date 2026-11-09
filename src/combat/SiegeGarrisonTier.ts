@@ -141,12 +141,11 @@ export function assignSiegeGarrisonTier(
         !!anchoredGeneral &&
         attackingLegions.some((l) => l.generalId === anchoredGeneral.generalId);
 
-    // ④ 同场唯一：攻方已有同名精锐军团，说明精锐已随军离城，守城不得重复出场
-    const attackerHasThisElite =
-        !!eliteName &&
-        attackingLegions.some((l) => l.isElite && l.name === eliteName);
-
-    const needElite = !hasLegionElite && !attackerHasThisElite && !!eliteName && !city.spawnEliteUsed && !isEliteOnCooldown(city.id);
+    // 🔴 [2026-11-09 主人令「同名也照样进战术模式」「当然会有重名，很正常」]
+    //    精锐按档可挂多名武将（T1 1–2、T2 1–4、T3/T4 1–8），攻守两边各有一位挂同一番号的武将是正常的，
+    //    各带各的精锐。原来「攻方已有同名精锐 → 守城不发」会让守方缺精锐、进不了战术模式（萨拉曼卡：海梅 vs 拉米罗二世，同为阿拉贡骑士）。
+    //    同一武将不会两边都在（见上面 attackerHasThisGeneral），所以不再拿番号同名来拦。
+    const needElite = !hasLegionElite && !!eliteName && !city.spawnEliteUsed && !isEliteOnCooldown(city.id);
     const needGeneral =
         !hasLegionGeneral &&
         !city.spawnGeneralUsed &&

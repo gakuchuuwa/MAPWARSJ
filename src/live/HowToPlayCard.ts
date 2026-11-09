@@ -14,10 +14,8 @@ export class HowToPlayCard {
         const now = Date.now();
         if (now - this.lastShownAt < MIN_GAP_MS) return;
         this.lastShownAt = now;
-        const text = this.duel
-            ? '欢迎来到直播间，发言即送5积分，发 1 加入乱入者、发 2 加入维序者，每发一次随机放一计；也可发 攻、胜、敌、混、并、败 指定计，发 押1、押2、押平 下注'
-            : '欢迎来到直播间，发言即送5积分，发 1 加入乱入者、发 2 加入维序者，打仗时每发一次随机放一计；也可发 攻、胜、敌、混、并、败 指定计，开战前9秒发 押1、押2、押平 下注';
-        speechAnnouncer.announceViewerNotice(text);
+        // 🔴 [2026-11-09 主人「语音播报好长」→「缩成一句」] 只念最关键的一句；六计、押注、送分等细节看底栏面板
+        speechAnnouncer.announceViewerNotice('发 1 加入乱入者，发 2 加入维序者');
     }
 }
 

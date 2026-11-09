@@ -1772,8 +1772,10 @@ path.vector-river-water {
 .event-header .feed-tab { opacity: 0.72; transition: all 0.15s ease; }
 .event-header .feed-tab.feed-tab--on { opacity: 1; background: rgba(232, 199, 126, 0.18); color: #e8c77e; border-color: rgba(232, 199, 126, 0.65); }
 .life-head { padding: 6px 4px 10px; margin-bottom: 6px; border-bottom: 1px dashed rgba(204, 174, 116, 0.35); color: #eee3ce; }
-.life-head-name { font-size: 18px; font-weight: 700; color: #e8c77e; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65); }
-.life-head-sub { font-size: 14px; font-weight: 600; margin-left: 8px; color: #d8c7a7; }
+.life-head-name { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 18px; font-weight: 700; color: #e8c77e; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65); }
+.life-head-sub { font-size: 14px; font-weight: 600; margin-left: 2px; color: #d8c7a7; }
+.life-export-btn { margin-left: auto; padding: 2px 8px; font-size: 12px; font-weight: 600; border-radius: 4px; cursor: pointer; color: #e8c77e; background: rgba(232, 199, 126, 0.14); border: 1px solid rgba(232, 199, 126, 0.45); }
+.life-export-btn:hover { background: rgba(232, 199, 126, 0.25); }
 .life-head-stat { font-size: 13px; color: #b9ab95; margin-top: 3px; }
 .life-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-right: 6px; border-radius: 4px; font-size: 12px; font-weight: 700; color: #f5f0e6; background: #6b5d47; border: 1px solid rgba(232, 199, 126, 0.25); flex-shrink: 0; }
 .life-badge--win { background: #2e6b4f; border-color: rgba(167, 196, 161, 0.4); }

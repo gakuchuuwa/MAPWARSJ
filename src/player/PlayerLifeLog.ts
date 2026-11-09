@@ -51,6 +51,27 @@ export const LIFE_START_AGE = 16;
 /** 最多保留多少条（防止存档无限变大；超出时丢最早的非关键条目） */
 const LIFE_MAX_EVENTS = 3000;
 
+/**
+ * 履历文字去机械腔 / 去内部后缀（兼容旧存档已记下的条目）：
+ * - 去掉兵种内部后缀「特殊」（如【印度部落民特殊】→【印度部落民】）
+ * - 去掉程序员术语「兵模」「原军团麾下」「归属XX」「回到平民」等生硬模板词
+ */
+export function cleanLifeText(raw: string): string {
+    let t = raw.trim();
+    t = t.replace(/【([^】]+?)特殊】/g, '【$1】');
+    t = t.replace(/^投奔【([^】]+)】麾下，归属(.+)$/, '投效$2【$1】麾下');
+    t = t.replace(/^投奔【([^】]+)】麾下$/, '投效【$1】麾下');
+    t = t.replace(/^离开原军团麾下$/, '兵败离营');
+    t = t.replace(/^离开【([^】]+)】麾下$/, '辞别【$1】离营');
+    t = t.replace(/^获得兵模【([^】]+)】$/, '编入【$1】');
+    t = t.replace(/^击败敌军，缴获兵模【([^】]+)】$/, '破敌缴获【$1】军备');
+    t = t.replace(/^通灵所得，获得兵模【([^】]+)】$/, '习得【$1】兵法');
+    t = t.replace(/^晋升【([^】]+)】$/, '累功升任【$1】');
+    t = t.replace(/，功劳归零，从【[^】]+】回到平民$/, '，削职归为白身');
+    t = t.replace(/^观众(.+?)为他改名「(.+?)」$/, '应$1之请，改名号为「$2」');
+    return t;
+}
+
 export class PlayerLifeLog {
     private startYear: number | null = null;
     private events: LifeEvent[] = [];
@@ -99,7 +120,7 @@ export class PlayerLifeLog {
 
     /** 宿敌：交手次数最多的敌将（并列取先遇到的） */
     public getRival(): { generalId: string; name: string; battles: number } | null {
-        return this.topBy('battle', 'enemyGeneralId', 'enemyName');
+        return this.topBy('battle', 'enemyGeneralId', 'enemyGeneralName', 'enemyName');
     }
 
     /** 战绩汇总 */
@@ -121,14 +142,35 @@ export class PlayerLifeLog {
 
     public restore(s: LifeLogSave | null | undefined): void {
         this.startYear = typeof s?.startYear === 'number' && Number.isFinite(s.startYear) ? s.startYear : null;
-        this.events = Array.isArray(s?.events)
+        const raw = Array.isArray(s?.events)
             ? s.events.filter((e) => e && typeof e.text === 'string' && typeof e.year === 'number')
-                .map((e) => ({ ...e, data: e.data ? { ...e.data } : undefined }))
             : [];
+        const cleaned: LifeEvent[] = [];
+        for (const e of raw) {
+            // 丢弃旧存档里因战败军团已销毁而多记出的「离开原军团麾下」
+            if (e.kind === 'leave' && e.text === '离开原军团麾下') continue;
+            const nextText = cleanLifeText(e.text);
+            // 丢弃紧挨着同一武将的重复「投效」（如赶路军团切战场军团产生的二次入伍记录）
+            if (e.kind === 'join') {
+                const prevJoinOrLeave = [...cleaned].reverse().find((x) => x.kind === 'join' || x.kind === 'leave' || x.kind === 'demote');
+                if (prevJoinOrLeave && prevJoinOrLeave.kind === 'join' && prevJoinOrLeave.text === nextText) {
+                    continue;
+                }
+            }
+            cleaned.push({ ...e, text: nextText, data: e.data ? { ...e.data } : undefined });
+        }
+        this.events = cleaned;
         this.emit();
     }
 
     private push(kind: LifeEventKind, text: string, rank: string, data?: LifeEvent['data']): void {
+        const cleanedText = cleanLifeText(text);
+        if (kind === 'join') {
+            const prevJoinOrLeave = [...this.events].reverse().find((x) => x.kind === 'join' || x.kind === 'leave' || x.kind === 'demote');
+            if (prevJoinOrLeave && prevJoinOrLeave.kind === 'join' && prevJoinOrLeave.text === cleanedText) {
+                return;
+            }
+        }
         this.events.push({
             year: this.getYear(),
             season: this.getSeason(),
@@ -137,7 +179,7 @@ export class PlayerLifeLog {
             age: this.getAge(),
             rank,
             kind,
-            text,
+            text: cleanedText,
             data: data ? { ...data } : undefined,
         });
         if (this.events.length > LIFE_MAX_EVENTS) {
@@ -147,13 +189,14 @@ export class PlayerLifeLog {
         }
     }
 
-    private topBy(kind: LifeEventKind, idKey: string, nameKey: string): { generalId: string; name: string; battles: number } | null {
+    private topBy(kind: LifeEventKind, idKey: string, nameKey: string, fallbackNameKey?: string): { generalId: string; name: string; battles: number } | null {
         const counts = new Map<string, { name: string; battles: number; first: number }>();
         this.events.forEach((e, i) => {
             if (e.kind !== kind) return;
             const id = e.data?.[idKey];
             if (typeof id !== 'string' || !id) return;
-            const name = String(e.data?.[nameKey] ?? id);
+            const rawName = e.data?.[nameKey] ?? (fallbackNameKey ? e.data?.[fallbackNameKey] : undefined) ?? id;
+            const name = String(rawName).replace(/部$/, '');
             const c = counts.get(id) ?? { name, battles: 0, first: i };
             c.battles++;
             counts.set(id, c);

@@ -584,6 +584,8 @@ export interface Scene13WarInit {
     defenderTroops: number;
     /** [2026-08-11] 每兵总加成（八环战力比除掉兵力后的部分，作用在伤害上）；缺省 1 = 无加成 */
     attackerBonus?: number;
+    /** 🔴 [2026-11-09] 经典战（名将军团 isFirstBattleHero 参战）——只给探针分类统计用 */
+    classicBattle?: boolean;
     defenderBonus?: number;
     /** 战场中心坐标（由 GameAppCombatHooks 传入；P2 地形 biome 判定用） */
     centerLat?: number;

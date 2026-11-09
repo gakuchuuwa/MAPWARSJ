@@ -4,7 +4,7 @@ import { CityManager } from '../world/CityManager';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { StreamModeToggle } from './StreamModeToggle';
-import type { PlayerLifeLog, LifeEvent } from '../player/PlayerLifeLog';
+import { cleanLifeText, type PlayerLifeLog, type LifeEvent } from '../player/PlayerLifeLog';
 import { downloadLifeStoryPack } from '../player/PlayerLifeStoryPack';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
@@ -498,7 +498,7 @@ function formatLifeLine(e: LifeEvent): string {
     return `<div class="event-item life-item${big ? ' feed-tier-s' : ''}"><div class="event-desc event-desc--feed">`
         + `<span class="life-badge ${badgeCls}">${badge}</span>`
         + `<span class="feed-time">${escapeHtml(formatFeedTime(e.year, e.season))} ${e.age}岁</span>`
-        + `<span class="life-text">${escapeHtml(e.text)}</span>`
+        + `<span class="life-text">${escapeHtml(cleanLifeText(e.text))}</span>`
         + `</div></div>`;
 }
 

@@ -8,7 +8,7 @@
  *    旁白不在游戏里念，剪视频时用这份资料让 AI 写文案、再离线配音。
  */
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
-import type { LifeEvent, PlayerLifeLog } from './PlayerLifeLog';
+import { cleanLifeText, type LifeEvent, type PlayerLifeLog } from './PlayerLifeLog';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
@@ -93,20 +93,23 @@ export function buildLifeStoryPack(log: PlayerLifeLog, hero: StoryPackHero, expo
     lines.push('| 现实时间 | 直播场次 | 游戏时间 | 年龄 | 官职 | 事件 |');
     lines.push('|---|---|---|---|---|---|');
     events.forEach((e, i) => {
-        lines.push(`| ${formatRealTime(e.realMs)} | ${sessionOf[i]} | ${gameTime(e)} | ${e.age} | ${cell(e.rank)} | ${cell(e.text)} |`);
+        lines.push(`| ${formatRealTime(e.realMs)} | ${sessionOf[i]} | ${gameTime(e)} | ${e.age} | ${cell(e.rank)} | ${cell(cleanLifeText(e.text))} |`);
     });
     lines.push('');
 
-    lines.push('## 给 AI 的写作要求');
+    lines.push('## 给 AI 的写作要求（去 AI 味 · 历史纪录片白描风）');
     lines.push('');
     lines.push('```');
     lines.push(`下面是古代军人「${hero.name}」一生的真实记录，来自一款历史战争模拟游戏。请据此写一篇适合做视频旁白的中文故事文案。`);
     lines.push('要求：');
-    lines.push('1. 只用记录里真实发生的事：投奔了谁、打了哪几仗、胜负、兵力、斩敌、升官和被贬、封号。不许编造记录里没有的人物、战役和情节。');
-    lines.push('2. 按时间顺序讲，写出起落：重点写以少胜多、惨败落难、被贬后东山再起、与宿敌再次交手、封侯立国这类转折。');
-    lines.push('3. 每一段开头标出对应的「现实时间」，方便剪辑时找到画面。');
-    lines.push('4. 语气像纪录片旁白，句子短，适合朗读；全文 800～1500 字。');
-    lines.push('5. 最后用两三句话总结他的一生。');
+    lines.push('1. 只用记录里真实发生的事：投效了谁、打了哪几仗、胜负、兵力、斩敌、升迁与削职、封号。不许编造记录里没有的人物、战役和情节。');
+    lines.push('2. 按时间顺序讲，写出起落：重点写以少胜多、兵败削职、东山再起、与宿敌再次交锋、封侯立国这类转折。');
+    lines.push('3. 每一段开头标出对应的「现实时间」，方便剪辑时对应录像画面。');
+    lines.push('4. 严格去 AI 味（Humanizer 准则）：');
+    lines.push('   - 禁用网文与 AI 套话：不许出现「命运的齿轮开始转动」「不仅…而且…」「在这场战役中」「值得一提的是」「总而言之」「书写了属于自己的传奇」等总结陈词；');
+    lines.push('   - 禁用程序员与游戏黑话：不许出现「兵模」「原军团」「功劳归零」「系统」等词；');
+    lines.push('   - 用《史记》列传与央视历史纪录片的冷峻白描口吻：多用具体动词与短句，少用形容词与感叹号，适合沉稳男声朗读；全文 800～1500 字。');
+    lines.push('5. 结尾只用两三句平实的话收束他的一生，不要升华说教。');
     lines.push('```');
     lines.push('');
     return lines.join('\n');

@@ -5098,7 +5098,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/SPANISH/gen_james_i_aragon.png": {
-            "scale": 1.04,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -5403,7 +5403,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/BENGALIS/boluo_damoboluo.png": {
-            "scale": 1.2,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -10831,6 +10831,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 11,
             "offsetY": -4
+        },
+        "/assets/SPANISH/gen_ignacio_loyola.png": {
+            "scale": 1.16,
+            "offsetX": 19,
+            "offsetY": 25
+        },
+        "/assets/SPANISH/gen_fernan_gonzalez.png": {
+            "scale": 0.92,
+            "offsetX": 6,
+            "offsetY": 2
         }
     },
     "folderGuides": {
