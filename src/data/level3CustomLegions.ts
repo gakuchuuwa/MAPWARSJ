@@ -168,8 +168,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代易洛魁军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'iroquois_warrior', count: 3 },
-            { type: 'champi_scout', count: 4 },
+            { type: 'champi_scout', count: 3 },
+            { type: 'iroquois_warrior', count: 4 },
             { type: 'slinger', count: 2 },
         ],
         regions: ['IROQUOIS'],

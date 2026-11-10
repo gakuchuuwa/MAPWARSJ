@@ -220,7 +220,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_topayupanqui',
         // 🔴 [2026-10-16 主人令] 印加的城堡兵＝印加枪兵长：精锐进城堡军团 4 档（与 3 档对调）。
         slots: [
-            { type: 'champi_runner', count: 3 },
+            { type: 'champi_warrior', count: 3 },
             { type: 'elite_kamayuk', count: 4 },
             { type: 'slinger', count: 2 },
         ],
@@ -916,7 +916,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'balance_yoke',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_alaric',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_johnthefearless（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_sieurbertrand',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_johnthefearless（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'maceman', count: 4 },
             { type: 'raider', count: 2 },
@@ -994,7 +994,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'balance_yoke',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_aethelfrith',
+        commanderUnit: 'hero_roland',
         slots: [
             { type: 'heavy_swordsman', count: 4 },
             { type: 'antiquity_light_cavalry', count: 2 },
@@ -1051,7 +1051,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'balance_yoke',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_alaric',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_johnthefearless（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_aristagoras',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_johnthefearless（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'swordsman', count: 4 },
             { type: 'scout_cavalry', count: 2 },
@@ -1826,7 +1826,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'balance_yoke',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_alaric',
+        commanderUnit: 'hero_ismail',
         slots: [
             { type: 'maceman', count: 4 },
             { type: 'antiquity_scout_cavalry', count: 2 },
@@ -2241,7 +2241,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'balance_yoke',
         shipId: 'ONAGER_SHIP',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'envoy',
         slots: [
             { type: 'levy', count: 4 },
             { type: 'equites', count: 2 },
@@ -2437,7 +2437,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_alaric',
+        commanderUnit: 'hero_sieurdemetz',
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'shock_cavalry', count: 2 },
@@ -2717,7 +2717,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CUMA_CASTLE_AGE3', castleName: '库曼 黑海北岸克里米亚要塞',
         formationMode: 'echelon',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_aristagoras',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_guacolda',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'amazon_warrior', count: 4 },
             { type: 'amazon_archer', count: 3 },
@@ -2774,7 +2774,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crane_wing',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_darius',
+        commanderUnit: 'hero_tsarkonstantin',
         slots: [
             { type: 'elite_war_chariot', count: 2 },
             { type: 'sickle_warrior', count: 4 },
@@ -3651,7 +3651,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MAYA_CASTLE_AGE3', castleName: '玛雅 奇琴伊察阶梯神庙堡',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        commanderUnit: 'hero_cusiyupanqui',
+        commanderUnit: 'hero_guacolda',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },
             { type: 'jaguar_warrior', count: 4 },
@@ -3674,9 +3674,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         commanderUnit: 'hero_arariboiamelee',
         slots: [
-            { type: 'maceman', count: 3 },
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'eagle_scout', count: 3 },
+            { type: 'jaguar_warrior', count: 4 },
+            { type: 'slinger', count: 2 },
         ],
     },
     {
@@ -3848,7 +3848,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BERB_CASTLE_AGE3', castleName: '柏柏尔 撒哈拉泥砖防御碉堡',
         formationMode: 'echelon',
         shipId: 'LEVIATHAN',
-        commanderUnit: 'hero_aristides',
+        commanderUnit: 'hero_richarddeclare',
         slots: [
             { type: 'lysander_raider', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
@@ -3923,7 +3923,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'dagnajan_elephant',
         slots: [
             { type: 'antiquity_spearman', count: 4 },
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'camel_scout', count: 2 },
             { type: 'antiquity_skirmisher', count: 3 },
         ],
     },
@@ -4125,7 +4125,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 旗舰沿用被替换掉的「古典时代阿契美尼德军团」原值：主人 2026-10-05 令登记的
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
-        commanderUnit: 'hero_tsarkonstantin',
+        commanderUnit: 'hero_darius',
         slots: [
             { type: 'war_chariot', count: 2 },
             { type: 'elite_immortal', count: 4 },
@@ -4232,7 +4232,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'balance_yoke',
         shipId: 'CATAPULT_SHIP',
-        commanderUnit: 'hero_constablerichemont',
+        commanderUnit: 'hero_henrythelion',
         slots: [
             { type: 'strategos', count: 4 },
             { type: 'frankish_paladin', count: 2 },

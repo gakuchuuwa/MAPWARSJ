@@ -1,8 +1,10 @@
 /**
- * 即时战斗（2026-11-05 主人令）
+ * 即时战斗（2026-11-05 主人令；2026-11-10 主人令加入全部 531 场名将经典战役）
  *
  * 「把项目中的战术模式单独运行，左右对战，可以选择双方势力、武将，可以选择攻城战还是野战，
  *   攻城战可以选择据点，野战可以选择地域。选择要带搜索功能，不选就是随机。总之和战术模式一模一样。」
+ * 「完全添加到 http://localhost:5173/?quickbattle=1，即时战术模式中。
+ *   标注好时间，地点，背景介绍。武将立绘。同时包含随机战斗。」
  *
  * 做法：不另起一套战术层，而是**在游戏本体里直接开一场仗**——
  *   起双方军团（与经典战同一口径：武将本据点起兵、精锐、文化编制）→ 摆到战场 → 走引擎原有的
@@ -21,14 +23,34 @@ import {
     getGeneralRecordByGeneralId,
     type FactionGeneral,
 } from '../data/FactionGenerals';
+import { getAllBattlefieldCharacters } from '../data/BattlefieldCharacters';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
-import { getCityEliteLegionName } from '../data/ExpeditionLegions';
+import {
+    getCityEliteLegionName,
+    getGeneralEliteConfig,
+    getFactionEliteConfig,
+    getEliteTierDisplayName,
+} from '../data/ExpeditionLegions';
+import { GENERAL_FIRST_BATTLES, type GeneralFirstBattle } from '../data/GeneralFirstBattles';
+import {
+    FIRST_BATTLE_BACKGROUNDS,
+    FIRST_BATTLE_KIND_LABEL,
+    firstBattleKindOf,
+    type FirstBattleKind,
+} from '../data/GeneralFirstBattleBackgrounds';
+import { clampFirstBattleTroops } from '../player/PlayerQuestSystem';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CULTURE_NAMES, getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
 import { GameConfig } from '../config/GameConfig';
 import { releaseDeploy } from '../legion/DeployGate';
+import {
+    setGameModeProvider,
+    setCentenarianYearProvider,
+    setScriptYearProvider,
+} from '../data/generalOnStage';
+import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 
 // ───────────────────────────── 数据 ─────────────────────────────
 
@@ -38,13 +60,18 @@ interface GeneralItem {
     factionId: string;
     cityId?: string;
     portrait: string;
+    eliteLabel: string;
 }
 
 type BattleKind = 'siege' | 'field';
+type PanelMode = 'classic' | 'random';
+type ClassicKindFilter = 'all' | FirstBattleKind;
 
 const CITY_TYPE_LABEL: Record<string, string> = {
     big_city: '大城', medium_city: '中城', small_city: '小城', pass: '险要', stockade: '城寨',
 };
+
+const DEFAULT_PORTRAIT_FALLBACK = '/assets/CENTRAL/default_general.png';
 
 function rand<T>(arr: readonly T[]): T | undefined {
     return arr.length ? arr[Math.floor(Math.random() * arr.length)] : undefined;
@@ -54,7 +81,24 @@ function randInt(lo: number, hi: number): number {
     return Math.round(lo + Math.random() * (hi - lo));
 }
 
-/** 全部可上战术模式的武将：有武将档案（否则武将技不触发）、不是叛军 */
+function formatYear(year: number): string {
+    return year < 0 ? `公元前 ${Math.abs(year)} 年` : `公元 ${year} 年`;
+}
+
+function formatCoord(lat: number, lng: number): string {
+    const ns = lat >= 0 ? `${lat.toFixed(2)}°N` : `${Math.abs(lat).toFixed(2)}°S`;
+    const ew = lng >= 0 ? `${lng.toFixed(2)}°E` : `${Math.abs(lng).toFixed(2)}°W`;
+    return `${ns}, ${ew}`;
+}
+
+function resolveEliteLabel(generalId: string, factionId: string): string {
+    const cfg = getGeneralEliteConfig(generalId) ?? getFactionEliteConfig(factionId);
+    if (!cfg) return '常备精锐';
+    const tierName = getEliteTierDisplayName(cfg.tier);
+    return tierName ? `${cfg.name}（${tierName}）` : cfg.name;
+}
+
+/** 全部可上战术模式的武将（含战场人物）：保证所有经典战主帅与自由对战武将均在索引内 */
 function collectGenerals(): GeneralItem[] {
     const seen = new Set<string>();
     const out: GeneralItem[] = [];
@@ -64,14 +108,30 @@ function collectGenerals(): GeneralItem[] {
             if (!g.generalId || seen.has(g.generalId)) continue;
             if (!getGeneralProfile(g.generalId)) continue;
             seen.add(g.generalId);
+            const fid = (g as { factionId?: string }).factionId ?? f.id;
             out.push({
                 generalId: g.generalId,
                 generalName: g.generalName,
-                factionId: (g as { factionId?: string }).factionId ?? f.id,
+                factionId: fid,
                 cityId: g.cityId,
                 portrait: g.portrait,
+                eliteLabel: resolveEliteLabel(g.generalId, fid),
             });
         }
+    }
+    for (const bf of getAllBattlefieldCharacters()) {
+        if (!bf.generalId || seen.has(bf.generalId)) continue;
+        const rec = getGeneralRecordByGeneralId(bf.generalId);
+        const fid = rec?.factionId ?? bf.factionId;
+        seen.add(bf.generalId);
+        out.push({
+            generalId: bf.generalId,
+            generalName: rec?.generalName ?? bf.generalName,
+            factionId: fid,
+            cityId: rec?.cityId,
+            portrait: rec?.portrait ?? bf.portrait ?? '',
+            eliteLabel: resolveEliteLabel(bf.generalId, fid),
+        });
     }
     return out;
 }
@@ -86,9 +146,11 @@ class SearchSelect {
     private readonly list: HTMLDivElement;
     private options: Opt[] = [];
     private value: string | null = null;
+    private readonly maxDisplay: number;
     onChange: ((v: string | null) => void) | null = null;
 
-    constructor(label: string) {
+    constructor(label: string, placeholder = '不选＝随机（可输入搜索）', maxDisplay = 120) {
+        this.maxDisplay = maxDisplay;
         this.root = document.createElement('div');
         this.root.className = 'qb-field';
         const cap = document.createElement('div');
@@ -96,7 +158,7 @@ class SearchSelect {
         cap.textContent = label;
         this.input = document.createElement('input');
         this.input.type = 'text';
-        this.input.placeholder = '不选＝随机（可输入搜索）';
+        this.input.placeholder = placeholder;
         this.list = document.createElement('div');
         this.list.className = 'qb-list';
         const clear = document.createElement('button');
@@ -129,22 +191,26 @@ class SearchSelect {
         });
     }
 
-    setOptions(opts: Opt[]): void {
+    setOptions(opts: Opt[], keepValue = true): void {
         this.options = opts;
-        if (this.value !== null && !opts.some((o) => o.value === this.value)) this.set(null);
+        if (!keepValue || (this.value !== null && !opts.some((o) => o.value === this.value))) {
+            this.set(null, true);
+        } else {
+            this.input.value = this.labelOf(this.value);
+        }
     }
 
     get(): string | null { return this.value; }
 
-    set(v: string | null): void {
-        this.commit(v);
+    set(v: string | null, silent = false): void {
+        this.commit(v, silent);
         this.input.value = this.labelOf(v);
     }
 
-    private commit(v: string | null): void {
+    private commit(v: string | null, silent = false): void {
         if (v === this.value) return;
         this.value = v;
-        this.onChange?.(v);
+        if (!silent) this.onChange?.(v);
     }
 
     private labelOf(v: string | null): string {
@@ -160,7 +226,7 @@ class SearchSelect {
             ? this.options.filter((o) => terms.every((t) => o.search.includes(t)))
             : this.options;
         this.list.innerHTML = '';
-        const MAX = 80;
+        const MAX = this.maxDisplay;
         for (const o of hits.slice(0, MAX)) {
             const d = document.createElement('div');
             d.className = 'qb-opt' + (o.value === this.value ? ' qb-on' : '');
@@ -188,7 +254,25 @@ function escapeHtml(s: string): string {
 
 // ───────────────────────────── 即时战斗主体 ─────────────────────────────
 
-interface Side { factionId: string; general: GeneralItem; troops: number }
+interface Side {
+    factionId: string;
+    displayFactionName?: string;
+    general: GeneralItem;
+    troops: number;
+    isClassicHero?: boolean;
+}
+
+interface ClassicBattleEntry {
+    key: string;
+    fb: GeneralFirstBattle;
+    kind: FirstBattleKind;
+    kindLabel: string;
+    yearText: string;
+    placeText: string;
+    background: string;
+    att: Side;
+    def: Side;
+}
 
 interface ActiveBattle {
     kind: BattleKind;
@@ -198,6 +282,7 @@ interface ActiveBattle {
     att: Side;
     def: Side;
     placeName: string;
+    classic?: ClassicBattleEntry;
     phase: 'engaging' | 'fighting';
     startedAt: number;
     /** 引擎结算的时刻（战术画面可能还在演残局） */
@@ -217,15 +302,18 @@ interface ActiveBattle {
 class Backdrop {
     readonly el: HTMLDivElement;
     private readonly msg: HTMLDivElement;
+    private readonly detail: HTMLDivElement;
     constructor() {
         this.el = document.createElement('div');
         this.el.id = 'quick-battle-backdrop';
         // z-index 在战术画布（400）与各 HUD 之上、即时战斗面板（20050）之下；打仗时整块隐藏
-        this.el.style.cssText = 'position:fixed;inset:0;z-index:20040;display:flex;align-items:center;justify-content:center;'
-            + 'background:radial-gradient(ellipse at center,#2a2216 0%,#0d0b08 70%);';
+        this.el.style.cssText = 'position:fixed;inset:0;z-index:20040;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;'
+            + 'background:radial-gradient(ellipse at center,#2a2216 0%,#0d0b08 70%);padding:24px;';
+        this.detail = document.createElement('div');
+        this.detail.style.cssText = 'max-width:760px;width:92vw;display:none';
         this.msg = document.createElement('div');
         this.msg.style.cssText = 'color:#f3d48a;font:600 20px "Noto Serif SC",serif;letter-spacing:2px;text-align:center;padding:0 24px';
-        this.el.appendChild(this.msg);
+        this.el.append(this.detail, this.msg);
         document.body.appendChild(this.el);
     }
     show(v: boolean): void {
@@ -233,6 +321,15 @@ class Backdrop {
         if (this.el.style.display !== d) this.el.style.display = d;
     }
     say(text: string): void { this.msg.textContent = text; }
+    setBattleBriefCard(html: string | null): void {
+        if (!html) {
+            this.detail.style.display = 'none';
+            this.detail.innerHTML = '';
+        } else {
+            this.detail.innerHTML = html;
+            this.detail.style.display = 'block';
+        }
+    }
 }
 
 /** 战术模式开关（调试面板 chk-tactical-mode）：GameAppCombatHooks.tacticalModeOn 每次开战都读它 */
@@ -244,8 +341,20 @@ class QuickBattle {
     private readonly generals: GeneralItem[];
     private readonly generalById: Map<string, GeneralItem>;
     private readonly factionName = new Map<string, string>();
+    private readonly classics: ClassicBattleEntry[];
+    private readonly classicByKey: Map<string, ClassicBattleEntry>;
+
     private panel!: HTMLDivElement;
     private status!: HTMLDivElement;
+    private mode: PanelMode = 'classic';
+    private classicFilter: ClassicKindFilter = 'all';
+    private classicSel!: SearchSelect;
+    private metaCard!: HTMLDivElement;
+    private attPortraitBox!: HTMLDivElement;
+    private defPortraitBox!: HTMLDivElement;
+    private customControlsWrap!: HTMLDivElement;
+    private classicControlsWrap!: HTMLDivElement;
+
     private attFaction!: SearchSelect;
     private attGeneral!: SearchSelect;
     private defFaction!: SearchSelect;
@@ -261,6 +370,90 @@ class QuickBattle {
         this.generals = collectGenerals();
         this.generalById = new Map(this.generals.map((g) => [g.generalId, g]));
         for (const f of FACTIONS) this.factionName.set(f.id, f.name);
+        this.classics = this.buildClassicEntries();
+        this.classicByKey = new Map(this.classics.map((c) => [c.key, c]));
+    }
+
+    /** 构造全库 531 场名将经典战役条目（按历史发生年份由古及今排序） */
+    private buildClassicEntries(): ClassicBattleEntry[] {
+        const cm = this.app.cityManager;
+        const list: ClassicBattleEntry[] = [];
+        for (const fb of Object.values(GENERAL_FIRST_BATTLES)) {
+            const hero = this.resolveGeneral(fb.generalId, undefined, fb.targetCityId);
+            const enemy = this.resolveGeneral(fb.enemyGeneralId ?? '', fb.enemyFactionId, fb.targetCityId);
+            if (!hero || !enemy) continue;
+
+            const myFactionId = hero.factionId;
+            const myFactionName = this.fname(myFactionId);
+            const enemyRawFactionId = fb.enemyFactionId || enemy.factionId;
+            const enemyFactionName = FACTIONS.find((f) => f.id === enemyRawFactionId)?.name
+                ?? fb.enemyFactionName
+                ?? this.fname(enemyRawFactionId);
+            // 同势力内战时引擎用 panshu 保证双方可交战，显示仍用真实历史势力名
+            const enemyEngineFactionId = enemyRawFactionId !== myFactionId ? enemyRawFactionId : 'panshu';
+
+            const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
+            const role = fb.role ?? 'attacker';
+            const heroSide: Side = {
+                factionId: myFactionId,
+                displayFactionName: myFactionName,
+                general: hero,
+                troops: myTroops,
+                isClassicHero: true,
+            };
+            const enemySide: Side = {
+                factionId: enemyEngineFactionId,
+                displayFactionName: enemyFactionName,
+                general: enemy,
+                troops: enemyTroops,
+                isClassicHero: false,
+            };
+
+            const att = role === 'defender' ? enemySide : heroSide;
+            const def = role === 'defender' ? heroSide : enemySide;
+            const kind = firstBattleKindOf(fb);
+            const kindLabel = FIRST_BATTLE_KIND_LABEL[kind];
+            const yearText = formatYear(fb.battleYear);
+
+            const targetCity = fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined;
+            const cityNote = targetCity && targetCity.name !== fb.targetName ? `·${targetCity.name}` : '';
+            const placeText = `${fb.targetName}${cityNote}（${formatCoord(fb.targetLat, fb.targetLng)}）`;
+            const background = FIRST_BATTLE_BACKGROUNDS[fb.generalId]
+                ?? fb.introLines.map((l) => l.text).join(' ');
+
+            list.push({
+                key: fb.generalId,
+                fb,
+                kind,
+                kindLabel,
+                yearText,
+                placeText,
+                background,
+                att,
+                def,
+            });
+        }
+        list.sort((a, b) => a.fb.battleYear - b.fb.battleYear || a.fb.battleName.localeCompare(b.fb.battleName, 'zh'));
+        return list;
+    }
+
+    private resolveGeneral(generalId: string, fallbackFactionId?: string, fallbackCityId?: string): GeneralItem | null {
+        if (!generalId) return null;
+        const hit = this.generalById.get(generalId);
+        if (hit) return hit;
+        const rec = getGeneralRecordByGeneralId(generalId);
+        if (!rec) return null;
+        const fid = rec.factionId || fallbackFactionId || 'panshu';
+        const item: GeneralItem = {
+            generalId: rec.generalId,
+            generalName: rec.generalName,
+            factionId: fid,
+            cityId: rec.cityId ?? fallbackCityId,
+            portrait: rec.portrait,
+            eliteLabel: resolveEliteLabel(rec.generalId, fid),
+        };
+        this.generalById.set(generalId, item);
+        return item;
     }
 
     init(): void {
@@ -269,15 +462,15 @@ class QuickBattle {
         this.captureErrors();
         this.buildPanel();
         this.backdrop.say('');
+        // 默认预抽一场经典战役，展示时间、地点、背景介绍与双方武将立绘
+        this.pickRandomClassic();
         // 打开页面第一次出选择画面也倒计时 30 秒自动开局（主人：「不是让你设计30秒开局吗」）
-        this.say(`${QuickBattle.AUTO_NEXT_SEC} 秒内可以选择，到时自动开局（不选＝随机）。`);
+        this.say(`已载入 ${this.classics.length} 场名将经典战役。${QuickBattle.AUTO_NEXT_SEC} 秒内可自由选择经典战役或切换随机战斗，到时自动开局。`);
         this.startCountdown();
         // 🔴 [2026-11-07] 下注窗口就在这 30 秒里开着（回到选择画面即开窗，开战封盘）
         this.app.live?.beginBetRound?.();
         setInterval(() => this.watch(), 400);
         // 遮罩跟着战术画面走：选人、等进场、战术素材载入中、收场都盖住战略地图；战术画面开始淡入才撤。
-        // 🔴 战术画布进场先全透明，等第一帧真正画出来（最多 10 秒）才淡入（Scene13WarLayer.entryFadePending）；
-        //    只看「战术模式激活」就撤遮罩，载入这几秒露出的就是战略地图（2026-11-05 主人：「又回到战略了」）。
         setInterval(() => {
             const loading = this.warActive() && this.app.scene13War?.entryFadePending === true;
             if (loading) this.backdrop.say('正在载入战术画面…');
@@ -295,6 +488,7 @@ class QuickBattle {
             why: 'quickBattle',
             stage,
             kind: a?.kind,
+            classicKey: a?.classic?.key ?? null,
             place: a?.placeName,
             att: a ? { g: a.att.general.generalId, f: a.att.factionId, troops: a.att.troops } : undefined,
             def: a ? { g: a.def.general.generalId, f: a.def.factionId, troops: a.def.troops } : undefined,
@@ -332,8 +526,6 @@ class QuickBattle {
 
     /**
      * 即时战斗就是来打战术模式的：开战前把战术模式开关打开（只改本页这一刻的勾选，不写存档）。
-     * 🔴 调试面板会把开关状态存进 localStorage（mapwar.debugPanel.options），平时关过一次就一直是关的；
-     *    GameAppCombatHooks.tacticalModeOn 每场仗都直接读这个勾选 → 开打了也只在战略地图上打（2026-11-05 主人实机卡住）。
      */
     private forceTacticalOn(): boolean {
         const chk = tacticalCheckbox();
@@ -347,29 +539,37 @@ class QuickBattle {
         return this.factionName.get(id) ?? this.app.cityManager.getFactionName(id) ?? id;
     }
 
-    /** 只留这一仗：停 AI 寻敌、募兵、玩家乱入者与任务跟踪 */
+    /** 只留这一仗：停 AI 寻敌、募兵、玩家乱入者与任务跟踪；全年代武将与据点城级全部解锁 */
     private quietWorld(): void {
         const app = this.app as unknown as Record<string, { update?: unknown; tick?: unknown } | null>;
         const noop = () => { /* 即时战斗：停用 */ };
         if (app.aiController) app.aiController.update = noop;
         if (app.recruitmentSystem) {
             app.recruitmentSystem.update = noop;
-            // 开局首发（点播放时错峰分批生成）也停：标记已做 + 入口置空
             (this.app.recruitmentSystem as unknown as { markInitialSpawnDone?: () => void }).markInitialSpawnDone?.();
             (app.recruitmentSystem as Record<string, unknown>).runInitialSpawn = noop;
         }
-        if (app.playerHero) app.playerHero.update = noop;
+        if (app.playerHero) {
+            (app.playerHero as Record<string, unknown>).autoPlan = 'melee';
+            app.playerHero.update = noop;
+        }
         if (app.playerQuests) app.playerQuests.tick = noop;
-        releaseDeploy();   // 开局集结待命（只闸移动）也放掉，野战两军不被拦在原地
+        // 解除百岁/剧本年份闸门：保证全库武将显示真名、武将技生效、据点保持真实城级与奇观
+        setGameModeProvider(() => 'melee');
+        setCentenarianYearProvider(() => null);
+        setScriptYearProvider(() => null);
+        setWonderGateYearProvider(() => null);
+        (this.app as unknown as { syncCityFoundedTypes?: () => void }).syncCityFoundedTypes?.();
+        releaseDeploy();
         this.app.timeSystem.setPaused(true);
     }
 
-    /** 撤掉地图上的军团；keep 里的（本场双方）不动。开局首发是 setTimeout 错峰生成的，开战后还可能冒出来，watch 里持续清 */
+    /** 撤掉地图上的军团；keep 里的（本场双方）不动 */
     private clearWorldLegions(keep?: ReadonlySet<Army>): void {
         const lm = this.app.historicalEventManager.getLegionManager();
         for (const a of [...lm.getArmies()]) {
             if (a.isDestroyed || keep?.has(a)) continue;
-            if (keep && a.getIsInCombat()) continue;   // 开战中别动正在打的单位
+            if (keep && a.getIsInCombat()) continue;
             try { a.disband(); } catch (e) { console.warn('[即时战斗] 解散军团失败', a.name, e); }
         }
     }
@@ -383,32 +583,141 @@ class QuickBattle {
 
         const p = document.createElement('div');
         p.id = 'quick-battle-panel';
-        p.innerHTML = `<div class="qb-title">即时战斗</div>`;
         this.panel = p;
 
+        // 1. 顶部标题与模式切换栏（经典战役 531 场 vs 随机/自由战斗）
+        const header = document.createElement('div');
+        header.className = 'qb-header';
+        header.innerHTML = `<div class="qb-title">MAPWAR · 即时战术对战</div>`;
+
+        const modeTabs = document.createElement('div');
+        modeTabs.className = 'qb-mode-tabs';
+        const btnClassic = document.createElement('button');
+        btnClassic.type = 'button';
+        btnClassic.dataset.mode = 'classic';
+        btnClassic.textContent = `📜 名将经典战役（${this.classics.length} 场）`;
+        btnClassic.addEventListener('click', () => this.setMode('classic'));
+
+        const btnRandom = document.createElement('button');
+        btnRandom.type = 'button';
+        btnRandom.dataset.mode = 'random';
+        btnRandom.textContent = '🎲 随机 / 自由战斗';
+        btnRandom.addEventListener('click', () => this.setMode('random'));
+
+        modeTabs.append(btnClassic, btnRandom);
+        header.appendChild(modeTabs);
+
+        // 2. 经典战役专属选择栏（分类过滤 + 搜索下拉 + 随机抽取按钮）
+        this.classicControlsWrap = document.createElement('div');
+        this.classicControlsWrap.className = 'qb-classic-bar';
+
+        const filterRow = document.createElement('div');
+        filterRow.className = 'qb-classic-filters';
+        const counts = {
+            all: this.classics.length,
+            field: this.classics.filter((c) => c.kind === 'field').length,
+            siege_attack: this.classics.filter((c) => c.kind === 'siege_attack').length,
+            siege_defend: this.classics.filter((c) => c.kind === 'siege_defend').length,
+        };
+        const filterDefs: [ClassicKindFilter, string][] = [
+            ['all', `全部（${counts.all}）`],
+            ['field', `野战（${counts.field}）`],
+            ['siege_attack', `攻城战（${counts.siege_attack}）`],
+            ['siege_defend', `防守战（${counts.siege_defend}）`],
+        ];
+        for (const [fk, flabel] of filterDefs) {
+            const fb = document.createElement('button');
+            fb.type = 'button';
+            fb.dataset.cfilter = fk;
+            fb.textContent = flabel;
+            fb.addEventListener('click', () => {
+                this.classicFilter = fk;
+                this.syncClassicFilterButtons();
+                this.classicSel.setOptions(this.classicOptions(fk), true);
+                if (!this.classicSel.get()) this.pickRandomClassic();
+                else this.refreshPreview();
+            });
+            filterRow.appendChild(fb);
+        }
+
+        const classicPickRow = document.createElement('div');
+        classicPickRow.className = 'qb-classic-pick-row';
+        this.classicSel = new SearchSelect(
+            '选择名将经典战役（可搜战役名、年份、地点、双方名将、势力）',
+            '输入关键词搜索 531 场经典战役（不选＝随机经典战役）',
+            600,
+        );
+        this.classicSel.setOptions(this.classicOptions('all'));
+        this.classicSel.onChange = () => {
+            if (this.classicSel.get()) this.mode = 'classic';
+            this.syncModeTabs();
+            this.refreshPreview();
+        };
+
+        const btnRandClassic = document.createElement('button');
+        btnRandClassic.type = 'button';
+        btnRandClassic.className = 'qb-rand-classic-btn';
+        btnRandClassic.textContent = '🎲 随机换一场经典战';
+        btnRandClassic.addEventListener('click', () => {
+            this.setMode('classic');
+            this.pickRandomClassic();
+        });
+
+        classicPickRow.append(this.classicSel.root, btnRandClassic);
+        this.classicControlsWrap.append(filterRow, classicPickRow);
+
+        // 3. 时间 · 地点 · 背景介绍 信息卡
+        this.metaCard = document.createElement('div');
+        this.metaCard.className = 'qb-meta-card';
+
+        // 4. 左右攻守双方卡片（含武将立绘 + 自由对战选择器）
         const facOpts: Opt[] = FACTIONS
             .filter((f) => this.generals.some((g) => g.factionId === f.id))
             .map((f) => ({ value: f.id, label: f.name, sub: f.id, search: `${f.name} ${f.id}`.toLowerCase() }));
 
-        const mkSide = (title: string, cls: string): [SearchSelect, SearchSelect, HTMLDivElement] => {
+        const mkSide = (
+            title: string,
+            cls: string,
+        ): [SearchSelect, SearchSelect, HTMLDivElement, HTMLDivElement, HTMLDivElement] => {
             const box = document.createElement('div');
             box.className = `qb-side ${cls}`;
             box.innerHTML = `<div class="qb-side-title">${title}</div>`;
+
+            const portraitBox = document.createElement('div');
+            portraitBox.className = 'qb-portrait-card';
+
+            const customWrap = document.createElement('div');
+            customWrap.className = 'qb-side-custom';
             const fac = new SearchSelect('势力');
             const gen = new SearchSelect('武将');
             fac.setOptions(facOpts);
-            const refreshGen = () => gen.setOptions(this.generalOptions(fac.get()));
+            const refreshGen = () => {
+                gen.setOptions(this.generalOptions(fac.get()));
+                this.refreshPreview();
+            };
             fac.onChange = refreshGen;
-            refreshGen();
-            box.append(fac.root, gen.root);
-            return [fac, gen, box];
+            gen.onChange = () => this.refreshPreview();
+            fac.setOptions(facOpts);
+            gen.setOptions(this.generalOptions(null));
+            customWrap.append(fac.root, gen.root);
+
+            box.append(portraitBox, customWrap);
+            return [fac, gen, portraitBox, customWrap, box];
         };
-        const [af, ag, attBox] = mkSide('攻方（左）', 'qb-att');
-        const [df, dg, defBox] = mkSide('守方（右）', 'qb-def');
-        this.attFaction = af; this.attGeneral = ag; this.defFaction = df; this.defGeneral = dg;
+        const [af, ag, attPortrait, attCustom, attBox] = mkSide('⚔ 攻方（左）', 'qb-att');
+        const [df, dg, defPortrait, defCustom, defBox] = mkSide('🛡 守方（右）', 'qb-def');
+        this.attFaction = af;
+        this.attGeneral = ag;
+        this.defFaction = df;
+        this.defGeneral = dg;
+        this.attPortraitBox = attPortrait;
+        this.defPortraitBox = defPortrait;
 
         const mid = document.createElement('div');
         mid.className = 'qb-mid';
+        const midTitle = document.createElement('div');
+        midTitle.className = 'qb-side-title qb-mid-title';
+        midTitle.textContent = '🗺 战场设定';
         const kindRow = document.createElement('div');
         kindRow.className = 'qb-kind';
         const kinds: [typeof this.kind, string][] = [['random', '随机'], ['siege', '攻城战'], ['field', '野战']];
@@ -417,18 +726,33 @@ class QuickBattle {
             b.type = 'button';
             b.textContent = label;
             b.dataset.kind = k;
-            b.addEventListener('click', () => { this.kind = k; this.syncKind(); });
+            b.addEventListener('click', () => {
+                this.kind = k;
+                this.syncKind();
+                this.refreshPreview();
+            });
             kindRow.appendChild(b);
         }
         this.citySel = new SearchSelect('据点（攻城战）');
         this.citySel.setOptions(this.cityOptions());
+        this.citySel.onChange = () => this.refreshPreview();
         this.regionSel = new SearchSelect('地域（野战）');
         this.regionSel.setOptions(this.regionOptions());
-        mid.append(kindRow, this.citySel.root, this.regionSel.root);
+        this.regionSel.onChange = () => this.refreshPreview();
 
-        const body = document.createElement('div');
-        body.className = 'qb-body';
-        body.append(attBox, mid, defBox);
+        const randCustomBtn = document.createElement('button');
+        randCustomBtn.type = 'button';
+        randCustomBtn.className = 'qb-rand-custom-btn';
+        randCustomBtn.textContent = '🎲 随机抽取攻守武将';
+        randCustomBtn.addEventListener('click', () => this.pickRandomCustomPreview());
+
+        mid.append(midTitle, kindRow, this.citySel.root, this.regionSel.root, randCustomBtn);
+
+        this.customControlsWrap = document.createElement('div');
+        this.customControlsWrap.className = 'qb-body';
+        this.customControlsWrap.append(attBox, mid, defBox);
+        // 把自定义下拉挂在数组里供模式切换显隐（立绘始终显示）
+        (this.customControlsWrap as unknown as { _sideCustoms: HTMLElement[] })._sideCustoms = [attCustom, defCustom, mid];
 
         const actions = document.createElement('div');
         actions.className = 'qb-actions';
@@ -438,22 +762,60 @@ class QuickBattle {
         go.textContent = '⚔ 开战';
         go.addEventListener('click', () => this.launch());
         this.goBtn = go;
+
+        const nextClassicBtn = document.createElement('button');
+        nextClassicBtn.type = 'button';
+        nextClassicBtn.textContent = '📜 随机经典战';
+        nextClassicBtn.addEventListener('click', () => {
+            this.setMode('classic');
+            this.pickRandomClassic();
+        });
+
         const reset = document.createElement('button');
         reset.type = 'button';
-        reset.textContent = '全部清空（随机）';
+        reset.textContent = '🎲 随机自由战';
         reset.addEventListener('click', () => {
-            for (const s of [this.attFaction, this.attGeneral, this.defFaction, this.defGeneral, this.citySel, this.regionSel]) s.set(null);
-            this.kind = 'random';
-            this.syncKind();
+            this.setMode('random');
+            this.pickRandomCustomPreview();
         });
-        actions.append(reset, go);
+        actions.append(nextClassicBtn, reset, go);
 
         this.status = document.createElement('div');
         this.status.className = 'qb-status';
 
-        p.append(body, actions, this.status);
+        p.append(header, this.classicControlsWrap, this.metaCard, this.customControlsWrap, actions, this.status);
         document.body.appendChild(p);
+        this.syncModeTabs();
+        this.syncClassicFilterButtons();
         this.syncKind();
+    }
+
+    private setMode(m: PanelMode): void {
+        this.mode = m;
+        this.syncModeTabs();
+        if (m === 'classic' && !this.classicSel.get()) {
+            this.pickRandomClassic();
+        } else if (m === 'random' && !this.attGeneral.get() && !this.defGeneral.get()) {
+            this.pickRandomCustomPreview();
+        } else {
+            this.refreshPreview();
+        }
+    }
+
+    private syncModeTabs(): void {
+        this.panel.querySelectorAll<HTMLButtonElement>('.qb-mode-tabs button')
+            .forEach((b) => b.classList.toggle('qb-on', b.dataset.mode === this.mode));
+        this.classicControlsWrap.style.display = this.mode === 'classic' ? '' : 'none';
+        const sideCustoms = (this.customControlsWrap as unknown as { _sideCustoms?: HTMLElement[] })._sideCustoms ?? [];
+        for (const el of sideCustoms) {
+            el.style.display = this.mode === 'random' ? '' : 'none';
+        }
+        this.customControlsWrap.classList.toggle('qb-classic-dual', this.mode === 'classic');
+    }
+
+    private syncClassicFilterButtons(): void {
+        this.classicControlsWrap.querySelectorAll<HTMLButtonElement>('.qb-classic-filters button')
+            .forEach((b) => b.classList.toggle('qb-on', b.dataset.cfilter === this.classicFilter));
     }
 
     private syncKind(): void {
@@ -461,6 +823,221 @@ class QuickBattle {
             .forEach((b) => b.classList.toggle('qb-on', b.dataset.kind === this.kind));
         this.citySel.root.style.display = this.kind === 'field' ? 'none' : '';
         this.regionSel.root.style.display = this.kind === 'siege' ? 'none' : '';
+    }
+
+    private classicOptions(filter: ClassicKindFilter): Opt[] {
+        return this.classics
+            .filter((c) => filter === 'all' || c.kind === filter)
+            .map((c) => {
+                const attText = `${c.att.displayFactionName ?? this.fname(c.att.factionId)}·${c.att.general.generalName}`;
+                const defText = `${c.def.displayFactionName ?? this.fname(c.def.factionId)}·${c.def.general.generalName}`;
+                const label = `【${c.yearText}·${c.kindLabel}】${c.fb.battleName}`;
+                const sub = `${attText} vs ${defText} · ${c.fb.targetName}`;
+                const search = `${c.fb.battleName} ${c.yearText} ${c.fb.battleYear} ${c.kindLabel} ${c.fb.targetName} ${c.placeText} ${attText} ${defText} ${c.key}`.toLowerCase();
+                return { value: c.key, label, sub, search };
+            });
+    }
+
+    /** 从当前经典战役分类池里随机抽一场并更新面板预览 */
+    private pickRandomClassic(avoidKey?: string): void {
+        const pool = this.classics.filter(
+            (c) => (this.classicFilter === 'all' || c.kind === this.classicFilter) && c.key !== avoidKey,
+        );
+        const picked = rand(pool) ?? rand(this.classics);
+        if (picked) {
+            this.classicSel.set(picked.key, true);
+        }
+        this.refreshPreview();
+    }
+
+    /** 随机自由战斗：预抽一组攻守武将供面板立绘与信息预览 */
+    private pickRandomCustomPreview(): void {
+        this.attFaction.set(null, true);
+        this.defFaction.set(null, true);
+        this.attGeneral.setOptions(this.generalOptions(null), false);
+        this.defGeneral.setOptions(this.generalOptions(null), false);
+        const attG = this.pickGeneral(null, null, {});
+        const defG = attG ? this.pickGeneral(null, null, { generalId: attG.generalId, factionId: attG.factionId }) : null;
+        this.attGeneral.set(attG?.generalId ?? null, true);
+        this.defGeneral.set(defG?.generalId ?? null, true);
+        this.refreshPreview();
+    }
+
+    /** 渲染单侧武将立绘卡 */
+    private renderPortraitCard(
+        box: HTMLDivElement,
+        sideLabel: '攻方' | '守方',
+        general: GeneralItem | null,
+        factionLabel: string,
+        troopsLabel: string,
+        isClassicHero = false,
+    ): void {
+        if (!general) {
+            box.innerHTML = `
+                <div class="qb-portrait-wrap qb-portrait-empty"><span>🎲</span></div>
+                <div class="qb-portrait-meta">
+                    <div class="qb-p-name">随机武将 <span class="qb-p-tag">${sideLabel}</span></div>
+                    <div class="qb-p-line"><span>势力：</span>${escapeHtml(factionLabel || '随机势力')}</div>
+                    <div class="qb-p-line"><span>精锐：</span>开战时按武将装配</div>
+                    <div class="qb-p-line"><span>兵力：</span>${escapeHtml(troopsLabel)}</div>
+                </div>
+            `;
+            return;
+        }
+        const imgSrc = general.portrait || DEFAULT_PORTRAIT_FALLBACK;
+        const heroBadge = isClassicHero
+            ? `<span class="qb-p-hero-badge">★ 战役主角</span>`
+            : `<span class="qb-p-tag">${sideLabel}主帅</span>`;
+        box.innerHTML = `
+            <div class="qb-portrait-wrap">
+                <img class="qb-portrait-img" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(general.generalName)}"
+                     onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
+            </div>
+            <div class="qb-portrait-meta">
+                <div class="qb-p-name">${escapeHtml(general.generalName)} ${heroBadge}</div>
+                <div class="qb-p-line"><span>势力：</span><b>${escapeHtml(factionLabel)}</b></div>
+                <div class="qb-p-line"><span>精锐：</span>${escapeHtml(general.eliteLabel)}</div>
+                <div class="qb-p-line"><span>兵力：</span>${escapeHtml(troopsLabel)}</div>
+            </div>
+        `;
+    }
+
+    /** 刷新面板上的「时间、地点、背景介绍」与「攻守双方武将立绘」 */
+    private refreshPreview(): void {
+        if (this.mode === 'classic') {
+            const key = this.classicSel.get();
+            const entry = (key ? this.classicByKey.get(key) : undefined) ?? this.classics[0];
+            if (!entry) return;
+            const attFacName = entry.att.displayFactionName ?? this.fname(entry.att.factionId);
+            const defFacName = entry.def.displayFactionName ?? this.fname(entry.def.factionId);
+            this.renderPortraitCard(
+                this.attPortraitBox,
+                '攻方',
+                entry.att.general,
+                attFacName,
+                `${entry.att.troops.toLocaleString()} 人`,
+                !!entry.att.isClassicHero,
+            );
+            this.renderPortraitCard(
+                this.defPortraitBox,
+                '守方',
+                entry.def.general,
+                defFacName,
+                `${entry.def.troops.toLocaleString()} 人`,
+                !!entry.def.isClassicHero,
+            );
+            this.metaCard.innerHTML = `
+                <div class="qb-meta-head">
+                    <span class="qb-meta-badge qb-badge-${entry.kind}">${escapeHtml(entry.kindLabel)}</span>
+                    <span class="qb-meta-battle-title">${escapeHtml(entry.fb.battleName)}</span>
+                    <span class="qb-meta-Chip">🕒 时间：<b>${escapeHtml(entry.yearText)}</b></span>
+                    <span class="qb-meta-Chip">📍 地点：<b>${escapeHtml(entry.placeText)}</b></span>
+                </div>
+                <div class="qb-meta-bg">
+                    <span class="qb-meta-bg-label">📖 背景介绍：</span>${escapeHtml(entry.background)}
+                </div>
+            `;
+            return;
+        }
+
+        // 随机 / 自由战斗模式
+        const attG = this.attGeneral.get() ? (this.generalById.get(this.attGeneral.get()!) ?? null) : null;
+        const defG = this.defGeneral.get() ? (this.generalById.get(this.defGeneral.get()!) ?? null) : null;
+        const attFacId = this.attFaction.get() ?? attG?.factionId ?? null;
+        const defFacId = this.defFaction.get() ?? defG?.factionId ?? null;
+        const { FIRST_BATTLE_MIN_TROOPS: lo, FIRST_BATTLE_MAX_TROOPS: hi } = GameConfig.COMBAT;
+        const troopsRange = `${lo.toLocaleString()} ~ ${hi.toLocaleString()} 人（随机）`;
+
+        this.renderPortraitCard(
+            this.attPortraitBox,
+            '攻方',
+            attG,
+            attFacId ? this.fname(attFacId) : '随机势力',
+            troopsRange,
+            false,
+        );
+        this.renderPortraitCard(
+            this.defPortraitBox,
+            '守方',
+            defG,
+            defFacId ? this.fname(defFacId) : '随机势力',
+            troopsRange,
+            false,
+        );
+
+        const kindText = this.kind === 'siege' ? '攻城战' : this.kind === 'field' ? '野战' : '随机（攻城战 / 野战）';
+        const cityObj = this.citySel.get() ? this.app.cityManager.getCity(this.citySel.get()!) : undefined;
+        const regKey = this.regionSel.get() as RegionType | null;
+        const placeStr = this.kind === 'siege'
+            ? (cityObj ? `${cityObj.name}（${formatCoord(cityObj.latitude, cityObj.longitude)}）` : '随机据点')
+            : this.kind === 'field'
+                ? (regKey ? `${CULTURE_NAMES[regKey] ?? regKey}（区域野战）` : '随机地域野外战场')
+                : (cityObj ? `据点：${cityObj.name}` : regKey ? `地域：${CULTURE_NAMES[regKey] ?? regKey}` : '随机战场（据点或野外）');
+
+        const attDesc = attG ? `${this.fname(attG.factionId)}·${attG.generalName}` : (attFacId ? `${this.fname(attFacId)}随机武将` : '随机武将');
+        const defDesc = defG ? `${this.fname(defG.factionId)}·${defG.generalName}` : (defFacId ? `${this.fname(defFacId)}随机武将` : '随机武将');
+
+        this.metaCard.innerHTML = `
+            <div class="qb-meta-head">
+                <span class="qb-meta-badge qb-badge-random">${escapeHtml(kindText)}</span>
+                <span class="qb-meta-battle-title">自由 / 随机战术对战</span>
+                <span class="qb-meta-Chip">🕒 时间：<b>跨时代乱斗（不限年份）</b></span>
+                <span class="qb-meta-Chip">📍 地点：<b>${escapeHtml(placeStr)}</b></span>
+            </div>
+            <div class="qb-meta-bg">
+                <span class="qb-meta-bg-label">📖 对战说明：</span>当前攻方为 <b>${escapeHtml(attDesc)}</b>，守方为 <b>${escapeHtml(defDesc)}</b>。未指定项将在开战时自动随机抽取；也可切回上方「📜 名将经典战役（${this.classics.length} 场）」体验真实历史名将对决。
+            </div>
+        `;
+    }
+
+    /** 构造载入遮罩上的战役简报卡（含时间、地点、背景介绍、双方武将立绘） */
+    private buildBackdropBriefHtml(a: ActiveBattle): string {
+        const c = a.classic;
+        const kindLabel = c ? c.kindLabel : (a.kind === 'siege' ? '攻城战' : '野战');
+        const battleTitle = c ? c.fb.battleName : `${a.placeName}之战`;
+        const yearText = c ? c.yearText : '跨时代乱斗';
+        const placeText = c ? c.placeText : a.placeName;
+        const bgText = c
+            ? c.background
+            : `${this.fname(a.att.factionId)}名将${a.att.general.generalName}率军 ${a.att.troops.toLocaleString()} 人，与${this.fname(a.def.factionId)}名将${a.def.general.generalName}（${a.def.troops.toLocaleString()} 人）于${a.placeName}展开战术决战。`;
+        const attImg = a.att.general.portrait || DEFAULT_PORTRAIT_FALLBACK;
+        const defImg = a.def.general.portrait || DEFAULT_PORTRAIT_FALLBACK;
+        const attFac = a.att.displayFactionName ?? this.fname(a.att.factionId);
+        const defFac = a.def.displayFactionName ?? this.fname(a.def.factionId);
+        return `
+            <div class="qb-loading-card">
+                <div class="qb-loading-top">
+                    <span class="qb-meta-badge">${escapeHtml(kindLabel)}</span>
+                    <span class="qb-loading-title">${escapeHtml(battleTitle)}</span>
+                </div>
+                <div class="qb-loading-sub">
+                    <span>🕒 时间：<b>${escapeHtml(yearText)}</b></span>
+                    <span>📍 地点：<b>${escapeHtml(placeText)}</b></span>
+                </div>
+                <div class="qb-loading-vs">
+                    <div class="qb-loading-hero qb-lh-att">
+                        <img src="${escapeHtml(attImg)}" alt="${escapeHtml(a.att.general.generalName)}"
+                             onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
+                        <div>
+                            <div class="qb-lh-role">⚔ 攻方 · ${escapeHtml(attFac)}</div>
+                            <div class="qb-lh-name">${escapeHtml(a.att.general.generalName)}</div>
+                            <div class="qb-lh-meta">${escapeHtml(a.att.general.eliteLabel)} · ${a.att.troops.toLocaleString()} 人</div>
+                        </div>
+                    </div>
+                    <div class="qb-loading-vs-tag">VS</div>
+                    <div class="qb-loading-hero qb-lh-def">
+                        <img src="${escapeHtml(defImg)}" alt="${escapeHtml(a.def.general.generalName)}"
+                             onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
+                        <div>
+                            <div class="qb-lh-role">🛡 守方 · ${escapeHtml(defFac)}</div>
+                            <div class="qb-lh-name">${escapeHtml(a.def.general.generalName)}</div>
+                            <div class="qb-lh-meta">${escapeHtml(a.def.general.eliteLabel)} · ${a.def.troops.toLocaleString()} 人</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="qb-loading-bg">📖 <b>背景介绍：</b>${escapeHtml(bgText)}</div>
+            </div>
+        `;
     }
 
     private say(msg: string, warn = false): void {
@@ -473,7 +1050,7 @@ class QuickBattle {
             .filter((g) => !factionId || g.factionId === factionId)
             .map((g) => {
                 const fn = this.fname(g.factionId);
-                return { value: g.generalId, label: g.generalName, sub: fn, search: `${g.generalName} ${g.generalId} ${fn}`.toLowerCase() };
+                return { value: g.generalId, label: g.generalName, sub: `${fn}·${g.eliteLabel}`, search: `${g.generalName} ${g.generalId} ${fn} ${g.eliteLabel}`.toLowerCase() };
             });
     }
 
@@ -509,15 +1086,8 @@ class QuickBattle {
     }
 
     // ── 循环播放：打完回选择画面，30 秒后自动再开一局 ──
-    // 🔴 [2026-11-05 主人令「战斗结束后，回到选择画面，给30秒选择时间，30秒后自动再开一局，循环播放」]
 
     private static readonly AUTO_NEXT_SEC = 30;
-    /**
-     * 🔴 [2026-11-07 主人令「一局定个时间，时间内战斗不结束，算和」]
-     *    本局时限 5 分钟，从战术画面真正看得见算起；到点还没分出胜负就收场、判和（押和赔 8 倍）。
-     *    定 300 秒的依据：本机实测 74 局即时战斗，平均 106 秒，超过 300 秒的约一成——
-     *    正好让「和」有真实概率，赔率 8 倍既不过分也不至于永远开不出来。
-     */
     private static readonly ROUND_LIMIT_MS = 300_000;
     private goBtn: HTMLButtonElement | null = null;
     private countdownTimer: number | null = null;
@@ -532,7 +1102,7 @@ class QuickBattle {
             if (left > 0) { paint(); return; }
             this.stopCountdown();
             this.launch();
-            if (!this.active) this.startCountdown();   // 这一局没开成（选择冲突等）：继续倒计时，循环不断
+            if (!this.active) this.startCountdown();
         }, 1000);
     }
 
@@ -547,7 +1117,11 @@ class QuickBattle {
         if (this.active) { this.say('上一仗还没打完。', true); return; }
         if (!appReady(this.app)) { this.say('游戏还在加载，稍等。', true); return; }
         try {
-            this.launchInner();
+            if (this.mode === 'classic') {
+                this.launchClassicInner();
+            } else {
+                this.launchRandomInner();
+            }
         } catch (e) {
             const msg = e instanceof Error ? e.message : String(e);
             console.error('[即时战斗] 开战失败', e);
@@ -555,14 +1129,44 @@ class QuickBattle {
             this.say(`开战失败：${msg}`, true);
             this.cleanup();
             this.panel.classList.remove('qb-hidden');
-            // 押在这一局上的筹码原数退回（这一仗没打成，不该白吃注），再把下一局的下注窗口打开
             this.app.live?.refundBetRound?.();
             this.app.live?.beginBetRound?.();
             this.startCountdown();
         }
     }
 
-    private launchInner(): void {
+    /** 启动一场名将经典战役（531 场之一） */
+    private launchClassicInner(): void {
+        let key = this.classicSel.get();
+        if (!key || !this.classicByKey.has(key)) {
+            this.pickRandomClassic();
+            key = this.classicSel.get();
+        }
+        const entry = (key ? this.classicByKey.get(key) : undefined) ?? rand(this.classics);
+        if (!entry) { this.say('找不到经典战役条目。', true); return; }
+
+        const { fb, att, def } = entry;
+        const cm = this.app.cityManager;
+
+        this.app.live?.sealBetRound?.();
+        this.clearWorldLegions();
+        const switchedOn = this.forceTacticalOn();
+
+        if (fb.battleType === 'siege') {
+            const targetCity = (fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined)
+                ?? cm.getNearestCity(null, { latitude: fb.targetLat, longitude: fb.targetLng });
+            if (!targetCity) throw new Error(`找不到经典战役据点：${fb.targetName}`);
+            this.startSiege(att, def, targetCity, entry);
+        } else {
+            this.startField(att, def, entry);
+        }
+        if (switchedOn) {
+            console.info('[即时战斗] 调试面板的「战术模式」开关原来是关的，本页已临时打开（不改存档设置）');
+        }
+    }
+
+    /** 启动一场自由 / 随机战斗 */
+    private launchRandomInner(): void {
         const cm = this.app.cityManager;
         const kind: BattleKind = this.kind === 'random' ? (Math.random() < 0.5 ? 'siege' : 'field') : this.kind;
 
@@ -574,7 +1178,6 @@ class QuickBattle {
         if (!attG) { this.say('攻方找不到可用武将。', true); return; }
         const attFactionId = attFac ?? attG.factionId;
 
-        // 攻城战：先定据点（守将不选时，按「谁占城谁得将」取该城守将）
         let city: City | undefined;
         if (kind === 'siege') {
             const cid = this.citySel.get();
@@ -603,7 +1206,6 @@ class QuickBattle {
         const att: Side = { factionId: attFactionId, general: attG, troops: randInt(lo, hi) };
         const def: Side = { factionId: defFactionId, general: defG, troops: randInt(lo, hi) };
 
-        // 🔴 [2026-11-07] 真正开打这一刻封盘：之后不再接注，等本局结算（攻/守/和）
         this.app.live?.sealBetRound?.();
         this.clearWorldLegions();
         const switchedOn = this.forceTacticalOn();
@@ -615,23 +1217,25 @@ class QuickBattle {
     }
 
     /** 与经典战起兵同一口径：武将本据点起兵（定文化编制）、精锐番号、立绘；再摆到战场 */
-    private raiseLegion(side: Side, pos: { lat: number; lng: number }): Army {
+    private raiseLegion(side: Side, pos: { lat: number; lng: number }, fallbackCityId?: string): Army {
         const cm = this.app.cityManager;
         const lm = this.app.historicalEventManager.getLegionManager();
         const g = side.general;
-        const home = (g.cityId ? cm.getCity(g.cityId) : undefined) ?? cm.getCitiesByFaction(side.factionId)[0];
+        const home = (g.cityId ? cm.getCity(g.cityId) : undefined)
+            ?? cm.getCitiesByFaction(side.factionId)[0]
+            ?? (fallbackCityId ? cm.getCity(fallbackCityId) : undefined);
         const name = getCityEliteLegionName(home?.id ?? g.cityId, g.generalId) ?? `${g.generalName}部`;
-        // 🔴 直接在战场上建军团：先在本据点建再 setPosition 瞬移，空间索引仍记在本据点，
-        //    野战接战查「附近敌军」查不到 → 两军走到一起也不开打（2026-11-05 实测）。
-        //    文化编制照样按本据点：createLegion 的文化区取 sourceCityId 那座城的 region。
         const army = lm.createLegion(pos, side.troops, side.factionId, name, undefined, undefined, home?.id, g.generalId, true);
         if (!army) throw new Error(`${g.generalName} 起兵失败`);
         army.setTroops(side.troops);
         army.isElite = true;
         army.name = name;
+        const eliteCfg = getGeneralEliteConfig(g.generalId) ?? getFactionEliteConfig(side.general.factionId);
+        if (eliteCfg) army.eliteOverride = eliteCfg;
         if (!army.generalId) army.generalId = g.generalId;
         const rec = getGeneralRecordByGeneralId(g.generalId);
         if (rec?.portrait) army.portraitPath = rec.portrait;
+        else if (g.portrait) army.portraitPath = g.portrait;
         applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
         const tag = army as Army & Record<string, unknown>;
         tag.__scriptPinned = true;        // 行为树不接管
@@ -640,7 +1244,7 @@ class QuickBattle {
         return army;
     }
 
-    private startSiege(att: Side, def: Side, city: City): void {
+    private startSiege(att: Side, def: Side, city: City, classic?: ClassicBattleEntry): void {
         const cm = this.app.cityManager;
         const lm = this.app.historicalEventManager.getLegionManager();
         const saved = { id: city.id, factionId: city.factionId, troops: city.troops };
@@ -650,15 +1254,23 @@ class QuickBattle {
 
         // 攻方摆在城西 → 战术画面里攻方在左
         const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
-        const attacker = this.raiseLegion(att, { lat: target.latitude, lng: target.longitude - ring });
+        const attacker = this.raiseLegion(att, { lat: target.latitude, lng: target.longitude - ring }, target.id);
         const tag = attacker as Army & Record<string, unknown>;
         tag.isFirstBattleHero = true;               // 攻城不并入第三方军团
         tag.firstBattleRole = 'attacker';
         tag.firstBattleTargetCityId = target.id;
+        if (classic) {
+            tag.firstBattleTitle = classic.fb.battleName;
+            tag.classicBattleGeneralId = classic.key;
+        } else {
+            tag.__quickBattleRandom = true;
+        }
 
         this.active = {
             kind: 'siege', attacker, defender: null, city: saved, att, def,
-            placeName: target.name, phase: 'engaging', startedAt: performance.now(),
+            placeName: classic ? classic.fb.battleName : target.name,
+            classic,
+            phase: 'engaging', startedAt: performance.now(),
         };
         this.focus(attacker, { lat: target.latitude, lng: target.longitude });
         this.app.timeSystem.setPaused(false);
@@ -667,12 +1279,15 @@ class QuickBattle {
         this.announce();
     }
 
-    private startField(att: Side, def: Side): void {
+    private startField(att: Side, def: Side, classic?: ClassicBattleEntry): void {
         const regionKey = (this.regionSel.get() as RegionType | null) ?? null;
-        const spot = this.pickFieldSpot(regionKey);
+        const spot = classic
+            ? this.resolveClassicFieldSpot(classic)
+            : this.pickFieldSpot(regionKey);
         if (!spot) throw new Error('该地域找不到可用的陆地战场');
-        const attacker = this.raiseLegion(att, spot.att);
-        const defender = this.raiseLegion(def, spot.def);
+        const fallbackCityId = classic?.fb.targetCityId;
+        const attacker = this.raiseLegion(att, spot.att, fallbackCityId);
+        const defender = this.raiseLegion(def, spot.def, fallbackCityId);
         const at = attacker as Army & Record<string, unknown>;
         const dt = defender as Army & Record<string, unknown>;
         at.isFirstBattleHero = true;
@@ -681,15 +1296,77 @@ class QuickBattle {
         at.firstBattlePairEnemyId = defender.id;     // 只和对方接战
         dt.isFirstBattleFieldEnemy = true;
         dt.firstBattlePairHeroId = attacker.id;
+        if (classic) {
+            at.firstBattleTitle = classic.fb.battleName;
+            at.classicBattleGeneralId = classic.key;
+            dt.firstBattleTitle = classic.fb.battleName;
+            dt.classicBattleGeneralId = classic.key;
+        } else {
+            at.__quickBattleRandom = true;
+            dt.__quickBattleRandom = true;
+        }
 
         this.active = {
             kind: 'field', attacker, defender, city: null, att, def,
-            placeName: spot.label, phase: 'engaging', startedAt: performance.now(),
+            placeName: spot.label,
+            classic,
+            phase: 'engaging', startedAt: performance.now(),
         };
         this.focus(attacker, spot.att);
         this.app.timeSystem.setPaused(false);
-        attacker.moveAlongPath([{ lat: spot.def.lat, lng: spot.def.lng }]);
+        const defPos = defender.getPosition();
+        attacker.moveAlongPath([{ lat: defPos.lat, lng: defPos.lng, sea: false }]);
         this.announce();
+    }
+
+    /** 经典战役野战坐标：按史实 targetLat/targetLng 落位；若恰贴海面则就近微调至陆地内侧以免误出海上图 */
+    private resolveClassicFieldSpot(classic: ClassicBattleEntry): { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string } {
+        const { fb } = classic;
+        const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
+        const RING_DIST = [0, 0.005, 0.015, 0.035, 0.08, 0.14, 0.20, 0.25];
+        const seaNear = (p: { lat: number; lng: number }): boolean => {
+            for (const d of RING_DIST) {
+                for (let k = 0; k < 8; k++) {
+                    const ang = (k * Math.PI) / 4;
+                    if (!isLand({ lat: p.lat + d * Math.cos(ang), lng: p.lng + d * Math.sin(ang) })) return true;
+                    if (d === 0) break;
+                }
+            }
+            return false;
+        };
+
+        let mid = { lat: fb.targetLat, lng: fb.targetLng };
+        const checkSpot = (m: { lat: number; lng: number }) => {
+            const a = { lat: m.lat, lng: m.lng - 0.03 };
+            const b = { lat: m.lat, lng: m.lng + 0.03 };
+            return isLand(a) && isLand(b) && !seaNear(m);
+        };
+
+        if (!checkSpot(mid)) {
+            let found: { lat: number; lng: number } | null = null;
+            for (const r of [0.06, 0.12, 0.2, 0.3, 0.45, 0.6]) {
+                for (let k = 0; k < 16; k++) {
+                    const ang = (k * Math.PI * 2) / 16;
+                    const cand = { lat: fb.targetLat + r * Math.sin(ang), lng: fb.targetLng + r * Math.cos(ang) };
+                    if (checkSpot(cand)) {
+                        found = cand;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            if (!found && fb.targetCityId) {
+                const c = this.app.cityManager.getCity(fb.targetCityId);
+                if (c) found = { lat: c.latitude, lng: c.longitude };
+            }
+            if (found) mid = found;
+        }
+
+        return {
+            att: { lat: mid.lat, lng: mid.lng - 0.03 },
+            def: { lat: mid.lat, lng: mid.lng + 0.03 },
+            label: `${fb.battleName}（${fb.targetName}）`,
+        };
     }
 
     /** 野战战场：该地域随机一座据点附近的陆地；攻方在西、守方在东（战术画面左右） */
@@ -697,9 +1374,6 @@ class QuickBattle {
         const cities = this.app.cityManager.getCities();
         const pool = region ? cities.filter((c) => getCityRegion(c) === region) : cities;
         const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
-        // 🔴 [2026-11-05 主人令「野战不要选址到海上」] 战术层判水（Scene13EnvironmentGenerator.probeWater）
-        //    扫的是战场中心 8 个方向、最远 0.20° 的同心圆环：圈内只要一点是海，整张战场就按海岸图出。
-        //    只查两军与中点三个点不够，这里按同一套环扫（放宽到 0.25°），圈内有海就换地方。
         const RING_DIST = [0, 0.005, 0.015, 0.035, 0.08, 0.14, 0.20, 0.25];
         const seaNear = (p: { lat: number; lng: number }): boolean => {
             for (const d of RING_DIST) {
@@ -712,8 +1386,6 @@ class QuickBattle {
             return false;
         };
         const cm = this.app.cityManager;
-        // 🔴 [2026-11-05 主人令「野战不要放大据点附近」] 野战离任何据点都要够远（约 50 公里），
-        //    战场上不出现据点；找不到才逐步放宽（仍不贴城）
         const minGapSteps = [0.5, 0.4, 0.3];
         for (const minGap of minGapSteps) {
             for (let tries = 0; tries < 150; tries++) {
@@ -734,14 +1406,6 @@ class QuickBattle {
         return null;
     }
 
-    /**
-     * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」]
-     *    即时战斗里探马者**不再入伍**。原做法（2026-11-05「把探马者加入到攻击方」）会把玩家钉死在攻方：
-     *    Scene13WarLayer.getPlayerSide() 返回攻方 → ViewerLive 用 playerSide 覆盖观众自己的选边
-     *    （`playerSideInBattle() ?? sides.get(id) ?? 0`，以及口令里的「只能为玩家所在的攻方放计」），
-     *    守方观众一个字都放不出去；没有玩家的线上构建更是一条计都放不出（castViewerSkill 直接 closed）。
-     *    现在观众就是选边放计的看客，镜头照旧跟拍攻方军团。
-     */
     private focus(army: Army, at: { lat: number; lng: number }): void {
         const hero = this.app.playerHero;
         if (hero?.getHostLegionId()) {
@@ -751,7 +1415,6 @@ class QuickBattle {
         try { this.app.map.getLeafletMap().setView([at.lat, at.lng], 9, { animate: false }); } catch { /* 同上 */ }
     }
 
-    /** 打完：探马者离队（军团马上要撤）。2026-11-07 起探马者不入伍了，这里通常已是空操作，留着防旧状态残留 */
     private releaseHero(): void {
         const hero = this.app.playerHero;
         if (!hero?.getHostLegionId()) return;
@@ -760,9 +1423,13 @@ class QuickBattle {
 
     private announce(): void {
         const a = this.active!;
-        const kindLabel = a.kind === 'siege' ? '攻城战' : '野战';
-        this.say(`${kindLabel}·${a.placeName}：${this.fname(a.att.factionId)} ${a.att.general.generalName}（${a.att.troops}）vs ${this.fname(a.def.factionId)} ${a.def.general.generalName}（${a.def.troops}）`);
+        const c = a.classic;
+        const kindLabel = c ? c.kindLabel : (a.kind === 'siege' ? '攻城战' : '野战');
+        const attFac = a.att.displayFactionName ?? this.fname(a.att.factionId);
+        const defFac = a.def.displayFactionName ?? this.fname(a.def.factionId);
+        this.say(`${kindLabel}·${a.placeName}：${attFac} ${a.att.general.generalName}（${a.att.troops}）vs ${defFac} ${a.def.general.generalName}（${a.def.troops}）`);
         this.panel.classList.add('qb-hidden');
+        this.backdrop.setBattleBriefCard(this.buildBackdropBriefHtml(a));
         this.backdrop.say('正在进入战术模式…');
     }
 
@@ -783,7 +1450,8 @@ class QuickBattle {
             if (field) {
                 const att = field.getAttackerUnits();
                 const def = field.getDefenderUnits();
-                const title = field.customTitle
+                const title = a.classic?.fb.battleName
+                    ?? field.customTitle
                     ?? (field.type === 'siege' ? `${a.placeName} 攻防战` : `${this.fname(a.att.factionId)} 大战 ${this.fname(a.def.factionId)}`);
                 cs.onRegionalBattleStart?.(att, def, undefined, undefined, title, '', false, field);
             } else if (duel) {
@@ -800,20 +1468,9 @@ class QuickBattle {
         return this.app.scene13War?.isActive?.() === true || this.app.battleScene?.isActive?.() === true;
     }
 
-    /**
-     * 战术画面在演的时候，大战略必须是「场景接管暂停」的状态。
-     *
-     * 🔴 [2026-11-05 进不去] GameAppLoop 只有在 `timeSystem.isGamePaused()` 为真、
-     *    且 `battleScene.isStrategyPausedByScene()` 为真时才会调 `scene13War.tick()`。
-     *    暂停一旦被别处解开（实测：无人值守直播的自动开播 togglePlayback），
-     *    主循环立刻改走战略分支 → tick/render 全线停摆 → 画布一直是全透明、
-     *    `entryFadePending` 永远是 true → 屏幕就停在「正在载入战术画面…」。
-     *    这里每 400ms 巡检一次，暂停被解开就按回场景接管态（BattleSceneLayer.tick 正常也做这件事）。
-     *    只动本页这一刻的暂停位，不写存档、不改大战略行为。
-     */
     private keepSceneClock(): void {
         if (!this.warActive()) return;
-        if (this.app.battleScene?.isStrategyPausedByScene?.() !== true) return;   // 场景自己没接管，不掺和
+        if (this.app.battleScene?.isStrategyPausedByScene?.() !== true) return;
         const ts = this.app.timeSystem;
         if (ts.isGamePaused()) return;
         ts.setPaused(true);
@@ -836,8 +1493,6 @@ class QuickBattle {
                 this.report('entered', a, { afterMs: Math.round(performance.now() - a.startedAt), retried: !!a.retried });
                 return;
             }
-            // 引擎已经开打，正常同一帧就进战术画面：1.2 秒还没进 → 把开战入口再调一次；
-            // 4 秒还没进 → 收场，面板上写清原因（同时落盘 scratch，供排查）
             if (this.battleStillRunning(a)) {
                 a.engineStartedAt ??= performance.now();
                 const waited = performance.now() - a.engineStartedAt;
@@ -867,15 +1522,11 @@ class QuickBattle {
             a.visibleAt = performance.now();
             this.report('visible', a, { afterMs: Math.round(a.visibleAt - a.startedAt) });
         }
-        // 🔴 [2026-11-07 主人令「一局定个时间，时间内战斗不结束，算和」]
-        //    从战术画面真正看得见算起，满 5 分钟还没分胜负 → 收场判和（下注按和局结算）。
-        //    只判「引擎里这一仗还没结算」的情形：已经结算、正在演残局的，交给下面的正常收场。
         if (!a.timedOut && a.visibleAt && this.battleStillRunning(a)
             && performance.now() - a.visibleAt > QuickBattle.ROUND_LIMIT_MS) {
             this.endByTimeLimit(a);
             return;
         }
-        // 引擎已结算：统一走 BattleSceneLayer.beginLingerAfterDefeat() 的 3 秒战场停留收场（20 秒兜底强退）
         if (!this.battleStillRunning(a)) {
             a.resolvedAt ??= performance.now();
             const waited = performance.now() - a.resolvedAt;
@@ -924,15 +1575,17 @@ class QuickBattle {
         return 'draw';
     }
 
-    /** 🔴 [2026-11-07] 本局时间到还没分胜负：收场判和（押攻/押守退本金，押和赔 8 倍） */
     private endByTimeLimit(a: ActiveBattle): void {
+        const prevClassicKey = a.classic?.key;
         a.timedOut = true;
         this.report('timeout', a, { limitMs: QuickBattle.ROUND_LIMIT_MS });
         this.app.live?.settleBetRound?.('draw');
         try { this.app.scene13War?.stop('本局时间到'); } catch { /* 收场失败也要退出 */ }
         try { if (this.app.battleScene?.isActive?.()) this.app.battleScene.exit(); } catch { /* 同上 */ }
         this.cleanup();
-        this.say(`本局时间到（${Math.round(QuickBattle.ROUND_LIMIT_MS / 60_000)} 分钟）未分胜负，算和。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局（不选＝随机）。`);
+        if (this.mode === 'classic') this.pickRandomClassic(prevClassicKey);
+        this.say(`本局时间到（${Math.round(QuickBattle.ROUND_LIMIT_MS / 60_000)} 分钟）未分胜负，算和。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局。`);
+        this.backdrop.setBattleBriefCard(null);
         this.backdrop.say('');
         this.panel.classList.remove('qb-hidden');
         this.app.live?.beginBetRound?.();
@@ -942,6 +1595,7 @@ class QuickBattle {
     private finish(fought: boolean): void {
         const a = this.active;
         if (!a) return;
+        const prevClassicKey = a.classic?.key;
         let result = '';
         if (fought) {
             const attAlive = !a.attacker.isDestroyed && a.attacker.getTroops() > 0;
@@ -953,15 +1607,17 @@ class QuickBattle {
                 result = attAlive && !defAlive ? `攻方 ${a.att.general.generalName} 胜`
                     : defAlive && !attAlive ? `守方 ${a.def.general.generalName} 胜` : '胜负未分';
             }
-            // 🔴 [2026-11-07] 有结果的局按下注结算；「胜负未分」（双方都还在）算和
             this.app.live?.settleBetRound?.(this.resultSide(a));
         }
         if (fought) this.report('finished', a, { result });
         this.cleanup();
-        if (fought) this.say(`上一仗结果：${result}。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局（不选＝随机）。`);
+        if (fought && this.mode === 'classic') {
+            this.pickRandomClassic(prevClassicKey);
+        }
+        if (fought) this.say(`上一仗结果：${result}。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局。`);
+        this.backdrop.setBattleBriefCard(null);
         this.backdrop.say('');
         this.panel.classList.remove('qb-hidden');
-        // 回到选人画面＝下一局的下注窗口打开（这一局没打成时，settle 没跑，注单要退）
         if (!fought) this.app.live?.refundBetRound?.();
         this.app.live?.beginBetRound?.();
         this.startCountdown();
@@ -987,40 +1643,97 @@ class QuickBattle {
 }
 
 const PANEL_CSS = `
-#quick-battle-panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20050;width:min(980px,94vw);
-  background:rgba(18,16,12,.94);border:1px solid #b08d4a;border-radius:10px;padding:18px 22px;color:#eadfc8;
-  font-family:'Noto Serif SC',serif;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#quick-battle-panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20050;width:min(1080px,95vw);max-height:94vh;overflow-y:auto;
+  background:rgba(18,16,12,.96);border:1px solid #b08d4a;border-radius:12px;padding:16px 22px;color:#eadfc8;
+  font-family:'Noto Serif SC',serif;box-shadow:0 12px 48px rgba(0,0,0,.75)}
 #quick-battle-panel.qb-hidden{display:none}
-#quick-battle-panel .qb-title{font-size:24px;font-weight:700;text-align:center;letter-spacing:6px;color:#f3d48a;margin-bottom:14px}
-#quick-battle-panel .qb-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-#quick-battle-panel .qb-side,#quick-battle-panel .qb-mid{background:rgba(255,255,255,.04);border-radius:8px;padding:12px}
-#quick-battle-panel .qb-side-title{font-size:17px;font-weight:700;margin-bottom:8px}
+#quick-battle-panel .qb-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;border-bottom:1px solid rgba(176,141,74,.28);padding-bottom:10px}
+#quick-battle-panel .qb-title{font-size:22px;font-weight:700;letter-spacing:4px;color:#f3d48a}
+#quick-battle-panel .qb-mode-tabs{display:flex;gap:8px}
+#quick-battle-panel .qb-mode-tabs button{padding:7px 18px;border-radius:6px;background:#241e14;border:1px solid #6b5a38;color:#d8c49a;cursor:pointer;font-size:15px;font-weight:600;transition:all .15s}
+#quick-battle-panel .qb-mode-tabs button.qb-on{background:linear-gradient(180deg,#9c7428,#6e4f16);color:#fff;border-color:#f0ca78;box-shadow:0 0 12px rgba(240,202,120,.3)}
+
+#quick-battle-panel .qb-classic-bar{background:rgba(255,255,255,.03);border:1px solid rgba(176,141,74,.25);border-radius:8px;padding:10px 12px;margin-bottom:12px}
+#quick-battle-panel .qb-classic-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+#quick-battle-panel .qb-classic-filters button{padding:4px 12px;border-radius:4px;background:#1e1911;border:1px solid #594a2e;color:#c7b48b;cursor:pointer;font-size:13px}
+#quick-battle-panel .qb-classic-filters button.qb-on{background:#7a5c22;color:#fff;border-color:#e0bb6a}
+#quick-battle-panel .qb-classic-pick-row{display:flex;align-items:flex-end;gap:10px}
+#quick-battle-panel .qb-classic-pick-row .qb-field{flex:1;margin-bottom:0}
+#quick-battle-panel .qb-rand-classic-btn{padding:8px 16px;border-radius:6px;background:#3a2d18;border:1px solid #a88642;color:#f3d48a;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;height:36px}
+#quick-battle-panel .qb-rand-classic-btn:hover{background:#523f21}
+
+#quick-battle-panel .qb-meta-card{background:linear-gradient(180deg,rgba(42,34,22,.85),rgba(24,20,14,.9));border:1px solid rgba(196,158,84,.42);border-radius:8px;padding:11px 14px;margin-bottom:12px}
+#quick-battle-panel .qb-meta-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:7px}
+#quick-battle-panel .qb-meta-badge{display:inline-block;padding:2px 9px;border-radius:4px;font-size:12px;font-weight:700;background:#7a3b1e;color:#ffd9b3;border:1px solid #d48455}
+#quick-battle-panel .qb-badge-field{background:#2d5236;color:#d6f5dc;border-color:#68a878}
+#quick-battle-panel .qb-badge-siege_attack{background:#6e2820;color:#ffd4cc;border-color:#d46a5a}
+#quick-battle-panel .qb-badge-siege_defend{background:#244466;color:#cce6ff;border-color:#5a94d4}
+#quick-battle-panel .qb-badge-random{background:#4f3d66;color:#e8d9ff;border-color:#9678bd}
+#quick-battle-panel .qb-meta-battle-title{font-size:18px;font-weight:700;color:#f7dfa0;letter-spacing:1px;margin-right:6px}
+#quick-battle-panel .qb-meta-Chip{font-size:13px;color:#d4c39e;background:rgba(0,0,0,.35);padding:3px 9px;border-radius:4px;border:1px solid rgba(176,141,74,.22)}
+#quick-battle-panel .qb-meta-Chip b{color:#fff3d1}
+#quick-battle-panel .qb-meta-bg{font-size:14px;line-height:1.65;color:#e8dec8;background:rgba(0,0,0,.28);padding:8px 11px;border-radius:6px;border-left:3px solid #c9a050}
+#quick-battle-panel .qb-meta-bg-label{color:#f3d48a;font-weight:700}
+
+#quick-battle-panel .qb-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+#quick-battle-panel .qb-body.qb-classic-dual{grid-template-columns:1fr 1fr}
+#quick-battle-panel .qb-side,#quick-battle-panel .qb-mid{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px}
+#quick-battle-panel .qb-side-title{font-size:16px;font-weight:700;margin-bottom:8px}
 #quick-battle-panel .qb-att .qb-side-title{color:#ff9b8a}
 #quick-battle-panel .qb-def .qb-side-title{color:#8ac4ff}
-#quick-battle-panel .qb-field{position:relative;margin-bottom:10px}
-#quick-battle-panel .qb-cap{font-size:13px;color:#b9a988;margin-bottom:4px}
+#quick-battle-panel .qb-mid-title{color:#e6c983}
+
+#quick-battle-panel .qb-portrait-card{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.38);border:1px solid rgba(176,141,74,.32);border-radius:8px;padding:9px 11px;margin-bottom:8px}
+#quick-battle-panel .qb-portrait-wrap{width:72px;height:90px;flex-shrink:0;border-radius:6px;overflow:hidden;border:1px solid #b8934b;background:#1a1610;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+#quick-battle-panel .qb-portrait-empty span{font-size:28px;opacity:.65}
+#quick-battle-panel .qb-portrait-img{width:100%;height:100%;object-fit:cover;display:block}
+#quick-battle-panel .qb-portrait-meta{flex:1;min-width:0}
+#quick-battle-panel .qb-p-name{font-size:17px;font-weight:700;color:#fff2d6;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#quick-battle-panel .qb-p-hero-badge{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:linear-gradient(180deg,#b88928,#7d5910);color:#fff8dc;border:1px solid #f5d27a}
+#quick-battle-panel .qb-p-tag{font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.1);color:#cbbba0}
+#quick-battle-panel .qb-p-line{font-size:13px;color:#d6c7a9;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#quick-battle-panel .qb-p-line span{color:#9e8e6e}
+#quick-battle-panel .qb-p-line b{color:#f5dfb0}
+
+#quick-battle-panel .qb-field{position:relative;margin-bottom:9px}
+#quick-battle-panel .qb-cap{font-size:12px;color:#b9a988;margin-bottom:3px}
 #quick-battle-panel .qb-row{display:flex;gap:4px}
-#quick-battle-panel input{flex:1;min-width:0;background:#0d0c0a;border:1px solid #6b5a38;color:#f5ead2;border-radius:5px;padding:7px 9px;font-size:15px;font-family:inherit}
+#quick-battle-panel input{flex:1;min-width:0;background:#0d0c0a;border:1px solid #6b5a38;color:#f5ead2;border-radius:5px;padding:7px 9px;font-size:14px;font-family:inherit}
 #quick-battle-panel .qb-clear{background:#2a2419;border:1px solid #6b5a38;color:#d8c49a;border-radius:5px;width:30px;cursor:pointer}
-#quick-battle-panel .qb-list{display:none;position:absolute;left:0;right:0;top:100%;z-index:5;max-height:300px;overflow:auto;background:#14120e;border:1px solid #8a7444;border-radius:5px;margin-top:2px}
-#quick-battle-panel .qb-opt{padding:6px 9px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-size:14px}
+#quick-battle-panel .qb-list{display:none;position:absolute;left:0;right:0;top:100%;z-index:30;max-height:320px;overflow:auto;background:#14120e;border:1px solid #8a7444;border-radius:5px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.7)}
+#quick-battle-panel .qb-opt{padding:6px 9px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
 #quick-battle-panel .qb-opt small{color:#9a8b6c;font-size:12px;white-space:nowrap}
 #quick-battle-panel .qb-opt:hover,#quick-battle-panel .qb-opt.qb-on{background:#3a3020}
 #quick-battle-panel .qb-more{padding:5px 9px;font-size:12px;color:#8a7c60}
-#quick-battle-panel .qb-kind{display:flex;gap:6px;margin-bottom:12px}
+#quick-battle-panel .qb-kind{display:flex;gap:6px;margin-bottom:10px}
 #quick-battle-panel button{font-family:inherit}
-#quick-battle-panel .qb-kind button{flex:1;padding:8px 0;background:#2a2419;border:1px solid #6b5a38;color:#d8c49a;border-radius:5px;cursor:pointer;font-size:15px}
+#quick-battle-panel .qb-kind button{flex:1;padding:7px 0;background:#2a2419;border:1px solid #6b5a38;color:#d8c49a;border-radius:5px;cursor:pointer;font-size:14px}
 #quick-battle-panel .qb-kind button.qb-on{background:#8a6a2c;color:#fff;border-color:#e0bb6a}
-#quick-battle-panel .qb-actions{display:flex;justify-content:center;gap:14px;margin-top:16px}
-#quick-battle-panel .qb-actions button{padding:9px 22px;border-radius:6px;cursor:pointer;font-size:16px;background:#2a2419;border:1px solid #6b5a38;color:#d8c49a}
-#quick-battle-panel .qb-actions .qb-go{background:#9a2f22;border-color:#e07a5a;color:#fff;font-weight:700;padding:9px 40px}
-#quick-battle-panel .qb-status{margin-top:12px;text-align:center;font-size:14px;color:#cdbf9f;min-height:20px}
+#quick-battle-panel .qb-rand-custom-btn{width:100%;padding:7px 10px;margin-top:4px;border-radius:5px;background:#332818;border:1px solid #7d6536;color:#ead49c;cursor:pointer;font-size:13px}
+#quick-battle-panel .qb-rand-custom-btn:hover{background:#463720}
+#quick-battle-panel .qb-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:14px}
+#quick-battle-panel .qb-actions button{padding:8px 20px;border-radius:6px;cursor:pointer;font-size:15px;background:#2a2419;border:1px solid #6b5a38;color:#d8c49a}
+#quick-battle-panel .qb-actions .qb-go{background:#9a2f22;border-color:#e07a5a;color:#fff;font-weight:700;padding:8px 36px}
+#quick-battle-panel .qb-status{margin-top:10px;text-align:center;font-size:13.5px;color:#cdbf9f;min-height:18px}
 #quick-battle-panel .qb-status.qb-warn{color:#ffb366}
+
+#quick-battle-backdrop .qb-loading-card{background:rgba(20,17,12,.92);border:1px solid #b08d4a;border-radius:10px;padding:18px 22px;color:#eadfc8;font-family:'Noto Serif SC',serif;box-shadow:0 10px 36px rgba(0,0,0,.65)}
+#quick-battle-backdrop .qb-loading-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#quick-battle-backdrop .qb-loading-title{font-size:22px;font-weight:700;color:#f3d48a;letter-spacing:2px}
+#quick-battle-backdrop .qb-loading-sub{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;color:#d4c39e;margin-bottom:14px}
+#quick-battle-backdrop .qb-loading-sub b{color:#fff3d1}
+#quick-battle-backdrop .qb-loading-vs{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+#quick-battle-backdrop .qb-loading-hero{flex:1;display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.4);border:1px solid rgba(176,141,74,.32);border-radius:8px;padding:10px}
+#quick-battle-backdrop .qb-loading-hero img{width:64px;height:80px;object-fit:cover;border-radius:5px;border:1px solid #b8934b;background:#1a1610;flex-shrink:0}
+#quick-battle-backdrop .qb-lh-role{font-size:12px;color:#bfa97a}
+#quick-battle-backdrop .qb-lh-att .qb-lh-role{color:#ff9b8a}
+#quick-battle-backdrop .qb-lh-def .qb-lh-role{color:#8ac4ff}
+#quick-battle-backdrop .qb-lh-name{font-size:18px;font-weight:700;color:#fff2d6;margin:2px 0}
+#quick-battle-backdrop .qb-lh-meta{font-size:12px;color:#c9ba9b}
+#quick-battle-backdrop .qb-loading-vs-tag{font-size:20px;font-weight:800;color:#e0b458;padding:0 4px}
+#quick-battle-backdrop .qb-loading-bg{font-size:14px;line-height:1.65;color:#e8dec8;background:rgba(0,0,0,.32);padding:10px 12px;border-radius:6px;border-left:3px solid #c9a050}
 `;
 
-/** 游戏本体是否已就位：直接看实例上的对象（延后初始化里最后才建的几样）。
- *  🔴 不用 isGameAppBooted()：dev 服务跑久了经多次热更新，动态 import 进来的 GameAppBootUtils
- *     可能是另一份模块实例，标志永远是 false → 面板永远不出来（2026-11-05 主人实机卡住）。 */
 function appReady(app: GameApp): boolean {
     const a = app as unknown as Record<string, unknown>;
     return !!(app.cityManager && app.combatSystem && app.historicalEventManager
@@ -1040,6 +1753,14 @@ export function startQuickBattleMode(app: GameApp): void {
         }
         clearInterval(timer);
         try {
+            // 先解除百岁/剧本年份闸门，再采集武将（否则开局默认百岁前 800 年会把未登场名将名字改称「XX将军」）
+            if (app.playerHero) (app.playerHero as unknown as Record<string, unknown>).autoPlan = 'melee';
+            setGameModeProvider(() => 'melee');
+            setCentenarianYearProvider(() => null);
+            setScriptYearProvider(() => null);
+            setWonderGateYearProvider(() => null);
+            (app as unknown as { syncCityFoundedTypes?: () => void }).syncCityFoundedTypes?.();
+
             const qb = new QuickBattle(app, backdrop);
             qb.init();
             (window as unknown as { quickBattle?: QuickBattle }).quickBattle = qb;

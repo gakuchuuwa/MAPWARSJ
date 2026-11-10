@@ -315,8 +315,14 @@ function startScene13War(
     // 🔴 [2026-11-09 主人令「把经典战的背景介绍改为进入战术模式就播报」]
     //    经典战（带 isFirstBattleHero 的名将军团参战）：进战术模式时念这一战的历史背景，
     //    走战役播报同一条链（等行军播报念完再开口）。接任务、对话时不再念。
-    const classicHeroGeneralId = [attacker, defender]
-        .find((u) => u.getEntity?.()?.isFirstBattleHero === true)?.generalId ?? null;
+    const classicHeroUnit = [attacker, defender]
+        .find((u) => {
+            const ent = u.getEntity?.();
+            return ent && !ent.__quickBattleRandom && (ent.isFirstBattleHero === true || !!ent.classicBattleGeneralId);
+        });
+    const classicHeroGeneralId = (classicHeroUnit?.getEntity?.()?.classicBattleGeneralId as string | undefined)
+        ?? classicHeroUnit?.generalId
+        ?? null;
     const classicBackground = classicHeroGeneralId ? (getFirstBattleBackground(classicHeroGeneralId) || null) : null;
     const resolvedBattleBriefing = battleBriefing || classicBackground || resolveHistoricalBattleBriefing(title, null);
     app.scene13War.onDecision = (winner, survivors) => { (app as any).live?.onTacticalBattleDecision?.(winner); onDecision(winner, survivors); };   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
