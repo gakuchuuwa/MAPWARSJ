@@ -61,6 +61,7 @@ import {
 } from '../config/city-marker-tokens';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { startCityFlagWave } from '../ui/CityFlagWave';
+import { startCityImgFlatten } from '../ui/CityImgFlatten';
 import {
     isMacroMapZoom,
     MACRO_HIDDEN_INFRA_PANES,
@@ -2293,6 +2294,7 @@ export class TerritorySystem {
         startCityFlagWave();   // 据点旗帜飘动的统一时钟（替代逐旗 CSS 动画，见 CityFlagWave.ts）
 
         const leafletMap = map.getLeafletMap();
+        startCityImgFlatten(leafletMap);   // 据点建筑图去位移变换（平移掉帧，见 CityImgFlatten.ts）
 
         // Create dedicated panes for city ground (z-index 332, below vectorRiverPane 335), city markers (z-index 610) and labels (z-index 660)
         if (!leafletMap.getPane('cityGroundPane')) {

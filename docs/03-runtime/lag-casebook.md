@@ -787,3 +787,34 @@ Edge CPU 采样（renderUnit 内）：`renderInfo` 自身最大——每军团�
 - `TerritorySystem.relayoutCityLabels`：不再「先全部 transform='' 再量」（写后读 = 全部城名强制重排），改为量当前外框减本函数上次写入位移（`CITY_LABEL_SHIFT`），只给位移变了的写回。
   合成对拍：40 轮 2392 个城名（1528 个需避让，含连排两次、中途改字宽）与原写法 **0 差异**。理论边界：1/64px 布局单位 vs 0.1px 位移，贴边恰好时可能差千分之几像素。尖峰真机未复测。
 - 🔴 已证伪，别重走：「长条图首次 drawImage 慢是同步解码 → 先 img.decode()」。页面实测首画 decode 前后同量级（雨林 41.9→44.1ms、橡树 18→15.2ms）：贵的是**整条上传显卡**，不是解码。已完整撤回（CityLifeAmbientLayer / VegetationLayer 与 21:22 备份逐字相同）。
+
+## O. 平时战略地图移动掉帧 —— 内存吃紧时图片反复解码 + 据点建筑图变换节点（2026-11-10）
+
+主人给的三个方向：陆地动物、陆地植被、生产方式（据点民生层），都是最近新加的。
+
+**量法**：有头 Chrome 真显卡，固定路线匀速跟拍，录时间线按「主线程每帧忙多少毫秒」比较（`scratch/_probe_three_trace_20261110.mjs`）。
+🔴 帧率数字不能用来判——同一配置 15～50 帧都出现过；要看主线程 ms/帧 和 Layerize / Commit / Decode Image。
+
+**结论**
+1. 三层确实是成本：三层全关主线程 17～18 ms/帧，全开 24～33 ms/帧。但单关任何一层都分不出谁最贵（差别小于波动）。
+2. 最差的帧（帧率 3～15）不是哪一层的逻辑慢，是**系统内存吃紧**：当时可用内存 64～400MB（16GB 机器，开发工具常驻提交 25GB+，
+   自动备份触发的 `git pack-objects` 又占 4.9GB；游戏本身页面进程 3.6GB + 显卡进程 2.3GB）。
+   浏览器把画布用到的图片解码结果随用随丢 → 7 秒内主线程 `Decode Image` 1927～3978 次、占 1.9～4 秒，Commit 12～109 ms/帧。
+   内存恢复到 2GB 以上后同一份代码 `Decode Image` 归零。**「以前不卡、跑一阵就卡」先看可用内存。**
+3. 植被整层重画的来源：换季渐变期间 15 次/秒（一分钟 177 次）、镜头移动重采样（132 次）、平移超界只有 7 次。未改。
+
+**已改**
+- `src/map/DecodedSprite.ts`：三层的 drawImage 改走常驻 ImageBitmap（`drawableOf`），淘汰时 `releaseDrawable`。
+  四轮对照（内存正常时）主线程 24.0 → 20.4 ms/帧、Commit 8.8 → 5.8；内存吃紧时 64 → 39 ms/帧。
+  注意：位图只省掉 PNG 解码，内存吃紧时仍会反复上传显卡（`GpuImageDecodeCache::DecodeImage` 仍在），不是根治。
+  对照开关 `window.__noDecodedSprite = true`。
+- `src/ui/CityImgFlatten.ts`：据点建筑图的纯位移 `transform:translate(...)` 在图片加载后改写成等价 left/top。
+  一屏 4250 张图里 2255 张被改写（带 scaleX(-1) 翻转的不动），位置最大偏差 0.038px；
+  四轮对照 Layerize 6.65 → 5.59 ms/帧。对照开关 `window.__cityImgFlatten(false)`。
+  🔴 没写 left/top 的绝对定位图不能换算（第一版漏判，偏了 60px），已加判据。
+
+**没解决 / 没验证**
+- 内存正常时主线程仍约 22～25 ms/帧（60 帧需要 ≤16.7）：Layerize 4～6、Commit 5～9、脚本 4～6。
+- 页面内存明细（memory-infra）：malloc 1.2GB、blink_gc 1.1GB（其中 `GeometryMapperTransformCache::Plane` 68 万个对象 188MB）、
+  canvas 656MB（1139 个画布）、array_buffer 544MB。未进一步处理。
+- 河流 pan-skip（`installRendererPanSkip`）开关前后 `d` 重设次数相同，仍未证明有收益。
