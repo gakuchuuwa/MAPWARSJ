@@ -11101,6 +11101,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 5,
             "offsetY": 19
+        },
+        "/assets/CENTRAL/song_lijilong.png": {
+            "scale": 1.17,
+            "offsetX": 14,
+            "offsetY": 4
         }
     },
     "folderGuides": {
