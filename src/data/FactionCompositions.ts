@@ -2455,6 +2455,26 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代普鲁战象军团",
         legionType: "sub",
     },
+    "early_chimu": {
+        legionName: "封建时代奇穆军团",
+        legionType: "sub",
+    },
+    "lithuanian_tribes": {
+        legionName: "封建时代立陶宛部族军团",
+        legionType: "sub",
+    },
+    "hellas_theme": {
+        legionName: "封建时代阿提卡军团",
+        legionType: "sub",
+    },
+    "lugii": {
+        legionName: "古典时代卢吉军团",
+        legionType: "sub",
+    },
+    "wagadu": {
+        legionName: "古典时代瓦加杜军团",
+        legionType: "sub",
+    },
 
     "chen": {
         legionName: "封建时代江淮军团",

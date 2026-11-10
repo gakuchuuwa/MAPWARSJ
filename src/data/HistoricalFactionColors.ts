@@ -603,6 +603,11 @@ desheng: '#2E6B7A', // 德胜·刘通
     'xinmeiliyan': '#6B4E2E', // 辛梅里安
     'aixini': '#5E7A3A', // 爱西尼
     'taluma': '#2E5A3E', // 塔鲁玛迦拉
+    'early_chimu': '#7B5233', // 早期奇穆
+    'lithuanian_tribes': '#4B633B', // 立陶宛部族
+    'hellas_theme': '#3B5B7B', // 海拉斯军区
+    'lugii': '#6B4B5B', // 卢吉联盟
+    'wagadu': '#8B6B33', // 瓦加杜
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
     'didi': '#8A7A3A', // 佛兰德·布鲁日（佛兰德斯金黑）

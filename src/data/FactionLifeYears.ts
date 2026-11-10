@@ -778,5 +778,10 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     yaqi: { start: 1496, end: 1903, source: 'Wikipedia「Aceh Sultanate」：1496 年建国，1903 年亚齐战争后苏丹国降于荷兰。' },
     zhamolin: { start: 1124, end: 1766, source: 'Wikipedia「Calicut kingdom」：1124 年萨穆蒂里（扎莫林）建国，1766 年为迈索尔海达尔·阿里吞并。', note: '1792 年后复为英属附庸，1806 年王国告终。🔴 [2026-11-04 按历史修复] 势力名由「扎莫林」（统治者称号）改为政权名「卡利卡特」。' },
     jianwen: { start: 1399, end: 1402, source: '《明史·恭闵帝本纪》：洪武三十一年（1398）即位、明年改元建文，建文四年（1402）靖难之役燕王入南京，帝不知所终。', note: '起讫即建文年号年份；纪年随建文而止。' },
-    shunde: { start: 1519, end: 1519, source: '《明史·宁王传》：正德十四年（1519）朱宸濠反于南昌、改元顺德，同年七月为王守仁所擒。', note: '起兵至被擒同年之内，起讫取同一年。' },
+    shunde: { start: 1519, end: 1519, source: '《明史·宁王传》：正德十四年（1519）朱宸濠反于南昌、改元顺德，同年七月为王守仁所擒。', note: '起讫即建文年号年份；起兵至被擒同年之内，起讫取同一年。' },
+    early_chimu: { start: 850, end: 1050, source: 'Wikipedia: Chimú culture / Taycanamo；塔卡伊纳莫传说于 9 世纪中叶（约 850–900）乘木筏抵莫切河谷建昌昌王权，至 11 世纪中叶早期王统阶段', note: '塔卡伊纳莫为开国传说始祖；1050 年后转入奇穆帝国扩张期（qimu）。' },
+    lithuanian_tribes: { start: 850, end: 1050, source: 'Wikipedia: History of Lithuania / Netimeras；1009 年《奎德林堡编年史》首次载立陶宛王内蒂梅尔（Rex Netimer）受洗，波罗的立陶宛部族王权约 9–11 世纪中叶', note: '内蒂梅尔为 1009 年史载立陶宛部族君主。' },
+    hellas_theme: { start: 695, end: 1050, source: 'Wikipedia: Hellas (theme) / Agallianos Kontoskeles；拜占庭利奥三世时期海拉斯军区（约 695 年设，统辖阿提卡与雅典），727 年督军阿加利诺斯起兵', note: '阿加利诺斯为《塞奥法诺斯编年史》所载海拉斯军区统帅。' },
+    lugii: { start: -100, end: 400, source: 'Wikipedia: Lugii / Krakus；塔西佗《日耳曼尼亚志》与托勒密《地理志》载维斯瓦河—奥得河流域卢吉部族联盟（普热沃尔斯克文化，约前 100–400 年）', note: '克拉库斯为《波兰编年史》所载维斯瓦河上游建克拉科夫城的传说君王。' },
+    wagadu: { start: 100, end: 476, source: 'Wikipedia: Ghana Empire / Dinga Cisse；《费塔什史》《苏丹史》载伊斯兰教兴起前瓦加杜（古加纳）卡亚玛加王朝已有约二十代国王都于库姆比萨利赫', note: '丁加西塞为索宁克史诗与编年史所载瓦加杜开国传说始祖王。' },
 };

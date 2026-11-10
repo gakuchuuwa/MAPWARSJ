@@ -300,6 +300,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_garcilaso': 'imperial',   // 加西拉索
     'bfe_michael_epirus': 'castle',   // 米海尔一世
     'bfe_siyaj_kak': 'antiquity',   // 西亚赫卡克
+    'bfe_spearthrower_owl': 'antiquity',   // 掷矛鸮
+    'bfe_netimeras': 'feudal',   // 内蒂梅尔
+    'bfe_agallianos': 'feudal',   // 阿加利诺斯
+    'bfe_krakus': 'antiquity',   // 克拉库斯
+    'bfe_dinga_cisse': 'antiquity',   // 丁加西塞
     'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼
     'bfe_erekle_ii': 'imperial',   // 赫拉克留二世
     'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
@@ -329,7 +334,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_vitalian': 'feudal',
     'bfe_alexios_branas': 'feudal',
     'bfe_dimitriev': 'castle',
-    'bfe_taycanamo': 'castle',
+    'bfe_taycanamo': 'feudal',
     'bfe_gouras': 'imperial',
     'bfe_karaiskakis': 'imperial',
     'bfe_kontoskeles': 'feudal',

@@ -886,6 +886,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'wandan': 'city_wandan',       // 万丹·万丹（胡椒港）
     'yinduxila': 'city_dinggucheng',
     'asakaini': 'city_aonuosiyan',
+    'early_chimu': 'city_chanchan',
+    'lithuanian_tribes': 'city_weierniwusi',
+    'hellas_theme': 'city_yadian',
+    'lugii': 'city_kelakefu',
+    'wagadu': 'city_kumubi',
 };
 
 // @ts-ignore

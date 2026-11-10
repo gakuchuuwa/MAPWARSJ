@@ -750,6 +750,11 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_garcilaso': 16,                      // 加西拉索
     'bfe_michael_epirus': 13,                      // 米海尔一世
     'bfe_siyaj_kak': 4,                      // 西亚赫卡克
+    'bfe_spearthrower_owl': 4,               // 掷矛鸮
+    'bfe_netimeras': 11,                     // 内蒂梅尔
+    'bfe_agallianos': 8,                     // 阿加利诺斯
+    'bfe_krakus': 4,                         // 克拉库斯
+    'bfe_dinga_cisse': 4,                    // 丁加西塞
     'bfe_dewawarman': 2,                      // 德瓦瓦尔曼
     'bfe_erekle_ii': 18,                      // 赫拉克留二世
     'bfe_joseph_brant': 18,                      // 约瑟夫布兰特

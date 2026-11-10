@@ -792,6 +792,12 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'latin_empire': [{ from: -9999, era: 'castle' }], // 拉丁帝国
     'anjou': [{ from: -9999, era: 'castle' }], // 安茹
     'pisa': [{ from: -9999, era: 'castle' }], // 比萨共和国
+    // ── 2026-11-10 主人令补齐时代文化军团对应政权 ──
+    'early_chimu': [{ from: -9999, era: 'feudal' }], // 早期奇穆（850–1050，塔卡伊纳莫）
+    'lithuanian_tribes': [{ from: -9999, era: 'feudal' }], // 立陶宛部族（850–1050，内蒂梅尔）
+    'hellas_theme': [{ from: -9999, era: 'feudal' }], // 海拉斯军区（695–1050，阿加利诺斯）
+    'lugii': [{ from: -9999, era: 'antiquity' }], // 卢吉联盟（-100–400，克拉库斯）
+    'wagadu': [{ from: -9999, era: 'antiquity' }], // 瓦加杜（100–476，丁加西塞）
 };
 
 

@@ -508,6 +508,11 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_garcilaso: { birth: 1501, death: 1536 },  // 加西拉索
     bfe_michael_epirus: { birth: 1170, death: 1215, kaoju: '推定' },  // 米海尔一世
     bfe_siyaj_kak: { birth: 340, death: 402, kaoju: '推定' },  // 西亚赫卡克
+    bfe_spearthrower_owl: { birth: 350, death: 439, kaoju: '推定' },  // 掷矛鸮
+    bfe_netimeras: { birth: 960, death: 1020, kaoju: '推定' },  // 内蒂梅尔
+    bfe_agallianos: { birth: 680, death: 727, kaoju: '推定' },  // 阿加利诺斯
+    bfe_krakus: { birth: 350, death: 420, kaoju: '推定' },  // 克拉库斯（传说）
+    bfe_dinga_cisse: { birth: 300, death: 380, kaoju: '推定' },  // 丁加西塞（传说）
     bfe_dewawarman: { birth: 100, death: 168, kaoju: '推定' },  // 德瓦瓦尔曼
     bfe_erekle_ii: { birth: 1720, death: 1798 },  // 赫拉克留二世
     bfe_joseph_brant: { birth: 1743, death: 1807 },  // 约瑟夫布兰特

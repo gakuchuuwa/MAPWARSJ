@@ -224,6 +224,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_garcilaso': 'GOTHS',   // 加西拉索｜据点 city_toledo
     'bfe_michael_epirus': 'GREECE',   // 米海尔一世｜据点 city_anbulajiya
     'bfe_siyaj_kak': 'MAYANS',   // 西亚赫卡克｜据点 city_tikal
+    'bfe_spearthrower_owl': 'AMERICA',   // 掷矛鸮｜据点 city_tenochtitlan
+    'bfe_netimeras': 'LITHUANIANS',   // 内蒂梅尔｜据点 city_weierniwusi
+    'bfe_agallianos': 'ATHENIANS',   // 阿加利诺斯｜据点 city_yadian
+    'bfe_krakus': 'POLES',   // 克拉库斯｜据点 city_kelakefu
+    'bfe_dinga_cisse': 'AFRICA',   // 丁加西塞｜据点 city_kumubi
     'bfe_dewawarman': 'MALAY',   // 德瓦瓦尔曼｜据点 city_wandan
     'bfe_erekle_ii': 'GEORGIANS',   // 赫拉克留二世｜据点 city_dibilisi
     'bfe_joseph_brant': 'AMERICA',   // 约瑟夫布兰特｜据点 city_onondaga

@@ -1821,6 +1821,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（格涅兹诺、波兹南；奥斯特鲁夫莱德尼茨基湖心要塞、粗糙石灰岩圆拱洗礼堂；波兰尼公爵重锁甲亲卫骑兵（Druzhina）、白木大盾铁骨朵、平原聚落戍卫大阵）
     //    英雄队（第 10 队·主将队）：hero_jadwiga / hero_jogaila　— 按 248 主将表取，不进三排兵种编制
     {
+        name: '古典时代卢吉军团', civ: '波兰', age: 'antiquity', deStyle: 'SLAV', region: 'POLES' as RegionType,
+        buildingStyle: 'POLES',
+        castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
+        formationMode: 'balance_yoke',
+        shipId: 'DEMO_RAFT',
+        commanderUnit: 'hero_alaric',
+        slots: [
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'bowman', count: 3 },
+        ],
+    },
+    {
         name: '封建时代波兰尼军团', civ: '波兰', age: 'feudal', deStyle: 'SLAV', region: 'POLES' as RegionType,
         buildingStyle: 'POLES',
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
@@ -2089,7 +2102,23 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 立陶宛　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // 🔴 [2026-11-09 主人令「不要有多余的军团，每个军团都要套武将和势力」] 「封建时代立陶宛部族军团」已删：该文化此时代没有公认政权的具名武将（传说人物也查过）
+    // ── 立陶宛 · 封建时代 · 封建时代立陶宛部族军团　（2026-11-10 主人令恢复：内蒂梅尔 为带名将）────────────────
+    //    评级：（未标评级）｜核心兵种：重步兵为主
+    //    描述正文（主人原文，一字未改）：（克尔纳韦；克尔纳韦五大防卫土丘山堡要塞、陡峭多重土壕栅栏；双手破甲粗铁战斧、波罗的生铁圆盾刺矛、高台土木壁障阻击维京长船大阵）
+    //    英雄队（第 10 队·主将队）：hero_algirdas / hero_jogaila / hero_kestutis / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代立陶宛部族军团', civ: '立陶宛', age: 'feudal', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
+        buildingStyle: 'LITHUANIANS',
+        castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
+        formationMode: 'balance_yoke',
+        shipId: 'GALLEY',
+        commanderUnit: 'hero_kestutis',
+        slots: [
+            { type: 'pikeman', count: 4 },
+            { type: 'leitis', count: 2 },
+            { type: 'elite_skirmisher', count: 3 },
+        ],
+    },
     // ── 立陶宛 · 城堡时代 · 城堡时代立陶宛大公国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（特拉凯、维尔纽斯；特拉凯水上红砖城堡、盖迪米纳斯红砖石砌塔楼；格伦瓦德破阵骑射标枪骑兵、东欧紧密锁甲鳞甲、抵御条顿十字军水上要塞铁骑大阵）
@@ -3638,6 +3667,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（图拉、乔卢拉；图拉金字塔顶巨型玄武岩武士石柱雕像、羽蛇神浮雕石砌护垣；带刃黑曜石月牙弯曲曲棍、单手圆木漆盾、崇尚生俘之强袭突击步战大阵）
     //    英雄队（第 10 队·主将队）：hero_cunhambebe / hero_arariboiamelee　— 按 248 主将表取，不进三排兵种编制
     {
+        name: '古典时代特奥蒂瓦坎军团', civ: '阿兹特克', age: 'antiquity', deStyle: 'MESO', region: 'AMERICA' as RegionType,
+        buildingStyle: 'AMERICA',
+        castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
+        formationMode: 'fish_scale',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_arariboiamelee',
+        slots: [
+            { type: 'maceman', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 2 },
+        ],
+    },
+    {
         name: '封建时代托尔特克军团', civ: '阿兹特克', age: 'feudal', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
@@ -3678,7 +3720,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 印加　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
-    // 🔴 [2026-11-09 主人令「不要有多余的军团，每个军团都要套武将和势力」] 「封建时代奇穆军团」已删：该文化此时代没有公认政权的具名武将（传说人物也查过）
+    // ── 印加 · 封建时代 · 封建时代奇穆军团　（2026-11-10 主人令恢复：塔卡伊纳莫 为带名将）────────────────
+    {
+        name: '封建时代奇穆军团', civ: '印加', age: 'feudal', deStyle: 'ANDE', region: 'INCA' as RegionType,
+        buildingStyle: 'INCA',
+        castleId: 'INCA_CASTLE_AGE3', castleName: '印加 库斯科萨克萨瓦曼巨石堡',
+        formationMode: 'fish_scale',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_cusiyupanqui',
+        slots: [
+            { type: 'champi_runner', count: 3 },
+            { type: 'elite_kamayuk', count: 4 },
+            { type: 'slinger', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 印加 · 城堡时代 · 城堡时代印加军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：重步兵、远程（标枪）为主
@@ -3859,6 +3914,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：重步兵、骑兵为主
     //    描述正文（主人原文，一字未改）：（昆比萨利赫、奥达戈斯特；昆比萨利赫双城石砌防御城郭、黄色砂岩国王重装石堡；铁质宽刃刺矛、熟牛皮椭圆大盾、跨撒哈拉黄金商道护卫重装步骑协同大阵）
     //    英雄队（第 10 队·主将队）：hero_sumanguru / hero_sundjata　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代瓦加杜军团', civ: '马里', age: 'antiquity', deStyle: 'AFRI', region: 'MALI' as RegionType,
+        buildingStyle: 'AFRICA',
+        castleId: 'AFRI_CASTLE_AGE3', castleName: '非洲/马里 杰内大清真寺泥石堡',
+        formationMode: 'balance_yoke',
+        shipId: 'CANOE',
+        commanderUnit: 'dagnajan_elephant',
+        slots: [
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'antiquity_skirmisher', count: 3 },
+        ],
+    },
     {
         name: '封建时代加纳军团', civ: '马里', age: 'feudal', deStyle: 'AFRI', region: 'MALI' as RegionType,
         buildingStyle: 'AFRICA',
@@ -4145,6 +4213,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：重骑兵、重步兵为主
     //    描述正文（主人原文，一字未改）：（雅典卫城、底比斯；雅典卫城山门法兰克巨石高耸要塞角楼、卫城条石方砖防卫石堞；全套欧式重型骑士板条锁甲、双手阔刃破甲重剑、十字军山巅卫城居高临下封锁大阵）
     //    英雄队（第 10 队·主将队）：hero_aristagoras / hero_aristides / hero_themistocles_hoplite　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代阿提卡军团', civ: '雅典', age: 'feudal', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
+        buildingStyle: 'ATHENIANS',
+        castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
+        formationMode: 'fish_scale',
+        shipId: 'BIREME',
+        commanderUnit: 'hero_aristides',
+        slots: [
+            { type: 'sacred_band', count: 3 },
+            { type: 'strategos', count: 4 },
+            { type: 'cretan_archer', count: 2 },
+        ],
+    },
     {
         name: '城堡时代雅典公国军团', civ: '雅典', age: 'castle', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
         buildingStyle: 'ATHENIANS',

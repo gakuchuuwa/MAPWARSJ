@@ -222,6 +222,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xinmeiliyan': '辛梅',
     'aixini': '爱西',
     'taluma': '塔鲁',
+    'early_chimu': '早奇',
+    'lithuanian_tribes': '立部',
+    'hellas_theme': '海拉',
+    'lugii': '卢吉',
+    'wagadu': '瓦加',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
   koln: '科隆',   // 🔴 [2026-10-28 主人批立] 科隆大主教区简称（库里无重）
