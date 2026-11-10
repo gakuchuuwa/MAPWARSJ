@@ -5,6 +5,7 @@ import { loadWorldBaseData, queryBaseTile, queryWinterSnow } from '../ui/scene13
 import type { TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { drawableOf } from './DecodedSprite';
 import {
     loadStrategicForestMask,
     queryStrategicCanopyDensity,
@@ -985,11 +986,11 @@ export class VegetationLayer {
                 if (framesImg) {
                     const frameIdx = meta.frames[variant % meta.frames.length];
                     const sx = frameIdx * meta.boxW;
-                    ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, h);
+                    ctx.drawImage(drawableOf(framesImg), sx, 0, meta.boxW, meta.boxH, dx, dy, w, h);
                     return asset;
                 }
                 if (prevImg) {
-                    ctx.drawImage(prevImg, 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, h);
+                    ctx.drawImage(drawableOf(prevImg), 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, h);
                     return asset;
                 }
                 return null;   // 两张都没就绪：由调用方用「上一次画成的图」兜底，绝不留空
@@ -999,7 +1000,7 @@ export class VegetationLayer {
             if (im) {
                 const w = Math.round(im.naturalWidth * it.s);
                 const h = Math.round(im.naturalHeight * it.s);
-                ctx.drawImage(im, it.x - Math.round(w / 2), it.y - h, w, h);
+                ctx.drawImage(drawableOf(im), it.x - Math.round(w / 2), it.y - h, w, h);
                 return asset;
             }
             return null;

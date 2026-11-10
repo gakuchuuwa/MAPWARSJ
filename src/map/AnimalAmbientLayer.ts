@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { drawableOf, releaseDrawable } from './DecodedSprite';
 import type { GameMap } from './GameMap';
 import { LandSeaSystem } from '../world/land-sea';
 import { CITIES_V2 } from '../data/cities_v2';
@@ -666,6 +667,7 @@ export class AnimalAmbientLayer {
         for (const [k, a] of cands) {
             if (bytes <= AnimalAmbientLayer.ASSET_BUDGET_BYTES) break;
             bytes -= this.assetBytes(a);
+            for (const im of a.sheets) releaseDrawable(im);
             this.assets.delete(k);
         }
     }
@@ -1400,7 +1402,7 @@ export class AnimalAmbientLayer {
             const dy = pt.y - hy * scale;
             ctx.save();
             ctx.globalAlpha = Math.max(0, Math.min(1, e.alpha));
-            ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            ctx.drawImage(drawableOf(sheet), frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
             ctx.restore();
         }
 
@@ -1430,7 +1432,7 @@ export class AnimalAmbientLayer {
             const dy = pt.y - hy * scale;
             birdCtx.save();
             birdCtx.globalAlpha = Math.max(0, Math.min(1, b.alpha));
-            birdCtx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            birdCtx.drawImage(drawableOf(sheet), frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
             birdCtx.restore();
         }
     }

@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { drawableOf, releaseDrawable } from './DecodedSprite';
 import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
@@ -2327,6 +2328,7 @@ export class CityLifeAmbientLayer {
             if (bytes <= CityLifeAmbientLayer.ASSET_BUDGET_BYTES) break;
             for (const im of a.sheets) {
                 if (im) bytes -= (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4;
+                releaseDrawable(im);
             }
             this.assets.delete(k);
         }
@@ -2580,10 +2582,10 @@ export class CityLifeAmbientLayer {
             // 以锚点竖线为轴左右翻转：落脚点不动，只换朝向
             targetCtx.translate(Math.round(px), 0);
             targetCtx.scale(-1, 1);
-            targetCtx.drawImage(st.sheet, sx, 0, st.boxW, st.boxH, -Math.round(st.anchorX * scale), dy, w, h);
+            targetCtx.drawImage(drawableOf(st.sheet), sx, 0, st.boxW, st.boxH, -Math.round(st.anchorX * scale), dy, w, h);
         } else {
             targetCtx.drawImage(
-                st.sheet,
+                drawableOf(st.sheet),
                 sx,
                 0,
                 st.boxW,
@@ -2618,7 +2620,7 @@ export class CityLifeAmbientLayer {
         this.ctx.imageSmoothingEnabled = true;
         this.ctx.imageSmoothingQuality = 'high';
         this.ctx.globalAlpha = Math.max(0, Math.min(1, alpha * 0.95));
-        this.ctx.drawImage(st.sheet, frame * st.boxW, 0, st.boxW, st.boxH, dx, dy, w, h);
+        this.ctx.drawImage(drawableOf(st.sheet), frame * st.boxW, 0, st.boxW, st.boxH, dx, dy, w, h);
         this.ctx.restore();
     }
 
@@ -2654,7 +2656,7 @@ export class CityLifeAmbientLayer {
 
         this.ctx.save();
         this.ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-        this.ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+        this.ctx.drawImage(drawableOf(sheet), frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
         this.ctx.restore();
     }
 
@@ -2910,7 +2912,7 @@ export class CityLifeAmbientLayer {
                     const dy = vPt.y - box.hy * scale;
                     this.ctx.save();
                     this.ctx.globalAlpha = harvesterAlpha;
-                    this.ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
+                    this.ctx.drawImage(drawableOf(sheet), frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
                     this.ctx.restore();
                 }
                 for (const boat of w.ships) {
@@ -2926,7 +2928,7 @@ export class CityLifeAmbientLayer {
                     const dy = bPt.y - box.hy * scale;
                     this.ctx.save();
                     this.ctx.globalAlpha = harvesterAlpha;
-                    this.ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
+                    this.ctx.drawImage(drawableOf(sheet), frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
                     this.ctx.restore();
                 }
             }
@@ -3108,7 +3110,7 @@ export class CityLifeAmbientLayer {
 
                     ctx.save();
                     ctx.globalAlpha = Math.max(0, Math.min(1, peaceFinalAlpha * actionLayer.weight));
-                    ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+                    ctx.drawImage(drawableOf(sheet), frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
                     ctx.restore();
                 }
             }
