@@ -523,8 +523,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/JIANGNAN/linshihong_linshihong.png": {
-            "scale": 1.08,
-            "offsetX": 7,
+            "scale": 1.04,
+            "offsetX": 8,
             "offsetY": 21
         },
         "/assets/BASHU/chenghan_lite.png": {
@@ -2853,9 +2853,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -45
         },
         "/assets/JIANGNAN/fangla_fangla.png": {
-            "scale": 1.28,
-            "offsetX": 0,
-            "offsetY": -36
+            "scale": 1.26,
+            "offsetX": -8,
+            "offsetY": -38
         },
         "/assets/BASHU/luodian_shexiang.png": {
             "scale": 0.77,
@@ -8820,7 +8820,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/JIANGNAN/longwu_zhengcai.png": {
             "scale": 1.16,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -9
         },
         "/assets/JIANGNAN/bfe2_zi_chang.png": {
             "scale": 1.3,
@@ -11031,6 +11031,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/JIANGNAN/tang_tianjun.png": {
+            "scale": 1.02,
+            "offsetX": 16,
+            "offsetY": -19
         }
     },
     "folderGuides": {
