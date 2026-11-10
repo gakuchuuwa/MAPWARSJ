@@ -15,7 +15,7 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     MONGOL: 'TAMGA',                             // 漠北蒙古：塔木加
     CENTRAL_ASIA: 'TIMURID_ANNULETS',            // 中亚：图兰三环纹
     KOREA: 'TOMOE',                              // 朝鲜：太极巴纹
-    JAPAN: 'KIKU',                               // 日本：十六瓣菊纹
+    JAPAN: 'japanese',                           // 日本：DE 十六瓣金菊纹（去铁盘底托＋叠乘旗布褶皱光影＋迎风切变试水）
     // ── 南亚 / 东南亚 ─────────────────────────────────────────────
     INDIA: 'TIGER',                              // 南印（达罗毗荼/朱罗）：虎纹
     MUGHAL: 'MUGHAL_SUN_LION',                   // 北印（莫卧儿）：狮日纹
@@ -99,8 +99,10 @@ export function getCultureEmblemFile(buildingStyle: string | null | undefined): 
     return CULTURE_EMBLEM[buildingStyle] ?? null;
 }
 
-/** 该文化纹章的完整路径（按旗面明暗取 `_w` 或 `_b`） */
+/** 该文化纹章的完整路径（小写走 `culture-emblems/sprite/` 布料融合雪碧图，大写走 `emblem-flags/` 单色 `_w/_b`） */
 export function getCultureEmblemPath(buildingStyle: string | null | undefined, useWhite: boolean = true): string | null {
     const key = getCultureEmblemFile(buildingStyle);
-    return key ? `/emblem-flags/${key}_${useWhite ? 'w' : 'b'}.png` : null;
+    if (!key) return null;
+    if (key === key.toLowerCase()) return `/culture-emblems/sprite/${key}.png`;
+    return `/emblem-flags/${key}_${useWhite ? 'w' : 'b'}.png`;
 }

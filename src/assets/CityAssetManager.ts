@@ -2049,14 +2049,19 @@ export class CityAssetManager {
         if (cityName != null) {
             const cultureEmblem = getCultureEmblemFile(buildingStyle);
             if (cultureEmblem) {
+                const isDeBlend = cultureEmblem === cultureEmblem.toLowerCase();
                 const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
                 return {
                     factionId,
-                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}`,
+                    variantKey: isDeBlend
+                        ? `culture_emblem_${factionId}_${cultureEmblem}`
+                        : `culture_emblem_${factionId}_${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}`,
                     text: '',
                     fill: '',
                     stroke: '',
-                    emblemPath: `/emblem-flags/${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}.png`,
+                    emblemPath: isDeBlend
+                        ? `/culture-emblems/sprite/${cultureEmblem}.png`
+                        : `/emblem-flags/${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}.png`,
                 };
             }
         }
