@@ -1453,7 +1453,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "jienei": {
-        legionName: "封建时代加纳军团",
+        legionName: "城堡时代马里军团",
         legionType: "sub",
     },
     "ghana_diguo": {

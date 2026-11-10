@@ -1953,7 +1953,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'phokis_feiluomoluosi': 'antiquity', // 菲洛墨洛斯
     'phokis_aonuomakusi': 'antiquity', // 奥诺马库斯
     'wuguobu_hunchang': 'feudal', // 浑敞
-    'jienei_keyikongboluo': 'feudal', // 科伊孔博罗
+    'jienei_keyikongboluo': 'castle', // 科伊孔博罗（13 世纪杰内首位穆斯林王，建杰内大清真寺）
     'balti_alixieerhan': 'imperial', // 阿里谢尔汗
     'qingyuan_yijun_ounanxi': 'castle', // 欧南喜
     'zhenghe_yijun_huanghua': 'castle', // 黄华

@@ -40,7 +40,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'jiaohuangguo': [{ from: -9999, era: 'castle' }], // 教皇国｜756 丕平献土—1500＝城堡时代罗马教廷军团；1500 后＝帝国时代意大利军团
     'yalan': [{ from: -9999, era: 'antiquity' }], // 亚兰（大马士革王国）｜前 10 世纪–前 732＝古典时代近东军团
     // 🔴 [2026-10-25 补齐·主人令「每个势力都要有时代」] 这三家只有据点、没有武将，此前漏登记：
-    'jienei': [{ from: -9999, era: 'antiquity' }], // 杰内｜加纳—马里商路商城（8–13 世纪，加纳帝国期入封建段）；势指针＝封建时代加纳军团 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：feudal → antiquity｜存续 -250–1468（FactionLifeYears）]
+    'jienei': [{ from: -9999, era: 'castle' }], // 杰内｜《苏丹史》载杰内城邦建于 765–1468（13 世纪科伊孔博罗改宗伊斯兰建杰内大清真寺），大部分年份在城堡段（1050–1468＝418 年 > 765–1050＝285 年）→ 城堡时代马里军团
     'ghana_diguo': [{ from: -9999, era: 'feudal' }], // 加纳帝国｜瓦加杜加纳（约 300–1200，8–11 世纪盛期，马宁）；势指针＝封建时代加纳军团
     'cueva': [{ from: -9999, era: 'castle' }], // 库埃瓦｜巴拿马科马格雷酋邦（1510 巴尔沃亚到访）＝帝国段；势指针＝帝国时代格查武士军团 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1400–1550（FactionLifeYears）]
     'song': [{ from: -9999, era: 'castle' }], // 宋国｜宋（960–1279）＝城堡时代中华军团（神臂弓/步人甲/斩马刀），北宋南宋同一支宋军
@@ -300,7 +300,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'golog': [{ from: -9999, era: 'imperial' }], // 果洛
     'gongsun_d': [{ from: -9999, era: 'antiquity' }], // 辽东
     'gouding': [{ from: -9999, era: 'antiquity' }], // 句町
-    'gualani': [{ from: -9999, era: 'castle' }], // 瓜拉尼 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1000–1900（FactionLifeYears）]
+    'gualani': [{ from: -9999, era: 'imperial' }], // 瓜拉尼｜1537–1801 殖民期部族同盟与传教区自治武装（尼古拉斯 1754 瓜拉尼战争）＝帝国时代塔莫约军团
     'guanche': [{ from: -9999, era: 'antiquity' }], // 关切人 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：castle → antiquity｜存续 -1000–1496（FactionLifeYears）]
     'guishuang': [{ from: -9999, era: 'antiquity' }], // 贵霜
     'guiyi': [{ from: -9999, era: 'feudal' }], // 归义
@@ -422,7 +422,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mangshi': [{ from: -9999, era: 'feudal' }], // 土库曼
     'mangsite': [{ from: -9999, era: 'antiquity' }], // 芒斯特 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }] → antiquity｜存续 -100–1118 大部分年份]
     'manzheboyi': [{ from: -9999, era: 'castle' }], // 满者伯夷
-    'mapuche': [{ from: -9999, era: 'castle' }], // 马普切 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1000–1883（FactionLifeYears）]
+    'mapuche': [{ from: -9999, era: 'imperial' }], // 马普切｜1470–1883 阿劳卡尼亚抗外军事同盟（劳塔罗、瓜科尔达 1550 年代抗西班牙）＝帝国时代阿劳卡尼亚军团
     'maqidun': [{ from: -9999, era: 'antiquity' }],
     'sesali': [{ from: -9999, era: 'antiquity' }], // 色萨利（古典）
     'maya': [{ from: -9999, era: 'feudal' }], // 玛雅｜按史分段：古典期 → 476 起封建 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }] → feudal｜存续 100–900 大部分年份]
@@ -456,7 +456,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'nanyue': [{ from: -9999, era: 'antiquity' }], // 南越
     'nanzhao': [{ from: -9999, era: 'feudal' }], // 南诏
     'nasier': [{ from: -9999, era: 'castle' }], // 纳斯尔
-    'naweierbuta': [{ from: -9999, era: 'castle' }], // 纳韦尔布塔 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1000–1883（FactionLifeYears）]
+    'naweierbuta': [{ from: -9999, era: 'imperial' }], // 纳韦尔布塔｜1536–1883 纳韦尔布塔抗西班牙军事同盟（加尔瓦里诺 1557 作战）＝帝国时代安第斯游击军团／阿劳卡尼亚军团
     'nidelan': [{ from: -9999, era: 'imperial' }], // 尼德兰
     'nongzhigao': [{ from: -9999, era: 'castle' }], // 大南
     'nuowei': [{ from: -9999, era: 'castle' }], // 挪威 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：feudal → castle｜存续 872–1900（FactionLifeYears）]
@@ -551,7 +551,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suzidaer': [{ from: -9999, era: 'castle' }], // 苏兹达尔
     'tailuona': [{ from: -9999, era: 'castle' }], // 泰罗纳 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 900–1600 大部分年份]
     'taimier': [{ from: -9999, era: 'imperial' }], // 马拉塔
-    'taino_d': [{ from: -9999, era: 'castle' }], // 泰诺 🔴[2026-11-09 主人「势力对照年代，要用年份长的，知名度高的」] 存续 1200–1512 按年数是城堡，但泰诺知名在 1492 后与西班牙交锋（哈土依），且 TUPI 文化没有城堡军团 → 保留帝国 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1200–1512（FactionLifeYears）]
+    'taino_d': [{ from: -9999, era: 'imperial' }], // 泰诺｜1492–1533 泰诺诸酋长领地抗西班牙时期（哈土依 1511–1512 古巴抗西）＝帝国时代塔莫约军团
     'taiping': [{ from: -9999, era: 'imperial' }], // 太平
     'taiyuan': [{ from: -9999, era: 'imperial' }], // 泰沅 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }] → imperial｜存续 1292–1775 大部分年份]
     'tajikezu': [{ from: -9999, era: 'castle' }], // 塔吉克 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 900–1900（FactionLifeYears）]
@@ -592,7 +592,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'tuolemi': [{ from: -9999, era: 'antiquity' }], // 托勒密
     'tuomengde': [{ from: -9999, era: 'castle' }], // 托蒙德
     'tuoming': [{ from: -9999, era: 'imperial' }], // 清真
-    'tupi': [{ from: -9999, era: 'castle' }], // 图皮 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1000–1567（FactionLifeYears）]
+    'tupi': [{ from: -9999, era: 'imperial' }], // 图皮｜1500–1567 沿海图皮诸部同盟与葡法交战（阿拉里博亚、蒂巴里萨 16 世纪中叶）＝帝国时代塔莫约军团／帝国时代图皮军团
     'tutul_xiu': [{ from: -9999, era: 'castle' }], // 休族 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：feudal → castle｜存续 850–1542（FactionLifeYears）]
     'uesugi': [{ from: -9999, era: 'imperial' }], // 上杉
     'utsunomiya': [{ from: -9999, era: 'castle' }], // 宇都宫 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1185–1597（FactionLifeYears）]
