@@ -248,7 +248,7 @@
    - 数据 `src/data/VectorSeaRouteData.ts`；寻路核心 `tools/sea_route_core.py` 与 `SeaRouteEditor` 同一套；本次重排脚本 `tools/rebuild-sea-network-2026-10-24.py`（含退港/长线/必保线清单，可重跑）。
    - 连通：**全世界一块（198 港）**——大西洋—地中海—黑海—波罗的海—美洲两岸 与 印度洋—太平洋 经**麦哲伦海峡线**（圣胡安港—利马，1520）相连；**红海—亚丁湾已并入**（亚丁—泽拉）；只剩**里海**独立。**好望角段已补**（2026-10-24 新建 7 港：罗安达/开普敦/莫桑比克/基尔瓦/蒙巴萨/摩加迪沙/亚丁，沿岸接力，拆掉原来的 19540km 直航），环球闭环成立；巴拿马运河不画（1914 年才有）。见 `docs/02-design/海路网-单一口径-2026-10-24.md` 第六、九节。
    - 验收：`scratch/audit_march_sea_legs.mts`（海路标记与形态）、`scratch/audit_sea_form_flip.mts`（海上不误切陆军）、`tools/audit-route-connectivity.mts`（零/单连接据点）、`scratch/audit_port_degrees.mts`（**每座港口必须 2–8 条海路**，新增港口后必跑）。
-8. 🔴 **战略地图码头/港口只放海边，不放内河/内湖**（2026-11-10 主人令「不要在河上放港口，一律放海边」）：`CityLifeAmbientLayer.ts` 的 `isDeepEnoughSea / findSeasideCoastPos / findSeaFishingSpot / getOrCreateCityPortDock` 一律只认真实开放海洋（`isOpenOcean`），并从外海回退到海陆交界海岸线落位，绝不跨陆地落到内河或内湖（如虎牢关旁黄河）。
+8. 🔴 **战略地图码头/港口只放海边，不放内河/内湖**（2026-11-10 主人令「不要在河上放港口，一律放海边」）：`CityLifeAmbientLayer.ts` 的 `isDeepEnoughSea / findSeasideCoastPos / findSeaFishingSpot / getOrCreateCityPortDock` 一律只认真实开放海洋（`isOpenOcean`），并从外海回退到海陆交界海岸线落位，绝不跨陆地落到内河或内湖（如虎牢关旁黄河）。🔴 **只有大城／中城／小城（`big_city / medium_city / small_city`）可放港口与渔港船坞；险要（`pass`）、城寨（`stockade`）一律不放**（2026-11-10 主人令「宁远是险要，只有大中小海边城附近可以放港口」）。
 9. 🔴 **战略底图军事沙盘定式（2026-11-10 主人定「固定好的风格就写下来，不要改来改去的」，严禁乱改）**：
    - **底图自然地理色彩 100% 保持原版自洽**：`HillshadeWorker.ts` 的海拔 LUT、气候贴图混合配比（`climateMat` 低地 `0.35` → 山地 `0.42`）、农田肌理、雪线一律不动，**严禁按海拔压暗平地或给高原人工补绿/打地域色彩补丁**。
    - **山川浮雕与走廊减法只认真实坡度（`slopeGrad`）与山高分级（`hillDepthT = rampWorker(zC, 120, 680)`）**：

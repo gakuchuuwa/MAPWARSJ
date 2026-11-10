@@ -1370,7 +1370,9 @@ export class CityLifeAmbientLayer {
                     const fishResource = fishPool[Math.floor(h2 * fishPool.length) % fishPool.length];
                     const winterActive = !isColdWinter || i === 0;
                     // 船坞只随机出现在部分渔业组合，且同一据点最多只出 1 座渔港；样式跟随文化，位置固定在近岸港湾。
-                    const wantsDock = !hasCityDock && strHash01(yk, i * 17 + 301) < 0.38;
+                    // 🔴 2026-11-10 主人令「宁远是险要，只有大中小海边城附近可以放港口」：险要、城寨不出船坞。
+                    const portCityType = city.type === 'big_city' || city.type === 'medium_city' || city.type === 'small_city';
+                    const wantsDock = portCityType && !hasCityDock && strHash01(yk, i * 17 + 301) < 0.38;
                     if (wantsDock) hasCityDock = true;
                     const buildingResource = wantsDock
                         ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
@@ -2214,6 +2216,11 @@ export class CityLifeAmbientLayer {
             return this.cityPortDockCache.get(city.id) ?? null;
         }
         if (city.buildingStyle === 'MONGOL') {
+            this.cityPortDockCache.set(city.id, null);
+            return null;
+        }
+        // 🔴 2026-11-10 主人令「宁远是险要，只有大中小海边城附近可以放港口」：险要（pass）、城寨（stockade）一律不放港口。
+        if (city.type !== 'big_city' && city.type !== 'medium_city' && city.type !== 'small_city') {
             this.cityPortDockCache.set(city.id, null);
             return null;
         }

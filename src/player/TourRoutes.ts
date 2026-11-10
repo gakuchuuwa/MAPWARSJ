@@ -96,18 +96,23 @@ export const GLOBE_CHAIN: TourStop[] = [
     ...GALLEON_SEA_TAIL,
 ];
 
-/** 航行：严格由东向西的海上丝绸之路与大航海环线（64 港全唯一，逐港一跳直连） */
+/** 航行：严格由东向西的海上丝绸之路与大航海环线（62 港全唯一，逐港一跳直连） */
 export const SAIL_CHAIN: TourStop[] = [
-    // 东海与南海西行主航道（长崎 → 庆元/宁波 → 台州 → 福州 → 漳州 → 澎湖 → 刺桐/泉州 → 番禺/广州 → 海康 → 崖州 → 乂安 → 云屯 → 占城 → 昆仑岛 → 淡马锡 → 亚齐 → 满剌加）
+    // 东海与南海西行主航道（长崎 → 宁波 → 台州 → 福州 → 漳州 → 澎湖 → 泉州 → 广州 → 海康 → 珠崖 → 乂安 → 云屯 → 洞海城 → 昆仑岛 → 满剌加 → 亚齐）
+    // 🔴 [2026-11-10 主人令「不要画路，只连接据点，直接昆仑岛至马六甲」] 海峡段站序改正：原走 昆仑岛 → 淡马锡 → 亚齐 → 满剌加——亚齐在苏门答腊西北端（西）、满剌加在东，西行先窜过亚齐再折回东，海峡来回横渡两次；
+    //    按主人指示改走 昆仑岛 → 满剌加 → 亚齐，三条衔接全是现有海路直连边（昆仑岛—满剌加、亚齐—满剌加、亚齐—尼科巴），不画新路；淡马锡只是不再入链，据点本身不动。
+    //    史序依据：满剌加＝郑和舰队基地与官厂；明针路西行序 满剌加 → 哑齐 → 翠蓝屿，满剌加在东、亚齐在西，西行必先满剌加后亚齐。
     S('city_nagasaki'), S('city_qingyuan_zj'), S('city_taizhou_zj'), S('city_fuzhou'), S('city_zhangzhou'),
     S('city_penghu'), S('city_qingjingsi'), S('city_panyu'), S('city_haikang'), S('city_yazhou'),
-    S('city_yian'), S('city_yuntun'), S('city_donghai'), S('city_kunlundao'), S('city_danmaxi'),
-    S('city_yaqi'), S('city_malacca'),
+    S('city_yian'), S('city_yuntun'), S('city_donghai'), S('city_kunlundao'),
+    S('city_malacca'), S('city_yaqi'),
     // 印度洋西行主航道（尼科巴 → 锡兰加勒 → 小葛兰 → 古里 → 孟买 → 卡拉奇 → 霍尔木兹 → 亚丁）
     S('city_nikoba'), S('city_jiale'), S('city_quilon'), S('city_guli'),
     S('city_mumbai'), S('city_kalaqi'), S('city_hormuz'), S('city_aden'),
-    // 东非斯瓦希里海岸南下至好望角（泽拉 → 摩加迪沙 → 蒙巴萨 → 莫桑比克 → 索法拉 → 好望角）
-    S('city_zeila'), S('city_mogadishu'), S('city_mombasa'), S('city_mozambique'), S('city_sofala'), S('city_cape_town'),
+    // 东非斯瓦希里海岸南下至好望角（摩加迪沙 → 蒙巴萨 → 莫桑比克 → 索法拉 → 好望角）
+    // 🔴 [2026-11-10 主人令「塞拉没必要连接」] 亚丁 → 摩加迪沙直接用现有直连海路（季风直渡阿拉伯海—东非段，郑和 «古里→木骨都束» 直渡同一走廊）；
+    //    塞拉（泽拉）是曼德海峡把口＋阿比西尼亚高原商队出海港（陆上商队线），不在这条海路主干上，只是不再入链，据点不动。
+    S('city_mogadishu'), S('city_mombasa'), S('city_mozambique'), S('city_sofala'), S('city_cape_town'),
     // 南大西洋横渡与南美东岸南下至麦哲伦海峡（圣赫勒拿 → 萨尔瓦多 → 卡布弗里乌 → 圣维森特 → 布宜诺斯艾利斯 → 圣胡利安 → 费利佩港）
     S('city_sainthelena'), S('city_salvador'), S('city_kabufoliwu'), S('city_saovicente'),
     S('city_buenosaires'), S('city_sanjulian'), S('city_felipe'),
@@ -122,7 +127,7 @@ export const SAIL_CHAIN: TourStop[] = [
     S('city_songshan'), S('city_chijianguan'), S('city_yuanzhishi'), S('city_taizaifu'), S('city_goto'),
 ];
 
-/** 环球合并总链：先走一圈陆路（GLOBE_CHAIN，133 站），再走一圈海路（SAIL_CHAIN，64 港），首尾在长崎无缝衔接循环 */
+/** 环球合并总链：先走一圈陆路（GLOBE_CHAIN，133 站），再走一圈海路（SAIL_CHAIN，62 港），首尾在长崎无缝衔接循环 */
 export const TOUR_CHAIN: readonly TourStop[] = [...GLOBE_CHAIN, ...SAIL_CHAIN];
 
 export function getTourChain(): readonly TourStop[] {

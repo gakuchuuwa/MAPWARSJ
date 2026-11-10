@@ -11006,6 +11006,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 33,
             "offsetY": 12
+        },
+        "/assets/MONGOL/rouran_anagui.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/MONGOL/rouran_doulun.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -12
         }
     },
     "folderGuides": {
