@@ -13,6 +13,7 @@ export const FACTION_LINEAGE_PARENT: Readonly<Record<string, string>> = {
     guge: 'tubo',                  // 古格 ← 吐蕃：吐蕃王族后裔所建
     ganzhou_huihu: 'huihu',        // 甘州回鹘 ← 回鹘：回鹘汗国覆灭后西迁另立
     liangxixili: 'xixiliwangguo',  // 两西西里 ← 西西里：西西里王位前后相承
+    byzantium_late: 'baizanting',  // 晚期拜占庭 ← 拜占庭：同一帝国前后时段（🔴 2026-11-10 主人令「把拜占庭的旗帜统一」），没打过仗，旗号/颜色/纹章随本家
 };
 
 /** 势力的本家（不在表里就是自己） */

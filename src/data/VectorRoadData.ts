@@ -40859,31 +40859,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "布尔萨-尼凯亚",
-                type: "road",
-                id: "road_city_buersa_city_nixiya_1787048246925",
-                startConnection: "city_buersa",
-                endConnection: "city_nixiya"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [29.06, 40.18],
-                    [29.1381389852002, 40.35587705192468],
-                    [29.12576571854981, 40.40949454074304],
-                    [29.158761096284184, 40.42599222961022],
-                    [29.237125118403323, 40.42599222961022],
-                    [29.286618185004883, 40.47548529621179],
-                    [29.344360096040038, 40.50848067394616],
-                    [29.38147989599121, 40.516729518379755],
-                    [29.513461406928702, 40.49610740729577],
-                    [29.72, 40.43],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "特里尔-海德堡",
                 type: "road",
                 id: "road_city_teerier_city_heidelberg_1787058177144",
@@ -65523,43 +65498,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "尼凯亚-⚔巴菲乌斯战役",
-                type: "road",
-                id: "road_city_nixiya_bf_fcam7_15_1793186756004",
-                startConnection: "city_nixiya",
-                endConnection: "bf_fcam7_15"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [29.72, 40.43],
-                    [29.65223333333333, 40.52556666666667],
-                    [29.584466666666668, 40.62113333333333],
-                    [29.5167, 40.7167],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "君士坦丁堡-⚔巴菲乌斯战役",
-                type: "road",
-                id: "road_city_junshitandingbao_bf_fcam7_15_1793186773136",
-                startConnection: "city_junshitandingbao",
-                endConnection: "bf_fcam7_15"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.97, 41.01],
-                    [29.358215332031254, 40.93011520598307],
-                    [29.5167, 40.7167],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "马杜赖-阿努拉德",
                 type: "road",
                 id: "road_city_madula_city_anulade_1793593050946",
@@ -75931,6 +75869,92 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [3.438864, 36.726386],
                     [3.315131, 36.742883],
                     [3.05, 36.75],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-⚔巴菲乌斯战役",
+                type: "road",
+                id: "road_city_junshitandingbao_bf_fcam7_15_1794277479537",
+                startConnection: "city_junshitandingbao",
+                endConnection: "bf_fcam7_15"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [29.033678, 41.117905],
+                    [29.075849, 41.098666],
+                    [29.09976, 41.069825],
+                    [29.123187, 41.009717],
+                    [29.138092, 40.995052],
+                    [29.179539, 40.984983],
+                    [29.200597, 40.970539],
+                    [29.239746, 40.953208],
+                    [29.27834, 40.94493],
+                    [29.360371, 40.895346],
+                    [29.483136, 40.800785],
+                    [29.527459, 40.787415],
+                    [29.832205, 40.780998],
+                    [29.938445, 40.786989],
+                    [29.942401, 40.772444],
+                    [29.905282, 40.702329],
+                    [29.84754, 40.710577],
+                    [29.818669, 40.718826],
+                    [29.69906, 40.689955],
+                    [29.612448, 40.685831],
+                    [29.5167, 40.7167],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "尼凯亚-⚔巴菲乌斯战役",
+                type: "road",
+                id: "road_city_nixiya_bf_fcam7_15_1794277489257",
+                startConnection: "city_nixiya",
+                endConnection: "bf_fcam7_15"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.72, 40.43],
+                    [29.513461, 40.496107],
+                    [29.459844, 40.504356],
+                    [29.414475, 40.51673],
+                    [29.34436, 40.508481],
+                    [29.311365, 40.533227],
+                    [29.282494, 40.599218],
+                    [29.27012, 40.607467],
+                    [29.331987, 40.661084],
+                    [29.5167, 40.7167],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "尼凯亚-布尔萨",
+                type: "road",
+                id: "road_city_nixiya_city_buersa_1794277499922",
+                startConnection: "city_nixiya",
+                endConnection: "city_buersa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.72, 40.43],
+                    [29.604421, 40.262803],
+                    [29.57073, 40.249091],
+                    [29.515147, 40.234158],
+                    [29.50823, 40.221055],
+                    [29.467459, 40.183458],
+                    [29.30724, 40.207398],
+                    [29.27012, 40.219771],
+                    [29.06, 40.18],
                 ]
             }
         },

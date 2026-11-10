@@ -21,6 +21,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     //    新增纹章一律先有素材（{KEY}_{w|b}.png）与史实依据，再在这里加一行；不许两家共用一个 KEY。
     luoma_diguo: 'EAGLE',   // 罗马帝国·军团鹰
     baizanting: 'BYZ_CROSS',   // 拜占庭·十字
+    byzantium_late: 'BYZ_CROSS',   // 🔴 [2026-11-10 主人令「把拜占庭的旗帜统一」] 同系政权（晚期拜占庭←拜占庭，见 FactionLineage），纹章随本家
     xila: 'OWL',   // 雅典·猫头鹰
     maqidun: 'SUN',   // 马其顿·维吉纳太阳
     gaolu: 'FLEUR',   // 法兰西·鸢尾

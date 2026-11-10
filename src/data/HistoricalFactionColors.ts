@@ -548,7 +548,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'cherusci': '#4A5A2E', // 切鲁西
     'sweden_medieval': '#2E5A8A', // 中世纪瑞典
     'rus_khaganate': '#4A3A6A', // 罗斯汗国
-    'byzantium_late': '#6A2E6A', // 晚期拜占庭
+    'byzantium_late': '#6A1B6D',  // 🔴 [2026-11-10 主人令「把拜占庭的旗帜统一」] 同系政权（晚期拜占庭←拜占庭）旗号/颜色随本家（原 #6A2E6A 自立色）
     'bulgaria_second': '#2E6A2E', // 第二保加利亚帝国
     'poland_duchy': '#B83A4A', // 波兰公国
     'saxony_electorate': '#3A5A2E', // 萨克森选侯国

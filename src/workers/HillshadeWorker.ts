@@ -1286,8 +1286,8 @@ function renderHillshade(
                         effDzdy3 = Math.max(-0.035, Math.min(0.035, dzdy3 * 0.4));
                     }
 
-                    const gx = (effDzdx1 * 4.3 * 0.56 * fineWeight + effDzdx3 * 6.8 * (1 - 0.56 * fineWeight)) * zScale * elevBoost;
-                    const gy = (effDzdy1 * 4.3 * 0.56 * fineWeight + effDzdy3 * 6.8 * (1 - 0.56 * fineWeight)) * zScale * elevBoost;
+                    const gx = (effDzdx1 * 4.0 * 0.55 * fineWeight + effDzdx3 * 6.3 * (1 - 0.55 * fineWeight)) * zScale * elevBoost;
+                    const gy = (effDzdy1 * 4.0 * 0.55 * fineWeight + effDzdy3 * 6.3 * (1 - 0.55 * fineWeight)) * zScale * elevBoost;
 
                     const norm = Math.sqrt(gx * gx + gy * gy + 1.0);
                     const normX = -gx / norm, normY = -gy / norm, normZ = 1.0 / norm;
@@ -1297,17 +1297,21 @@ function renderHillshade(
                     const illumS = Math.max(0, normX * lxS + normY * lyS + normZ * lzS);
                     const illum = illumP * 0.76 + illumS * 0.24;
 
-                    const ridge = Math.min(0.42, Math.max(0, lap * 0.022)) * fineWeight;
-                    const cavity = Math.min(0.48, Math.max(0, -lap * 0.024)) * fineWeight;
+                    const hillDepthT = rampWorker(zC, 120, 680);
+                    const ridge = Math.min(0.38, Math.max(0, lap * 0.020)) * fineWeight * (0.50 + 0.50 * hillDepthT);
+                    const cavity = Math.min(0.42, Math.max(0, -lap * 0.021)) * fineWeight * (0.35 + 0.65 * hillDepthT);
 
-                    const ambient = 0.30;
-                    const contrastIllum = Math.pow(illum, 1.24);
+                    const ambient = 0.33;
+                    const contrastIllum = Math.pow(illum, 1.21);
                     const flatIllum = lzP * 0.76 + lzS * 0.24;
-                    const flatShade = ambient + 0.88 * Math.pow(flatIllum, 1.24);
-                    let expShade = ((ambient + 0.88 * contrastIllum) / flatShade) * (1.0 - cavity * 0.62) * (1.0 + ridge * 0.65);
-                    // 🔴 [2026-11-10 军事沙盘高对比浮雕] 压深山脉背阴与沟壑纵深，让崇山峻岭真正“立起来”
-                    const minShade = zC > 1200 ? Math.min(0.30, 0.21 + (zC - 1200) * 0.000032) : 0.21;
-                    expShade = Math.max(minShade, Math.min(1.46, expShade));
+                    const flatShade = ambient + 0.86 * Math.pow(flatIllum, 1.21);
+                    let expShade = ((ambient + 0.86 * contrastIllum) / flatShade) * (1.0 - cavity * 0.54) * (1.0 + ridge * 0.60);
+                    // 🔴 [2026-11-10 低丘防黑斑 + 高山深壑分级]
+                    //    平原上的低矮孤丘（<450m，如维罗纳—威尼斯间的尤加内丘陵）阴影下限抬高至 0.56，呈现柔和缓丘，绝不出现黑墨斑；
+                    //    真正的中高山脉（>680m）平滑释放至 0.28 深邃峡谷阴影。
+                    const baseMinShade = 0.56 - 0.28 * hillDepthT;
+                    const minShade = zC > 1200 ? Math.min(0.35, 0.28 + (zC - 1200) * 0.000035) : baseMinShade;
+                    expShade = Math.max(minShade, Math.min(1.44, expShade));
 
                     shadeFactor = 1 + (expShade - 1) * params.opacity;
                 }
@@ -1387,14 +1391,16 @@ function renderHillshade(
                 const alpineT = rampWorker(colorZ, treeLine, rowSnowline - 200);
 
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
-                    // 🔴 9-18 主人令「降低平原黄绿反差」＋ 2026-11-10 军事沙盘减法：
-                    //    平原保持柔和低饱和走廊，崇山峻岭与陡坡迅速收干鲜绿气候贴图，让位给冷灰褐岩体浮雕。
-                    const lowBlend = 0.28 + 0.30 * sandiness;
-                    const slopeMute = 1.0 - rampWorker(slopeGrad, 0.030, 0.14) * (1.0 - sandiness * 0.6);
-                    const elevMute = 1.0 - rampWorker(colorZ, 450, 1800) * 0.48 * (1.0 - sandiness * 0.7);
-                    const baseBlend = lowBlend * slopeMute * elevMute;
+                    // 🔴 9-18 主人令「降低平原黄绿反差」＋ 2026-11-10 修正：
+                    //    只按真实坡度（slopeGrad）衰减陡坡山脊的绿植贴图，绝不按海拔一刀切压掉高原盆地（如墨西哥谷地、关中、云贵坝子）的绿意。
+                    const lowBlend = 0.34 + 0.26 * sandiness;
+                    const flatBasinBoost = colorZ > 500
+                        ? (1.0 - rampWorker(slopeGrad, 0.015, 0.055)) * 0.14 * humidity
+                        : 0;
+                    const slopeMute = 1.0 - rampWorker(slopeGrad, 0.045, 0.18) * 0.62 * (1.0 - sandiness * 0.6);
+                    const baseBlend = Math.min(0.58, (lowBlend + flatBasinBoost) * slopeMute);
                     // 林线以上低地平原植被自然退隐，让位给高山植被与高寒裸岩
-                    const alpineTreeFade = 1.0 - alpineT * 0.65;
+                    const alpineTreeFade = 1.0 - alpineT * 0.58;
                     const blend = baseBlend * snowFade * alpineTreeFade * climateMat[idx + 3] / 255;
                     r += (climateMat[idx] - r) * blend;
                     g += (climateMat[idx + 1] - g) * blend;
@@ -1402,9 +1408,10 @@ function renderHillshade(
                 }
 
                 if (isLand && matTapA) {
-                    // ① 山地与高山自然带：900m 起中山植被渐入；林线以上转为高寒草甸与碎屑流
-                    const mont = rampWorker(colorZ, 900, 2200) * 0.38 * snowFade;
-                    const montWeight = Math.max(mont, alpineT * 0.52 * snowFade);
+                    // ① 山地与高山自然带：仅在有坡度起伏的山地（slopeGrad）或林线以上渐入，避免把湿润高原平坦谷地涂成枯黄草甸
+                    const montSlopeGate = rampWorker(slopeGrad, 0.022, 0.085);
+                    const mont = rampWorker(colorZ, 900, 2200) * 0.34 * montSlopeGate * snowFade;
+                    const montWeight = Math.max(mont, alpineT * 0.48 * snowFade);
                     if (montWeight > 0) {
                         if (mix2(texGr4, humidity * 0.7, texDs5, aridity + 0.3 * (1 - humidity), p)) {
                             r += (TX[0] - r) * montWeight; g += (TX[1] - g) * montWeight; b += (TX[2] - b) * montWeight;
@@ -1560,24 +1567,24 @@ function renderHillshade(
                     }
                 }
 
-                // ④ 坡面露岩与高山裸岩带（2026-11-10 军事沙盘强化：崇山峻岭压成冷峻的深灰褐色立体浮雕）：
-                // A. 坡面露岩：坡度 0.042（约 2.4°）起露岩，陡坡与山岭迅速转为冷灰褐岩石；
-                // B. 高山裸岩带：中山至高山随海拔与起伏度露出冷灰褐岩体基底。
+                // ④ 坡面露岩与高山裸岩带（2026-11-10 修正：只认真实陡坡与高山脊线，绝不把平坦高原盆地涂成灰褐泥地）：
+                // A. 坡面露岩：坡度 0.055（约 3.1°）起露岩，陡坡与山脊转为冷灰褐岩石；
+                // B. 高山裸岩带：林线以上随坡度与海拔露出岩石基底。
                 let nonVegRockBeach = 0;
                 if (isLand && matTapA && texRck) {
-                    const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.042) / 0.21));
-                    const mountRock = rampWorker(colorZ, 520, 1900) * rampWorker(slopeGrad, 0.018, 0.085) * 0.78;
-                    const alpineRock = alpineT * rampWorker(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.35, Math.min(1.0, slopeGrad / 0.07));
+                    const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.055) / 0.23));
+                    const mountRock = rampWorker(colorZ, 700, 2200) * rampWorker(slopeGrad, 0.040, 0.13) * 0.68;
+                    const alpineRock = alpineT * rampWorker(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
                     const rockT = Math.max(slopeT, mountRock, alpineRock);
                     if (rockT > 0 && sampleTex(texRck, p)) {
-                        const rockMax = 0.68 + 0.24 * Math.max(0, Math.min(1, (zC - 800) / 1500));
+                        const rockMax = 0.62 + 0.24 * Math.max(0, Math.min(1, (zC - 1000) / 1600));
                         const w = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
                         nonVegRockBeach = w;
                         const grey = TX[0] * 0.299 + TX[1] * 0.587 + TX[2] * 0.114;
-                        // 冷峻深灰褐色岩石基底（压低饱和度与明度，脱离草绿）
-                        let tr = (TX[0] + (grey - TX[0]) * 0.52) * 0.84 + 10;
-                        let tg = (TX[1] + (grey - TX[1]) * 0.56) * 0.82 + 5;
-                        let tb = (TX[2] + (grey - TX[2]) * 0.50) * 0.84 + 4;
+                        // 冷灰褐岩石基底（保留微弱冷橄榄灰调，使山林树木自然融于山体，不死黑脱节）
+                        let tr = (TX[0] + (grey - TX[0]) * 0.42) * 0.92 + 6;
+                        let tg = (TX[1] + (grey - TX[1]) * 0.40) * 0.92 + 5;
+                        let tb = (TX[2] + (grey - TX[2]) * 0.38) * 0.93 + 6;
                         const wet = humidity * 0.35;
                         if (wet > 0 && sampleTex(texRockWet, p)) {
                             tr += (TX[0] - tr) * wet; tg += (TX[1] - tg) * wet; tb += (TX[2] - tb) * wet;
@@ -1779,35 +1786,44 @@ function renderHillshade(
                         sb += (92 - sb) * k;
                     }
 
-                    // 🔴 [2026-11-10 军事沙盘做减法：浅色走廊 vs 冷峻深灰褐山体浮雕]
-                    //   1) 可通行的平原盆地（低海拔 + 平缓）：收低杂讯饱和度并柔和提亮为浅色走廊；
-                    //   2) 不可通行的崇山峻岭（高坡度 / 中高海拔）：整体去饱和压暗为冷峻深灰褐色，与平原走廊拉开鲜明层级。
+                    // 🔴 [2026-11-10 军事沙盘做减法（修正版）：按真实坡度区分「浅色通行走廊」与「冷灰褐险峻山脊」]
+                    //   1) 可通行的平原、河谷、高原盆地（不论海拔高低，只要地势平坦 slopeGrad 小）：
+                    //      保持干净柔和的浅色走廊底盘（湿润高原盆地同步修正海拔色阶的黄褐底色，恢复柔和绿洲/谷地感）；
+                    //   2) 不可通行的崇山峻岭（严格由陡坡 slopeGrad 驱动，绝不把高海拔平地误涂成灰褐泥地）：
+                    //      去饱和收敛为冷灰褐岩体，依靠 Hillshade 光影立起沟壑纵深，避免底色双重压黑发脏。
                     if (isLand) {
                         const snowKeep = Math.min(snowFade, 1 - Math.min(1, extraWinterSnowW * 0.85));
-                        const barrierW = Math.max(
-                            rampWorker(slopeGrad, 0.028, 0.14),
-                            rampWorker(colorZ, 520, 2100) * 0.72,
-                        ) * snowKeep;
-                        const corridorW = (1.0 - rampWorker(slopeGrad, 0.008, 0.028))
-                            * (1.0 - rampWorker(colorZ, 280, 620))
+                        const flatW = 1.0 - rampWorker(slopeGrad, 0.010, 0.034);
+                        const corridorW = flatW * snowKeep;
+                        const barrierW = rampWorker(slopeGrad, 0.038, 0.17)
+                            * (0.25 + 0.75 * rampWorker(colorZ, 220, 850))
                             * snowKeep;
+
+                        // 高海拔湿润与半湿润平坦盆地（如墨西哥谷地、云贵坝子、外高加索高原）：温和中和海拔 LUT 的焦黄褐色，回到自然温润谷地底色
+                        if (flatW > 0.05 && colorZ > 550 && humidity > 0.25 && sandiness < 0.40) {
+                            const basinGreenW = flatW * rampWorker(colorZ, 550, 1750) * rampWorker(humidity, 0.25, 0.65) * 0.42 * snowKeep;
+                            sr += (144 - sr) * basinGreenW;
+                            sg += (166 - sg) * basinGreenW;
+                            sb += (125 - sb) * basinGreenW;
+                        }
+
                         const baseLuma = sr * 0.299 + sg * 0.587 + sb * 0.114;
                         if (corridorW > 0.01) {
-                            // 平原盆地：去饱和 26%，微提浅暖沙盘走廊明度
-                            const desat = 0.26 * corridorW;
-                            sr = sr + (baseLuma - sr) * desat + 7.5 * corridorW;
-                            sg = sg + (baseLuma - sg) * desat + 6.5 * corridorW;
-                            sb = sb + (baseLuma - sb) * desat + 4.0 * corridorW;
+                            // 平原与平坦谷地走廊：轻度去饱和 20%，微提柔和沙盘明度
+                            const desat = 0.20 * corridorW;
+                            sr = sr + (baseLuma - sr) * desat + 5.5 * corridorW;
+                            sg = sg + (baseLuma - sg) * desat + 5.0 * corridorW;
+                            sb = sb + (baseLuma - sb) * desat + 3.0 * corridorW;
                         }
                         if (barrierW > 0.01) {
-                            // 崇山峻岭：去饱和 44% 并压暗为冷峻深灰褐色立体岩体
-                            const desatM = 0.44 * barrierW;
-                            const coldR = baseLuma * 0.86 + 8;
-                            const coldG = baseLuma * 0.82 + 3;
-                            const coldB = baseLuma * 0.80 + 2;
-                            sr = (sr + (coldR - sr) * desatM) * (1.0 - 0.14 * barrierW);
-                            sg = (sg + (coldG - sg) * desatM) * (1.0 - 0.17 * barrierW);
-                            sb = (sb + (coldB - sb) * desatM) * (1.0 - 0.13 * barrierW);
+                            // 陡峭山岭：去饱和 36% 靠拢冷灰褐岩体，仅轻微压暗 5%（把明暗交给 Hillshade，不死黑、不与绿树脱节）
+                            const desatM = 0.36 * barrierW;
+                            const coldR = baseLuma * 0.90 + 6;
+                            const coldG = baseLuma * 0.88 + 5;
+                            const coldB = baseLuma * 0.85 + 4;
+                            sr = (sr + (coldR - sr) * desatM) * (1.0 - 0.05 * barrierW);
+                            sg = (sg + (coldG - sg) * desatM) * (1.0 - 0.06 * barrierW);
+                            sb = (sb + (coldB - sb) * desatM) * (1.0 - 0.04 * barrierW);
                         }
                     }
 
@@ -1815,22 +1831,21 @@ function renderHillshade(
                     let sOutG = sg * shadeFactor;
                     let sOutB = sb * shadeFactor;
 
-                    // 瑞士制图学天光散射（Imhof relief fill：适度收敛，保留深谷冷峻暗部对比）
-                    if (!isWater && zC > 0 && shadeFactor < 0.94) {
-                        const shadowDepth = (0.94 - shadeFactor) / 0.94;
-                        const elevSky = Math.min(1.0, 0.55 + Math.max(0, zC) * 0.00014 + extraWinterSnowW * 0.18);
-                        const skyW = shadowDepth * shadowDepth * (0.20 + extraWinterSnowW * 0.02) * elevSky;
-                        sOutR += (124 - sOutR) * skyW * 0.32;
-                        sOutG += (148 - sOutG) * skyW * 0.42;
-                        sOutB += (182 - sOutB) * skyW * 0.62;
+                    // 瑞士制图学天光散射（Imhof relief fill：保留深谷冷蓝灰散射通透感，消除焦黑斑块）
+                    if (!isWater && zC > 0 && shadeFactor < 0.95) {
+                        const shadowDepth = (0.95 - shadeFactor) / 0.95;
+                        const elevSky = Math.min(1.0, 0.62 + Math.max(0, zC) * 0.00015 + extraWinterSnowW * 0.18);
+                        const skyW = shadowDepth * shadowDepth * (0.25 + extraWinterSnowW * 0.02) * elevSky;
+                        sOutR += (132 - sOutR) * skyW * 0.35;
+                        sOutG += (158 - sOutG) * skyW * 0.45;
+                        sOutB += (196 - sOutB) * skyW * 0.68;
                     }
 
-                    // 山川坡面光影加强（加大山脊与沟壑的明暗反差）
+                    // 山川坡面光影加强（严格按真实坡度 slopeRelief 与山体高度分级驱动，平原低丘温和、崇山峻岭深邃）
                     if (isLand) {
-                        const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.020) / 0.220));
-                        const elevRelief = Math.max(0, Math.min(1, (colorZ - 220) / 1500));
-                        const reliefWeight = Math.max(slopeRelief, elevRelief * 0.60);
-                        const reliefGain = 1 + 0.28 * reliefWeight;
+                        const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.022) / 0.220));
+                        const mountScale = 0.35 + 0.65 * rampWorker(colorZ, 180, 720);
+                        const reliefGain = 1 + 0.24 * slopeRelief * mountScale;
                         sOutR = sr + (sOutR - sr) * reliefGain;
                         sOutG = sg + (sOutG - sg) * reliefGain;
                         sOutB = sb + (sOutB - sb) * reliefGain;
