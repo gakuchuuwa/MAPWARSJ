@@ -1602,6 +1602,89 @@ export class Scene13GroundLayerGL {
   }
 
   /**
+   * 为战术大山（MOUNTAIN_01~11）及其环山树林隆起双层自然高地丘陵台基（主峰平顶 4.0~4.8 级 + 山麓二级阶梯台地 2.8~3.2 级 + 外坡）：
+   * 确保每座大山及山脚四周的树木都稳立在高地、丘陵山之上，绝不悬在平地上。调用后需调 flushFoundation() 生效。
+   */
+  public raiseMountainHillMound(
+    screenX: number,
+    screenY: number,
+    W: number,
+    H: number,
+    mScale = 2.0,
+    seed = 1,
+    isForbiddenScreen?: (sx: number, sy: number) => boolean,
+  ): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    if (!c) return;
+    const N = this.N;
+    const V = N + 1;
+    const scaleRatio = Math.max(0.65, Math.min(1.25, mScale / 2.0));
+    const rCore = 2.8 * scaleRatio;      // 大山核心主峰平顶半径（格）
+    const rBench = 5.2 * scaleRatio;     // 环山林木所在的二级丘陵台地半径（格）
+    const slopeW = 3.4 * scaleRatio;     // 外围丘陵斜坡宽度（格）
+    const maxR = rBench + slopeW + 1.5;
+
+    const p1 = ((seed * 1.73) % 6.28318);
+    const p2 = ((seed * 2.91 + 1.1) % 6.28318);
+    const curCenterElev = this.elevationLevelAt(screenX, screenY, W, H);
+    const summitH = Math.max(curCenterElev, 4.2 + ((Math.abs(seed) % 3) * 0.3));
+    const benchH = Math.max(2.8, Math.min(3.5, summitH - 1.2));
+
+    const x0 = Math.max(1, Math.floor(c.gx - maxR - 1));
+    const x1 = Math.min(N - 1, Math.ceil(c.gx + maxR + 1));
+    const y0 = Math.max(1, Math.floor(c.gy - maxR - 1));
+    const y1 = Math.min(N - 1, Math.ceil(c.gy + maxR + 1));
+
+    const isWetNear = (gx: number, gy: number): boolean => {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const nx = Math.max(0, Math.min(N - 1, gx + dx));
+          const ny = Math.max(0, Math.min(N - 1, gy + dy));
+          if ((this.smoothWater[ny * N + nx] ?? 0) >= 0.14) return true;
+        }
+      }
+      return false;
+    };
+
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        if (isWetNear(x, y)) continue;
+        if (isForbiddenScreen) {
+          const pt = this.cellToScreen(x, y, W, H);
+          if (isForbiddenScreen(pt.x, pt.y)) continue;
+        }
+        const dx = x - c.gx;
+        const dy = y - c.gy;
+        const theta = Math.atan2(dy, dx);
+        const rJitter = 1.0 + 0.13 * Math.sin(2 * theta + p1) + 0.08 * Math.cos(3 * theta + p2);
+        const dist = Math.hypot(dx, dy) / rJitter;
+        if (dist >= rBench + slopeW) continue;
+
+        let targetH = 0;
+        if (dist <= rCore) {
+          targetH = summitH;
+        } else if (dist <= rCore + 1.2) {
+          const s = (dist - rCore) / 1.2;
+          const t = s * s * (3 - 2 * s);
+          targetH = summitH + (benchH - summitH) * t;
+        } else if (dist <= rBench) {
+          targetH = benchH;
+        } else {
+          const s = Math.min(1, (dist - rBench) / slopeW);
+          const t = s * s * (3 - 2 * s);
+          targetH = benchH * (1 - t);
+        }
+
+        const idx = y * V + x;
+        if (targetH > this.cornerElev[idx]) {
+          this.cornerElev[idx] = targetH;
+        }
+      }
+    }
+    this.elevDirty = true;
+  }
+
+  /**
    * 🔴 [2026-10-12 主人令「大城（Big City）：主城坐落开阔平原，周边远景散落 1~3 级开阔缓坡与远山」]
    * 大城都城宏伟开阔地势生成：
    * 1. 广袤平原主城基底：城池与宽幅护城河整平在 0 级开阔平坦地基上，保障大军排兵布阵与城防完整；

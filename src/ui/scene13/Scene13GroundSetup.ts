@@ -20,7 +20,7 @@ import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { canSpawnDeepSeaWhaleOrNessie } from '../../map/MarineLifeLayer';
-import { applyDeCityToGround, decloneBattlefieldRocks, getClimateMountainPool } from './Scene13CityLayout';
+import { applyDeCityToGround, decloneBattlefieldRocks, getClimateMountainPool, spawnMountainFoothillTrees } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
@@ -1217,25 +1217,35 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
                 : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`];
 
-    // ── 0. 野战远翼大山（高地/山地在远翼高台摆 1 座 DE 大山，避开中央交战区） ──
+    // ── 0. 野战远翼大山（高地/山地在远翼高地丘陵山中心摆 1 座 DE 大山，避开中央交战区） ──
     if (elevM >= 350 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') {
         const mountainPool = getClimateMountainPool.call(this, isSnow);
         const N = glLayer.data?.width ?? 120;
-        const hillCands: Array<{ x: number; y: number; elev: number }> = [];
-        for (let gy = 5; gy <= N - 5; gy += 3) {
-            for (let gx = 5; gx <= N - 5; gx += 3) {
+        const hillCands: Array<{ x: number; y: number; elev: number; plateauElev: number }> = [];
+        for (let gy = 6; gy <= N - 6; gy += 3) {
+            for (let gx = 6; gx <= N - 6; gx += 3) {
                 const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
                 if (Math.abs(pt.y - cy) < 500) continue;
                 if (!isSafeSpot(pt.x, pt.y, 680, 560, 480)) continue;
                 const el = glLayer.elevationLevelAt(pt.x, pt.y, VW, VH);
-                if (el >= 1.2) hillCands.push({ x: pt.x, y: pt.y, elev: el });
+                if (el < 1.8) continue;
+                let sumE = 0;
+                for (const dy of [-2, 0, 2]) {
+                    for (const dx of [-2, 0, 2]) {
+                        const np = glLayer.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, VW, VH);
+                        sumE += glLayer.elevationLevelAt(np.x, np.y, VW, VH);
+                    }
+                }
+                hillCands.push({ x: pt.x, y: pt.y, elev: el, plateauElev: sumE / 9 });
             }
         }
         if (hillCands.length > 0) {
-            hillCands.sort((a, b) => b.elev - a.elev || (rnd() - 0.5));
+            hillCands.sort((a, b) => (b.plateauElev - a.plateauElev) || (b.elev - a.elev) || (rnd() - 0.5));
             const hc = hillCands[0];
             const mAsset = mountainPool[Math.floor(rnd() * mountainPool.length)];
             pushRelic(mAsset, hc.x, hc.y, rnd() < 0.5, 1.85, 0, 0, true);
+            spawnMountainFoothillTrees.call(this, hc.x, hc.y, 1.85, 0);
+            glLayer.flushFoundation();
         }
     }
 

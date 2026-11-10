@@ -45,6 +45,7 @@ export const ELITE_HISTORIC_NAMES: ReadonlySet<string> = new Set([
     '解烦兵',
     '锦帆贼',
     '静塞军',
+    '泾原军',
     '控鹤都',
     '六班直',
     '龙卫骑',

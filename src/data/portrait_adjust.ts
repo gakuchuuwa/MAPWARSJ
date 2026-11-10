@@ -11026,6 +11026,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.32,
             "offsetX": 11,
             "offsetY": 24
+        },
+        "/assets/JIANGNAN/song_zhangru.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

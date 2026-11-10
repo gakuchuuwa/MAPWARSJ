@@ -454,4 +454,8 @@ function installRendererPanSkip(map: L.Map, pane: string): void {
         orig.call(this);
         if (m) origin = m.getPixelOrigin();
     };
+    // 渲染器上图时已经把**原来的** _update 登记给了 moveend（getEvents 当时取的引用），
+    // 只换实例属性不够，得把监听也换成新函数；之后下图 / 再上图走 getEvents，拿到的就是新函数。
+    map.off('moveend', orig, r);
+    map.on('moveend', r._update, r);
 }

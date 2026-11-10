@@ -5078,7 +5078,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'tang_zhuci', cityId: 'city_changan', factionId: 'da_qin', generalName: '朱泚', portrait: '/assets/CENTRAL/tang_zhuci.png', eliteName: '泾原乱兵', eliteTier: 4 },
+        { generalId: 'tang_zhuci', cityId: 'city_changan', factionId: 'da_qin', generalName: '朱泚', portrait: '/assets/CENTRAL/tang_zhuci.png', eliteName: '泾原军', eliteTier: 4 },   // 🔴 [2026-11-10 主人令「哪有自己叫自己乱兵的」] 原「泾原乱兵」是唐史站在朝廷立场的贬称；部队本为泾原节度使镇军、783 年赴长安哗变拥立朱泚，按史原名改「泾原军」（3 字史源名，已登记 ELITE_HISTORIC_NAMES）
 
 
 

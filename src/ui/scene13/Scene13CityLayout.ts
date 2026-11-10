@@ -18,7 +18,7 @@ import {
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { syncTradeCartAnimals } from './Scene13Animals';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
-import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
+import { bareSandRejectsTree, DESERT_TREE_ASSETS, deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
 import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree, plantTreeAt, ZONE_PLANTS } from '../../world/environment/plantCatalog';
 import { envZoneAt, type EnvZone } from '../../world/environment/envZones';
@@ -2465,31 +2465,57 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             return true;
         };
 
-        const hillCandidates: Array<{ x: number; y: number; elev: number }> = [];
-        for (let gy = 4; gy <= N - 4; gy += 2) {
-            for (let gx = 4; gx <= N - 4; gx += 2) {
+        const hillCandidates: Array<{ x: number; y: number; elev: number; plateauElev: number; tie: number }> = [];
+        const fallbackCandidates: Array<{ x: number; y: number; elev: number; plateauElev: number; tie: number }> = [];
+        for (let gy = 5; gy <= N - 5; gy += 2) {
+            for (let gx = 5; gx <= N - 5; gx += 2) {
                 const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
                 if (!isMountainSafeSpot(gx, gy, pt)) continue;
                 const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                if (elev < 2.0) continue;
-                hillCandidates.push({
+                // 计算 3×3 邻域（间隔 2 格）的平顶丘陵均值高程，确保大山落在真正的高地、丘陵山平顶中心而非斜坡边缘
+                let sumElev = 0;
+                let minNbrElev = elev;
+                for (const dy of [-2, 0, 2]) {
+                    for (const dx of [-2, 0, 2]) {
+                        const np = gl.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, W, H);
+                        const ne = gl.elevationLevelAt(np.x, np.y, W, H);
+                        sumElev += ne;
+                        if (ne < minNbrElev) minNbrElev = ne;
+                    }
+                }
+                const plateauElev = sumElev / 9;
+                const candItem = {
                     x: pt.x + (mRnd() - 0.5) * 18,
                     y: pt.y + (mRnd() - 0.5) * 10,
                     elev,
-                });
+                    plateauElev,
+                    tie: mRnd(),
+                };
+                if (elev >= 2.2 && plateauElev >= 1.8) {
+                    hillCandidates.push(candItem);
+                } else {
+                    fallbackCandidates.push(candItem);
+                }
             }
         }
-        // 纯随机打散洗牌，随机放到地图的高地上去
-        hillCandidates.sort(() => mRnd() - 0.5);
+        // 优先选取平顶丘陵高地中心（按高地层级从高到低排，同层级随机打散）；若原图高地不足，从远翼安全点补足并隆起丘陵山台基
+        hillCandidates.sort((a, b) => {
+            const tierA = (a.elev >= 3.0 && a.plateauElev >= 2.5) ? 2 : 1;
+            const tierB = (b.elev >= 3.0 && b.plateauElev >= 2.5) ? 2 : 1;
+            if (tierA !== tierB) return tierB - tierA;
+            return a.tie - b.tie;
+        });
+        fallbackCandidates.sort((a, b) => (b.plateauElev - a.plateauElev) || (a.tie - b.tie));
+        const allMountainCandidates = [...hillCandidates, ...fallbackCandidates];
 
-                const targetCount = this.defenderCityType === 'pass'
+        const targetCount = this.defenderCityType === 'pass'
             ? (4 + Math.floor(mRnd() * 3))
             : isHighlandSite
                 ? (1 + Math.floor(mRnd() * 2))
                 : 1;
         const chosenPts: Array<{ x: number; y: number }> = [];
         let placed = 0;
-        for (const cand of hillCandidates) {
+        for (const cand of allMountainCandidates) {
             if (placed >= targetCount) break;
             let mx = cand.x, my = cand.y;
             if (placed === 0 && this.passMountainConfig?.x !== undefined) mx = this.passMountainConfig.x;
@@ -2532,8 +2558,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 obstructionTouched: false,
                 obstructionDisabled: true,
             });
+            spawnMountainFoothillTrees.call(this, mx, my, mScale, placed, {
+                inCity,
+                inGateRoad,
+                inMoat: inMoat ?? undefined,
+                inCorridor: inBattleCorridor,
+                markCityOutskirts: true,
+            });
             placed++;
         }
+        gl.flushFoundation();
     }
 
     for (const sp of this.decorSprites) {
@@ -2741,6 +2775,310 @@ export function getClimateMountainPool(this: Scene13WarLayer, isSnowScene: boole
         return ['MOUNTAIN_06', 'MOUNTAIN_07', 'MOUNTAIN_08'];
     }
     return ['MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_05'];
+}
+
+export interface MountainFoothillOptions {
+    inCity?: (x: number, y: number) => boolean;
+    inGateRoad?: (x: number, y: number) => boolean;
+    inMoat?: (x: number, y: number) => boolean;
+    inCorridor?: (pt: { x: number; y: number }) => boolean;
+    markCityOutskirts?: boolean;
+}
+
+/**
+ * 在战术地图大山（MOUNTAIN_01~11）山麓四周布置与所在地区、气候、季节匹配的环山林木与灌丛：
+ *   · 树种严格对齐 22 环境区植物总表（ZONE_PLANTS[envZoneAt]）+ 区域代表树种（pickTree + plantRegionalizeTree）+ 四季/真积雪换装（seasonalDeTree）；
+ *   · 严格遵守 DE 地形护栏：纯沙地（14 Desert / 2 Beach）与沙漠主题只放沙漠树种（PALM/ACACIA/DRAGON_TREE/BUSH_TREE_A），温带/泰加不放棕榈，水体不放树；
+ *   · 沿山脚与左右山麓椭圆外沿分簇错落排布（重点落在山前坡脚 dy>0 与左右两翼山腰，使山脚与地面自然衔接，绝不堆在山体正中或挡住交战走廊）。
+ */
+export function spawnMountainFoothillTrees(
+    this: Scene13WarLayer,
+    mx: number,
+    my: number,
+    mScale: number,
+    mountainIdx: number,
+    opts?: MountainFoothillOptions,
+): void {
+    const gl = this.groundLayerGL;
+    const W = this.worldCX * 2;
+    const H = this.worldCY * 2;
+    if (W <= 0 || H <= 0) return;
+
+    // 先在大山底部与山麓四周隆起双层自然高地丘陵台基（主峰平顶 + 环山林木所在的二级丘陵台地 + 斜坡），确保大山和周围树木都稳立在高地、丘陵山上
+    if (gl) {
+        const isForbiddenForHill = (sx: number, sy: number): boolean => {
+            if (opts?.inCity?.(sx, sy) || opts?.inGateRoad?.(sx, sy) || opts?.inMoat?.(sx, sy)) return true;
+            for (const sp of this.spawns) {
+                if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.45) < 280) return true;
+            }
+            return false;
+        };
+        gl.raiseMountainHillMound(mx, my, W, H, mScale, mountainIdx + 1, isForbiddenForHill);
+        for (let i = this.decorSprites.length - 1; i >= 0; i--) {
+            const sp = this.decorSprites[i];
+            if (sp.asset.startsWith('MOUNTAIN_') && Math.hypot(sp.x - mx, sp.y - my) < 8) {
+                sp.lift = gl.elevationLiftAt(sp.x, sp.y, W, H);
+                break;
+            }
+        }
+    }
+
+    const defRec: any = this.defenderCityRecord();
+    const siteLat = defRec?.lat ?? this.centerLat ?? 30;
+    const siteLng = defRec?.lng ?? this.centerLng ?? 110;
+    const siteBaseTile = String(this.environmentPlan?.baseTerrain ?? 'gr1');
+    const deMapTheme = String(this.environmentPlan?.deMapTheme ?? '');
+    const styleKey = String(defRec?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? this.sideCulture?.[1] ?? this.sideCulture?.[0] ?? 'CENTRAL').toUpperCase();
+
+    const winterFlag = queryWinterSnow(siteLat, siteLng);
+    const winterSnowOk = winterFlag === null ? true : (winterFlag > 0 && winterFlag !== 4);
+    const isSnow = winterSnowOk && (Boolean(gl?.isIce) || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile));
+    const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
+    const rawSeason4: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+        ? rawCalSeason
+        : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+    const calSeason: TreeSeason = localSeasonAtLat(rawSeason4, siteLat);
+
+    // Deterministic RNG per mountain
+    let fSeed = ((Math.round(mx * 31 + my * 57) ^ Math.imul(mountainIdx + 1, 0x9e3779b9) ^ Math.round(siteLat * 1000 + siteLng * 100)) >>> 0) || 0x6c8e9cf5;
+    const fRnd = (): number => {
+        fSeed = Math.imul(fSeed ^ (fSeed >>> 15), 0x85ebca6b) >>> 0;
+        fSeed = Math.imul(fSeed ^ (fSeed >>> 13), 0xc2b2ae35) >>> 0;
+        return ((fSeed ^ (fSeed >>> 16)) >>> 0) / 4294967296;
+    };
+
+    const zoneId: EnvZone = envZoneAt(siteLat, siteLng);
+    const zoneMain = ZONE_PLANTS[zoneId].main;
+    const leadPick = pickTree({
+        baseTile: siteBaseTile,
+        lat: siteLat,
+        lng: siteLng,
+        season: calSeason,
+        isSiege: this.battleType === 'siege',
+        buildingStyle: styleKey,
+    });
+
+    const isDesertTheme = /desert/i.test(deMapTheme);
+    const isTempOrTaigaTheme = /taiga|temperate/i.test(deMapTheme) && !isDesertTheme;
+    const isSandOrGobiTile = /^(des|pal|ds5|qs|pal1)/i.test(siteBaseTile);
+    const isGobiOrColdArid = /^(ds5|qs|pal1)/i.test(siteBaseTile) || siteLat >= 35.0;
+    const isAridGround = isDesertTheme || isSandOrGobiTile || /^(ds2|gr5|gr7|gravel_default|rck)$/i.test(siteBaseTile);
+
+    // Build weighted regional tree pool matching ZONE_PLANTS + cultural leadPick
+    const weightedTrees: string[] = [];
+    const leadRegional = plantRegionalizeTree(siteLat, siteLng, leadPick, fRnd());
+    if (leadRegional) {
+        weightedTrees.push(leadRegional, leadRegional);
+    }
+    for (const [tKey, w] of zoneMain) {
+        const count = Math.max(1, Math.round(w));
+        for (let k = 0; k < count; k++) weightedTrees.push(tKey);
+    }
+    if (weightedTrees.length === 0) {
+        weightedTrees.push(plantTreeAt(siteLat, siteLng, fRnd()));
+    }
+
+    const N = gl?.data?.width ?? 120;
+    const WATER_TERRAINS = new Set([1, 4, 15, 22, 23, 58, 95, 96]);
+    const terrainAtScreen = (sx: number, sy: number): number => {
+        if (!gl || !gl.data?.terrain) return -1;
+        const c = gl.screenToCell(sx, sy, W, H);
+        if (!c) return -1;
+        const gx = Math.max(0, Math.min(N - 1, Math.round(c.gx)));
+        const gy = Math.max(0, Math.min(N - 1, Math.round(c.gy)));
+        return gl.data.terrain[gy * N + gx] ?? -1;
+    };
+
+    const resolveFoothillTreeAt = (sx: number, sy: number, slotIdx: number): string | null => {
+        const tid = terrainAtScreen(sx, sy);
+        if (WATER_TERRAINS.has(tid)) return null;
+        const roll01 = ((slotIdx * 0.31 + fRnd() * 0.69) % 1);
+        const deTerrTree = tid >= 0 ? deTerrainSeasonalTree(tid, calSeason, isSnow) : null;
+        let cand = deTerrTree
+            ? plantRegionalizeTree(siteLat, siteLng, deTerrTree, roll01)
+            : plantRegionalizeTree(siteLat, siteLng, weightedTrees[Math.floor(fRnd() * weightedTrees.length)], roll01);
+
+        // Strict desert / bare sand guard (Rule A & B of _verify_forest_on_sand.mjs)
+        if (isDesertTheme || isSandOrGobiTile || bareSandRejectsTree(tid, cand)) {
+            if (/PINE/i.test(cand) || !DESERT_TREE_ASSETS.has(cand)) {
+                if (isDesertTheme) {
+                    const desertPool = siteLat < 35.0
+                        ? ['PALM', 'PALM', 'ACACIA', 'BUSH_TREE_A']
+                        : ['PALM', 'BUSH_TREE_A', 'ACACIA'];
+                    cand = desertPool[slotIdx % desertPool.length];
+                } else {
+                    cand = isGobiOrColdArid ? 'BUSH_TREE_A' : 'PALM';
+                }
+            }
+        }
+        // Strict temperate / taiga guard (Rule D: no PALM / DRAGON_TREE / WAX_PALM on temperate/taiga)
+        if (isTempOrTaigaTheme && /^(PALM|DRAGON_TREE|WAX_PALM)$/i.test(cand)) {
+            const nonDesertZone = zoneMain.map(([t]) => t).filter((t) => !/^(PALM|DRAGON_TREE|WAX_PALM)$/i.test(t));
+            cand = nonDesertZone.length > 0 ? nonDesertZone[slotIdx % nonDesertZone.length] : (isSnow ? 'SNOW_PINE' : 'OAK');
+        }
+        // High plateau gravel guard
+        if (siteBaseTile === 'gravel_default' && /^(SNOW_PINE|PINE|ASIAN_PINE)$/i.test(cand)) {
+            cand = zoneId === 'TIB' ? 'CYPRESS' : 'BUSH_TREE_A';
+        }
+
+        const finalTree = seasonalDeTree(cand, calSeason, isSnow);
+        if (bareSandRejectsTree(tid, finalTree)) return null;
+        if (isDesertTheme && /PINE/i.test(finalTree)) return null;
+        if (isTempOrTaigaTheme && /^(PALM|DRAGON_TREE|WAX_PALM)$/i.test(finalTree)) return null;
+        return finalTree;
+    };
+
+    // Determine target foothill tree count by region natural forest cover
+    const ZONE_FOOTHILL_COUNT: Readonly<Record<EnvZone, number>> = {
+        SEA: 13, SAS: 12, SWM: 13, EAS: 13, NEB: 12, NEO: 13, WEU: 11, CEU: 11, SIB: 11,
+        NCP: 9,  MED: 9,  AND: 8,  NAM: 10, AFR: 8,
+        LOE: 7,  STP: 6,  TIB: 6,  WAH: 6,  AUS: 6,
+        CAD: 4,  HDS: 4,  ARC: 4,
+    };
+    const scaleFactor = Math.max(0.65, Math.min(1.15, mScale / 1.85));
+    const targetTrees = Math.max(3, Math.round((ZONE_FOOTHILL_COUNT[zoneId] ?? 8) * scaleFactor));
+
+    // Mountain base ellipse in isometric screen coordinates (centered slightly below mountain anchor)
+    const baseCx = mx;
+    const baseCy = my + 14 * mScale;
+    const rxBase = 278 * mScale;
+    const ryBase = 138 * mScale;
+
+    // Candidate angles around the mountain foothills:
+    // Front slopes & lower flanks (sin >= -0.08) + left/right upper shoulders (|cos| >= 0.72),
+    // grouped into natural inner-foot & outer-skirt rings so trees form organic foothill groves
+    const angleSlots: Array<{ ang: number; radMul: number }> = [
+        // Left flank & front-left foothill cluster
+        { ang: 0.88 * Math.PI, radMul: 0.92 },
+        { ang: 0.78 * Math.PI, radMul: 1.04 },
+        { ang: 0.83 * Math.PI, radMul: 1.20 },
+        { ang: 0.66 * Math.PI, radMul: 0.96 },
+        { ang: 0.71 * Math.PI, radMul: 1.15 },
+        // Front valley foot
+        { ang: 0.54 * Math.PI, radMul: 0.94 },
+        { ang: 0.44 * Math.PI, radMul: 0.96 },
+        { ang: 0.49 * Math.PI, radMul: 1.14 },
+        // Right flank & front-right foothill cluster
+        { ang: 0.32 * Math.PI, radMul: 0.95 },
+        { ang: 0.27 * Math.PI, radMul: 1.15 },
+        { ang: 0.18 * Math.PI, radMul: 0.92 },
+        { ang: 0.10 * Math.PI, radMul: 1.06 },
+        { ang: 0.14 * Math.PI, radMul: 1.22 },
+        // Upper-left & upper-right mountain shoulders (peeking out from both sides of the peak)
+        { ang: -0.06 * Math.PI, radMul: 0.98 },
+        { ang: -0.15 * Math.PI, radMul: 1.08 },
+        { ang: -0.94 * Math.PI, radMul: 0.98 },
+        { ang: -0.85 * Math.PI, radMul: 1.08 },
+    ];
+    // Deterministic shuffle while biasing front/flank slots first
+    for (let i = angleSlots.length - 1; i > 0; i--) {
+        const j = Math.floor(fRnd() * (i + 1));
+        const tmp = angleSlots[i];
+        angleSlots[i] = angleSlots[j];
+        angleSlots[j] = tmp;
+    }
+
+    const TREE_OR_BLD_RE = /^(?:BUILDING:|BATTLEFIELD:|RESOURCE:|.*(?:TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE|SPRUCE))/i;
+    const isTooCloseToExisting = (tx: number, ty: number, minIsoGap: number): boolean => {
+        for (const sp of this.decorSprites) {
+            if (sp.asset.startsWith('MOUNTAIN_')) continue;
+            if (!TREE_OR_BLD_RE.test(sp.asset)) continue;
+            if (Math.hypot(tx - sp.x, (ty - sp.y) * 1.45) < minIsoGap) return true;
+        }
+        return false;
+    };
+
+    const isSpotSafe = (tx: number, ty: number): boolean => {
+        if (tx < 120 || tx > W - 120 || ty < 90 || ty > H - 90) return false;
+        if (opts?.inCity?.(tx, ty) || opts?.inGateRoad?.(tx, ty) || opts?.inMoat?.(tx, ty)) return false;
+        if (gl) {
+            if (gl.isWaterAt(tx, ty, W, H)) return false;
+            const c = gl.screenToCell(tx, ty, W, H);
+            if (!c || gl.getWaterDensityAt(c.gx, c.gy) >= 0.18) return false;
+        }
+        for (const sp of this.spawns) {
+            if (Math.hypot(tx - sp.x, (ty - sp.y) * 1.45) < 300) return false;
+        }
+        if (!this.deCity && Math.hypot(tx - W * 0.5, (ty - H * 0.5) * 1.45) < 380) return false;
+        return true;
+    };
+
+    const placedFoothillTrees: Array<{ x: number; y: number }> = [];
+    for (let idx = 0; idx < angleSlots.length && placedFoothillTrees.length < targetTrees; idx++) {
+        const slot = angleSlots[idx];
+        const ang = slot.ang + (fRnd() - 0.5) * 0.14;
+        const rad = slot.radMul + (fRnd() - 0.5) * 0.10;
+        const tx = Math.round(baseCx + Math.cos(ang) * rxBase * rad);
+        const ty = Math.round(baseCy + Math.sin(ang) * ryBase * rad);
+
+        if (!isSpotSafe(tx, ty)) continue;
+        if (isTooCloseToExisting(tx, ty, 92)) continue;
+
+        const treeAsset = resolveFoothillTreeAt(tx, ty, idx);
+        if (!treeAsset) continue;
+
+        this.ensureNatureAsset(treeAsset);
+        const lift = gl ? gl.elevationLiftAt(tx, ty, W, H) : 0;
+        const spr: DecorSprite = {
+            asset: treeAsset,
+            frame: Math.floor(fRnd() * 8),
+            x: tx,
+            y: ty,
+            flip: fRnd() < 0.5,
+            scale: 0.90 + fRnd() * 0.18,
+            layer: 'world',
+            z: 0,
+            lift,
+            indestructible: true,
+            obstruction: undefined,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        };
+        if (opts?.markCityOutskirts) (spr as any).cityOutskirts = true;
+        this.decorSprites.push(spr);
+        placedFoothillTrees.push({ x: tx, y: ty });
+
+        if (gl && !isAridGround && !isSnow) {
+            gl.addForestAt(tx, ty, W, H, 1.25);
+        }
+    }
+
+    // Companion foothill shrubs / underbrush at the base of the mountain trees
+    const shrubPool = isSnow
+        ? ['BUSH_TREE_B']
+        : isAridGround
+            ? ['BUSH_TREE_A', 'GRASS_DRY']
+            : (zoneId === 'SEA' || zoneId === 'SAS' || zoneId === 'SWM' || zoneId === 'EAS' || zoneId === 'NEO')
+                ? ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN']
+                : ['SHRUB_GREEN', 'BUSH_GREEN'];
+    const targetShrubs = Math.min(4, Math.max(1, Math.floor(placedFoothillTrees.length * 0.35)));
+    for (let si = 0; si < targetShrubs && si < placedFoothillTrees.length; si++) {
+        const baseTree = placedFoothillTrees[si];
+        const sx = baseTree.x + Math.round((fRnd() < 0.5 ? -1 : 1) * (22 + fRnd() * 18));
+        const sy = baseTree.y + Math.round(8 + fRnd() * 14);
+        if (!isSpotSafe(sx, sy)) continue;
+        const shAsset = shrubPool[si % shrubPool.length];
+        this.ensureNatureAsset(shAsset);
+        const shSpr: DecorSprite = {
+            asset: shAsset,
+            frame: Math.floor(fRnd() * 6),
+            x: sx,
+            y: sy,
+            flip: fRnd() < 0.5,
+            scale: 0.78 + fRnd() * 0.14,
+            layer: 'world',
+            z: -1,
+            lift: gl ? gl.elevationLiftAt(sx, sy, W, H) : 0,
+            indestructible: true,
+            obstruction: undefined,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        };
+        if (opts?.markCityOutskirts) (shSpr as any).cityOutskirts = true;
+        this.decorSprites.push(shSpr);
+    }
 }
 
 /** 地基层 DOM 跟着镜头走：城心屏幕位置 ＝ 画布中心 ＋ 平移 ＋ (城心 − 中心) × 缩放 */
@@ -3152,6 +3490,7 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
                 obstructionTouched: false,
                 obstructionDisabled: true,
             });
+            spawnMountainFoothillTrees.call(this, mX, mY, mScale, 0);
 
             // 2. 北翼大山（上方「两山夹一关」天险，与南翼处于同一气候风貌池中抽取；翻转互补）
             const northAsset = this.passMountainConfig.northAsset || pickMountain();
@@ -3177,6 +3516,7 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
                 obstructionTouched: false,
                 obstructionDisabled: true,
             });
+            spawnMountainFoothillTrees.call(this, nX, nY, nScale, 1);
         }
 
         // 🔴 [2026-10-15 主人令「所有的栅栏，城墙都是一样的，不要搞那么复杂，都是可以被打坍塌的」]

@@ -429,7 +429,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/death_${dir}.png`),
         },
-        // 【浪人】帝国时代2征服者版（非决定版）武士，8方向，由 graphics.drs 的 SLP 977/974/980/981 解出，2026-11-04
+        // 【浪人】帝国时代2征服者版（非决定版）武士，8方向，由 graphics.drs 的 SLP 984/974/980/977 解出，2026-11-04
         'ronin': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/attack_${dir}.png`),
