@@ -19,7 +19,7 @@ import type { GameMap } from '../map/GameMap';
 import { getCultureNavalShip } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
-import { getTourChain } from './TourRoutes';
+import { GLOBE_CHAIN, getTourChain } from './TourRoutes';
 import { tradeWindEffect } from '../map/TradeWindEffect';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
@@ -64,7 +64,7 @@ import { downloadLifeStoryPack } from './PlayerLifeStoryPack';
 
 /** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
 export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
-export type PlayerPlayMode = 'auto' | 'rest' | 'globe' | 'sail';
+export type PlayerPlayMode = 'auto' | 'rest' | 'globe';
 
 /** 从 fromLng 往西走到 toLng 要跨多少经度（0~360，跨 180° 经线自动接续） */
 function westwardDeg(fromLng: number, toLng: number): number {
@@ -711,7 +711,7 @@ export class PlayerHero {
         if (mode === 'auto') {
             this.useTourCaravan = false;
             this.useTourShip = false;
-        } else if (mode === 'globe' || mode === 'sail') {
+        } else if (mode === 'globe') {
             this.useTourCaravan = true;
             this.tourCaravanDir = null;
             this.useTourShip = true;
@@ -728,7 +728,7 @@ export class PlayerHero {
         }
         this.emitChange();
     }
-    public isTourMode(): boolean { return this.playMode === 'globe' || this.playMode === 'sail'; }
+    public isTourMode(): boolean { return this.playMode === 'globe'; }
     /**
      * 🔴 [2026-11-06 主人令]「给项目中的玩家添加商队和商船模型，如果切换到环球旅行，和环球航行的模式的时候，
      *    就自动切换到商队和商船的模式。」
@@ -859,8 +859,8 @@ export class PlayerHero {
      *     等主人把路画通后自动恢复，不会让玩家走冤枉路；
      *   · 陆路段（by=land）只走陆路，陆路不通才退到任意路；海路段只走海路。
      */
-    private planChainLeg(mode: 'globe' | 'sail', hereId: string, pos: { lat: number; lng: number }): boolean {
-        const chain = getTourChain(mode);
+    private planChainLeg(hereId: string, pos: { lat: number; lng: number }): boolean {
+        const chain = getTourChain();
         const n = chain.length;
         if (n < 2) return false;
         const cm = this.deps.cityManager;
@@ -871,7 +871,7 @@ export class PlayerHero {
             const direct = roadRegistry.findDirectEdgePath(from, to, by === 'sea');
             if (direct && direct.coordinates.length >= 2) return direct;
             let res = by === 'land' ? roadRegistry.findLandOnlyPath(from, to) : roadRegistry.findSeaOnlyPath(from, to);
-            if (!res && mode === 'globe') {
+            if (!res) {
                 res = roadRegistry.findDirectEdgePath(from, to) ?? roadRegistry.findPath(from, to);
             }
             return res && res.coordinates.length >= 2 ? res : null;
@@ -883,10 +883,10 @@ export class PlayerHero {
                 .sort((a, b) => getEuclideanDistance(pos, { lat: a.c.latitude, lng: a.c.longitude })
                     - getEuclideanDistance(pos, { lat: b.c.latitude, lng: b.c.longitude }));
             for (const x of near.slice(0, 8)) {
-                const res = pathOf(hereId, x.s.id, mode === 'sail' ? 'sea' : x.s.by);
+                const res = pathOf(hereId, x.s.id, x.s.by);
                 if (!res) continue;
                 this.tourIdx = x.i;
-                this.launchTourLeg(x.c, res, mode === 'sail');
+                this.launchTourLeg(x.c, res, false);
                 return true;
             }
             return false;
@@ -907,9 +907,13 @@ export class PlayerHero {
                 const straight = PlayerHero.greatCircleKm(hereCity.latitude, hereCity.longitude, dest.latitude, dest.longitude);
                 if (km > straight * 2 + 100 && k < n - 1) continue;
             }
+            if (j === 0 || j === GLOBE_CHAIN.length) {
+                // 完成一圈陆路或一圈海路进入下一圈，清空旧圈已访记录
+                this.recentTourStops = [hereId];
+            }
             this.tourIdx = j;
             this.tourPrevId = hereId;
-            this.launchTourLeg(dest, res, mode === 'sail');
+            this.launchTourLeg(dest, res, stop.by === 'sea');
             return true;
         }
         return false;
@@ -950,8 +954,8 @@ export class PlayerHero {
                 ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 30);
             if (!here) return;
             this.rememberTourStop(here);
-            // 🔴 [2026-11-05 主人令] 环球优先陆路、按知名商路链走（TourRoutes.GLOBE_CHAIN）；链走不通才退回旧的向西选址
-            if (this.planChainLeg('globe', here, pos)) return;
+            // 🔴 [2026-11-10 主人令] 环球与航行合并为「环球」：走一圈陆路（GLOBE_CHAIN），走一圈海路（SAIL_CHAIN）
+            if (this.planChainLeg(here, pos)) return;
             const dists = roadRegistry.getRoadDistancesKmFrom(here);
             const reach = [...dists.entries()]
                 .filter(([id, d]) => id !== here && d > 0)
@@ -1014,7 +1018,7 @@ export class PlayerHero {
         const startId = nearPort.id;
         this.rememberTourStop(startId);
         // 🔴 [2026-11-05 主人令] 航行只走海路、按知名大航海港口链走（TourRoutes.SAIL_CHAIN）；链走不通才退回旧针路表
-        if (this.planChainLeg('sail', startId, pos)) return;
+        if (this.planChainLeg(startId, pos)) return;
         let chosenDest: City | null = null;
         let chosenPath: Array<{ lat: number; lng: number; sea?: boolean }> | null = null;
 

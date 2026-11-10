@@ -13,7 +13,7 @@ import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { envZoneAt } from '../world/environment/envZones';
 import { forestPotentialAt } from '../world/environment/forestModel';
 import { AmbientFrameGate } from './AmbientFrameGate';
-import { isOpenOcean } from './MarineLifeLayer';
+import { isOpenOcean, canSpawnDeepSeaWhaleOrNessie } from './MarineLifeLayer';
 import {
     buildLivelihoodGeo, livelihoodCandidates, pickLivelihood, NOMADIC_HERDER_CULTURES,
     type LivelihoodCategory, type LivelihoodGeo,
@@ -225,6 +225,42 @@ const HUNT_DECAY_START_SEC = 13;
 const HUNT_CARRY_START_SEC = 23;
 const HUNT_RETURN_START_SEC = 27;
 const HUNT_NEXT_PREY_SEC = HUNT_RETURN_START_SEC;
+
+/**
+ * 🔴 真实海岸搁浅鲸鱼动态生态与生命周期（2026-11-10 主人令）：
+ * 1. 初期（0~45s 新搁浅）：抹香鲸/巨鲸完整搁浅于潮间浅滩，周围赶来 1~2 名村民/小船蹲跪采割（BEACHED_WHALE 100%）；
+ * 2. 中期（45~70s 采割肉尽）：鲸肉取空肉身渐隐，巨兽白骨残骸（ANIMAL_SKELETON）逐渐显现，采割者离去；
+ * 3. 终期（70~85s 潮汐流沙冲刷）：白骨受海水潮汐冲刷与流沙掩埋逐渐淡出消逝，海滩回归平静；
+ * 4. 彻底平息后，下一次在另一处外海海岸随机重新发生（不固定于单一据点、不写死同一经纬度）。
+ */
+const WHALE_STAGE_FRESH_SEC = 45;
+const WHALE_STAGE_DECAY_SEC = 25;
+const WHALE_STAGE_SKELETON_SEC = 18;
+const WHALE_STAGE_WASH_SEC = 12;
+const WHALE_TOTAL_LIFECYCLE_SEC = WHALE_STAGE_FRESH_SEC + WHALE_STAGE_DECAY_SEC + WHALE_STAGE_SKELETON_SEC + WHALE_STAGE_WASH_SEC; // 100 秒
+const MAX_CONCURRENT_BEACHED_WHALES = 2;
+
+interface DynamicCoastalWhale {
+    id: string;
+    cityId: string;
+    spawnTimeSec: number;
+    whalePos: Pt;
+    variant: number;
+    mirror: boolean;
+    villagers: Array<{
+        pos: Pt;
+        dir: 'VIL_MALE_HUNTER' | 'VIL_MALE_FORAGER';
+        action: 'gather' | 'work';
+        facing: number;
+        phase: number;
+    }>;
+    ships: Array<{
+        pos: Pt;
+        facing: number;
+        fishResource: string;
+        phase: number;
+    }>;
+}
 
 /** 67 文化 → 生计配置表（注意：陆地列表不含渔夫，所有渔业一律在海中生成渔船与海鱼群） */
 const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
@@ -571,6 +607,10 @@ export class CityLifeAmbientLayer {
     private cityPortDockCache = new Map<string, CityPortDock | null>();
     private visibleCitiesKey = '';
     private visibleCitiesCache: CityDataV2[] = [];
+    /** 真实海岸搁浅鲸鱼生态（自然随机偶发 + 完整生命周期） */
+    private activeCoastalWhales: DynamicCoastalWhale[] = [];
+    private lastWhaleSpawnCheckSec = 0;
+    private recentWhaleCityIds = new Set<string>();
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
 
     constructor(map: L.Map) {
@@ -1078,6 +1118,114 @@ export class CityLifeAmbientLayer {
         return { whalePos, villagerPositions, shipPositions };
     }
 
+    /**
+     * 动态海岸搁浅鲸鱼生态（真实偶发 + 完整生命周期）：
+     * 仅在外海大洋（isOpenOcean 且近海为 canSpawnDeepSeaWhaleOrNessie 深海区）海岸线上随机低频偶发；
+     * 经历 0~45s 新鲜采割 → 45~70s 采空化为白骨残骸 → 70~85s 潮汐冲刷消散 的完整自然历程。
+     */
+    private updateDynamicCoastalWhales(tSec: number): void {
+        if (this.activeCoastalWhales.length > 0) {
+            this.activeCoastalWhales = this.activeCoastalWhales.filter(
+                (w) => tSec - w.spawnTimeSec < WHALE_TOTAL_LIFECYCLE_SEC
+            );
+        }
+        if (this.activeCoastalWhales.length >= MAX_CONCURRENT_BEACHED_WHALES) return;
+        if (tSec - this.lastWhaleSpawnCheckSec < 12) return;
+        this.lastWhaleSpawnCheckSec = tSec;
+
+        const spawnChance = this.activeCoastalWhales.length === 0 ? 0.50 : 0.20;
+        if (Math.random() >= spawnChance) return;
+
+        let candCities = this.visibleCitiesCache.filter(
+            (c) => isOpenOcean(c.lat, c.lng) && !this.recentWhaleCityIds.has(c.id)
+        );
+        if (candCities.length === 0) {
+            this.recentWhaleCityIds.clear();
+            candCities = this.visibleCitiesCache.filter((c) => isOpenOcean(c.lat, c.lng));
+        }
+        if (candCities.length === 0) return;
+
+        const city = candCities[Math.floor(Math.random() * candCities.length)];
+        const baseAngle = Math.random() * Math.PI * 2;
+        let whaleSpot: { whalePos: Pt; villagerPositions: Pt[]; shipPositions: Pt[] } | null = null;
+        let foundSeaPos: Pt | null = null;
+
+        for (let attempt = 0; attempt < 8; attempt++) {
+            const ang = baseAngle + attempt * (Math.PI / 4) + (Math.random() - 0.5) * 0.3;
+            const seaSpot = this.findSeaFishingSpot(city.lat, city.lng, ang, (Math.random() - 0.5) * 2);
+            if (!seaSpot) continue;
+            if (!canSpawnDeepSeaWhaleOrNessie(seaSpot.homePos.lat, seaSpot.homePos.lng)) continue;
+            const spot = this.findCoastalWhaleSpot(city.lat, city.lng, seaSpot.homePos);
+            if (spot) {
+                whaleSpot = spot;
+                foundSeaPos = seaSpot.homePos;
+                break;
+            }
+        }
+
+        if (!whaleSpot || !foundSeaPos) return;
+
+        const companionCount = 1 + (Math.random() < 0.5 ? 0 : 1);
+        const useVillagers = whaleSpot.villagerPositions.length > 0
+            && (whaleSpot.shipPositions.length === 0 || Math.random() < 0.55);
+
+        const villagers: DynamicCoastalWhale['villagers'] = [];
+        const ships: DynamicCoastalWhale['ships'] = [];
+
+        if (useVillagers) {
+            const vList = whaleSpot.villagerPositions.slice(0, companionCount);
+            vList.forEach((vPos, idx) => {
+                const vDir = idx === 0 ? 'VIL_MALE_HUNTER' : 'VIL_MALE_FORAGER';
+                const vAct = vDir === 'VIL_MALE_HUNTER' ? 'gather' : 'work';
+                const vFacing = dirFromDelta(
+                    whaleSpot!.whalePos.lat - vPos.lat,
+                    whaleSpot!.whalePos.lng - vPos.lng
+                );
+                villagers.push({
+                    pos: vPos,
+                    dir: vDir,
+                    action: vAct,
+                    facing: vFacing,
+                    phase: Math.floor(Math.random() * 1000),
+                });
+            });
+        } else {
+            const sList = whaleSpot.shipPositions.slice(0, companionCount);
+            const fishPool = Math.abs(city.lat) > 42
+                ? ['SALMON_FISH', 'SHORE_FISH', 'TUNA_FISH']
+                : ['DORADO_FISH', 'TUNA_FISH', 'SHORE_FISH', 'SALMON_FISH'];
+            sList.forEach((sPos, idx) => {
+                const sFacing = dirFromDelta(
+                    whaleSpot!.whalePos.lat - sPos.lat,
+                    whaleSpot!.whalePos.lng - sPos.lng
+                );
+                ships.push({
+                    pos: sPos,
+                    facing: sFacing,
+                    fishResource: fishPool[Math.floor(Math.random() * fishPool.length)],
+                    phase: Math.floor(Math.random() * 1000),
+                });
+            });
+        }
+
+        this.recentWhaleCityIds.add(city.id);
+        if (this.recentWhaleCityIds.size > 12) {
+            const first = this.recentWhaleCityIds.values().next().value;
+            if (first) this.recentWhaleCityIds.delete(first);
+        }
+
+        this.activeCoastalWhales.push({
+            id: `whale_${city.id}_${Math.floor(tSec)}`,
+            cityId: city.id,
+            spawnTimeSec: tSec,
+            whalePos: whaleSpot.whalePos,
+            variant: Math.floor(Math.random() * 8),
+            mirror: Math.random() < 0.5,
+            villagers,
+            ships,
+        });
+    }
+
     /** 林场树丛：只有本年布局里抽到狩猎 / 伐木的据点才有；几何按「据点｜林场种类」固定缓存。 */
     private getOrCreateCityForest(city: CityDataV2, cat: 'forest_hunting' | 'forest_logging'): CityForestProp[] {
         const cacheKey = `${city.id}|${cat}`;
@@ -1196,7 +1344,6 @@ export class CityLifeAmbientLayer {
         const usedFarmLivestock = new Set<string>();
         // 🔴 2026-11-01 主人令「无论随机出几个渔业，最多出一个渔港」：同一据点最多只生成 1 座船坞/渔港
         let hasCityDock = false;
-        let hasCityBeachedWhale = false;
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(yk, i * 17 + 2);
             const h3 = strHash01(yk, i * 17 + 3);
@@ -1224,105 +1371,6 @@ export class CityLifeAmbientLayer {
                     const winterActive = !isColdWinter || i === 0;
                     // 船坞只随机出现在部分渔业组合，且同一据点最多只出 1 座渔港；样式跟随文化，位置固定在近岸港湾。
                     const wantsDock = !hasCityDock && strHash01(yk, i * 17 + 301) < 0.38;
-                    if (!wantsDock && !hasCityBeachedWhale && strHash01(yk, i * 17 + 305) < 0.36) {
-                        const whaleSpot = this.findCoastalWhaleSpot(cLat, cLng, seaSpot.homePos);
-                        if (whaleSpot) {
-                            hasCityBeachedWhale = true;
-                            const beachedWhale = {
-                                pos: whaleSpot.whalePos,
-                                variant: Math.floor(strHash01(yk, i * 17 + 306) * 8),
-                                mirror: strHash01(yk, i * 17 + 307) < 0.5,
-                            };
-                            const companionCount = 1 + (strHash01(yk, i * 17 + 309) < 0.5 ? 0 : 1);
-                            const useVillagers = whaleSpot.villagerPositions.length > 0
-                                && (whaleSpot.shipPositions.length === 0 || strHash01(yk, i * 17 + 308) < 0.55);
-                            if (useVillagers) {
-                                const vList = whaleSpot.villagerPositions.slice(0, companionCount);
-                                vList.forEach((vPos, idx) => {
-                                    const vDir = idx === 0 ? 'VIL_MALE_HUNTER' : 'VIL_MALE_FORAGER';
-                                    const vAct = vDir === 'VIL_MALE_HUNTER' ? 'gather' : 'work';
-                                    const vFacing = dirFromDelta(
-                                        whaleSpot.whalePos.lat - vPos.lat,
-                                        whaleSpot.whalePos.lng - vPos.lng
-                                    );
-                                    list.push({
-                                        id: idx === 0 ? `${yk}_life_${i}` : `${yk}_life_${i}_whale_vil_${idx}`,
-                                        cityId: city.id,
-                                        cityPos: { lat: cLat, lng: cLng },
-                                        isAnimal: false,
-                                        isSeaFishing: false,
-                                        livelihood: 'maritime_fishing',
-                                        fishResource: '',
-                                        beachedWhale: idx === 0 ? beachedWhale : undefined,
-                                        isWhaleHarvester: true,
-                                        fieldHand: idx > 0 ? true : undefined,
-                                        lib: 'SUCAI',
-                                        dir: vDir,
-                                        homePos: vPos,
-                                        gatePos: { ...vPos },
-                                        lastDrawPos: { ...vPos },
-                                        facing: vFacing,
-                                        phase: (phase + idx * 173) % 1000,
-                                        slotIdx: i,
-                                        winterActive,
-                                        viewAlpha: 1,
-                                        peaceAlpha: 1,
-                                        actionAlpha: 1,
-                                        damageBlend: 0,
-                                        combatStartSec: 0,
-                                        presentAtCombat: false,
-                                        inCombatVisual: false,
-                                        peaceAtCombat: 1,
-                                        damagePreset: villagerPresets[i % villagerPresets.length],
-                                        damageVariant: damageVariant + idx * 3,
-                                        displayedAction: vAct,
-                                        desiredAction: vAct,
-                                    });
-                                });
-                            } else {
-                                const sList = whaleSpot.shipPositions.slice(0, companionCount);
-                                sList.forEach((sPos, idx) => {
-                                    const sFacing = dirFromDelta(
-                                        whaleSpot.whalePos.lat - sPos.lat,
-                                        whaleSpot.whalePos.lng - sPos.lng
-                                    );
-                                    list.push({
-                                        id: idx === 0 ? `${yk}_life_${i}` : `${yk}_life_${i}_whale_boat_${idx}`,
-                                        cityId: city.id,
-                                        cityPos: { lat: cLat, lng: cLng },
-                                        isAnimal: false,
-                                        isSeaFishing: true,
-                                        livelihood: 'maritime_fishing',
-                                        fishResource: fishPool[Math.floor(strHash01(yk, i * 17 + 310 + idx) * fishPool.length) % fishPool.length],
-                                        beachedWhale: idx === 0 ? beachedWhale : undefined,
-                                        fieldHand: idx > 0 ? true : undefined,
-                                        lib: 'SUCAI',
-                                        dir: 'SHP_FISHING_SHIP',
-                                        homePos: sPos,
-                                        gatePos: { ...sPos },
-                                        lastDrawPos: { ...sPos },
-                                        facing: sFacing,
-                                        phase: (phase + idx * 197) % 1000,
-                                        slotIdx: i,
-                                        winterActive,
-                                        viewAlpha: 1,
-                                        peaceAlpha: 1,
-                                        actionAlpha: 1,
-                                        damageBlend: 0,
-                                        combatStartSec: 0,
-                                        presentAtCombat: false,
-                                        inCombatVisual: false,
-                                        peaceAtCombat: 1,
-                                        damagePreset: 'sea_shipwreck',
-                                        damageVariant: damageVariant + idx * 5,
-                                        displayedAction: 'work',
-                                        desiredAction: 'work',
-                                    });
-                                });
-                            }
-                            continue;
-                        }
-                    }
                     if (wantsDock) hasCityDock = true;
                     const buildingResource = wantsDock
                         ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
@@ -1921,7 +1969,7 @@ export class CityLifeAmbientLayer {
     private resolveSeasonalAction(actor: CityLifeActor, season: number): string {
         if (actor.isSeaFishing) {
             // 渔船全年生产，秋季部分船只往返渔场与港湾，冬季也不停航闲置；同场的帮手船只撒网不回港。
-            if (actor.fieldHand || actor.beachedWhale) return 'work';
+            if (actor.fieldHand) return 'work';
             if (season === 2) return actor.slotIdx % 2 === 0 ? 'move' : 'work';
             return 'work';
         }
@@ -2225,9 +2273,6 @@ export class CityLifeAmbientLayer {
 
     /** 预热战时所需的破坏残骸、沉船与尸体贴图 */
     private preloadWarDamageAssetsForActor(actor: CityLifeActor): void {
-        if (actor.beachedWhale) {
-            this.loadStripAsset('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON');
-        }
         if (actor.isSeaFishing) {
             this.loadAsset('SUCAI', 'SHP_FISHING_SHIP', 'sink');
             this.loadAsset('SUCAI', 'SHIP_SINK_SMALL', 'idle');
@@ -2313,6 +2358,14 @@ export class CityLifeAmbientLayer {
         const actionSeason = seasonBlend > 0 ? nextSeason : season;
         const inViewActorIds = new Set<string>();
         const tSec = this.nowMs / 1000;
+        this.updateDynamicCoastalWhales(tSec);
+        if (this.activeCoastalWhales.length > 0) {
+            this.loadStripAsset('SUCAI_BATTLEFIELD', 'BEACHED_WHALE');
+            this.loadStripAsset('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON');
+            this.loadAsset('SUCAI', 'VIL_MALE_HUNTER', 'gather');
+            this.loadAsset('SUCAI', 'VIL_MALE_FORAGER', 'work');
+            this.loadAsset('SUCAI', 'SHP_FISHING_SHIP', 'work');
+        }
 
         for (const city of visibleCities) {
             const actors = this.getOrCreateCityActors(city);
@@ -2397,9 +2450,6 @@ export class CityLifeAmbientLayer {
                 }
                 if (actor.buildingResource) {
                     this.loadStripAsset('SUCAI_BUILDING', actor.buildingResource);
-                }
-                if (actor.beachedWhale) {
-                    this.loadStripAsset('SUCAI_BATTLEFIELD', 'BEACHED_WHALE');
                 }
                 if (false) {
                 }
@@ -2779,38 +2829,99 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        for (const actor of list) {
-        // 海岸搁浅鲸鱼（BEACHED_WHALE）先于旁侧村民与渔船绘制，使 1~2 个村民或渔船始终清晰呈现在鲸鱼旁侧；支持 8 方向帧与随机镜像。
-            if (!actor.beachedWhale) continue;
-            const wPt = this.toContainerPt(actor.beachedWhale.pos.lat, actor.beachedWhale.pos.lng);
+        // 绘制动态海岸搁浅鲸鱼生态（真实偶发 + 完整生命周期：新搁浅采割 → 腐化白骨残骸 → 潮汐冲刷消逝）
+        for (const w of this.activeCoastalWhales) {
+            const elapsed = tSec - w.spawnTimeSec;
+            if (elapsed < 0 || elapsed >= WHALE_TOTAL_LIFECYCLE_SEC) continue;
+
+            let fleshAlpha = 0;
+            let skeletonAlpha = 0;
+            let harvesterAlpha = 0;
+
+            if (elapsed < WHALE_STAGE_FRESH_SEC) {
+                fleshAlpha = Math.min(1, elapsed / 2.5);
+                skeletonAlpha = 0;
+                harvesterAlpha = Math.min(1, elapsed / 2.5);
+            } else if (elapsed < WHALE_STAGE_FRESH_SEC + WHALE_STAGE_DECAY_SEC) {
+                const p = (elapsed - WHALE_STAGE_FRESH_SEC) / WHALE_STAGE_DECAY_SEC;
+                fleshAlpha = Math.max(0, 1 - p);
+                skeletonAlpha = Math.min(1, p);
+                harvesterAlpha = Math.max(0, 1 - p * 1.5);
+            } else if (elapsed < WHALE_STAGE_FRESH_SEC + WHALE_STAGE_DECAY_SEC + WHALE_STAGE_SKELETON_SEC) {
+                fleshAlpha = 0;
+                skeletonAlpha = 1;
+                harvesterAlpha = 0;
+            } else {
+                const p = (elapsed - (WHALE_STAGE_FRESH_SEC + WHALE_STAGE_DECAY_SEC + WHALE_STAGE_SKELETON_SEC)) / WHALE_STAGE_WASH_SEC;
+                fleshAlpha = 0;
+                skeletonAlpha = Math.max(0, 1 - p);
+                harvesterAlpha = 0;
+            }
+
+            const wPt = this.toContainerPt(w.whalePos.lat, w.whalePos.lng);
             if (wPt.x < -m || wPt.x > this.canvas.width + m || wPt.y < -m || wPt.y > this.canvas.height + m) continue;
-            const damageAlpha = actor.presentAtCombat ? actor.viewAlpha * actor.damageBlend : 0;
-            if (damageAlpha > 0.01) {
+
+            if (skeletonAlpha > 0.01) {
                 this.drawStripSprite(
                     'SUCAI_BATTLEFIELD',
                     'ANIMAL_SKELETON',
-                    actor.beachedWhale.variant,
+                    w.variant,
                     wPt.x,
                     wPt.y,
                     WRECK_SCALE_BASE * zoomFactor,
-                    damageAlpha * 0.95,
+                    skeletonAlpha * 0.95,
                     this.ctx,
-                    actor.beachedWhale.mirror
+                    w.mirror
                 );
             }
-            const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha;
-            if (peaceFinalAlpha > 0.01) {
+
+            if (fleshAlpha > 0.01) {
                 this.drawStripSprite(
                     'SUCAI_BATTLEFIELD',
                     'BEACHED_WHALE',
-                    actor.beachedWhale.variant,
+                    w.variant,
                     wPt.x,
                     wPt.y,
                     RESOURCE_SCALE_BASE * zoomFactor,
-                    peaceFinalAlpha,
+                    fleshAlpha,
                     this.ctx,
-                    actor.beachedWhale.mirror
+                    w.mirror
                 );
+            }
+
+            if (harvesterAlpha > 0.01) {
+                for (const vil of w.villagers) {
+                    const vPt = this.toContainerPt(vil.pos.lat, vil.pos.lng);
+                    const asset = this.assetFor('SUCAI', vil.dir, vil.action);
+                    if (!asset) continue;
+                    const box = asset.dirs[String(vil.facing)] ?? asset.dirs['0'];
+                    const sheet = asset.sheets[vil.facing] ?? asset.sheets[0];
+                    if (!box || !sheet || !sheet.complete || !sheet.naturalWidth) continue;
+                    const frame = Math.floor(tSec * 14 + vil.phase) % Math.max(1, asset.frames);
+                    const scale = VILLAGER_SCALE_BASE * zoomFactor;
+                    const dx = vPt.x - box.hx * scale;
+                    const dy = vPt.y - box.hy * scale;
+                    this.ctx.save();
+                    this.ctx.globalAlpha = harvesterAlpha;
+                    this.ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
+                    this.ctx.restore();
+                }
+                for (const boat of w.ships) {
+                    const bPt = this.toContainerPt(boat.pos.lat, boat.pos.lng);
+                    const asset = this.assetFor('SUCAI', 'SHP_FISHING_SHIP', 'work');
+                    if (!asset) continue;
+                    const box = asset.dirs[String(boat.facing)] ?? asset.dirs['0'];
+                    const sheet = asset.sheets[boat.facing] ?? asset.sheets[0];
+                    if (!box || !sheet || !sheet.complete || !sheet.naturalWidth) continue;
+                    const frame = Math.floor(tSec * 12 + boat.phase) % Math.max(1, asset.frames);
+                    const scale = SHIP_SCALE_BASE * zoomFactor;
+                    const dx = bPt.x - box.hx * scale;
+                    const dy = bPt.y - box.hy * scale;
+                    this.ctx.save();
+                    this.ctx.globalAlpha = harvesterAlpha;
+                    this.ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, dx, dy, box.fw * scale, box.fh * scale);
+                    this.ctx.restore();
+                }
             }
         }
 
@@ -2822,7 +2933,7 @@ export class CityLifeAmbientLayer {
             const act = animalPace ? (animalPace.moving ? 'walk' : 'idle') : actor.displayedAction;
             const huntVisual = this.isHuntPrey(actor) ? this.getHuntVisual(actor, tSec) : null;
             const idleWalkMotion = this.usesIdleWalkCycle(actor) ? this.getIdleWalkMotion(actor, tSec) : null;
-            const hunterBehavior = (actor.dir === 'VIL_MALE_HUNTER' && !actor.isWhaleHarvester) ? this.getHunterBehavior(actor, tSec) : null;
+            const hunterBehavior = actor.dir === 'VIL_MALE_HUNTER' ? this.getHunterBehavior(actor, tSec) : null;
             let drawLat = actor.homePos.lat;
             let drawLng = actor.homePos.lng;
             let facing = actor.facing;
@@ -2856,7 +2967,7 @@ export class CityLifeAmbientLayer {
                         if (dLat !== 0 || dLng !== 0) facing = dirFromDelta(dLat, dLng);
                     }
                 } else {
-                    const turnOffset = actor.isWhaleHarvester ? 0 : Math.floor((tSec + actor.phase) / 8) % 2;
+                    const turnOffset = Math.floor((tSec + actor.phase) / 8) % 2;
                     facing = (actor.facing + turnOffset) % 8;
                 }
                 if (!huntVisual || huntVisual.stage === 'alive') {

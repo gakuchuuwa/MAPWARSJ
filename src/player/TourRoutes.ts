@@ -49,7 +49,8 @@ export const GLOBE_CHAIN: TourStop[] = [
     // 燕赵太行东麓官道与崤函古道（山海关 → 北京 → 真定 → 邯郸 → 安阳 → 洛阳 → 函谷关 → 潼关 → 长安）
     L('city_feiru'), L('city_wuzhong'), L('city_beijing'), L('city_fanyang'), L('city_baoding'),
     L('city_zhongshan'), L('city_zhending'), L('city_xingtai'), L('city_handan'), L('city_anyang'),
-    L('city_zhaoge'), L('city_huojia'), L('city_hulaoguan'), L('city_luoyang'), L('city_lushi'),
+    L('city_zhaoge'), L('city_huojia'), L('city_hulaoguan'), L('city_luoyang'), L('city_mianchi'),
+    // 崤函古道（洛阳 → 渑池 → 函谷关 → 潼关 → 长安）｜🔴 [2026-11-10 逐段复查] 原走陆浑关属崤山南道，按「最知名商路」改走北崤道正线（渑池会盟在这条干道上）。
     L('city_hanguguan'), L('city_tongguan'), L('city_changan'),
     // 丝绸之路：关中 → 陇右 → 河西走廊 → 敦煌 → 玉门关
     L('city_qishan'), L('city_longzhou'), L('city_tianshui'), L('city_longxi'), L('city_lintao'),
@@ -121,6 +122,9 @@ export const SAIL_CHAIN: TourStop[] = [
     S('city_songshan'), S('city_chijianguan'), S('city_yuanzhishi'), S('city_taizaifu'), S('city_goto'),
 ];
 
-export function getTourChain(mode: 'globe' | 'sail'): readonly TourStop[] {
-    return mode === 'globe' ? GLOBE_CHAIN : SAIL_CHAIN;
+/** 环球合并总链：先走一圈陆路（GLOBE_CHAIN，133 站），再走一圈海路（SAIL_CHAIN，64 港），首尾在长崎无缝衔接循环 */
+export const TOUR_CHAIN: readonly TourStop[] = [...GLOBE_CHAIN, ...SAIL_CHAIN];
+
+export function getTourChain(): readonly TourStop[] {
+    return TOUR_CHAIN;
 }

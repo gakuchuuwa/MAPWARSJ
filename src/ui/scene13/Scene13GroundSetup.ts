@@ -835,7 +835,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
  *       5) 远翼大山、特种地质奇观与惨烈古战场遗骸（高地远山、野生金矿/石矿/采石坑、地表裂隙/弹坑/盐壳/硫磺口、战车与攻城器残骸、战场白骨与荒冢）
  */
 export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
-    const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}`;
+    const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}_${this.environmentPlan?.seed ?? ''}`;
     let rSeed = 2166136261 >>> 0;
     for (let i = 0; i < seedStr.length; i++) {
         rSeed = Math.imul(rSeed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
@@ -1894,7 +1894,13 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             }
         }
         if (shoreSpots.length > 0) {
-            shoreSpots.sort(() => rnd() - 0.5);
+            // 真实随机打乱岸线候选点（Fisher-Yates），避免 V8 sort 偏倚导致每次搁浅在同一地点
+            for (let i = shoreSpots.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                const tmp = shoreSpots[i];
+                shoreSpots[i] = shoreSpots[j];
+                shoreSpots[j] = tmp;
+            }
             const aquaticPool = isSeaBattle
                 ? [
                     'RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH',

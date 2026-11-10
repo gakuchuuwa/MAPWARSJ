@@ -396,7 +396,7 @@ export class PlayerQuestSystem {
                 // 切换到休息/环球/航行：关闭可能正弹着的武将接任务对话框（防 3 秒倒计时自动把人拽回入伍）
                 if (mode !== 'auto') this.deps.closeDialogue();
                 // 切换到环球/航行：若当前已随军入伍，先自动离队并清除离队 9 秒停顿，立即启程环游
-                if (mode === 'globe' || mode === 'sail') {
+                if (mode === 'globe') {
                     this.abortScriptJourney();
                     if (deps.hero.isAttached()) this.leaveHost();
                     deps.hero.clearHold();

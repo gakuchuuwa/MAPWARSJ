@@ -620,8 +620,8 @@ export class PlayerHUD {
         const modes: Array<[PlayerPlayMode, string, string]> = [
             ['auto', '🤖 自动', '自动寻找武将、自动入伍随军、自动接战'],
             ['rest', '💤 休息', '纯手动操作，不自动行动'],
-            ['globe', '🌍 环球', '只环球旅行，不找武将，水陆路皆可'],
-            ['sail', '⛵ 航行', '只坐船环游世界，不上陆地'],
+            ['globe', '🌍 环球', '环球旅行：走一圈陆路，走一圈海路'],
+
         ];
         const curIdx = Math.max(0, modes.findIndex(([m]) => m === hero.playMode));
         const [, curText, curTip] = modes[curIdx];
@@ -645,7 +645,7 @@ export class PlayerHUD {
             hero.setPlayMode(next);
             // 🔴 [2026-11-06 主人令] 环球/航行＝玩家换成商队车、商船模型：先按当前所在文化预热素材，
             //    点下去就是车/船，不会先闪一下人物兵模（素材没到之前由 GlobalUnitRenderer 暂用人物兵模顶着）
-            if (next === 'globe' || next === 'sail') {
+            if (next === 'globe') {
                 const pos = hero.getPosition();
                 preloadPlayerTourModels(pos.lat, pos.lng, hero.tourCaravanDir, hero.tourShipDir);
             }
