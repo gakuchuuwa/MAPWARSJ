@@ -546,17 +546,17 @@ desheng: '#2E6B7A', // 德胜·刘通
     'helvetii': '#5A6A3A', // 赫尔维蒂
     'hussites': '#6A2E2E', // 胡斯派
     'cherusci': '#4A5A2E', // 切鲁西
-    'sweden_medieval': '#2E5A8A', // 中世纪瑞典
+    'sweden_medieval': '#1E63AC', // 🔴 [2026-11-10 主人令] 同系随本家（中世纪瑞典←瑞典，见 FactionLineage），原 #2E5A8A 作废
     'rus_khaganate': '#4A3A6A', // 罗斯汗国
     'byzantium_late': '#6A1B6D',  // 🔴 [2026-11-10 主人令「把拜占庭的旗帜统一」] 同系政权（晚期拜占庭←拜占庭）旗号/颜色随本家（原 #6A2E6A 自立色）
     'bulgaria_second': '#2E6A2E', // 第二保加利亚帝国
-    'poland_duchy': '#B83A4A', // 波兰公国
-    'saxony_electorate': '#3A5A2E', // 萨克森选侯国
-    'portugal_medieval': '#2E6A3A', // 中世纪葡萄牙
+    'poland_duchy': '#C7102E', // 🔴 [2026-11-10 主人令] 同系随本家（波兰公国←波兰，见 FactionLineage），原 #B83A4A 作废
+    'saxony_electorate': '#B63030', // 🔴 [2026-11-10 主人令] 同系随本家（萨克森选侯国←萨克森，见 FactionLineage），原 #3A5A2E 作废
+    'portugal_medieval': '#284B9E', // 🔴 [2026-11-10 主人令] 同系随本家（中世纪葡萄牙←葡萄牙，见 FactionLineage），原 #2E6A3A 作废
     'denmark_norway': '#B93A3A', // 丹麦-挪威
-    'denmark_medieval': '#9A2E2E', // 中世纪丹麦
+    'denmark_medieval': '#C0202E', // 🔴 [2026-11-10 主人令] 同系随本家（中世纪丹麦←丹麦，见 FactionLineage），原 #9A2E2E 作废
     'scotland_stuart': '#2E3A6A', // 斯图亚特苏格兰
-    'england_modern': '#8A2E3A', // 近代英格兰
+    'england_modern': '#B4283C', // 🔴 [2026-11-10 主人令] 同系随本家（近代英格兰←英格兰，见 FactionLineage），原 #8A2E3A 作废
     'rashtrakuta': '#6A3A6A', // 拉什特拉库塔
     'andean_rebellion': '#7A4A3A', // 安第斯起义军
     'abkhazia_kingdom': '#3A6A3A', // 阿布哈兹王国

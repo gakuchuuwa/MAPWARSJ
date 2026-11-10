@@ -68,6 +68,12 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     leangongguo: 'LEON_LION',   // 莱昂·狮
     alagong: 'ARAGON_STRIPES',   // 阿拉贡·红黄条纹
     putaoya: 'PORTUGAL_QUINAS',   // 葡萄牙·五盾（quinas）
+    portugal_medieval: 'PORTUGAL_QUINAS',   // 🔴 [2026-11-10 主人令「葡中这个旗号也不对」] 同系政权（中世纪葡萄牙←葡萄牙，见 FactionLineage），纹章随本家：勃艮第—阿维斯王朝的葡萄牙王国同样用五盾盾徽（史实）
+    sweden_medieval: 'SWEDEN_CROWNS',   // 🔴 [2026-11-10 主人令「瑞中」字旗拼凑作废] 同系政权（中世纪瑞典←瑞典，见 FactionLineage），纹章随本家：三王冠（Tre Kronor）14 世纪即见载于瑞典王室盾徽
+    denmark_medieval: 'DENMARK_CROSS',   // 🔴 [2026-11-10 主人令「丹中」字旗拼凑作废] 同系政权（中世纪丹麦←丹麦，见 FactionLineage），纹章随本家：Dannebrog 斜杆白十字 13 世纪起即为丹麦王室军旗
+    poland_duchy: 'POLISH_EAGLE',   // 🔴 [2026-11-10 主人令「波公」字旗拼凑作废] 同系政权（波兰公国←波兰，见 FactionLineage），纹章随本家：皮亚斯特王朝白鹰纹章，1025 年升王国前后相承
+    saxony_electorate: 'SAXONY_CRANCELIN',   // 🔴 [2026-11-10 主人令「萨选」字旗拼凑作废] 同系政权（萨克森选侯国←萨克森，见 FactionLineage），纹章随本家：横条十纹带斜贯菱环（Rautenkranz），韦廷王朝盾徽
+    england_modern: 'ENGLAND_CROSS',   // 🔴 [2026-11-10 主人令「英近」字旗拼凑作废] 同系政权（近代英格兰←英格兰，见 FactionLineage），纹章随本家：圣乔治十字 13 世纪起为英格兰军旗，都铎—斯图亚特沿用
     kelite: 'VENICE_LION',   // 威尼斯共和国·圣马可飞狮
     baojialiya: 'BULGARIA_LION',   // 保加利亚·狮
     saierweiya: 'SERBIA_EAGLE',   // 塞尔维亚·双头鹰

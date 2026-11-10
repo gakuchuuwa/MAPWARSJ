@@ -1391,14 +1391,11 @@ function renderHillshade(
                 const alpineT = rampWorker(colorZ, treeLine, rowSnowline - 200);
 
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
-                    // 🔴 9-18 主人令「降低平原黄绿反差」＋ 2026-11-10 修正：
-                    //    只按真实坡度（slopeGrad）衰减陡坡山脊的绿植贴图，绝不按海拔一刀切压掉高原盆地（如墨西哥谷地、关中、云贵坝子）的绿意。
-                    const lowBlend = 0.34 + 0.26 * sandiness;
-                    const flatBasinBoost = colorZ > 500
-                        ? (1.0 - rampWorker(slopeGrad, 0.015, 0.055)) * 0.14 * humidity
-                        : 0;
-                    const slopeMute = 1.0 - rampWorker(slopeGrad, 0.045, 0.18) * 0.62 * (1.0 - sandiness * 0.6);
-                    const baseBlend = Math.min(0.58, (lowBlend + flatBasinBoost) * slopeMute);
+                    // 9-18 主人令「降低平原黄绿反差」：低地 0.35，山地(>400m)平滑过渡至 0.42（保持原版全球气候底色配比）
+                    const lowBlend = 0.35 + 0.25 * sandiness;
+                    const baseBlend = colorZ < 400
+                        ? lowBlend
+                        : Math.min(0.42 + 0.18 * sandiness, lowBlend + (colorZ - 400) / 1400 * (0.42 - lowBlend));
                     // 林线以上低地平原植被自然退隐，让位给高山植被与高寒裸岩
                     const alpineTreeFade = 1.0 - alpineT * 0.58;
                     const blend = baseBlend * snowFade * alpineTreeFade * climateMat[idx + 3] / 255;
@@ -1786,44 +1783,32 @@ function renderHillshade(
                         sb += (92 - sb) * k;
                     }
 
-                    // 🔴 [2026-11-10 军事沙盘做减法（修正版）：按真实坡度区分「浅色通行走廊」与「冷灰褐险峻山脊」]
-                    //   1) 可通行的平原、河谷、高原盆地（不论海拔高低，只要地势平坦 slopeGrad 小）：
-                    //      保持干净柔和的浅色走廊底盘（湿润高原盆地同步修正海拔色阶的黄褐底色，恢复柔和绿洲/谷地感）；
-                    //   2) 不可通行的崇山峻岭（严格由陡坡 slopeGrad 驱动，绝不把高海拔平地误涂成灰褐泥地）：
-                    //      去饱和收敛为冷灰褐岩体，依靠 Hillshade 光影立起沟壑纵深，避免底色双重压黑发脏。
+                    // 🔴 [2026-11-10 军事沙盘做减法（定型版）：不改底图自然地理色彩，只按真实坡度做「走廊柔和去饱和」与「陡坡冷岩浮雕」]
                     if (isLand) {
                         const snowKeep = Math.min(snowFade, 1 - Math.min(1, extraWinterSnowW * 0.85));
                         const flatW = 1.0 - rampWorker(slopeGrad, 0.010, 0.034);
                         const corridorW = flatW * snowKeep;
-                        const barrierW = rampWorker(slopeGrad, 0.038, 0.17)
-                            * (0.25 + 0.75 * rampWorker(colorZ, 220, 850))
+                        const barrierW = rampWorker(slopeGrad, 0.042, 0.17)
+                            * (0.25 + 0.75 * rampWorker(colorZ, 240, 850))
                             * snowKeep;
-
-                        // 高海拔湿润与半湿润平坦盆地（如墨西哥谷地、云贵坝子、外高加索高原）：温和中和海拔 LUT 的焦黄褐色，回到自然温润谷地底色
-                        if (flatW > 0.05 && colorZ > 550 && humidity > 0.25 && sandiness < 0.40) {
-                            const basinGreenW = flatW * rampWorker(colorZ, 550, 1750) * rampWorker(humidity, 0.25, 0.65) * 0.42 * snowKeep;
-                            sr += (144 - sr) * basinGreenW;
-                            sg += (166 - sg) * basinGreenW;
-                            sb += (125 - sb) * basinGreenW;
-                        }
 
                         const baseLuma = sr * 0.299 + sg * 0.587 + sb * 0.114;
                         if (corridorW > 0.01) {
-                            // 平原与平坦谷地走廊：轻度去饱和 20%，微提柔和沙盘明度
-                            const desat = 0.20 * corridorW;
-                            sr = sr + (baseLuma - sr) * desat + 5.5 * corridorW;
-                            sg = sg + (baseLuma - sg) * desat + 5.0 * corridorW;
-                            sb = sb + (baseLuma - sb) * desat + 3.0 * corridorW;
+                            // 平原与平坦谷地走廊：轻度去饱和 16%，微提柔和沙盘明度
+                            const desat = 0.16 * corridorW;
+                            sr = sr + (baseLuma - sr) * desat + 4.5 * corridorW;
+                            sg = sg + (baseLuma - sg) * desat + 4.0 * corridorW;
+                            sb = sb + (baseLuma - sb) * desat + 2.5 * corridorW;
                         }
                         if (barrierW > 0.01) {
-                            // 陡峭山岭：去饱和 36% 靠拢冷灰褐岩体，仅轻微压暗 5%（把明暗交给 Hillshade，不死黑、不与绿树脱节）
-                            const desatM = 0.36 * barrierW;
+                            // 陡峭山岭：去饱和 32% 靠拢冷灰褐岩体，仅轻微压暗 4%（把明暗交给 Hillshade，不死黑、不与绿树脱节）
+                            const desatM = 0.32 * barrierW;
                             const coldR = baseLuma * 0.90 + 6;
                             const coldG = baseLuma * 0.88 + 5;
                             const coldB = baseLuma * 0.85 + 4;
-                            sr = (sr + (coldR - sr) * desatM) * (1.0 - 0.05 * barrierW);
-                            sg = (sg + (coldG - sg) * desatM) * (1.0 - 0.06 * barrierW);
-                            sb = (sb + (coldB - sb) * desatM) * (1.0 - 0.04 * barrierW);
+                            sr = (sr + (coldR - sr) * desatM) * (1.0 - 0.04 * barrierW);
+                            sg = (sg + (coldG - sg) * desatM) * (1.0 - 0.05 * barrierW);
+                            sb = (sb + (coldB - sb) * desatM) * (1.0 - 0.03 * barrierW);
                         }
                     }
 
