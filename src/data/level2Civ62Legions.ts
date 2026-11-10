@@ -837,7 +837,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
         formationMode: 'crane_wing',
         shipId: 'HERO_ADMIRALYISUNSHIN',
-        commanderUnit: 'hero_zhouyu',
+        commanderUnit: 'hero_robinhood',
         slots: [
             { type: 'war_wagon', count: 2 },
             { type: 'jian_swordsman', count: 4 },
@@ -875,7 +875,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
         formationMode: 'balance_yoke',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_kitabatake',
+        commanderUnit: 'hero_zhouyu',
         slots: [
             { type: 'samurai', count: 4 },
             { type: 'mounted_samurai', count: 2 },

@@ -388,8 +388,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/JAPAN/ashikaga_zulizunshi.png": {
-            "scale": 1.02,
-            "offsetX": 0,
+            "scale": 0.96,
+            "offsetX": 5,
             "offsetY": -30
         },
         "/assets/NORTHEAST/fuyu_weichoutai.png": {
@@ -11000,6 +11000,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/MONGOL/__闲置__JAPAN_37.png": {
             "scale": 1.06,
             "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/JAPAN/toyotomi_horiuchiujiyoshi.png": {
+            "scale": 1.08,
+            "offsetX": 33,
             "offsetY": 12
         }
     },
