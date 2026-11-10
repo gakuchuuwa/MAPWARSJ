@@ -22,6 +22,10 @@
  *    （如普罗夫迪夫：公元前342年腓力二世所建，守将却是封建时代的西美昂）**也填进来** ——
  *    填了本表就按本表判，不再看归属武将时代（见 `src/events/cityInYear.ts`）。
  *
+ * 🔴 [2026-11-10 主人令「每个据点补全建成年代，不清楚就估算」] 本表已扩到**全库 1255 城**：
+ *    每个据点代表**周围 50 公里**的范围，年代取该范围内**最早成城年代**（例：安阳含邺城、殷墟 → 取殷都约前1300）。
+ *    旧的「不在表里＝前334前就存在」默认自这次全量覆盖后**不再触发**（仅防今后新增城漏登）。
+ *    查不到确切成城年的照常登记，注释标「约」＋推定依据（汉置郡县多取约前202；商周古都取史称；等等）。
  * 名字另管：**一处一名，与年代无关**（`src/data/cityDisplayNames.ts`）——
  *    本表只管「这地方在不在」，图上叫什么名字与本表**毫不相干**。
  *
@@ -511,5 +515,949 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_sanaa: -200,         // 萨那：前2世纪萨巴铭文已载萨那（Sha'oub/Sanaa）为设防都会（英文维基 Sanaa）
     city_nanmadol: 1180,      // 南马都尔：约12世纪末绍德雷尔王朝始筑玄武岩人工岛都城（英文维基 Nan Madol）
     city_bermuda: 1609,       // 百慕大：1609年乔治·萨默斯舰队登陆定居、1612年建圣乔治镇（英文维基 Bermuda）
+    // ── 全库补全（2026-11-10 主人令「每个据点补全建成年代，不清楚就估算」；口径＝据点50km范围最早成城年）──
+    city_ueda: 1583, // 约1583真田昌幸筑上田城
+    city_izumo: 1470, // 约15世纪中叶尼子氏月山富田城
+    city_satsuma: 1500, // 约16世纪初岛津氏鹿儿岛城郭（福城）
+    city_tsushima: 1500, // 约16世纪对马宗氏金石城馆
+    city_yoshida: 1520, // 约16世纪初毛利氏吉田郡山城
+    city_kasugayama: 1470, // 约15世纪中叶长尾氏春日山城
+    city_tsutsujigasaki: 1519, // 1519武田信虎筑躑躅崎馆
+    city_okafu: 1500, // 约16世纪初长宗我部氏冈丰城
+    city_himeji: 1346, // 1346赤松氏筑姬路城
+    city_utsunomiya: 1200, // 约13世纪初宇都宫氏宇都宫城
+    city_tsuruga: 1380, // 约14世纪末苇名氏黑川城（鹤之城前身）
+    city_nabari: 1500, // 约16世纪伊贺名张山寨
+    city_xiantai: 1601, // 1601伊达政宗筑仙台青叶城
+    city_songshan: 1602, // 1602加藤嘉明筑伊予松山城
+    city_noshima: 1550, // 约16世纪中叶村上水军能岛城
+    city_funei: 1550, // 约16世纪中叶大友氏丰后府内馆
+    city_gaodao: 1470, // 约15世纪中叶诹访氏高岛城旧馆
+    city_katsuyama: 1490, // 约15世纪末蛎崎氏胜山馆
+    city_genjo: 1335, // 约1335南部氏八户根城
+    city_akaogicheng: 1550, // 约16世纪种子岛赤尾木城
+    city_akakinagusuku: 1460, // 约15世纪中叶奄美赤木名城
+    city_goto: 1550, // 约16世纪五岛氏福江城
+    city_nagasaki: 1571, // 1571长崎开港
+    city_guizhicheng: 1500, // 约16世纪備中高松城初筑
+    city_hamamatsu: 1560, // 1560德川氏筑滨松城
+    city_zonggu: 1500, // 约16世纪北海道宗谷聚落
+    city_hakone: 1400, // 约15世纪北条氏箱根关所（关东门户）
+    city_fuwa: 1500, // 约16世纪美浓不破关所（律令三関遗址承袭）
+    city_xiongben: 1601, // 1601加藤清正筑熊本城
+    city_yanaginogosho: 1094, // 约1094藤原清衡迁居平泉筑柳之御所
+    city_asuka: 1332, // 1332楠木正成筑千早城
+    city_asu: 1332, // 1332楠木正成筑千早城
+    city_chijianguan: 1200, // 约13世纪长门赤间关渡关所（下关）
+    city_atsuta: 1200, // 约13世纪尾张热田神宫门前町
+    city_gugudao: 1400, // 约15世纪宫古岛平良聚落
+    city_moyoro: 1300, // 约13世纪北海道东鄂霍次克文化莫约罗遗址
+    city_bailao: 1450, // 约15世纪阿伊努白老聚落
+    city_yuanzhishi: 1400, // 约15世纪壹岐原之辻国府遗址聚落（更早弥生遗址）
+    city_honolulu: 1000, // 约1000年代波利尼西亚火奴鲁鲁
+    city_jindo: 1597, // 1597鸣梁海战当地成役
+    city_suncheon_k: 990, // 高丽成宗年间顺天升州牧（约990）
+    city_haeju: 960, // 约10世纪中叶高丽瀑池（黄州）
+    city_xingzhuting: 1450, // 约15世纪中期济州星主厅（朝鲜济州牧迁建附近）
+    city_shangzhou: 1450, // 朝鲜庆尚道三白聚落（约15世纪）
+    city_sabi: 538, // 538百济圣王迁都泗沘（扶余）
+    city_geumseong: 400, // 约4世纪百济罗州锦城
+    city_jeonju: 660, // 约7世纪百济完山（今全州）
+    city_guoyuancheng: 685, // 685新罗国原城（改置国原州附近）
+    city_wugucheng: 500, // 约5世纪高句丽筑乌骨山城（凤凰山）
+    city_longwan: 1114, // 高丽1114义州龙湾鸭绿府
+    city_pidao: 1621, // 1621毛文龙驻皮岛
+    city_gimhae: 42, // 约公元42年首露王立伽倻金海
+    city_xicheng: 400, // 约4世纪慈江道息谷聚落
+    city_deokwon: 1100, // 高丽初期德源郡（约1100）
+    city_yuezhi: 1450, // 朝鲜忠清道大木岳关隘（约15世纪）
+    city_heseluo: 200, // 约2世纪濊君驻新罗何瑟罗（江陵）
+    city_guoneicheng: 37, // 约37年高句丽立国定都国内城（集安）
+    city_jinju: 680, // 约7世纪末新罗晋州
+    city_hetuala: 1603, // 1603努尔哈赤筑赫图阿拉
+    city_julunbo: 1603, // 1603赫图阿拉（辽东后金都城）
+    city_yeren_base: 1683, // 1683清筑瑷珲城
+    city_qiji: 450, // 约5世纪库页岛普禄肃慎聚落
+    city_moergen: 1689, // 1689清置墨尔根城
+    city_bukui: 1691, // 1691清筑齐齐哈尔（卜奎）
+    city_bamiancheng: 1050, // 辽金八面城（叶赫住地，约11世纪）
+    city_salhu: 1470, // 约15世纪末萨尔浒堡初建
+    city_wushecheng: 1130, // 约12世纪金乌舍寨（白城一带）
+    city_huifa: 1400, // 约15世纪辉发部山城
+    city_kuanchengzi: 1750, // 清代长春宽城子（约1750）
+    city_daerhan: 1650, // 清代达尔罕旗（约1650）
+    city_pennuli: 730, // 约8世纪唐洲盆奴里部（黑龙江下游）
+    city_wuyun: 1750, // 清代乌云（约1750）
+    city_nuotuoluo: 500, // 约5世纪库页岛诺托罗鄂罗克聚落
+    city_baizhu: 1300, // 元代征骨嵬白主土城（约1300）
+    city_xierka: 1400, // 约15世纪明锡尔喀（乌苏里江北）
+    city_nibuchu: 1665, // 1665俄人占尼布楚
+    city_yakesa: 1640, // 约1640达斡尔故地雅克萨
+    city_geerbiqi: 1689, // 1689尼布楚界河格尔必齐河
+    city_huma: 1650, // 清代呼玛尔（约1650）
+    city_haomen: 121, // 前121年汉置浩亹县（门源）
+    city_jilishan: 1100, // 约12世纪初辽蒺藜山（懿州近地）
+    city_wuguo: 1100, // 约12世纪初辽五国城（依兰）
+    city_nanghar: 1500, // 约16世纪明囊哈儿（库页岛耶稣会传教点）
+    city_tongjiajiang: 1400, // 约15世纪建州浑江（通化）
+    city_longtanshancheng: 1216, // 1216东夏国蒲鲜万奴依托龙潭山城
+    city_xupin: 1190, // 金末恤品路（约1190）
+    city_boli2: 698, // 约698唐勃利州（今哈巴罗夫斯克）
+    city_nuergan: 1400, // 约15世纪明奴儿干特林（1409置都司）
+    city_yalu: 698, // 约698渤海置西京鸭绿府
+    city_dongkang: 700, // 约8世纪渤海东康（绥芬河上游）
+    city_boduo: 1300, // 元代伯都讷（约1300）
+    city_lahasusu: 1300, // 元代拉哈苏苏（约1300）
+    city_niman: 1370, // 明尼满河（约1370）
+    city_jicheng: 283, // 约283慕容氏居棘城（前燕早期都城）
+    city_bailangshan: 207, // 207白狼山之战（首见于汉末战录）
+    city_fenglin: 1400, // 约15世纪明凤林城
+    city_gaxian: 443, // 443北魏太武帝勒嘎仙洞（铭文首见）
+    city_bayanwula: -300, // 约前3世纪东胡故地（燕辽东郡时期）
+    city_dongshengzhou: -127, // 前127卫青取河南地后汉置增山县（西河郡北属）
+    city_yanran: -89, // 前89窦宪燕然山勒石（杭爱山首见于汉史）
+    city_langjuxu: -119, // 前119霍去病封狼居胥（肯特山首见于汉史）
+    city_guanglu: -102, // 约前102汉筑光禄塞（徐自为出五原塞数百里）
+    city_shengle: 258, // 258力微率众迁居盛乐（拓跋氏首建牙城）
+    city_songmo: 950, // 约10世纪辽马盂山（平泉，奚王避暑地）
+    city_emil: 1220, // 约1220窝阔台封地也迷里城（额敏）
+    city_kereyid: 1200, // 约13世纪初克烈部翁金河（首见蒙元纪事）
+    city_fuhai: 1200, // 约13世纪初乃蛮故地乌伦古湖（福海）
+    city_tatar: 900, // 约9世纪塔塔儿部额布都格（哈拉哈河故地）
+    city_merkit: 1727, // 1727恰克图条约设买卖城
+    city_hetao: -127, // 前127汉取河南地置朔方郡（河套首建郡城）
+    city_yingchang: 1273, // 约1273元置应昌路（克什克腾）
+    city_burhan: 1177, // 约1177铁木真避兵不儿罕山（蒙古纪事首见）
+    city_kerulen: 1000, // 约11世纪契丹河董城／巴拉斯城（克鲁伦中游）
+    city_erguna: 1388, // 1388明军战于捕鱼儿海（贝尔湖首见于明史）
+    city_dzungar_basin: 1640, // 约17世纪中叶准噶尔和博克赛尔
+    city_porbazhyn: 760, // 约8世纪中叶回鹘博尔巴任湖中城（图瓦）
+    city_guyanshan: -119, // 前119霍去病禅姑衍（漠北首见于汉史）
+    city_xinghe: 1300, // 约1300元置兴和路（张北）
+    city_teerhunjuntai: 1200, // 约13世纪初漠北特尔浑河牧地
+    city_douweihunhe: -100, // 约前2世纪末汉史记都尉溷河（蒙古中）
+    city_qudiaoalan: 1229, // 1229窝阔台曲雕阿兰忽里勒台
+    city_kuoyitian: 1202, // 1202阔亦田之战（首见于蒙古纪事）
+    city_sangguer: 1650, // 约17世纪中叶清车臣部温都尔汗（克鲁伦岸）
+    city_xianping: 970, // 约10世纪末辽置咸平府（开原）
+    city_saiyinshanda: 1650, // 约17世纪中叶喀尔喀东戈壁赛音山达牧地
+    city_yangjigan: 1000, // 约11世纪突厥—花剌子模养吉干要塞（锡尔河口）
+    city_zhande: 900, // 约10世纪花剌子模毡的城（锡尔河下游）
+    city_wulihong: 1200, // 约13世纪初漠北乌利洪牧地
+    city_yeerdishi: 1204, // 1204屈出律退守也儿的石河（额尔齐斯）
+    city_hangai: -89, // 前89燕然山（杭爱山）首见于汉史
+    city_toumancheng: -209, // 约前209头曼单于庭（阴山南头曼城）
+    city_xiaoyenisei: -100, // 约前1世纪汉史记北海（丁零故地贝加尔）
+    city_naomaohu: -137, // 约前137东汉置宜禾都尉屯伊吾（淖毛湖）
+    city_jining: 1300, // 约1300元置集宁路（黄旗海畔）
+    city_temermen: 1200, // 约13世纪初漠北特尔门牧地（土拉支流）
+    city_luhun: -89, // 前89窦宪出涿邪山（首见于汉史）
+    city_junjishan: -99, // 前99李陵战于浚稽山（首见于汉史）
+    city_hanhai: -100, // 约前1世纪汉史记瀚海（汉军北追至大漠）
+    city_jiluoshan: -89, // 前89窦宪破北匈奴于稽落山
+    city_wubusabo: 1200, // 约13世纪初坚昆故地乌布苏湖
+    city_shilekahe: 1689, // 1689尼布楚条约外贝加尔石勒喀堡
+    city_qihe: 1000, // 约11世纪乌古斯—克普恰克毡的故址（锡尔河下游）
+    city_biaoshi: -111, // 前111汉武帝置张掖郡表氏县（高台）
+    city_shandan: -111, // 前111汉置删丹县（山丹）
+    city_mangshilake: 1000, // 约11世纪乌古斯曼格什拉克港名初见（里海东岸）
+    city_yingsuochuan: 650, // 约7世纪中叶西突厥鹰娑川（巴音布鲁克）
+    city_kobdo: 1760, // 1760年前后清筑科布多城
+    city_kulun: 1778, // 1778喇嘛库伦定居于今乌兰巴托
+    city_turkestan: 1000, // 约11世纪突厥斯坦城（亚萨圣地）
+    city_wuliyasutai: 1733, // 1733清置乌里雅苏台将军驻城
+    city_baidalik: 1200, // 约13世纪初扎布汗河拜达里克牧地
+    city_teshuolankalun: 650, // 约7世纪唐对都播（唐努乌梁海）首见案
+    city_duluohe: 1731, // 1731清雍正年间置推河戍所
+    city_tacheng: 1764, // 1764清筑塔尔巴哈台城
+    city_buergenjuntai: 1200, // 约13世纪初布尔根河牧地（科布多南）
+    city_zhabuhanjuntai: 1733, // 1733清定边左副将军驻扎布汗河畔
+    city_halagaitu2: 1490, // 约15世纪末乌珠穆沁部南迁哈拉盖图
+    city_bayantumen: 1650, // 约17世纪中叶车臣部巴彦图门
+    city_wuliyasitai: 1490, // 约15世纪乌里雅斯太（东乌珠穆沁）游牧地
+    city_saihantala: 1490, // 约15世纪末苏尼特部赛汉塔拉牧地
+    city_saiyinsanda: 1650, // 约17世纪中叶喀尔喀东戈壁赛音山达
+    city_chita: 1653, // 1653俄人建赤塔先镇
+    city_chifeng: 916, // 916耶律阿保机于木叶山建契丹独具神祠
+    city_jiangsheng: 947, // 约947辽置降圣州
+    city_jianshuijinguan: -102, // 约前102汉置肩水金关（居延南部汉简首载）
+    city_luntai: -101, // 前101汉武帝命贰师军轮台筑屯田城
+    city_aodongcheng: 698, // 698大祚荣立渤海国营敖东城
+    city_taqian: 91, // 91年东汉班超任西域都护驻它乾城
+    city_jilusai: -102, // 约前102汉置鸡鹿塞（朔方郡关门）
+    city_raoleshui: 450, // 约450《魏书》首记库莫奚饶乐水（西拉木伦）
+    city_wuchuanzhen: 420, // 约420北魏置六镇之一的武川镇
+    city_keyimen: 1038, // 约1038西夏立国置贺兰山口克夷门关
+    city_jingbianbao: 1471, // 1471明置靖边营堡
+    city_ruoshui: -102, // 约前102汉置居延都尉（弱水畔）
+    city_saierwusu: 1300, // 约1300元代戈壁驿站赛尔乌苏
+    city_yanran_stone: -89, // 前89窦宪燕然山勒石
+    city_woluduobali: 779, // 约779回鹘可汗建卜古罕城（鄂尔浑）
+    city_otuken: 550, // 约550突厥汗国牙帐于都斤山
+    city_suoling: 600, // 约7世纪铁勒记载娑陵水（色楞格）
+    city_woluduocheng: 650, // 约7世纪突厥青岭牙帐
+    city_mierkefu: 1220, // 约1220库曼主教区要塞密尔科夫（顿河下游）
+    city_oleshky: 1200, // 约13世纪初第聂伯河口奥列什基木栅商埠
+    city_saksin: 1050, // 约11世纪可萨故地萨克辛城（伏尔加河口）
+    city_saigede: 440, // 约440阿提拉王庭驻蒂萨河塞格德
+    city_huneiduolala: 1300, // 约1300匈雅德氏胡内多阿拉（考尔文城堡前身）
+    city_guishancheng: -500, // 约前5世纪大宛贵山城（波斯时期费尔干纳）
+    city_loulan: -77, // 前77汉改楼兰为鄯善、立扜泥城王治
+    city_shache: -126, // 前126《史记》首见莎车国（渠莎）
+    city_ruoqiang: -100, // 约前2世纪末婼羌部落见于汉地志（若羌卡克里克）
+    city_qiemo: -126, // 前126《史记》首见且末国（播仙／且末）
+    city_jingjue: -126, // 前126《汉书·西域传》首载精绝国（尼雅）
+    city_pishan: -126, // 前126《史记》首见皮山国（固玛）
+    city_weili: -100, // 约前2世纪末尉犁国君城（今库尔勒）见于汉史
+    city_xiye: -126, // 前126《史记》首见西夜（叶城）
+    city_dabancheng: 1750, // 约1750清置达坂城
+    city_hepancheng: 650, // 约650唐安西都护府拨换城（阿克苏）
+    city_sanlongsha: 200, // 约2世纪汉敦煌西三陇沙障（见于汉代地理志）
+    city_wutucheng: 1755, // 约1755清筑迪化城（乌鲁木齐前身）
+    city_bieshibali: -126, // 前126《汉书》首载车师后国务涂谷城
+    city_balikun: 1750, // 约1750清筑巴里坤汉、满两城
+    city_dawushenkate: 1750, // 约1750清置乌什（大乌什）
+    city_yumi: -126, // 前126《史记》首见扜弥国（于田阿赫雅尔）
+    city_keliyashankou: -100, // 约前2世纪末克里雅山口戍（见于汉设西域戍所）
+    city_bohuancheng: 650, // 约650唐拨换城（今阿克苏）
+    city_weitoucheng: 1750, // 约1750清置阿合奇（尉头故地）
+    city_yanqi: -126, // 前126《史记》首见焉耆国（员渠城）
+    city_chiting: 650, // 约650唐西州赤亭守捉（鄯善）
+    city_talas: -100, // 约前2世纪末怛罗斯城见于粟特商路记载
+    city_kanka: -500, // 约前5世纪康国城（撒马尔罕一带，波斯时期）
+    city_mazhatage: 600, // 约7世纪于阗麻扎塔格佛寺戍堡
+    city_dashicheng: 650, // 约650唐置大石城（乌什）
+    city_wosedecheng: -100, // 约前2世纪末姑墨国握瑟德城见于汉史
+    city_paixiucheng: -100, // 约前2世纪末涓笃城见于《汉书·西域传》
+    city_gongzhubao: -50, // 约前1世纪渴盘陀筑公主堡（传汉公主和亲所遗）
+    city_xiuxun: -100, // 约前2世纪末休循国（阿赖谷）见于《汉书》
+    city_yinai: 1800, // 约1800清代英吉沙尔
+    city_tuokexun: 1750, // 约1750清代托克逊
+    city_kungang: 1750, // 约1750清代昆岗军台（拜城）
+    city_huoluoge: 1900, // 约19世纪末帕米尔霍罗格舒格南聚落
+    city_huoluo: 1900, // 约19世纪末帕米尔霍罗格聚落
+    city_hamiwei: 1406, // 1406明永乐四年置哈密卫
+    city_yuergun: 750, // 约750唐安西玉尔滚守捉
+    city_ahexikesi: 1750, // 约1750清代阿赫西克特卫戍（费尔干纳旧都）
+    city_jinshan: 1200, // 约13世纪初金微山牧地（阿尔泰山）
+    city_naiman: -200, // 约前2世纪葱岭北见于巴克特里亚文献
+    city_humicheng: -500, // 约前5世纪瓦罕护密城（波斯时期）
+    city_dargan: 500, // 约5世纪花剌子模达尔甘城见于萨珊文献
+    city_yierkeshentan: 500, // 约5世纪阿赖谷斯姆哈纳商栈
+    city_xiwanjin: 500, // 约5世纪石汗那悉万斤城
+    city_pengdi: 500, // 约5世纪呼罗珊—巴德吉斯彭迪城
+    city_zhenzhuhe: 1000, // 约11世纪萨曼史书真珠河（泽拉夫尚河）
+    city_fayzabad: 500, // 约5世纪呼罗珊法里亚布城
+    city_almaliq: 650, // 约650唐在西域置弓月城（伊犁谷地）
+    city_heishacheng: 650, // 约650回鹘黑沙城牙帐（突厥时期首见于记载）
+    city_beiluocheng: 650, // 约650西突厥弩失毕部孛罗城（博尔塔拉）
+    city_dushancheng: 650, // 约650西突厥独山戍（伊犁北）
+    city_hormuz: 1000, // 约11世纪波斯南岸霍尔木兹港
+    city_suez: -600, // 约前6世纪波斯万尼霍莱科利斯马（法老谢蒂斯运河）
+    city_beirut: -1000, // 约前1000土地上腓尼基人村（贝鲁特首见于埃及文书）；罗马Berytus殖民（前15）
+    city_anate: -100, // 约前1世纪幼发拉底河阿纳特（见于帕提亚时代作物志）
+    city_aswan: -1500, // 约前1500古埃及尼罗河第一瀑布Syene
+    city_fariyab: 300, // 约3世纪萨珊时期呼罗珊法里亚布城
+    city_bam_citadel: -500, // 约前5世纪波斯设巴姆堡城
+    city_salahesi: 800, // 约9世纪萨拉赫斯（见于塔希尔王朝时期记载）
+    city_yazide: -300, // 约前3世纪波斯安息时期亚兹德（见于萨珊文书）
+    city_malulude: 800, // 约9世纪木鹿卢德城（塔希尔—萨曼时期）
+    city_zanzhan: 1200, // 约13世纪初阿塞拜疆赞詹城
+    city_malagai: 1256, // 1256旭烈兀于马拉盖设伊儿汗国根据地
+    city_wuer: -2600, // 约前2600乌尔第三王朝前身（苏美尔月神城成城）
+    city_hatusha: -1600, // 约前1600赫梯建都哈图沙（青铜时代都城）
+    city_yashucheng: -2500, // 约前2500亚述城成城（底格里斯河古都）
+    city_xiemianjieer: 700, // 约8世纪可萨汗国早期都城谢缅杰尔（奥林匹克河湾）
+    city_waka: 1000, // 约11世纪陶鲁斯山岩顶瓦卡城堡
+    city_kutayixi: 458, // 约458年前后库塔伊西（格鲁吉亚早期都城）
+    city_nixiya: -100, // 约前1世纪比提尼亚尼凯亚见于罗马时期城志
+    city_baku: -550, // 约前550年波斯居鲁士时期巴库（阿塞拜疆）
+    city_akhaltsikhe: 1000, // 约11世纪萨姆茨赫阿哈尔齐赫
+    city_kafa: 1265, // 约1265热那亚人建卡法商业站（克里米亚）
+    city_luxiweng: 1200, // 约1206保加利亚沙皇卡洛扬在鲁西翁筑塞
+    city_banjiaxi: -550, // 约前550希腊殖民布伦尼基（今班加西）
+    city_kalisituosi: -700, // 约前700优卑亚卡里斯托斯（希腊城邦起）
+    city_aolinsuosi: -700, // 约前700卡尔基狄克奥林索斯（希腊殖民起）
+    city_chimarros: -550, // 约前550纳克索斯岛希马鲁塔设防塔楼
+    city_nikexiya: -1000, // 约前1000吕西尼昂塞浦路斯尼科西亚（青铜时代聚落）
+    city_famagusta: -300, // 约前3世纪托勒密建阿西诺城（法马古斯塔前身，Ammochostos）
+    city_kolossi: 1210, // 1210圣殿骑士团建塞浦路斯科洛西堡
+    city_kailaina: -500, // 约前5世纪弗里吉亚凯莱奈（马其顿殖民前）
+    city_ravenna: -500, // 约前5世纪翁布里亚—伊特鲁里亚拉文纳城
+    city_nabone: -600, // 约前600年迦太基时期纳博讷城
+    city_akeman: 600, // 约7世纪奥斯曼阿克曼
+    city_seyute: 1299, // 约1299奥斯曼一世建瑟于特首个贝伊国都城
+    city_aidiernei: 1365, // 约1365奥斯曼穆拉德一世迁都埃迪尔内（前身阿德里安堡）
+    city_anding: -114, // 前114汉武帝元鼎三年置安定郡（泾川）
+    city_hanzhong: -312, // 前312秦惠王置汉中郡（南郑）
+    city_langya: -473, // 前473越王勾践灭吴后迁都琅琊（春秋齐琅琊邑）
+    city_lanling: -256, // 约前256楚国取兰陵（春申君封荀子）【氶县汉置】
+    city_dingtao: -1000, // 商周曹国都陶丘（定陶）
+    city_boyang: -110, // 前110汉武帝元封元年置泰山郡治奉高
+    city_qiaojun: -221, // 秦置谯县（亳州）
+    city_longzhou: -350, // 约战国秦置汧县（陇县）
+    city_longxi: -202, // 汉置襄武县（陇西郡治）
+    city_lintao: -279, // 前279秦灭义渠后置陇西郡（狄道）
+    city_qucheng: -221, // 秦置朐县（连云港海州）
+    city_baibogu: 188, // 188汉末白波军起白波谷（首见于汉末战录）
+    city_guangchengguan: 184, // 184东汉中平元年置八关之一的广成关
+    city_wuguan: -500, // 约战国秦置武关（秦楚界关）
+    city_xiaoguan: -300, // 约战国秦置萧关（关中四塞之一）
+    city_jinsuoguan: 600, // 约隋末唐初置金锁关（铜川）
+    city_mulingguan: -600, // 春秋齐国筑穆陵关（齐长城）
+    city_qingshiguan: -500, // 约战国齐筑青石关（齐鲁古道）
+    city_mianchi: -300, // 约战国秦置渑池邑（崤函道）
+    city_guyangsai: -200, // 汉置固阳塞（五原北塞）
+    city_xiayangdu: -500, // 春秋晋龙门渡（河津）
+    city_tianjinguan: -100, // 西汉置天井关（晋城）
+    city_qishan: -1100, // 约前1100先周古公亶父自豳迁岐（周原）
+    city_weirong: 1100, // 约北宋崇宁年间置威戎寨（静宁）
+    city_lushi: -638, // 前638晋迁陆浑戎于此（陆浑关）
+    city_jiaoxi: -200, // 汉置黔陬县（胶州）
+    city_yangxian: -100, // 西汉已见兴势山地（洋县关塞通道)
+    city_shangyong: -1000, // 商周庸国故地上庸（竹山）
+    city_junzhou: -202, // 汉置武当县（丹江口）
+    city_jinzhou_shanxi: -312, // 前312秦置西城县（今安康）
+    city_huojia: -111, // 前111汉武帝元鼎六年置获嘉县
+    city_eyu: -350, // 战国赵置阏与邑（和顺）
+    city_shangluo: -340, // 前340秦孝公封商鞅于商於（商邑商县）
+    city_binzhou2: -221, // 秦置漆县（邠州）
+    city_yongqiu: -221, // 秦置雍丘县（杞县）
+    city_mengcheng: -150, // 西汉置山桑县（蒙城）
+    city_yongcheng: -200, // 西汉置芒县（永城）
+    city_kunyang: -300, // 战国秦置昆阳邑（叶县）
+    city_yucheng: -655, // 虞国灭亡之年（春秋虞国故地虞城）
+    city_shayuan: 620, // 唐初置长宁县（宜君一带）
+    city_fengtian: 670, // 唐高宗时置奉天县（乾县）
+    city_yunzhongcheng: 200, // 汉代文献已载黄河君子津渡（托克托）
+    city_chiwubao: -100, // 西汉已见赤乌戍地（天祝）
+    city_baoding: 977, // 北宋太平兴国年间置保塞军（保定州治前身）
+    city_hejian: -202, // 汉置乐成县（献县）
+    city_jingzhou2: -202, // 汉置蓨县（景县）
+    city_jingxingguan: -300, // 战国赵置井陉关（土门关）
+    city_daomaguan: -200, // 汉置倒马关（唐县）
+    city_yinzhou: -300, // 战国秦上郡绥德地（延川—绥德）
+    city_wuzhousai: -202, // 汉置善无县（右玉）
+    city_eyangling: 630, // 630李靖夜袭恶阳岭（定襄北）
+    city_piaoyujin: -100, // 西汉已见漂渝津（海河入海口渡）
+    city_daixian: 630, // 唐置蔚州灵仙县（蔚县）
+    city_xingtai: -1046, // 西周初封邢侯于邢（邢台）
+    city_xiurongchuan: 396, // 约396北魏置秀容郡（秀容川）
+    city_beishacheng: 500, // 约5世纪高句丽筑卑沙城（大黑山山城）
+    city_dengzhou: 684, // 684唐置登州（蓬莱）
+    city_wenan: -202, // 汉置文安县（河间郡）
+    city_wudingzhou: -202, // 汉置乐安县（惠民）
+    city_fuzhou_fugu: 900, // 宋代置府州（府谷）
+    city_ningwuguan: 1470, // 明成化年间置宁武关
+    city_yanmenguan: -300, // 战国赵置雁门郡（勾注山雁门关）
+    city_gubeikou: 900, // 五代辽金时期已成古北口关塞
+    city_wendeng: 568, // 北齐天统年间置文登县
+    city_feiru: -300, // 战国燕置肥如县（卢龙）
+    city_jingzhou: -202, // 汉置蓨县（景县）
+    city_liyang: -222, // 前222秦置巨鹿郡（平乡一带）
+    city_qingchi: 581, // 隋置清池县（沧州）
+    city_zhangguojuncheng: 915, // 约915辽置应州彰国军城（应县）
+    city_lishi: -400, // 战国赵置离石邑（西河郡地）
+    city_xindu: -350, // 战国赵置信都（冀州）
+    city_feihu: -300, // 战国赵置飞狐关（太行八陉第七陉）
+    city_tuhe: -202, // 汉置徒河县（锦州）
+    city_wuzhong: -600, // 春秋无终国（天津蓟州）
+    city_ningyuan: 1426, // 明宣宗年间置宁远卫（兴城）
+    city_xuanhu: 1390, // 明洪武年间置宣府周六卫（宣化）
+    city_yulin: 1471, // 明成化年间置榆林卫
+    city_tongguan: 211, // 211潼关之战首见于史（汉末置关）
+    city_piantouguan: 1470, // 明成化年间置偏头关
+    city_shanhaiguan: 1381, // 1381徐达筑山海关
+    city_xucheng: -221, // 秦置符离县（宿州）
+    city_ziwu: 15, // 新莽置子午关（子午谷道）
+    city_mudan: 1750, // 清代牡丹社（排湾社聚落）
+    city_donghai: 1616, // 约1616阮主时代置越南洞海门城
+    city_wanxiang: 1560, // 1560澜沧王国赛塔提拉迁都万象
+    city_shunchang: -221, // 秦置汝阴县（阜阳）
+    city_dasanguan: -300, // 约战国秦置大散关（秦岭西口）
+    city_zijingguan: -300, // 战国赵置关（紫荆关前身）
+    city_zaoyang: -202, // 汉置蔡阳县（枣阳）
+    city_hoabinh: 1600, // 约17世纪阮主时期置越南和平地（芒族故地）
+    city_xingqing: 620, // 唐初置合水县（庆阳）
+    city_shuanghe: 1238, // 1238素可泰王国建于孟素可泰
+    city_dajianlu: 1650, // 约17世纪中叶明清交恶处明正土司司治设打箭炉附近
+    city_fushi: -300, // 战国秦置上郡肤施（延安）
+    city_zuli: -114, // 前114汉置祖厉县（靖远）
+    city_zhedi: 590, // 隋置真宁县（正宁）
+    city_zhongli: -221, // 秦置盱眙县
+    city_yancheng2: -221, // 秦置郾县（郾城）
+    city_fangqu: -200, // 汉置方渠县（环县）
+    city_cheollyeong: 1355, // 约1355元置双城总管府（铁岭关前身）
+    city_langbolabang: 1353, // 1353法昂立澜沧王国迁都琅勃拉邦
+    city_bushan: -111, // 前111汉置郁林郡布山县（贵港）
+    city_yiling: -278, // 前278秦拔郢置夷陵县（宜昌）
+    city_suizhou: -1000, // 约西周初封随侯国（随州）
+    city_chaisang: -202, // 汉置柴桑县（九江）
+    city_changzhou: -547, // 前547季札封延陵（常州州治前身）
+    city_jiaxing: -221, // 秦置由拳县（嘉兴）
+    city_shanxian: -221, // 秦置剡县（嵊州）
+    city_wuling: -202, // 汉置临沅县（常德）
+    city_dusong: 1300, // 约14世纪初元置独松关
+    city_xianxia: 878, // 878黄巢开仙霞岭道后置仙霞关
+    city_wuzhou: -221, // 秦置长山县（金华）
+    city_quzhou: -221, // 秦绍置新安县（信安前身，衢州）
+    city_raozhou: -111, // 前111汉置鄱阳县（饶州）
+    city_qianzhou: 280, // 280晋升南康县（赣州南康）
+    city_wushengguan: 530, // 约南朝梁置武胜关（义阳三关之一）
+    city_qingyuan: -221, // 秦置中宿县（清远）
+    city_hengpuguan: -111, // 前111汉置横浦关（大庾岭）
+    city_yangshanguan: -111, // 前111汉置阳山关
+    city_huangxiguan: -111, // 前111汉置湟溪关（南岭入粤）
+    city_dangyang: -202, // 汉置当阳县
+    city_tainan: 1662, // 1662郑成功置承天府（台南）
+    city_liuxian: -202, // 汉置六安国（六安）
+    city_gaoliang: -111, // 前111汉置高凉县
+    city_qingxi: 1130, // 1130方腊居帮源洞（见于宋史）
+    city_xinhui: 1279, // 1279崖山海战见于宋史（新会）
+    city_ninghai: 620, // 隋末置白峤镇（宁海）
+    city_zhenghe: 1000, // 约北宋置政和县（福建）
+    city_zhangzhou: 600, // 六朝置龙溪县（漳州）
+    city_tingzhou: 600, // 六朝置黄连镇（宁化）
+    city_ruijin: 1000, // 北宋置瑞金监（客家大本营）
+    city_taizhou_zj: 280, // 280吴升临海郡（台州）
+    city_wenzhou: 323, // 323晋置永嘉郡（温州）
+    city_shaxian: 540, // 六朝置沙戍堡（沙县）
+    city_yanping: -202, // 汉置南平县（南平）
+    city_chuzhou_zj: 600, // 隋置丽水县（处州）
+    city_yili: -278, // 前278秦拔郢置夷陵县（宜昌）
+    city_haiyang: -111, // 前111汉置海阳县（潮州）
+    city_changhua_tw: 1624, // 1624台湾西传基督教小型教堂（荷据彰化前身）
+    city_pinglong: 1500, // 明代乾州平陇苗民关寨
+    city_jintian: 1700, // 约清前期桂平金田村聚落
+    city_shanghai: 1000, // 约宋代上海县前身（青龙镇）
+    city_huashan: -500, // 约战国末骆越花山岩画
+    city_hepu: -111, // 前111汉置合浦郡海门镇（合浦—北海）
+    city_haikang: 580, // 隋置海康县（雷州）
+    city_cen: 1100, // 宋代始见凌云（岑氏土司地）
+    city_wanling: -202, // 汉置宛陵县（宣城）
+    city_chimushan: 1300, // 宋代畲族敕木山聚落
+    city_wulingshan: -111, // 前111汉置壶头山（沅陵）
+    city_yongan: 1452, // 明代置永安州（蒙山）
+    city_yixian: -221, // 秦置黟县（徽州）
+    city_laifeng: 1400, // 明代散毛土司司治（屏山）
+    city_cili: -202, // 汉置慈利县
+    city_qianshan: -202, // 汉置皖县（潜山）
+    city_bamian: 1400, // 明清湘西八面山苗居
+    city_guyanguan: -111, // 前111汉置古严关（兴安）
+    city_hezhou: -111, // 前111汉置临贺县（贺州）
+    city_mailingguan: 1000, // 五代马楚—南汉争夺麦岭关（约1000）
+    city_yongzhou_hn: -111, // 前111汉置泉陵县（永州）
+    city_yazhou: -111, // 前111汉置珠崖郡
+    city_hailing: -202, // 汉置海陵县（泰州）
+    city_jingkou: 200, // 约200三国吴魏濡须水口城（濡须口）
+    city_luling: -202, // 汉置庐陵县（吉安）
+    city_qingliuguan: 1200, // 约南宋置清流关（滁州）
+    city_wancheng: 1200, // 约南宋置安庆府皖口（1200年代）
+    city_jiuzi: -202, // 汉置姑孰（当涂）
+    city_datong2: 600, // 唐置大通镇（铜陵）
+    city_yiyang: 500, // 南朝梁置弋阳郡（潢川）
+    city_linchuan: 280, // 280吴置临川郡（抚州）
+    city_mengjia: 1700, // 清代艋舺（台北）
+    city_diaoyudao: 1400, // 明初已见钓鱼屿（约1400）
+    city_penghu: 1300, // 元代已置澎湖巡检司（约1300）
+    city_guozhou: -202, // 汉置安汉县（南充）
+    city_mianyang: -221, // 秦置涪县（绵阳）
+    city_fuling: -300, // 战国巴蜀置楚（涪陵，秦置县）
+    city_songzhou: 620, // 唐置松州嘉诚县（松潘）
+    city_jianchang: -111, // 前111汉置邛都县（越嶲郡治）
+    city_guangnan: -111, // 前111汉置句町县（广南）
+    city_hezhang: -200, // 汉置可乐砂ريف属县（夜郎可乐遗址）
+    city_baoshan: 1000, // 宋代已见云南永昌（保山）
+    city_jianmenguan: 217, // 217蜀汉置剑阁县（剑门关）
+    city_baishuiguan: 200, // 汉末蜀汉置白水关（青川）
+    city_mianzhuguan: 700, // 唐置鹿头关（白马关）
+    city_diaoyucheng: 1243, // 1243南宋余玠建钓鱼城
+    city_panzhou: 620, // 唐代设潘州（若尔盖）
+    city_maozhou: -202, // 汉置汶江县（茂县）
+    city_lueyang: -202, // 汉置略阳道
+    city_qiuchi: -202, // 汉置上禄县（西和）
+    city_ganquanyi: -202, // 汉置武都郡治（武都）
+    city_dangchang: -202, // 汉置阴平道（文县）
+    city_dafang: 1630, // 明代水西土司司治（大方）
+    city_meinuozhai: 1750, // 清代小金坠坝美诺寨
+    city_piandaoshui: 200, // 汉代已见乌江中游偏刀水（思南）
+    city_leigong: 1500, // 明代贵州雷公山苗寨
+    city_hailongtun: 1250, // 约1250蒙元灭宋时期杨氏海龙屯初建
+    city_zhenyuan: 1400, // 明置㵲溪（镇远）
+    city_dangqu: -202, // 汉置宕渠县（渠县）
+    city_shimenguan: 1500, // 明代乌蒙石门关（盐津）
+    city_xiushan: 1500, // 明代渝东南秀山土司
+    city_jiading: 105, // 汉置乐山甲定丹寨（105年赋置县）
+    city_leshan: -202, // 汉置南安县（乐山）
+    city_hanchang: -202, // 汉置汉昌县（巴中）
+    city_yongning2: 1510, // 明置叙永永宁司（约1510）
+    city_jiangyang: -202, // 汉置江阳县（泸州）
+    city_juzhou: 1280, // 约1280元置顺元路（贵阳）
+    city_mengle: 1180, // 约1180勐泐车里景龙金殿国（傣泐）
+    city_yinsheng: 700, // 唐置银生节度（景东）
+    city_huixian: -111, // 前111汉置河池县（徽县）
+    city_shizhu: 1370, // 明代石柱宣抚司司治
+    city_bijie: 1382, // 1382明置毕节卫
+    city_dayan: 1250, // 约1250蒙元时期丽江木氏土司镇（大研）
+    city_tengyuecheng: 1620, // 明代置腾越州（腾冲）
+    city_mengmao: 1270, // 约1270麓川勐卯城
+    city_linqiong: -220, // 秦置临邛县（西汉径置铁官）
+    city_yandao: -312, // 前312秦置严道县（荥经）
+    city_qingxiguan: 700, // 唐置清溪关（汉源）
+    city_yuegui: -111, // 前111汉置越嶲郡
+    city_huichuan: 1380, // 明代会川卫（会理）
+    city_puding: 1300, // 约1300元置普定路（安顺）
+    city_weixian2: 1300, // 约1300元置曲靖路
+    city_luoxiong: 1200, // 约南宋置罗雄州（罗平）
+    city_wanwen: -111, // 前111汉置宛温县（兴义）
+    city_bodao: 1500, // 明代珙县僰人悬棺墓地群
+    city_nanpu: -202, // 汉置朐忍县（万州）
+    city_baidicheng2: 300, // 约300公孙述故国白帝城（今奉节）
+    city_luobo: 1000, // 宋代已见罗博
+    city_situo: 1300, // 约1300滇思陀部
+    city_zizhou_d: 600, // 隋置郪县（三台）
+    city_cangyuan: 1000, // 约宋代佤山沧源聚落
+    city_sandou: 1000, // 约宋代水族三都聚落（史载（水书文献））
+    city_xuecheng: 1000, // 唐已见薛城（理县）
+    city_diezhou: 740, // 唐742置叠州合川郡（迭部）
+    city_nieduo: 700, // 约8世纪初吐蕃小勃律孽多城（吉尔吉特）
+    city_dafeichuan: 670, // 670唐吐蕃大非川之战
+    city_mapangyongcuo: -100, // 吐蕃玛旁雍错圣地（阿里）
+    city_maqu: 1500, // 明代玛曲（黄河首曲）
+    city_qiongbu: 1270, // 约13世纪藏北丁青
+    city_nichi: 1200, // 约13世纪太昭（工布江达）
+    city_longmucuo: 700, // 唐前藏北部驻龙木错（约700）
+    city_payangyi: 700, // 吐蕃帕羊驿（阿里边地）
+    city_jiamachikang: 700, // 吐蕃松赞干布甲玛行宫
+    city_mangkangzong: 700, // 吐蕃置芒康宗
+    city_adunzi: 700, // 吐蕃置阿墩子（德钦）
+    city_hunduduo: 700, // 吐蕃瓦罕昏度多
+    city_puticheng: 700, // 吐蕃巴尔蒂斯坦菩提城
+    city_kajier: 700, // 吐蕃时代拉达克卡吉尔关
+    city_zhaburang2: 850, // 约850古格先祖后西藏建札布让
+    city_sapi: 700, // 吐蕃萨毗城（柴达木西）
+    city_gasikou: 700, // 吐蕃噶斯口（柴达木西）
+    city_kangyanchuan: 600, // 吐蕃康查木多（昌都）
+    city_heizong: 700, // 吐蕃置黑河宗
+    city_pibo: 600, // 吐蕃置匹播城（琼结）
+    city_jiegu: 1700, // 约18世纪结古镇
+    city_riwoche: 1270, // 约1270所在地类乌齐寺
+    city_nangqian: 1000, // 约11世纪囊谦土司司治
+    city_sajia: 1073, // 1073建萨迦寺
+    city_juemuzong: 700, // 吐蕃置觉木宗
+    city_jiangzi: 1400, // 约1400年前后建江孜宗
+    city_yadong: 700, // 吐蕃春丕谷
+    city_leweizhai: 1750, // 乾隆年间金川勒乌围官寨
+    city_leh: 900, // 吐蕃拉达克首城（列城）
+    city_dangxiong: 600, // 吐蕃藏北当雄
+    city_cuona: 600, // 吐蕃山南错那
+    city_metuo: 600, // 吐蕃墨脱
+    city_chubusi: 700, // 吐蕃楚布寺（约700）
+    city_mufu: 1700, // 约18世纪中甸独克宗城
+    city_rituzong: 1000, // 约11世纪吐蕃日土宗
+    city_zhadunzong: 700, // 吐蕃藏西南扎敦
+    city_derge: 1400, // 约1400德格土司司治
+    city_ganzi: 1400, // 明代甘孜土司腰
+    city_basu: 700, // 吐蕃置八宿宗
+    city_suozong: 700, // 吐蕃置索县
+    city_litangzong: 1600, // 明代四川理塘寺
+    city_gadake: 1200, // 约12世纪吐蕃垦拓时期阿里噶尔
+    city_galangzong: 1500, // 约15世纪波密噶朗土司
+    city_jimai: 1000, // 后西藏吉麦（羊卓雍错）
+    city_tingbu: 1200, // 约13世纪藏历世布廷布
+    city_niubiziliang: 700, // 吐蕃柴达木北
+    city_mahaitai: 700, // 吐蕃柴达木北
+    city_taijinaier: 700, // 吐蕃台吉乃尔
+    city_gasinaoer: 700, // 吐蕃尕斯错纳
+    city_saga: 700, // 吐蕃论钦陵驻萨噶
+    city_tonghai: 700, // 唐置通海都督府
+    city_weichu: 700, // 唐置威楚（楚雄）
+    city_mengshe: 640, // 约640云南蒙舍诏巍山
+    city_wumeng: 600, // 南诏置乌蒙
+    city_shengjingguan: 600, // 南诏置胜境关
+    city_meng: 640, // 约640云南蒙舍诏
+    city_kelunpo: 1515, // 1515年前后葡人首抵科伦坡
+    city_cochin: 1341, // 1341年前后佩鲁流音·科奇因（柯枝）建香料港
+    city_quilon: 825, // 约825小葛兰（奎隆）建香料港
+    city_suomunate: -100, // 前1世纪左右所求那陀卫姆（索普拉特）
+    city_surat: 1000, // 约11世纪印度苏拉特古港
+    city_madras: 1600, // 约1600英人建马德拉斯圣乔治堡
+    city_mumbai: 1500, // 约1500葡人初至孟买
+    city_puli: 1000, // 约11世纪奥里萨普里古城
+    city_danta: 700, // 奄里萨丹塔普拉明（约700）
+    city_jinqi: 1000, // 约11世纪建志（金奇）
+    city_bishnupur: 1000, // 约11世纪建置比什努普尔
+    city_golconda: 1300, // 约1300蒙古后库特布沙希王朝戈尔康达城
+    city_putijiaye: -500, // 前5世纪佛陀今生之子菩提伽耶
+    city_gwalior_fort: 100, // 约1世纪建置瓜廖尔最初的堡垒
+    city_sheweicheng: -500, // 前5世纪佛教断石（舍卫城建于佛生时）
+    city_zhanbo: -500, // 前5世纪鸯伽瞻波城
+    city_ayuta: -500, // 前5世纪憍萨罗阿逾陀城
+    city_geergang: 1200, // 约13世纪而后阿豪姆人戈尔冈城
+    city_suomapuli: 700, // 约8世纪索玛普利大寺
+    city_jidagang: 1000, // 约10世纪孟加拉吉大港早期
+    city_danmoledi: -300, // 前3世纪阿酥那时期 $ (名为丹摩栗底)
+    city_kolkata: 1690, // 1690乔布·查诺克建加尔各答城
+    city_atuoke: -325, // 前325年涅阿尔科斯经印度河阿托克渡(阿托则è)
+    city_piyetuo: 1000, // 约10世纪高棉毗耶陀前吴哥城
+    city_khorat: 1300, // 约13世纪罗斛故地呵叻城
+    city_jingling: 1500, // 1500年前后北大年苏丹国都城
+    city_yunmeng: 1500, // 1500年前后北大年苏丹国都城
+    city_tianyang: 1500, // 1500年前后北大年苏丹国都城
+    city_chenzhou2: 1500, // 1500年前后北大年苏丹国都城
+    city_yuanzhou: 1500, // 1500年前后北大年苏丹国都城
+    city_longchuan: 1500, // 1500年前后北大年苏丹国都城
+    city_shicheng: 1500, // 1500年前后北大年苏丹国都城
+    city_baling: 1500, // 1500年前后北大年苏丹国都城
+    city_linzheng: 1500, // 1500年前后北大年苏丹国都城
+    city_guiyang: 1500, // 1500年前后北大年苏丹国都城
+    city_qujiang: 1500, // 1500年前后北大年苏丹国都城
+    city_qichun: 1500, // 1500年前后北大年苏丹国都城
+    city_shaozhou: 1500, // 1500年前后北大年苏丹国都城
+    city_chongan: 1500, // 1500年前后北大年苏丹国都城
+    city_tanzhong: 1500, // 1500年前后北大年苏丹国都城
+    city_yunyang: 1500, // 1500年前后北大年苏丹国都城
+    city_dupan: 200, // 约2世纪扶南属国阇槃
+    city_bangdun: 1300, // 约14世纪归仁邦敦
+    city_sanpu: 500, // 约6世纪水真陆真三菩
+    city_hengyu: 1500, // 1500年前后北大年苏丹国都城
+    city_shangding: 1400, // 约15世纪湄公河上丁
+    city_dongxu_old: 500, // 约6世纪缅甸凯图玛蒂
+    city_fuchun: 1600, // 约1600阮主定都富春（顺化）
+    city_ambon: 1512, // 1512葡人建安汶堡
+    city_banda: 1609, // 1609荷人建班达奈拉堡
+    city_wandan: 1527, // 1527万丹苏丹国建城
+    city_shwebo: 1752, // 1752雍笈牙定都瑞波
+    city_hagatna: 1400, // 查莫罗阿加尼亚聚落（西班牙殖民前）
+    city_deernate: 1500, // 约15世纪德那地特尔纳特苏丹国属地
+    city_danmaxi: 1300, // 约1300年淡马锡（新加坡拉）
+    city_pagaruyung: 200, // 约2世纪米南加保帕加鲁荣
+    city_ava: 1365, // 1365年建成因瓦（阿瓦）王都城
+    city_srikshetra: 600, // 约6世纪骠国室利差罗
+    city_kangla: 33, // 约公元33年建室室利人因帕尔康格拉王城
+    city_mizhina: 1200, // 缅北密支那早期
+    city_mubang: 1400, // 明代木邦土司司治
+    city_santaguan: 500, // 约500年岗卡傑里三塔关故地
+    city_xianglin: 500, // 约5世纪南越象林
+    city_hoalu: 968, // 968丁部领立大瞿越都华闾
+    city_xidu: 1418, // 1418黎利蓝山起义
+    city_guangyuan: 1500, // 明代越南广源州
+    city_yian: 900, // 约10世纪南越义安（驩州）
+    city_myson: 400, // 约4世纪占婆美山圣地
+    city_chingkham: 1300, // 约13世纪兰纳清坎寨（清莱）
+    city_kalasan: 778, // 778年夏连特拉王朝建卡拉桑塔
+    city_salamanca: -200, // 约前200年罗马建萨拉曼卡城
+    city_valencia: -100, // 约前100年罗马建巴伦西亚
+    city_valen: -100, // 约前100年罗马建巴伦西亚
+    city_numantia: -100, // 前2世纪末努曼提亚成城
+    city_zaragoza: -100, // 约前1世纪罗马建萨拉戈萨
+    city_la_mota: 1100, // 约1100年卡斯蒂利亚建拉莫塔堡
+    city_palma: -123, // 前123年罗马建帕尔马
+    city_verona: -500, // 约前5世纪伊特鲁里亚维罗纳城
+    city_pisa: -100, // 约前100年罗马伊特鲁里亚比萨
+    city_shangbeili: 1000, // 约1000年萨伏伊尚贝里
+    city_antiwali: 1000, // 约1000年达尔马提亚安提瓦里
+    city_kesenza: -500, // 约前500年布鲁提姆科森扎城
+    city_meierfei: 1000, // 约1000年诺曼人建南意大利梅尔菲
+    city_oristano: 1000, // 约1000年撒丁岛奥里斯塔诺
+    city_dijon: 1000, // 约1000年勃艮第第戎
+    city_geneva: -100, // 约前1世纪罗马日内瓦
+    city_mengteluo: 1000, // 约1000年勃艮第蒙特罗要塞
+    city_lier: 1000, // 约1000年佛兰德里尔
+    city_toulouse: -100, // 约前1世纪罗马图卢兹
+    city_nantes: -100, // 约前1世纪罗马南
+    city_avignon: -100, // 约前1世纪卡马尔格阿维尼翁
+    city_calais: 900, // 约9世纪加莱
+    city_oushi: -100, // 约前1世纪阿马尼亚克欧什
+    city_shatteer: 1000, // 约1000年沙特尔主教城
+    city_chambord: 1519, // 1519弗朗索瓦一世立项建香波堡
+    city_bremen: 585, // 585年法兰克建不莱梅
+    city_yachen: 600, // 约7世纪法兰克王宫亚琛
+    city_gothenburg: 1600, // 约1600年瑞典哥德堡
+    city_rostock: 1200, // 约1200年梅克伦堡罗斯托克
+    city_bruges: 850, // 约850年佛兰德布鲁日
+    city_bulusaier: 1000, // 约1000年布鲁塞尔
+    city_shiqieqing: 1000, // 约1000年波美拉尼亚什切青
+    city_heidelberg: 1196, // 1196年海德堡建城
+    city_lubeck: 1143, // 1143年荷尔施坦因重设吕贝克
+    city_bolandengbao: 1160, // 约1160年阿斯卡尼亚勃兰登堡
+    city_niulunbao: 1050, // 约1050年纽伦堡
+    city_magedebao: 805, // 805年查理曼建马格德堡
+    city_leigensibao: 500, // 约500年罗马卡斯特拉雷根斯堡
+    city_bulunruike: 800, // 约800年萨克森不伦瑞克
+    city_gebenhagen: 1167, // 1167年阿布萨隆筑哥本哈根城
+    city_basaier: -50, // 约前50年罗马建巴塞尔
+    city_hague: 1230, // 约1230荷兰伯爵驻地海牙
+    city_lahexiuyuan: 1093, // 1093年亨利二世建拉赫修院
+    city_meiyinci: -20, // 罗马时期约前20年美因茨筑
+    city_aogesibao: -15, // 前15年罗马建奥格斯堡
+    city_aidingbao: -100, // 约2世纪罗马时期
+    city_ragusa: -100, // 约前1世纪拉古萨（杜布罗夫尼克）
+    city_nuofugeerdede: 859, // 859年留里克兄弟入主诺夫哥罗德
+    city_ladoga: 753, // 约753年拉多加建城
+    city_baihu: 862, // 862年留里克之弟建白湖
+    city_xieerpuhuofu: 1300, // 约1320年莫斯科添设谢尔普霍夫
+    city_fulajimier: 1108, // 1108年建弗拉基米尔城
+    city_simolengsike: 900, // 约9世纪斯摩棱斯克
+    city_jialiqi: 1200, // 约1200年加利奇大营
+    city_pusikefu: 903, // 903年首载普斯科夫
+    city_liangzan: 1000, // 约1000年建梁赞
+    city_teweier: 1135, // 1135年建特维尔城
+    city_xianuofugeerdede: 1221, // 1221年建下诺夫哥罗德
+    city_peilieyasilafu: -100, // 约前1世纪佩列亚斯拉夫
+    city_cherkasy: 1000, // 约1000年切尔卡瑟
+    city_sarajevo: 1450, // 约1450年波斯尼亚萨拉热窝
+    city_gradeci: 1000, // 约1000年格代茨
+    city_belgrade: -100, // 约前2世纪罗马建辛吉杜姆
+    city_skopje: -100, // 约前2世纪罗马建斯库皮
+    city_prilep: -100, // 约前2世纪罗马建普里莱普
+    city_zhytomyr: 884, // 884年建日托米尔
+    city_qiernigeweifu: 900, // 约9世纪末切尔尼戈夫
+    city_boluocike: 862, // 862年留里克系波洛茨克建城
+    city_saerkeer: 800, // 约800年顿河萨尔克尔
+    city_weishen: 1400, // 约1400年顿河哥萨克
+    city_wupusala: 500, // 约500年瑞典乌普萨拉
+    city_weishibi: 900, // 约9世纪哥得兰维斯比
+    city_york: 71, // 公元71年罗马建Eboracum（约克）
+    city_boergong: 1200, // 约1200年挪威博尔贡
+    city_beiergen: 1070, // 约1070年挪威卑尔根（奥拉夫三世）
+    city_oxford: 900, // 约871年阿尔弗雷德设牛津
+    city_norwich: 1000, // 约1000年诺里奇
+    city_winchester: -300, // 约前300年凯尔特贝尔盖亚温彻斯特
+    city_plymouth: 1000, // 约1000年普利茅斯早期
+    city_limerick: -100, // 约前100年维京人（爱尔兰）利默里克
+    city_bordeaux: -300, // 约前300年凯尔特比图里加波尔多
+    city_kanafeng: 1283, // 1283年爱德华一世建卡那封城堡
+    city_geluosite: 1000, // 约1000年格洛斯特
+    city_hawadeng: 1282, // 1282年威尔士哈瓦登
+    city_buyiersi: 1282, // 1282年欧温桥布伊尔斯城
+    city_dunadd: 500, // 约600年达尔里阿达邓纳德
+    city_scone: 1000, // 约1000年苏格兰斯昆
+    city_yinfeineisi: 565, // 565年圣哥伦巴建因弗内斯
+    city_carlisle: 72, // 72年罗马建卡莱尔
+    city_dublin: 841, // 841年维京人建都柏林
+    city_kasheer: 600, // 约6世纪卡舍尔
+    city_rennes: 300, // 约300年罗马时代雷恩
+    city_kanpeier: 500, // 约6世纪布列塔尼坎佩尔
+    city_salatuofu: 1590, // 1590年俄国建萨拉托夫
+    city_zhapoluore: 1600, // 约1600年扎波罗热塞契
+    city_jiridao: 1601, // 1601年基日教区档案首载教堂院
+    city_chalijin: 1589, // 1589年俄国建伏尔加察里津
+    city_samala: 1586, // 1586年俄国建萨马拉
+    city_wufa: 1574, // 1574年俄国乌法成镇
+    city_bieergeleide: 1600, // 约1600年别尔哥罗德
+    city_haerkefu: 1654, // 1654年哥萨克建哈尔科夫
+    city_woluonerizh: 1586, // 1586年俄筑沃罗涅日木堡
+    city_teernuowo: 1200, // 约1200年代保加利亚特尔诺沃
+    city_bucharest: 1400, // 约15世纪初瓦拉几亚布加勒斯特
+    city_yaxi: 1000, // 约1000年摩尔达维亚雅西
+    city_teergewishite: 1400, // 约1400年瓦拉几亚特尔戈维什泰
+    city_agesi: 400, // 约4世纪中叶瓦拉几亚库尔泰亚（罗马）
+    city_baba_vida: 600, // 约600年保加利亚巴巴维达
+    city_suceava: 1400, // 约15世纪初摩尔达维亚苏恰瓦
+    city_eger: 1494, // 约1494年首见沃里尼亚维雷茨基
+    city_aoermuci: -100, // 约前100年斯拉夫奥缪尔聚落（厄尔布鲁士前沿）
+    city_buernuo: 1000, // 约1000年摩拉维亚布尔诺
+    city_brest: 1000, // 约1000年布列斯特
+    city_weierniwusi: 1000, // 约1000年立陶宛维尔纽斯
+    city_liga: 1150, // 1150年立陶宛里加
+    city_talin: 1219, // 1219年丹麦建塔林
+    city_youliyefu: 1000, // 约1000年尤里耶夫
+    city_geluodenuo: 1000, // 约1000年格罗德诺
+    city_weijiebusike: 900, // 约9世纪立陶宛维捷布斯克
+    city_kawunas: 1200, // 约1200年立陶宛卡乌纳斯
+    city_gdansk: 950, // 约950年格但斯克
+    city_poznan: 890, // 约890年皮亚斯特波兹南
+    city_liweifu: 1256, // 1256年加利西亚利沃夫
+    city_bedzin: 1300, // 约1300年本津堡
+    city_kenisibao: 1255, // 1255年条顿骑士团筑柯尼斯堡
+    city_puleisilafu: 800, // 约800年建保加利亚普雷斯拉夫
+    city_elmina: 1482, // 1482年葡人建埃尔米纳城堡
+    city_sainthelena: 1502, // 1502年若昂·达诺瓦发现圣赫勒拿岛
+    city_mauritius: 1700, // 约1700年代初法国东印度公司毛里求斯（Port Louis）
+    city_niani: 1235, // 约1235马里帝国尼亚尼首都
+    city_debuleidamo: 1300, // 约1300年提格雷德布拉坦尼
+    city_telde: -100, // 约前100年大加那利岛特尔德原住民聚落
+    city_lalibeila: 1100, // 约1135扎格维王朝修拉利贝拉
+    city_fasil_fort: 1600, // 约1600年代法西里德埃塞俄比亚帝国
+    city_kumubi: 500, // 约5世纪库姆比萨利赫古加纳西部城
+    city_jienei: 1000, // 约1000年代杰内城
+    city_malindi: 500, // 斯瓦希里殖民迦太基后初期马林迪
+    city_barawa: 500, // 斯瓦希里沿海布拉瓦城
+    city_saimien: 500, // 约5世纪库什王国塞纳城
+    city_debuleilibanuosi: 1300, // 约1300年代达格纳詹南征经肖阿德布雷利巴诺斯
+    city_zeila: 500, // 约500年阿达尔泽拉港
+    city_jamestown: 1607, // 1607年英格兰北美首永久定居点詹姆斯敦
+    city_portroyal: 1655, // 1655年英格兰夺得牙买加皇家港
+    city_tahiti: 1000, // 约1000年波利尼西亚大溪地
+    city_rapanui: 1000, // 约1000年代拉帕努伊（复活节岛）
+    city_mua: 900, // 约900年代汤加穆阿首都
+    city_yala: 1510, // 约1510年代西班牙初征古巴圣地亚哥
+    city_shengduomingge: 1496, // 美洲最早的欧洲殖民城圣多明各
+    city_martinique: 1635, // 1635年法国占据马提尼克
+    city_newamsterdam: 1626, // 1626年荷兰西印度公司建新阿姆斯特丹
+    city_quebec: 1608, // 1608年尚普兰建魁北克城
+    city_acapulco: 1615, // 约1615年西班牙开辟阿卡普尔科大帆船港
+    city_veracruz: 1519, // 1519年科尔特斯建韦拉克鲁斯
+    city_shengaogusiding: 1565, // 1565年西班牙建圣奥古斯丁
+    city_yiguasu: 1542, // 1542年卡韦萨·德巴卡到达伊瓜苏一带
+    city_banama: 1519, // 1519年8月15日佩德罗·阿里亚斯·达维拉建巴拿马城
+    city_portobelo: 1500, // 西属巴拿马波多韦洛
+    city_katachena: 1533, // 1533年西班牙皮萨罗部建卡塔赫纳城
+    city_hongsa: 1500, // 新西班牙晚期穆伊斯卡洪萨
+    city_diyawanake: 100, // 约公元1世纪末蒂亚瓦纳科城
+    city_suojiamosuo: 1450, // 1450年前后穆伊斯卡索加莫索
+    city_comagre: 1450, // 约1450年前后穆伊斯卡科马格雷领聚落
+    city_machu_picchu: 1450, // 约1450前后帕查库提在马丘比丘建王家山城
+    city_andahuaylas: 1450, // 约1450前后印加安达瓦伊拉斯
+    city_quito: 1200, // 约1200年代印加基多
+    city_valparaiso: 1544, // 1544年巴尔迪维亚定瓦尔帕莱索为出海口
+    city_buenosaires: 1536, // 1536年门多萨初建布宜诺斯艾利斯
+    city_lima: 1535, // 1535年初西班牙皮萨罗建利马
+    city_kabufoliwu: 1500, // 约1500年图皮人卡布弗里乌据点
+    city_kelipuli: 1500, // 约1500年马普切人凯利普利据点
+    city_bideluoa: 1500, // 1500年前后比德罗阿
+    city_tucapel: 1553, // 1553年图卡佩尔劳塔罗首胜
+    city_ledu: 450, // 约5世纪吐谷浑据浇河城（贵德，原汉宣帝神爵年破羌地）
+    city_gaoque: -127, // 前127汉卫青出高阙取河南地（史记首载）
+    city_xingxingxia: -102, // 约前102汉筑河西烽燧（星星峡五峰燧系汉唐明递修）
+    city_yumenguan: -111, // 约前111汉武帝置敦煌郡、设玉门关（小方盘城）
+    city_yangguan: -111, // 约前111汉武帝置阳关（敦煌西南）
+    city_hamhung: 200, // 约2世纪沃沮聚落（咸兴）
+    city_longer: 1200, // 约13世纪女真—蒙古聚落（会宁笼耳）
+    city_fuhan: -81, // 前81汉昭帝始元六年置枹罕县（临夏）
+    city_chilechuan: -214, // 前214秦始皇置九原郡（河套）
+    city_fusicheng: 540, // 约540吐谷浑夸吕可汗建都伏俟城（青海湖西）
+    city_chijin: 1404, // 1404明置赤斤蒙古卫（赤金堡）
+    city_ordos: -127, // 前127汉置朔方郡延恩县
+    city_buerhanbuda: 700, // 约7世纪多弥部白海堡（玛多一带）
+    city_yunwu: -111, // 前111汉置金城郡允吾县（民和）
+    city_huashixia: 680, // 680前后黑齿常之河源军破吐蕃于花石峡
+    city_dadoubagu: 609, // 609隋炀帝西征经大斗拔谷（扁都口首见史）
+    city_jinchangcheng: 620, // 约620唐置瓜州晋昌县
+    city_changze: -127, // 前127汉置朔方郡长泽县
+    city_linrong: -127, // 前127汉置朔方郡临戎县
+    city_aowei: -111, // 约前111汉置媪围县（景泰）
+    city_mingsha: 599, // 约599隋置鸣沙县，唐升鸣沙州（中宁）
+    city_lingju: -121, // 前121霍去病河西受降后汉置令居塞
+    city_jingsai: 711, // 约711唐张仁愿置静塞军（吴忠）
+    city_lingzhou: 624, // 约624唐置灵州、回乐为州治（灵武）
+    city_juyansai: -102, // 前102汉太初三年路博德筑遮虏障（居延）
+    city_huangchuan: -202, // 汉置弋阳县（潢川，弋阳侯国地）
+    city_ledou: -61, // 前61汉宣帝神爵二年置破羌县（乐都）
+    city_quyancheng: -300, // 约战国置朐衍邑（盐池，朐衍戎故地）
+    city_xiuta: -700, // 约前7世纪腓尼基殖民休达（Abyla）
+    city_danjier: -450, // 约前5世纪迦太基置丹吉尔（Tingis）
+    city_teleimusen: 100, // 约1世纪罗马置特莱姆森（Pomaria）
+    city_bujiaya: 100, // 约1世纪罗马置贝贾亚（Saldae）
+    city_kailuwan: 670, // 670乌格巴建凯鲁万
+    city_khenchela: 100, // 约1世纪罗马置肯切拉要塞
+    city_labate: 1146, // 1146穆瓦希德建拉巴特要塞
+    city_jiaziwen: 250, // 约250萨珊沙普尔一世建舍普尔城（加兹温前身）
+    city_jelling: 936, // 约936老戈姆王王庭于耶灵（10世纪丹麦王家陵）
+    city_hedeby: 700, // 约8世纪初维京贸易城海瑟比
+    city_boertu: -300, // 约前3世纪罗马置波尔图（Portus Cale）
+    city_aomen: 1557, // 1557葡人获准居留澳门
+    city_cebu: 1521, // 1521麦哲伦抵宿务首见于欧史（1565西班牙建城）
+    city_ribeira: 1462, // 1462葡建里贝拉格兰德（佛得角首府）
+    city_saovicente: 1532, // 1532葡建巴西首个殖民村圣维森特
+    city_angra: 1480, // 约1480葡建亚速尔特塞拉安格拉城
+    city_braganca: 1181, // 约1181布拉干萨领主建城
+    city_coimbra: -100, // 约前1世纪罗马置科英布拉（Aeminium）
+    city_palenque: -226, // 约前226帕伦克最早纪年（玛雅Lakamha）
+    city_guanabara: 1475, // 约1475图皮人定居瓜纳巴拉湾
+    city_teyuna: 1200, // 约1200泰罗纳建石阶山城（失落之城）
+    city_sanjulian: 1520, // 1520麦哲伦越冬圣胡利安港
+    city_uxmal: 850, // 约850乌斯马尔玛雅城建盛期
+    city_onon: 1142, // 约1142易洛魁联盟立会于奥农多加（传统纪年）
 };
 
+/**
+ * 战场**不成城**：`bf_*` 打点（`Battlefields.ts`）无居城年代，统一取**该役之年**（`scriptYear`）
+ * 作首见年代——该年剧本开打时战场即上图，之前不上图（2026-11-10 主人令「战场用各自 scriptYear」）。
+ */
+export const BATTLEFIELD_FOUNDED_YEAR: Record<string, number> = {
+    bf_haimusishan: -335,
+    bf_duonaohe: -335,
+    bf_gelanikusihe: -334,
+    bf_yisusi: -333,
+    bf_gaojiamila: -331,
+    bf_wukexiya: -331,
+    bf_bosimen: -330,
+    bf_xierhe: -329,
+    bf_haidasipaisihe: -326,
+    bf_kesaiya: -324,
+    bf_kalka: 1223,
+    bf_jieqiao: 191,
+    bf_ayinzhaluete: 1260,
+    bf_acam1_1: 711,
+    bf_acam1_5: 732,
+    bf_acam2_4: 1235,
+    bf_acam3_1: 1476,
+    bf_acam3_5: 1509,
+    bf_cam2_3: 1429,
+    bf_cam2_6: 1453,
+    bf_cam3_6: 1192,
+    bf_cam4_1: 1206,
+    bf_cam4_2: 1218,
+    bf_cam4_6: 1241,
+    bf_cam5_4: 1176,
+    bf_eecam1_4: 1362,
+    bf_eecam2_4: 1399,
+    bf_eecam2_6: 1410,
+    bf_eecam3_1: 1420,
+    bf_eecam3_3: 1422,
+    bf_eecam3_4: 1424,
+    bf_eecam3_6: 1431,
+    bf_coop10_1: 402,
+    bf_fcam5_2: 1440,
+    bf_fcam6_3: 1191,
+    bf_fcam7_1: 732,
+    bf_fcam7_3: 1066,
+    bf_fcam7_4: 1071,
+    bf_fcam7_5: 1415,
+    bf_fcam7_6: 1571,
+    bf_fcam7_7: 1582,
+    bf_fcam7_8: 1598,
+    bf_fcam7_12: 895,
+    bf_fcam7_13: 1183,
+    bf_fcam7_15: 1302,
+    bf_fcam7_16: 1363,
+    bf_incam1_4: 1526,
+    bf_incam1_5: 1527,
+    bf_kcam1_3: 1391,
+    bf_kcam1_6: 1402,
+    bf_kcam2_4: 1279,
+    bf_kcam3_2: 1238,
+    bf_rcam1_4: 1357,
+    bf_rcam4_4: 1426,
+    bf_wecam1_1: 1265,
+    bf_wecam1_3: 1296,
+    bf_wecam1_4: 1298,
+    bf_wecam2_1: 1382,
+    bf_wecam2_5: 1476,
+    bf_wecam2_6: 1477,
+    bf_wecam3_1: 1053,
+    bf_xcam1_4: 451,
+    bf_xcam2_2: 1081,
+    bf_xcam2_5: 1094,
+    bf_xcam3_4: 1520,
+    bf_xcam3_5: 1521,
+    bf_dcam0_1: 1201,
+    bf_shiting: 228,
+    bf_suwasong: 486,
+    bf_kanni: -216,
+    bf_bingshang: 1242,
+    bf_chibi: 208,
+    bf_aersha: 1514,
+    bf_nikebolisi: -66,
+    bf_nikebao: 1396,
+    bf_wulanbutong: 1690,
+    bf_yipususi: -301,
+    bf_qielami: 1063,
+    bf_chaerdilan: 1514,
+    bf_mierbeige: 1547,
+    bf_mohaqi: 1526,
+    bf_huangshui: 1648,
+    bf_tahuda: 683,
+};

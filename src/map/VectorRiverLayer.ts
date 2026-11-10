@@ -6,7 +6,7 @@ import { STRATEGIC_WATER_PALETTE } from './StrategicWaterMaterial';
 const VECTOR_RIVER_BASE = STRATEGIC_WATER_PALETTE.coastalAzure;
 const VECTOR_RIVER_WATER_COLOR = `rgb(${VECTOR_RIVER_BASE.join(',')})`;
 // 柔和河岸微阴影：从水体基色派生微暗半透明色，模拟细河嵌进地形的微河床边缘
-const RIVER_BED_SHADOW_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.round(v * 0.58)).join(',')})`;
+const RIVER_BED_SHADOW_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.round(v * 0.42)).join(',')})`;
 // 河心微光/反光：针对主要宽河轻微提亮，取浅滩透底色
 const VECTOR_RIVER_TONE_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.shallowReef.join(',')})`;
 
@@ -287,8 +287,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
             color: RIVER_BED_SHADOW_COLOR,
-            weight: waterWeight + 1.8,
-            opacity: 0.34,
+            weight: waterWeight + 2.2,
+            opacity: 0.56,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -324,7 +324,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
             stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 3.6,
             color: VECTOR_RIVER_TONE_COLOR,
             weight: Math.max(1.0, weight * 0.45),
-            opacity: 0.35,
+            opacity: 0.52,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),

@@ -924,8 +924,9 @@ export class CityLifeAmbientLayer {
         return true;
     }
 
-    /** 严格判定某点处于真实海域（中心点及周围至少 3 个邻点均为海，防止渔船搁浅在岸线陆地上） */
+    /** 严格判定某点处于真实海域（必须连通外海 isOpenOcean，且中心点及周围至少 3 个邻点均为海，绝不把内陆江河湖泊当海） */
     private isDeepEnoughSea(pos: Pt): boolean {
+        if (!isOpenOcean(pos.lat, pos.lng)) return false;
         if (!this.isSea(pos)) return false;
         const d = 0.024;
         let seaCount = 0;
@@ -936,8 +937,37 @@ export class CityLifeAmbientLayer {
         return seaCount >= 3;
     }
 
-    /** 在据点周边搜寻真实海域渔场点，并同时返回近岸港湾海域点（全在海中）。
-     *  🔴 2026-10-30 主人令「渔船可以离据点远些显示」：先找 0.30°~0.72° 的外海，找不到再退回近海，沿海小湾照样有渔场。 */
+    /**
+     * 从外海锚点 seaPos 朝据点 (cLat, cLng) 反向步进，精确找到海陆交界的海边岸线点（海边船坞落点）：
+     * 从海往陆走，遇到第一个陆地点即停，绝不会跨过陆地落到内陆河流上。
+     */
+    private findSeasideCoastPos(cLat: number, cLng: number, seaPos: Pt): Pt | null {
+        const steps = 28;
+        let lastSea: Pt = seaPos;
+        let hitLand: Pt | null = null;
+        for (let s = 1; s < steps; s++) {
+            const t = 1 - s / steps;
+            const pt: Pt = {
+                lat: cLat + (seaPos.lat - cLat) * t,
+                lng: cLng + (seaPos.lng - cLng) * t,
+            };
+            if (this.isSea(pt)) {
+                lastSea = pt;
+            } else {
+                hitLand = pt;
+                break;
+            }
+        }
+        if (!hitLand) return null;
+        return {
+            lat: hitLand.lat * 0.35 + lastSea.lat * 0.65,
+            lng: hitLand.lng * 0.35 + lastSea.lng * 0.65,
+        };
+    }
+
+    /** 在据点周边搜寻真实海域渔场点，并同时返回海边岸线港湾点（全在海边/海中，绝不在内河）。
+     *  🔴 2026-10-30 主人令「渔船可以离据点远些显示」：先找 0.30°~0.72° 的外海，找不到再退回近海，沿海小湾照样有渔场。
+     *  🔴 2026-11-10 主人令「不要在河上放港口，一律放海边」：gatePos 从外海反向退到海陆交界岸线，严禁落在内陆河流上。 */
     private findSeaFishingSpot(cLat: number, cLng: number, baseAngle: number, distBias: number): { homePos: Pt; gatePos: Pt } | null {
         const radii = [0.30, 0.38, 0.47, 0.57, 0.67, 0.14, 0.20, 0.25];
         const angleSteps = 20;
@@ -951,18 +981,11 @@ export class CityLifeAmbientLayer {
                     lng: cLng + Math.cos(ang) * actualR,
                 };
                 if (this.isDeepEnoughSea(cand)) {
-                    // 寻找从外海渔场朝据点方向推进的近岸港湾海域点（同样必须在海中）
-                    let gatePos = cand;
-                    for (const f of [0.30, 0.42, 0.55, 0.68, 0.80]) {
-                        const nearCand = {
-                            lat: cLat + (cand.lat - cLat) * f,
-                            lng: cLng + (cand.lng - cLng) * f,
-                        };
-                        if (this.isSea(nearCand)) {
-                            gatePos = nearCand;
-                            break;
-                        }
-                    }
+                    const coastPos = this.findSeasideCoastPos(cLat, cLng, cand);
+                    const gatePos = coastPos ?? {
+                        lat: cLat + (cand.lat - cLat) * 0.72,
+                        lng: cLng + (cand.lng - cLng) * 0.72,
+                    };
                     return { homePos: cand, gatePos };
                 }
             }
@@ -2132,13 +2155,21 @@ export class CityLifeAmbientLayer {
         return st.ready ? st : undefined;
     }
 
-    /** 沿海/沿河据点自动探测紧邻岸线并生成对应文化的港口码头与船坞 */
+    /**
+     * 沿海据点自动探测紧邻海岸线并生成对应文化的港口码头与船坞
+     * 🔴 2026-11-10 主人令「不要在河上放港口，一律放海边」：
+     *    严禁用内陆水体掩膜（isWaterSync）在江河/湖泊边放港口；只认连通外海的真实海域（isDeepEnoughSea），
+     *    并从海面反向退到海陆交界岸线摆放，一律放在海边。
+     */
     private getOrCreateCityPortDock(city: CityDataV2, actors: CityLifeActor[]): CityPortDock | null {
         if (this.cityPortDockCache.has(city.id)) {
             return this.cityPortDockCache.get(city.id) ?? null;
         }
         if (city.buildingStyle === 'MONGOL') {
             this.cityPortDockCache.set(city.id, null);
+            return null;
+        }
+        if (this.hasPendingLandSeaAround(city.lat, city.lng)) {
             return null;
         }
         // 已由海上渔业组合自带船坞的据点不再重复摆放第二座码头
@@ -2148,9 +2179,8 @@ export class CityLifeAmbientLayer {
         }
         const h = (Math.floor(strHash01(city.id, 1301) * 0xFFFFFFFF) >>> 0);
         const cosLat = Math.max(0.25, Math.cos((city.lat * Math.PI) / 180));
-        const radii = [0.048, 0.062, 0.076, 0.092];
+        const radii = [0.06, 0.10, 0.15, 0.22];
         let bestPos: Pt | null = null;
-        let sawLoadedTile = false;
 
         for (const r of radii) {
             for (let step = 0; step < 16; step++) {
@@ -2158,19 +2188,11 @@ export class CityLifeAmbientLayer {
                 const ang = (dirIdx / 16) * Math.PI * 2;
                 const dLat = Math.sin(ang) * r;
                 const dLng = (Math.cos(ang) * r) / cosLat;
-                const lat = city.lat + dLat;
-                const lng = city.lng + dLng;
-                const seaVal = this.isSea({ lat, lng });
-                const waterVal = LandSeaSystem.getWaterSampler().isWaterSync(lat, lng);
-                if (waterVal !== null) sawLoadedTile = true;
-                if (seaVal || waterVal === true) {
-                    // 确认据点一侧半程仍在陆地（紧贴城墙外水陆交界岸线）
-                    const midSea = this.isSea({ lat: city.lat + dLat * 0.45, lng: city.lng + dLng * 0.45 });
-                    if (!midSea) {
-                        bestPos = {
-                            lat: city.lat + dLat * 0.82,
-                            lng: city.lng + dLng * 0.82,
-                        };
+                const seaCand = { lat: city.lat + dLat, lng: city.lng + dLng };
+                if (this.isDeepEnoughSea(seaCand)) {
+                    const coastPos = this.findSeasideCoastPos(city.lat, city.lng, seaCand);
+                    if (coastPos && Math.hypot(coastPos.lat - city.lat, (coastPos.lng - city.lng) * cosLat) <= 0.12) {
+                        bestPos = coastPos;
                         break;
                     }
                 }
@@ -2179,7 +2201,7 @@ export class CityLifeAmbientLayer {
         }
 
         if (!bestPos) {
-            if (sawLoadedTile) this.cityPortDockCache.set(city.id, null);
+            this.cityPortDockCache.set(city.id, null);
             return null;
         }
 

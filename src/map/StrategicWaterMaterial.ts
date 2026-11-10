@@ -308,13 +308,13 @@ export function renderStrategicWater(
 
             if (dist < 6.5) {
                 // 贴岸 4.5px 内微透清浅浅滩色 (shallowReef)
-                const seamT = Math.pow(1 - dist / 6.5, 1.2) * 0.26;
+                const seamT = Math.pow(1 - dist / 6.5, 1.2) * 0.34;
                 r = r * (1 - seamT) + reefR * seamT;
                 g = g * (1 - seamT) + reefG * seamT;
                 b = b * (1 - seamT) + reefB * seamT;
                 // 贴岸 1.5px 水岸湿润微暗浸润边，让水体自然嵌入大地
                 if (dist < 1.5) {
-                    const bankShade = 1 - (1 - dist / 1.5) * 0.12;
+                    const bankShade = 1 - (1 - dist / 1.5) * 0.22;
                     r *= bankShade;
                     g *= bankShade;
                     b *= bankShade;
