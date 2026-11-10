@@ -190,6 +190,11 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
 const PLOT_DX = Math.round(120 * STRATEGIC_SPRITE_SCALE);
 const PLOT_DY = Math.round(80 * STRATEGIC_SPRITE_SCALE);
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -PLOT_DY], [-PLOT_DX, 0], [PLOT_DX, 0], [0, PLOT_DY]];
+/** 四块地皮共边相邻关系（0 北、1 西、2 东、3 南）：北↔西、北↔东、南↔西、南↔东 共一条边；
+ *  南北、东西只对顶点（对角），不算相邻。
+ *  🔴 2026-11-10 主人令「如果是两块田地，要挨着，不要对角」：只铺两块时必须是共边相邻的一对，
+ *     宁可少铺一块，也不铺成两块对角。 */
+const PLOT_CELL_ADJACENT: readonly (readonly number[])[] = [[1, 2], [0, 3], [0, 3], [1, 2]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
 const PLOT_LEADER_CELL = 3;
@@ -821,16 +826,29 @@ export class CityLifeAmbientLayer {
     /**
      * 地皮选址：返回 pos 处能铺的地皮块号。农田 / 水田 / 草场都最多 2×2 四块，
      * 主人所在的南块必须能铺，其余三块各自判、能铺几块铺几块（平原多半四块，山谷常常只剩一两块）。
+     * 🔴 2026-11-10 主人令「如果是两块田地，要挨着，不要对角」：只保留与主人（南块）共边连成一片的地块，
+     *    南北、东西这种只对顶点的组合不算，地里不够就少铺一块，绝不铺成两块对角。
      */
     private plotCellsAt(pos: Pt): number[] {
         const p = this.map.project([pos.lat, pos.lng], 9);
         const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
         if (!this.isPlotCellFlatLand(p.x, p.y)) return [];
-        const cells: number[] = [];
+        const flat = new Set<number>([PLOT_LEADER_CELL]);
         PLOT_CELL_OFFSETS.forEach(([ox, oy], k) => {
-            if (k === PLOT_LEADER_CELL || this.isPlotCellFlatLand(p.x + ox - s[0], p.y + oy - s[1])) cells.push(k);
+            if (k === PLOT_LEADER_CELL) return;
+            if (this.isPlotCellFlatLand(p.x + ox - s[0], p.y + oy - s[1])) flat.add(k);
         });
-        return cells;
+        const keep = new Set<number>();
+        const queue: number[] = [PLOT_LEADER_CELL];
+        while (queue.length > 0) {
+            const k = queue.shift() as number;
+            if (keep.has(k)) continue;
+            keep.add(k);
+            for (const n of PLOT_CELL_ADJACENT[k]) {
+                if (flat.has(n) && !keep.has(n)) queue.push(n);
+            }
+        }
+        return PLOT_CELL_OFFSETS.map((_, k) => k).filter((k) => keep.has(k));
     }
 
     /**
@@ -1425,12 +1443,19 @@ export class CityLifeAmbientLayer {
             if (!homePos) continue;
             if (plotKind) newPlots.push({ cityId: city.id, ...this.plotPx(homePos) });
             // 平原能铺满四块时也只留本组抽到的块数：南块（主人）必留，其余按哈希挑。
+            // 🔴 2026-11-10 主人令「如果是两块田地，要挨着，不要对角」：挑块时只许挑与已铺地块共边相邻的，
+            //    两块田必须是南＋西或南＋东这样挨着的一对；南北、东西只对顶点，不许出现两块对角田。
             if (plotCells && plotCells.length > unitCount) {
+                const keepCells = new Set<number>([PLOT_LEADER_CELL]);
                 const others = plotCells
                     .filter((k) => k !== PLOT_LEADER_CELL)
-                    .sort((a, b) => strHash01(yk, i * 17 + 10 + a) - strHash01(yk, i * 17 + 10 + b))
-                    .slice(0, unitCount - 1);
-                plotCells = plotCells.filter((k) => k === PLOT_LEADER_CELL || others.includes(k));
+                    .sort((a, b) => strHash01(yk, i * 17 + 10 + a) - strHash01(yk, i * 17 + 10 + b));
+                for (const k of others) {
+                    if (keepCells.size >= unitCount) break;
+                    if (!PLOT_CELL_ADJACENT[k].some((n) => keepCells.has(n))) continue;
+                    keepCells.add(k);
+                }
+                plotCells = plotCells.filter((k) => keepCells.has(k));
             }
 
             // 猎人只在猎场旁短距离搬运，交接点保持在已验收的陆上范围内，不跨海回城。
