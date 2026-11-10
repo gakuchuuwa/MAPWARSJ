@@ -10996,6 +10996,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -40
+        },
+        "/assets/MONGOL/__闲置__JAPAN_37.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 12
         }
     },
     "folderGuides": {

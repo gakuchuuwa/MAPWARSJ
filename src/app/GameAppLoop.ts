@@ -93,7 +93,7 @@ function followLerpFactor(deltaSeconds: number): number {
  *         （见 followPanStep）。偏移只会单调衰减，不再随帧长忽大忽小。
  *    停稳（目标不动且进死区）时把地图层对齐回整像素，免得底图长期停在半像素上发虚。
  */
-const followPanState = { lastTarget: null as L.Point | null, lastZoom: NaN };
+const followPanState = { lastTarget: null as L.Point | null, lastZoom: NaN, settled: false };
 let lastFollowPanArmyId: string | null = null;
 /** 本帧战斗场景生命周期（battleScene.tick）是否已经跑过（见 tickGameAppFrame 末尾的兜底） */
 let battleSceneTickedThisFrame = false;
@@ -101,6 +101,7 @@ let battleSceneTickedThisFrame = false;
 function resetFollowPanState(): void {
     followPanState.lastTarget = null;
     followPanState.lastZoom = NaN;
+    followPanState.settled = false;
 }
 /** 目标单帧位移小于这个（像素）算「没动」：只有没动时死区才生效，否则行进中会反复进出死区一停一走 */
 const FOLLOW_STILL_EPS_PX = 0.01;
@@ -282,6 +283,7 @@ function followPanStep(map: L.Map, target: L.LatLng, deltaTime: number): void {
     const centerPx = map.project(center, zoom);
     const targetPx = map.project(target, zoom);
     const prev = followPanState.lastZoom === zoom ? followPanState.lastTarget : null;
+    if (followPanState.lastZoom !== zoom) followPanState.settled = false;
     followPanState.lastTarget = targetPx;
     followPanState.lastZoom = zoom;
 
@@ -289,8 +291,25 @@ function followPanStep(map: L.Map, target: L.LatLng, deltaTime: number): void {
     let my = prev ? targetPx.y - prev.y : 0;
     if (Math.abs(mx) + Math.abs(my) > FOLLOW_JUMP_PX) { mx = 0; my = 0; }
     const still = Math.abs(mx) + Math.abs(my) <= FOLLOW_STILL_EPS_PX;
+    // 🔴 [2026-11-09 主人报「人物静止时，所有据点名字轻微上下颤抖」] 停稳后「对齐整像素」与「平滑收拢」互相打架：
+    //    死区 120m 在 zoom9 只有约 0.4~0.5px，而对齐整像素最多把镜头挪开 0.7px —— 一对齐就又出了死区，
+    //    下一帧收拢挪回小数像素、进死区，再下一帧又对齐……地图层逐帧在「整像素 ↔ 小数像素」之间来回，
+    //    上面所有据点名字跟着贴相邻像素行，看起来就是轻微上下抖。
+    //    主人局落盘（LabelJitterProbe，dpr 1.5）：地图层 [2468,-13855] ↔ [2467.771,-13854.982] 逐帧交替。
+    //    修法：对齐后记「已停稳」。停稳期间只要目标没动、偏移没超过「死区 + 1px」（对齐最多带来 0.71px）就一动不动；
+    //    目标一动或偏移变大立刻解除，行进中的跟拍手感不变。
+    if (!still) {
+        followPanState.settled = false;
+    } else if (followPanState.settled
+        && !(import.meta.env.DEV && (window as unknown as { __followNoSettle?: boolean }).__followNoSettle)) {
+        const offPx = Math.hypot(targetPx.x - centerPx.x, targetPx.y - centerPx.y);
+        const deadPx = dist > 1e-6 && offPx > 1e-6 ? FOLLOW_RECENTER_DEADZONE_M * offPx / dist : 0;
+        if (offPx <= deadPx + 1) return;
+        followPanState.settled = false;
+    }
     if (still && dist <= FOLLOW_RECENTER_DEADZONE_M) {
         snapMapPaneToWholePixel(map);
+        followPanState.settled = true;
         return;
     }
     // 上一帧遗留偏移 = 当前偏移 − 目标本帧位移
