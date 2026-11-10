@@ -7,8 +7,6 @@ import { resolveCityDeBuildingStyle } from '../src/systems/cityDeStyle';
 
 const DIR = 'public/SUCAI_BUILDING';
 const USER_MADE = new Set([
-    'DIANQIAN_CASTLE_AGE3',
-    'LINGNAN_CASTLE_AGE3',
     'TIBET_CASTLE_AGE3',
     'WESTERN_CASTLE_AGE3',
 ]);

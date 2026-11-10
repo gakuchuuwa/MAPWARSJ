@@ -1295,9 +1295,8 @@ path.npc-hitbox {
     }
 }
 
-.city-flag-body {
-    animation: cityFlagWave 0.6s steps(1) infinite;
-}
+/* [2026-11-10 查战略地图移动掉帧] 不再给每面旗各挂一个 CSS 动画（主线程动画：每帧给每面旗重算样式）。
+   换帧改由 src/ui/CityFlagWave.ts 的统一时钟驱动（同样 4 帧、150ms 一帧、同样的位移），上面的关键帧保留备查。 */
 
 /* ========================================
    Unified Editor Sidebar

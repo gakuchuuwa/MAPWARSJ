@@ -174,25 +174,29 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     yiwu: 'WESTERN_CASTLE_AGE3',           // 伊吾
     yiduhu: 'WESTERN_CASTLE_AGE3',         // 亦都护（高昌回鹘）
     // ── 滇黔 ──
-    nanzhao: 'DIANQIAN_CASTLE_AGE3',       // 南诏
-    dali: 'DIANQIAN_CASTLE_AGE3',          // 大理
-    baiman: 'DIANQIAN_CASTLE_AGE3',        // 白蛮（大中国/高升泰）
-    dian: 'DIANQIAN_CASTLE_AGE3',          // 滇国
-    ailao: 'DIANQIAN_CASTLE_AGE3',         // 哀牢
-    mu_lijiang: 'DIANQIAN_CASTLE_AGE3',    // 丽江木氏土司
-    luchuan: 'DIANQIAN_CASTLE_AGE3',       // 麓川平缅
-    kunming_yi: 'DIANQIAN_CASTLE_AGE3',    // 昆明夷
-    wuman: 'DIANQIAN_CASTLE_AGE3',         // 乌蛮（乌蒙山盖聘）
-    zangke: 'DIANQIAN_CASTLE_AGE3',        // 牂牁（胜境关谢龙羽）
+    // 🔴 [2026-11-10 主人令「DIANQIAN_CASTLE_AGE3（滇黔城堡）…删除，这些都是老图片了」]
+    //    旧手绘图已删，这十家滇黔政权改挂巴蜀支系 DE 城楼（大理/乌蒙/胜境关等据点 buildingStyle 本来也是 BASHU）
+    nanzhao: 'SHU_CASTLE_AGE3',            // 南诏
+    dali: 'SHU_CASTLE_AGE3',               // 大理
+    baiman: 'SHU_CASTLE_AGE3',             // 白蛮（大中国/高升泰）
+    dian: 'SHU_CASTLE_AGE3',               // 滇国
+    ailao: 'SHU_CASTLE_AGE3',              // 哀牢
+    mu_lijiang: 'SHU_CASTLE_AGE3',         // 丽江木氏土司
+    luchuan: 'SHU_CASTLE_AGE3',            // 麓川平缅
+    kunming_yi: 'SHU_CASTLE_AGE3',         // 昆明夷
+    wuman: 'SHU_CASTLE_AGE3',              // 乌蛮（乌蒙山盖聘）
+    zangke: 'SHU_CASTLE_AGE3',             // 牂牁（胜境关谢龙羽）
     // ── 岭南 ──
-    nanyue: 'LINGNAN_CASTLE_AGE3',         // 南越国
-    minyue: 'LINGNAN_CASTLE_AGE3',         // 闽越国
-    nanhan: 'LINGNAN_CASTLE_AGE3',         // 南汉
-    yingzhou: 'LINGNAN_CASTLE_AGE3',       // 英州（湟溪关·南汉开国皇帝刘龑）
-    min_wang: 'LINGNAN_CASTLE_AGE3',       // 闽国
-    li_clan: 'LINGNAN_CASTLE_AGE3',        // 俚人/洗夫人
-    ming_zheng: 'LINGNAN_CASTLE_AGE3',     // 明郑（台湾/金门）
-    quanzhou: 'LINGNAN_CASTLE_AGE3',       // 泉州水师
+    // 🔴 [2026-11-10 同上] 旧手绘图 LINGNAN_CASTLE_AGE3 已删，这八家改挂江南支系 DE 城楼
+    //    （番禺/冶城/阳山关等据点 buildingStyle 为 JIANGNAN；湟溪关属 HUGUANG，由据点自己的 buildingStyle 决定）
+    nanyue: 'WU_CASTLE_AGE3',              // 南越国
+    minyue: 'WU_CASTLE_AGE3',              // 闽越国
+    nanhan: 'WU_CASTLE_AGE3',              // 南汉
+    yingzhou: 'WU_CASTLE_AGE3',            // 英州（湟溪关·南汉开国皇帝刘龑）
+    min_wang: 'WU_CASTLE_AGE3',            // 闽国
+    li_clan: 'WU_CASTLE_AGE3',             // 俚人/洗夫人
+    ming_zheng: 'WU_CASTLE_AGE3',          // 明郑（台湾/金门）
+    quanzhou: 'WU_CASTLE_AGE3',            // 泉州水师
     // ── 美洲 ──
     inca: 'INCA_CASTLE_AGE3',
     maya: 'MAYA_CASTLE_AGE3',
@@ -353,7 +357,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     FRANKS: 'FRAN_CASTLE_AGE3',               // 法兰克：加洛林法兰克石堡
     SASANIAN: 'PERS_CASTLE_AGE3',             // 萨珊：萨珊波斯圆城要塞
     TURKS: 'TURK_CASTLE_AGE3',                // 突厥：突厥可汗牙帐要塞
-    NANZHAO: 'DIANQIAN_CASTLE_AGE3',          // 南诏：太和苍山云关要塞
+    // 🔴 [2026-11-10 主人令] 旧手绘图 DIANQIAN_CASTLE_AGE3 已删；南诏本属巴蜀支系（REGION_TO_BRANCH: NANZHAO→BASHU）
+    NANZHAO: 'SHU_CASTLE_AGE3',               // 南诏：洱海苍山城，随巴蜀支系
     SRIVIJAYA: 'SEAS_CASTLE_AGE3',            // 三佛齐在苏门答腊，用东南亚风格集本套
     KUSHAN: 'INDI_CASTLE_AGE3',               // 贵霜（大月氏）据犍陀罗，建筑为希腊—印度混合的犍陀罗式
     KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
@@ -404,7 +409,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
     GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形
     PRE_QIN: 'CHIN_CASTLE_AGE3',            // 古典先秦，承华夏古建屋形
-    DALI: 'DIANQIAN_CASTLE_AGE3',             // 大理在云南横断山地，属古滇文化圈；原挂马来（MALA）是明显错配
+    // 🔴 [2026-11-10 主人令] 旧手绘图 DIANQIAN_CASTLE_AGE3 已删；大理在横断山地，随巴蜀支系（REGION_TO_BRANCH: DALI→BASHU）
+    DALI: 'SHU_CASTLE_AGE3',                 // 大理：太和城—羊苴咩城，随巴蜀支系
                 // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
     CRUSADERS: 'MEDI_CASTLE_AGE3',          // 十字军（阿卡），无专属；十字军城堡是拉丁人所建，取地中海套
@@ -676,25 +682,16 @@ export const BRANCH_CASTLE: Record<string, string> = {
 /** 城级城堡外观覆盖：只改城市标记的城堡图，不改 buildingStyle/文化/军团。
  *  🔴 [2026-10-18] 奥农多加（易洛魁）66 无 IROQUOIS 分支；用 VIKI_CASTLE_AGE3（诺斯长屋环形要塞）
  *     代理长屋+木栅外观，避免继续用 MESO 阿兹特克金字塔。
- *  🔴 [2026-11-10] 补入闲置的 6 座 DE 专属城堡变体（不改动 67 文化键，只做城级城堡外观精细分流）：
+ *  🔴 [2026-11-10] 补入闲置的 4 座 DE 专属城堡变体（不改动 67 文化键，只做城级城堡外观精细分流）：
  *     - 阿契美尼德专属堡 `PERSIAN_CASTLE_ACHAEMENIDS_AGE3`：里海门（波斯门险要）
- *     - 滇黔城楼 `DIANQIAN_CASTLE_AGE3`：大理、乌蒙、胜境关、石门关
- *     - 岭南城楼 `LINGNAN_CASTLE_AGE3`：番禺、横浦关、阳山关、湟溪关
- *     - 普鲁三阶科技升级堡 `PURU_CASTLE_AGE3_ATTACKUP / BOTHUP / DEFENSEUP`：白沙瓦、华氏城、拉合尔 */
+ *     - 普鲁三阶科技升级堡 `PURU_CASTLE_AGE3_ATTACKUP / BOTHUP / DEFENSEUP`：白沙瓦、华氏城、拉合尔
+ *  🔴 [2026-11-10 主人令「DIANQIAN_CASTLE_AGE3（滇黔城堡）与 LINGNAN_CASTLE_AGE3（岭南城堡）删除，
+ *     这些都是老图片了」] 原先挂这两张旧手绘图的 8 座城（大理、乌蒙、胜境关、石门关／番禺、横浦关、
+ *     阳山关、湟溪关）已解绑，改由各自的 buildingStyle 取城楼（BASHU→SHU、JIANGNAN→WU、HUGUANG→湖广）。 */
 const CITY_CASTLE_VISUAL_OVERRIDE: Readonly<Record<string, string>> = {
     city_onondaga: 'VIKI_CASTLE_AGE3',
     // PERSIAN 阿契美尼德变体
     city_lihaimen: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',
-    // SHU 滇黔分支变体
-    city_dali_city: 'DIANQIAN_CASTLE_AGE3',
-    city_wumeng: 'DIANQIAN_CASTLE_AGE3',
-    city_shengjingguan: 'DIANQIAN_CASTLE_AGE3',
-    city_shimenguan: 'DIANQIAN_CASTLE_AGE3',
-    // WU 岭南分支变体
-    city_panyu: 'LINGNAN_CASTLE_AGE3',
-    city_hengpuguan: 'LINGNAN_CASTLE_AGE3',
-    city_yangshanguan: 'LINGNAN_CASTLE_AGE3',
-    city_huangxiguan: 'LINGNAN_CASTLE_AGE3',
     // PURU 普鲁三阶科技升级变体
     city_baishawa: 'PURU_CASTLE_AGE3_ATTACKUP',
     city_huashicheng: 'PURU_CASTLE_AGE3_BOTHUP',

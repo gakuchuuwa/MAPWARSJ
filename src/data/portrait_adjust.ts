@@ -3183,9 +3183,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/JIANGNAN/qi_d_qijiguang.png": {
-            "scale": 1.11,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -59
+            "offsetY": -56
         },
         "/assets/daming/__闲置__JIANGNAN_20.png": {
             "scale": 0.96,
@@ -11016,6 +11016,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -12
+        },
+        "/assets/JIANGNAN/haikou_maohaifeng.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/JIANGNAN/wuzhou_wangwenjin.png": {
+            "scale": 1.32,
+            "offsetX": 11,
+            "offsetY": 24
         }
     },
     "folderGuides": {

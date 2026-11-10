@@ -60,6 +60,7 @@ import {
     getCityMarkerSizeClass,
 } from '../config/city-marker-tokens';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
+import { startCityFlagWave } from '../ui/CityFlagWave';
 import {
     isMacroMapZoom,
     MACRO_HIDDEN_INFRA_PANES,
@@ -2289,6 +2290,7 @@ export class TerritorySystem {
     constructor(map: GameMap, factionManager: FactionManager) {
         this.map = map;
         this.factionManager = factionManager;
+        startCityFlagWave();   // 据点旗帜飘动的统一时钟（替代逐旗 CSS 动画，见 CityFlagWave.ts）
 
         const leafletMap = map.getLeafletMap();
 

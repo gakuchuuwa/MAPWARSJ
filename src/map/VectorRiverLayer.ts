@@ -129,6 +129,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
         group.clearLayers();
         this.fillRiverGroup(group, { ...src, features: visible }, this.paneName);
         this.styleLiveGroup();
+        const map = (this as unknown as { _map?: L.Map })._map;
+        if (map && this.paneName) installRendererPanSkip(map, this.paneName);
     }
 
     /**
@@ -417,4 +419,39 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
         return newData;
     }
+}
+
+/**
+ * 🔴 [2026-11-10 主人令「平时战略地图移动，掉帧优化」] 河流 SVG 渲染器：镜头只是平移、视口还在上次画好的范围里时，不重做。
+ *
+ * Leaflet 的渲染器挂在 `moveend` 上，每次都重算范围、挪 SVG 容器、给**每一条**河流路径重新裁剪并重设 `d` 属性。
+ * 跟拍时 moveend 约每 100ms 一次：有头浏览器实测 6 秒内河流路径属性被改 4400 次、SVG 资源失效 3300 次，
+ * 主人局落盘里这个监听器平均 2.9ms/次、最长 132ms。
+ * 渲染器本来就比视口大一圈（padding，默认上下左右各 10%），视口没走出这一圈时已画好的内容完全够用。
+ * 这里只在「缩放级别没变、像素原点没变、视口仍在已画范围内」时跳过；走出范围 / 缩放 / 重置视图照常整套重做。
+ * DEV 对照：`window.__riverNoPanSkip = true` 退回每次都重做。
+ */
+function installRendererPanSkip(map: L.Map, pane: string): void {
+    type R = { _update: () => void; _bounds?: L.Bounds; _zoom?: number; _map?: L.Map; __panSkip?: boolean };
+    const r = (map as unknown as { _paneRenderers?: Record<string, R> })._paneRenderers?.[pane];
+    if (!r || r.__panSkip || typeof r._update !== 'function') return;
+    r.__panSkip = true;
+    const orig = r._update;
+    let origin: L.Point | null = null;
+    r._update = function (this: R): void {
+        const m = this._map;
+        const off = import.meta.env.DEV && (window as unknown as { __riverNoPanSkip?: boolean }).__riverNoPanSkip;
+        if (!off && m && this._bounds && origin && this._zoom === m.getZoom()
+            && !(m as unknown as { _animatingZoom?: boolean })._animatingZoom) {
+            const po = m.getPixelOrigin();
+            if (po.x === origin.x && po.y === origin.y) {
+                const tl = m.containerPointToLayerPoint([0, 0]);
+                const br = tl.add(m.getSize());
+                const b = this._bounds;
+                if (b.min && b.max && tl.x >= b.min.x && tl.y >= b.min.y && br.x <= b.max.x && br.y <= b.max.y) return;
+            }
+        }
+        orig.call(this);
+        if (m) origin = m.getPixelOrigin();
+    };
 }
