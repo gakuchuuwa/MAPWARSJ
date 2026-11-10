@@ -291,7 +291,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_16': 'HUGUANG',   // 西瓯｜桀骏｜据点 布山
     'bfe3_17': 'WEI',   // 赵宋｜王离｜据点 肤施
     'bfe3_18': 'WEI',   // 刘汉｜陈馀｜据点 井陉关
-    'bfe3_19': 'ORIE',   // 托勒密｜斯科帕斯｜据点 亚历山大
+    'bfe3_19': 'MACEDONIAN',   // 托勒密｜斯科帕斯｜据点 亚历山大城（希腊化—马其顿建筑层）
     'bfe3_2': 'BASHU',   // 蜀汉｜芦子霸王｜据点 成都
     'bfe3_20': 'KOREA',   // 高句丽｜卫满｜据点 平壤
     'bfe3_22': 'HUGUANG',   // 闽越｜驺郢｜据点 崇安
@@ -1621,7 +1621,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tuoba_weijingxin': 'CENTRAL',   // 拓跋魏｜韦敬欣｜据点 郯城
     'tuoba_yuanying': 'WEI',   // 武周｜元英｜据点 中山
     'tuoerkete_topiltzin': 'AMERICA',   // 托尔特克｜托皮尔岑｜据点 特诺奇提特兰
-    'tuolemi_tuolemi': 'ORIE',   // 托勒密｜托勒密一世｜据点 亚历山大
+    'tuolemi_tuolemi': 'MACEDONIAN',   // 托勒密｜托勒密一世｜据点 亚历山大城（希腊化—马其顿建筑层）
     'tuomengde_aobulaien': 'CELTS',   // 托蒙德｜奥布赖恩｜据点 利默里克
     'tuoming_tuomin': 'WESTERN',   // 清真｜妥明｜据点 迪化城
     'tushetu_tuxietuhan': 'MONGOL',   // 喀尔喀｜衮布｜据点 库伦

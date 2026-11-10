@@ -16,6 +16,7 @@ import {
 } from '../../combat/GeneralSkillCombat';
 import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
 import { getFirstBattleBackground } from '../../data/GeneralFirstBattleBackgrounds';
+import { GENERAL_FIRST_BATTLES } from '../../data/GeneralFirstBattles';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
@@ -324,6 +325,12 @@ function startScene13War(
         ?? classicHeroUnit?.generalId
         ?? null;
     const classicBackground = classicHeroGeneralId ? (getFirstBattleBackground(classicHeroGeneralId) || null) : null;
+    const classicFb = classicHeroGeneralId ? GENERAL_FIRST_BATTLES[classicHeroGeneralId] : undefined;
+    const battleKindLabel: '野战' | '攻城' | '守城' = battleType === 'siege'
+        ? (classicFb?.battleType === 'siege'
+            ? (classicFb.role === 'defender' ? '守城' : '攻城')
+            : (followedOnDefenderSide ? '守城' : '攻城'))
+        : '野战';
     const resolvedBattleBriefing = battleBriefing || classicBackground || resolveHistoricalBattleBriefing(title, null);
     app.scene13War.onDecision = (winner, survivors) => { (app as any).live?.onTacticalBattleDecision?.(winner); onDecision(winner, survivors); };   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
@@ -352,6 +359,7 @@ function startScene13War(
         environmentSeed,
         // [2026-08-21] 战斗类型（野战双方都布出兵口建筑、攻城只攻方布）
         battleType,
+        battleKindLabel,
         // [2026-08-24] 水军攻城战：左侧强制出海（攻方破浪抢滩），不靠地形探测碰运气
         isNaval,
         // [2026-08-22] 攻城战守方城等级（决定守城建筑池时代）

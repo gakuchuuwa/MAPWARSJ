@@ -40,6 +40,7 @@ import {summarizeTechEffects, summarizeSingleTechEffect} from '../systems/Milita
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
+import { GENERAL_FIRST_BATTLES } from '../data/GeneralFirstBattles';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { EVENT_SITES } from '../data/eventSites';
@@ -511,6 +512,9 @@ export class CombatUI {
     /** 战术战按两军站位算出的左右（syncScene13WarStart 写入，收起面板时清）。
      *  有值时 show/showRegional 不再按跟拍军团改左右——它们在战术战启动后还会再调一次。 */
     private scene13LockedFlip: boolean | null = null;
+    /** 当前战斗类型标签（野战 / 攻城 / 守城），同步展示在顶部玩家面板与底部六计之间 */
+    private currentBattleKindLabel: '野战' | '攻城' | '守城' = '野战';
+    private techDividerKindBadge: HTMLSpanElement | null = null;
     private leftMultBadge: HTMLSpanElement | null = null;
     private rightMultBadge: HTMLSpanElement | null = null;
     private leftFactionNameSpan!: HTMLSpanElement;
@@ -1622,7 +1626,6 @@ export class CombatUI {
         if (isScriptPeriod()) {
             if (this.leftTechBox) this.leftTechBox.style.display = 'none';
             if (this.rightTechBox) this.rightTechBox.style.display = 'none';
-            if (this.techDivider) this.techDivider.style.display = 'none';
         } else {
             if (this.leftTechBox) {
                 this.leftTechBox.style.position = 'fixed';
@@ -1659,18 +1662,20 @@ export class CombatUI {
                 if (this.leftTechBox) this.scene13TechSizeObserver.observe(this.leftTechBox);
                 if (this.rightTechBox) this.scene13TechSizeObserver.observe(this.rightTechBox);
             }
-            // 攻守分界徽记：钉在两侧六技能面板的中缝上（血槽正上方中央）
-            if (this.techDivider) {
-                const size = uiPx(T.sideBar.centerVsIconSize);
-                this.techDivider.style.width = size;
-                this.techDivider.style.height = size;
-                this.techDivider.style.left = '50%';
-                this.techDivider.style.right = 'auto';
-                this.techDivider.style.top = 'auto';
-                this.techDivider.style.bottom = '40px';
-                this.techDivider.style.transform = 'translateX(-50%)';
-                this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
-            }
+        }
+        // 攻守分界徽记 + 战斗类型标签（野战/攻城/守城）：钉在两侧六技能面板的中缝上（血槽正上方中央）
+        if (this.techDivider) {
+            this.techDivider.style.width = '42px';
+            this.techDivider.style.height = 'auto';
+            this.techDivider.style.left = '50%';
+            this.techDivider.style.right = 'auto';
+            this.techDivider.style.top = 'auto';
+            this.techDivider.style.bottom = '40px';
+            this.techDivider.style.transform = 'translateX(-50%)';
+            this.techDivider.style.zIndex = String(T.zIndex.panel + 4);
+            this.techDivider.style.display = 'flex';
+            this.techDivider.style.opacity = '1';
+            this.syncBattleKindUI(this.currentBattleKindLabel);
         }
     }
 
@@ -1766,6 +1771,13 @@ export class CombatUI {
             defenderNameTag.style.display = 'none';
         }
 
+        // 战斗类型标签（野战 / 攻城 / 守城）
+        const resolvedKind: '野战' | '攻城' | '守城' = init.battleKindLabel
+            ?? ((init.battleType === 'siege' || init.defenderCityId)
+                ? (init.followedOnDefenderSide ? '守城' : '攻城')
+                : '野战');
+        this.syncBattleKindUI(resolvedKind);
+
         // 标题设置：剧本战斗用 fieldBattleData.title（「格拉尼库斯河战役」「伊苏斯战役」），
         // 攻城战用守城据点名 + 「之战」，其余野战兜底「遭遇战」。
         let titleText: string;
@@ -1781,8 +1793,9 @@ export class CombatUI {
         //    不是历史事件年份，绝不能传给 formatBattleTitleWithYear。
         //    函数自行通过历史事件表/战场表查找年份，查不到就不加。
         const formattedTitle = formatBattleTitleWithYear(titleText);
+        const kindBadgeHtml = this.renderBattleKindBadgeHtml(this.currentBattleKindLabel);
         this.battleTitle.style.background = 'none';
-        this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
+        this.battleTitle.innerHTML = `${kindBadgeHtml}<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
 
         // 势力名与军团名显示
         // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 势力名一律取**显示势力**：
@@ -1912,7 +1925,7 @@ export class CombatUI {
         this.leftTechBox = mkBox(true);
         this.rightTechBox = mkBox(false);
 
-        // 攻守分界徽记：复用中央对峙条同款 battlefield_icon，与血条／名牌同一套视觉语言。
+        // 攻守分界徽记：复用中央对峙条同款 battlefield_icon，并在两侧六技能面板之间标明此战类型（野战/攻城/守城）。
         // 挂 body 而非 #top-center-hud —— 13 布局要把它 fixed 到屏幕底部正中，
         // 留在 HUD 里会被那条 flex 的 order 规则拉走位置。
         const divider = document.createElement('div');
@@ -1920,20 +1933,42 @@ export class CombatUI {
         divider.style.cssText = `
             position: fixed;
             display: none;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            gap: 2px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.25s ease;
         `;
+        const kindBadge = document.createElement('span');
+        kindBadge.className = 's13-battle-kind-divider-badge';
+        kindBadge.style.cssText = `
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Noto Serif SC', 'SimSun', serif;
+            font-size: 11px;
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.88), inset 0 0 4px rgba(255,215,0,0.18);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.95);
+        `;
+        kindBadge.textContent = '野战';
+        divider.appendChild(kindBadge);
+        this.techDividerKindBadge = kindBadge;
+        const iconSize = uiPx(COMBAT_UI_TOKENS.sideBar.centerVsIconSize);
         const dImg = document.createElement('img');
         dImg.src = '/ui-assets/battlefield_icon.png';
         dImg.alt = '';
         dImg.draggable = false;
-        dImg.style.cssText = 'width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.9));';
+        dImg.style.cssText = `width:${iconSize};height:${iconSize};object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.9));`;
         divider.appendChild(dImg);
         document.body.appendChild(divider);
         this.techDivider = divider;
+        this.syncBattleKindUI(this.currentBattleKindLabel);
 
         const container = document.getElementById('top-center-hud');
         if (container) {
@@ -4494,6 +4529,22 @@ export class CombatUI {
         this.defenderDisplayFactionId = this.displayFactionId(defender.factionId, defGenId);
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
+        // 判定此战类型（野战 / 攻城 / 守城）
+        const isSiegeRegional = this.currentBattleType === 'siege' || defenders.some(u => u.unitType === 'city');
+        const classicHeroU = [...attackers, ...defenders].find(u => {
+            const ent = u.getEntity?.();
+            return ent && !ent.__quickBattleRandom && (ent.isFirstBattleHero === true || !!ent.classicBattleGeneralId);
+        });
+        const classicHeroId = (classicHeroU?.getEntity?.()?.classicBattleGeneralId as string | undefined) ?? classicHeroU?.generalId ?? null;
+        const classicFb = classicHeroId ? GENERAL_FIRST_BATTLES[classicHeroId] : undefined;
+        const followedOnDef = followedId ? defenders.some(u => u.id === followedId) : false;
+        const regionalKind: '野战' | '攻城' | '守城' = isSiegeRegional
+            ? (classicFb?.battleType === 'siege'
+                ? (classicFb.role === 'defender' ? '守城' : '攻城')
+                : (followedOnDef ? '守城' : '攻城'))
+            : '野战';
+        this.syncBattleKindUI(regionalKind);
+
         this.updateMultiplierBadges(attacker, defender);
         this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defenders);
@@ -6188,6 +6239,32 @@ export class CombatUI {
         this.updateStats();
     }
 
+    private getBattleKindTheme(kindLabel: '野战' | '攻城' | '守城'): { color: string; bg: string; border: string } {
+        if (kindLabel === '攻城') {
+            return { color: '#fecaca', bg: 'rgba(68, 16, 16, 0.92)', border: 'rgba(248, 113, 113, 0.82)' };
+        }
+        if (kindLabel === '守城') {
+            return { color: '#bae6fd', bg: 'rgba(12, 42, 68, 0.92)', border: 'rgba(56, 189, 248, 0.82)' };
+        }
+        return { color: '#a7f3d0', bg: 'rgba(12, 48, 34, 0.92)', border: 'rgba(52, 211, 153, 0.82)' };
+    }
+
+    private renderBattleKindBadgeHtml(kindLabel: '野战' | '攻城' | '守城'): string {
+        const th = this.getBattleKindTheme(kindLabel);
+        return `<span class="combat-battle-kind-badge" style="display:inline-block;padding:1px 6px;margin-right:6px;border-radius:4px;font-family:'Noto Serif SC','SimSun',serif;font-size:11.5px;font-weight:900;line-height:1.2;letter-spacing:1px;color:${th.color};background:${th.bg};border:1px solid ${th.border};box-shadow:0 1px 4px rgba(0,0,0,0.75);vertical-align:middle;">${kindLabel}</span>`;
+    }
+
+    private syncBattleKindUI(kindLabel: '野战' | '攻城' | '守城'): void {
+        this.currentBattleKindLabel = kindLabel;
+        if (this.techDividerKindBadge) {
+            const th = this.getBattleKindTheme(kindLabel);
+            this.techDividerKindBadge.textContent = kindLabel;
+            this.techDividerKindBadge.style.color = th.color;
+            this.techDividerKindBadge.style.background = th.bg;
+            this.techDividerKindBadge.style.border = `1px solid ${th.border}`;
+        }
+    }
+
     private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string, defUnits?: IBattleUnit | IBattleUnit[]) {
         this.attackerDisplayName = attName;
         this.defenderDisplayName = defName;
@@ -6202,7 +6279,8 @@ export class CombatUI {
         
         // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：公元前331年-高加米拉战役，公元208年-赤壁之战）
         const formattedTitle = formatBattleTitleWithYear(title, year);
-        const titleHtml = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
+        const kindBadgeHtml = this.renderBattleKindBadgeHtml(this.currentBattleKindLabel);
+        const titleHtml = `${kindBadgeHtml}<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
         this.battleTitle.style.background = 'none';
         this.battleTitle.style.border = 'none';
         this.battleTitle.style.boxShadow = 'none';
@@ -6291,10 +6369,6 @@ export class CombatUI {
                     this.sideElement('defender', this.leftTechBox, this.rightTechBox),
                     sideTechs.defender || [], sideTechs.attacker || [], false,
                 );
-                if (this.techDivider && this.scene13LayoutOn) {
-                    this.techDivider.style.display = 'flex';
-                    this.techDivider.style.opacity = '1';
-                }
             } else if (this.leftTechBox.dataset.sig !== '' || this.leftTechBox.style.display !== 'none') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
@@ -6304,7 +6378,12 @@ export class CombatUI {
                 this.leftTechBox.style.display = 'none';
                 this.rightTechBox.style.opacity = '0';
                 this.rightTechBox.style.display = 'none';
-                if (this.techDivider) {
+            }
+            if (this.techDivider) {
+                if (is13 && this.scene13LayoutOn) {
+                    this.techDivider.style.display = 'flex';
+                    this.techDivider.style.opacity = '1';
+                } else {
                     this.techDivider.style.opacity = '0';
                     this.techDivider.style.display = 'none';
                 }

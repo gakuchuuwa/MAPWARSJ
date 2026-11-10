@@ -4083,8 +4083,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/CENTRAL_ASIA/saman_yisimayi.png": {
-            "scale": 1.23,
-            "offsetX": 0,
+            "scale": 1.21,
+            "offsetX": 12,
             "offsetY": 21
         },
         "/assets/CENTRAL_ASIA/yanda_touluoman.png": {
@@ -11046,6 +11046,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 12,
             "offsetY": 16
+        },
+        "/assets/XIANBEI/bfe3_38.png": {
+            "scale": 1.3,
+            "offsetX": 42,
+            "offsetY": -17
+        },
+        "/assets/FRANKS/aosiruowen_baodewen.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/ORIE/gen_toghtekin.png": {
+            "scale": 1.14,
+            "offsetX": 33,
+            "offsetY": 12
+        },
+        "/assets/MACEDONIAN/gen_perdiccas.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/KOREA/baiji_shenjian.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {

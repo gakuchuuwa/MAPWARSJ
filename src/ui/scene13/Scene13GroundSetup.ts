@@ -1086,11 +1086,15 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
     const isTibet = /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(cultStyle)
         || /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(String(this.sideCulture?.[1] ?? ''));
-    const isNomad = !isAmericas && (deStyle === 'YURT'
+    // 🔴 [2026-11-10 主人令「河西不应该有这些建筑吧？请合理安排。」]
+    //    河西走廊（HEXI）自汉代起为丝路绿洲与屯田边塞，受汉唐西夏佛寺、汉代烽燧深度浸润，
+    //    归属东亚丝路绿洲文化（isEastAsia），绝非草原毡帐游牧，严禁混入 isNomad 导致刷出巨石阵与凯尔特神木
+    const isHexi = cultStyle === 'HEXI';
+    const isNomad = !isAmericas && !isHexi && (deStyle === 'YURT'
         || isTibet
-        || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
+        || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|TIBET)$/.test(cultStyle));
     const isEastAsia = !isAmericas && !isNomad && (deStyle === 'ASIA'
-        || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
+        || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN|HEXI)$/.test(cultStyle));
     const isJapan = cultStyle === 'JAPAN';
     // 🔴 [2026-11-08 主人问「西藏的战场放这个建筑，可以吗」] 西藏文化借用 PURU 粗石墙/民居代理，
     //    绝不可归入印度/南亚文化圈（isIndosphere），严禁在西藏出现印度伊斯兰陵墓 GOL_GUMBAZ 或波罗的海异教神树祠 PAGAN_SHRINE
@@ -1543,17 +1547,21 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                             : 'TRADE:MERCHANT_ASIA/move_4';
 
         // 严格按世界各文明划分宗教/遗迹地标池（城堡 POENARI_CASTLE 归入军事要塞军营配套，不进宗教地标池单摆）
+        // 🔴 [2026-11-10 主人令「河西不应该有这些建筑吧？请合理安排。」]
+        //    ① 河西走廊（HEXI）与东亚汉地：大佛像、古塔群、中式遗址、佛寺；绝无巨石阵与凯尔特神木
+        //    ② 草原游牧（MONGOL/XIANBEI/HUNS/TURKS）：草原大佛/石人、藏蒙白塔、萨满金顶神帐、草原古墓荒冢、塞外古代废墟；巨石阵严格归入欧洲森林异教
+        //    ③ 巨石阵（SCEN_STONEHENGE）与神木（PAGAN_SHRINE）严格仅限欧洲异教（isPaganNorth），绝不跨大陆乱入
         const monumentPool: string[] = isAmericas
             ? (deStyle === 'ANDE'
-                ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE']
-                : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
+                ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:SCEN_ANCIENT_RUINS']
+                : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:SCEN_ANCIENT_RUINS'])
             : isTibet
                 ? [
                     'BUILDING:SCEN_BUDDHA_STATUE',
                     'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
                     'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
                 ]
-            : isEastAsia
+            : (isEastAsia || isHexi)
                 ? [
                     'BUILDING:SCEN_BUDDHA_STATUE',
                     'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
@@ -1600,22 +1608,29 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                                             'BUILDING:SCEN_MESOPOTAMIAN_RUINS', 'BUILDING:SCEN_MESOPOTAMIAN_TOMB',
                                             'BATTLEFIELD:MESOPOTAMIAN_TOMB', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                         ]
-                                        : (isNomad || isPaganNorth)
+                                        : isNomad
                                             ? [
-                                                'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES',
-                                                'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS',
-                                                'BATTLEFIELD:ANCIENT_RUINS', 'BUILDING:SCEN_HERO_SHRINE',
+                                                'BUILDING:SCEN_BUDDHA_STATUE',
+                                                'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_C',
+                                                'BUILDING:SCEN_GRAVES', 'BUILDING:YURT_A',
+                                                'BUILDING:SCEN_ANCIENT_RUINS', 'BATTLEFIELD:ANCIENT_RUINS',
                                             ]
-                                            : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                            : isPaganNorth
                                                 ? [
-                                                    'BUILDING:SCEN_CASTLE_RUINS',
-                                                    'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                    'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES',
+                                                    'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS',
+                                                    'BATTLEFIELD:ANCIENT_RUINS', 'BUILDING:SCEN_HERO_SHRINE',
                                                 ]
-                                                : [
-                                                    'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
-                                                    'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS',
-                                                    `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                                                ];
+                                                : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                                    ? [
+                                                        'BUILDING:SCEN_CASTLE_RUINS',
+                                                        'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                    ]
+                                                    : [
+                                                        'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
+                                                        'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS',
+                                                        `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                    ];
 
         // 🔴 [2026-11-09 主人令「野战战场上的建筑摆放都是平行的，这不对吧，哪有野外摆放这么规整的？」]
         //    院落配套建筑偏移全部采用非对称斜向错落坐标（|Δy| ≥ 96~172px，且左右两侧深度互不镜像），
@@ -1807,22 +1822,25 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     pushRelic(mAsset, sx, sy, rnd() < 0.5, mScale, 0, 0, true);
 
                     // 必配附属建筑：配套僧舍/偏殿/祭坛（使宗教圣地形成完整院落，不孤零零单立）
-                    const shrineWingAsset = isTibet
+                    const shrineWingAsset = (isTibet || isHexi)
                         ? (mAsset === 'BUILDING:SCEN_PAGODA_C' ? 'BUILDING:SCEN_BUDDHA_STATUE' : 'BUILDING:SCEN_PAGODA_C')
                         : isNomad
-                            ? 'BUILDING:PAGAN_SHRINE'
-                            : isGrecoRoman
-                                ? 'BUILDING:SCEN_HERO_SHRINE'
-                                : (!mAsset.includes('MONASTERY') && !isNomad)
-                                    ? `BUILDING:${deStyle}_MONASTERY_AGE3`
-                                    : culturalHousePool[0];
+                            ? (mAsset === 'BUILDING:YURT_A' ? 'BUILDING:SCEN_FLAG_RITUAL_A' : (mAsset.includes('PAGODA') || mAsset.includes('BUDDHA') ? 'BUILDING:YURT_E' : 'BUILDING:SCEN_GRAVES'))
+                            : isPaganNorth
+                                ? 'BUILDING:PAGAN_SHRINE'
+                                : isGrecoRoman
+                                    ? 'BUILDING:SCEN_HERO_SHRINE'
+                                    : (!mAsset.includes('MONASTERY') && !isNomad)
+                                        ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                        : culturalHousePool[0];
                     const wingSpot = findCompanionSpot(sx, sy, shrineWingAsset, companionWingOffsets, 430, 285);
                     if (wingSpot) {
                         clearTreesInRadius(wingSpot.x, wingSpot.y, 130);
                         glLayer.carveFoundation(wingSpot.x, wingSpot.y, VW, VH, 1.5);
                         pushRelic(shrineWingAsset, wingSpot.x, wingSpot.y, rnd() < 0.5, 0.74, 0, 0, false);
                     }
-                    if (!isSnow) {
+                    // 🔴 [2026-11-10 主人令] 河西戈壁荒漠与塞北游牧草原严禁生成修剪式欧式对称花坛
+                    if (!isSnow && !isNomad && !isHexi && !isArid) {
                         const fbLeft = findCompanionSpot(sx, sy, 'FLOWERBED', [[-105, 48], [-125, 36], [-92, 64]], 430, 285, mainAnchor);
                         if (fbLeft) {
                             pushRelic('FLOWERBED', fbLeft.x, fbLeft.y, false, 0.84, -6, 0, false);

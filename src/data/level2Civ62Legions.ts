@@ -1161,7 +1161,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_sirjohnfastolf',
         slots: [
             { type: 'two_handed_swordsman', count: 4 },
-            { type: 'cavalier', count: 2 },
+            { type: 'crusader_knight', count: 2 },
             { type: 'longbowman_elite', count: 3 },
         ],
     },

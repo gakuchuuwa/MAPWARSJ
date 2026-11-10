@@ -995,7 +995,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             WESTERN:      { trees: ['WILLOW', 'PALM', 'BUSH_TREE_A', 'SPRUCE'], shrubs: ['BUSH_TREE_A', 'GRASS_DRY'], mult: 0.58, flowerbed: false },
             CENTRAL_ASIA: { trees: ['WILLOW', 'CYPRESS', 'PALM', 'BIRCH_GREEN', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.68, flowerbed: true },
             CEAS:         { trees: ['WILLOW', 'CYPRESS', 'PALM', 'BIRCH_GREEN', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.68, flowerbed: true },
-            HEXI:         { trees: ['WILLOW', 'BUSH_TREE_A', 'ASIAN_PINE', 'BIRCH_GREEN', 'OAK'], shrubs: ['BUSH_TREE_A', 'GRASS_DRY', 'SHRUB_GREEN'], mult: 0.62, flowerbed: false },
+            HEXI:         { trees: ['WILLOW', 'BUSH_TREE_A', 'ASIAN_PINE', 'DEAD_TREE'], shrubs: ['BUSH_TREE_A', 'GRASS_DRY', 'SHRUB_GREEN'], mult: 0.62, flowerbed: false },
             TURKS:        { trees: ['CYPRESS', 'OAK', 'OLIVE', 'WILLOW', 'BUSH_TREE_A'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.76, flowerbed: true },
 
             // ── Tier 5：大漠游牧与塞外草原王帐文化（苍茫极疏 · 系数 0.35~0.42） ──
@@ -1420,13 +1420,14 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
         const isTibetOutskirts = /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(cultStyle)
             || /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(String(this.sideCulture?.[1] ?? ''));
-        const isNomadOutskirts = !isAmericasOutskirts && (isYurtOrNomadCity
-            || isTibetOutskirts
-            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
-        const isSlavFolwark = !isAmericasOutskirts && !isNomadOutskirts
+        const isHexiOutskirts = cultStyle === 'HEXI' || String(this.sideCulture?.[1] ?? '') === 'HEXI';
+        const isNomadOutskirts = !isAmericasOutskirts && !isHexiOutskirts && (isYurtOrNomadCity
+            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS)$/.test(cultStyle));
+        const isPaganNorthOutskirts = /^(CELTIC|VIKINGS|NORSE|GOTHS|SAXONS|BRITONS|TEUTONS)$/.test(cultStyle);
+        const isSlavFolwark = !isAmericasOutskirts && !isNomadOutskirts && !isHexiOutskirts
             && (deStyle === 'SLAV' || /^(POLES|SLAVIC|LITHUANIANS|BOHEMIANS)$/.test(cultStyle));
         const isEastAsiaOutskirts = !isAmericasOutskirts && !isNomadOutskirts
-            && (deStyle === 'ASIA' || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
+            && (deStyle === 'ASIA' || isHexiOutskirts || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN|HEXI)$/.test(cultStyle));
         // 🔴 [2026-11-08 主人问「西藏的战场放这个建筑，可以吗」] 西藏据点城墙/民居借用 PURU 粗石代理，
         //    绝不可因此归入印度/南亚文化圈（isIndosphereOutskirts），严禁在西藏出现印度伊斯兰陵墓 GOL_GUMBAZ 或波罗的海异教神树祠 PAGAN_SHRINE
         const isIndosphereOutskirts = !isAmericasOutskirts && !isNomadOutskirts && !isTibetOutskirts
@@ -2174,13 +2175,14 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             // 城堡 POENARI_CASTLE 归入 (E) 城郊要塞军营配套组合，不进宗教名胜池单摆
             const templeMonumentPool: string[] = isAmericasOutskirts
                 ? (deStyle === 'ANDE'
-                    ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
-                    : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
-                : isTibetOutskirts
+                    ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:SCEN_ANCIENT_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`]
+                    : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:SCEN_ANCIENT_RUINS'])
+                : (isTibetOutskirts || isHexiOutskirts)
                     ? [
                         'BUILDING:SCEN_BUDDHA_STATUE',
                         'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
                         'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
+                        ...(isHexiOutskirts ? ['BUILDING:SCEN_CHINESE_RUINS', 'BUILDING:KHIT_CASTLE_AGE3', 'BUILDING:ASIA_MONASTERY_AGE3'] : []),
                     ]
                 : isEastAsiaOutskirts
                     ? [
@@ -2223,16 +2225,25 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                                 'BUILDING:SCEN_MESOPOTAMIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                             ]
                                             : isNomadOutskirts
-                                                ? ['BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_HERO_SHRINE', 'BUILDING:SCEN_HALL_OF_HEROES']
-                                                : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                                ? [
+                                                    'BUILDING:SCEN_BUDDHA_STATUE',
+                                                    'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_C',
+                                                    'BUILDING:YURT_A', 'BUILDING:SCEN_GRAVES', 'BUILDING:SCEN_ANCIENT_RUINS',
+                                                ]
+                                                : isPaganNorthOutskirts
                                                     ? [
-                                                        'BUILDING:SCEN_CASTLE_RUINS',
+                                                        'BUILDING:SCEN_STONEHENGE', 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_HALL_OF_HEROES',
                                                         'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                                     ]
-                                                    : [
-                                                        'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
-                                                        'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                                                    ];
+                                                    : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                                        ? [
+                                                            'BUILDING:SCEN_CASTLE_RUINS',
+                                                            'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                        ]
+                                                        : [
+                                                            'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
+                                                            'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                        ];
 
             const subCompounds = shuffle(['suburban_trade_post', 'sacred_shrine_compound'] as const);
             const maxSubCompounds = this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' ? 2 : 1;
@@ -2319,21 +2330,23 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         gl.carveFoundation(sx, sy, W, H, 2.0);
                         pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 42, 0.92, -6, false, 0);
 
-                        const wingShrineAsset = isTibetOutskirts
+                        const wingShrineAsset = (isTibetOutskirts || isHexiOutskirts)
                             ? (tmAsset === 'BUILDING:SCEN_PAGODA_C' ? 'BUILDING:SCEN_BUDDHA_STATUE' : 'BUILDING:SCEN_PAGODA_C')
                             : isNomadOutskirts
-                                ? 'BUILDING:PAGAN_SHRINE'
-                                : isGrecoRomanOutskirts
-                                    ? 'BUILDING:SCEN_HERO_SHRINE'
-                                    : (!tmAsset.includes('MONASTERY') && this.defenderCityType !== 'stockade')
-                                        ? `BUILDING:${deStyle}_MONASTERY_AGE3`
-                                        : housePool[0];
+                                ? (mRnd() < 0.4 ? 'BUILDING:SCEN_FLAG_RITUAL_A' : (mRnd() < 0.7 ? 'BUILDING:YURT_E' : 'BUILDING:SCEN_GRAVES'))
+                                : isPaganNorthOutskirts
+                                    ? 'BUILDING:PAGAN_SHRINE'
+                                    : isGrecoRomanOutskirts
+                                        ? 'BUILDING:SCEN_HERO_SHRINE'
+                                        : (!tmAsset.includes('MONASTERY') && this.defenderCityType !== 'stockade')
+                                            ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                            : housePool[0];
                         const wingSpot = findOutskirtsCompanionSpot(sx, sy, wingShrineAsset, wingBuildingOffsets);
                         if (wingSpot && pushOutskirtsSprite(wingShrineAsset, wingSpot.x, wingSpot.y, 0.74, 0, mRnd() < 0.5, 0)) {
                             clearTreesInRadius(wingSpot.x, wingSpot.y, 130);
                             gl.carveFoundation(wingSpot.x, wingSpot.y, W, H, 1.5);
                         }
-                        if (!isSnow) {
+                        if (!isSnow && !isNomadOutskirts && !isHexiOutskirts && !isArid) {
                             const fbLeft = findOutskirtsCompanionSpot(sx, sy, 'FLOWERBED', [[-195, 72], [-175, 92], [-215, 48]]);
                             if (fbLeft) {
                                 pushOutskirtsSprite('FLOWERBED', fbLeft.x, fbLeft.y, 0.84, -6, false, 0);

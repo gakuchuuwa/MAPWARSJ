@@ -625,6 +625,8 @@ export interface Scene13WarInit {
     defenderCityId?: string | null;
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */
     title?: string | null;
+    /** 战斗类型标签（野战 / 攻城 / 守城），用于在顶部玩家面板与底部六计之间展示 */
+    battleKindLabel?: '野战' | '攻城' | '守城' | null;
     /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，让跟随军团固定在屏幕左边。 */
     followedOnDefenderSide?: boolean;
     /** [2026-09-19] 攻方精锐番号（如「土默特精骑」） */

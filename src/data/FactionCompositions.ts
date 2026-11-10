@@ -1163,7 +1163,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tuolemi": {
-        legionName: "古典时代近东军团",
+        // 🔴 [2026-11-10] 亚历山大城按史改 MACEDONIAN 后，主将托勒密一世的军团＝古典 × 马其顿；指针按其实际军团对齐（只用于该势力无将守城兜底）
+        legionName: "古典时代马其顿军团",
         legionType: "sub",
     },
     "siam": {

@@ -369,8 +369,8 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
         return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
     }
     if (sub === 'HEXI') {
-        if (isAridDesertOrGobi || q.lng < 101.2) return 'BUSH_TREE_A';
-        return q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK';
+        if (isAridDesertOrGobi || q.lng < 104.0) return 'BUSH_TREE_A';
+        return 'WILLOW';
     }
     if (sub === 'JIANGNAN' || sub === 'HUGUANG') {
         return (q.lat >= 28.0 && (baseForBiome === 'gr4' || baseForBiome === 'qs2' || baseForBiome === 'sh4'))
