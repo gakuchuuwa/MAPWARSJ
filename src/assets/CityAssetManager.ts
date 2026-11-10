@@ -1,6 +1,7 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { getEraFactionDisplayName, getEraFactionDisplayFlagText, getEraCityDisplayName, getEraCityDisplayFlagText } from '../data/eraFactionDisplay';
+import { getCultureEmblemFile } from '../data/CultureEmblems';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -2040,6 +2041,23 @@ export class CityAssetManager {
                 stroke: '',
                 emblemPath: `/emblem-flags/${emblemKey}_${useWhiteEmblem ? 'w' : 'b'}.png`,
             };
+        }
+        // 🔴 [2026-11-10 主人令「统一风格，DE 里有的就用 DE 里的」]
+        //   百岁模式：该势力此刻**一个在场武将都没有**（`cityName` 已由 eraFactionDisplay 判定），
+        //   且本据点建筑文化有文化徽章 → 旗面直接贴「文化徽章」（四时代同图、不染色、不写字）。
+        //   顺序：势力专属纹章 > 文化徽章 > 时代字旗（2026-11-03 主人令「有纹章的武将不在场照旧画纹章」不变）。
+        if (cityName != null) {
+            const cultureEmblem = getCultureEmblemFile(buildingStyle);
+            if (cultureEmblem) {
+                return {
+                    factionId,
+                    variantKey: `culture_emblem_${cultureEmblem}`,
+                    text: '',
+                    fill: '',
+                    stroke: '',
+                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
+                };
+            }
         }
         const eraFlagText = cityName != null
             ? getEraCityDisplayFlagText(factionId, buildingStyle)
