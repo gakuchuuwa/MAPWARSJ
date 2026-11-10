@@ -596,7 +596,9 @@ export class SpeechAnnouncer {
       const defPhrase = SIEGE_DEF_PHRASE[j][terrain];
       const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
       const mingjiang = isFamousGeneral(defGeneral.generalId) ? "名将" : "";
-      text = `${attackerLead}，${atkPrefix}，${verb}${opts.cityName}。${defFaction}${mingjiang}${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${defPhrase}`;
+      const defGenSpeech = getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName);
+      const defPrefix = defFaction && !defGenSpeech.startsWith(defFaction) ? defFaction : "";
+      text = `${attackerLead}，${atkPrefix}，${verb}${opts.cityName}。${defPrefix}${mingjiang}${defGenSpeech}，${defPhrase}`;
     }
     console.log("[Speech] 攻城:", text);
     this.speak(text);
@@ -635,7 +637,9 @@ export class SpeechAnnouncer {
       text = `${att}军，攻占${cityPhrase}`;
     } else {
       const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
-      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${defFaction}${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
+      const defGenSpeech = getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName);
+      const defPrefix = defFaction && !defGenSpeech.startsWith(defFaction) ? defFaction : "";
+      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${defPrefix}${defGenSpeech}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
     }
     console.log("[Speech] 攻占:", text);
     if (isCenter) {

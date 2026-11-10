@@ -1,4 +1,4 @@
-import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import {FACTION_GENERALS, formatLegionGeneralName, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
@@ -1803,6 +1803,14 @@ export class CombatUI {
             ? resolveCityLegionName(init.defenderFactionId, resolvedDefGeneralId ?? init.defenderGeneralId, { cityId: init.defenderCityId, year: init.getYear?.() })
             : resolveGeneralLegionName(init.defenderFactionId, resolvedDefGeneralId ?? init.defenderGeneralId))
             || getCultureLegionName(defRegion);
+        // 🔴 [2026-11-10 主人令「据点武将未登场或已退场时：守将名显示为，军团名字+『将军』」]
+        //    守城无武将 ID 时（如武将未登场/已退场/外出或无将据点），守方名牌同样显示「军团名字+将军」
+        if (defenderNameTag.style.display === 'none' && (init.battleType === 'siege' || init.defenderCityId)) {
+            defenderNameTag.textContent = formatLegionGeneralName(defLegionName);
+            delete defenderNameTag.dataset.generalId;
+            defenderNameTag.dataset.side = 'defender';
+            defenderNameTag.style.display = 'block';
+        }
 
         // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
@@ -6586,6 +6594,7 @@ export class CombatUI {
         const rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
         const famousBadge = this.sideElement(side, this.leftFamousBadge, this.rightFamousBadge);
         const legionTag = this.sideElement(side, this.leftLegionTag, this.rightLegionTag);
+        const legionName = this.resolveUnitLegionName(nameUnit, side);
         if (rec) {
             tag.textContent = rec.generalName;
             tag.style.display = 'block';
@@ -6595,14 +6604,17 @@ export class CombatUI {
             } else {
                 famousBadge.style.display = 'none';
             }
+        } else if (side === 'defender' && nameUnit.unitType === 'city') {
+            tag.textContent = formatLegionGeneralName(legionName);
+            tag.style.display = 'block';
+            delete tag.dataset.generalId;
+            famousBadge.style.display = 'none';
         } else {
             tag.textContent = '';
             tag.style.display = 'none';
             delete tag.dataset.generalId;
             famousBadge.style.display = 'none';
         }
-
-        const legionName = this.resolveUnitLegionName(nameUnit, side);
         const eliteName = (nameUnit.unitType === 'city')
             ? readSiegeGarrisonEliteName(nameUnit.getEntity?.())
             : (nameUnit.getEntity?.() ? getLegionEliteLegionName(nameUnit.getEntity()) : null);

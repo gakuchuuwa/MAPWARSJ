@@ -214,16 +214,10 @@ import { getBattlefieldCharacter } from './BattlefieldCharacters';
 
 
 
-import { isGeneralOnStage, getGameMode } from './generalOnStage';
-
-
-
-
-
-
-
+import { isGeneralOnStage, getGameMode, getCurrentStageYear } from './generalOnStage';
 import { getGeneralProfile } from './general-skills/profiles';
-import { HUGUANG_CITY_IDS } from './cities_v2';
+import { CITIES_V2, HUGUANG_CITY_IDS } from './cities_v2';
+import { LEVEL_2_CIV_62_LEGIONS } from './level2Civ62Legions';
 
 
 
@@ -17997,7 +17991,7 @@ function resolveGeneralRefs(refs: CityGeneralRef[]): FactionGeneral[] {
             item: {
                 ...g,
                 factionId: g.factionId ?? r.blockFactionId,
-                generalName: stageGeneralName(g.generalId, g.generalName),
+                generalName: stageGeneralName(g.generalId, g.generalName, g.cityId, g.legionName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId, cityId: g.cityId }) },
             isFamous,
             idx };
@@ -18162,54 +18156,71 @@ export function getFactionGeneral(
 
 
 
-/** 🔴 [2026-10-16 主人定] 剧本期武将不在「登场年～卒年」内 → 换名（立绘不变）。
+const _STAGE_AGE_ORDER = ['antiquity', 'feudal', 'castle', 'imperial'] as const;
+let _cityBuildingStyleIndex: Map<string, string> | null = null;
+function getCityBuildingStyleForStage(cityId?: string | null): string | null {
+    if (!cityId) return null;
+    try {
+        const rt = typeof window !== 'undefined' ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
+        if (rt?.buildingStyle) return String(rt.buildingStyle);
+    } catch {
+        // ignore
+    }
+    if (!_cityBuildingStyleIndex) {
+        _cityBuildingStyleIndex = new Map();
+        for (const c of CITIES_V2) {
+            if (c.buildingStyle) _cityBuildingStyleIndex.set(c.id, String(c.buildingStyle));
+        }
+    }
+    return _cityBuildingStyleIndex.get(cityId) ?? null;
+}
 
+function resolveStageEraLegionByStyle(year: number, buildingStyle: string | null): string | null {
+    if (!buildingStyle) return null;
+    const targetAge = year < 476 ? 'antiquity' : year < 1050 ? 'feudal' : year < 1500 ? 'castle' : 'imperial';
+    const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === buildingStyle);
+    if (candidates.length === 0) return null;
+    const exact = candidates.find((l) => l.age === targetAge);
+    if (exact) return exact.name;
+    const targetIdx = _STAGE_AGE_ORDER.indexOf(targetAge);
+    let best = candidates[0];
+    let bestDist = Math.abs(_STAGE_AGE_ORDER.indexOf(best.age) - targetIdx);
+    for (let i = 1; i < candidates.length; i++) {
+        const d = Math.abs(_STAGE_AGE_ORDER.indexOf(candidates[i].age) - targetIdx);
+        if (d < bestDist) {
+            best = candidates[i];
+            bestDist = d;
+        }
+    }
+    return best.name;
+}
 
+/**
+ * 🔴 [2026-11-10 主人令「据点武将未登场或已退场时：守将名显示为，军团名字+『将军』，例如，封建时代法兰克军团，显示为法兰克将军，城堡时代中华军团，显示为中华将军。」]
+ * 把军团名（如「封建时代法兰克军团」「城堡时代中华军团」）去掉四时代前缀与「军团」后缀，拼上「将军」。
+ */
+export function formatLegionGeneralName(legionName: string | null | undefined): string {
+    if (!legionName) return '将军';
+    const core = legionName
+        .trim()
+        .replace(/^(?:古典时代|封建时代|城堡时代|帝国时代)/, '')
+        .replace(/军团$/, '')
+        .trim();
+    return core ? `${core}将军` : '将军';
+}
 
-
-
-
-
- *  🔴 [2026-10-20 主人令「没有武将的，不再用XX势力+将军，一律都叫将军」] 原「势力+将军」作废 ⇒ 一律「将军」
-
-
-
-
-
-
-
- *     （起因：播报「格鲁吉亚格鲁吉亚将军」说两次势力）。
-
-
-
-
-
-
-
- *  乱斗 / 编辑器 / 在场 → 原名。 */
-
-
-
-
-
-
-
-function stageGeneralName(generalId: string, name: string): string {
-
-
-
-
-
-
-
-    return isGeneralOnStage(generalId) ? name : '将军';
-
-
-
-
-
-
-
+function stageGeneralName(
+    generalId: string,
+    name: string,
+    cityId?: string | null,
+    fallbackLegionName?: string | null,
+): string {
+    if (isGeneralOnStage(generalId)) return name;
+    const year = getCurrentStageYear()
+        ?? ((typeof window !== 'undefined' ? (window as any).game?.timeSystem?.getYear?.() : null) ?? -800);
+    const style = getCityBuildingStyleForStage(cityId);
+    const legionName = resolveStageEraLegionByStyle(year, style) ?? fallbackLegionName ?? null;
+    return formatLegionGeneralName(legionName);
 }
 
 
@@ -18748,7 +18759,7 @@ export function getCityGeneralsResolved(cityId: string | null | undefined): Fact
             item: {
                 ...g,
                 factionId,
-                generalName: stageGeneralName(g.generalId, g.generalName),
+                generalName: stageGeneralName(g.generalId, g.generalName, g.cityId, g.legionName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId, cityId: g.cityId }) },
             isOwnerMatch,
             isFamous,
@@ -19176,7 +19187,7 @@ export function getGeneralRecordByGeneralId(
 
 
 
-        generalName: stageGeneralName(generalId, hit.general.generalName),
+        generalName: stageGeneralName(generalId, hit.general.generalName, hit.general.cityId, hit.general.legionName),
 
 
 

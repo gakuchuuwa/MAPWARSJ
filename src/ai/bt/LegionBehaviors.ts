@@ -41,7 +41,7 @@ import { GameConfig } from '../../config/GameConfig';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
-import { isGeneralOnStage } from '../../data/generalOnStage';
+import { isGeneralOnStage, isGeneralPastCentenarianAge } from '../../data/generalOnStage';
 import { getGeneralCulture } from '../../data/GeneralCulture';
 import { shouldGeneralWaitInCityForFirstBattle } from '../../data/GeneralFirstBattles';
 import type { Army } from '../../legion/Army';
@@ -827,10 +827,12 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         return BTStatus.FAILURE;
     }
     // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」「没有武将不能出兵」] 兵力不足 5000 或无在场武将的非剧本军团不许再选新目标出征，转入撤退解散
+    // 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」] 已到退场年纪仍在场领兵的武将，不因兵力不足 5000 撤退解散，一直打到军团完全战败为止
+    const pastAgeKeepFighting = isGeneralPastCentenarianAge(ctx.army.generalId);
     if (
         !ctx.army.isScriptArmy &&
         !ctx.army.scriptMarchExempt &&
-        (ctx.army.getTroops() < GameConfig.LEGION.DISBAND_TROOP_THRESHOLD || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
+        ((!pastAgeKeepFighting && ctx.army.getTroops() < GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
     ) {
         ctx.army.weakCheckAfterBattle = true;
         return BTStatus.FAILURE;
@@ -1232,7 +1234,9 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     }
 
     // 触发条件：无在场武将（跨年退场/无将），或刚打完一仗（weakCheckAfterBattle）/当前无目标准备重新出征时兵力 < 5000
+    // 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」] 已满退场年纪的武将领兵时不撤退解散，直至军团完全战败
     const noOnStageGeneral = !army.generalId || !isGeneralOnStage(army.generalId);
+    if (!noOnStageGeneral && isGeneralPastCentenarianAge(army.generalId)) return false;
     const noActiveTarget = !getStrategicTargetId(ctx) && !getStrategicTargetArmyId(ctx) && !army.getTargetCity();
     if (!noOnStageGeneral && !army.weakCheckAfterBattle && !noActiveTarget) return false;
     army.weakCheckAfterBattle = false;

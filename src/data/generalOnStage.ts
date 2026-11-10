@@ -21,6 +21,11 @@ import { GameConfig } from '../config/GameConfig';
 let scriptYearProvider: () => number | null = () => null;
 /** 百岁模式当前年份（由 GameApp 注入：百岁模式时返回当前游戏年份，其余模式返回 null） */
 let centenarianYearProvider: () => number | null = () => null;
+/**
+ * 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」]
+ * 百岁模式下，该武将此刻是否有尚未完全战败的在场军团（由 GameApp 注入）。
+ */
+let activeLegionGeneralChecker: (generalId: string) => boolean = () => false;
 
 export function setScriptYearProvider(fn: () => number | null): void {
     scriptYearProvider = fn;
@@ -28,6 +33,10 @@ export function setScriptYearProvider(fn: () => number | null): void {
 
 export function setCentenarianYearProvider(fn: () => number | null): void {
     centenarianYearProvider = fn;
+}
+
+export function setActiveLegionGeneralChecker(fn: (generalId: string) => boolean): void {
+    activeLegionGeneralChecker = fn;
 }
 
 /** 当前玩法模式（由 GameApp 注入）；编辑器 / 离线脚本未注入 → null（不按模式改行为） */
@@ -44,7 +53,19 @@ export function getGameMode(): GeneralGameMode | null {
 
 let inYearLookup = false;
 
-/** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年] → 按普通武将处理） */
+/** 取当前模式下的判定年份（剧本＝事件年，百岁＝日历年，其余＝null） */
+export function getCurrentStageYear(): number | null {
+    if (inYearLookup) return null;
+    const scriptMode = isScriptPeriod();
+    inYearLookup = true;
+    try {
+        return scriptMode ? scriptYearProvider() : centenarianYearProvider();
+    } finally {
+        inYearLookup = false;
+    }
+}
+
+/** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年]且无在场未败军团 → 按普通守将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
     const scriptMode = isScriptPeriod();
@@ -64,7 +85,26 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
         return year <= life.death;
     }
     const win = getCentenarianStageWindow(generalId);
-    return !!win && year >= win.from && year <= win.to;
+    if (!win || year < win.from) return false;
+    if (year <= win.to) return true;
+    // 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」]
+    //    已满百岁退场年（year > win.to），但只要所率军团尚未完全战败，就继续留在场上直至该军团覆灭。
+    return activeLegionGeneralChecker(generalId);
+}
+
+/** 百岁模式下该武将是否已满退场年纪（year > win.to） */
+export function isGeneralPastCentenarianAge(generalId: string | null | undefined): boolean {
+    if (!generalId || inYearLookup || isScriptPeriod()) return false;
+    inYearLookup = true;
+    let year: number | null = null;
+    try {
+        year = centenarianYearProvider();
+    } finally {
+        inYearLookup = false;
+    }
+    if (year == null) return false;
+    const win = getCentenarianStageWindow(generalId);
+    return !!win && year > win.to;
 }
 
 /**

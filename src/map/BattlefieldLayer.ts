@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { BATTLEFIELDS, battlefieldSamePointCityId, battlefieldBattleName, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { isScriptPeriod } from '../events/scriptPeriod';
+import { getWonderGateYear } from '../data/wonderFoundedYears';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
 import { deHashString } from '../systems/cityWallShared';
 import type { TerritorySystem } from '../systems/TerritorySystem';
@@ -215,16 +216,15 @@ export class BattlefieldLayer {
         this.renderBattlefields();
     }
 
-    /** 重绘全部战场（打完标记变化、手动刷新时调） */
+    /** 重绘全部战场（打完标记变化、跨年、手动刷新时调） */
     public renderBattlefields(): void {
         const visibleBfs = new Map<string, BattlefieldData>();
+        const gateYear = getWonderGateYear();
         for (const bf of BATTLEFIELDS) {
-            // 🔴 [2026-09-19 主人定] **取消「未到年份不上图」**。
-            //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
-            //    还要写上时间，万一以后还要用，就不要再写了。」
-            //    改之前是 2026-09-16 那条「未到发生年份的战场不上图」，与「武将触发」相冲：
-            //    玩家在 -334 年就可能跟着某位武将奔赴一场史实战役，战场却因为年份没到压根不在图上。
-            //    `bf.scriptYear` 字段**保留**（数据里照旧填），只是不再参与显示判定。
+            // 🔴 [2026-11-10 主人令「战场要等年份发生后才能显示出来」]
+            //    与奇观/据点建城年同一口径：有年代闸门时（百岁模式＝日历年份，剧本模式＝事件年份），
+            //    未到发生年份（scriptYear > gateYear）且尚未打过的战场不显示；乱斗与编辑器模式 gateYear 为 null 全显示。
+            if (gateYear !== null && bf.scriptYear > gateYear && !isBattlefieldFought(bf.id)) continue;
             // 🔴 [2026-11-08 主人令「50KM以内的战场，和据点属于同一个点，不用设计。之前就是这个判定，不要重复。」]
             if (battlefieldSamePointCityId(bf.id)) continue;
             if (this.visibilityFilter && !this.visibilityFilter(bf.id)) continue;

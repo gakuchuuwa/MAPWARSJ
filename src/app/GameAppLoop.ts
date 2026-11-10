@@ -479,8 +479,8 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
             app.historicalEventManager.updateEvents(gameDelta);
             // [2026-09-05 玩家] 单骑行军 / 入伍贴军团（大战略未暂停才动；13 期间冻结）
             app.playerHero?.update(gameDelta);
-            // 🔴 [2026-10-22] 马厩：换季时疲劳受伤到期；百岁模式里马会生小马、会老死
-            app.playerHero?.horses.tick(app.playerHero.autoPlan === 'centenarian');
+            // 🔴 [2026-11-10 主人定] 关闭百岁模式马匹生老病死（探马长寿编年史模式不再触发马匹老死/生小马干扰）
+            app.playerHero?.horses.tick(false);
             // [2026-09-05 玩家] 任务跟踪：目标据点易主 → 判成功；军团覆灭 → 判失败
             app.playerQuests?.tick();
         }
@@ -571,8 +571,8 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 app.historicalEventManager.updateEvents(gameDelta);
             // [2026-09-05 玩家] 单骑行军 / 入伍贴军团（大战略未暂停才动；13 期间冻结）
             app.playerHero?.update(gameDelta);
-            // 🔴 [2026-10-22] 马厩：换季时疲劳受伤到期；百岁模式里马会生小马、会老死
-            app.playerHero?.horses.tick(app.playerHero.autoPlan === 'centenarian');
+            // 🔴 [2026-11-10 主人定] 关闭百岁模式马匹生老病死（探马长寿编年史模式不再触发马匹老死/生小马干扰）
+            app.playerHero?.horses.tick(false);
             // [2026-09-05 玩家] 任务跟踪：目标据点易主 → 判成功；军团覆灭 → 判失败
             app.playerQuests?.tick();
                 perfMonitor.endTimer('historicalEvent');

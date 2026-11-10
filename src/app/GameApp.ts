@@ -81,7 +81,7 @@ import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
-import { setScriptYearProvider, setCentenarianYearProvider, setGameModeProvider, isGeneralOnStage } from '../data/generalOnStage';
+import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
@@ -372,6 +372,15 @@ export class GameApp {
                     ? (this.timeSystem?.getYear() ?? null)
                     : null,
             );
+            // 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」]
+            //    已满退场年纪但仍有未战败军团在场的武将继续留在场上，直至该军团覆灭
+            setActiveLegionGeneralChecker((generalId) => {
+                const armies = this.historicalEventManager?.getLegionManager()?.getArmies();
+                if (!armies) return false;
+                return armies.some(
+                    (a) => !a.isDestroyed && a.type === 'legion' && a.generalId === generalId && (a.getTroops() > 0 || a.getIsInCombat()),
+                );
+            });
             // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
             //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
             //    唯一一份定义 = `syncScriptOwners()`（年份每场在前进，故开局、切模式、打完一场都要重跑）。
@@ -442,8 +451,9 @@ export class GameApp {
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             this.cityManager.setOnYearOrEditorChange(() => {
                 this.syncCityFoundedTypes();
-                // 百岁模式跨年 / 编辑器切换 → 特殊建筑按新建成年份重画
+                // 百岁模式跨年 / 编辑器切换 → 特殊建筑与战场按新建成年份重画
                 this.map.getMonumentLayer()?.syncFoundedYear();
+                this.map.getBattlefieldLayer()?.renderBattlefields();
             });
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
@@ -675,6 +685,10 @@ export class GameApp {
                         });
                     }
 
+                    // 🔴 [2026-11-10] 到年纪的武将在军团完全战败后退场：军团覆灭时同步刷新一次据点归属与时代泛称
+                    if ((this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian') {
+                        this.syncEraFactionDisplays();
+                    }
                     if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;
                     this.brawlFeedPanel.pushLegionAnnihilated({
                         factionId: army.getDisplayFactionId(),
