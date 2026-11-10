@@ -29,6 +29,7 @@ const problems: string[] = [];
 //    原 25 家动乱势力的武将一律改走「势力时代 × 据点文化」自动判定；三级军团本体照旧保留、不动。
 const UPRISING_LEGION = '盗贼团伙';   // 仍存在的三级番号（现无武将挂载，保留定义）
 let total = 0, ok = 0, uprisingOk = 0, thirdKept = 0;
+const usedL2 = new Set<string>();
 for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
     for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
         total++;
@@ -36,6 +37,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         const era = getGeneralEra(g.generalId, gfid);
         const culture = getGeneralCulture(g.generalId);
         const legion = getLegionNameOfGeneral(gfid, g.generalId) ?? getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[gfid]?.legionName;
+        if (legion) usedL2.add(legion);
         const who = `${gfid}｜${fname(gfid)}｜${g.generalName}`;
         if (!era) { problems.push(`${who}｜缺时代`); continue; }
         if (!culture) { problems.push(`${who}｜缺文化`); continue; }
@@ -65,7 +67,13 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         ok++;
     }
 }
-console.log({ 武将总数: total, 对应上: ok, 动乱番号残留: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
+// 🔴 [2026-11-10 主人令「如果二级军团没有武将套用，请报错」]
+for (const l of L2) {
+    if (!usedL2.has(l.name)) {
+        problems.push(`【二级军团无武将套用】${l.name}（${l.buildingStyle}×${l.age}）`);
+    }
+}
+console.log({ 武将总数: total, 对应上: ok, 动乱番号残留: uprisingOk, 三级保留: thirdKept, 二级军团总数: L2.length, 二级已套用: L2.filter((l) => usedL2.has(l.name)).length, 有问题: problems.length });
 for (const p of problems) console.log('  ', p);
 process.exit(problems.length ? 1 : 0);
 

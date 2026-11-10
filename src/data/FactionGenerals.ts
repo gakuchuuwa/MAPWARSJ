@@ -3374,28 +3374,28 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 西亚赫·卡克（4 世纪，特奥蒂瓦坎统帅；378 年率军入蒂卡尔，蒂卡尔王查克·托克·伊查克一世同日身亡，另立新王）｜势力 特奥蒂瓦坎（新增）｜据点 蒂卡尔（MAYANS）｜普将｜精锐「特奥蒂瓦坎武士」T3｜立绘留空
         { generalId: 'bfe_siyaj_kak', factionId: 'teotihuacan', cityId: 'city_tikal', generalName: '西亚赫卡克', portrait: '/assets/MAYANS/bfe_siyaj_kak.png', eliteName: '特奥蒂瓦坎武士', eliteTier: 3 },
         // 🔴 [2026-11-10 主人令「只要这个时代和文化，历史上有武将的名字，就应该成立这个时代的文化军团」]
-        // 掷矛鸮（Atlatl Cauac / Spearthrower Owl，374–439 年在位，玛雅蒂卡尔第 31 号石碑铭文确认的特奥蒂瓦坎统治者，坐镇墨西哥谷地派遣西亚赫卡克远征）｜势力 特奥蒂瓦坎｜据点 特诺奇提特兰（AMERICA）｜普将｜精锐「特奥蒂瓦坎武士」T3｜立绘留空
-        { generalId: 'bfe_spearthrower_owl', factionId: 'teotihuacan', cityId: 'city_tenochtitlan', generalName: '掷矛鸮', portrait: '', eliteName: '特奥蒂瓦坎武士', eliteTier: 3 },
+        // 掷矛鸮（Atlatl Cauac / Spearthrower Owl，374–439 年在位，玛雅蒂卡尔第 31 号石碑铭文确认的特奥蒂瓦坎统治者，坐镇墨西哥谷地派遣西亚赫卡克远征）｜势力 特奥蒂瓦坎｜据点 特诺奇提特兰（AMERICA）｜普将｜精锐「特奥蒂瓦坎武士」T3
+        { generalId: 'bfe_spearthrower_owl', factionId: 'teotihuacan', cityId: 'city_tenochtitlan', generalName: '掷矛鸮', portrait: '/assets/AMERICA/bfe_spearthrower_owl.png', eliteName: '特奥蒂瓦坎武士', eliteTier: 3 },
     ],
     lithuanian_tribes: [
         // 🔴 [2026-11-10 主人令「只要这个时代和文化，历史上有武将的名字，就应该成立这个时代的文化军团」]
-        // 内蒂梅尔（Netimeras，1009 年《奎德林堡编年史》首次记载立陶宛国名时所载立陶宛部族君主 Rex Netimer）｜势力 立陶宛部族｜据点 维尔纽斯（LITHUANIANS）｜普将｜精锐「波罗的斧兵」T4｜立绘留空
-        { generalId: 'bfe_netimeras', factionId: 'lithuanian_tribes', cityId: 'city_weierniwusi', generalName: '内蒂梅尔', portrait: '', eliteName: '波罗的斧兵', eliteTier: 4 },
+        // 内蒂梅尔（Netimeras，1009 年《奎德林堡编年史》首次记载立陶宛国名时所载立陶宛部族君主 Rex Netimer）｜势力 立陶宛部族｜据点 维尔纽斯（LITHUANIANS）｜普将｜精锐「波罗的斧兵」T4
+        { generalId: 'bfe_netimeras', factionId: 'lithuanian_tribes', cityId: 'city_weierniwusi', generalName: '内蒂梅尔', portrait: '/assets/LITHUANIANS/bfe_netimeras.png', eliteName: '波罗的斧兵', eliteTier: 4 },
     ],
     hellas_theme: [
         // 🔴 [2026-11-10 主人令「只要这个时代和文化，历史上有武将的名字，就应该成立这个时代的文化军团」]
-        // 阿加利诺斯（Agallianos Kontoskeles，《塞奥法诺斯编年史》载 727 年拜占庭海拉斯军区督军，率阿提卡与爱琴海舰队起兵反抗利奥三世）｜势力 海拉斯军区｜据点 雅典（ATHENIANS）｜普将｜精锐「阿提卡矛兵」T4｜立绘留空
-        { generalId: 'bfe_agallianos', factionId: 'hellas_theme', cityId: 'city_yadian', generalName: '阿加利诺斯', portrait: '', eliteName: '阿提卡矛兵', eliteTier: 4 },
+        // 阿加利诺斯（Agallianos Kontoskeles，《塞奥法诺斯编年史》载 727 年拜占庭海拉斯军区督军，率阿提卡与爱琴海舰队起兵反抗利奥三世）｜势力 海拉斯军区｜据点 雅典（ATHENIANS）｜普将｜精锐「阿提卡矛兵」T4
+        { generalId: 'bfe_agallianos', factionId: 'hellas_theme', cityId: 'city_yadian', generalName: '阿加利诺斯', portrait: '/assets/ATHENIANS/bfe_agallianos.png', eliteName: '阿提卡矛兵', eliteTier: 4 },
     ],
     lugii: [
         // 🔴 [2026-11-10 主人令「可以是传说人物，不能是神话人物」]
-        // 克拉库斯（Krakus，卡德武贝克《波兰编年史》Chronica Polonorum 载维斯瓦河上游建克拉科夫瓦维尔堡、抗击外敌的传说君王）｜势力 卢吉联盟｜据点 克拉科夫（POLES）｜普将（传说人物）｜精锐「维斯瓦矛兵」T4｜立绘留空
-        { generalId: 'bfe_krakus', factionId: 'lugii', cityId: 'city_kelakefu', generalName: '克拉库斯', portrait: '', eliteName: '维斯瓦矛兵', eliteTier: 4 },
+        // 克拉库斯（Krakus，卡德武贝克《波兰编年史》Chronica Polonorum 载维斯瓦河上游建克拉科夫瓦维尔堡、抗击外敌的传说君王）｜势力 卢吉联盟｜据点 克拉科夫（POLES）｜普将（传说人物）｜精锐「维斯瓦矛兵」T4
+        { generalId: 'bfe_krakus', factionId: 'lugii', cityId: 'city_kelakefu', generalName: '克拉库斯', portrait: '/assets/POLES/bfe_krakus.png', eliteName: '维斯瓦矛兵', eliteTier: 4 },
     ],
     wagadu: [
         // 🔴 [2026-11-10 主人令「可以是传说人物，不能是神话人物」]
-        // 丁加西塞（Dinga Cisse，《费塔什史》《苏丹史》与索宁克史诗所载瓦加杜王国/古加纳开国传说始祖王）｜势力 瓦加杜｜据点 库姆比萨利赫（AFRICA）｜普将（传说人物）｜精锐「瓦加杜矛兵」T4｜立绘留空
-        { generalId: 'bfe_dinga_cisse', factionId: 'wagadu', cityId: 'city_kumubi', generalName: '丁加西塞', portrait: '', eliteName: '瓦加杜矛兵', eliteTier: 4 },
+        // 丁加西塞（Dinga Cisse，《费塔什史》《苏丹史》与索宁克史诗所载瓦加杜王国/古加纳开国传说始祖王）｜势力 瓦加杜｜据点 库姆比萨利赫（AFRICA）｜普将（传说人物）｜精锐「瓦加杜矛兵」T4
+        { generalId: 'bfe_dinga_cisse', factionId: 'wagadu', cityId: 'city_kumubi', generalName: '丁加西塞', portrait: '/assets/AFRICA/bfe_dinga_cisse.png', eliteName: '瓦加杜矛兵', eliteTier: 4 },
     ],
     salakanagara: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]

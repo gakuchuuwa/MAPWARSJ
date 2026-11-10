@@ -42,7 +42,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     // 🔴 [2026-10-25 补齐·主人令「每个势力都要有时代」] 这三家只有据点、没有武将，此前漏登记：
     'jienei': [{ from: -9999, era: 'castle' }], // 杰内｜《苏丹史》载杰内城邦建于 765–1468（13 世纪科伊孔博罗改宗伊斯兰建杰内大清真寺），大部分年份在城堡段（1050–1468＝418 年 > 765–1050＝285 年）→ 城堡时代马里军团
     'ghana_diguo': [{ from: -9999, era: 'feudal' }], // 加纳帝国｜瓦加杜加纳（约 300–1200，8–11 世纪盛期，马宁）；势指针＝封建时代加纳军团
-    'cueva': [{ from: -9999, era: 'castle' }], // 库埃瓦｜巴拿马科马格雷酋邦（1510 巴尔沃亚到访）＝帝国段；势指针＝帝国时代格查武士军团 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1400–1550（FactionLifeYears）]
+    'cueva': [{ from: -9999, era: 'imperial' }], // 库埃瓦｜巴拿马科马格雷酋邦（1480–1550，潘基亚科 1513 接待巴尔沃亚）＝帝国时代格查武士军团
     'song': [{ from: -9999, era: 'castle' }], // 宋国｜宋（960–1279）＝城堡时代中华军团（神臂弓/步人甲/斩马刀），北宋南宋同一支宋军
     'shunde': [{ from: -9999, era: 'imperial' }], // 顺德（宁王朱宸濠 1519）｜帝国时代 × 豫章 江南 = 帝国时代两江军团
     'jianwen': [{ from: -9999, era: 'castle' }], // 建文（1399–1402）｜帝国时代 × 历下 河朔 = 帝国时代燕晋军团 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1399–1402（FactionLifeYears）]
@@ -153,10 +153,10 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'shahi': [{ from: -9999, era: 'feudal' }], // 印度教沙希（850–1026）
     'xisa': [{ from: -9999, era: 'antiquity' }], // 西萨特拉普（1–2 世纪）
     'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1832 起）
-    'ante': [{ from: -9999, era: 'feudal' }], // 安特（4 世纪） 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：antiquity → feudal｜存续 390–602（FactionLifeYears）]
+    'ante': [{ from: -9999, era: 'antiquity' }], // 安特（300–602，4 世纪博兹王抗击东哥特，古典段 176 年 > 封建段 126 年）＝古典时代安特军团
     'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }] → feudal｜存续 409–585 大部分年份]
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
-    'yicha': [{ from: -9999, era: 'castle' }], // 伊察 🔴[2026-11-09 主人「势力对照年代，要用年份长的，知名度高的」] 存续 1194–1697 按年数是城堡，但伊察以玛雅最后一个独立王国闻名（1697 卡内克降西班牙）→ 帝国 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1194–1697（FactionLifeYears）]
+    'yicha': [{ from: -9999, era: 'imperial' }], // 伊察（1441–1697 佩滕伊察湖诺赫佩滕独立王国，卡内克抗西至 1697，帝国段 197 年 > 城堡段 59 年）＝帝国时代玛雅军团
     'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
     'yili': [{ from: -9999, era: 'antiquity' }], // 伊利里亚（巴托起义，前 6 年）
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
@@ -459,7 +459,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'naweierbuta': [{ from: -9999, era: 'imperial' }], // 纳韦尔布塔｜1536–1883 纳韦尔布塔抗西班牙军事同盟（加尔瓦里诺 1557 作战）＝帝国时代安第斯游击军团／阿劳卡尼亚军团
     'nidelan': [{ from: -9999, era: 'imperial' }], // 尼德兰
     'nongzhigao': [{ from: -9999, era: 'castle' }], // 大南
-    'nuowei': [{ from: -9999, era: 'castle' }], // 挪威 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：feudal → castle｜存续 872–1900（FactionLifeYears）]
+    'nuowei': [{ from: -9999, era: 'feudal' }], // 挪威（872–1066 金发王朝维京时代挪威王国，金发哈拉尔至哈德拉达 9 将全属维京期，封建段 178 年 > 城堡段 16 年）＝封建时代维京军团
     'oda': [{ from: -9999, era: 'imperial' }], // 织田
     'odrysian_late': [{ from: -9999, era: 'antiquity' }], // 奥德里西亚
     'ongut': [{ from: -9999, era: 'castle' }], // 汪古
@@ -674,7 +674,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yidelisi': [{ from: -9999, era: 'feudal' }], // 伊德里斯王朝
     'yidier': [{ from: -9999, era: 'feudal' }], // 伊蒂尔汗国
     'yiduhu': [{ from: -9999, era: 'castle' }], // 亦都护
-    'yilaka': [{ from: -9999, era: 'castle' }], // 伊拉卡 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 1450–1537（FactionLifeYears）]
+    'yilaka': [{ from: -9999, era: 'imperial' }], // 伊拉卡（1470–1539 通达马抗击西班牙征服者，帝国段 39 年 > 城堡段 30 年）＝帝国时代格查武士军团
     'yilisi': [{ from: -9999, era: 'antiquity' }], // 埃利斯
     'yilou': [{ from: -9999, era: 'antiquity' }], // 挹娄
     'yiluokui': [{ from: -9999, era: 'imperial' }] /* 🔴 2026-11-09 存续 1450—今，大部分年份与知名期都在帝国段 */, // 易洛魁联盟
@@ -713,7 +713,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'da_yan': [{ from: -9999, era: 'feudal' }], // 大燕｜按现存名将成名年推定：–∞起古典 → 720起封建
     'dali': [{ from: -9999, era: 'castle' }], // 大理｜按现存名将成名年推定：–∞起封建 → 1065起城堡
     'da_qin': [{ from: -9999, era: 'feudal' }], // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 大秦（朱泚）｜783 据长安称帝、国号秦（应天），784 改国号汉 → 封建时代
-    'danmai': [{ from: -9999, era: 'castle' }], // 丹麦｜–∞起封建 → 1184起城堡 → 1500起帝国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }, { from: 1184, era: 'castle' }, { from: 1500, era: 'imperial' }] → feudal｜存续年不全，取武将最多的时代] 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：feudal → castle｜存续 936–1900（FactionLifeYears）]
+    'danmai': [{ from: -9999, era: 'feudal' }], // 丹麦（714–1047 海瑟比—耶灵维京时代丹人王国，戈德弗雷德、蓝牙哈拉尔；1047–1523 中世纪丹麦已单列 denmark_medieval）＝封建时代丹人军团
     'xinbuli': [{ from: -9999, era: 'antiquity' }], // 辛布里（金布里）｜前 113–前 101 辛布里战争
     'daquyue': [{ from: -9999, era: 'feudal' }], // 大瞿越｜按现存名将成名年推定：–∞起封建 → 1405起城堡
     'deli': [{ from: -9999, era: 'castle' }], // 德里苏丹国｜按现存名将成名年推定：–∞起城堡 → 1526起帝国
@@ -753,7 +753,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'panyao': [{ from: -9999, era: 'imperial' }], // 盘瑶｜按现存名将成名年推定：–∞起城堡 → 1750起帝国 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：castle → imperial｜存续 1200–1900（FactionLifeYears）]
     'putaoya': [{ from: -9999, era: 'imperial' }], // 葡萄牙｜按现存名将成名年推定：–∞起城堡 → 1520起帝国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }, { from: 1520, era: 'imperial' }] → imperial｜存续 1139–1910 大部分年份]
     'rouran': [{ from: -9999, era: 'antiquity' }], // 柔然｜按现存名将成名年推定：–∞起古典 → 500起封建
-    'ruidian_si': [{ from: -9999, era: 'castle' }], // 瑞典｜按现存名将成名年推定：–∞起封建 → 1230起城堡 → 1570起帝国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }, { from: 1230, era: 'castle' }, { from: 1570, era: 'imperial' }] → imperial｜存续年不全，取武将最多的时代] 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 970–1900（FactionLifeYears）]
+    'ruidian_si': [{ from: -9999, era: 'imperial' }], // 瑞典（1523–1900 瓦萨王朝起近代瑞典王国，古斯塔夫二世、卡尔十二世；1164–1523 中世纪瑞典已单列 sweden_medieval）＝帝国时代达拉纳长矛军团
     'ryukyu': [{ from: -9999, era: 'imperial' }], // 琉球｜按现存名将成名年推定：–∞起城堡 → 1490起帝国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }] → imperial｜存续 1429–1879 大部分年份]
     'safawei_d': [{ from: -9999, era: 'imperial' }], // 萨法维｜按现存名将成名年推定：–∞起城堡 → 1510起帝国
     'yinduxila': [{ from: -9999, era: 'antiquity' }], // 印度希腊王国（约前 180–前 10）＝古典时代

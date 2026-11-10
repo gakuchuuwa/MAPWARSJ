@@ -4649,12 +4649,13 @@ function computeLegionNameViolations(): string[] {
             if (n) generalUsers.set(n, (generalUsers.get(n) ?? 0) + 1);
         }
     }
+    // 🔴 [2026-11-10 主人令「如果二级军团没有武将套用，请报错」] 所有二级军团都必须有武将实际套用：
     const unusedL2 = LEVEL_2_CIV_62_LEGIONS
-        .filter(l => !legionUsers.has(l.name) && !generalUsers.has(l.name) && activeStyleAges.has(`${l.buildingStyle}|${l.age}`))
-        .map(l => l.name);
+        .filter(l => !generalUsers.has(l.name))
+        .map(l => `${l.name}（${l.buildingStyle}）`);
     if (unusedL2.length > 0) {
         violations.push(
-            `【二级军团】${unusedL2.length} 支有对应（时代+建筑文化）势力却未套用：${unusedL2.join('、')}`,
+            `【二级军团】${unusedL2.length} 支没有武将套用：${unusedL2.join('、')}`,
         );
     }
     const unusedL3 = [...LEVEL_3_LEGION_NAMES].filter(n => !legionUsers.has(n) && !generalUsers.has(n));
