@@ -12857,7 +12857,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    // 🔴 [2026-11-09 主人令「没名字的武将删除」] 原 dong: { generalId: 'dong_nangqianjiabo', generalName: '囊谦' } 已删——「囊谦」是囊谦王（Nangchen Gyalpo）的称号，不是本名；旗号「囊谦」照旧（地名／王系，非人名）
+    // 🔴 [2026-11-10 主人令「删除这个势力」] 势力「囊谦土司(dong)」已整体删除（无武将、无精锐番号）；原 dong: { generalId: 'dong_nangqianjiabo', generalName: '囊谦' } 已于 2026-11-09 按「没名字的武将删除」删掉——「囊谦」是囊谦王（Nangchen Gyalpo）的称号，不是本名
 
 
 

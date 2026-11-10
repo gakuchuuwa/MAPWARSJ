@@ -105,15 +105,17 @@ function bothSidesHaveRealGenerals(attackers: Scene13GateUnit[], defenders: Scen
     return attackers.some(sideHasRealGeneral) && defenders.some(sideHasRealGeneral);
 }
 
-/** 区域战进 13 的普通门槛（开战与援军赶到共用）：双方合计兵力都 ≥ SCENE13_MIN_TROOPS、不都是海军、双方都有武将和精锐 */
+/** 区域战进 13 的普通门槛（开战与援军赶到共用）：双方合计兵力都 ≥ SCENE13_MIN_TROOPS（攻城战守方 ≥ 10000 兵）、不都是海军、双方都有真武将 */
 function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene13GateUnit[]): boolean {
     const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
     const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0);
     const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0);
-    if (attTroops < minTroops || defTroops < minTroops) return false;
+    const isSiege = defenders.some(unitIsFortress) || attackers.some(unitIsFortress);
+    // 🔴 [2026-11-10 主人令「兵力上一万，+有武将，必须进入战术模式」]
+    //    攻城战守方兵力必须 ≥ 10000（未满 1 万的残城/空虚城不进战术模式），攻方 ≥ minTroops；且双方有真武将即必进（不因精锐冷却或转丸破军拦截）
+    if (attTroops < minTroops || defTroops < (isSiege ? 10000 : minTroops)) return false;
     if (attackers.every(unitIsNaval) && defenders.every(unitIsNaval)) return false;
-    return bothSidesHaveRealGenerals(attackers, defenders)
-        && attackers.some(unitHasElite) && defenders.some(unitHasElite);
+    return bothSidesHaveRealGenerals(attackers, defenders);
 }
 
 /**

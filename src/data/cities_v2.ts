@@ -2835,10 +2835,10 @@ buildingStyle: 'TIBET', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 索县；索宗；霍尔小城',
     },
 
-    // ── 2026-05-28 新增：董(囊谦宗/玉树/家族) ──
-    { id: 'city_nangqian', name: '囊谦宗', factionId: 'dong', lat: 32.2000, lng: 96.4800, type: 'stockade', region: 'TIBET_CASTLE',
+    // 🔴 [2026-11-10 主人令「删除这个势力」] 原囊谦土司(dong)已删，据点改隶玉树二十五族(gling)——囊谦千户本为玉树二十五族之首
+    { id: 'city_nangqian', name: '囊谦宗', factionId: 'gling', lat: 32.2000, lng: 96.4800, type: 'stockade', region: 'TIBET_CASTLE',
 buildingStyle: 'TIBET', troops: 10000, tier: 4,
-        note: '🔴 [2026-11-07 按史补依据] 囊谦土司；囊谦宗；隆庆小城',
+        note: '🔴 [2026-11-10 主人令「删除这个势力」] 原属囊谦土司(dong，已删)，归玉树二十五族(gling)；囊谦宗；隆庆小城',
     },
 
     // ── 工布土王(尼池/林芝)；巴塘宗改叛军点 ──

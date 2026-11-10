@@ -1001,28 +1001,32 @@ export class SiegeManager {
         }
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
-        // 剧情/经典战攻城不触发纵横削将/削精锐，保证历史对手完整出场并进入战术模式
+        // 🔴 [2026-11-10 主人令「恢复，转丸破军，纵横捭阖，飞箝擒王，不战而屈。加一条，兵力上一万，+有武将，必须进入战术模式」]
+        //    守方兵力 ≥ 10000 时禁止触发废将（纵横捭阖/飞箝擒王），确保兵力上一万+有武将的据点必保留守将并进入战术模式
+        const preDefTroops = (targetCity.troops || 0) + nearbyDefenderLegions.reduce((s, l) => s + (l.getTroops() || 0), 0);
         if (!isFirstBattleSiege) {
-            // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
-            if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
-                const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
-                if (Math.random() < chance) {
-                    targetCity.spawnGeneralUsed = true;
-                    targetCity.spawnEliteUsed = true;
-                    army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
-                    emitFollowedGeneralStrategicMapFx(army, 'sabotage_garrison', cityPos.lat, cityPos.lng, 'pulse');
-                    siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
+            if (preDefTroops < 10000) {
+                // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
+                if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
+                    const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
+                    if (Math.random() < chance) {
+                        targetCity.spawnGeneralUsed = true;
+                        targetCity.spawnEliteUsed = true;
+                        army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
+                        emitFollowedGeneralStrategicMapFx(army, 'sabotage_garrison', cityPos.lat, cityPos.lng, 'pulse');
+                        siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
+                    }
                 }
-            }
 
-            // 飞箝擒王：攻城前按 magnitude 概率消耗守城将出场配额
-            if (generalHasStrategicEffect(army, 'sabotage_general')) {
-                const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
-                if (Math.random() < chance) {
-                    targetCity.spawnGeneralUsed = true;
-                    army.markPendingPostBattleDiplomacyFx('sabotage_general');
-                    emitFollowedGeneralStrategicMapFx(army, 'sabotage_general', cityPos.lat, cityPos.lng, 'pulse');
-                    siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
+                // 飞箝擒王：攻城前按 magnitude 概率消耗守城将出场配额
+                if (generalHasStrategicEffect(army, 'sabotage_general')) {
+                    const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
+                    if (Math.random() < chance) {
+                        targetCity.spawnGeneralUsed = true;
+                        army.markPendingPostBattleDiplomacyFx('sabotage_general');
+                        emitFollowedGeneralStrategicMapFx(army, 'sabotage_general', cityPos.lat, cityPos.lng, 'pulse');
+                        siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
+                    }
                 }
             }
 
@@ -1281,28 +1285,28 @@ export class SiegeManager {
         const firstBattleTitle = (army as { firstBattleTitle?: string }).firstBattleTitle;
         const finalTitle = siegeData.title || firstBattleTitle || `${targetCity.name} 攻防战`;
 
-        // ── 威慑·望风披靡：战前削守方城防（仅据点，不动附近援军）──
+        const defenderHasGeneral = defenderUnits.some((u) => !!u.generalId);
+        const mustEnterTactical = defenderHasGeneral && preDefTroops >= 10000;
+
+        // ── 威慑·望风披靡：战前削守方城防（仅据点，不动附近援军；若满足「≥1万+有武将」必进战术，则保底 10000 不跌破战术门槛）──
         if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'pre_battle_intimidate')) {
             const pct = getGeneralStrategicMagnitude(army, 'pre_battle_intimidate', 0.10);
             const before = finalDefender.troops;
-            const after = Math.max(1, Math.floor(before * (1 - pct)));
+            const rawAfter = Math.max(1, Math.floor(before * (1 - pct)));
+            const after = (mustEnterTactical && before >= 10000) ? Math.max(10000, rawAfter) : rawAfter;
             finalDefender.setTroops(after);
             siegeLog(`[威慑] 望风披靡：${finalDefender.name} ${before} → ${after} (-${Math.round(pct * 100)}%)`);
             const pos = army.getPosition();
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
 
-        // ── 乱斗·野战余威（2026-11-03 主人定「如果刚野战完的，再去打据点，且无武将，可以100%获得。避免无效战争」）──
-        const defenderHasGeneral = defenderUnits.some((u) => !!u.generalId);
-        const justWonFieldBattle = !!(army as { justWonFieldBattle?: boolean }).justWonFieldBattle;
-        (army as { justWonFieldBattle?: boolean }).justWonFieldBattle = false;
+        // ── 乱斗/百岁·野战余威受降（2026-11-10 主人定「野战被打败的武将，必须是该据点武将，那么该据点可以不战而降」）──
         const fieldDefeat = getCityFieldDefeat(targetCity.id);
-        if (fieldDefeat || justWonFieldBattle) {
+        if (fieldDefeat) {
             const myTroops = attackerUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
             const enemyTroops = defenderUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
-            const effectiveWinnerFaction = justWonFieldBattle ? army.getFactionId() : fieldDefeat?.winnerFactionId;
             if (canYieldCityFromFieldDefeat({
-                fieldDefeatWinnerFactionId: effectiveWinnerFaction,
+                fieldDefeatWinnerFactionId: fieldDefeat.winnerFactionId,
                 attackerFactionId: army.getFactionId(),
                 defenderHasGeneral,
                 attackerTroops: myTroops,
@@ -1313,7 +1317,7 @@ export class SiegeManager {
             })) {
                 consumeCityFieldDefeat(targetCity.id);
                 siegeLog(
-                    `[野战余威] ${army.name} 刚野战获胜兵临无将据点【${targetCity.name}】 → 100% 不战而下`
+                    `[野战余威] ${army.name} 刚在野战击败【${targetCity.name}】武将，兵临无将据点 → 100% 不战而下`
                 );
 
                 // 清协同军团战斗态（已调过 setCombatState(true) 的附近攻守军团）
@@ -1352,8 +1356,8 @@ export class SiegeManager {
             }
         }
 
-        // ── 同文化无将5倍兵力100%投降 / 威慑·不战而屈（50%） / 优势兵力攻无将据点（30%）：跳过战斗直接占城（剧情经典战攻城禁止跳过战斗！）──
-        if (!isFirstBattleSiege) {
+        // ── 同文化无将5倍兵力100%投降 / 威慑·不战而屈（50%） / 优势兵力攻无将据点（30%）：跳过战斗直接占城（守方≥1万+有武将必进战术模式，禁止跳过！）──
+        if (!isFirstBattleSiege && !mustEnterTactical) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
             if (myTroops > enemyTroops) {

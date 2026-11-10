@@ -125,7 +125,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 威慑类 ──
 
-    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.50, engineStatus: 'ready', category: 'deterrence', note: '兵力优势时不战占城：概率 50%（2026-11-03 主人定）' },
+    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.50, engineStatus: 'ready', category: 'deterrence', note: '兵力优势时不战占城：概率 50%（守方≥1万且有将的硬仗不跳过，2026-11-10 主人定）' },
 
     // 【2026-07-31 改名】原名「先声夺人」与战术技 ts_021 完全重名。
     //   ts_021 已挂《左传·襄公二十六年》「先人有夺人之心」的出处，且它作用于【开局阶段】，
@@ -135,13 +135,13 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'retired', category: 'deterrence', note: '【已退役】（2026-08-17 主人令：删除越城而走防卡死）' },
 
-    // ── 纵横类（2026-10-19 主人令：可能影响剧本，先屏蔽不使用）──
+    // ── 纵横类（2026-11-10 主人令：恢复纵横捭阖、飞箝擒王、转丸破军；守方≥1万且有将时必进战术模式）──
 
-    str_22: { id: 'str_22', grid: 'S㉒', displayName: '纵横捭阖', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'retired', category: 'diplomacy', note: '10%概率攻城封杀守将/精（已屏蔽停用）' },
+    str_22: { id: 'str_22', grid: 'S㉒', displayName: '纵横捭阖', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'ready', category: 'diplomacy', note: '10%概率攻城封杀守将/精' },
 
-    str_23: { id: 'str_23', grid: 'S㉓', displayName: '飞箝擒王', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'retired', category: 'diplomacy', note: '15%的几率，攻城战封杀守将（已屏蔽停用）' },
+    str_23: { id: 'str_23', grid: 'S㉓', displayName: '飞箝擒王', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀守将' },
 
-    str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'retired', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（已屏蔽停用）' },
+    str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐' },
 
     // ── 防务类（⚠️ 封印退役技：大地图军团战略不使用据点防务技，禁止分配给任何武将）──
 

@@ -454,7 +454,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     kongsa: { start: null, end: 1950, source: '不确定：孔萨为霍尔五部之一，18 世纪初受清封，起年无明文；1950 年甘孜解放', note: '🔴 [2026-11-04 判定] 甘孜孔萨土司，与麻书、白利等分治霍尔地面；土司割据且有史称 → 独立势力保留' },
     // 🔴 [2026-11-04 按历史修复] 'daca'（原「八宿寺」，达擦活佛领八宿宗）非割据政权，已并入甘丹颇章，存续年删除
     hor: { start: null, end: null, source: '不确定：霍尔三十九族为那曲—索宗蒙古—藏化部族集团，清雍正后隶驻藏大臣，无明确起止', note: '🔴 [2026-11-04 判定] 势力改「霍尔三十九族」（清代史称）；部落集团半独立且有史称 → 独立势力保留' },
-    dong: { start: 1175, end: 1955, source: 'Wikipedia：Kingdom of Nangchen（囊谦土司 1175—1955）', note: '玉树囊谦王，藏语 Nangchen' },
+    // 🔴 [2026-11-10 主人令「删除这个势力」] dong（囊谦土司）已删，存续年删除
     bailang: { start: null, end: null, source: '不确定：《后汉书·南蛮西南夷列传》载白狼王唐菆献歌（约 74 年），此后无纪年，唐以后不见', note: '白狼羌居川西巴塘—理塘一带' },
     duolu: { start: 600, end: 657, source: '《旧唐书·突厥传》西突厥五咄陆部；657 年阿史那贺鲁被擒', note: '咄陆为西突厥左厢五部，后归突骑施' },
     tiemuer: { start: 1370, end: 1507, source: 'Wikipedia：Timurid Empire（1370—1507）；势力名「图兰」即帖木儿帝国', note: '都撒马尔罕；1507 年昔班尼汗灭之' },

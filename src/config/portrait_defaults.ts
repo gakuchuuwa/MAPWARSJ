@@ -427,7 +427,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'bailang': _tuboPortraitPool,
     // 🔴 [2026-11-04] 'daca' 已并入甘丹颇章，立绘池登记删除
     // 🔴 [2026-11-04] 'dalung' 已并入甘丹颇章，立绘池登记删除
-    'dong': _tuboPortraitPool,
+    // 🔴 [2026-11-10 主人令「删除这个势力」] 'dong'（囊谦土司）已删，立绘池登记删除
     'galangdiba': _tuboPortraitPool,
     'ganden': _tuboPortraitPool,
     'gar_kham': _tuboPortraitPool,

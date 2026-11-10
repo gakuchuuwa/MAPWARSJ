@@ -949,16 +949,6 @@
       "note": "达隆噶举/噶斯家族万户；康区大本营类乌齐(前藏发源地达隆塘)"
     },
     {
-      "factionId": "dong",
-      "flag": "隆庆",
-      "cityId": "city_nangqian",
-      "cityName": "囊谦宗",
-      "priority": 4,
-      "type": "家族",
-      "auditStatus": "ok",
-      "note": "隆庆土司"
-    },
-    {
       "factionId": "mamon",
       "flag": "马蒙",
       "cityId": "city_dargan",

@@ -74,8 +74,8 @@ export interface FieldYieldCheckInput {
 }
 
 /**
- * 「野战余威受降」判定（2026-11-03 主人定「如果刚野战完的，再去打据点，且无武将，可以100%获得。避免无效战争」）：
- * 刚野战打赢 + 守方这一仗无将 + 乱斗/百岁模式 → 100% 直接获得据点。
+ * 「野战余威受降」判定（2026-11-10 主人定「野战被打败的武将，必须是该据点武将，那么该据点可以不战而降」）：
+ * 该据点武将刚在野战中被本势力打败 + 守方这一仗无将 + 乱斗/百岁模式 → 100% 直接获得据点。
  */
 export function canYieldCityFromFieldDefeat(input: FieldYieldCheckInput): boolean {
     return !!input.gameMode

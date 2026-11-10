@@ -4680,24 +4680,39 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         }
     }
 
+    // 🔴 [2026-11-10 主人令「一键清扫，请修复」] 注释不是数据：删势力时留下的「原 'xxx': 'yyy' 已删」注释，
+    //   会被下面三条正则当成真条目读进来（StartingCapitals 里 jianzhou 的删除注释因此被误报
+    //   「势力 jianzhou 不在 factions.ts」）。三张登记表统一先剥掉行注释再解析，引号内的 // 由 findLineCommentStart 保护。
+    const stripLineComments = (text: string): string =>
+        text
+            .split('\n')
+            .map((line) => {
+                const at = findLineCommentStart(line);
+                return at >= 0 ? line.slice(0, at) : line;
+            })
+            .join('\n');
+    const sdnClean = stripLineComments(sdnText);
+    const scClean = stripLineComments(scText);
+
     // flags: { [factionId]: flagText } — keys may or may not be quoted
     const flags: Record<string, string> = {};
-    for (const m of sdnText.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']*)'/g)) {
+    for (const m of sdnClean.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']*)'/g)) {
         const key = m[1] || m[2];
         if (key) flags[key] = m[3];
     }
 
     // startingCapitals: { [factionId]: cityId } — keys may or may not be quoted
     const capitals: Record<string, string> = {};
-    for (const m of scText.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']+)'/g)) {
+    for (const m of scClean.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']+)'/g)) {
         const key = m[1] || m[2];
         if (key) capitals[key] = m[3];
     }
 
     // factionColors: { [factionId]: colorHex }
     const colorsText = fs.readFileSync(path.resolve(__dirname, 'src/data/HistoricalFactionColors.ts'), 'utf-8');
+    const colorsClean = stripLineComments(colorsText);
     const factionColors: Record<string, string> = {};
-    for (const m of colorsText.matchAll(/(?:'([^']+)'|(\w+)):\s*'(#[0-9a-fA-F]{6})'/g)) {
+    for (const m of colorsClean.matchAll(/(?:'([^']+)'|(\w+)):\s*'(#[0-9a-fA-F]{6})'/g)) {
         const key = m[1] || m[2];
         if (key) factionColors[key] = m[3];
     }

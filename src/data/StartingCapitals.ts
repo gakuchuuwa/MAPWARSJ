@@ -158,7 +158,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'mac_dynasty': 'city_sanpu',   // 登记用，不改据点归属
     'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
     'mamunid': 'city_urgench',   // 登记用，不改据点归属
-    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 'jianzhou': 'city_tongjiajiang' 已删（浑江本属 manzhou_d）
+    // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou → city_tongjiajiang 的首府登记已删（浑江本属 manzhou_d）
     'bashkir': 'city_kashan',   // 登记用，不改据点归属
     'drevlians': 'city_zhytomyr',   // 登记用，不改据点归属
     'mongol_ancient': 'city_burhan',   // 登记用，不改据点归属
@@ -554,8 +554,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：霍尔(索宗/那曲) ──
     'hor': 'city_suozong',
 
-    // ── 2026-05-28 新增：董(囊谦宗/玉树) ──
-    'dong': 'city_nangqian',
+    // 🔴 [2026-11-10 主人令「删除这个势力」] 'dong'（囊谦土司）已删，首府映射删除
 
     // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
 'bailang': 'city_adunzi',

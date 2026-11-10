@@ -2677,10 +2677,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代卫藏军团",
         legionType: "region",
     },
-    "dong": {
-        legionName: "城堡时代萨迦军团",
-        legionType: "region",
-    },
+    // 🔴 [2026-11-10 主人令「删除这个势力」] "dong"（囊谦土司）已删，编制指针删除
+
     "weitou": {
         legionName: "古典时代西域军团",
         legionType: "region",

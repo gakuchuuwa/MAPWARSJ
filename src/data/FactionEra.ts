@@ -257,7 +257,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'dianguo': [{ from: -9999, era: 'antiquity' }], // 滇国
     'didi': [{ from: -9999, era: 'castle' }], // 佛兰德
     'dixiang': [{ from: -9999, era: 'antiquity' }], // 新国
-    'dong': [{ from: -9999, era: 'imperial' }], // 隆庆 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'castle' }] → imperial｜存续 1175–1955 大部分年份]
+    // 🔴 [2026-11-10 主人令「删除这个势力」] 'dong'（囊谦土司）已删，时代登记删除
     'donggete': [{ from: -9999, era: 'feudal' }], // 东哥特 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }] → feudal｜存续 493–553 大部分年份]
     'dongjin': [{ from: -9999, era: 'antiquity' }], // 东晋
     'dongxia': [{ from: -9999, era: 'castle' }], // 东夏
