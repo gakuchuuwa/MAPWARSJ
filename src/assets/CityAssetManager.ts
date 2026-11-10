@@ -2042,20 +2042,21 @@ export class CityAssetManager {
                 emblemPath: `/emblem-flags/${emblemKey}_${useWhiteEmblem ? 'w' : 'b'}.png`,
             };
         }
-        // 🔴 [2026-11-10 主人令「统一风格，DE 里有的就用 DE 里的」]
-        //   百岁模式：该势力此刻**一个在场武将都没有**（`cityName` 已由 eraFactionDisplay 判定），
-        //   且本据点建筑文化有文化徽章 → 旗面直接贴「文化徽章」（四时代同图、不染色、不写字）。
-        //   顺序：势力专属纹章 > 文化徽章 > 时代字旗（2026-11-03 主人令「有纹章的武将不在场照旧画纹章」不变）。
+        // 🔴 [2026-11-10 主人令] 百岁模式：该势力此刻**一个在场武将都没有**（`cityName` 已由 eraFactionDisplay 判定），
+        //   且本据点建筑文化有文化纹章（非华/魏/吴/蜀/荆/越/凉 7 个单字旗文化）→ 旗面贴「单色文化纹章剪影」
+        //   （按旗布深浅自动取白图黑边 `_w` 或黑图白边 `_b`，带迎风透视倾斜，与势力纹章同款融入旗面）。
+        //   顺序：势力专属纹章 > 文化纹章 > 时代字旗。
         if (cityName != null) {
             const cultureEmblem = getCultureEmblemFile(buildingStyle);
             if (cultureEmblem) {
+                const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
                 return {
                     factionId,
-                    variantKey: `culture_emblem_${cultureEmblem}`,
+                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}`,
                     text: '',
                     fill: '',
                     stroke: '',
-                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
+                    emblemPath: `/emblem-flags/${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}.png`,
                 };
             }
         }

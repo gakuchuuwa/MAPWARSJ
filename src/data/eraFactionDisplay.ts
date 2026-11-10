@@ -111,27 +111,36 @@ interface EraNameDef {
 }
 
 const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
-    // 🔴 [2026-10-20 主人令] 中原四时代：名字随当时代军团名（华夏/中原/中华/中国），旗号四时代统一「华」
+    // 🔴 [2026-11-10 主人令「这些还是用字更好。中原用华，河朔用魏，江南用吴，巴蜀用蜀，湖广用荆，越南用越，河西用凉」]
     'CENTRAL|antiquity': { flagText: '华' },    // 古典时代华夏军团 → 华夏；旗面只写「华」
     'CENTRAL|feudal': { flagText: '华' },       // 封建时代中原军团 → 中原；旗面只写「华」
     'CENTRAL|castle': { flagText: '华' },       // 城堡时代中华军团 → 中华；旗面只写「华」
     'CENTRAL|imperial': { flagText: '华' },     // 帝国时代中国军团 → 中国；旗面只写「华」
-    'WEI|antiquity': { name: '太行' },          // 古典时代太行军团（原魏晋军团）
-    'WEI|feudal': { name: '河朔' },             // 封建时代河朔军团（原北朝军团）
-    // 🔴 [2026-10-20 主人令「河朔的帝国我改了燕晋，请改旗号燕晋」] 河朔·帝国：势力名随军团名＝燕晋，旗面写「燕晋」
-    'WEI|imperial': { flagText: '燕晋' },       // 帝国时代燕晋军团（原大明军团）→ 燕晋；旗面写「燕晋」
-    'JIANGNAN|feudal': { name: '江淮' },        // 封建时代江淮军团
-    'JIANGNAN|castle': { name: '江南' },        // 城堡时代江南军团（原南宋军团）
+    'WEI|antiquity': { name: '太行', flagText: '魏' },          // 古典时代太行军团（原魏晋军团）；旗面写「魏」
+    'WEI|feudal': { name: '河朔', flagText: '魏' },             // 封建时代河朔军团（原北朝军团）；旗面写「魏」
+    'WEI|castle': { flagText: '魏' },                           // 城堡时代河朔；旗面写「魏」
+    'WEI|imperial': { flagText: '魏' },                         // 帝国时代燕晋军团；旗面写「魏」
+    'JIANGNAN|antiquity': { flagText: '吴' },                   // 古典时代江南；旗面写「吴」
+    'JIANGNAN|feudal': { name: '江淮', flagText: '吴' },        // 封建时代江淮军团；旗面写「吴」
+    'JIANGNAN|castle': { name: '江南', flagText: '吴' },        // 城堡时代江南军团（原南宋军团）；旗面写「吴」
+    'JIANGNAN|imperial': { flagText: '吴' },                    // 帝国时代江南；旗面写「吴」
+    'BASHU|antiquity': { flagText: '蜀' },                      // 古典时代巴蜀；旗面写「蜀」
+    'BASHU|feudal': { flagText: '蜀' },                         // 封建时代巴蜀；旗面写「蜀」
+    'BASHU|castle': { name: '川峡', flagText: '蜀' },           // 城堡时代川峡军团；旗面写「蜀」
+    'BASHU|imperial': { flagText: '蜀' },                       // 帝国时代巴蜀；旗面写「蜀」
+    'HUGUANG|antiquity': { flagText: '荆' },                    // 古典时代湖广；旗面写「荆」
+    'HUGUANG|feudal': { flagText: '荆' },                       // 封建时代湖广；旗面写「荆」
+    'HUGUANG|castle': { flagText: '荆' },                       // 城堡时代湖广；旗面写「荆」
+    'HUGUANG|imperial': { flagText: '荆' },                     // 帝国时代湖广；旗面写「荆」
     'WESTERN|antiquity': { name: '西域' },      // 古典时代西域军团（原塞种军团；地区/行政统称，不用族群名）
     'WESTERN|feudal': { name: '安西' },         // 封建时代安西军团（原回鹘军团；唐安西都护府，与静海同一类行政名）
     'HEXI|antiquity': { name: '凉州', flagText: '凉' },  // 古典时代凉州军团（原西凉军团）；旗面只写一个「凉」
-    // 🔴 [2026-10-20 主人令「城堡时代大夏旗号用夏」] 河西·城堡：势力名仍用国号正名「大夏」，旗面只写一个「夏」
-    'HEXI|castle': { flagText: '夏' },       // 城堡时代大夏军团（党项西夏）→ 大夏；旗面只写「夏」
-    'BASHU|castle': { name: '川峡' },           // 城堡时代川峡军团（原山城军团；北宋川峡四路，宋元巴蜀的行政区统称）
+    'HEXI|feudal': { flagText: '凉' },          // 封建时代河西；旗面写「凉」
+    'HEXI|castle': { flagText: '凉' },          // 城堡时代大夏军团；旗面统一写「凉」
+    'HEXI|imperial': { flagText: '凉' },        // 帝国时代河西；旗面写「凉」
     'PERSIAN|antiquity': { name: '阿契美尼德' }, // 古典时代阿契美尼德军团（原长生／不死军团；长生军是部队番号，不能当军团名）
-    'VIETNAMESE|feudal': { name: '静海' },      // 封建时代瞿越军团（原丁黎军团）
-    // 🔴 [2026-11-04 主人令「越南势力旗号只用一个越字」] 城堡（大越）、帝国（安南＝当时国号仍为大越，1804 起越南）旗面只写「越」；
-    //   古典交趾、封建静海是中原郡县/军镇名，不是越南政权国号，照旧
+    'VIETNAMESE|antiquity': { flagText: '越' }, // 古典时代交趾；旗面统一写「越」
+    'VIETNAMESE|feudal': { name: '静海', flagText: '越' },      // 封建时代瞿越军团（原丁黎军团）；旗面写「越」
     'VIETNAMESE|castle': { flagText: '越' },    // 城堡时代大越军团 → 大越；旗面只写「越」
     'VIETNAMESE|imperial': { flagText: '越' },  // 帝国时代安南军团 → 安南；旗面只写「越」
     // 🔴 [2026-10-20 主人令「不以朝代为名，可以用发羌吗，旗号羌？」] 青藏·古典：势力名随军团名＝发羌，旗面只写一个「羌」
