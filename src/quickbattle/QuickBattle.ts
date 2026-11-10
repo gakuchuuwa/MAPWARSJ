@@ -51,6 +51,9 @@ import {
     setScriptYearProvider,
 } from '../data/generalOnStage';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
+import {
+    resolveGeneralPortraitPath,
+} from '../config/portrait_defaults';
 
 // ───────────────────────────── 数据 ─────────────────────────────
 
@@ -70,8 +73,6 @@ type ClassicKindFilter = 'all' | FirstBattleKind;
 const CITY_TYPE_LABEL: Record<string, string> = {
     big_city: '大城', medium_city: '中城', small_city: '小城', pass: '险要', stockade: '城寨',
 };
-
-const DEFAULT_PORTRAIT_FALLBACK = '/assets/CENTRAL/default_general.png';
 
 function rand<T>(arr: readonly T[]): T | undefined {
     return arr.length ? arr[Math.floor(Math.random() * arr.length)] : undefined;
@@ -114,7 +115,11 @@ function collectGenerals(): GeneralItem[] {
                 generalName: g.generalName,
                 factionId: fid,
                 cityId: g.cityId,
-                portrait: g.portrait,
+                portrait: resolveGeneralPortraitPath(g.portrait, {
+                    factionId: fid,
+                    generalId: g.generalId,
+                    cityId: g.cityId,
+                }),
                 eliteLabel: resolveEliteLabel(g.generalId, fid),
             });
         }
@@ -123,13 +128,18 @@ function collectGenerals(): GeneralItem[] {
         if (!bf.generalId || seen.has(bf.generalId)) continue;
         const rec = getGeneralRecordByGeneralId(bf.generalId);
         const fid = rec?.factionId ?? bf.factionId;
+        const cid = rec?.cityId;
         seen.add(bf.generalId);
         out.push({
             generalId: bf.generalId,
             generalName: rec?.generalName ?? bf.generalName,
             factionId: fid,
-            cityId: rec?.cityId,
-            portrait: rec?.portrait ?? bf.portrait ?? '',
+            cityId: cid,
+            portrait: resolveGeneralPortraitPath(rec?.portrait ?? bf.portrait, {
+                factionId: fid,
+                generalId: bf.generalId,
+                cityId: cid,
+            }),
             eliteLabel: resolveEliteLabel(bf.generalId, fid),
         });
     }
@@ -298,6 +308,16 @@ interface ActiveBattle {
     timedOut?: boolean;
 }
 
+interface LastBattleSpec {
+    mode: PanelMode;
+    kind: BattleKind;
+    att: Side;
+    def: Side;
+    classic?: ClassicBattleEntry;
+    cityId?: string;
+    fieldSpot?: { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string };
+}
+
 /** 盖住战略地图的深色底：即时战斗里只看得到选人面板和战术画面 */
 class Backdrop {
     readonly el: HTMLDivElement;
@@ -363,6 +383,10 @@ class QuickBattle {
     private regionSel!: SearchSelect;
     private kind: 'random' | BattleKind = 'random';
     private active: ActiveBattle | null = null;
+    private lastBattleSpec: LastBattleSpec | null = null;
+    private lastClassicKey: string | null = null;
+    private lastRandomPairKey: string | null = null;
+    private replayBtn: HTMLButtonElement | null = null;
     /** 最近一条报错（开打却没进战术画面时，面板上直接写出来） */
     private lastError: { at: number; text: string } | null = null;
 
@@ -444,12 +468,17 @@ class QuickBattle {
         const rec = getGeneralRecordByGeneralId(generalId);
         if (!rec) return null;
         const fid = rec.factionId || fallbackFactionId || 'panshu';
+        const cid = rec.cityId ?? fallbackCityId;
         const item: GeneralItem = {
             generalId: rec.generalId,
             generalName: rec.generalName,
             factionId: fid,
-            cityId: rec.cityId ?? fallbackCityId,
-            portrait: rec.portrait,
+            cityId: cid,
+            portrait: resolveGeneralPortraitPath(rec.portrait, {
+                factionId: fid,
+                generalId: rec.generalId,
+                cityId: cid,
+            }),
             eliteLabel: resolveEliteLabel(rec.generalId, fid),
         };
         this.generalById.set(generalId, item);
@@ -778,7 +807,17 @@ class QuickBattle {
             this.setMode('random');
             this.pickRandomCustomPreview();
         });
-        actions.append(nextClassicBtn, reset, go);
+
+        const replayBtn = document.createElement('button');
+        replayBtn.type = 'button';
+        replayBtn.className = 'qb-replay';
+        replayBtn.textContent = '🔄 重复上一局';
+        replayBtn.disabled = true;
+        replayBtn.title = '尚无上一局对战记录';
+        replayBtn.addEventListener('click', () => this.replayLastBattle());
+        this.replayBtn = replayBtn;
+
+        actions.append(nextClassicBtn, reset, replayBtn, go);
 
         this.status = document.createElement('div');
         this.status.className = 'qb-status';
@@ -838,32 +877,65 @@ class QuickBattle {
             });
     }
 
-    /** 从当前经典战役分类池里随机抽一场并更新面板预览 */
+    /** 从当前经典战役分类池里随机抽一场并更新面板预览（排除当前与上一局，杜绝连续两场同样战役） */
     private pickRandomClassic(avoidKey?: string): void {
-        const pool = this.classics.filter(
-            (c) => (this.classicFilter === 'all' || c.kind === this.classicFilter) && c.key !== avoidKey,
+        const curKey = this.classicSel.get();
+        const bannedKeys = new Set<string>();
+        const bannedNames = new Set<string>();
+        for (const k of [avoidKey, curKey, this.lastClassicKey]) {
+            if (!k) continue;
+            bannedKeys.add(k);
+            const bName = this.classicByKey.get(k)?.fb.battleName;
+            if (bName) bannedNames.add(bName);
+        }
+        const basePool = this.classics.filter(
+            (c) => this.classicFilter === 'all' || c.kind === this.classicFilter,
         );
-        const picked = rand(pool) ?? rand(this.classics);
+        const strictPool = basePool.filter(
+            (c) => !bannedKeys.has(c.key) && !bannedNames.has(c.fb.battleName),
+        );
+        const keyOnlyPool = basePool.filter((c) => !bannedKeys.has(c.key));
+        const picked = rand(strictPool) ?? rand(keyOnlyPool) ?? rand(basePool) ?? rand(this.classics);
         if (picked) {
             this.classicSel.set(picked.key, true);
         }
         this.refreshPreview();
     }
 
-    /** 随机自由战斗：预抽一组攻守武将供面板立绘与信息预览 */
+    /** 随机自由战斗：预抽一组攻守武将供面板信息预览（排除当前与上一局组合，杜绝连续两场相同对阵） */
     private pickRandomCustomPreview(): void {
+        const curAtt = this.attGeneral.get();
+        const curDef = this.defGeneral.get();
+        const bannedPairs = new Set<string>();
+        if (curAtt && curDef) {
+            bannedPairs.add(`${curAtt}|${curDef}`);
+            bannedPairs.add(`${curDef}|${curAtt}`);
+        }
+        if (this.lastRandomPairKey) {
+            const [la, ld] = this.lastRandomPairKey.split('|');
+            if (la && ld) {
+                bannedPairs.add(`${la}|${ld}`);
+                bannedPairs.add(`${ld}|${la}`);
+            }
+        }
         this.attFaction.set(null, true);
         this.defFaction.set(null, true);
         this.attGeneral.setOptions(this.generalOptions(null), false);
         this.defGeneral.setOptions(this.generalOptions(null), false);
-        const attG = this.pickGeneral(null, null, {});
-        const defG = attG ? this.pickGeneral(null, null, { generalId: attG.generalId, factionId: attG.factionId }) : null;
+        let attG: GeneralItem | null = null;
+        let defG: GeneralItem | null = null;
+        for (let tries = 0; tries < 24; tries++) {
+            attG = this.pickGeneral(null, null, {});
+            defG = attG ? this.pickGeneral(null, null, { generalId: attG.generalId, factionId: attG.factionId }) : null;
+            if (!attG || !defG) break;
+            if (!bannedPairs.has(`${attG.generalId}|${defG.generalId}`)) break;
+        }
         this.attGeneral.set(attG?.generalId ?? null, true);
         this.defGeneral.set(defG?.generalId ?? null, true);
         this.refreshPreview();
     }
 
-    /** 渲染单侧武将立绘卡 */
+    /** 渲染单侧武将信息卡（不显示未调用缩放数据的小立绘，完整缩放立绘在战术战斗画面中展示） */
     private renderPortraitCard(
         box: HTMLDivElement,
         sideLabel: '攻方' | '守方',
@@ -874,7 +946,6 @@ class QuickBattle {
     ): void {
         if (!general) {
             box.innerHTML = `
-                <div class="qb-portrait-wrap qb-portrait-empty"><span>🎲</span></div>
                 <div class="qb-portrait-meta">
                     <div class="qb-p-name">随机武将 <span class="qb-p-tag">${sideLabel}</span></div>
                     <div class="qb-p-line"><span>势力：</span>${escapeHtml(factionLabel || '随机势力')}</div>
@@ -884,15 +955,10 @@ class QuickBattle {
             `;
             return;
         }
-        const imgSrc = general.portrait || DEFAULT_PORTRAIT_FALLBACK;
         const heroBadge = isClassicHero
             ? `<span class="qb-p-hero-badge">★ 战役主角</span>`
             : `<span class="qb-p-tag">${sideLabel}主帅</span>`;
         box.innerHTML = `
-            <div class="qb-portrait-wrap">
-                <img class="qb-portrait-img" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(general.generalName)}"
-                     onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
-            </div>
             <div class="qb-portrait-meta">
                 <div class="qb-p-name">${escapeHtml(general.generalName)} ${heroBadge}</div>
                 <div class="qb-p-line"><span>势力：</span><b>${escapeHtml(factionLabel)}</b></div>
@@ -990,7 +1056,7 @@ class QuickBattle {
         `;
     }
 
-    /** 构造载入遮罩上的战役简报卡（含时间、地点、背景介绍、双方武将立绘） */
+    /** 构造载入遮罩上的战役简报卡（含时间、地点、背景介绍、双方武将信息；不显示未调用缩放数据的小立绘） */
     private buildBackdropBriefHtml(a: ActiveBattle): string {
         const c = a.classic;
         const kindLabel = c ? c.kindLabel : (a.kind === 'siege' ? '攻城战' : '野战');
@@ -1000,8 +1066,6 @@ class QuickBattle {
         const bgText = c
             ? c.background
             : `${this.fname(a.att.factionId)}名将${a.att.general.generalName}率军 ${a.att.troops.toLocaleString()} 人，与${this.fname(a.def.factionId)}名将${a.def.general.generalName}（${a.def.troops.toLocaleString()} 人）于${a.placeName}展开战术决战。`;
-        const attImg = a.att.general.portrait || DEFAULT_PORTRAIT_FALLBACK;
-        const defImg = a.def.general.portrait || DEFAULT_PORTRAIT_FALLBACK;
         const attFac = a.att.displayFactionName ?? this.fname(a.att.factionId);
         const defFac = a.def.displayFactionName ?? this.fname(a.def.factionId);
         return `
@@ -1016,8 +1080,6 @@ class QuickBattle {
                 </div>
                 <div class="qb-loading-vs">
                     <div class="qb-loading-hero qb-lh-att">
-                        <img src="${escapeHtml(attImg)}" alt="${escapeHtml(a.att.general.generalName)}"
-                             onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
                         <div>
                             <div class="qb-lh-role">⚔ 攻方 · ${escapeHtml(attFac)}</div>
                             <div class="qb-lh-name">${escapeHtml(a.att.general.generalName)}</div>
@@ -1026,8 +1088,6 @@ class QuickBattle {
                     </div>
                     <div class="qb-loading-vs-tag">VS</div>
                     <div class="qb-loading-hero qb-lh-def">
-                        <img src="${escapeHtml(defImg)}" alt="${escapeHtml(a.def.general.generalName)}"
-                             onerror="this.onerror=null;this.src='${DEFAULT_PORTRAIT_FALLBACK}';" />
                         <div>
                             <div class="qb-lh-role">🛡 守方 · ${escapeHtml(defFac)}</div>
                             <div class="qb-lh-name">${escapeHtml(a.def.general.generalName)}</div>
@@ -1135,6 +1195,80 @@ class QuickBattle {
         }
     }
 
+    /** 重复上一局：完全还原上一局的战役、双方主帅、兵力与战场并立即开战 */
+    private replayLastBattle(): void {
+        const spec = this.lastBattleSpec;
+        if (!spec) { this.say('尚无上一局对战记录。', true); return; }
+        this.stopCountdown();
+        if (this.active) { this.say('上一仗还没打完。', true); return; }
+        if (!appReady(this.app)) { this.say('游戏还在加载，稍等。', true); return; }
+
+        try {
+            if (spec.classic) {
+                this.mode = 'classic';
+                this.classicSel.set(spec.classic.key, true);
+                this.syncModeTabs();
+                this.refreshPreview();
+            } else {
+                this.mode = 'random';
+                this.kind = spec.kind;
+                this.syncKind();
+                this.attFaction.set(spec.att.factionId, true);
+                this.defFaction.set(spec.def.factionId, true);
+                this.attGeneral.setOptions(this.generalOptions(spec.att.factionId), false);
+                this.defGeneral.setOptions(this.generalOptions(spec.def.factionId), false);
+                this.attGeneral.set(spec.att.general.generalId, true);
+                this.defGeneral.set(spec.def.general.generalId, true);
+                if (spec.cityId) this.citySel.set(spec.cityId, true);
+                this.syncModeTabs();
+                this.refreshPreview();
+            }
+
+            this.app.live?.sealBetRound?.();
+            this.clearWorldLegions();
+            const switchedOn = this.forceTacticalOn();
+            const cm = this.app.cityManager;
+
+            if (spec.kind === 'siege') {
+                const targetCity = (spec.cityId ? cm.getCity(spec.cityId) : undefined)
+                    ?? (spec.classic?.fb.targetCityId ? cm.getCity(spec.classic.fb.targetCityId) : undefined)
+                    ?? (spec.classic ? cm.getNearestCity(null, { latitude: spec.classic.fb.targetLat, longitude: spec.classic.fb.targetLng }) : undefined);
+                if (!targetCity) throw new Error('找不到上一局的据点');
+                this.startSiege({ ...spec.att }, { ...spec.def }, targetCity, spec.classic);
+            } else {
+                this.startField({ ...spec.att }, { ...spec.def }, spec.classic, spec.fieldSpot);
+            }
+
+            if (switchedOn) {
+                console.info('[即时战斗] 调试面板的「战术模式」开关原来是关的，本页已临时打开（不改存档设置）');
+            }
+        } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e);
+            console.error('[即时战斗] 重复上一局失败', e);
+            this.say(`重复上一局失败：${msg}`, true);
+            this.cleanup();
+            this.panel.classList.remove('qb-hidden');
+            this.app.live?.refundBetRound?.();
+            this.app.live?.beginBetRound?.();
+            this.startCountdown();
+        }
+    }
+
+    private syncReplayButton(): void {
+        if (!this.replayBtn) return;
+        const spec = this.lastBattleSpec;
+        if (!spec) {
+            this.replayBtn.disabled = true;
+            this.replayBtn.title = '尚无上一局对战记录';
+            return;
+        }
+        this.replayBtn.disabled = false;
+        const battleLabel = spec.classic
+            ? spec.classic.fb.battleName
+            : `${spec.att.general.generalName} vs ${spec.def.general.generalName}`;
+        this.replayBtn.title = `重复上一局：${battleLabel}`;
+    }
+
     /** 启动一场名将经典战役（531 场之一） */
     private launchClassicInner(): void {
         let key = this.classicSel.get();
@@ -1195,6 +1329,21 @@ class QuickBattle {
         }
         if (!defG) defG = this.pickGeneral(defFac, null, { generalId: attG.generalId, factionId: attFactionId });
         if (!defG) { this.say('守方找不到可用武将。', true); return; }
+        // 若用户未手动锁死双方武将且抽到了与上一局相同的对阵，重抽一次守将避免连续两场相同
+        if (
+            (!this.attGeneral.get() || !this.defGeneral.get())
+            && this.lastRandomPairKey
+            && (`${attG.generalId}|${defG.generalId}` === this.lastRandomPairKey
+                || `${defG.generalId}|${attG.generalId}` === this.lastRandomPairKey)
+        ) {
+            for (let tries = 0; tries < 12; tries++) {
+                const alt = this.pickGeneral(defFac, null, { generalId: attG.generalId, factionId: attFactionId });
+                if (alt && alt.generalId !== defG.generalId) {
+                    defG = alt;
+                    break;
+                }
+            }
+        }
         if (defG.generalId === attG.generalId) { this.say('双方不能是同一位武将。', true); return; }
         const defFactionId = defFac ?? defG.factionId;
         if (defFactionId === attFactionId) {
@@ -1266,6 +1415,21 @@ class QuickBattle {
             tag.__quickBattleRandom = true;
         }
 
+        if (classic) {
+            this.lastClassicKey = classic.key;
+        } else {
+            this.lastRandomPairKey = `${att.general.generalId}|${def.general.generalId}`;
+        }
+        this.lastBattleSpec = {
+            mode: classic ? 'classic' : 'random',
+            kind: 'siege',
+            att: { ...att },
+            def: { ...def },
+            classic,
+            cityId: target.id,
+        };
+        this.syncReplayButton();
+
         this.active = {
             kind: 'siege', attacker, defender: null, city: saved, att, def,
             placeName: classic ? classic.fb.battleName : target.name,
@@ -1279,11 +1443,16 @@ class QuickBattle {
         this.announce();
     }
 
-    private startField(att: Side, def: Side, classic?: ClassicBattleEntry): void {
+    private startField(
+        att: Side,
+        def: Side,
+        classic?: ClassicBattleEntry,
+        fixedSpot?: { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string },
+    ): void {
         const regionKey = (this.regionSel.get() as RegionType | null) ?? null;
-        const spot = classic
+        const spot = fixedSpot ?? (classic
             ? this.resolveClassicFieldSpot(classic)
-            : this.pickFieldSpot(regionKey);
+            : this.pickFieldSpot(regionKey));
         if (!spot) throw new Error('该地域找不到可用的陆地战场');
         const fallbackCityId = classic?.fb.targetCityId;
         const attacker = this.raiseLegion(att, spot.att, fallbackCityId);
@@ -1301,10 +1470,21 @@ class QuickBattle {
             at.classicBattleGeneralId = classic.key;
             dt.firstBattleTitle = classic.fb.battleName;
             dt.classicBattleGeneralId = classic.key;
+            this.lastClassicKey = classic.key;
         } else {
             at.__quickBattleRandom = true;
             dt.__quickBattleRandom = true;
+            this.lastRandomPairKey = `${att.general.generalId}|${def.general.generalId}`;
         }
+        this.lastBattleSpec = {
+            mode: classic ? 'classic' : 'random',
+            kind: 'field',
+            att: { ...att },
+            def: { ...def },
+            classic,
+            fieldSpot: spot,
+        };
+        this.syncReplayButton();
 
         this.active = {
             kind: 'field', attacker, defender, city: null, att, def,
@@ -1411,6 +1591,9 @@ class QuickBattle {
         if (hero?.getHostLegionId()) {
             try { hero.detach(); } catch (e) { console.warn('[即时战斗] 探马者离队失败', e); }
         }
+        try { this.app.audioManager?.unlock?.(); } catch { /* ignore */ }
+        try { this.app.audioManager?.setGamePaused?.(false); } catch { /* ignore */ }
+        try { this.app.combatUI?.setPortraitMinimized?.(false); } catch { /* ignore */ }
         try { this.app.cameraFollowUI?.setFollow(army.id, army.name); } catch { /* 镜头失败不影响开战 */ }
         try { this.app.map.getLeafletMap().setView([at.lat, at.lng], 9, { animate: false }); } catch { /* 同上 */ }
     }
@@ -1470,6 +1653,7 @@ class QuickBattle {
 
     private keepSceneClock(): void {
         if (!this.warActive()) return;
+        try { this.app.audioManager?.setGamePaused?.(false); } catch { /* ignore */ }
         if (this.app.battleScene?.isStrategyPausedByScene?.() !== true) return;
         const ts = this.app.timeSystem;
         if (ts.isGamePaused()) return;
@@ -1584,6 +1768,7 @@ class QuickBattle {
         try { if (this.app.battleScene?.isActive?.()) this.app.battleScene.exit(); } catch { /* 同上 */ }
         this.cleanup();
         if (this.mode === 'classic') this.pickRandomClassic(prevClassicKey);
+        else this.pickRandomCustomPreview();
         this.say(`本局时间到（${Math.round(QuickBattle.ROUND_LIMIT_MS / 60_000)} 分钟）未分胜负，算和。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局。`);
         this.backdrop.setBattleBriefCard(null);
         this.backdrop.say('');
@@ -1611,8 +1796,10 @@ class QuickBattle {
         }
         if (fought) this.report('finished', a, { result });
         this.cleanup();
-        if (fought && this.mode === 'classic') {
+        if (this.mode === 'classic') {
             this.pickRandomClassic(prevClassicKey);
+        } else {
+            this.pickRandomCustomPreview();
         }
         if (fought) this.say(`上一仗结果：${result}。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局。`);
         this.backdrop.setBattleBriefCard(null);
@@ -1713,6 +1900,8 @@ const PANEL_CSS = `
 #quick-battle-panel .qb-rand-custom-btn:hover{background:#463720}
 #quick-battle-panel .qb-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:14px}
 #quick-battle-panel .qb-actions button{padding:8px 20px;border-radius:6px;cursor:pointer;font-size:15px;background:#2a2419;border:1px solid #6b5a38;color:#d8c49a}
+#quick-battle-panel .qb-actions button:disabled{opacity:.42;cursor:not-allowed}
+#quick-battle-panel .qb-actions .qb-replay{border-color:#9e7d3b;color:#f3d48a}
 #quick-battle-panel .qb-actions .qb-go{background:#9a2f22;border-color:#e07a5a;color:#fff;font-weight:700;padding:8px 36px}
 #quick-battle-panel .qb-status{margin-top:10px;text-align:center;font-size:13.5px;color:#cdbf9f;min-height:18px}
 #quick-battle-panel .qb-status.qb-warn{color:#ffb366}

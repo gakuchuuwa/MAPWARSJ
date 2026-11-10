@@ -11036,6 +11036,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 16,
             "offsetY": -19
+        },
+        "/assets/JIANGNAN/gen_liu_guoxuan.png": {
+            "scale": 1.26,
+            "offsetX": 20,
+            "offsetY": 6
+        },
+        "/assets/SASANIAN/yilihanguo_kitbuqa.png": {
+            "scale": 1.1,
+            "offsetX": 12,
+            "offsetY": 16
         }
     },
     "folderGuides": {

@@ -7020,7 +7020,7 @@ export class AudioManager {
 
 
 
-    private activeOneShots = new Map<HTMLAudioElement, SoundDefinition>();
+    private activeOneShots = new Map<HTMLAudioElement, { def: SoundDefinition; key: SoundKey }>();
 
 
 
@@ -8289,7 +8289,12 @@ export class AudioManager {
 
 
 
-        if (!req) return;
+        if (!req) {
+            if (this.tacticalBgmPool.length > 0 && !this.isBgmPlaying()) {
+                this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+            }
+            return;
+        }
 
 
 
@@ -8625,15 +8630,9 @@ export class AudioManager {
 
 
 
-        // 游戏暂停时屏蔽所有非 bgm 音效
-
-
-
-
-
-
-
-        if (this.gamePaused && definition.category !== 'bgm') return false;
+        // 游戏暂停时屏蔽所有非 bgm 音效（13 战术模式自身跑独立时钟，战略层暂停不屏蔽 13 战术音效/六计音效）
+        const inScene13 = (window as { game?: { scene13War?: { isActive?: () => boolean } } }).game?.scene13War?.isActive?.() === true;
+        if (this.gamePaused && !inScene13 && definition.category !== 'bgm') return false;
 
 
 
@@ -8737,7 +8736,7 @@ export class AudioManager {
 
 
 
-            this.activeOneShots.set(audio, definition);
+            this.activeOneShots.set(audio, { def: definition, key });
 
 
 
@@ -8905,7 +8904,7 @@ export class AudioManager {
 
 
 
-                    if (loaded && this.settings.enabled && !this.gamePaused) playFromBase(loaded);
+                    if (loaded && this.settings.enabled && (!this.gamePaused || inScene13)) playFromBase(loaded);
 
 
 
@@ -12527,6 +12526,21 @@ export class AudioManager {
 
 
     public enterScene13Bgm(cultureRegion?: string | null): void {
+        this.gamePaused = false;
+        const skillKeys: SoundKey[] = [
+            'skill_gongzhan',
+            'skill_shengzhan',
+            'skill_dizhan',
+            'skill_hunzhan',
+            'skill_bingzhan',
+            'skill_baizhan',
+        ];
+        for (const sk of skillKeys) {
+            const def = SOUND_DEFINITIONS[sk];
+            if (def && !this.getAudioElement(sk, def)) {
+                void this.ensureAudioElement(sk, def);
+            }
+        }
 
 
 
@@ -14022,7 +14036,7 @@ export class AudioManager {
 
 
 
-        for (const [audio, definition] of this.activeOneShots.entries()) {
+        for (const [audio, entry] of this.activeOneShots.entries()) {
 
 
 
@@ -14038,7 +14052,7 @@ export class AudioManager {
 
 
 
-            this.setVolume(audio, this.resolveVolume(definition), durationMs);
+            this.setVolume(audio, this.resolveVolume(entry.def, entry.key), durationMs);
 
 
 

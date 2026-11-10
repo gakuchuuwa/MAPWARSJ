@@ -1682,6 +1682,9 @@ export class CombatUI {
         this.isVisible = true;
         this.container.classList.add('is-battle-visible');
         this.isCollapsed = false;
+        if (this.isPortraitMinimized) {
+            this.setPortraitMinimized(false);
+        }
         // 🔴 [2026-10-27 主人令「攻方立绘固定在左，攻方从右边杀来很别扭」] 立绘左右按两军在战场画面上的站位：
         //    攻方在画面左边 ⇒ 攻方立绘在左；攻方从右边杀来 ⇒ 攻方立绘在右。没传（正上下对阵）才沿用旧规则。
         this.scene13SidesFlipped = attackerOnLeft !== undefined ? !attackerOnLeft : init.followedOnDefenderSide === true;
@@ -4921,10 +4924,16 @@ export class CombatUI {
         _skillId?: string,
         viewer?: { name: string; paid: boolean },
     ): void {
-        if (!this.scene13LayoutOn) return;
+        if (!this.scene13LayoutOn) {
+            const war = (window as any).game?.scene13War;
+            if (war?.isActive?.() === true && !war?.isSkirmish?.()) {
+                this.applyScene13Layout(true);
+            }
+        }
         // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
         this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
         audioManager.playScene13SkillSfx(sixSet, viewer !== undefined);
+        if (!this.scene13LayoutOn) return;
         // 战术模式内武将自动释放六计只播 DE 六计专属音效 + 立绘大字 Cut-in，不再播放 TTS 语音播报（防遮盖 DE 战场音效及阻塞放计）
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);

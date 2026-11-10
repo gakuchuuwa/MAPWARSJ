@@ -52,15 +52,16 @@ export class BattleSceneLayer {
         // 🔴 先置 strategyPausedByScene 再 setPaused(true)：setPaused 同步触发 onPauseChange
         //   （GameApp → audioManager.setGamePaused），回调里 isStrategyPausedByScene() 要能读到 true，
         //   否则 13 场景暂停会被当成用户真暂停，battle_loop 被停、13 战斗没有音效（2026-08-12 修）。
-        if (this.pauseHook && !this.pauseHook.isGamePaused()) {
+        if (this.pauseHook) {
             this.strategyPausedByScene = true;
-            this.pauseHook.setPaused(true);
-        } else if (!this.strategyPausedByScene) {
-            this.strategyPausedByScene = false;
+            if (!this.pauseHook.isGamePaused()) {
+                this.pauseHook.setPaused(true);
+            }
         }
 
         // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起（记录状态供退出时还原）
         const game = (window as any).game;
+        game?.audioManager?.setGamePaused?.(false);
         game?.cameraFollowUI?.onEnterBattleScene13?.();
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
     }

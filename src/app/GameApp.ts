@@ -781,10 +781,13 @@ export class GameApp {
             this.cameraFollowUI.init(
                 () => legionManager.getArmies(),
                 (armyId) => {
+                    const inTacticalScene = this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true;
                     legionManager.setFollowedLegionId(armyId);
                     if (!armyId) {
                         this.combatUI.setFollowedArmy(null);
-                        this.combatUI.hide();
+                        if (!inTacticalScene) {
+                            this.combatUI.hide();
+                        }
                         CityAssetManager.prioritizeFollowedFaction(null);
                     } else {
                         const army = legionManager.getLegionById(armyId);
@@ -829,7 +832,8 @@ export class GameApp {
                         // 新目标不在任何战斗中 → 必须收掉上一场的面板：
                         // 否则旧战斗的立绘/名牌会一直挂到那场仗自己打完（十几秒），
                         // 而战斗面板的全部入口都以「跟随军团参战」为前提，留着就是错的。
-                        if (!found) {
+                        // （但若当前正处于 13 战术战场画面中，绝不隐藏战斗立绘与底部面板）
+                        if (!found && !inTacticalScene) {
                             this.combatUI.hide();
                         }
                     }

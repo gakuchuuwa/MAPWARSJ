@@ -398,13 +398,13 @@ function isQuickBattleUnit(u: { getEntity?(): any } | null | undefined): boolean
  * 🔴 [2026-10-04 主人定「按专业游戏设计」｜2026-10-19 强化] 玩家所在军团或首次随将剧情军团一开战，
  *    镜头无条件切回跟随玩家军团（解除停泊或其它军团跟拍）—— 确保首次随将触发剧情的战斗 100% 进入战术模式。
  */
-function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[], forceForStory = false): void {
+function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[], _forceForStory = false): void {
     const cam = app.cameraFollowUI;
     const hero = app.playerHero;
     if (!cam || !hero) return;
     const mine = hero.getHostLegionId() ?? hero.id;
     const questLegionId = app.playerQuests?.getQuest()?.legionId ?? null;
-    if (forceForStory || ids.includes(mine) || (questLegionId && ids.includes(questLegionId))) {
+    if (ids.includes(mine) || (questLegionId && ids.includes(questLegionId))) {
         cam.followPlayerByUser();
     }
 }
@@ -421,6 +421,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         let followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (isBattlefieldEvent && (!followedId || (battle.attacker.id !== followedId && battle.defender.id !== followedId))) {
             followedId = battle.attacker.id;
+            try { app.cameraFollowUI?.setFollow(followedId, battle.attacker.name); } catch { /* ignore */ }
         }
         if (!followedId) return;
         const isInvolved = battle.attacker.id === followedId || battle.defender.id === followedId;
@@ -531,6 +532,10 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     return ent?.isFirstBattleHero === true || ent?.isScriptArmy === true;
                 });
                 followedId = heroUnit?.id ?? attackers[0]?.id ?? defenders[0]?.id ?? null;
+            }
+            if (followedId) {
+                const targetUnit = allUnits.find((u) => u.id === followedId);
+                try { app.cameraFollowUI?.setFollow(followedId, targetUnit?.name ?? ''); } catch { /* ignore */ }
             }
         }
         if (!followedId) return;
