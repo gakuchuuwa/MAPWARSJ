@@ -39,7 +39,6 @@ import {
     firstBattleKindOf,
     type FirstBattleKind,
 } from '../data/GeneralFirstBattleBackgrounds';
-import { clampFirstBattleTroops } from '../player/PlayerQuestSystem';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CULTURE_NAMES, getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
@@ -50,6 +49,7 @@ import {
     setCentenarianYearProvider,
     setScriptYearProvider,
 } from '../data/generalOnStage';
+import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import {
     resolveGeneralPortraitPath,
@@ -74,12 +74,12 @@ const CITY_TYPE_LABEL: Record<string, string> = {
     big_city: '大城', medium_city: '中城', small_city: '小城', pass: '险要', stockade: '城寨',
 };
 
+/** 🔴 [2026-11-10 主人令] 即时战术模式攻守双方一律同兵力：野战 2 万 vs 2 万，攻城/守城 1.5 万 vs 1.5 万 */
+const QUICK_BATTLE_FIELD_TROOPS = 20_000;
+const QUICK_BATTLE_SIEGE_TROOPS = 15_000;
+
 function rand<T>(arr: readonly T[]): T | undefined {
     return arr.length ? arr[Math.floor(Math.random() * arr.length)] : undefined;
-}
-
-function randInt(lo: number, hi: number): number {
-    return Math.round(lo + Math.random() * (hi - lo));
 }
 
 function formatYear(year: number): string {
@@ -409,34 +409,38 @@ class QuickBattle {
 
             const myFactionId = hero.factionId;
             const myFactionName = this.fname(myFactionId);
-            const enemyRawFactionId = fb.enemyFactionId || enemy.factionId;
+            // 🔴 [2026-10-20 / 2026-11-10 主人令「一个武将一个势力，请符合历史」]
+            //    敌将自身在 FactionGenerals.ts 里的真实政权（enemy.factionId）优先于旧首战表的 fb.enemyFactionId
+            const enemyRawFactionId = (enemy.factionId && enemy.factionId !== 'panshu')
+                ? enemy.factionId
+                : (fb.enemyFactionId || enemy.factionId);
             const enemyFactionName = FACTIONS.find((f) => f.id === enemyRawFactionId)?.name
                 ?? fb.enemyFactionName
                 ?? this.fname(enemyRawFactionId);
             // 同势力内战时引擎用 panshu 保证双方可交战，显示仍用真实历史势力名
             const enemyEngineFactionId = enemyRawFactionId !== myFactionId ? enemyRawFactionId : 'panshu';
 
-            const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
+            const kind = firstBattleKindOf(fb);
+            const kindLabel = FIRST_BATTLE_KIND_LABEL[kind];
+            const equalTroops = kind === 'field' ? QUICK_BATTLE_FIELD_TROOPS : QUICK_BATTLE_SIEGE_TROOPS;
             const role = fb.role ?? 'attacker';
             const heroSide: Side = {
                 factionId: myFactionId,
                 displayFactionName: myFactionName,
                 general: hero,
-                troops: myTroops,
+                troops: equalTroops,
                 isClassicHero: true,
             };
             const enemySide: Side = {
                 factionId: enemyEngineFactionId,
                 displayFactionName: enemyFactionName,
                 general: enemy,
-                troops: enemyTroops,
+                troops: equalTroops,
                 isClassicHero: false,
             };
 
             const att = role === 'defender' ? enemySide : heroSide;
             const def = role === 'defender' ? heroSide : enemySide;
-            const kind = firstBattleKindOf(fb);
-            const kindLabel = FIRST_BATTLE_KIND_LABEL[kind];
             const yearText = formatYear(fb.battleYear);
 
             const targetCity = fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined;
@@ -583,11 +587,16 @@ class QuickBattle {
             app.playerHero.update = noop;
         }
         if (app.playerQuests) app.playerQuests.tick = noop;
-        // 解除百岁/剧本年份闸门：保证全库武将显示真名、武将技生效、据点保持真实城级与奇观
+        const lm = this.app.historicalEventManager?.getLegionManager?.() as unknown as {
+            followResupplySystem?: { update: () => void };
+        } | undefined;
+        if (lm?.followResupplySystem) lm.followResupplySystem.update = noop;
+        // 解除百岁/剧本年份闸门：保证全库武将显示真名、武将技生效、据点保持真实城级与奇观，并清空百岁前 800 年的时代泛称覆盖
         setGameModeProvider(() => 'melee');
         setCentenarianYearProvider(() => null);
         setScriptYearProvider(() => null);
         setWonderGateYearProvider(() => null);
+        refreshEraFactionDisplays(null);
         (this.app as unknown as { syncCityFoundedTypes?: () => void }).syncCityFoundedTypes?.();
         releaseDeploy();
         this.app.timeSystem.setPaused(true);
@@ -1351,9 +1360,9 @@ class QuickBattle {
             return;
         }
 
-        const { FIRST_BATTLE_MIN_TROOPS: lo, FIRST_BATTLE_MAX_TROOPS: hi } = GameConfig.COMBAT;
-        const att: Side = { factionId: attFactionId, general: attG, troops: randInt(lo, hi) };
-        const def: Side = { factionId: defFactionId, general: defG, troops: randInt(lo, hi) };
+        const equalTroops = kind === 'field' ? QUICK_BATTLE_FIELD_TROOPS : QUICK_BATTLE_SIEGE_TROOPS;
+        const att: Side = { factionId: attFactionId, general: attG, troops: equalTroops };
+        const def: Side = { factionId: defFactionId, general: defG, troops: equalTroops };
 
         this.app.live?.sealBetRound?.();
         this.clearWorldLegions();
@@ -1942,12 +1951,13 @@ export function startQuickBattleMode(app: GameApp): void {
         }
         clearInterval(timer);
         try {
-            // 先解除百岁/剧本年份闸门，再采集武将（否则开局默认百岁前 800 年会把未登场名将名字改称「XX将军」）
+            // 先解除百岁/剧本年份闸门，再采集武将（否则开局默认百岁前 800 年会把未登场名将名字改称「XX将军」、把势力名改称古典泛称）
             if (app.playerHero) (app.playerHero as unknown as Record<string, unknown>).autoPlan = 'melee';
             setGameModeProvider(() => 'melee');
             setCentenarianYearProvider(() => null);
             setScriptYearProvider(() => null);
             setWonderGateYearProvider(() => null);
+            refreshEraFactionDisplays(null);
             (app as unknown as { syncCityFoundedTypes?: () => void }).syncCityFoundedTypes?.();
 
             const qb = new QuickBattle(app, backdrop);

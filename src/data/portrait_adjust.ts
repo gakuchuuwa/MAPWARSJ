@@ -1417,11 +1417,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/NORTHEAST/xingan_hailancha.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/NORTHEAST/wula_buzhantai.png": {
             "scale": 1.16,
             "offsetX": 0,
@@ -9458,9 +9453,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -22
         },
         "/assets/NORTHEAST/__多余__NORTHEAST_01.png": {
-            "scale": 1,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": 18
+            "offsetY": -5
         },
         "/assets/JIANGNAN/gen_zengguofan.png": {
             "scale": 1,
@@ -10843,7 +10838,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/ROMA/bfe3_79.png": {
-            "scale": 1.12,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 47
         },
@@ -10926,16 +10921,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 16,
             "offsetY": 6
-        },
-        "/assets/NORTHEAST/bfe_fuquan.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -5
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_53.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -55
         },
         "/assets/NORTHEAST/manzhou_nuerhachi.png": {
             "scale": 1.08,
@@ -11071,6 +11056,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_54.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/NORTHEAST/xingan_hailancha.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/NORTHEAST/bfe_fuquan.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -55
+        },
+        "/assets/NORTHEAST/gen_kangxi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/NORTHEAST/gen_mingrui.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/NORTHEAST/gen_nikan.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/NORTHEAST/manzhou_d_sabusu.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/ORIE/bfe2_enlil_nadin_ahi.png": {
+            "scale": 1.04,
+            "offsetX": 7,
+            "offsetY": 3
+        },
+        "/assets/WEI/zhuozhou_shisiming.png": {
+            "scale": 1.14,
+            "offsetX": 5,
+            "offsetY": 19
         }
     },
     "folderGuides": {

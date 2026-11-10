@@ -4244,7 +4244,8 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    mongol_a: 0.700,  // -17.9 LUFS
+    // 🔴 [2026-11-10 主人令「蒙古马头琴 葫芦丝 [mongol_a]，删除这个曲子，不像战斗曲」]
+    //    mongol_a 已连同 public/bgm/mongol_a_bgm.aud 删除，并从「曲名表 / 时长表 / 响度表 / MONGOL 文化池」四处一并摘除。
 
 
 
@@ -6004,7 +6005,8 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
+    // 🔴 [2026-11-10 主人令「蒙古马头琴 葫芦丝 [mongol_a]，删除这个曲子，不像战斗曲」] 本文化池由 3 首降为 2 首（de_MONGOL 主题曲 + STEPPE）。
+    MONGOL: ['de_MONGOL', 'STEPPE'],
 
 
 

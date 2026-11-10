@@ -158,7 +158,6 @@ export const BGM_TITLES: Record<string, string> = {
     mayans_b: '鹰骨陶笛+圆木鼓',
     mexica_ritual: '阿兹特克战祭',
     mohicans: '最后的莫西干人',
-    mongol_a: '蒙古马头琴 葫芦丝',
     mughal_a: 'Ravi Shankar 西塔尔',
     mughal_b: '塔布拉鼓 纯节奏',
     muisca_a: '穆伊斯卡 前哥伦布',

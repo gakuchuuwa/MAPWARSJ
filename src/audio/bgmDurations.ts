@@ -158,7 +158,6 @@ export const BGM_DURATIONS: Record<string, number> = {
     mayans_b: 75,
     mexica_ritual: 515,
     mohicans: 374,
-    mongol_a: 183,
     mughal_a: 124,
     mughal_b: 190,
     muisca_a: 130,

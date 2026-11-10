@@ -380,7 +380,7 @@ export const FACTIONS: Faction[] = [
 
 
    // 穆尔加布/马尔夫鲁德（Murghab）
-    { id: 'xiajiasi', name: '坚昆' },   // 旗号二字；唐称黠戛斯，同族
+    { id: 'xiajiasi', name: '黠戛斯' },   // 🔴 [2026-11-10 主人令「阿热的势力也不对，请符合历史」] 旗下唯一武将阿热为唐会昌元年（840）黠戛斯可汗，势力正名用「黠戛斯」（旗号简称见 SandboxDisplayNames）
 
 
 

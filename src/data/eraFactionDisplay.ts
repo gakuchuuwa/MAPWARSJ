@@ -23,7 +23,7 @@
  */
 import { CITIES_V2 } from './cities_v2';
 import { FACTION_GENERALS, type FactionGeneral } from './FactionGenerals';
-import { isGeneralOnStage } from './generalOnStage';
+import { getGameMode, isGeneralOnStage } from './generalOnStage';
 import {
     getEraByYear,
     resolveCultureEraLegionName,
@@ -208,15 +208,15 @@ let overrides = new Map<string, EraNameDef>();
 /** 百岁模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非百岁模式），供据点级时代名用 */
 let activeEra: DefenseEraAge | null = null;
 
-/** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名） */
+/** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名；只在百岁模式生效） */
 export function getEraFactionDisplayName(factionId: string | null | undefined): string | null {
-    if (!factionId) return null;
+    if (!factionId || getGameMode() !== 'centenarian') return null;
     return overrides.get(factionId)?.name ?? null;
 }
 
-/** 该势力此刻的**旗号文字**（主人单独定过的，如凉州→「凉」）；没单独定 → null（沿用显示名前两字） */
+/** 该势力此刻的**旗号文字**（主人单独定过的，如凉州→「凉」）；没单独定 → null（沿用显示名前两字；只在百岁模式生效） */
 export function getEraFactionDisplayFlagText(factionId: string | null | undefined): string | null {
-    if (!factionId) return null;
+    if (!factionId || getGameMode() !== 'centenarian') return null;
     return overrides.get(factionId)?.flagText ?? null;
 }
 
@@ -236,7 +236,7 @@ export function getEraCityDisplayName(
     factionId: string | null | undefined,
     buildingStyle: string | null | undefined,
 ): string | null {
-    if (!factionId || !buildingStyle || !activeEra) return null;
+    if (!factionId || !buildingStyle || !activeEra || getGameMode() !== 'centenarian') return null;
     if (!overrides.has(factionId)) return null;
     return eraNameOfStyleAndEra(buildingStyle, activeEra)?.name ?? null;
 }
@@ -246,7 +246,7 @@ export function getEraCityDisplayFlagText(
     factionId: string | null | undefined,
     buildingStyle: string | null | undefined,
 ): string | null {
-    if (!factionId || !buildingStyle || !activeEra) return null;
+    if (!factionId || !buildingStyle || !activeEra || getGameMode() !== 'centenarian') return null;
     if (!overrides.has(factionId)) return null;
     return eraNameOfStyleAndEra(buildingStyle, activeEra)?.flagText ?? null;
 }
@@ -258,7 +258,7 @@ export function getEraCityDisplayFlagText(
  */
 export function refreshEraFactionDisplays(year: number | null): string[] {
     const next = new Map<string, EraNameDef>();
-    const era = (year != null && Number.isFinite(year)) ? getEraByYear(year) : null;
+    const era = (year != null && Number.isFinite(year) && getGameMode() === 'centenarian') ? getEraByYear(year) : null;
     /** 时代是否变了：据点级时代名可能变而势力级名字不变（有些分支相邻时代同名），
      *  换时代时一律把有覆盖的势力报为 changed，让据点旗号也重刷一遍（2026-10-24 据点级口径）。 */
     const eraChanged = activeEra !== era;

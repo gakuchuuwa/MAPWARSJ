@@ -7183,7 +7183,10 @@ export class CombatUI {
         generalId?: string | null,
     ): string {
         const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
-        let factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
+        // 🔴 [2026-10-20 / 2026-11-10 主人令「一个武将一个势力，请符合历史」]
+        //    带武将的部队（无论是攻城/守城还是同城多势力）一律优先按该武将自己的政权（getFactionIdOfGeneral）显示势力名
+        const ownFactionId = generalId ? getFactionIdOfGeneral(generalId) : null;
+        let factionId = ownFactionId ?? unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
 
         if (!factionId && generalId) {
             for (const [fid, entry] of Object.entries(FACTION_GENERALS)) {
@@ -7220,12 +7223,14 @@ export class CombatUI {
     }
 
     /**
-     * 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」]
-     * 显示用势力：叛军 panshu 是「没有武将的据点」的兜底无主状态（无字旗、不能出征），
-     * 带武将的部队绝不能显示成叛军。经典战「敌势力＝本方势力（史实内战／缺对应政权）」时，
-     * 引擎拿 panshu 当占位势力让两军能互相开打 —— 显示层回到武将自己的势力。
+     * 🔴 [2026-10-26 / 2026-11-10 主人令「一个武将一个势力，请符合历史」]
+     * 显示用势力：有在场武将时，立绘下方一律显示该武将自己的历史政权（避免同据点多势力或 panshu 占位把守城/敌将显示成别的势力）。
      */
     private displayFactionId(factionId: string | null | undefined, generalId?: string | null): string | null {
+        if (generalId) {
+            const own = getFactionIdOfGeneral(generalId);
+            if (own && !isBlankRebelFaction(own)) return own;
+        }
         if (!factionId) return factionId ?? null;
         if (isBlankRebelFaction(factionId) && generalId) {
             return getFactionIdOfGeneral(generalId) ?? factionId;

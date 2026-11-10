@@ -37,6 +37,13 @@ export class FollowResupplySystem {
         //    实测：马其顿军团 18100 出佩拉，路过马其顿城被补 5000 → 23100，与史料、播报都对不上。
         //    与剧本期关掉行军减兵（MarchAttritionSystem）同一口径；乱斗模式照旧补兵。
         if (isScriptPeriod()) return;
+        // 经典首战行军 / 即时战术对战：兵力固定，路过己方据点不抽城兵（否则 2 万出门路过本城会被补成 2.5 万）
+        const tagged = army as Army & {
+            isFirstBattleMarch?: boolean;
+            scriptMarchExempt?: boolean;
+            __quickBattle?: boolean;
+        };
+        if (tagged.isFirstBattleMarch || tagged.scriptMarchExempt || tagged.__quickBattle || army.isScriptArmy) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
         if (army.getIsInCombat()) return;
         if (army.isRetreatingHome) return; // 撤退中的残兵不抽沿途城兵
