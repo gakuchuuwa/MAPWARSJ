@@ -1231,6 +1231,8 @@ export class GameApp {
         this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War, {
             hasViewerRename: () => this.live?.hasActiveViewerRename() ?? false,
             vetoViewerRename: () => { this.live?.vetoPlayerName(); },
+            // 🔴 [2026-11-10 主人令「乱入者前面的旗号请删除，改为玩家加入的势力名」]
+            getFactionName: (id) => this.cityManager.getFactionName(id),
         });
 
         this.cameraFollowUI.setPlayerHero(hero);

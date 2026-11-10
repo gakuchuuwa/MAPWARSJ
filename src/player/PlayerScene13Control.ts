@@ -7,7 +7,6 @@
  *   · 指挥条/玩家面板（顶部居中）：官阶 / 本场击杀 / 攻击·待命·退出战斗按钮 / 受控编队数
  */
 import type { PlayerHero } from './PlayerHero';
-import { CityAssetManager } from '../assets/CityAssetManager';
 
 export interface Scene13PlayerApi {
     isActive(): boolean;
@@ -48,8 +47,14 @@ export class PlayerScene13Control {
     constructor(
         private hero: PlayerHero,
         private scene: Scene13PlayerApi,
-        /** 直播观众改名的主播一键否决（战略地图 HUD 在打仗时隐藏，战术顶栏也要有） */
-        private rename?: { hasViewerRename(): boolean; vetoViewerRename(): void },
+        /** 直播观众改名的主播一键否决（战略地图 HUD 在打仗时隐藏，战术顶栏也要有）；
+         *  🔴 [2026-11-10 主人令「乱入者前面有一个旗帜旗号，请删除，改为玩家加入的势力名」]
+         *     顶栏不再画旗，改显示玩家所属势力全名 —— 名字从 CityManager/FactionManager 取 */
+        private hud?: {
+            hasViewerRename(): boolean;
+            vetoViewerRename(): void;
+            getFactionName?(id: string): string;
+        },
     ) {
         this.createBar();
         document.addEventListener('keydown', (e) => this.onKey(e, true));
@@ -166,7 +171,7 @@ export class PlayerScene13Control {
         btnVeto.style.cssText = 'display:none; cursor:pointer; background:rgba(120,32,32,0.85); border:1px solid rgba(235,110,110,0.65); color:#ffd8d8; font-family:inherit; font-size:12px; padding:2px 8px; border-radius:4px;';
         btnVeto.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.rename?.vetoViewerRename();
+            this.hud?.vetoViewerRename();
             this.refresh();
         });
         bar.appendChild(btnVeto);
@@ -296,15 +301,14 @@ export class PlayerScene13Control {
             this.countdownEl.style.color = rem <= 60 ? '#ff6b6b' : '#ffd27a';
             this.countdownEl.style.borderColor = rem <= 60 ? 'rgba(255,107,107,0.75)' : 'rgba(212,175,55,0.55)';
         }
-        let flagHtml = '';
+        // 🔴 [2026-11-10 主人令「乱入者前面有一个旗帜旗号，请删除。改为玩家加入的势力名」]
+        //    原来这里画一面势力旗（旗面＋旗号字），现已删除，只显示玩家所属势力的名字。
+        let factionHtml = '';
         if (this.hero.factionId) {
-            CityAssetManager.requestFactionFlagTint(this.hero.factionId);
-            const flagCloth = CityAssetManager.getProcessedFlag(this.hero.factionId);
-            const flagOverlay = CityAssetManager.getProcessedFlagTextSync(this.hero.factionId);
-            const overlayHtml = flagOverlay
-                ? `<span style="position:absolute;left:-3px;top:-2px;width:32px;height:40px;background-image:url('${flagOverlay}');background-size:128px 240px;background-position:-64px -120px;background-repeat:no-repeat;image-rendering:auto !important;"></span>`
-                : '';
-            flagHtml = `<span style="display:inline-block;position:relative;width:24px;height:20px;vertical-align:middle;margin-right:3px;"><span style="position:absolute;left:-1px;top:-1px;width:32px;height:40px;transform:scale(0.85);transform-origin:0 0;pointer-events:none;"><span style="position:absolute;left:0;top:0;width:32px;height:40px;transform:scaleX(-1);transform-origin:center;background-image:url('${flagCloth}');background-size:128px 320px;background-position:-96px -40px;background-repeat:no-repeat;"></span>${overlayHtml}</span></span>`;
+            const factionName = this.hud?.getFactionName?.(this.hero.factionId) ?? '';
+            if (factionName) {
+                factionHtml = `<span style="color:#7cd4a0; font-weight:700; margin-right:4px;">${factionName}</span>`;
+            }
         }
         const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
         if (st) {
@@ -325,7 +329,7 @@ export class PlayerScene13Control {
                     : '<span style="color:#ff8585; font-weight:900;">阵亡复活中</span>');
             this.info.title = `统率权限：${ctl}`;
             this.info.innerHTML =
-                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b>·${rank.title}·`
+                `${factionHtml}<b style="color:#ffd27a;">${this.hero.name}</b>·${rank.title}·`
                 + `${hpText}·`
                 + `斩<b>${st.kills}</b>·功${this.hero.merit}`;
             const on = 'rgba(212,175,55,0.35)';
@@ -343,13 +347,13 @@ export class PlayerScene13Control {
             if (this.hint) this.hint.style.display = 'none';
         } else {
             this.info.innerHTML =
-                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
+                `${factionHtml}<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
             if (this.btnAttack) this.btnAttack.style.display = 'none';
             if (this.btnHold) this.btnHold.style.display = 'none';
             if (this.hint) this.hint.style.display = 'none';
         }
         if (this.btnExit) this.btnExit.style.display = 'inline-block';
-        if (this.btnVeto) this.btnVeto.style.display = this.rename?.hasViewerRename() ? 'inline-block' : 'none';
+        if (this.btnVeto) this.btnVeto.style.display = this.hud?.hasViewerRename() ? 'inline-block' : 'none';
     }
 
     public dispose(): void {

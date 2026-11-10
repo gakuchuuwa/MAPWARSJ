@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
-import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
+import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, getSmallCityPalisadeAnchors, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
     buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing,
@@ -170,6 +170,12 @@ const CULTURAL_LANDMARK_SET = new Set<string>([
     'FOLWARK', 'WOODEN_FORT', 'QUIMPER_CATHEDRAL', 'SCEN_AACHEN_CATHEDRAL',
     'SCEN_HALL_OF_HEROES', 'POENARI_CASTLE', 'MINARET_OF_JAM', 'SCEN_FIRE_SHRINE',
     'SCEN_SANKORE_MADRASAH', 'SCEN_DOME_OF_THE_ROCK', 'GOL_GUMBAZ', 'SCEN_CUSHITE_PYRAMIDS',
+    'SCEN_ANDEAN_RUINS',
+]);
+
+/** 城寨营地古典行军帐（GREEK_WAR_TENT）按 67 文化分配给古典地中海与波斯系 */
+const CLASSICAL_WAR_TENT_STYLES = new Set<string>([
+    'GREECE', 'ATHENIANS', 'SPARTANS', 'MACEDONIAN', 'THRACIAN', 'ROMA', 'PERSIAN', 'SASANIAN',
 ]);
 
 /** 67 建筑风格 → 文化地标池（按据点哈希固定抽取 1 座混入小城/中城外环）
@@ -199,6 +205,8 @@ const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
     INDIA: ['SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE'],
     GURJARAS: ['SCEN_REKHADEUL_TEMPLE', 'SANCHI_STUPA'],
     BENGALIS: ['SANCHI_STUPA', 'SCEN_REKHADEUL_TEMPLE'],
+    MUGHAL: ['GOL_GUMBAZ', 'MINARET_OF_JAM'],
+    PURU: ['SANCHI_STUPA', 'SCEN_BUDDHA_STATUE'],
     // 波斯、中亚与西亚
     PERSIAN: ['SCEN_FIRE_SHRINE', 'MINARET_OF_JAM'],
     SASANIAN: ['SCEN_FIRE_SHRINE'],
@@ -226,9 +234,9 @@ const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
     ARMENIANS: ['SCEN_ARCHAIC_THOLOS'],
     // 西欧、中欧、北欧与东欧
     FRANKS: ['QUIMPER_CATHEDRAL'],
+    BURGUNDIANS: ['QUIMPER_CATHEDRAL', 'SCEN_AACHEN_CATHEDRAL'],
     BRITONS: ['QUIMPER_CATHEDRAL'],
     CELTS: ['QUIMPER_CATHEDRAL', 'SCEN_HALL_OF_HEROES'],
-    AMERICA: ['QUIMPER_CATHEDRAL'],
     GERMANIC: ['SCEN_AACHEN_CATHEDRAL'],
     SAXONS: ['SCEN_AACHEN_CATHEDRAL', 'SCEN_HALL_OF_HEROES'],
     BOHEMIANS: ['SCEN_AACHEN_CATHEDRAL', 'POENARI_CASTLE'],
@@ -241,6 +249,13 @@ const CULTURAL_LANDMARK_BY_STYLE: Record<string, readonly string[]> = {
     VARANGIANS: ['WOODEN_FORT', 'SCEN_HALL_OF_HEROES'],
     MAGYAR: ['POENARI_CASTLE', 'FOLWARK'],
     BULGARIANS: ['POENARI_CASTLE'],
+    // 美洲
+    AMERICA: ['QUIMPER_CATHEDRAL'],
+    MAYANS: ['SCEN_ANDEAN_RUINS'],
+    INCA: ['SCEN_ANDEAN_RUINS'],
+    MUISCA: ['SCEN_ANDEAN_RUINS'],
+    MAPUCHE: ['WOODEN_FORT'],
+    TUPI: ['WOODEN_FORT'],
 };
 
 /** 本城是否已建成（按史实年份）以该素材为主/附加奇观的建筑——战术侧 buildDeCityGridHtml 会单独摆出来 */
@@ -778,7 +793,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                 ordered.map((o): [string, string] => [o.b, 'AGE2']), native, {
                     seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false,
                     gateEdges: [true, true, true, true],   // 🔴 [2026-10-12 主人令「大中小城寨，一律改为四门吧」] 小城四门
-                    wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : DE_PALISADE_ANCHORS,
+                    wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : getSmallCityPalisadeAnchors(buildingStyle || style),
                     groundTile: cityGroundTile(buildingStyle, 'sr2'),
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
                     auxBuildings: [
@@ -876,8 +891,9 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
     const stoneAnchors = DE_STONE_ANCHORS_BY_STYLE[style];
+    const palisadeAnchors = getSmallCityPalisadeAnchors(buildingStyle || style);
     wallPieces.forEach((w) => {
-        const anchor = (useStoneWall && stoneAnchors) ? stoneAnchors[w.type] : DE_PALISADE_ANCHORS[w.type];
+        const anchor = (useStoneWall && stoneAnchors) ? stoneAnchors[w.type] : palisadeAnchors[w.type];
         const zIndex = Math.round(100 + w.y);
         // 🔴 [2026-10-11 战术侧 1.0] 墙体三类的素材框宽各不相同（墙 107 / 门 307 / 垛 163），
         //    按同一个 widthFactor 画必然有两件偏小 ⇒ 有原生表时逐件按**素材框宽**画。
@@ -951,11 +967,12 @@ function buildDeStockadeStackHtml(
                         `${style}_MILL_AGE2`, `${style}_BARRACKS_AGE2`, `${style}_TOWER_AGE2`,
                     ].filter((k) => !!DE_SPRITE_BOX_W[k]);
                     const campPool = [
-                        'CAMP_BARRACKS', 'CAMP_ARCHERY_RANGE', 'OUTPOST', 'FORTIFIED_OUTPOST',
-                        ...(style === 'GREEK' || style === 'THRACIAN' || style === 'MEDI' ? ['GREEK_WAR_TENT'] : []),
+                        'CAMP_BARRACKS', 'CAMP_ARCHERY_RANGE', 'CAMP_STABLE', 'OUTPOST', 'FORTIFIED_OUTPOST',
+                        ...(CLASSICAL_WAR_TENT_STYLES.has(buildingStyle || style) ? ['GREEK_WAR_TENT'] : []),
                     ];
                     const hutPool = [
                         'SETTLEMENT', 'DARK_TOWN_CENTER_AGE1',
+                        'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1',
                         'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
                     ];
                     for (let i = cultPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cultPool[i], cultPool[j]] = [cultPool[j], cultPool[i]]; }

@@ -932,6 +932,37 @@ export function getStockadeFenceSetByStyle(style: string | undefined | null): St
     return STOCKADE_FENCE_SETS[getStockadeFenceKeyByStyle(style)];
 }
 
+/** 城寨为密编荆篱（FENCE）的 15 个文化，在小城（封建级木栅）升格对应的木栅系 */
+const SMALL_CITY_PALISADE_FOR_FENCE: Record<string, 'HARDWOOD' | 'DARK' | 'ARCHAIC'> = {
+    CELTS: 'DARK',
+    BRITONS: 'DARK',
+    TUPI: 'DARK',
+    WESTERN: 'ARCHAIC',
+    TIBET: 'HARDWOOD',
+    ORIE: 'HARDWOOD',
+    ETHIOPIANS: 'HARDWOOD',
+    BERBER: 'HARDWOOD',
+    AFRICA: 'HARDWOOD',
+    BENGALIS: 'HARDWOOD',
+    INDIA: 'HARDWOOD',
+    VIETNAMESE: 'HARDWOOD',
+    KHMER: 'HARDWOOD',
+    BURMESE: 'HARDWOOD',
+    MALAY: 'HARDWOOD',
+};
+
+/** 取非石墙小城的木栅材质（按 67 文化分配 HARDWOOD / DARK / ARCHAIC 三套木栅） */
+export function getSmallCityPalisadeKeyByStyle(style: string | undefined | null): 'HARDWOOD' | 'DARK' | 'ARCHAIC' {
+    const k = getStockadeFenceKeyByStyle(style);
+    if (k === 'DARK' || k === 'ARCHAIC' || k === 'HARDWOOD') return k;
+    return (style && SMALL_CITY_PALISADE_FOR_FENCE[style]) || 'HARDWOOD';
+}
+
+/** 取非石墙小城的木栅锚点表（战略与战术共用） */
+export function getSmallCityPalisadeAnchors(style: string | undefined | null): Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> {
+    return STOCKADE_FENCE_SETS[getSmallCityPalisadeKeyByStyle(style)].anchors;
+}
+
 export function normalizeStockadeCorner(pieces: Array<{ type: string }>, fenceKey: StockadeFenceKey): void {
     if (fenceKey !== 'FENCE') {
         for (const p of pieces) {
@@ -1365,7 +1396,24 @@ export function resolveTacticalWallSetup(
                 wallPost: `${buildingStyle}_WALL_POST`,
             };
         }
-        // 普通小城：硬木粗桩栅栏
+        // 非石墙小城：按 67 文化分配三套木栅（HARDWOOD / DARK / ARCHAIC）
+        const palKey = getSmallCityPalisadeKeyByStyle(rawBuildingStyle || buildingStyle);
+        if (palKey === 'DARK') {
+            return {
+                wallMat: 'DARK',
+                wBase: 'DARK_WALL_PALISADE',
+                gBase: 'DARK_GATE_PALISADE',
+                wallPost: 'DARK_WALL_PALISADE_POST',
+            };
+        }
+        if (palKey === 'ARCHAIC') {
+            return {
+                wallMat: 'ARCHAIC',
+                wBase: 'ARCHAIC_WALL_PALISADE',
+                gBase: 'ARCHAIC_GATE_PALISADE',
+                wallPost: 'HARDWOOD_WALL_PALISADE_POST',
+            };
+        }
         return {
             wallMat: 'HARDWOOD',
             wBase: 'HARDWOOD_WALL_PALISADE',

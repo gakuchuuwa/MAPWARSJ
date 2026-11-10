@@ -11,7 +11,7 @@
 import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
 import { resolveCastleAsset } from '../../config/deCastleAssets';
-import { DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS } from '../../systems/cityWallShared';
+import { DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS } from '../../systems/cityWallShared';
 import { DE_SPRITE_BOX_W } from '../../systems/battlefield/deSpriteSizes';
 import type { RegionType } from '../../systems/RegionSystem';
 
@@ -101,6 +101,7 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
     addAnchorDirs(DE_PALISADE_ANCHORS);
     addAnchorDirs(DE_DARK_PALISADE_ANCHORS);
     addAnchorDirs(DE_ARCHAIC_PALISADE_ANCHORS);
+    addAnchorDirs(DE_FENCE_ANCHORS);
     if (castleDir && DE_SPRITE_BOX_W[castleDir]) spriteW[castleDir] = DE_SPRITE_BOX_W[castleDir];
     for (const n of ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
         'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
@@ -111,7 +112,7 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
         'AMPHITHEATRE', 'ARCH_OF_CONSTANTINE', 'SCEN_ARCHAIC_THOLOS', 'SCEN_HERO_SHRINE',
         'SCEN_STATUE_ALEXANDER', 'SCEN_STATUE_ARES_MARBLE', 'SCEN_STATUE_GREEK_HERO',
         'FOLWARK', 'WOODEN_FORT', 'QUIMPER_CATHEDRAL', 'SCEN_AACHEN_CATHEDRAL', 'SCEN_HALL_OF_HEROES', 'POENARI_CASTLE',
-        'MINARET_OF_JAM', 'SCEN_FIRE_SHRINE', 'SCEN_SANKORE_MADRASAH', 'SCEN_DOME_OF_THE_ROCK', 'GOL_GUMBAZ', 'SCEN_CUSHITE_PYRAMIDS',
+        'MINARET_OF_JAM', 'SCEN_FIRE_SHRINE', 'SCEN_SANKORE_MADRASAH', 'SCEN_DOME_OF_THE_ROCK', 'GOL_GUMBAZ', 'SCEN_CUSHITE_PYRAMIDS', 'SCEN_ANDEAN_RUINS',
         `${deStyle}_HOUSE_AGE2`, `${deStyle}_MILL_AGE2`, `${deStyle}_BARRACKS_AGE2`, `${deStyle}_TOWER_AGE2`]) {
         for (const key of [`${deStyle}_${n}`, n]) if (DE_SPRITE_BOX_W[key]) spriteW[key] = DE_SPRITE_BOX_W[key];
     }

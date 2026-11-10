@@ -29,6 +29,7 @@ import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
 import { isWonderFounded } from '../../data/wonderFoundedYears';
 import { resolveStockadeFenceKey } from '../../data/stockadeWallStyleLookup';
+import { destrFamilyOf } from '../../data/buildingDestructionAssets';
 import { resolveTacticalWallSetup, passRingHalfExtents } from '../../systems/cityWallShared';
 import { isMountainPass, EXCLUDED_PASS_IDS } from '../../systems/passMountainDecision';
 
@@ -126,8 +127,9 @@ export function buildDeCity(this: Scene13WarLayer): void {
                 rubbleAsset = 'BATTLEFIELD:FENCE_RUBBLE';
                 this.ensureNatureAsset(rubbleAsset);
             } else {
-                rubbleAsset = `${p.dir}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + `${p.dir}_DESTR`);
+                const fam = destrFamilyOf(p.dir);
+                rubbleAsset = `${fam}_RUBBLE`;
+                this.ensureNatureAsset('BUILDINGANIM:' + `${fam}_DESTR`);
                 this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
             }
             const st = isWoodGate ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_GATE : WALL_GATE_STATS.STONE_GATE);
@@ -3025,8 +3027,9 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
                 rubbleAsset = 'BATTLEFIELD:FENCE_RUBBLE';
                 this.ensureNatureAsset(rubbleAsset);
             } else {
-                rubbleAsset = `${asset}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
+                const fam = destrFamilyOf(asset);
+                rubbleAsset = `${fam}_RUBBLE`;
+                this.ensureNatureAsset('BUILDINGANIM:' + `${fam}_DESTR`);
                 this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
             }
             this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });

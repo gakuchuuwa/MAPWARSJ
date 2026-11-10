@@ -4184,25 +4184,28 @@ export class PlayerQuestSystem {
      *   玩家**接下任何任务**（入伍/出征/复国/经典战）即清空 —— 告辞只是这一次不接，不是永远不见。
      */
     private readonly declinedGenerals = new Set<string>();
-    /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（66 类走完清空、重开一轮）。 */
+    /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（67 类走完清空、重开一轮）。 */
     private readonly visitedStyles = new Set<string>();
-    /** 🔴 [2026-10-07 主人令「由东向西」] 上一次轮到的那一类的经度（该类候选城经度中位数）；每轮开头置空。 */
-    private lastStyleLng: number | null = null;
+    /** 🔴 [2026-11-10 主人令「由东向西，再加个由北向南」] 经度分带宽度（度）：同带内由北向南，跨带由东向西。 */
+    private static readonly STYLE_LNG_BAND_DEG = 15;
+    /** 上一次轮到的那一类的经度带与中位坐标；每轮开头置空。 */
+    private lastStyleAnchor: { band: number; lat: number; lng: number } | null = null;
 
     /**
      * 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
      * 🔴 [2026-10-07 主人令]「由东向西」：让玩家挨个投奔势力、挨个体验不同文化区，直至全球兜一圈。
+     * 🔴 [2026-11-10 主人令]「由东向西，再加个由北向南」：按 15° 经度分带，从东向西逐带推进；
+     *   同一经度带内按纬度中位数由北向南依次走，避免相近经度上南北大幅折返。
      *
-     *   把候选按建筑风格分组，只把选中的那一类的城交给下面原有的链条（兵多 → 名将 → 同档就近）去挑。
-     *   选哪一类：每轮第一次取**离玩家最近**的一类；之后取**上一类西边最近、这一轮还没轮到**的一类
-     *   （一类的东西位置 = 该类候选城经度的中位数），走到最西头就从最东边还没轮到的接着走。
-     *   · 某一类取不到候选（无人占 / 没锚定武将 / 兵不足 1 万）就不进轮次；
-     *   · 取不到 66 类风格的据点不进轮次（2026-10-07 实测 0 座）；
-     *   · 66 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
+     *   把候选按建筑风格分组，只把选中的那一类的城交给下面原有的链条（名将优先 → 最近 K 座）去挑。
+     *   选哪一类：每轮第一次取**离玩家最近**的一类；之后按「经度带由东向西、同带内纬度由北向南」取下一类，
+     *   走到最西头就从最东边还没轮到的接着走。
+     *   · 某一类取不到候选（无人占 / 没锚定武将 / 兵不足 5000）就不进轮次；
+     *   · 67 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
      *   · 玩家坐标取不到 → 在本轮未轮到的类里随机点一类（绝不卡死）。
      *
-     *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（名将 → 兵力 / 最近 K 座）
-     *      仍在 `pickAutoCity` 里跑（「远游」签与「名将硬筛」已按主人令另行处理）。
+     *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（名将 → 最近 K 座）
+     *      仍在 `pickAutoCity` 里跑。
      */
     private pickStyle62Pool(candidates: City[], me: { lat: number; lng: number }): City[] {
         const byStyle = new Map<string, City[]>();
@@ -4219,21 +4222,38 @@ export class PlayerQuestSystem {
         let fresh = [...byStyle.keys()].filter((k) => !this.visitedStyles.has(k));
         if (!fresh.length) {
             this.visitedStyles.clear();
-            this.lastStyleLng = null;
+            this.lastStyleAnchor = null;
             fresh = [...byStyle.keys()];
         }
 
-        // 一类的东西位置 = 该类候选城经度的中位数
+        // 一类的东西/南北位置 = 该类候选城经度/纬度的中位数；按 15° 经度分带
         const lngOfStyle = (k: string): number => {
             const a = byStyle.get(k)!.map((c) => c.longitude).sort((x, y) => x - y);
             return a[Math.floor(a.length / 2)];
         };
+        const latOfStyle = (k: string): number => {
+            const a = byStyle.get(k)!.map((c) => c.latitude).sort((x, y) => x - y);
+            return a[Math.floor(a.length / 2)];
+        };
+        const bandOfStyle = (k: string): number =>
+            Math.floor(lngOfStyle(k) / PlayerQuestSystem.STYLE_LNG_BAND_DEG);
+
         let picked: string;
-        if (this.lastStyleLng !== null) {
-            // 由东向西：上一类西边最近的一类；西边没有了 → 绕回最东边
-            const byLng = [...fresh].sort((a, b) => lngOfStyle(b) - lngOfStyle(a));
-            const last = this.lastStyleLng;
-            picked = byLng.find((k) => lngOfStyle(k) <= last) ?? byLng[0];
+        if (this.lastStyleAnchor !== null) {
+            // 经度带由东向西（band 从大到小），同带内由北向南（lat 从大到小），再按经度由东向西兜底
+            const ordered = [...fresh].sort((a, b) =>
+                (bandOfStyle(b) - bandOfStyle(a))
+                || (latOfStyle(b) - latOfStyle(a))
+                || (lngOfStyle(b) - lngOfStyle(a)),
+            );
+            const last = this.lastStyleAnchor;
+            picked = ordered.find((k) => {
+                const b = bandOfStyle(k);
+                if (b < last.band) return true;
+                if (b > last.band) return false;
+                const lat = latOfStyle(k);
+                return lat < last.lat || (lat === last.lat && lngOfStyle(k) <= last.lng);
+            }) ?? ordered[0];
         } else {
             // 每轮第一次「离哪个近就先选哪个」：一类的距离 = 该类里离玩家最近的那座城的距离。
             const distOfStyle = (k: string): number => Math.min(
@@ -4245,7 +4265,11 @@ export class PlayerQuestSystem {
             }
         }
         this.visitedStyles.add(picked);
-        this.lastStyleLng = lngOfStyle(picked);
+        this.lastStyleAnchor = {
+            band: bandOfStyle(picked),
+            lat: latOfStyle(picked),
+            lng: lngOfStyle(picked),
+        };
         return byStyle.get(picked) ?? [];
     }
 

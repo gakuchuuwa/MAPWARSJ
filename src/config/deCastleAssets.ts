@@ -619,6 +619,7 @@ export const BRANCH_CASTLE: Record<string, string> = {
   BURGUNDIANS: 'BURG_CASTLE_AGE3',
   BURMESE: 'BURM_CASTLE_AGE3',
   BYZANTINE: 'BYZA_CASTLE_AGE3',
+  CELTS: 'CELT_CASTLE_AGE3',
   CENTRAL: 'CHIN_CASTLE_AGE3',
   CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',
   CUMAN: 'CUMA_CASTLE_AGE3',
@@ -628,6 +629,7 @@ export const BRANCH_CASTLE: Record<string, string> = {
   GEORGIANS: 'GEOR_CASTLE_AGE3',
   GERMANIC: 'EAST_CASTLE_AGE3',
   GOTHS: 'GOTH_CASTLE_AGE3',
+  GREECE: 'GREEK_CASTLE_AGE3',
   GURJARAS: 'GURJ_CASTLE_AGE3',
   HUNS: 'HUNS_CASTLE_AGE3',
   INCA: 'INCA_CASTLE_AGE3',
@@ -667,13 +669,36 @@ export const BRANCH_CASTLE: Record<string, string> = {
   VIETNAMESE: 'VIET_CASTLE_AGE3',
   VIKINGS: 'VIKI_CASTLE_AGE3',
   WEI: 'WEI_CASTLE_AGE3',
+  WESTERN: 'WESTERN_CASTLE_AGE3',
+  XIANBEI: 'MONG_CASTLE_AGE3',
 };
 
 /** 城级城堡外观覆盖：只改城市标记的城堡图，不改 buildingStyle/文化/军团。
  *  🔴 [2026-10-18] 奥农多加（易洛魁）66 无 IROQUOIS 分支；用 VIKI_CASTLE_AGE3（诺斯长屋环形要塞）
- *     代理长屋+木栅外观，避免继续用 MESO 阿兹特克金字塔。 */
+ *     代理长屋+木栅外观，避免继续用 MESO 阿兹特克金字塔。
+ *  🔴 [2026-11-10] 补入闲置的 6 座 DE 专属城堡变体（不改动 67 文化键，只做城级城堡外观精细分流）：
+ *     - 阿契美尼德专属堡 `PERSIAN_CASTLE_ACHAEMENIDS_AGE3`：里海门（波斯门险要）
+ *     - 滇黔城楼 `DIANQIAN_CASTLE_AGE3`：大理、乌蒙、胜境关、石门关
+ *     - 岭南城楼 `LINGNAN_CASTLE_AGE3`：番禺、横浦关、阳山关、湟溪关
+ *     - 普鲁三阶科技升级堡 `PURU_CASTLE_AGE3_ATTACKUP / BOTHUP / DEFENSEUP`：白沙瓦、华氏城、拉合尔 */
 const CITY_CASTLE_VISUAL_OVERRIDE: Readonly<Record<string, string>> = {
     city_onondaga: 'VIKI_CASTLE_AGE3',
+    // PERSIAN 阿契美尼德变体
+    city_lihaimen: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',
+    // SHU 滇黔分支变体
+    city_dali_city: 'DIANQIAN_CASTLE_AGE3',
+    city_wumeng: 'DIANQIAN_CASTLE_AGE3',
+    city_shengjingguan: 'DIANQIAN_CASTLE_AGE3',
+    city_shimenguan: 'DIANQIAN_CASTLE_AGE3',
+    // WU 岭南分支变体
+    city_panyu: 'LINGNAN_CASTLE_AGE3',
+    city_hengpuguan: 'LINGNAN_CASTLE_AGE3',
+    city_yangshanguan: 'LINGNAN_CASTLE_AGE3',
+    city_huangxiguan: 'LINGNAN_CASTLE_AGE3',
+    // PURU 普鲁三阶科技升级变体
+    city_baishawa: 'PURU_CASTLE_AGE3_ATTACKUP',
+    city_huashicheng: 'PURU_CASTLE_AGE3_BOTHUP',
+    city_laheer: 'PURU_CASTLE_AGE3_DEFENSEUP',
 };
 
 /** 城堡素材解析：**城级外观覆盖 → 建筑风格 → 势力专属 → 文化区 → 风格集默认**。 */
