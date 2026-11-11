@@ -21,6 +21,8 @@
  */
 
 import { getGeneralProfile } from './general-skills/profiles';
+import { GENERAL_EXTRA_CLASSIC_BATTLES } from './GeneralExtraClassicBattles';
+import { getCurrentStageYear } from './generalOnStage';
 
 export interface FirstBattleDialogueLine {
     speaker: 'general' | 'player';
@@ -30,6 +32,11 @@ export interface FirstBattleDialogueLine {
 export interface GeneralFirstBattle {
     /** 我方名将 ID */
     generalId: string;
+    /**
+     * 这一场的唯一编号（🔴 2026-11-11 一名将多场）。第一场不写＝就是 generalId；
+     * 补选的后几场（`GeneralExtraClassicBattles`）必须写，惯例 `<generalId>@<年份>`。
+     */
+    battleId?: string;
     /** 历史战役名称 */
     battleName: string;
     /** 历史发生年份（公元前为负） */
@@ -12117,60 +12124,131 @@ export function getGeneralFirstBattle(generalId: string | null | undefined): Gen
     return GENERAL_FIRST_BATTLES[generalId] ?? null;
 }
 
-const completedFirstBattleGenerals = new Set<string>();
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔴 [2026-11-11 主人定] 一名将多场经典战 · 按年份开放 · 一局里同一场只打一次
+//   · 一位名将的经典战＝第一场（本表）＋补选的后几场（GeneralExtraClassicBattles），按年份排；
+//   · 游戏年份到了这一场的史实年份才能接；过了没打不作废，名将在场就一直能接；同时能接几场先打最早的；
+//   · 「同一场」＝战役名＋年份相同（攻守两方各有一条），任何一方接过，另一方就跳过这场、接他的下一场。
+// ═══════════════════════════════════════════════════════════════════════════
 
-export function markFirstBattleCompleted(generalId: string | null | undefined): void {
-    if (!generalId) return;
-    completedFirstBattleGenerals.add(generalId);
+/** 这一场的编号（第一场＝generalId） */
+export function battleIdOf(fb: GeneralFirstBattle): string {
+    return fb.battleId ?? fb.generalId;
 }
 
+/** 「同一场」的判据：战役名＋年份 */
+function battleKeyOf(fb: Pick<GeneralFirstBattle, 'battleName' | 'battleYear'>): string {
+    return `${fb.battleName}|${fb.battleYear}`;
+}
+
+/** 这位名将的全部经典战（只对名将生效），按年份从早到晚 */
+export function getGeneralClassicBattles(generalId: string | null | undefined): GeneralFirstBattle[] {
+    const first = getGeneralFirstBattle(generalId);
+    if (!first || !generalId) return [];
+    const extras = GENERAL_EXTRA_CLASSIC_BATTLES[generalId] ?? [];
+    return [first, ...extras].sort((a, b) => a.battleYear - b.battleYear);
+}
+
+/** 按编号取一场（战斗层用：认出正在打的是哪一场） */
+export function getClassicBattleById(battleId: string | null | undefined): GeneralFirstBattle | null {
+    if (!battleId) return null;
+    const first = GENERAL_FIRST_BATTLES[battleId];
+    if (first) return first;
+    const at = battleId.indexOf('@');
+    const owner = at > 0 ? battleId.slice(0, at) : '';
+    for (const fb of GENERAL_EXTRA_CLASSIC_BATTLES[owner] ?? []) if (battleIdOf(fb) === battleId) return fb;
+    return null;
+}
+
+/** 这一局已经接过的经典战（按「同一场」记） */
+const completedBattleKeys = new Set<string>();
+/** 玩家已经随过的名将（只管「头一回随他出征」的行军标记，与经典战开不开放无关） */
+const joinedGenerals = new Set<string>();
+
+/** 这一场在这一局里是否已经接过（攻守任何一方接过都算） */
+export function isClassicBattleDone(fb: GeneralFirstBattle): boolean {
+    return completedBattleKeys.has(battleKeyOf(fb));
+}
+
+/** 接下这一场：记为已接（同一场的另一方随之跳过） */
+export function markClassicBattleCompleted(fb: GeneralFirstBattle): void {
+    completedBattleKeys.add(battleKeyOf(fb));
+}
+
+/**
+ * 这位名将眼下能接的经典战：没接过、且游戏年份已到（year 为空＝不按年份拦），取最早的一场。
+ */
+export function getNextClassicBattle(generalId: string | null | undefined, year: number | null): GeneralFirstBattle | null {
+    for (const fb of getGeneralClassicBattles(generalId)) {
+        if (isClassicBattleDone(fb)) continue;
+        if (year != null && Number.isFinite(year) && year < fb.battleYear) return null;   // 按年排序：最早一场没到年份，后面的更没到
+        return fb;
+    }
+    return null;
+}
+
+/** 这位名将还有没接的经典战（不看年份） */
+export function hasRemainingClassicBattles(generalId: string | null | undefined): boolean {
+    return getGeneralClassicBattles(generalId).some((fb) => !isClassicBattleDone(fb));
+}
+
+/** 玩家已随过这位名将（任何任务） */
+export function markFirstBattleCompleted(generalId: string | null | undefined): void {
+    if (!generalId) return;
+    joinedGenerals.add(generalId);
+}
+
+/** 玩家是否随过这位名将（只用于「头一回随他出征」的行军标记） */
 export function isFirstBattleCompleted(generalId: string | null | undefined): boolean {
     if (!generalId) return false;
-    return completedFirstBattleGenerals.has(generalId);
+    return joinedGenerals.has(generalId);
 }
 
 export function clearCompletedFirstBattles(): void {
-    completedFirstBattleGenerals.clear();
+    joinedGenerals.clear();
+    completedBattleKeys.clear();
 }
 
-/**
- * 🔴 [2026-11-11 主人定「同一战，只找一个人就行」] 这位名将的经典战**这一场**是否已打过——
- * 同一场（战役名 + 年份相同，如卡迭石之战的攻守两位主将）任何一方打过都算。
- */
+/** 这位名将的经典战是否全部接过（有经典战才有意义） */
 export function isFirstBattleDoneForBattle(generalId: string | null | undefined): boolean {
-    if (!generalId) return false;
-    if (completedFirstBattleGenerals.has(generalId)) return true;
-    const mine = GENERAL_FIRST_BATTLES[generalId];
-    if (!mine) return false;
-    for (const other of completedFirstBattleGenerals) {
-        const fb = GENERAL_FIRST_BATTLES[other];
-        if (fb && fb.battleName === mine.battleName && fb.battleYear === mine.battleYear) return true;
-    }
-    return false;
+    const all = getGeneralClassicBattles(generalId);
+    return all.length > 0 && all.every((fb) => isClassicBattleDone(fb));
 }
 
-/** 存档用：已打过经典战的名将（🔴 2026-11-11 百岁模式开局这批靠它决定退不退场，读档必须带回来） */
+const SAVE_BATTLE_PREFIX = 'battle:';
+
+/** 存档用：已接过的经典战＋已随过的名将（🔴 百岁模式开局这批靠它决定退不退场，读档必须带回来） */
 export function listCompletedFirstBattles(): string[] {
-    return [...completedFirstBattleGenerals];
-}
-
-/** 读档用：整份替换为存档里的已打过名单 */
-export function restoreCompletedFirstBattles(generalIds: readonly string[] | null | undefined): void {
-    completedFirstBattleGenerals.clear();
-    for (const id of generalIds ?? []) if (id) completedFirstBattleGenerals.add(id);
+    return [...joinedGenerals, ...[...completedBattleKeys].map((k) => SAVE_BATTLE_PREFIX + k)];
 }
 
 /**
- * 守己方城类的经典战武将（battleType === 'siege' && role === 'defender'）：
- * 在玩家尚未与其触发并完成经典战前，留在城中等候玩家，不提前由 AI 募兵出征；
- * 攻其他城与野战类的武将不限制出征，玩家无论在城中还是野外找到该武将均可直接奔赴战场开战。
+ * 读档用：整份替换。旧档只存了 generalId（那时「随过他」就等于「经典战用掉了」）→ 按旧口径把他第一场记为已接。
+ */
+export function restoreCompletedFirstBattles(entries: readonly string[] | null | undefined): void {
+    clearCompletedFirstBattles();
+    const list = (entries ?? []).filter(Boolean);
+    const isNewFormat = list.some((e) => e.startsWith(SAVE_BATTLE_PREFIX));
+    for (const e of list) {
+        if (e.startsWith(SAVE_BATTLE_PREFIX)) { completedBattleKeys.add(e.slice(SAVE_BATTLE_PREFIX.length)); continue; }
+        joinedGenerals.add(e);
+        if (!isNewFormat) {
+            const first = GENERAL_FIRST_BATTLES[e];
+            if (first) completedBattleKeys.add(battleKeyOf(first));
+        }
+    }
+}
+
+/**
+ * 守己方城类的经典战武将：眼下能接的那一场是「守城」时，留在城中等候玩家，不提前由 AI 募兵出征；
+ * 攻其他城与野战类的不限制出征，玩家无论在城中还是野外找到他均可直接奔赴战场开战。
  */
 export function shouldGeneralWaitInCityForFirstBattle(
     generalId: string | null | undefined,
     _cityId?: string | null,
 ): boolean {
-    if (!generalId || isFirstBattleCompleted(generalId)) return false;
-    const fb = getGeneralFirstBattle(generalId);
+    if (!generalId) return false;
+    const fb = getNextClassicBattle(generalId, getCurrentStageYear());
     if (!fb) return false;
     return fb.battleType === 'siege' && fb.role === 'defender';
 }

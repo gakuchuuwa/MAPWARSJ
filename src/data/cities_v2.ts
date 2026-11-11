@@ -815,7 +815,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_diezhou', name: '迭部', factionId: 'dangchang_guo', lat: 33.975273, lng: 103.482971, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 甘南迭部（白龙江上游）；定级依据§6.2：迭部非关隘（唐742叠州改合川郡、治合川县），按城市判级；人口查无可靠估计，落最小城档 → 城寨。🔴 [2026-10-20 主人令「没有历史吗，为什么让我定」] 风格按史实改：叠州＝宕昌羌故地，8 世纪起属吐蕃，甘南藏区，当地最著名的是藏式碉房、木构与寺院（与同属甘南的玛曲一致），库里「青藏」风格另含「古典发羌」＝早期羌人，宕昌羌亦归此 → TIBET（原 BASHU）' },
 
 
-    { id: 'city_panzhou', name: '潘寨', factionId: 'tang', lat: 33.578015, lng: 103.029785, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '🔴 [2026-11-07 按史补依据] 唐潘州（今若尔盖），川西；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_panzhou', name: '潘寨', factionId: 'tang', lat: 33.578015, lng: 103.029785, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 唐潘州（今若尔盖），川西；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 BASHU→TIBET（精确）：若尔盖潘州，青藏高原东缘安多藏族牧区与格鲁派寺院圈。' },
 
 
 
@@ -935,7 +935,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 迪化 — 且弥清新都 (原庭州已删除)
     // 鹰娑川 — 土尔扈特 (天山尤鲁都斯/巴音布鲁克)
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：鹰娑川：西突厥/突骑施牧地，归突厥 TURKS
-    { id: 'city_yingsuochuan', name: '鹰娑川', factionId: 'tuerhute', lat: 42.869899, lng: 83.773499, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 鹰娑川（今巴音布鲁克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_yingsuochuan', name: '鹰娑川', factionId: 'tuerhute', lat: 42.869899, lng: 83.773499, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 鹰娑川（今巴音布鲁克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：天山尤勒都斯高山草甸，西突厥与土尔扈特汗部毡帐游牧。' },
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
@@ -1204,7 +1204,7 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_satsuma', name: '鹿儿岛城', factionId: 'shimazu', lat: 31.6003, lng: 130.5583, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' , note: '🔴 [2026-11-07 按史补依据] 萨摩鹿儿岛；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
 
     // // [DATA LOST - emishi deleted]
-    { id: 'city_shuri', name: '首里', factionId: 'ryukyu', lat: 26.22, lng: 127.72, type: 'small_city', region: 'SONG', buildingStyle: 'JAPAN', troops: 10000, tier: 1, note: '🔴 [2026-11-07 按史补依据] 琉球首里城；琉球王国都城；那霸水师；按 2026-10-25 标准：城居 1–2 → 小城' },
+    { id: 'city_shuri', name: '首里', factionId: 'ryukyu', lat: 26.22, lng: 127.72, type: 'small_city', region: 'SONG', buildingStyle: 'JAPAN', troops: 10000, tier: 1, note: '🔴 [2026-11-07 按史补依据] 琉球首里城；琉球王国都城；那霸水师；按 2026-10-25 标准：城居 1–2 → 小城；🔴 [2026-11-11 补标] 【建筑风格代理】琉球王国按司石城（Gusuku）与御岳信仰，67键无琉球，取最近JAPAN。' },
     { id: 'city_tsushima', name: '金石馆', factionId: 'so', lat: 34.2031, lng: 129.2892, type: 'stockade', troops: 10000, 
         note: '🔴 [2026-11-07 按史补依据] 对马金石城；金石城；对马小城', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
@@ -1275,9 +1275,9 @@ buildingStyle: 'JAPAN', troops: 10000,
         lat: 15.00, lng: 108.50,
         type: 'stockade',
         region: 'VIETNAMESE',
-        buildingStyle: 'VIETNAMESE',
+        buildingStyle: 'KHMER',
         troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 越南象林（占城北）；象林；林邑小城',
+        note: '🔴 [2026-11-07 按史补依据] 越南象林（占城北）；象林；林邑小城；🔴 [2026-11-11 按史改] 据点文化 VIETNAMESE→KHMER（代理）：占婆林邑都城，印度化红砖神庙塔；67键无占婆，同美山取最近KHMER。',
     },
     // ── 2026-05-25 新增：秦朝核对追加势力城市 ──
     {
@@ -1381,8 +1381,8 @@ buildingStyle: 'XIANBEI', troops: 10000,
     
     { id: 'city_jinshan', name: '额尔齐斯', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'pass', region: 'CENTRAL_ASIA',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：额尔齐斯：辉特（卫拉特蒙古）关隘，归鞑靼（中亚草原）
-buildingStyle: 'CENTRAL_ASIA', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 额尔齐斯河；额尔齐斯；辉特关隘',
+buildingStyle: 'MONGOL', troops: 10000,
+        note: '🔴 [2026-11-07 按史补依据] 额尔齐斯河；额尔齐斯；辉特关隘；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：阿尔泰南麓卫拉特辉特部毡帐牧地，非河中定居绿洲城郭。',
     },
     { id: 'city_dafang', name: '大方城', factionId: 'luodian', lat: 27.046910, lng: 105.707703, type: 'small_city', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
@@ -1421,12 +1421,12 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 翁金河（蒙古中南部）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_naiman', name: '金微山', factionId: 'tujue', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 金微山（阿尔泰）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_naiman', name: '金微山', factionId: 'tujue', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 金微山（阿尔泰）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：阿尔泰金微山，北匈奴与铁勒、突厥毡帐牧地。' },
 
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'stockade', region: 'STEPPE',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：福海：乃蛮小城，归鞑靼（中亚草原）
-buildingStyle: 'CENTRAL_ASIA', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 乌伦古湖（今福海）；福海；乃蛮小城',
+buildingStyle: 'MONGOL', troops: 10000,
+        note: '🔴 [2026-11-07 按史补依据] 乌伦古湖（今福海）；福海；乃蛮小城；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：乌伦古湖畔乃蛮部太阳汗冬营，景教/萨满毡帐游牧。',
     },
     { id: 'city_tatar', name: '额布都格', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'stockade', region: 'STEPPE',
 buildingStyle: 'MONGOL', troops: 10000,
@@ -1567,7 +1567,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
  // 镜像
-    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '🔴 [2026-11-07 按史补依据] 金川美诺寨（今小金），川西；🔴 [2026-10-24 复核] 风格保留 BASHU：美诺寨属大小金川（清 属四川，金川之役阿桂驻地），嘉绒藏区碉楼与川西汉式混居，项目以「巴蜀」承四川；驻将阿桂＝帝国时代四川军团即此链。' },
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 金川美诺寨（今小金），川西；🔴 [2026-10-24 复核] 风格保留 BASHU：美诺寨属大小金川（清 属四川，金川之役阿桂驻地），嘉绒藏区碉楼与川西汉式混居，项目以「巴蜀」承四川。；🔴 [2026-11-11 按史改] 据点文化 BASHU→TIBET（精确）：小金川嘉绒藏族土司官寨，石砌高碉；与大金川勒乌围同区。' },
 
 
 
@@ -1654,7 +1654,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     // 第十五类：越南阮朝
     { id: 'city_nanghar', name: '囊哈儿', factionId: 'jilimi', lat: 52.209343, lng: 141.951599, type: 'stockade', region: 'JURCHEN',
 buildingStyle: 'NORTHEAST', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 奴儿干囊哈儿（库页岛）；囊哈儿；吉里小城',
+        note: '🔴 [2026-11-07 按史补依据] 奴儿干囊哈儿（库页岛）；囊哈儿；吉里小城；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛渔猎聚落，取最近NORTHEAST。',
     },
     {
         id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
@@ -1771,8 +1771,8 @@ buildingStyle: 'TIBET', troops: 10000,
 
     // === 第二类：雪域土著与古老强族 ===
     { id: 'city_buerhanbuda', name: '白海堡', factionId: 'tubo', lat: 34.9100, lng: 98.2100, type: 'pass', region: 'HEXI',
-buildingStyle: 'HEXI', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 青海玛多一带；白海堡；多弥关隘',
+buildingStyle: 'TIBET', troops: 10000,
+        note: '🔴 [2026-11-07 按史补依据] 青海玛多一带；白海堡；多弥关隘；🔴 [2026-11-11 按史改] 据点文化 HEXI→TIBET（精确）：玛多黄河源柏海，海拔4200米高寒藏区牧帐文化。',
     },
     { id: 'city_mapangyongcuo', name: '玛旁雍错', factionId: 'supi', lat: 30.814997, lng: 81.430664, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
@@ -1878,7 +1878,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         id: 'city_myson', name: '美山', factionId: 'champa',
         lat: 15.50, lng: 108.50, type: 'stockade', region: 'KHMER',
         buildingStyle: 'KHMER', troops: 10000, tier: 4,
-        note: '🔴 [2026-11-07 按史补依据] 占婆美山圣地；美山；占婆圣地神庙要塞，制蓬峨驻防', mirror: true },
+        note: '🔴 [2026-11-07 按史补依据] 占婆美山圣地；美山；占婆圣地神庙要塞，制蓬峨驻防；🔴 [2026-11-11 补标] 【建筑风格代理】占婆美山印度教红砖塔圣地，67键无占婆，取最近KHMER。', mirror: true },
     
     {
         id: 'city_hoalu',
@@ -1901,7 +1901,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     {
         id: 'city_mudan', name: '牡丹社', factionId: 'paiwan',
         lat: 22.20, lng: 120.8333, type: 'stockade', region: 'HUAXIA_IMPERIAL',
-        buildingStyle: 'MALAY', troops: 10000, tier: 4, note: '🔴 [2026-11-07 按史补依据] 台湾牡丹社（排湾）；岭南/南方环线共用锚点；文化岭南' },
+        buildingStyle: 'MALAY', troops: 10000, tier: 4, note: '🔴 [2026-11-07 按史补依据] 台湾牡丹社（排湾）；岭南/南方环线共用锚点；文化岭南；🔴 [2026-11-11 补标] 【建筑风格代理】台湾排湾族石板屋聚落，取最近南岛MALAY。' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
     { id: 'city_cen', name: '凌云', factionId: 'cen_d', lat: 24.462119, lng: 106.627808, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '🔴 [2026-11-07 按史补依据] 广西凌云；定级依据§6.2：凌云非关隘（清泗城府治、乾隆五年增设凌云县），按城市判级；人口查无可靠估计，落最小城档 → 城寨' },
 
@@ -2180,8 +2180,8 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // ── 2026-05-28 新增：黎(崖州) ──
     { id: 'city_yazhou', name: '珠崖', factionId: 'liren', lat: 18.432692, lng: 108.989868, type: 'stockade', region: 'JIANGNAN',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：珠崖（海南）：珠崖郡，汉地郡县
-buildingStyle: 'JIANGNAN', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 汉珠崖郡（海南）；珠崖；俚族小城',
+buildingStyle: 'HUGUANG', troops: 10000,
+        note: '🔴 [2026-11-07 按史补依据] 汉珠崖郡（海南）；珠崖；俚族小城；🔴 [2026-11-11 按史改] 据点文化 JIANGNAN→HUGUANG（精确）：海南崖州黎俚聚落，岭南道/广南西路，华南岭南文化圈。',
     },
     // ── 2026-05-28 新增：悉勃野(匹播) ──
     { id: 'city_pibo', name: '匹播', factionId: 'lang_clan', lat: 29.224032, lng: 91.746826, type: 'stockade', region: 'TIBET_CASTLE',
@@ -2191,7 +2191,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-05-28 新增：工布(江达宗) ──
     // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
     // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
-    { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'HEXI', troops: 10000, mirror: true, note: '🔴 [2026-11-07 按史补依据] 玛多花石峡；黑齿常之河源军大破吐蕃' },
+    { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'TIBET', troops: 10000, mirror: true, note: '🔴 [2026-11-07 按史补依据] 玛多花石峡；黑齿常之河源军大破吐蕃；🔴 [2026-11-11 按史改] 据点文化 HEXI→TIBET（精确）：玛多花石峡，唐蕃古道黄河源高寒藏族游牧。' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
     { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'CENTRAL', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 唐文登县，胶东；🔴 [2026-11-07 第一步·只看据点] 山东半岛属中原（区域对照 CENTRAL 含山东），原 WEI 不符；苏定方神丘道行军伐百济，自城山济海（《玉海·卷一八一》引《通鉴》；原注「神灭军」按史正之）；推算：城居 1 万（文登，登州属县 1 万）→ 小城' },
@@ -2265,7 +2265,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '🔴 [2026-11-07 按史补依据] 社会群岛大溪地；大溪地(Tahiti)，南太平洋中央社会群岛枢纽与波利尼西亚航海核心，欧洲环球探险横渡太平洋补给基地；按2026-10-25标准：≤1700年常住数千人<1万且城防仅木栅桩栏 → 城寨',
+        note: '🔴 [2026-11-07 按史补依据] 社会群岛大溪地；大溪地(Tahiti)，南太平洋中央社会群岛枢纽与波利尼西亚航海核心，欧洲环球探险横渡太平洋补给基地；按2026-10-25标准：≤1700年常住数千人<1万且城防仅木栅桩栏 → 城寨；🔴 [2026-11-11 补标] 【建筑风格代理】社会群岛毛利神庙Marae，取最近南岛MALAY。',
     },
     {
         id: 'city_rapanui',
@@ -2277,7 +2277,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '🔴 [2026-11-07 按史补依据] 拉帕努伊（复活节岛）；复活节岛(Easter Island/拉帕努伊Rapa Nui)，东南太平洋中心孤岛，以巨石像阿胡(Ahu Moai)著称，南美智利横渡南太平洋至大溪地唯一海中陆标；按2026-10-25标准：鼎盛期数千人<1万且聚落无石砌防御城墙 → 城寨',
+        note: '🔴 [2026-11-07 按史补依据] 拉帕努伊（复活节岛）；复活节岛(Easter Island/拉帕努伊Rapa Nui)，东南太平洋中心孤岛，以巨石像阿胡(Ahu Moai)著称，南美智利横渡南太平洋至大溪地唯一海中陆标；按2026-10-25标准：鼎盛期数千人<1万且聚落无石砌防御城墙 → 城寨；🔴 [2026-11-11 补标] 【建筑风格代理】拉帕努伊摩艾石像平台，取最近南岛MALAY。',
     },
     {
         id: 'city_mua',
@@ -2289,7 +2289,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '🔴 [2026-11-07 按史补依据] 汤加穆阿；穆阿(Muʻa/Lapaha)，图伊汤加帝国(Tuʻi Tonga Empire，约950–1865)王都，西波利尼西亚远洋航海帝国中枢，连接大溪地与美拉尼西亚、摩鹿加群岛及关岛之核心枢纽，塔斯曼与库克船长三次停靠补给港；按2026-10-25标准：≤1700年常住数千人<1万且为环壕土石聚落 → 城寨',
+        note: '🔴 [2026-11-07 按史补依据] 汤加穆阿；穆阿(Muʻa/Lapaha)，图伊汤加帝国(Tuʻi Tonga Empire，约950–1865)王都，西波利尼西亚远洋航海帝国中枢，连接大溪地与美拉尼西亚、摩鹿加群岛及关岛之核心枢纽，塔斯曼与库克船长三次停靠补给港；按2026-10-25标准：≤1700年常住数千人<1万且为环壕土石聚落 → 城寨；🔴 [2026-11-11 补标] 【建筑风格代理】汤加石墓Langi，取最近南岛MALAY。',
     },
     {
         id: 'city_honolulu',
@@ -2301,7 +2301,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '🔴 [2026-11-07 按史补依据] 夏威夷火奴鲁鲁；火奴鲁鲁(Honolulu/檀香山)，波利尼西亚三角航海网北顶点，史前大溪地远洋双体舟北上定居之地，库克船长北太平洋航线与跨太平洋帆船贸易核心枢纽；按2026-10-25标准：≤1700年常住数千人<1万且无石砖城垣 → 城寨',
+        note: '🔴 [2026-11-07 按史补依据] 夏威夷火奴鲁鲁；火奴鲁鲁(Honolulu/檀香山)，波利尼西亚三角航海网北顶点，史前大溪地远洋双体舟北上定居之地，库克船长北太平洋航线与跨太平洋帆船贸易核心枢纽；按2026-10-25标准：≤1700年常住数千人<1万且无石砖城垣 → 城寨；🔴 [2026-11-11 补标] 【建筑风格代理】夏威夷Heiau神庙，取最近南岛MALAY。',
     },
     {
         id: 'city_sainthelena',
@@ -2425,17 +2425,17 @@ export const CITIES_V2: CityDataV2[] = [
         note: '🔴 [2026-11-07 按史补依据] 印加托梅班巴；印加帝国北方副都；普马蓬戈神庙与驻防聚落人口约1.5–2万；按2026-10-25标准：城居>1万 → 小城',
     },
     // ── 2026-10-24 主人「添加据点」：环非洲 7 港（本地文化判定，见 docs/02-design/海路网-单一口径-2026-10-24.md）──
-    { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate；推算：城居 1.2 万（基尔瓦苏丹国都城，鼎盛逾万人）→ 小城' },
-    { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa' },
-    { id: 'city_malindi', name: '马林迪', factionId: 'malindi', lat: -3.2192, lng: 40.1169, type: 'small_city', region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', troops: 10000, note: '马林迪（Malindi，汉籍「麻林地」）：斯瓦希里海岸城邦，与蒙巴萨争霸；1414 年马林迪使节随郑和船队入明朝贡（献麒麟长颈鹿），是郑和航线最南的已知节点之一。鼎盛逾万人 → 小城（2026-10-25）。【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（与基尔瓦/蒙巴萨同例，非精确）' },
-    { id: 'city_barawa', name: '布拉瓦', factionId: 'mogadishu', lat: 1.1000, lng: 44.0300, type: 'stockade', region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', troops: 10000, note: '布拉瓦（Barawa／Baraawe，汉籍「卜剌哇」）：索马里贝纳迪尔海岸斯瓦希里城邦，郑和船队东非分䑸所至；中世纪人口无学术估算 → 按「算不出一律城寨」。【建筑风格代理】同东非，取埃塞俄比亚分支' },
-    { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；摩加迪沙（Mogadishu；索马里语 Muqdisho，旧称 Xamar 哈马，汉籍「木骨都束」）：摩加迪沙苏丹国都城（10–16世纪）。伊本·白图泰 1331 年记其为「极大的城」，有环城石墙、圆柱宣礼塔、Almnara 塔；人口无学术估算 → 城寨。按史＋依据：https://en.wikipedia.org/wiki/Sultanate_of_Mogadishu 、https://en.wikipedia.org/wiki/Mogadishu' },
+    { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate；推算：城居 1.2 万（基尔瓦苏丹国都城，鼎盛逾万人）→ 小城；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：基尔瓦苏丹国都城，珊瑚石大清真寺与胡苏尼库布瓦宫；取最近ORIE。' },
+    { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：斯瓦希里伊斯兰港市，姆纳拉与曼德里清真寺；取最近ORIE。' },
+    { id: 'city_malindi', name: '马林迪', factionId: 'malindi', lat: -3.2192, lng: 40.1169, type: 'small_city', region: 'ETHIOPIANS', buildingStyle: 'ORIE', troops: 10000, note: '马林迪（Malindi，汉籍「麻林地」）：斯瓦希里海岸城邦，与蒙巴萨争霸；1414 年马林迪使节随郑和船队入明朝贡（献麒麟长颈鹿），是郑和航线最南的已知节点之一。鼎盛逾万人 → 小城（2026-10-25）。【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（与基尔瓦/蒙巴萨同例，非精确）；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：斯瓦希里伊斯兰港市，珊瑚石建筑与季风帆船通商；取最近ORIE。' },
+    { id: 'city_barawa', name: '布拉瓦', factionId: 'mogadishu', lat: 1.1000, lng: 44.0300, type: 'stockade', region: 'ETHIOPIANS', buildingStyle: 'ORIE', troops: 10000, note: '布拉瓦（Barawa／Baraawe，汉籍「卜剌哇」）：索马里贝纳迪尔海岸斯瓦希里城邦，郑和船队东非分䑸所至；中世纪人口无学术估算 → 按「算不出一律城寨」。【建筑风格代理】同东非，取埃塞俄比亚分支；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：布拉瓦伊斯兰海商名城，珊瑚石宅与清真寺；取最近ORIE。' },
+    { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；摩加迪沙（Mogadishu；索马里语 Muqdisho，旧称 Xamar 哈马，汉籍「木骨都束」）：摩加迪沙苏丹国都城（10–16世纪）。伊本·白图泰 1331 年记其为「极大的城」，有环城石墙、圆柱宣礼塔、Almnara 塔；人口无学术估算 → 城寨。按史＋依据：https://en.wikipedia.org/wiki/Sultanate_of_Mogadishu 、https://en.wikipedia.org/wiki/Mogadishu；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：摩加迪沙苏丹国，1269法赫鲁丁清真寺，沙斐仪派印度洋海商；取最近ORIE。' },
     { id: 'city_mozambique', name: '莫桑比克', factionId: 'putaoya', lat: -15.03, lng: 40.74, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡属莫桑比克岛；莫桑比克岛（Ilha de Moçambique；斯瓦希里 Msumbiji）：1507 年特里斯唐·达·库尼亚取岛设商站，1507–1898 为**葡属东非首府**；北半部珊瑚石「石城」Cidade de Pedra（圣塞巴斯蒂昂堡 1558–1620，撒哈拉以南非洲现存最完整古堡）、医院、教堂群为葡属石构，故建筑风格取葡萄牙（殖民新建/长期统治城按实际建成层）；守将＝葡属东非镇守将。岛域仅95.7公顷、史无人口估算 → 城寨。按史＋依据：https://whc.unesco.org/en/list/599/ 、https://en.wikipedia.org/wiki/Island_of_Mozambique 、https://en.wikipedia.org/wiki/Fort_S%C3%A3o_Sebasti%C3%A3o_(Mozambique)' },
     { id: 'city_luanda', name: '罗安达', factionId: 'putaoya', lat: -8.8383, lng: 13.2344, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡属安哥拉罗安达；罗安达（Luanda）：1576年1月25日保罗·迪亚士·德·诺瓦伊斯建城（São Paulo da Assunção de Loanda），**葡属安哥拉首府**（1576–1621 都城），1576 年前只有姆本杜 axiluanda 渔村、城的建筑层是葡萄牙石构（圣米格尔堡 1576、主教座堂 1679），故建筑风格取葡萄牙（与果阿/萨尔瓦多同例：殖民新建城按实际建成层）；守将＝葡属安哥拉镇守将。17世纪人口无可靠统计（税册1781年9755）→ 城寨。按史＋依据：https://en.wikipedia.org/wiki/Luanda 、https://en.wikipedia.org/wiki/Portuguese_Angola 、https://en.wikipedia.org/wiki/Angolan_Wars' },
     { id: 'city_cape_town', name: '开普敦', factionId: 'nidelan', lat: -33.9253, lng: 18.4239, type: 'stockade', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 荷兰开普殖民地（文档登记飞地）；开普敦（Cape Town／Kaapstad，科伊语 ǁHui!gaeb「云聚之处」）：1652年4月6日荷属东印度公司建补给站，**荷属开普殖民地首府**；好望堡（1666–79）与 Cape Dutch 石构/砖构为本地实际建成层，按殖民新建城取荷兰（日耳曼）风格；守将＝开普殖民地指挥官。1652年约90人、1754年12,239人（>1万＝小城）。按史＋依据：https://en.wikipedia.org/wiki/History_of_Cape_Town 、https://en.wikipedia.org/wiki/Cape_Colony；推算：城居 0.2 万（开普敦，1652 年东印度公司补给站 0.2 万）→ 城寨' },
     { id: 'city_aden', name: '亚丁', factionId: 'zuraid', lat: 12.7855, lng: 45.0187, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 也门亚丁；亚丁（Aden／عدن，古称 Eudaemon「幸福之城」，汉籍唐「三兰」、明「阿丹」）：祖拉伊德王朝（Banū Zuraiʿ，1083–1174）都城；拉苏里德时期约8万人口（>1万、<10万＝小城）。塔维拉蓄水池（希米亚尔 275 年始凿）、阿班清真寺、希拉堡；伊本·赫尔敦记「也门最坚固之城，多数以石筑」。按史＋依据：https://en.wikipedia.org/wiki/Aden 、https://en.wikipedia.org/wiki/Zurayid_dynasty；推算：城居 3.5 万（亚丁港城，拉苏里德时期约 3–5 万；原 8 万说偏大不取）→ 小城' },
 
-    { id: 'city_moyoro', name: '莫约罗', factionId: 'ayinu_ezo', lat: 44.02, lng: 144.27, type: 'stockade', troops: 10000, region: 'AINU', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 北海道鄂霍次克文化遗址（网走莫约罗）；北海道东部阿伊努民族与鄂霍次克文化起源遗址莫约罗' },
+    { id: 'city_moyoro', name: '莫约罗', factionId: 'ayinu_ezo', lat: 44.02, lng: 144.27, type: 'stockade', troops: 10000, region: 'AINU', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 北海道鄂霍次克文化遗址（网走莫约罗）；北海道东部阿伊努民族与鄂霍次克文化起源遗址莫约罗；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN。' },
 
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' , note: '🔴 [2026-11-07 按史补依据] 玻俄提亚底比斯（希腊本土中北部）；推算：城居 3 万（古典底比斯，同期希腊大邦城居 2–4 万）→ 小城' },
@@ -2448,7 +2448,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_verona', name: '维罗纳', factionId: 'kelite', lat: 45.43, lng: 10.99, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 威尼托维罗纳；推算：城居 2.5 万（中世纪维罗纳，1300 年前后约 2–3 万）→ 小城' },
     { id: 'city_palermo', name: '巴勒莫', factionId: 'xixiliwangguo', lat: 38.11, lng: 13.36, type: 'medium_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS' , note: '🔴 [2026-11-07 按史补依据] 西西里巴勒莫；按 2026-10-25 标准：城居 12–15 → 中城' },
 
-    { id: 'city_bremen', name: '不莱梅', factionId: 'hansa', lat: 53.07, lng: 8.8, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 威悉河口汉萨城；🔴 [2026-11-07 第一步·只看据点] 不来梅是威悉河口的汉萨城市，属条顿区域（德意志＋波罗的海汉萨城市）；原 FRANKS 不符；推算：城居 1.5 万（不莱梅，中世纪 1–2 万）→ 小城' },
+    { id: 'city_bremen', name: '不莱梅', factionId: 'hansa', lat: 53.07, lng: 8.8, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'SAXONS' , note: '🔴 [2026-11-07 按史补依据] 威悉河口汉萨城；🔴 [2026-11-07 第一步·只看据点] 不来梅是威悉河口的汉萨城市，属条顿区域（德意志＋波罗的海汉萨城市）；原 FRANKS 不符；推算：城居 1.5 万（不莱梅，中世纪 1–2 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 GERMANIC→SAXONS（精确）：威悉河下游古撒克逊核心城，低地撒克逊语；两可判给据点少者。' },
 
         { id: 'city_anbulajiya', name: '安布拉基亚', factionId: 'yipilusi', lat: 39.16, lng: 20.98, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 伊庇鲁斯安布拉基亚（今阿尔塔）；伊庇鲁斯王国古都·皮洛士大帝王都·希腊西方锁钥；推算：城居 1 万（伊庇鲁斯古都，同期希腊中型城 1 万上下）→ 小城' },
 { id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'SPARTANS', note: '🔴 [2026-11-07 按史补依据] 拉科尼亚斯巴达；定级依据§6.2：斯巴达非关隘/要塞/堡垒，按城市判级；全邦国4–5万为拉科尼亚口径，城内为无城墙散村远低于此 → 小城；推算：城居 5 万（note 记 5 万）→ 小城' },
@@ -2461,7 +2461,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
-    { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 达尔马提亚拉古萨（今杜布罗夫尼克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'LATIN', note: '🔴 [2026-11-07 按史补依据] 达尔马提亚拉古萨（今杜布罗夫尼克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 SLAVIC→LATIN（代理）：拉古萨共和国，天主教拉丁—威尼斯海商城邦，意大利建筑师所筑海防棱堡与总督宫；取最近LATIN。' },
 
     { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_si', lat: 57.7, lng: 11.97, type: 'small_city', troops: 10000, region: 'SWEDISH', buildingStyle: 'VIKINGS' , note: '🔴 [2026-11-07 按史补依据] 瑞典西海岸哥德堡；🔴 [2026-11-07 第一步·只看据点] 哥德堡在瑞典西海岸，属维京/斯堪的纳维亚区域；原 GERMANIC 不符（VIKINGS 5 城少于 GERMANIC 22 城，两说都通取少的一方）；推算：城居 1 万（哥德堡，1700 年前后 1 万上下）→ 小城' },
     { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'stockade', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 梅克伦堡汉萨城；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
@@ -2512,9 +2512,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_nantes', name: '南特', factionId: 'bulietani', lat: 47.21, lng: -1.55, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '🔴 [2026-11-07 按史补依据] 布列塔尼边境南特；推算：城居 1.5 万（南特，中世纪 1–2 万）→ 小城' },
     { id: 'city_florence', name: '佛罗伦萨', factionId: 'florence', lat: 43.76, lng: 11.25, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 托斯卡纳佛罗伦萨；按 2026-10-25 标准：城居 11–12 → 中城' },
     { id: 'city_venice', name: '威尼斯', factionId: 'kelite', lat: 45.44, lng: 12.31, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 威尼斯共和国；按 2026-10-25 标准：城居 13.5–15.8 → 中城' },
-        { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 大希腊塔兰托；大希腊第一古都·塔兰托湾港口·斯巴达海外移民古都' },
+        { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'SPARTANS', note: '🔴 [2026-11-07 按史补依据] 大希腊塔兰托；大希腊第一古都·塔兰托湾港口·斯巴达海外移民古都；🔴 [2026-11-11 按史改] 据点文化 GREECE→SPARTANS（精确）：斯巴达帕尔泰尼人公元前706年所建海外殖民母邦，多立克拉科尼亚传统；两可判给据点少者。' },
 { id: 'city_naples', name: '那不勒斯', factionId: 'xixiliwangguo', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 那不勒斯王国；按 2026-10-25 标准：城居 25–40 → 中城' },
-    { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'small_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 加泰罗尼亚巴塞罗那（文档登记归意大利）；按 2026-10-25 标准：城居 6.4–7.3 → 小城' },
+    { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'small_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'SPANISH' , note: '🔴 [2026-11-07 按史补依据] 加泰罗尼亚巴塞罗那（文档登记归意大利）；按 2026-10-25 标准：城居 6.4–7.3 → 小城；🔴 [2026-11-11 按史改] 据点文化 LATIN→SPANISH（精确）：阿拉贡王冠核心王都，加泰罗尼亚哥特石构，与萨拉戈萨、巴伦西亚同系。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：格拉纳达：西班牙安达卢斯
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'ORIE' , note: '🔴 [2026-11-07 按史补依据] 安达卢斯格拉纳达；按 2026-10-25 标准：城居 10–16.5 → 中城' },
     { id: 'city_genoa', name: '热那亚', factionId: 'kelimiya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN' , note: '🔴 [2026-11-07 按史补依据] 热那亚共和国；按 2026-10-25 标准：城居 8–12 → 中城' },
@@ -2525,7 +2525,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhytomyr', name: '日托米尔', factionId: 'jialixiya', lat: 50.25, lng: 28.65, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 乌克兰日托米尔；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 普法尔茨海德堡；存疑补注（2026-10-28）：海德堡＝城堡山选侯堡＋内卡河谷老城（1196 建制、1386 大学城），非守道关塞；1700 前城居人口待考（约 5 千–1 万）→ 按 2026-10-25 标准②③疑应改小城，报主待审' },
-    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 易北河口汉萨城；按 2026-10-25 标准：城居 7–7.5 → 小城' },
+    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'SAXONS' , note: '🔴 [2026-11-07 按史补依据] 易北河口汉萨城；按 2026-10-25 标准：城居 7–7.5 → 小城；🔴 [2026-11-11 按史改] 据点文化 GERMANIC→SAXONS（精确）：易北河下游古撒克逊北阿尔宾吉亚，低地撒克逊语；两可判给据点少者。' },
     { id: 'city_lubeck', name: '吕贝克', factionId: 'hansa', lat: 53.87, lng: 10.69, type: 'small_city', region: 'HRE', buildingStyle: 'GERMANIC', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 汉萨同盟吕贝克；吕贝克（Lübeck）：汉萨同盟总部与自由市，特拉维河畔（距波罗的海 15 km，河海港），波罗的海—北海转运枢纽，荷尔斯泰因门与七塔城；14 世纪城居约 2.3 万 → 小城（2026-10-25）。低地日耳曼砖构，故 GERMANIC' },
     { id: 'city_amsterdam', name: '阿姆斯特丹', factionId: 'nidelan', lat: 52.3676, lng: 4.9041, type: 'medium_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 荷兰阿姆斯特丹；1275 年 10 月 27 日弗洛里斯五世通行税特许状首见「Amestelledamme」（阿姆斯特尔河坝）；1602 年 VOC 总部，17 世纪欧洲第三大城；1650 年城居约 20 万 → 中城（2026-10-25）。🔴 [2026-11-02 主人令「替换掉乌特勒支」] 原位乌特勒支（前 47 罗马要塞 Trajectum）已改为阿姆斯特丹' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'BRITONS' , note: '🔴 [2026-11-07 按史补依据] 英格兰约克（罗马 Eboracum—中世纪约克）；🔴 [2026-11-07 按史·第一步] buildingStyle DANES→BRITONS：约克的实际建筑层是罗马 Eboracum 石城墙（多角塔尚存）→ 盎格鲁-撒克逊诺森布里亚 → 中世纪英格兰石城墙与约克大教堂；维京约维克（866–954，88 年）只有木构遗迹，不构成建筑层。67 键里对应英格兰的是 BRITONS（不列颠＝英格兰—布列塔尼，伦敦、牛津、温彻斯特同键）。region 仍记 VIKINGS（地理分区，不改）。推算：城居 1.1 万（约克，1300 年前后约 1.1 万）→ 小城' },
@@ -2543,7 +2543,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '🔴 [2026-11-07 按史补依据] 普罗旺斯阿维尼翁；推算：城居 2 万（阿维尼翁（教廷驻地）1300 年前后 2 万上下）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：米兰：意大利，用意大利古典石堡
     { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 10000, region: 'LOMBARDS', buildingStyle: 'LATIN', note: '🔴 [2026-11-07 按史补依据] 米兰公国；伦巴第王国早期重镇与中世纪铁王冠要邑；按 2026-10-25 标准：城居 15–20 → 中城' },
-    { id: 'city_palma', name: '帕尔马', factionId: 'jiatailuoniya', lat: 39.57, lng: 2.65, type: 'small_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'LATIN', note: '🔴 [2026-11-07 按史补依据] 帕尔马公国；2026-11-05 主人令添加；马略卡岛首府帕尔马（Palma de Mallorca）；离最近据点巴塞罗那约 205km' },
+    { id: 'city_palma', name: '帕尔马', factionId: 'jiatailuoniya', lat: 39.57, lng: 2.65, type: 'small_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 帕尔马公国；2026-11-05 主人令添加；马略卡岛首府帕尔马（Palma de Mallorca）；离最近据点巴塞罗那约 205km；🔴 [2026-11-11 按史改] 据点文化 LATIN→SPANISH（精确）：马略卡岛帕尔马（非意大利帕尔马公国），阿拉贡王冠哥特石构。' },
     { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-11-07 按史补依据] 东哥特王国都城拉文纳；🔴 [2026-10-24 主人定「按建议改」] 风格保留 GOTHS：拉文纳虽以早期基督教/拜占庭马赛克（圣维塔莱等）著称，但 493–540 年为东哥特王国都城（狄奥多里克宫廷、阿里乌斯洗礼堂），本地政权段成立；旧审核提 MEDI 不取。改 BYZANTINE 会把狄奥多里克/奥多亚克/霍诺留三将带成非哥特文化，故维持。；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-11-07 按史补依据] 西哥特都城托莱多；🔴 [2026-10-05 主人令「建筑风格必须当地」] 托莱多是**西哥特王国都城**（554–711，托莱多公会议所在地，西哥特王冠还愿物出土地），也是 62 类「哥特」的据点（城堡 GOTH_CASTLE_AGE3）→ 挂 GOTHS（一级 WEST）。旧值 CASTILE／MEDI（卡斯蒂利亚—西班牙）是后来的政权。；按 2026-10-25 标准：城居 4–6 → 小城' },
@@ -2587,7 +2587,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_luoma', name: '罗马', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA' , note: '🔴 [2026-11-07 按史补依据] 罗马城；按 2026-10-25 标准：城居 80–100 万 → 大城' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '🔴 [2026-11-07 按史补依据] 阿提卡雅典；定级依据§6.2：雅典非关隘/要塞/堡垒，按城市判级；城墙内+比雷埃夫斯 12–18万（公元前431年，古典人口学通行算法）>10万 → 中城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：加的斯：西班牙
-    { id: 'city_jiadisi', name: '加的斯', factionId: 'buni', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER' , note: '🔴 [2026-11-07 按史补依据] 安达卢斯加的斯；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
+    { id: 'city_jiadisi', name: '加的斯', factionId: 'buni', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'SPANISH' , note: '🔴 [2026-11-07 按史补依据] 安达卢斯加的斯；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城；🔴 [2026-11-11 按史改] 据点文化 BERBER→SPANISH（精确）：加的斯，1262年收复后天主教西班牙海防石城。' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡萄牙里斯本；🔴 [2026-10-05 主人令「建筑风格必须是当地的，和殖民者、武将没关系」] 里斯本是**葡萄牙王国首都**（1147 年阿方索一世自摩尔人手中收复，葡萄牙本土），风格挂葡萄牙（PORTUGUESE／一级 MEDI）—— 它同时是 62 类「葡萄牙」的据点（城堡 PORT_CASTLE_AGE3）。旧值 LATIN_CASTLE（意大利）与本地不符。；按 2026-10-25 标准：城居 11–18.8 → 中城' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 奥地利公国都城；哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city；推算：城居 2.5 万（维也纳，中世纪约 2–2.5 万）→ 小城' },
@@ -2733,7 +2733,7 @@ buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
     },
     { id: 'city_qiji', name: '普禄', factionId: 'feiyaka', lat: 51.5800, lng: 140.0000, type: 'stockade', region: 'MANCHU',
 buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
-        note: '🔴 [2026-11-07 按史补依据] 库页岛普禄；普禄；费雅喀小城',
+        note: '🔴 [2026-11-07 按史补依据] 库页岛普禄；普禄；费雅喀小城；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛渔猎聚落，取最近NORTHEAST。',
     },
     // ── 2026-05-28 新增：伊勒巴斯(希瓦)、南杰(日土宗) ──
     { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'han_d', lat: 38.0011, lng: 100.9125, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '🔴 [2026-11-07 按史补依据] 祁连山大斗拔谷（扁都口）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
@@ -2795,7 +2795,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         buildingStyle: 'JAPAN' },
     { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'ryukyu', lat: 28.4540, lng: 129.6740, type: 'pass', region: 'JAPAN_IMPERIAL',
 buildingStyle: 'JAPAN', troops: 10000, tier: 4,
-        note: '🔴 [2026-11-07 按史补依据] 奄美赤木名；赤木名城；奄美关隘',
+        note: '🔴 [2026-11-07 按史补依据] 奄美赤木名；赤木名城；奄美关隘；🔴 [2026-11-11 补标] 【建筑风格代理】奄美按司石城，67键无琉球，取最近JAPAN。',
     },
 
     // ── 2026-05-28 新增：康区藏族土司/部落据点 ──
@@ -2889,7 +2889,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：轮台：汉轮台屯田、西域都护地，塔里木
-    { id: 'city_luntai', name: '轮台', factionId: 'han_d', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'HEXI' , note: '🔴 [2026-11-07 按史补依据] 汉轮台屯田城（塔里木北道，文档登记飞地）；推算：城居 1.2 万（轮台，汉西域屯田城，同期 1–1.5 万）→ 小城' },
+    { id: 'city_luntai', name: '轮台', factionId: 'han_d', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 汉轮台屯田城（塔里木北道，文档登记飞地）；推算：城居 1.2 万（轮台，汉西域屯田城，同期 1–1.5 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 HEXI→WESTERN（精确）：塔里木盆地北道腹地西域都护府故地，绿洲屯城，非河西走廊。' },
 
     { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'pass', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MONGOL', troops: 10000,
@@ -2901,7 +2901,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：淖毛湖：哈密北境回部（维吾尔）牧地，归鞑靼（中亚）
-    { id: 'city_naomaohu', name: '淖毛湖', factionId: 'xiongnu', lat: 43.279321, lng: 94.713135, type: 'stockade', troops: 10000, region: 'STEPPE_ANTIQUITY', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 伊吾淖毛湖；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_naomaohu', name: '淖毛湖', factionId: 'xiongnu', lat: 43.279321, lng: 94.713135, type: 'stockade', troops: 10000, region: 'STEPPE_ANTIQUITY', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 伊吾淖毛湖；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：东天山北麓伊吾戈壁草场，北匈奴呼衍部驻牧。' },
 
     { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.97439, lng: 99.113159, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 汉漠北稽落山；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
@@ -3457,12 +3457,12 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     // 占城国（林邑/环王国）佛临城阇槃；与占婆国（美山）分立，各 1 势力 1 据点
-    { id: 'city_dupan', name: '阇槃', factionId: 'champa', lat: 13.93, lng: 109.11, type: 'small_city', troops: 10000, region: 'SEAS', buildingStyle: 'VIETNAMESE' , note: '🔴 [2026-11-07 按史补依据] 占城阇槃（今藩朗）；推算：城居 1 万（阇槃，扶南属国都 1 万）→ 小城' },
+    { id: 'city_dupan', name: '阇槃', factionId: 'champa', lat: 13.93, lng: 109.11, type: 'small_city', troops: 10000, region: 'SEAS', buildingStyle: 'KHMER' , note: '🔴 [2026-11-07 按史补依据] 占城阇槃（今藩朗）；推算：城居 1 万（阇槃，扶南属国都 1 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 VIETNAMESE→KHMER（代理）：占婆毗阇耶王都，红砖神庙塔群；同美山取最近KHMER。' },
 
     // 孟邦墨侬族故地
     { id: 'city_bangdun', name: '邦敦', factionId: 'nongzhigao', lat: 12.87, lng: 107.8, type: 'stockade', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 越南邦敦（归仁）；邦敦；墨侬小城', region: 'SEAS',
-        buildingStyle: 'VIETNAMESE' },
+        note: '🔴 [2026-11-07 按史补依据] 越南邦敦（归仁）；邦敦；墨侬小城；🔴 [2026-11-11 按史改] 据点文化 VIETNAMESE→KHMER（代理）：西原高地孟—高棉语族墨侬人猎象聚落，取同语族KHMER。', region: 'SEAS',
+        buildingStyle: 'KHMER' },
     // 水真腊南境部族
     { id: 'city_sanpu', name: '三菩', factionId: 'chenla', lat: 12.77, lng: 105.97, type: 'stockade', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 柬埔寨三菩；三菩；水真小城', region: 'SEAS',
@@ -3482,10 +3482,10 @@ buildingStyle: 'TIBET', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 羊卓雍错一带吉麦；吉麦；贡唐小城',
     },
     // ── 2026-06-11 新增：库页岛民族据点 ──
-    { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 库页岛诺托罗；库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
-    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 黑龙江口白主；库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
-    { id: 'city_bailao', name: '白老', factionId: 'ayinu_ezo', lat: 42.55, lng: 141.36, type: 'stockade', region: 'AINU', buildingStyle: 'JAPAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 胆振白老；北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
-    { id: 'city_zonggu', name: '宗谷', factionId: 'ayinu_ezo', lat: 45.5, lng: 141.93, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 北见宗谷；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 库页岛诺托罗；库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛鄂罗克/阿伊努渔猎聚落，取最近NORTHEAST。' },
+    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 黑龙江口白主；库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛骨嵬/吉里迷渔猎聚落，取最近NORTHEAST。' },
+    { id: 'city_bailao', name: '白老', factionId: 'ayinu_ezo', lat: 42.55, lng: 141.36, type: 'stockade', region: 'AINU', buildingStyle: 'JAPAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 胆振白老；北海道南端据泊地方，阿伊努传统聚落（白老古名）；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN。' },
+    { id: 'city_zonggu', name: '宗谷', factionId: 'ayinu_ezo', lat: 45.5, lng: 141.93, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 北见宗谷；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN。' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'manzhou_d', lat: 46.9, lng: 134.1, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '🔴 [2026-11-07 按史补依据] 明锡尔喀（乌苏里江北）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     { id: 'city_niman', name: '尼满', factionId: 'wure', lat: 45.51, lng: 131.96, type: 'stockade', region: 'MOHE', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 明尼满河（乌苏里江）；兀惹部乌昭度居地（《辽史》）' },
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境据点 ──
@@ -3508,7 +3508,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
 
-    { id: 'city_gugudao', name: '平良', factionId: 'ryukyu', lat: 24.805, lng: 125.281, type: 'stockade', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 宫古岛平良；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_gugudao', name: '平良', factionId: 'ryukyu', lat: 24.805, lng: 125.281, type: 'stockade', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 宫古岛平良；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 补标] 【建筑风格代理】琉球宫古/先岛石城聚落，67键无琉球，取最近JAPAN。' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：哲德：锡尔河下游毡的故址一带，乌古斯后钦察，归库曼 CUMAN
     { id: 'city_qihe', name: '哲德', factionId: 'xierhe', lat: 44.2219, lng: 64.3332, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 锡尔河哲德；锡尔河下游Jand/毡的故址一带（哲德为异译）；乌古斯后钦察要城；非七河地区' },
@@ -3521,7 +3521,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     // ── 2026-06-20 新增：卡伦·图斯 ──
-    { id: 'city_tusi', name: '图斯', factionId: 'ansxi', lat: 36.45, lng: 59.57, type: 'small_city', region: 'SASANIAN', buildingStyle: 'PERSIAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 呼罗珊图斯；古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸；推算：城居 1.5 万（图斯，萨珊东北边防元帅驻跸 1.5 万）→ 小城' },
+    { id: 'city_tusi', name: '图斯', factionId: 'ansxi', lat: 36.45, lng: 59.57, type: 'small_city', region: 'SASANIAN', buildingStyle: 'SASANIAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 呼罗珊图斯；古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸；推算：城居 1.5 万（图斯，萨珊东北边防元帅驻跸 1.5 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 PERSIAN→SASANIAN（精确）：呼罗珊图斯，萨珊卡伦氏领地与东北边防重镇。' },
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
     { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.36, type: 'stockade', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 锡斯坦博斯特（今拉什卡尔加）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
@@ -3723,7 +3723,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 10000, region: 'SEASIA_CASTLE', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 爪哇满者伯夷特罗武兰；满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉；按 2026-10-25 标准：城居 查不到；按遗址约 100km² 的密集聚落与都城地位推算 5–10 → 中城' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 阿杰梅尔＝乔汉王朝都城（拉杰普特/印度西部）→ GURJARAS；原标 INDIA
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 10000, region: 'GURJARAS', buildingStyle: 'GURJARAS', note: '🔴 [2026-11-07 按史补依据] 拉贾斯坦阿杰梅尔；乔汉(遮娄其)王朝都城，普里特维抗古尔；按 2026-10-25 标准：城居 5–10 → 中城' },
-    { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'GHANA', buildingStyle: 'AFRICA', note: '🔴 [2026-11-07 按史补依据] 马里帝国库姆比萨利赫；🔴 [2026-10-25 按史] 大区 AFRICA→GHANA：库姆比萨利赫＝加纳帝国（瓦加杜）都城，属加纳大区；建筑文化仍 AFRICA（与加纳军团同文化）。加纳古都，苏曼古鲁攻占后为索索都城；推算：城居 2 万（库姆比萨利赫，加纳古都 2 万）→ 小城' },
+    { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'GHANA', buildingStyle: 'AFRICA', note: '🔴 [2026-11-07 按史补依据] 马里帝国库姆比萨利赫；🔴 [2026-10-25 按史] 大区 AFRICA→GHANA：库姆比萨利赫＝加纳帝国（瓦加杜）都城，属加纳大区；建筑文化仍 AFRICA（与加纳军团同文化）。加纳古都，苏曼古鲁攻占后为索索都城；推算：城居 2 万（库姆比萨利赫，加纳古都 2 万）→ 小城；🔴 [2026-11-11 补标] 【建筑风格代理】索宁克人加纳帝国都城，67键无加纳，取最近AFRICA（马里系）。' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 叙利亚沿海（Laodicea）；安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-18 按据点] 据点本身是古叙利亚港市拉塔基亚（塞琉古 Laodicea，罗马/拜占庭/阿拉伯/奥斯曼层），实体建筑以中东石构为主；十字军是一段外来政权，不据此定风格；博希蒙德是武将与据点错配，待改武将。；推算：城居 1 万（拉塔基亚，古叙利亚港市 1 万上下）→ 小城' },
     { id: 'city_lansi', name: '兰斯', factionId: 'gaolu', lat: 49.26, lng: 4.03, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '🔴 [2026-11-07 按史补依据] 法兰西兰斯；法兰西加冕城，1429年贞德护查理七世于此加冕；定级依据§6.2：兰斯非关隘/要塞/堡垒（主教城、加冕城），按城市判级；罗马盛期3–5万（de Planhol《An Historical Geography of France》p.47；另有「或至10万」之不确说），1793年32,334，17世纪前未达10万 → 小城。按史＋依据：https://en.wikipedia.org/wiki/Reims；推算：城居 5 万（note 记 5 万）→ 小城' },
     // 🔴 [2026-10-18 按史] 卡那封城堡为爱德华一世铁环城堡群之首，实建为英格兰/萨伏伊规制石堡 → BRITONS；不取凯尔特。
@@ -3755,7 +3755,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kawunas', name: '卡乌纳斯', factionId: 'litaowan', lat: 54.90, lng: 23.91, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '🔴 [2026-11-07 按史补依据] 立陶宛卡乌纳斯；立陶宛第二城，科斯图提斯1362年在此抵御条顿骑士团；按 2026-10-25 标准：立陶宛考纳斯城堡城，城居约 1 万 → 小城' },
     { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'baojialiya', lat: 44.12, lng: 27.26, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '🔴 [2026-11-07 按史补依据] 多瑙河畔多布罗加德鲁斯塔尔（多罗斯托隆）；🔴 [2026-11-07 第一步·只看据点] 多瑙河南岸多布罗加，属保加利亚 BULGARIANS 区域，原 SLAVIC 不符；多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：也儿的石：额尔齐斯河上游乃蛮故地（屈出律退守处），归鞑靼（中亚草原）
-    { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 也儿的石河（额尔齐斯）；额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部' },
+    { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 也儿的石河（额尔齐斯）；额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：额尔齐斯河上游乃蛮故地，蒙古—阿尔泰草原牙帐。' },
     { id: 'city_mierkefu', name: '密尔科夫', factionId: 'kuman_oleshky', lat: 45.65, lng: 27.05, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 顿河下游密尔科夫（库曼）；喀尔巴阡东麓库曼主教区要塞；吉尔根汗驻此，精锐库曼骑。🔴 [2026-10-24 按史·同阿克曼法] 建筑风格 SLAVIC→CUMAN：1228 年教廷设库曼主教区（Diocese of Cumania，1228–1241），主教座在 Milcov 河「civitas de Mylco」（后世主教称 Milkovia 主教），本地即库曼之地、无斯拉夫政权建筑层；66 分支取 CUMAN（库曼草原要塞）→ 吉尔根汗（库曼汗）文化随之为库曼，军团回「城堡时代库曼军团」。原 SLAVIC 会把库曼汗带成斯拉夫「博亚尔重骑军团」。依据：英文维基 Roman Catholic Diocese of Cumania（see 在 Milcov 河、库曼人地域）。；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_oleshky', name: '奥列什基', factionId: 'kuman_oleshky', lat: 46.61, lng: 32.72, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 第聂伯河口奥列什基；第聂伯河口木栅商埠；库曼忽炭汗驻牧，精锐库曼弓骑 T1', mirror: true },
     { id: 'city_saksin', name: '萨克辛', factionId: 'kuman_oleshky', lat: 46.72, lng: 47.92, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 伏尔加河口萨克辛；伏尔加三角洲夯土砖石要塞，水陆咽喉；钦察巴奇曼驻此，精锐斡勒轻骑 T2；萨克辛（伏尔加下游萨克斯因城），城居 2–4 万 → 小城', mirror: true },
@@ -3772,7 +3772,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 太平洋新增据点（全库此前无马里亚纳/查莫罗任何记录）
     // 🔴 [2026-10-13 主人令「查不到的一律城寨」] 定级：非险要（拉特石柱是屋基、无石头城墙）→ 城市档；
     //    阿加尼亚**单邑城居人口史料查不到**，不许拿全岛 4–10 万去推一个村落 ⇒ 按「算不出来一律按城寨」落 **城寨(stockade)**。
-    { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '🔴 [2026-11-07 按史补依据] 关岛阿加尼亚；阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
+    { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '🔴 [2026-11-07 按史补依据] 关岛阿加尼亚；阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。；🔴 [2026-11-11 补标] 【建筑风格代理】密克罗尼西亚查莫罗拉提石聚落，取最近南岛MALAY。' },
     { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '🔴 [2026-11-07 按史补依据] 佛兰德—勃艮第里尔；好人菲利普1454年野鸡宴会誓师东征之地；推算：城居 2 万（里尔，中世纪佛兰德城 1.5–2.5 万）→ 小城' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
     { id: 'city_hawadeng', name: '哈瓦登', factionId: 'weiershigongguo', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '🔴 [2026-11-07 按史补依据] 威尔士哈瓦登；戴菲德1282年突袭英军城堡点燃威尔士抗英终战；定级依据§6.2：威尔士哈瓦登城堡，石墙 → 险要' },
@@ -3830,7 +3830,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_alepo', name: '阿勒颇', factionId: 'ayoubu', lat: 36.2, lng: 37.16, type: 'medium_city', troops: 10000, region: 'MAMLUKS', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 叙利亚阿勒颇；阿尤布都，黎凡特商路枢纽；按 2026-10-25 标准：城居 8–12 → 中城' },
     // ── 2026-08-04 新增：埃德萨（奥斯若恩国都；十字军埃德萨伯国首府）──
     { id: 'city_aidesa', name: '埃德萨', factionId: 'aosiruowen', lat: 37.15, lng: 38.7825, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 美索不达米亚北部埃德萨（今乌尔法）；今土耳其乌尔法（Şanlıurfa）；塞琉古建城名埃德萨，奥斯若恩王国国都；叙利亚基督教中心；1098–1144十字军埃德萨伯国首府；与尼尼微—阿勒颇走廊十字路口。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.1674,38.7955 偏离 2.25 公里，按英文维基百科 Edessa 坐标改为 37.15,38.7825。🔴 [2026-10-18 按据点] 据点本身是奥斯若恩/叙利亚古城埃德萨，实体建筑主体为罗马—拜占庭—叙利亚石构；十字军伯国是一段外来政权，不据此定风格；鲍德温是武将与据点错配，待改武将。；按 2026-10-25 标准：城居 2–4 → 小城' },
-    { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 10000, region: 'KHAZARS', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 里海西岸杰尔宾特（萨珊关城）；打耳班（杰尔宾特）＝里海西岸萨珊「铁门」要塞（双层城墙垒石存世），守高加索通道 → 险要（2026-10-25 标准②）' },
+    { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 10000, region: 'KHAZARS', buildingStyle: 'SASANIAN', note: '🔴 [2026-11-07 按史补依据] 里海西岸杰尔宾特（萨珊关城）；打耳班（杰尔宾特）＝里海西岸萨珊「铁门」要塞（双层城墙垒石存世），守高加索通道 → 险要（2026-10-25 标准②）；🔴 [2026-11-11 按史改] 据点文化 PERSIAN→SASANIAN（精确）：萨珊霍斯劳一世所筑杰尔宾特巨石长城，萨珊关塞。' },
     { id: 'city_miletus', name: '米利都', factionId: 'aiaoniya', lat: 37.5303, lng: 27.2783, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 爱奥尼亚米利都；伊奥尼亚第一城、爱琴海东岸大港，公元前334年米利都围城战的目标城（英文维基百科 Siege of Miletus 信息框坐标 37°31′49″N 27°16′42″E，即今土耳其艾登省迪迪姆）。定级依据§6.2：英文维基百科 Miletus 信息框未给人口（只给遗址面积 90 公顷），公元前334年人口无可靠数字 → 按规则兜底城寨。' },
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' , note: '🔴 [2026-11-07 按史补依据] 爱奥尼亚以弗所；按 2026-10-25 标准：城居 10–20 → 中城' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.9289, lng: 32.8547, type: 'small_city', troops: 10000, region: 'HITTITES', buildingStyle: 'TURKS', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚中部安卡拉（加拉太）；🔴 [2026-10-25] 安卡拉原主保留加拉太（加拉太王国首都，史实；不归赫梯，避免加拉太势力 0 据点）；🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.93,32.87 偏离安卡拉城 1.31 公里，按英文维基百科 Ankara 坐标改为 39.9289,32.8547。；推算：城居 1.5 万（安卡拉，青铜—古典城 1.5 万）→ 小城' },
@@ -3877,7 +3877,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 卡斯蒂利亚马德里；定级依据§6.2：马德里非关隘/要塞/堡垒（中世纪城镇，非纯军事要塞），按城市判级；16世纪末8.5–9.5万（Carbajo Isla《La población de la Villa de Madrid desde el siglo XVI》，Revista de Demografía Histórica III, 1984；Modernalia 转录），属「10万左右、边缘模糊」→ 中城。按史＋依据：https://www.modernalia.es/items/show/1401；按 2026-10-25 标准：城居 4.9–13 → 中城' },
     { id: 'city_numantia', name: '努曼提亚', factionId: 'arevaci', lat: 41.81, lng: -2.43, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 凯尔特伊比利亚努曼提亚；努曼提亚（凯尔特伊比利亚阿雷瓦西人核心要塞，杜罗河上游梅塞塔高原；有石砌城墙，按城判小城）；2026-10-25 为古典时代凯尔特伊比利亚军团新建，建筑文化按伊比利亚中部区域判 SPANISH' },
     { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡萄牙波尔图；波尔图；杜罗河口，葡萄牙国名发源地。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土城市，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。；推算：城居 1.5 万（波尔图，中世纪 1–2 万）→ 小城' },
-    { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'stockade', troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚西北角（文档登记飞地）；🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.95,26.23 偏离特洛伊遗址 1.13 公里，按英文维基百科 Troy 坐标改为 39.9575,26.2389。；推算：城居 0.5 万（特洛伊（Hisarlık）遗址，青铜时代小城 0.5 万）→ 城寨' },
+    { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'stockade', troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚西北角（文档登记飞地）；🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.95,26.23 偏离特洛伊遗址 1.13 公里，按英文维基百科 Troy 坐标改为 39.9575,26.2389。；推算：城居 0.5 万（特洛伊（Hisarlık）遗址，青铜时代小城 0.5 万）→ 城寨；🔴 [2026-11-11 按史改] 据点文化 ORIE→GREECE（精确）：特洛伊/伊利昂，伊奥利亚希腊城邦与希腊化神庙剧场。' },
 
     { id: 'city_bashila', name: '巴士拉', factionId: 'womaya', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 伊拉克巴士拉；巴士拉；阿拉伯帝国 636 年军事营地；按 2026-10-25 标准：城居 10–15 → 中城' },
     { id: 'city_tenochtitlan', name: '特诺奇提特兰', factionId: 'aztec', lat: 19.43, lng: -99.13, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '🔴 [2026-11-07 按史补依据] 阿兹特克都城特诺奇提特兰；阿兹特克帝国都城，特斯科科湖心岛；按 2026-10-25 标准：城居 20–40 → 中城' },
@@ -3889,17 +3889,17 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_bacata', name: '巴卡塔', factionId: 'muisca', lat: 4.71, lng: -74.07, type: 'small_city', troops: 10000, region: 'MUISCA', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 穆伊斯卡巴卡塔（今波哥大）；穆伊斯卡联盟西帕首府，今波哥大；按 2026-10-25 标准：城居 2–4 → 小城' },
     { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 瓜纳巴拉湾（里约）；图皮塔莫约核心湾，阿拉里博亚战场；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_onondaga', name: '奥农多加', factionId: 'yiluokui', lat: 43.05, lng: -76.15, type: 'stockade', troops: 10000, region: 'IROQUOIS', buildingStyle: 'AMERICA', note: '易洛魁联盟「中央火塘」所在，五族大议事会驻地。🔴 [2026-10-18] 66 无 IROQUOIS 分支，建筑风格仍 AMERICA 供文化/军团；城堡外观用 VIKI_CASTLE_AGE3（诺斯长屋环形要塞）代理长屋+木栅，不再用 MESO 金字塔。；按 2026-10-25 标准：城居 0.1–0.3 → 城寨' },
-    { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 奇穆都城昌昌；奇穆王国都城，前哥伦布时期美洲最大土坯城；按 2026-10-25 标准：城居 6–10 → 中城' },
-    { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'small_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '🔴 [2026-11-07 按史补依据] 米却肯钦聪灿（塔拉斯坎）；塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」；按 2026-10-25 标准：城居 2.5–4 → 小城' },
+    { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 奇穆都城昌昌；奇穆王国都城，前哥伦布时期美洲最大土坯城；按 2026-10-25 标准：城居 6–10 → 中城；🔴 [2026-11-11 补标] 【建筑风格代理】奇穆王国土坯城，67键无奇穆，取最近INCA。' },
+    { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'small_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '🔴 [2026-11-07 按史补依据] 米却肯钦聪灿（塔拉斯坎）；塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」；按 2026-10-25 标准：城居 2.5–4 → 小城；🔴 [2026-11-11 补标] 【建筑风格代理】塔拉斯坎圆形阶梯金字塔Yacata，67键无塔拉斯坎，取最近AMERICA。' },
     // 🔴 [2026-10-18 主人令] 新阿姆斯特丹按建城者（荷兰西印度公司）定 SAXONS（低地日耳曼/北海砖木要塞）；旧注释「归 BRITONS」作废。
     { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'nidelan', lat: 40.71, lng: -74.01, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '🔴 [2026-11-07 按史补依据] 荷兰北美殖民地（文档登记飞地）；荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约；推算：城居 0.5 万（新阿姆斯特丹，1626 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：魁北克：法兰西殖民地（新法兰西）
     { id: 'city_quebec', name: '魁北克', factionId: 'gaolu', lat: 46.81, lng: -71.21, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '🔴 [2026-11-07 按史补依据] 法属北美魁北克（文档登记飞地）；尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽；推算：城居 0.5 万（魁北克，1608 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：阿卡普尔科：西班牙殖民地（马尼拉大帆船港）
     { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xibanya', lat: 16.85, lng: -99.92, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属新西班牙太平洋岸港；新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗；推算：城居 0.5 万（阿卡普尔科，马尼拉帆船终点 0.5 万）→ 城寨' },
-    { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'stockade', troops: 10000, region: 'TAIRONA', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 加勒比岸特尤纳（泰罗纳）；泰罗纳石阶山城（失落之城），圣玛尔塔内华达山；定级依据§6.2：特尤纳为聚落/山城（Buritaca-200，35ha、169级石台地、约1000座房屋），按城市判级；人口推测2,000–8,000未达1万 → 城寨' },
+    { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'stockade', troops: 10000, region: 'TAIRONA', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 加勒比岸特尤纳（泰罗纳）；泰罗纳石阶山城（失落之城），圣玛尔塔内华达山；定级依据§6.2：特尤纳为聚落/山城（Buritaca-200，35ha、169级石台地、约1000座房屋），按城市判级；人口推测2,000–8,000未达1万 → 城寨；🔴 [2026-11-11 按史改] 据点文化 INCA→MUISCA（代理）：泰罗纳山城，与穆伊斯卡同属奇布查语系、同金铜祭祀信仰，从未属印加；取最近MUISCA。' },
     // 🔴 [2026-10-18 按史] 圣胡利安港历史上从未建过欧洲永久石造城郭/要塞，仅麦哲伦等临时泥木锚地；真实长期实体建筑为特维尔切木骨皮蒙营帐，故取南安第斯 MAPUCHE（无 TEHUELCHE 分支）。
-    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'stockade', troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '🔴 [2026-11-07 按史补依据] 巴塔哥尼亚圣胡利安港（文档登记飞地）；1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来；推算：城居 0.1 万（圣胡利安港，1520 麦哲伦越冬锚地 0.1 万）→ 城寨' },
+    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'stockade', troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '🔴 [2026-11-07 按史补依据] 巴塔哥尼亚圣胡利安港（文档登记飞地）；1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来；推算：城居 0.1 万（圣胡利安港，1520 麦哲伦越冬锚地 0.1 万）→ 城寨；🔴 [2026-11-11 补标] 【建筑风格代理】巴塔哥尼亚特维尔切营地，取最近MAPUCHE。' },
     // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──
     //  1501 韦斯普奇船队：里斯本 → 佛得角 → 借东北信风横渡 → 圣罗克角 → 沿岸南下
     //  → 1502-01-01 发现瓜纳巴拉湾（误认作河，命名 Rio de Janeiro）。
@@ -3916,7 +3916,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xibanya', lat: 19.19, lng: -96.14, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属新西班牙墨西哥湾港；科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km；推算：城居 0.8 万（韦拉克鲁斯，1519 建港 0.8 万）→ 城寨' },
     // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
     // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
-    { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 加勒比岸亚拉（文档登记飞地）；古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
+    { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 加勒比岸亚拉（文档登记飞地）；古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）；🔴 [2026-11-11 补标] 【建筑风格代理】古巴泰诺人木屋村寨，67键无泰诺，取最近TUPI。' },
     { id: 'city_havana', name: '哈瓦那', factionId: 'xibanya', lat: 23.13, lng: -82.38, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属古巴哈瓦那；西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人；按 2026-10-25 标准：城居 0.8–1.5 → 小城' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '🔴 [2026-11-07 按史补依据] 加那利特尔德；大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系。🔴 [2026-10-24 按史] 建筑风格 AFRICA→BERBER：关切人（Guanches）是**柏柏尔人**的一支（语言属柏柏尔语族），加那利石屋—土堡与柏柏尔卡斯巴同系；AFRICA（西非马里泥土城）不符。无将驻守。；推算：城居 0.3 万（特尔德，大加那利关切人王城 0.3 万）→ 城寨' },
     { id: 'city_angra', name: '安格拉', factionId: 'putaoya', lat: 38.66, lng: -27.22, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 亚速尔特塞拉岛安格拉；亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌；推算：城居 0.3 万（安格拉，亚速尔中继港 0.3 万）→ 城寨。🔴 [2026-11-04 按历史修复] 亚速尔是葡萄牙属地、非独立政权，据点归葡萄牙（原误挂 yasuer）' },
@@ -3957,7 +3957,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：万象：澜沧（寮）王国都城，同圈
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'KHMER', note: '🔴 [2026-11-07 按史补依据] 澜沧王国万象；澜沧王国后期首都，塔銮所在地；推算：城居 1 万（万象，澜沧王国都城 1 万）→ 小城' },
     { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 10000, region: 'KUSH', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】麦罗埃属努比亚/库施，66 文化无库施分支，取最近东非分支埃塞俄比亚（代理，非精确）；库施王国都城，黑金字塔群；推算：城居 2 万（麦罗埃，库施都城 2 万）→ 小城' },
-    { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'inca', lat: -16.554, lng: -68.673, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 的的喀喀湖蒂亚瓦纳科；前印加蒂亚瓦纳科文明中心；定级依据§6.2：城内1万–3万（Parsons 1968等主流；Kolata 11.5万为离群高值），未达中城10万门槛 → 小城；推算：城居 2 万（蒂亚瓦纳科，城内 1–3 万）→ 小城' },
+    { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'inca', lat: -16.554, lng: -68.673, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 的的喀喀湖蒂亚瓦纳科；前印加蒂亚瓦纳科文明中心；定级依据§6.2：城内1万–3万（Parsons 1968等主流；Kolata 11.5万为离群高值），未达中城10万门槛 → 小城；推算：城居 2 万（蒂亚瓦纳科，城内 1–3 万）→ 小城；🔴 [2026-11-11 补标] 【建筑风格代理】前印加蒂亚瓦纳科巨石城，取最近INCA。' },
     { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'small_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '🔴 [2026-11-07 按史补依据] 奥里萨普里；印度教圣城，贾格纳特神庙；定级依据§6.2：城内常住17世纪推断1万–3万（1901年官方49334），未达中城10万门槛 → 小城；推算：城居 2 万（普里，17 世纪约 1–3 万）→ 小城' },
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '🔴 [2026-11-07 按史补依据] 毗奢耶那伽罗亨比；毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一；按 2026-10-25 标准：城居 50–60 万 → 大城' },
     { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '🔴 [2026-11-07 按史补依据] 德干比贾布尔；比贾布尔苏丹国都，戈尔贡巴兹；按 2026-10-25 标准：城居 10–20 → 中城' },
@@ -3987,7 +3987,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：色雷斯鲁西翁（Rousion）：1206 年保加利亚破拉丁帝国处，该地在拜占庭/拉丁帝国核心区
     { id: 'city_luxiweng', name: '鲁西翁', factionId: 'baojialiya', lat: 40.88, lng: 26.63, type: 'stockade', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '🔴 [2026-11-07 按史补依据] 色雷斯鲁西翁（君士坦丁堡近郊）；色雷斯要塞鲁西翁(Rousion)；1206年保加利亚沙皇卡洛扬率库曼骑兵于此大破拉丁帝国军（鲁西翁之战）；推算：城居 0.5 万（鲁西翁，色雷斯要塞 0.5 万）→ 城寨' },
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 穆伊斯卡索加莫索；古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁；定级依据§6.2：圣地非常住城（超地方政治体400–700人，朝圣者定期聚集不常住；Fajardo 2016），人口不足一万 → 按规则判城寨' },
-    { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 伊瓜苏河口；伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），人口不足一万 → 按规则判城寨' },
+    { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 伊瓜苏河口；伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），人口不足一万 → 按规则判城寨；🔴 [2026-11-11 补标] 【建筑风格代理】瓜拉尼人长屋，取最近TUPI。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
     { id: 'city_banama', name: '巴拿马', factionId: 'xibanya', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属巴拿马地峡城；老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址；推算：城居 1 万（老巴拿马城，1519 建 1 万）→ 小城' },
     // 🔴 [2026-11-02 主人令「添加波多韦洛据点」] 圣费利佩-德波多韦洛：西属美洲珍宝船队大西洋白银大帆船装船要塞港
@@ -3998,7 +3998,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
     { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xibanya', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属新格拉纳达港；卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队；推算：城居 1.2 万（卡塔赫纳·德·印迪亚斯，1533 建城 1.2 万）→ 小城' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '🔴 [2026-11-07 按史补依据] 埃塞俄比亚拉利贝拉；古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地；定级依据§6.2：中世纪城居人口无可靠数字（现代镇区8484/17367），人口不足一万 → 按规则判城寨' },
-    { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】阿达尔/泽拉属东非索马里，66 文化无斯瓦希里/索马里分支，取最近东非分支埃塞俄比亚（代理，非精确）；泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部；推算：城居 0.3 万（泽拉，阿达尔港镇 0.3 万）→ 城寨' },
+    { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '【建筑风格代理】阿达尔/泽拉属东非索马里，66 文化无斯瓦希里/索马里分支，取最近东非分支埃塞俄比亚（代理，非精确）；泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部；推算：城居 0.3 万（泽拉，阿达尔港镇 0.3 万）→ 城寨；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：阿达尔苏丹国古都，逊尼派伊斯兰与红海海商，珊瑚石清真寺；取最近ORIE。' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'aqimeinide', lat: 40.1322, lng: 28.0504, type: 'stockade', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚西北波斯总督驻地（文档登记飞地）；阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'small_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'BENGALIS', note: '🔴 [2026-11-07 按史补依据] 孟加拉比什努普尔；定级依据§6.2：17世纪王都推断5000–20000（1901年官方19090；城墙7英里设防王都），未达中城10万门槛 → 小城；推算：城居 1.2 万（比什努普尔，17 世纪王都约 0.5–2 万，取 1.2 万）→ 小城' },
     { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '🔴 [2026-11-07 按史补依据] 保加利亚巴巴维达；维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
@@ -4046,7 +4046,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yinfeineisi', name: '因弗内斯', factionId: 'scotland', lat: 57.48, lng: -4.22, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '🔴 [2026-11-07 按史补依据] 苏格兰因弗内斯；因弗内斯（Inverness）：苏格兰高地首府、因弗内斯城堡；城居不足 1 万、市镇无石墙（仅城堡）→ 城寨（木栅，同 CELTS 文化与斯昆等 CELTS 城口径）' },
     { id: 'city_andahuaylas', name: '安达瓦伊拉斯', factionId: 'chanka', lat: -13.6556, lng: -73.3872, type: 'stockade', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 印加安达瓦伊拉斯；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 安达瓦伊拉斯（Andahuaylas），昌卡（Chanka）部族联盟的核心谷地，印加帝国崛起前最大的敌手。定级依据：无史料人口 → 城寨。归属：势力「昌卡」。' },
     { id: 'city_yamaguchi', name: '山口', factionId: 'ouchi', lat: 34.1861, lng: 131.4714, type: 'small_city', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 周防山口（大内氏）；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 山口（周防国），大内氏的城下町，仿京都格局，号称"西京"，16世纪人口估计过万。定级依据：城下町常住人口过万、未达10万 → 小城。归属：势力「大内」（大内氏，陶晴贤为家老）。；推算：城居 2 万（山口，大内氏城下町，同期 2 万）→ 小城' },
-    { id: 'city_comagre', name: '科马格雷', factionId: 'cueva', lat: 8.95, lng: -78.15, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 穆伊斯卡科马格雷；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 科马格雷（Comagre），达连地区库埃瓦（Cueva）酋邦酋长的村落，巴尔沃亚1510年所访。定级依据：无史料人口 → 城寨；位置取达连地区库埃瓦酋邦区域的约数，待主人核。归属：势力「库埃瓦」。' },
+    { id: 'city_comagre', name: '科马格雷', factionId: 'cueva', lat: 8.95, lng: -78.15, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 穆伊斯卡科马格雷；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 科马格雷（Comagre），达连地区库埃瓦（Cueva）酋邦酋长的村落，巴尔沃亚1510年所访。定级依据：无史料人口 → 城寨；位置取达连地区库埃瓦酋邦区域的约数，待主人核。归属：势力「库埃瓦」。；🔴 [2026-11-11 补标] 【建筑风格代理】巴拿马库埃瓦木构宫寨，取最近MUISCA。' },
     { id: 'city_ahmedabad', name: '艾哈迈达巴德', factionId: 'gujarat', lat: 23.0225, lng: 72.5714, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', note: '🔴 [2026-11-07 按史补依据] 古吉拉特艾哈迈达巴德；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 艾哈迈达巴德（Ahmedabad），1411年艾哈迈德沙一世所建，古吉拉特苏丹国都城，16世纪城居数十万。定级依据：16世纪城内人口估计数十万，达10万门槛、未达50万 → 中城。归属：势力「古吉拉特」（古吉拉特苏丹国）。' },
     { id: 'city_miaowu', name: '妙乌', factionId: 'arakan', lat: 20.5925, lng: 93.1953, type: 'medium_city', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '🔴 [2026-11-07 按史补依据] 若开妙乌；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 妙乌（Mrauk-U），1430年建，阿拉干王国都城，17世纪为孟加拉湾贸易大港，城居估计十余万。定级依据：17世纪城居估计达10万、未达50万 → 中城。归属：势力「阿拉干」（1666年吉大港守军）。' },
     { id: 'city_batavia', name: '巴达维亚', factionId: 'nidelan', lat: -6.1352, lng: 106.8133, type: 'small_city', troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 巴达维亚（今雅加达）；🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 巴达维亚（Batavia），1619年荷兰东印度公司（VOC）建于雅加达旧址的亚洲总部，17世纪中叶城居约两三万。定级依据：人口过万、未达10万 → 小城；建筑风格看据点当地（爪哇）。归属：势力「荷兰东印度公司」（热兰遮城长官揆一的主公）。' },
@@ -4072,13 +4072,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_norwich', name: '诺里奇', factionId: 'danmai', lat: 52.63, lng: 1.3, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '🔴 [2026-11-07 按史补依据] 东盎格利亚诺里奇；诺里奇；东盎格利亚最大城（古思伦丹麦维京统治），中世纪人口约 1 万 → 小城；推算：城居 1 万（诺里奇，中世纪约 1 万）→ 小城' },
     // 🔴 [2026-11-03 主人批准超长陆路增补中间据点]
     { id: 'city_taghaza', name: '塔加扎', factionId: 'mulabite', lat: 23.62, lng: -5.00, type: 'stockade', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '🔴 [2026-11-07 按史补依据] 撒哈拉塔加扎盐矿；🔴 [2026-11-03 主人批准新建] 塔加扎（Taghaza），西撒哈拉商道核心盐矿重镇（廷巴克图—马拉喀什中点）；伊本·白图泰1352年亲访记其以岩盐砌屋，穆拉比特王朝与马里、桑海先后控扼此地。定级依据：沙漠盐矿聚落常住人口数千、不足1万，无石筑城郭 → 城寨(stockade)。建筑风格：柏柏尔(BERBER)。' },
-    { id: 'city_atacama', name: '阿塔卡马', factionId: 'inca', lat: -22.91, lng: -68.20, type: 'pass', troops: 10000, region: 'AMERICA', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 阿塔卡马沙漠；🔴 [2026-11-03 主人批准新建] 阿塔卡马（San Pedro de Atacama / Pukará de Quitor），阿塔卡马沙漠最大绿洲与印加南道要塞（蒂亚瓦纳科—瓦尔帕莱索中点）；12世纪筑基托尔石筑普卡拉山堡（Pukará de Quitor），15世纪图帕克·印加·尤潘基南征智利由此推进，1540年巴尔迪维亚攻取此石堡。定级依据：绿洲咽喉具完整石筑山堡城垣 → 关隘(pass)。建筑风格：印加(INCA)。' },
+    { id: 'city_atacama', name: '阿塔卡马', factionId: 'inca', lat: -22.91, lng: -68.20, type: 'pass', troops: 10000, region: 'AMERICA', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 阿塔卡马沙漠；🔴 [2026-11-03 主人批准新建] 阿塔卡马（San Pedro de Atacama / Pukará de Quitor），阿塔卡马沙漠最大绿洲与印加南道要塞（蒂亚瓦纳科—瓦尔帕莱索中点）；12世纪筑基托尔石筑普卡拉山堡（Pukará de Quitor），15世纪图帕克·印加·尤潘基南征智利由此推进，1540年巴尔迪维亚攻取此石堡。定级依据：绿洲咽喉具完整石筑山堡城垣 → 关隘(pass)。建筑风格：印加(INCA)。；🔴 [2026-11-11 补标] 【建筑风格代理】阿塔卡梅尼奥石堡Pukara，取最近INCA。' },
     { id: 'city_nicaragua', name: '尼加拉瓜', factionId: 'xibanya', lat: 11.44, lng: -85.83, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属尼加拉瓜；🔴 [2026-11-03 主人批准新建] 尼加拉瓜（里瓦斯地峡/格拉纳达，科潘—巴拿马中点濒海港埠）；1524年弗朗西斯科·埃尔南德斯·德·科尔多瓦在此建城，控太平洋沿岸与尼加拉瓜湖航道，16世纪辖区印第安与西裔人口逾万 → 小城(small_city)。建筑风格：西班牙(SPANISH)。' },
     { id: 'city_mendoza', name: '门多萨', factionId: 'xibanya', lat: -32.89, lng: -68.84, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属库约门多萨；🔴 [2026-11-03 主人批准新建] 门多萨（Mendoza），安第斯山东麓库约地区首府（布宜诺斯艾利斯—科利普利/瓦尔帕莱索中道重镇）；1561年佩德罗·德尔·卡斯蒂略始建、1562年胡安·胡弗雷迁址重建，控乌斯帕亚塔山口通道。定级依据：殖民初期城居数千、不足1万 → 城寨(stockade)。建筑风格：西班牙(SPANISH)。' },
     { id: 'city_saopaulo', name: '圣保罗', factionId: 'putaoya', lat: -23.35, lng: -46.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡属巴西圣保罗；🔴 [2026-11-03 主人批准新建] 圣保罗（São Paulo de Piratininga），巴西皮拉蒂宁加高原内陆重镇（瓜纳巴拉—伊瓜苏内陆进军大本营）；1554年建城，17世纪为保利斯塔旗队（Bandeirantes）拉波索·塔瓦雷斯西征瓜伊拉（伊瓜苏）的出发基地。定级依据：16—17世纪城居数千、不足1万 → 城寨(stockade)。建筑风格：葡萄牙(PORTUGUESE)。' },
     { id: 'city_sanaa', name: '萨那', factionId: 'ayoubu', lat: 15.35, lng: 44.21, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 也门萨那；🔴 [2026-11-03 主人批准新建] 萨那（Sanaa），也门高原古都（亚丁—麦加内陆要冲）；自萨巴王国与希木叶尔王国以来即为南阿拉伯高原都会，1174年阿尤布王朝图兰沙平定也门驻节于此，鼎盛期城居人口约10万 → 中城(medium_city)。建筑风格：阿拉伯(ORIE)。' },
     // 🔴 [2026-11-03 主人批准超长海路增补中转岛屿据点]
-    { id: 'city_nanmadol', name: '南马都尔', factionId: 'bolinixiya', lat: 6.84, lng: 158.33, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 波纳佩南马都尔；🔴 [2026-11-03 主人批准新建] 南马都尔（Nan Madol / 波纳佩 Pohnpei），西太平洋密克罗尼西亚加罗林群岛核心（火奴鲁鲁/穆阿—阿加尼亚/德尔纳特跨洋中转枢纽）；12—17世纪绍德雷尔王朝（Saudeleur）以玄武岩巨石于珊瑚礁人工岛上筑起海上王城。定级依据：常住贵族与祭司约千余人、不足1万 → 城寨(stockade)。建筑风格：马来/南岛(MALAY)。' },
+    { id: 'city_nanmadol', name: '南马都尔', factionId: 'bolinixiya', lat: 6.84, lng: 158.33, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 波纳佩南马都尔；🔴 [2026-11-03 主人批准新建] 南马都尔（Nan Madol / 波纳佩 Pohnpei），西太平洋密克罗尼西亚加罗林群岛核心（火奴鲁鲁/穆阿—阿加尼亚/德尔纳特跨洋中转枢纽）；12—17世纪绍德雷尔王朝（Saudeleur）以玄武岩巨石于珊瑚礁人工岛上筑起海上王城。定级依据：常住贵族与祭司约千余人、不足1万 → 城寨(stockade)。建筑风格：马来/南岛(MALAY)。；🔴 [2026-11-11 补标] 【建筑风格代理】波纳佩玄武岩水上巨石城，取最近南岛MALAY。' },
     { id: 'city_bermuda', name: '百慕大', factionId: 'yinggelan', lat: 32.38, lng: -64.68, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'BRITONS', note: '🔴 [2026-11-07 按史补依据] 英属百慕大；🔴 [2026-11-03 主人批准新建] 百慕大（Bermuda / St. George\'s），西大西洋远洋航道核心中转岛（安格拉/特尔德—北美东岸与加勒比各港中继站）；1609年英格兰弗吉尼亚公司舰队司令乔治·萨默斯率船队在此开辟殖民据点（又称萨默斯群岛 Somers Isles），1612年建圣乔治镇与海防石堡。定级依据：17世纪常住数千人、不足1万 → 城寨(stockade)。建筑风格：不列颠(BRITONS)。' },
     // 🔴 [2026-11-05 主人批准新建] 商路补点第一批（广宁、安市城、布尔戈斯、都灵、埃武拉）
     { id: 'city_guangning', name: '广宁', factionId: 'ming_d', lat: 41.6, lng: 121.8, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI', note: '🔴 [2026-11-07 按史补依据] 明广宁卫（今北镇），辽东；🔴 [2026-11-05 主人批准新建] 广宁（今辽宁北镇，医巫闾山南麓）：明辽东镇总兵府、辽东巡抚驻地，辽西走廊中枢；李成梁镇此，天启二年广宁之战王化贞弃城；推算：城居约 3 万（辽西第一重镇、有城墙）→ 小城；与徒河、棘城均 ≥50km' },
@@ -4091,7 +4091,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_bayonne', name: '巴约讷', factionId: 'gaolu', lat: 43.49, lng: -1.47, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '🔴 [2026-11-07 按史补依据] 加斯科涅巴约讷；🔴 [2026-11-05 主人批准新建] 巴约讷（Bayonne）：加斯科涅—西班牙边境要塞，沃邦筑城堡；1814 年图韦诺总督坚守对抗威灵顿；推算：≤1700 年城居约 1.2 万（有城墙）→ 小城；与波尔多 ≥50km' },
     { id: 'city_badajoz', name: '巴达霍斯', factionId: 'kasidiliya', lat: 38.88, lng: -6.97, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 埃斯特雷马杜拉巴达霍斯；🔴 [2026-11-05 主人批准新建] 巴达霍斯（Badajoz）：瓜迪亚纳河畔西葡边境要塞；1811 年梅纳乔守城战死、1812 年围城；推算：≤1700 年城居约 1.5 万（星形堡垒城墙）→ 小城；与埃武拉 ≥50km' },
     { id: 'city_pamplona', name: '潘普洛纳', factionId: 'kasidiliya', lat: 42.82, lng: -1.64, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 纳瓦拉潘普洛纳；🔴 [2026-11-05 主人批准新建] 潘普洛纳（Pamplona）：纳瓦拉王国都城，1521 年城堡守军抵抗法军—纳瓦拉联军，罗耀拉负伤；推算：≤1700 年城居约 1 万（有城墙、城堡）→ 小城；与巴约讷 ≥50km' },
-    { id: 'city_nis', name: '尼什', factionId: 'saierweiya', lat: 43.32, lng: 21.9, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'MAGYAR', note: '🔴 [2026-11-07 按史补依据] 巴尔干尼什；🔴 [2026-11-05 主人批准新建] 尼什（Niš，古奈苏斯）：巴尔干军事大道要冲，君士坦丁大帝故乡；1809 年车加尔山战役辛格利奇据山抗奥斯曼；推算：≤1700 年城居约 1.5 万（有城墙）→ 小城；与巴巴维达 ≥50km' },
+    { id: 'city_nis', name: '尼什', factionId: 'saierweiya', lat: 43.32, lng: 21.9, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 巴尔干尼什；🔴 [2026-11-05 主人批准新建] 尼什（Niš，古奈苏斯）：巴尔干军事大道要冲，君士坦丁大帝故乡；1809 年车加尔山战役辛格利奇据山抗奥斯曼；推算：≤1700 年城居约 1.5 万（有城墙）→ 小城；与巴巴维达 ≥50km；🔴 [2026-11-11 按史改] 据点文化 MAGYAR→SLAVIC（精确）：摩拉瓦河谷尼什，塞尔维亚东正教斯拉夫腹地，从未属马扎尔文化圈。' },
     // 🔴 [2026-11-05 主人批准新建] 商路补点第三批（锡瓦斯、埃尔津詹、梅里达；新势力三家）
     { id: 'city_sivas', name: '锡瓦斯', factionId: 'xiwasi', lat: 39.75, lng: 37.02, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚中部锡瓦斯（塞巴斯蒂亚）；🔴 [2026-11-05 主人批准新建] 锡瓦斯（Sivas，古塞巴斯泰亚）：安纳托利亚中部要冲，罗姆塞尔柱重镇；1381–1398 年卡迪·布尔汉丁于此称苏丹，1400 年帖木儿围城；推算：≤1700 年城居约 2 万（商队城、有城墙）→ 小城；与阿马西亚 ≥50km' },
     { id: 'city_erzincan', name: '埃尔津詹', factionId: 'mengguqieke', lat: 39.75, lng: 39.49, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '🔴 [2026-11-07 按史补依据] 安纳托利亚东部埃尔津詹；🔴 [2026-11-05 主人批准新建] 埃尔津詹（Erzincan）：幼发拉底河上游谷地，门古切克埃尔津詹支治所；1473 年奥特卢克贝利战役在其西；推算：≤1700 年城居约 1.5 万（商队城、有城墙）→ 小城；与埃尔祖鲁姆、锡瓦斯均 ≥50km' },
@@ -4106,7 +4106,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_guayaquil', name: '瓜亚基尔', factionId: 'xibanya', lat: -2.19, lng: -79.89, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '🔴 [2026-11-05 主人批准新建] 瓜亚基尔（Guayaquil）：瓜亚斯河口，太平洋岸皇家造船厂所在；1538 年奥雷利亚纳建城并任代理总督（武将自利马移来）；木屋无墙，人口待考 → 城寨；与托梅班巴 ≥50km' },
     { id: 'city_valdivia', name: '瓦尔迪维亚', factionId: 'xibanya', lat: -39.81, lng: -73.25, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属智利瓦尔迪维亚；🔴 [2026-11-05 主人批准新建] 瓦尔迪维亚（Valdivia）：智利南部深水军港，1552 年瓦尔迪维亚建城，1643 年荷兰布劳威尔占据；木栅城寨，人口待考 → 城寨；主人令 2026-11-05：无武将、距其他据点 >200km 作航线中转站（瓦尔迪维亚本人已挂瓦尔帕莱索，该处无其他将可移）' },
     { id: 'city_shimoda', name: '下田', factionId: 'hojo', lat: 34.68, lng: 138.95, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 伊豆下田；🔴 [2026-11-05 主人批准新建] 下田：伊豆半岛南端港口，北条水军基地；1590 年丰臣水军围下田城，清水康英死守；人口待考：≤1700 年城居人口查不到 → 城寨；与箱根关 ≥50km' },
-    { id: 'city_sofala', name: '索法拉', factionId: 'kilwa', lat: -20.18, lng: 34.73, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '🔴 [2026-11-05 主人批准新建] 索法拉（Sofala）：莫桑比克南部沿海黄金出口港，斯瓦希里城邦（基尔瓦属地）；【建筑风格代理】同基尔瓦；人口待考 → 城寨；主人令 2026-11-05：无武将、距其他据点 >200km 作航线中转站' },
+    { id: 'city_sofala', name: '索法拉', factionId: 'kilwa', lat: -20.18, lng: 34.73, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '🔴 [2026-11-05 主人批准新建] 索法拉（Sofala）：莫桑比克南部沿海黄金出口港，斯瓦希里城邦（基尔瓦属地）；【建筑风格代理】同基尔瓦；人口待考 → 城寨；主人令 2026-11-05：无武将、距其他据点 >200km 作航线中转站；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：斯瓦希里海岸最南伊斯兰黄金贸易港，同基尔瓦；取最近ORIE。' },
     { id: 'city_arica', name: '阿里卡', factionId: 'xibanya', lat: -18.48, lng: -70.31, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 西属秘鲁阿里卡；🔴 [2026-11-05 主人批准新建] 阿里卡（Arica）：波托西白银装船港；人口待考 → 城寨；主人令 2026-11-05：无武将、距其他据点 >200km 作航线中转站' },
     { id: 'city_palapag', name: '帕拉帕格', factionId: 'sumuroyi', lat: 12.57, lng: 125, type: 'stockade', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 菲律宾帕拉帕格；🔴 [2026-11-05 主人批准新建] 帕拉帕格（Palapag）：萨马岛北端，马尼拉大帆船进入菲律宾群岛的第一锚泊点；1649 年苏穆罗伊在此起事；木屋无墙，人口待考 → 城寨；与宿务 ≥50km' },
     // 🔴 [2026-11-05 主人批准新建] 航行中转站（昆仑岛、尼科巴）

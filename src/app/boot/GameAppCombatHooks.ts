@@ -16,7 +16,7 @@ import {
 } from '../../combat/GeneralSkillCombat';
 import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
 import { getFirstBattleBackground } from '../../data/GeneralFirstBattleBackgrounds';
-import { GENERAL_FIRST_BATTLES } from '../../data/GeneralFirstBattles';
+import { getClassicBattleById } from '../../data/GeneralFirstBattles';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
@@ -324,8 +324,10 @@ function startScene13War(
     const classicHeroGeneralId = (classicHeroUnit?.getEntity?.()?.classicBattleGeneralId as string | undefined)
         ?? classicHeroUnit?.generalId
         ?? null;
-    const classicBackground = classicHeroGeneralId ? (getFirstBattleBackground(classicHeroGeneralId) || null) : null;
-    const classicFb = classicHeroGeneralId ? GENERAL_FIRST_BATTLES[classicHeroGeneralId] : undefined;
+    // 🔴 [2026-11-11 一名将多场] 正在打的是哪一场：军团身上记的 classicBattleId（第一场＝generalId）
+    const classicBattleId = (classicHeroUnit?.getEntity?.()?.classicBattleId as string | undefined) ?? classicHeroGeneralId;
+    const classicBackground = classicBattleId ? (getFirstBattleBackground(classicBattleId) || null) : null;
+    const classicFb = getClassicBattleById(classicBattleId) ?? undefined;
     const battleKindLabel: '野战' | '攻城' | '守城' = battleType === 'siege'
         ? (classicFb?.battleType === 'siege'
             ? (classicFb.role === 'defender' ? '守城' : '攻城')

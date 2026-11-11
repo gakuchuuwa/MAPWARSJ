@@ -40,7 +40,7 @@ import {summarizeTechEffects, summarizeSingleTechEffect} from '../systems/Milita
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { GENERAL_FIRST_BATTLES } from '../data/GeneralFirstBattles';
+import { getClassicBattleById } from '../data/GeneralFirstBattles';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { EVENT_SITES } from '../data/eventSites';
@@ -4536,7 +4536,7 @@ export class CombatUI {
             return ent && !ent.__quickBattleRandom && (ent.isFirstBattleHero === true || !!ent.classicBattleGeneralId);
         });
         const classicHeroId = (classicHeroU?.getEntity?.()?.classicBattleGeneralId as string | undefined) ?? classicHeroU?.generalId ?? null;
-        const classicFb = classicHeroId ? GENERAL_FIRST_BATTLES[classicHeroId] : undefined;
+        const classicFb = getClassicBattleById((classicHeroU?.getEntity?.()?.classicBattleId as string | undefined) ?? classicHeroId) ?? undefined;
         const followedOnDef = followedId ? defenders.some(u => u.id === followedId) : false;
         const regionalKind: '野战' | '攻城' | '守城' = isSiegeRegional
             ? (classicFb?.battleType === 'siege'

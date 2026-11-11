@@ -26,7 +26,7 @@ export class ClassicBattleBriefingRunner {
 
     constructor(private readonly getSpeak: () => SpeakFn | undefined) {}
 
-    /** 正在为谁念（念完或停下后为 null） */
+    /** 正在念的是哪一场（经典战编号；念完或停下后为 null） */
     public currentGeneralId(): string | null { return this.generalId; }
 
     public isBusy(): boolean { return this.speaking; }

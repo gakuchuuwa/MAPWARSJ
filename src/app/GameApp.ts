@@ -383,6 +383,7 @@ export class GameApp {
                 );
             });
             // 🔴 [2026-11-11 主人定「只用于开局这批」] 开局这批名将：经典战没打不退场、打过等军团战败退场（见 getCentenarianStageWindow）
+            // 🔴 [2026-11-11 一名将多场] 还有没接的经典战＝pending，全部接过＝done
             setFirstBattleStatusProvider((generalId) =>
                 getGeneralFirstBattle(generalId)
                     ? (isFirstBattleDoneForBattle(generalId) ? 'done' : 'pending')

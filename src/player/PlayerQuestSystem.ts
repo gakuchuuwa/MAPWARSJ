@@ -12,7 +12,7 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
-import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode } from '../data/generalOnStage';
+import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode, getCurrentStageYear } from '../data/generalOnStage';
 import { getCityEliteLegionName, getFactionEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { FACTIONS } from '../data/factions';
@@ -43,8 +43,10 @@ import {
     getGeneralFirstBattle,
     markFirstBattleCompleted,
     isFirstBattleCompleted,
-    isFirstBattleDoneForBattle,
     clearCompletedFirstBattles,
+    getNextClassicBattle,
+    markClassicBattleCompleted,
+    battleIdOf,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
@@ -148,6 +150,8 @@ export interface PlayerQuest {
     };
     /** 武将首次会面·历史经典战状态 */
     firstBattle?: {
+        /** 🔴 [2026-11-11 一名将多场] 这一场的编号（第一场＝generalId） */
+        battleId: string;
         battleName: string;
         battleType: 'field' | 'siege';
         role: 'attacker' | 'defender';
@@ -348,6 +352,8 @@ const HOST_MOVE_EPS_DEG = 0.008;
  *   主人看着就是「军团不在安卡拉停驻」。拉开之后：一路走到城下，上一句还没念完才停。
  */
 const BRIEFING_ANCHOR_NEAR_KM = 15;
+/** 🔴 [2026-11-11 主人定] 守城战、野战经典战打赢：本军团获得「敌军开战兵力 × 此比例」的兵力 */
+const CLASSIC_WIN_TROOP_REWARD_RATIO = 0.5;
 /** 🔴 [2026-10-23 主人「起码一句话要保持在10秒以上吧」] 探马主线的旁白字幕每句至少挂多久 */
 export const MAINLINE_MIN_LINE_MS = 10000;
 const BRIEFING_HOLD_NEAR_KM = 2.5;
@@ -1985,8 +1991,9 @@ export class PlayerQuestSystem {
     private hasPendingFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {
         if (!generalId) return null;
         if (this.deps.hero.autoPlan === 'script') return null;
-        if (isFirstBattleCompleted(generalId)) return null;
-        return getGeneralFirstBattle(generalId);
+        // 🔴 [2026-11-11 主人令「不要在一局中触发同一场战役」「一名将多场、按年份触发」]
+        //    取他眼下能接的那一场：没接过（攻守任何一方接过都算接过）、游戏年份已到、最早的一场。
+        return getNextClassicBattle(generalId, getCurrentStageYear());
     }
 
     /**
@@ -2157,6 +2164,7 @@ export class PlayerQuestSystem {
         const metAtFront = !!opts?.metAtFront;
         if (!isGeneralOnStage(g.generalId)) return;
         markFirstBattleCompleted(g.generalId);
+        markClassicBattleCompleted(fb);   // 🔴 接下即记：这一局里这场（含攻守另一方）不再触发
         this.headingToEventGeneralId = null;
 
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
@@ -2206,6 +2214,7 @@ export class PlayerQuestSystem {
         (host as Army & { isFirstBattleHero?: boolean }).isFirstBattleHero = true;
         (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
         (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
+        (host as Army & { classicBattleId?: string }).classicBattleId = battleIdOf(fb);
         (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId =
             fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined);
         host.scriptMarchExempt = true;
@@ -2337,6 +2346,7 @@ export class PlayerQuestSystem {
             targetCityId: fb.targetCityId ?? city.id,
             targetCityName: fb.battleName,
             firstBattle: {
+                battleId: battleIdOf(fb),
                 battleName: fb.battleName,
                 battleType: effectiveBattleType,
                 role,
@@ -2567,6 +2577,7 @@ export class PlayerQuestSystem {
             delete (host as { isFirstBattleHero?: boolean }).isFirstBattleHero;
             delete (host as { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole;
             delete (host as { firstBattleTitle?: string }).firstBattleTitle;
+            delete (host as { classicBattleId?: string }).classicBattleId;
             delete (host as { firstBattleTargetCityId?: string }).firstBattleTargetCityId;
             delete (host as { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
@@ -2627,30 +2638,28 @@ export class PlayerQuestSystem {
             );
         }
 
-        // 🔴 [2026-10-29 主人令「按历史走，野战的后续要不要奖励据点，按历史走」] 推翻 10-20「所有野战剧情结束后要有据点奖励」：
-        //    野战经典战打赢后，只有史实记载这一仗拿下了某座城（数据里写了 rewardCityId，如牧野之战入朝歌）才给据点；
-        //    没写的一律不给，也不再「就近取一座」或把目标据点硬划过来（如洮西之战，姜维只是大破王经，并未夺城）。
-        let fieldRewardCity: City | undefined;
-        if (fbState?.battleType === 'field' && fbState.rewardCityId) {
-            const reward = this.deps.cityManager.getCity(fbState.rewardCityId);
-            if (reward) {
-                fieldRewardCity = reward;
-                if (reward.factionId !== q.factionId) {
-                    this.deps.cityManager.updateCity(
-                        reward.id,
-                        { factionId: q.factionId, troops: Math.max(reward.troops || 0, 3000) },
-                        { skipCaptureLog: true },
-                    );
-                    this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
-                    gameLog('expedition', `[玩家] 野战经典战奖励据点（按史）：${q.generalName} ${fbState.battleName} → ${reward.name}`);
-                }
-            }
-        }
+        // 🔴 [2026-11-11 主人令「经典战根据战争结果获取奖励：攻城战胜利获得据点，守城战、野战胜利获得兵力；
+        //    结果不用符合历史，按游戏走向来」] 取代 10-29「野战按史奖励据点（rewardCityId）」：野战不再给据点。
+        //    · 攻城胜：上面已把目标城划归我方；
+        //    · 守城胜 / 野战胜：本军团获得兵力 ＝ 敌军开战兵力的一半（收编降卒、就地募兵），不超过军团上限。
+        //    （本函数只在打赢时调用；打输走 failFirstBattle，没有奖励。）
+        const fieldRewardCity: City | undefined = undefined;
 
         // 确保经典战后出征军团兵力充足（至少 10,000 人），绝不因战损低于 5,000 而在本城解散
         const minContinueTroops = Math.max(10000, Math.min(fbState?.myTroops ?? 20000, 20000));
         if (host.getTroops() < minContinueTroops) {
             host.setTroops(minContinueTroops);
+        }
+        const wonTroopReward = fbState && (fbState.battleType === 'field' || fbState.role === 'defender');
+        if (wonTroopReward) {
+            const reward = Math.max(0, Math.round((fbState.enemyTroops || 0) * CLASSIC_WIN_TROOP_REWARD_RATIO));
+            const before = host.getTroops();
+            const after = Math.min(GameConfig.LEGION.ARMY_MAX_TROOPS, before + reward);
+            if (after > before) {
+                host.setTroops(after);
+                this.deps.notify(`🏆 【${fbState.battleName}】${fbState.battleType === 'field' ? '野战' : '守城'}大捷，${q.generalName}所部获得兵力 ${after - before}`);
+                gameLog('expedition', `[玩家] 经典战奖励兵力：${q.generalName} ${fbState.battleName} +${after - before}（${before}→${after}）`);
+            }
         }
         host.clearExternalCombatState();
         host.clearPostBattleRest();
@@ -3793,15 +3802,16 @@ export class PlayerQuestSystem {
     /** 🔴 [2026-11-11 主人定] 战略大局播报器：上一支军团解散、去找下一位武将时开念，开打时当段念完即收 */
     private readonly classicBriefing = new ClassicBattleBriefingRunner(() => this.deps.announceBriefing);
 
-    /** 为这位武将的经典战开念战略大局（已在念 / 已念过不重复） */
+    /** 为这位武将的这一场经典战开念战略大局（按场认：已在念 / 已念过不重复） */
     private beginClassicStrategicBriefing(generalId: string, fb: GeneralFirstBattle): void {
-        if (this.classicBriefing.hasStarted(generalId)) return;
+        const key = battleIdOf(fb);
+        if (this.classicBriefing.hasStarted(key)) return;
         const myFactionId = getFactionIdOfGeneral(generalId);
         const myFactionName = myFactionId ? this.deps.cityManager.getFactionName(myFactionId) : '';
         const generalName = getGeneralRecordByGeneralId(generalId)?.generalName ?? '';
         const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
         const paragraphs = getFirstBattleStrategicParagraphs(fb, { myFactionName, generalName, enemyFactionName });
-        this.classicBriefing.start(generalId, paragraphs);
+        this.classicBriefing.start(key, paragraphs);
         gameLog('expedition', `[玩家] 经典战战略播报开念：${generalName}【${fb.battleName}】共 ${paragraphs.length} 段`);
     }
 
@@ -3817,10 +3827,10 @@ export class PlayerQuestSystem {
      *   · 本场军团开打 → 当段念完就收，剩下的不念（战术模式那段等 S 级播报空闲就开口）。
      */
     private tickClassicBriefing(): void {
-        const runningFor = this.classicBriefing.currentGeneralId();
+        const runningFor = this.classicBriefing.currentGeneralId();   // 正在念的那一场的编号
         const q = this.quest;
         if (q?.kind === 'first_battle') {
-            if (runningFor && (runningFor !== q.generalId || this.hostInBattle() || this.deps.isScene13Active?.())) {
+            if (runningFor && (runningFor !== q.firstBattle?.battleId || this.hostInBattle() || this.deps.isScene13Active?.())) {
                 this.classicBriefing.stopAfterCurrent();
             }
             return;
@@ -3831,13 +3841,13 @@ export class PlayerQuestSystem {
         }
         if (this.deps.hero.autoPlan === 'script') return;
         const target = this.huntingGeneralId();
-        const fb = target && !isFirstBattleDoneForBattle(target) ? this.hasPendingFirstBattle(target) : null;
+        const fb = target ? this.hasPendingFirstBattle(target) : null;
         if (target && fb) {
-            if (runningFor !== target) {
+            if (runningFor !== battleIdOf(fb)) {
                 if (runningFor) this.classicBriefing.stopAfterCurrent();
                 this.beginClassicStrategicBriefing(target, fb);
             }
-        } else if (runningFor && runningFor !== target) {
+        } else if (runningFor) {
             this.classicBriefing.stopAfterCurrent();
         }
     }

@@ -220,9 +220,10 @@ export function getFirstBattleStrategicParagraphs(
     fb: GeneralFirstBattle,
     names: { myFactionName: string; generalName: string; enemyFactionName: string },
 ): string[] {
-    const imported = CLASSIC_BATTLE_BRIEFINGS[fb.generalId]?.strategic?.filter((p) => p.trim());
+    const id = fb.battleId ?? fb.generalId;   // 🔴 一名将多场：按这一场的编号取（第一场＝generalId）
+    const imported = CLASSIC_BATTLE_BRIEFINGS[id]?.strategic?.filter((p) => p.trim());
     if (imported?.length) return imported;
-    const hand = FIRST_BATTLE_STRATEGIC_BACKGROUNDS[fb.generalId];
+    const hand = FIRST_BATTLE_STRATEGIC_BACKGROUNDS[id];
     if (hand) return [hand];
     return [fallbackStrategicLine(fb, names.myFactionName, names.generalName, names.enemyFactionName)];
 }
