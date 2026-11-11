@@ -2043,25 +2043,18 @@ export class CityAssetManager {
             };
         }
         // 🔴 [2026-11-10 主人令] 百岁模式：该势力此刻**一个在场武将都没有**（`cityName` 已由 eraFactionDisplay 判定），
-        //   且本据点建筑文化有文化纹章（非华/魏/吴/蜀/荆/越/凉 7 个单字旗文化）→ 旗面贴「单色文化纹章剪影」
-        //   （按旗布深浅自动取白图黑边 `_w` 或黑图白边 `_b`，带迎风透视倾斜，与势力纹章同款融入旗面）。
-        //   顺序：势力专属纹章 > 文化纹章 > 时代字旗。
+        //   且本据点建筑文化配有文化符号（非华/魏/吴/蜀/荆/越/凉 7 个单字旗文化）→ 旗面贴布料融合文化符号雪碧图。
+        //   顺序：势力专属纹章 > 文化符号 > 时代字旗。
         if (cityName != null) {
             const cultureEmblem = getCultureEmblemFile(buildingStyle);
             if (cultureEmblem) {
-                const isDeBlend = cultureEmblem === cultureEmblem.toLowerCase();
-                const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
                 return {
                     factionId,
-                    variantKey: isDeBlend
-                        ? `culture_emblem_${factionId}_${cultureEmblem}`
-                        : `culture_emblem_${factionId}_${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}`,
+                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}`,
                     text: '',
                     fill: '',
                     stroke: '',
-                    emblemPath: isDeBlend
-                        ? `/culture-emblems/sprite/${cultureEmblem}.png`
-                        : `/emblem-flags/${cultureEmblem}_${useWhiteEmblem ? 'w' : 'b'}.png`,
+                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
                 };
             }
         }

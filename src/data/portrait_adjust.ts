@@ -707,11 +707,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/CENTRAL/long2_weixiaokuan.png": {
-            "scale": 1.14,
-            "offsetX": 3,
-            "offsetY": 1
-        },
         "/assets/BASHU/ba_bamanzi.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -2386,11 +2381,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 7
-        },
-        "/assets/CENTRAL/__闲置__CENTRAL_25.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/CENTRAL/__闲置__CENTRAL_27.png": {
             "scale": 1.12,
@@ -10373,9 +10363,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/BENGALIS/gen_shashanka.png": {
-            "scale": 1.02,
-            "offsetX": -3,
-            "offsetY": -5
+            "scale": 1.08,
+            "offsetX": 26,
+            "offsetY": -8
         },
         "/assets/NORTHEAST/dajin_wanyanchengyu.png": {
             "scale": 0.94,
@@ -11106,6 +11096,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 14,
             "offsetY": 4
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_73.png": {
+            "scale": 1.14,
+            "offsetX": 3,
+            "offsetY": 1
+        },
+        "/assets/CENTRAL/long2_weixiaokuan.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

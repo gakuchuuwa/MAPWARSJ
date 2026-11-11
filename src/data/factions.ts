@@ -459,7 +459,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'tuoba', name: '拓跋魏' },
  // 代表北魏，避免旗号重名
-    { id: 'yuwen', name: '宇文北周' },
+    { id: 'yuwen', name: '宇文周' },
 
 
 

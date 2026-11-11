@@ -1180,7 +1180,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'liuzhou_shenxiyi': 'HUGUANG',   // 李唐｜沈希仪｜据点 潭中
     'liwang_liguangbi': 'WEI',   // 李唐｜李光弼｜据点 晋阳
     'lizhou_d_liaohua': 'BASHU',   // 蜀汉｜廖化｜据点 剑门关
-    'long2_weixiaokuan': 'CENTRAL',   // 宇文北周｜韦孝宽｜据点 汧源
+    'long2_weixiaokuan': 'CENTRAL',   // 宇文周｜韦孝宽｜据点 汧源
     'longwu_huangdaozhou': 'HUGUANG',   // 隆武｜黄道周｜据点 建宁
     'longwu_zhengzhilong': 'HUGUANG',   // 隆武｜郑芝龙｜据点 延平
     'lopi_abo': 'TIBET',   // 甘丹颇章｜阿波｜据点 墨脱
@@ -1910,8 +1910,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yumi_anguo': 'WESTERN',   // 扜弥｜安国｜据点 阿赫雅尔
     'yun_wuli': 'CENTRAL',   // 允戎｜吾离｜据点 陆浑关
     'yunzhong_tuobaliwei': 'XIANBEI',   // 拓跋魏｜拓跋力微｜据点 盛乐
-    'yuwen_yuwentai': 'XIANBEI',   // 宇文北周｜宇文泰｜据点 武川镇
-    'yuwen_yuwenxian': 'XIANBEI',   // 宇文北周｜宇文宪｜据点 武川镇
+    'yuwen_yuwentai': 'XIANBEI',   // 宇文周｜宇文泰｜据点 武川镇
+    'yuwen_yuwenxian': 'XIANBEI',   // 宇文周｜宇文宪｜据点 武川镇
     'yuzhou_zuti': 'CENTRAL',   // 司马晋｜祖逖｜据点 雍丘
     'zangke_xielongyu': 'BASHU',   // 李唐｜谢龙羽｜据点 胜境关
     'zaoyang_d_menggong': 'HUGUANG',   // 赵宋｜孟珙｜据点 枣阳
