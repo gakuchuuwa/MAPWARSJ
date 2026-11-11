@@ -3243,7 +3243,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/CENTRAL/jin_xianzhen.png": {
-            "scale": 1.1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -8118,9 +8118,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/WEI/gen_zhang_rou.png": {
-            "scale": 1.14,
+            "scale": 1.18,
             "offsetX": 1,
-            "offsetY": 0
+            "offsetY": 1
         },
         "/assets/WEI/bfe_qijie.png": {
             "scale": 1.1,
@@ -9084,7 +9084,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/WEI/ming_d_zhouyuji.png": {
             "scale": 1.16,
-            "offsetX": 10,
+            "offsetX": 12,
             "offsetY": 4
         },
         "/assets/MONGOL/tujue_xielikehan.png": {
@@ -10293,7 +10293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/WEI/__闲置__NORTH_04.png": {
-            "scale": 1.08,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -11121,6 +11121,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": 12,
             "offsetY": 12
+        },
+        "/assets/WEI/erzhu_erzhuzhao.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/CENTRAL/bfe_prince_chao.png": {
+            "scale": 1.19,
+            "offsetX": 25,
+            "offsetY": -4
+        },
+        "/assets/WEI/zhanger.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/WEI/baibo_zhangjue.png": {
+            "scale": 1.28,
+            "offsetX": 17,
+            "offsetY": 1
+        },
+        "/assets/WEI/ming_d_tanlun.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/WEI/bfe3_85.png": {
+            "scale": 1.32,
+            "offsetX": 34,
+            "offsetY": 10
+        },
+        "/assets/WEI/__闲置__daming_15.png": {
+            "scale": 1.28,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
