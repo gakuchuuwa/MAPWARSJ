@@ -12,7 +12,7 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
-import { isGeneralOnStage } from '../data/generalOnStage';
+import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode } from '../data/generalOnStage';
 import { getCityEliteLegionName, getFactionEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { FACTIONS } from '../data/factions';
@@ -3655,9 +3655,10 @@ export class PlayerQuestSystem {
      * [2026-09-14] 原有的「当年剧本主角优先」已随剧本系统一并删除。
      */
     private autoTravelToBestCity(): void {
-        const city = this.pickAutoCity();
+        const queued = this.pickOpeningQueueGeneral();
+        const city = queued?.city ?? this.pickAutoCity();
         if (!city) return;
-        const g = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
+        const g = queued?.general ?? this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
         this.headingTargetGeneralId = g?.generalId ?? null;
         this.rememberVisit(city, g?.generalId);
         // 🔴 [2026-09-09 主人定「找武将：认人不认城，如果武将出征，就直接去找出征的武将」]
@@ -4053,6 +4054,38 @@ export class PlayerQuestSystem {
      * 只用来避免每 400ms 重铺一次路；见到人（`onArrive` / `onMeetArmy`）即清空。
      */
     private headingToEventGeneralId: string | null = null;
+
+    /**
+     * 🔴 [2026-11-11 主人定「只在排队这批人里挑最近的那位」「只用于开局这批」]
+     * 百岁模式：开局这批里还没打经典战的名将（见 isOpeningQueueGeneral）排在一切寻将规则之前，
+     * 在他们里面挑**离玩家最近**的那位（率军在外就按军团位置算）；这批人打完就回到 pickAutoCity 的常规轮换。
+     * 告辞过的这一轮跳过。
+     */
+    private pickOpeningQueueGeneral(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
+        if (getGameMode() !== 'centenarian') return null;
+        const me = this.deps.hero.getPosition();
+        let best: { city: City; general: { generalId: string; generalName: string; portrait: string }; d: number } | null = null;
+        for (const c of this.deps.cityManager.getCities()) {
+            if (!c.factionId) continue;
+            for (const ag of getCityAnchoredGenerals(c.id)) {
+                const id = ag.generalId;
+                if (!isOpeningQueueGeneral(id) || !this.hasPendingFirstBattle(id)) continue;
+                if (this.declinedGenerals.has(id) || !isGeneralOnStage(id)) continue;
+                const army = this.armyOfGeneral(id);
+                const pos = army ? army.getPosition() : { lat: c.latitude, lng: c.longitude };
+                const d = me && typeof me.lat === 'number' ? PlayerQuestSystem.distKm(me, pos) : 0;
+                if (best && d >= best.d) continue;
+                const rec = getGeneralRecordByGeneralId(id);
+                best = {
+                    city: c,
+                    general: { generalId: id, generalName: rec?.generalName ?? ag.generalName, portrait: rec?.portrait ?? ag.portrait },
+                    d,
+                };
+            }
+        }
+        if (best) gameLog('expedition', `[玩家] 开局排队名将：最近的是 ${best.general.generalName}（${Math.round(best.d)}km）`);
+        return best ? { city: best.city, general: best.general } : null;
+    }
 
     private pickAutoCity(): City | null {
         const candidates: City[] = [];

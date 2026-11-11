@@ -12317,7 +12317,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'zhanger', factionId: 'zhao', cityId: 'city_liyang', generalName: '张耳', portrait: '/assets/WEI/zhanger.png', eliteName: '丛台绝剑', eliteTier: 2 },   // 🔴 [2026-10-25 新增] 前207 守巨鹿数月（项羽救赵解围）；赵相→常山王；普将；据点巨鹿 WEI 文化
-        { generalId: 'zhao_zhaokuo', factionId: 'zhao', cityId: 'city_shangdang', generalName: '赵括', portrait: '', eliteName: '赵军锐士', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 长平之战赵军主将，代廉颇出战，为白起所围，中箭而死（《史记·白起王翦列传》）；经典战当场敌将，普将，立绘留空
+        { generalId: 'zhao_zhaokuo', factionId: 'zhao', cityId: 'city_handan', generalName: '赵括', portrait: '', eliteName: '赵军锐士', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 长平之战赵军主将，代廉颇出战，为白起所围，中箭而死（《史记·白起王翦列传》）；经典战当场敌将，普将，立绘留空
     ],
 
 
@@ -18245,7 +18245,7 @@ function stageGeneralName(
 ): string {
     if (isGeneralOnStage(generalId)) return name;
     const year = getCurrentStageYear()
-        ?? ((typeof window !== 'undefined' ? (window as any).game?.timeSystem?.getYear?.() : null) ?? -800);
+        ?? ((typeof window !== 'undefined' ? (window as any).game?.timeSystem?.getYear?.() : null) ?? -500);
     const style = getCityBuildingStyleForStage(cityId);
     const legionName = resolveStageEraLegionByStyle(year, style) ?? fallbackLegionName ?? null;
     return formatLegionGeneralName(legionName);

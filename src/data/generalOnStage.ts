@@ -108,10 +108,58 @@ export function isGeneralPastCentenarianAge(generalId: string | null | undefined
 }
 
 /**
+ * 名将经典战状态（由 GameApp 注入，免得本文件反向 import 经典战表成环）：
+ *   'none' = 没有经典战（普将，或名将没收录经典战）；'pending' = 有、还没打；'done' = 已打过。
+ * 未注入（编辑器 / 离线脚本）→ 一律 'none'。
+ */
+export type FirstBattleStatus = 'none' | 'pending' | 'done';
+let firstBattleStatusProvider: (generalId: string) => FirstBattleStatus = () => 'none';
+
+export function setFirstBattleStatusProvider(fn: (generalId: string) => FirstBattleStatus): void {
+    firstBattleStatusProvider = fn;
+}
+
+/**
+ * 🔴 [2026-11-11 主人定] 开局这批里「快到年纪」的名将也算排队：开局时已在场、但离退场不足这么多年的。
+ *   （开局前500年 → 居鲁士只剩 20 年，不排队就容易错过他的经典战。）
+ */
+const OPENING_TIGHT_YEARS = 30;
+/** 🔴 [2026-11-11 主人定] 开局这批里没有经典战的，按生年早晚在「开局后 50～150 年」之间分批退场 */
+const OPENING_STAGGER_FROM = 50;
+const OPENING_STAGGER_TO = 150;   // 2026-11-11 主人「分批退场可以拉长」100 → 150
+
+/** 开局这批里「本来开局前就已退场」的武将 → 分批退场年（按生年排序；缓存按开局年失效） */
+let openingStaggerCache: { start: number; exitYear: Map<string, number> } | null = null;
+
+function openingStaggerExitYear(generalId: string, start: number): number | undefined {
+    if (!openingStaggerCache || openingStaggerCache.start !== start) {
+        const clamped: Array<{ id: string; birth: number }> = [];
+        for (const [id, life] of Object.entries(GENERAL_LIFE_YEARS)) {
+            const debut = getGeneralDebutYear(id);
+            if (debut == null) continue;
+            if (Math.max(debut, centenarianYearOf(life.birth)) < start) clamped.push({ id, birth: life.birth });
+        }
+        clamped.sort((a, b) => a.birth - b.birth || a.id.localeCompare(b.id));
+        const span = OPENING_STAGGER_TO - OPENING_STAGGER_FROM;
+        const exitYear = new Map<string, number>();
+        clamped.forEach((c, i) => {
+            const frac = clamped.length > 1 ? i / (clamped.length - 1) : 1;
+            exitYear.set(c.id, start + OPENING_STAGGER_FROM + Math.round(span * frac));
+        });
+        openingStaggerCache = { start, exitYear };
+    }
+    return openingStaggerCache.exitYear.get(generalId);
+}
+
+/**
  * 百岁模式在场窗口 [登场年, 退场年]；未收录 → null。
- * 🔴 [2026-10-20 主人令「把开局设为前800年，所有前800年前的武将都按开局登场」「100年退场」]
- *   本来的百岁窗口在开局年之前就已结束的武将 → 开局即登场，在场 100 年（开局年 ～ 开局年+100）；
- *   开局时本就在场或之后才登场的武将，窗口不变。
+ * 🔴 [2026-10-20 主人令「所有开局年前的武将都按开局登场」] 本来的百岁窗口在开局年之前就已结束的武将 → 开局即登场。
+ * 🔴 [2026-11-11 主人定「只用于开局这批」] 开局这批（上面这些 + 开局时在场但离退场不足 OPENING_TIGHT_YEARS 年的）：
+ *   · 有经典战、还没打 → **不退场**（to = Infinity），等玩家来带他打经典战；
+ *   · 开局前就该退场的：经典战打过了 → 退场年记为开局年，此后只靠「军团没败不退场」留在场上，军团战败即退场；
+ *     没有经典战 → 按生年早晚在开局后 50～150 年分批退场（不再同一年一起走）；
+ *   · 开局时本就在场的那几位打过经典战 → 照原窗口。
+ *   开局之后才登场的武将不受影响，照常按生年+120 退场（再加 isGeneralOnStage 里「军团没败不退场」）。
  */
 export function getCentenarianStageWindow(generalId: string): { from: number; to: number } | null {
     const life = GENERAL_LIFE_YEARS[generalId];
@@ -120,6 +168,29 @@ export function getCentenarianStageWindow(generalId: string): { from: number; to
     if (debut == null) return null;
     const to = Math.max(debut, centenarianYearOf(life.birth));
     const start = GameConfig.TIME.TIMELINE_START_YEAR;
-    if (to < start) return { from: start, to: start + 100 };
+    if (to < start) {
+        const fb = firstBattleStatusProvider(generalId);
+        if (fb === 'pending') return { from: start, to: Infinity };
+        if (fb === 'done') return { from: start, to: start };
+        return { from: start, to: openingStaggerExitYear(generalId, start) ?? start + OPENING_STAGGER_TO };
+    }
+    if (debut <= start && to < start + OPENING_TIGHT_YEARS && firstBattleStatusProvider(generalId) === 'pending') {
+        return { from: debut, to: Infinity };
+    }
     return { from: debut, to };
+}
+
+/**
+ * 🔴 [2026-11-11 主人定] 开局这批里**还在等玩家打经典战**的名将（玩家寻将优先在这些人里挑最近的）。
+ * 只在百岁模式有意义；判定口径与 getCentenarianStageWindow 一致。
+ */
+export function isOpeningQueueGeneral(generalId: string): boolean {
+    if (firstBattleStatusProvider(generalId) !== 'pending') return false;
+    const life = GENERAL_LIFE_YEARS[generalId];
+    if (!life) return false;
+    const debut = getGeneralDebutYear(generalId);
+    if (debut == null) return false;
+    const start = GameConfig.TIME.TIMELINE_START_YEAR;
+    const to = Math.max(debut, centenarianYearOf(life.birth));
+    return to < start || (debut <= start && to < start + OPENING_TIGHT_YEARS);
 }

@@ -1755,9 +1755,9 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     muwaxide_axatafu: { birth: 1190, death: 1248, kaoju: '推定' },
     gepids_cunimund: { birth: 490, death: 567, kaoju: '推定' },
     uesugi_chaoding: { birth: 1525, death: 1546 },  // 上杉朝定
-    tujishi_tuhuoxian: { birth: 710, death: 740, kaoju: '推定' },  // 吐火仙
-    dongjin_simachi: { birth: 284, death: 313 },  // 司马炽
-    zhao_zhaokuo: { birth: -290, death: -260 },  // 赵括
+    tujishi_tuhuoxian: { birth: 710, death: 750, kaoju: '推定' },  // 吐火仙（骨啜，740 献俘长安获唐玄宗赦免授左金吾大将军，生卒史失载）
+    dongjin_simachi: { birth: 284, death: 313 },  // 司马炽（《晋书·孝怀帝纪》，生卒正史明载）
+    zhao_zhaokuo: { birth: -284, death: -260, kaoju: '推定' },  // 赵括（生年史失载，避父赵奢 -290 同生年推定）
     kalbids_ibnhawwas: { birth: 1010, death: 1068, kaoju: '推定' },
     zhanger: { birth: -270, death: -202, kaoju: '推定' },   // 张耳（约前 270–前 202）
     gaogouli_liuli: { birth: -50, death: 18, kaoju: '推定' },   // 类利/琉璃明王（约前 50–18），前 19 即位，3 年迁都国内城

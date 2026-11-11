@@ -903,7 +903,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'uesugi_chaoding': 'JAPAN',   // 上杉家｜上杉朝定｜据点 江户城
     'tujishi_tuhuoxian': 'WESTERN',   // 突骑施｜吐火仙｜据点 碎叶
     'dongjin_simachi': 'CENTRAL',   // 司马晋｜司马炽｜据点 洛阳
-    'zhao_zhaokuo': 'WEI',   // 赵国｜赵括｜据点 长子
+    'zhao_zhaokuo': 'WEI',   // 赵国｜赵括｜据点 邯郸
     'gesake_bulawen': 'SLAVIC',   // 哥萨克｜布拉温｜据点 察里津
     'gesake_khmelnytsky': 'CUMAN',   // 哥萨克｜赫梅利尼茨基｜据点 奥列什基
     'ghana_tongka_manin': 'AFRICA',   // 加纳帝国｜马宁｜据点 库姆比萨利赫

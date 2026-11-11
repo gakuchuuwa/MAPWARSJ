@@ -81,7 +81,8 @@ import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
-import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, isGeneralOnStage } from '../data/generalOnStage';
+import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
+import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
@@ -381,6 +382,12 @@ export class GameApp {
                     (a) => !a.isDestroyed && a.type === 'legion' && a.generalId === generalId && (a.getTroops() > 0 || a.getIsInCombat()),
                 );
             });
+            // 🔴 [2026-11-11 主人定「只用于开局这批」] 开局这批名将：经典战没打不退场、打过等军团战败退场（见 getCentenarianStageWindow）
+            setFirstBattleStatusProvider((generalId) =>
+                getGeneralFirstBattle(generalId)
+                    ? (isFirstBattleDoneForBattle(generalId) ? 'done' : 'pending')
+                    : 'none',
+            );
             // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
             //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
             //    唯一一份定义 = `syncScriptOwners()`（年份每场在前进，故开局、切模式、打完一场都要重跑）。

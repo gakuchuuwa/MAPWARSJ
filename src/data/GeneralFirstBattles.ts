@@ -3031,7 +3031,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_gao_zhihui',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '高智慧据浙江水险聚众叛乱，老夫提水师自海道入浙江直逼会稽！壮士，拔刀随老将乘潮登岸，奇袭破营斩杀高智慧！' },
+            { speaker: 'general', text: '高智慧据浙江水险连营百里，老夫奉命率死士轻舸横渡浙江直扑敌垒！壮士，拔刀随老将抢滩登岸，焚舰破营击败高智慧！' },
             { speaker: 'player', text: '愿随来护儿将军共赴会稽之战，大破高智慧军！' },
         ],
     },
@@ -5229,25 +5229,24 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     // #270 吉亚斯丁 (1140 ~ 1203) — 公元1175年拉合尔之战
     huluo_jiyasiding: {
         generalId: 'huluo_jiyasiding',
-        battleName: '拉合尔之战',
-        battleYear: 1186,
+        battleName: '尼沙布尔之战',
+        battleYear: 1200,
         battleType: 'siege',
         role: 'attacker',
-        targetName: '拉合尔城',
-        targetCityId: 'city_laheer',
-        targetLat: 31.55,
-        targetLng: 74.35,
+        targetName: '尼沙布尔',
+        targetCityId: 'city_nishabuer',
+        targetLat: 36.2133,
+        targetLng: 58.7958,
         myTroops: 20000,
-        enemyFactionId: 'jiazini',
-        enemyFactionName: '加兹尼残部',
-        enemyGeneralId: 'jiazini_khusrau_malik',   // 🔴 [2026-11-11 按史] 1186 拉合尔伽色尼末王呼斯劳（原 1175 赫拉特与 1186 拉合尔两役糅合）
+        enemyFactionId: 'huarazim',
+        enemyFactionName: '花剌子模',
+        enemyGeneralId: 'huarazim_mohemo',   // 🔴 [2026-11-11 按史] 1200 吉亚斯丁亲统西征呼罗珊攻拔尼沙布尔（1186 拉合尔系其弟穆罕默德亲统，《纳昔儿史话》）
         enemyTroops: 14300,
         introLines: [
-            { speaker: 'general', text: '伽色尼残部呼斯劳据拉合尔负隅顽抗，古尔王朝当一统东方！战象开道长矛森严，勇士，随本王踏平拉合尔，威加北印度！' },
-            { speaker: 'player', text: '愿随吉亚斯丁将军共赴拉合尔之战，大破加兹尼残部敌军！' },
+            { speaker: 'general', text: '花剌子模旧主新丧、摩诃末立足未稳，呼罗珊富庶名城尽在眼前！古尔的勇士，推抛石机随大苏丹攻拔尼沙布尔，饮马里海！' },
+            { speaker: 'player', text: '愿随吉亚斯丁苏丹西征呼罗珊，一鼓攻克尼沙布尔！' },
         ],
     },
-
     // #271 源赖朝 (1147 ~ 1199) — 公元1180年富士川之战
     gen_minamoto_yoritomo: {
         generalId: 'gen_minamoto_yoritomo',
@@ -7128,8 +7127,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'attacker',
         targetName: '武藏河越城下',
         targetCityId: 'city_edo',
-        targetLat: 35.75,
-        targetLng: 139.8007,
+        targetLat: 35.925,
+        targetLng: 139.491,
         myTroops: 15000,
         enemyFactionId: 'uesugi',
         enemyFactionName: '关东联军',
@@ -8080,7 +8079,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 1792,
         battleType: 'field',
         role: 'defender',
-        targetName: '加德满都甲尔木山梁',
+        targetName: '阳布甲尔古拉山',
         targetCityId: 'city_kathmandu',
         targetLat: 27.715138,
         targetLng: 85.185242,
@@ -11960,7 +11959,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 1792,
         battleType: 'field',
         role: 'attacker',
-        targetName: '加德满都甲尔木山梁',
+        targetName: '阳布甲尔古拉山',
         targetCityId: 'city_kathmandu',
         targetLat: 27.715138,
         targetLng: 85.185242,
@@ -12132,6 +12131,33 @@ export function isFirstBattleCompleted(generalId: string | null | undefined): bo
 
 export function clearCompletedFirstBattles(): void {
     completedFirstBattleGenerals.clear();
+}
+
+/**
+ * 🔴 [2026-11-11 主人定「同一战，只找一个人就行」] 这位名将的经典战**这一场**是否已打过——
+ * 同一场（战役名 + 年份相同，如卡迭石之战的攻守两位主将）任何一方打过都算。
+ */
+export function isFirstBattleDoneForBattle(generalId: string | null | undefined): boolean {
+    if (!generalId) return false;
+    if (completedFirstBattleGenerals.has(generalId)) return true;
+    const mine = GENERAL_FIRST_BATTLES[generalId];
+    if (!mine) return false;
+    for (const other of completedFirstBattleGenerals) {
+        const fb = GENERAL_FIRST_BATTLES[other];
+        if (fb && fb.battleName === mine.battleName && fb.battleYear === mine.battleYear) return true;
+    }
+    return false;
+}
+
+/** 存档用：已打过经典战的名将（🔴 2026-11-11 百岁模式开局这批靠它决定退不退场，读档必须带回来） */
+export function listCompletedFirstBattles(): string[] {
+    return [...completedFirstBattleGenerals];
+}
+
+/** 读档用：整份替换为存档里的已打过名单 */
+export function restoreCompletedFirstBattles(generalIds: readonly string[] | null | undefined): void {
+    completedFirstBattleGenerals.clear();
+    for (const id of generalIds ?? []) if (id) completedFirstBattleGenerals.add(id);
 }
 
 /**

@@ -759,7 +759,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     amago: { start: 1486, end: 1566, source: 'Wikipedia「Amago clan」：1486 年尼子经久取月山富田城，1566 年为毛利元就攻灭。' },
     shimazu: { start: 1187, end: 1871, source: 'Wikipedia「Shimazu clan」：1187 年岛津忠久任萨摩守护，至 1871 年废藩置县。', note: '守护—战国大名—萨摩藩一贯。' },
     mori: { start: 1523, end: 1600, source: 'Wikipedia「Mōri clan」：1523 年毛利元就继家督，1600 年关原后减封周防・长门。', note: '后为长州藩。' },
-    uesugi: { start: 1548, end: 1600, source: 'Wikipedia「Uesugi clan」：1548 年上杉谦信（长尾景虎）继越后，1600 年关原后减封米泽。' },
+    uesugi: { start: 1368, end: 1871, source: 'Wikipedia「上杉氏」「関東管領」「米沢藩」：1368 年上杉宪显复任关东管领确立上杉氏关东统治（扇谷、山内两上杉；1561 年上杉谦信入继山内上杉家督），1871 年米泽藩废藩置县。' },
     takeda: { start: 1521, end: 1582, source: 'Wikipedia「Takeda clan」：武田信虎 1521 年统一甲斐成战国大名，1582 年天目山之战灭亡。' },
     toyotomi: { start: 1585, end: 1615, source: 'Wikipedia「Toyotomi clan」：1585 年丰臣秀吉任关白、政权成立，1615 年大坂之阵灭亡。' },
     utsunomiya: { start: 1185, end: 1597, source: 'Wikipedia「Utsunomiya clan」：1597 年宇都宫氏被丰臣秀吉改易除封。', note: '不确定起始：镰仓以来为下野豪族，独立政权起点无定说。｜估算依据：镰仓以来世居下野宇都宫，取镰仓幕府立1185。' },
