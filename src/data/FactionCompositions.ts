@@ -97,10 +97,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代巽他军团",
     legionType: "region",
 },   // 萨拉卡那加拉｜主将 德瓦瓦尔曼
-"kartli_kakheti": {
-    legionName: "帝国时代高加索军团",
-    legionType: "region",
-},   // 卡特利-卡赫季｜主将 赫拉克留二世
 "helvetii": {
     legionName: "古典时代萨波迪亚军团",
     legionType: "region",
@@ -113,50 +109,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代撒克逊军团",
     legionType: "region",
 },   // 切鲁西｜主将 阿米尼乌斯
-"sweden_medieval": {
-    legionName: "城堡时代北欧军团",
-    legionType: "region",
-},   // 中世纪瑞典｜主将 比尔格雅尔
-"rus_khaganate": {
-    legionName: "封建时代瓦良格军团",
-    legionType: "region",
-},   // 罗斯汗国｜主将 留里克
-"byzantium_late": {
-    legionName: "城堡时代拜占庭军团",
-    legionType: "region",
-},   // 晚期拜占庭｜主将 伊萨克
-"bulgaria_second": {
-    legionName: "城堡时代默西亚军团",
-    legionType: "region",
-},   // 第二保加利亚帝国｜主将 伊瓦伊洛
-"poland_duchy": {
-    legionName: "封建时代波兰尼军团",
-    legionType: "region",
-},   // 波兰公国｜主将 勇者波列
-"saxony_electorate": {
-    legionName: "帝国时代萨克森军团",
-    legionType: "region",
-},   // 萨克森选侯国｜主将 约翰腓特烈
-"portugal_medieval": {
-    legionName: "城堡时代葡萄牙王国军团",
-    legionType: "region",
-},   // 中世纪葡萄牙｜主将 恩里克
-"denmark_norway": {
-    legionName: "帝国时代丹麦皇家军团",
-    legionType: "region",
-},   // 丹麦-挪威｜主将 克里斯蒂安四世
-"denmark_medieval": {
-    legionName: "城堡时代卡尔马军团",
-    legionType: "region",
-},   // 中世纪丹麦｜主将 阿布萨隆
-"scotland_stuart": {
-    legionName: "帝国时代苏格兰高地军团",
-    legionType: "region",
-},   // 斯图亚特苏格兰｜主将 格雷厄姆
-"england_modern": {
-    legionName: "帝国时代大不列颠军团",
-    legionType: "region",
-},   // 近代英格兰｜主将 萨默斯
 "rashtrakuta": {
     legionName: "封建时代朱罗军团",
     legionType: "region",
@@ -189,10 +141,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "封建时代基辅罗斯军团",
     legionType: "region",
 },   // 德列夫利安人｜主将 日托米尔
-"mongol_ancient": {
-    legionName: "封建时代突厥军团",
-    legionType: "region",
-},   // 蒙兀室韦｜主将 孛端察儿
 "marcomanni": {
     legionName: "古典时代马科曼尼军团",
     legionType: "region",
@@ -225,10 +173,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "城堡时代萨迦军团",
     legionType: "region",
 },   // 唃厮啰｜主将 木征
-"yarlung": {
-    legionName: "古典时代发羌军团",
-    legionType: "region",
-},   // 雅砻部落｜主将 聂赤
 "old_saxons": {
     legionName: "封建时代奥斯特法伦军团",
     legionType: "region",
@@ -237,10 +181,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代日耳曼尼亚军团",
     legionType: "region",
 },   // 阿勒曼尼｜主将 克诺多马尔
-"magyar_tribes": {
-    legionName: "封建时代马扎尔军团",
-    legionType: "region",
-},   // 马扎尔部落联盟｜主将 阿尔帕德
 "taifa_toledo": {
     legionName: "封建时代哈里发军团",
     legionType: "region",
@@ -265,10 +205,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代高卢军团",
     legionType: "region",
 },   // 阿维尔尼｜主将 维钦托利
-"france_modern": {
-    legionName: "帝国时代法兰西军团",
-    legionType: "region",
-},   // 近代法兰西｜主将 乌里希
 "imro": {
     legionName: "帝国时代塞拉尼克军团",
     legionType: "region",
@@ -277,18 +213,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "帝国时代里拉军团",
     legionType: "region",
 },   // 保加利亚公国｜主将 列夫斯基
-"later_le": {
-    legionName: "帝国时代安南军团",
-    legionType: "region",
-},   // 后黎朝｜主将 黎来
 "aksum": {
     legionName: "封建时代拉利贝拉军团",
     legionType: "region",
 },   // 阿克苏姆｜主将 埃扎纳
-"castile_county": {
-    legionName: "封建时代摩尔游骑军团",
-    legionType: "region",
-},   // 卡斯蒂利亚伯国｜主将 费尔南·冈萨雷斯
 "milan_duchy": {
     legionName: "帝国时代意大利皇家军团",
     legionType: "region",
@@ -468,16 +396,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 🔴 [2026-10-18 主人令「先两个」] 三级军团首次套用（口径：军团建筑文化 = 武将据点的建筑风格，且武将为帝国时代）：
     //   亚速尔·西普里亚诺（帝国时代，据点安格拉 city_angra｜PORTUGUESE）→ 帝国时代葡萄牙风琴军团
     //   纳韦尔布塔·加尔瓦里诺（帝国时代，据点科利普利 city_kelipuli｜MAPUCHE）→ 帝国时代安第斯游击军团
-    "naweierbuta": {
-        legionName: "帝国时代安第斯游击军团",
-        legionType: "sub",
-    },
     "genji_iyo": {
         legionName: "城堡时代幕府军团",
-        legionType: "sub",
-    },
-    "hepan": {
-        legionName: "封建时代安西军团",
         legionType: "sub",
     },
     "teluoyi": {
@@ -652,10 +572,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代蒙古军团",
         legionType: "sub",
     },
-    "dzungar": {
-        legionName: "帝国时代突厥斯坦军团",
-        legionType: "sub",
-    },
     "kazakh": {
         legionName: "帝国时代突厥斯坦军团",
         legionType: "sub",
@@ -692,10 +608,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代突厥斯坦军团",
         legionType: "sub",
     },
-    "xiajiasi": {
-        legionName: "封建时代突厥军团",
-        legionType: "sub",
-    },
     "juqu_d": {
         legionName: "古典时代漠南游牧军团",
         legionType: "sub",
@@ -724,16 +636,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代图兰军团",
         legionType: "sub",
     },
-    "mangshi": {
-        legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
     "xiongnu": {
         legionName: "古典时代漠南游牧军团",
-        legionType: "sub",
-    },
-    "cheshihou": {
-        legionName: "古典时代西域军团",
         legionType: "sub",
     },
     "xijue": {
@@ -746,10 +650,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yada": {
         legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
-    "jie": {
-        legionName: "封建时代图兰军团",
         legionType: "sub",
     },
     "saman": {
@@ -786,10 +686,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代吐蕃军团",
         legionType: "region",
     },
-    "guge": {
-        legionName: "封建时代吐蕃军团",
-        legionType: "region",
-    },
     "qifu_d": {
         legionName: "古典时代漠南游牧军团",
         legionType: "sub",
@@ -803,10 +699,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "supi": {
-        legionName: "封建时代吐蕃军团",
-        legionType: "region",
-    },
-    "khyungpo": {
         legionName: "封建时代吐蕃军团",
         legionType: "region",
     },
@@ -894,10 +786,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代八旗军团",
         legionType: "region",
     },
-    "feiyaka": {
-        legionName: "帝国时代八旗军团",
-        legionType: "region",
-    },
     "suolun": {
         legionName: "帝国时代八旗军团",
         legionType: "region",
@@ -907,10 +795,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "eluoke": {
-        legionName: "帝国时代八旗军团",
-        legionType: "region",
-    },
-    "kuye": {
         legionName: "帝国时代八旗军团",
         legionType: "region",
     },
@@ -1124,10 +1008,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代蒙古军团",
         legionType: "sub",
     },
-    "choros": {
-        legionName: "城堡时代河中军团",
-        legionType: "sub",
-    },
     "zhadalan": {
         legionName: "城堡时代蒙古军团",
         legionType: "sub",
@@ -1136,16 +1016,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代蒙古军团",
         legionType: "sub",
     },
-    "xianhai": {
-        legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
     "zubu": {
         legionName: "城堡时代蒙古军团",
-        legionType: "sub",
-    },
-    "wugu_d": {
-        legionName: "城堡时代河中军团",
         legionType: "sub",
     },
     "salai": {
@@ -1156,10 +1028,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     //    → 古典时代萨尔马提亚军团（库曼文化古典档＝萨尔马提亚—阿兰草原重骑）。原挂「城堡时代库曼军团」晚一档。
     "kuman_oleshky": {
         legionName: "城堡时代库曼军团",
-        legionType: "sub",
-    },
-    "aertai": {
-        legionName: "城堡时代河中军团",
         legionType: "sub",
     },
     "tuolemi": {
@@ -1212,10 +1080,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 🔴 [2026-10-25 主人令] 伊蒂尔汗国＝可萨（7–10 世纪＝封建段）｜首府伊蒂尔 CUMAN → 封建时代可萨军团。
     //    原挂「封建时代河中军团」文化错。
-    "yidier": {
-        legionName: "封建时代可萨军团",
-        legionType: "sub",
-    },
     "aqimeinide": {
         legionName: "古典时代阿契美尼德军团",
         legionType: "sub",
@@ -1250,14 +1114,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "liao_d": {
         legionName: "封建时代漠南军团",
-        legionType: "sub",
-    },
-    "houliao": {
-        legionName: "城堡时代女真军团",
-        legionType: "sub",
-    },
-    "xiliao": {
-        legionName: "城堡时代河中军团",
         legionType: "sub",
     },
     "kumoxi": {
@@ -1466,16 +1322,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代爪哇军团",
         legionType: "sub",
     },
-    "malai": {
-        legionName: "城堡时代爪哇军团",
-        legionType: "sub",
-    },
     "pagan": {
         legionName: "城堡时代阿瓦军团",
-        legionType: "sub",
-    },
-    "miandian": {
-        legionName: "帝国时代缅甸军团",
         legionType: "sub",
     },
     "dayue": {
@@ -1664,10 +1512,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代吴哥军团",
         legionType: "sub",
     },
-    "odrysian_late": {
-        legionName: "古典时代色雷斯军团",
-        legionType: "sub",
-    },
     "qimu": {
         legionName: "城堡时代印加军团",
         legionType: "sub",
@@ -1727,10 +1571,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "daxi_ming": {
         legionName: "帝国时代四川军团",
-        legionType: "sub",
-    },
-    "basha_d": {
-        legionName: "帝国时代洛韦克军团",
         legionType: "sub",
     },
     "luohu": {
@@ -2001,16 +1841,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代东法兰克军团",
         legionType: "sub",
     },
-    "huohengsuolun": {
-        legionName: "城堡时代条顿骑士军团",
-        legionType: "sub",
-    },
     "ruishi": {
         legionName: "城堡时代条顿骑士军团",
-        legionType: "sub",
-    },
-    "mosike_gongguo": {
-        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "eluosi_diguo": {
@@ -2125,17 +1957,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代突厥军团",
         legionType: "sub",
     },
-    "ganzhou_huihu": {
-        legionName: "封建时代河西军团",
-        legionType: "sub",
-    },
     // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle HEXI）→ 封建时代河西军团
     "chuyue": {
         legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
-    "anxi": {
-        legionName: "封建时代安西军团",
         legionType: "sub",
     },
     "an": {
@@ -2150,20 +1974,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代河中军团",
         legionType: "sub",
     },
-    "suogediyana": {
-        legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
     "sogdian": {
         legionName: "封建时代图兰军团",
         legionType: "sub",
     },
     "yanda": {
         legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
-    "anushidgin": {
-        legionName: "城堡时代河中军团",
         legionType: "sub",
     },
     "fanyanna": {
@@ -2256,10 +2072,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kawusi": {
         legionName: "帝国时代突厥斯坦军团",
-        legionType: "sub",
-    },
-    "wuhu": {
-        legionName: "封建时代图兰军团",
         legionType: "sub",
     },
     "badakhshan": {
@@ -2383,10 +2195,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代马六甲军团",
         legionType: "sub",
     },
-    "liaozu": {
-        legionName: "帝国时代洛韦克军团",
-        legionType: "sub",
-    },
     "aolisha": {
         legionName: "城堡时代维查耶那加尔军团",
         legionType: "sub",
@@ -2432,14 +2240,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代尤卡坦军团",
         legionType: "sub",
     },
-    "julushi": {
-        legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
-    "sute": {
-        legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
     "ayinu_ezo": {
         legionName: "城堡时代幕府军团",
         legionType: "sub",
@@ -2452,28 +2252,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代普鲁战象军团",
         legionType: "sub",
     },
-    "shiyuzu": {
-        legionName: "古典时代普鲁战象军团",
-        legionType: "sub",
-    },
-    "early_chimu": {
-        legionName: "封建时代奇穆军团",
-        legionType: "sub",
-    },
-    "lithuanian_tribes": {
-        legionName: "封建时代立陶宛部族军团",
-        legionType: "sub",
-    },
-    "hellas_theme": {
-        legionName: "封建时代阿提卡军团",
-        legionType: "sub",
-    },
     "lugii": {
         legionName: "古典时代卢吉军团",
-        legionType: "sub",
-    },
-    "wagadu": {
-        legionName: "古典时代瓦加杜军团",
         legionType: "sub",
     },
 
@@ -2506,10 +2286,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代江淮军团",
         legionType: "region",
     },
-    "zhuang_d": {
-        legionName: "帝国时代两江军团",
-        legionType: "region",
-    },
     "jingpozu": {
         legionName: "帝国时代缅甸军团",
         legionType: "region",
@@ -2520,10 +2296,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "saimien": {
         legionName: "封建时代拉利贝拉军团",
-        legionType: "region",
-    },
-    "feierganna": {
-        legionName: "城堡时代蒙兀儿军团",
         legionType: "region",
     },
     "hamade": {
@@ -2594,10 +2366,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代安西军团",
         legionType: "region",
     },
-    "pisha": {
-        legionName: "封建时代安西军团",
-        legionType: "region",
-    },
     "shache": {
         legionName: "古典时代西域军团",
         legionType: "region",
@@ -2616,10 +2384,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yarkand": {
         legionName: "帝国时代叶尔羌军团",
-        legionType: "region",
-    },
-    "yiduhu": {
-        legionName: "城堡时代蒙兀儿军团",
         legionType: "region",
     },
     "yuchi": {
@@ -2642,10 +2406,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代叶尔羌军团",
         legionType: "region",
     },
-    "dayuzi": {
-        legionName: "城堡时代蒙兀儿军团",
-        legionType: "region",
-    },
     "shi_clan": {
         legionName: "封建时代安西军团",
         legionType: "region",
@@ -2656,10 +2416,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "zhaowu": {
         legionName: "城堡时代蒙兀儿军团",
-        legionType: "region",
-    },
-    "loulan": {
-        legionName: "古典时代西域军团",
         legionType: "region",
     },
     "khon": {
@@ -2738,10 +2494,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "xingliao": {
         legionName: "封建时代新罗军团",
-        legionType: "region",
-    },
-    "bailong": {
-        legionName: "古典时代西域军团",
         legionType: "region",
     },
     "weiwuer": {

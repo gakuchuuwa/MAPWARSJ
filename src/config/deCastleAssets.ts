@@ -144,7 +144,6 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     champa: 'SEAS_CASTLE_AGE3',            // 占婆（美山关隘·制蓬峨）
     pagan: 'BURM_CASTLE_AGE3',             // 缅国（蒲甘）
     hantawadi: 'BURM_CASTLE_AGE3',         // 汉达瓦底
-    miandian: 'BURM_CASTLE_AGE3',          // 缅甸（三塔关摩诃悉都）
     malacca: 'MALA_CASTLE_AGE3',           // 满剌加
     medang: 'MALA_CASTLE_AGE3',           // 马打蓝
     yelusalengwg: 'MEDI_CASTLE_AGE3',      // 耶路撒冷王国(十字军)
@@ -153,7 +152,6 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     huluo: 'GURJ_CASTLE_AGE3',             // 古尔
     // ── 青藏 ──
     tubo: 'TIBET_CASTLE_AGE3',             // 吐蕃
-    guge: 'TIBET_CASTLE_AGE3',             // 古格
     xiangxiong: 'TIBET_CASTLE_AGE3',       // 象雄
     ladakh: 'TIBET_CASTLE_AGE3',           // 拉达克
     supi: 'TIBET_CASTLE_AGE3',             // 苏毗
@@ -169,10 +167,8 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     shule: 'WESTERN_CASTLE_AGE3',          // 疏勒
     yanqi: 'WESTERN_CASTLE_AGE3',          // 焉耆
     shanshan: 'WESTERN_CASTLE_AGE3',       // 鄯善
-    loulan: 'WESTERN_CASTLE_AGE3',         // 楼兰
     shache: 'WESTERN_CASTLE_AGE3',         // 莎车
     yiwu: 'WESTERN_CASTLE_AGE3',           // 伊吾
-    yiduhu: 'WESTERN_CASTLE_AGE3',         // 亦都护（高昌回鹘）
     // ── 滇黔 ──
     // 🔴 [2026-11-10 主人令「DIANQIAN_CASTLE_AGE3（滇黔城堡）…删除，这些都是老图片了」]
     //    旧手绘图已删，这十家滇黔政权改挂巴蜀支系 DE 城楼（大理/乌蒙/胜境关等据点 buildingStyle 本来也是 BASHU）
@@ -217,7 +213,6 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     lesser_poland: 'POLE_CASTLE_AGE3',
     braganza_house: 'PORT_CASTLE_AGE3',
     trastamara: 'SPAN_CASTLE_AGE3',
-    odrysian_late: 'THRACIANS_CASTLE_AGE3',
     naxos_ancient: 'MACEDONIAN_CASTLE_AGE3',
 };
 

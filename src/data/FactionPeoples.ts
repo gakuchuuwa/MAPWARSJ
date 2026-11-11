@@ -19,7 +19,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
     yilihanguo_d: '蒙古',
     dada_ming: '蒙古',
     oirat_ming: '蒙古',
-    dzungar: '蒙古',
     khoshut: '蒙古',
     ganden: '蒙古',
     jinzhang: '蒙古',
@@ -41,7 +40,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
     mowoer: '突厥',
 
     // 缅族诸政权
-    miandian: '缅',
     dongxu: '缅',
     hantawadi: '缅',
 
@@ -65,7 +63,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
 
     // 契丹（辽、西辽）
     liao_d: '契丹',
-    xiliao: '契丹',
 
     // 伊比利亚基督教诸国
     leangongguo: '伊比利亚',
@@ -76,7 +73,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
     aswaka: '印度-希腊',
 
     // 唐（安西诸军）
-    hepan: '唐',
     juandu: '唐',
 
     // 高棉 vs 占（不同民族，2026-11-07 已拆号，保留映射以免再被合并）
@@ -89,7 +85,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
 
     // 德意志诸侯（阿斯卡尼亚、霍亨索伦、施瓦本）
     asikanani: '德意志',
-    huohengsuolun: '德意志',
     shiwaben: '德意志',
 
     // 尼泊尔（廓尔喀、马拉）
@@ -101,7 +96,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
     yuenan: '越',
 
     // 罗斯诸公国
-    mosike_gongguo: '罗斯',
     peilieya_gongguo: '罗斯',
 
     // 波斯（萨珊、米赫兰）
@@ -110,7 +104,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
 
     // 乌古斯诸部
     xierhe: '乌古斯',
-    xianhai: '乌古斯',
 
     // 西班牙（卡斯蒂利亚、西班牙）
     kasidiliya: '西班牙',

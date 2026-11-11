@@ -68,7 +68,12 @@ if (factsFile) {
     let extrasTouched = false;
     // 同一场这次定下的敌方势力（改敌将时要用）
     const pendingEnemyFaction = new Map<string, string>();
-    for (const r of rows) {
+    // 🔴 [2026-11-11] 敌将最后办：它要挂到「这一批定下的敌方国号」下，而定稿表里
+    //    「敌方国号」行与「敌将」行的先后是写稿方随手写的；按表里的顺序办会把敌将挂到旧的敌势力上。
+    //    所以先办年份/战场/坐标/敌方国号，再办敌将。
+    const isEnemyGeneralRow = (r: string[]) => get(r, '项目') === '敌将';
+    const orderedRows = [...rows.filter((r) => !isEnemyGeneralRow(r)), ...rows.filter(isEnemyGeneralRow)];
+    for (const r of orderedRows) {
         const g = (n: string) => get(r, n);
         const id = g('编号');
         if (!id || id === '编号') continue;

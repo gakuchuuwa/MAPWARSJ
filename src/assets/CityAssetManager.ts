@@ -75,7 +75,6 @@ export class CityAssetManager {
     //    🔴 2026-10-26 主人令「中国旗号能用一个字的就用一个字，但是要符合历史」：中国政权改单字国号
     //      （东晋/后晋→晋、南唐→唐、孙吴→吴、刘宋→宋、萧齐/高齐→齐、南梁/后梁→梁、马楚/荆楚→楚…），
     //      同国号允许重旗；本表已与 SandboxDisplayNames 同批对齐。
-        'aertai': '阿勒',
         'amaniyake': '阿马',
         'antiaokegongguo': '赞吉',
         'aolitai': '奥里',
@@ -83,22 +82,15 @@ export class CityAssetManager {
         'bogendigongguo': '勃公',
         'bogendi_wangguo': '勃王',
         'bulu': '波罗',
-        'feierganna': '费尔',
         'genji_iyo': '伊予',
-        'julushi': '居鲁',
         'kaliya': '卡里',
         'kapaduoxiya': '卡帕',
-        'malai': '马来',
         'malli': '马利',
         'manzheboyi': '满者',
-        'miandian': '缅甸',
-        'naweierbuta': '纳韦',
         'qimu': '奇穆',
         'saimien': '塞米',
         'saipulusi': '塞浦',
-        'suogediyana': '索格',
         'suosuo': '索索',
-        'sute': '诺塔',
         'tailuona': '泰罗',
         'taimier': '马拉',
         'talasike': '塔拉',
@@ -158,7 +150,6 @@ export class CityAssetManager {
 'qiuchi': '仇池',
 'helian': '夏',
 'xiongnu': '匈奴',
-        'jie': '羯族',
 'tuoba': '魏',
 'yuwen': '周',
 'chen': '陈',
@@ -174,14 +165,11 @@ export class CityAssetManager {
 'jianwen': '明',   // 🔴 [2026-11-09 主人令「建文是明」] 建文＝年号，国号明（铁铉济南之战 1400）
 'shunde': '明',   // 🔴 [2026-11-09 主人令] 朱宸濠只改元顺德、国号仍是明（王守仁鄱阳湖之战 1519）
 'liao_d': '辽',
-'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
-'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
 'guishuang': '贵霜',
 'rouran': '柔然',
         'baiji': '百济',
 'tubo': '吐蕃',
-'guge': '吐蕃',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'tujue': '突厥',
 'dayue': '越',   // 2026-11-09 同步正表
         'ryukyu': '琉球',
@@ -201,12 +189,10 @@ export class CityAssetManager {
         'gouding': '句町',
         'baibo': '黄巾',
 'xianlingqiang': '先零',
-'cheshihou': '乌垒',
 'yelang': '夜郎',
 'ailao': '哀牢',
 'fuyu': '夫余',
 'shule': '疏勒',
-        'loulan': '楼兰',
         'shache': '莎车',
 'qiuci': '龟兹',
 'yanqi': '焉耆',
@@ -218,7 +204,6 @@ export class CityAssetManager {
 
         'gaoqi_d': '齐',
         'wuzhou_d': '周',
-        'zhuang_d': '壮',
 'xibo_d': '锡伯',
 'ranwei_d': '魏',
 
@@ -228,7 +213,6 @@ export class CityAssetManager {
 'xijue': '十箭',
 
 'xueyantuo': '薛延',
-        'xiajiasi': '坚昆',
 'tujishi': '突骑',
         'nanzhao': '南诏',
 'xiaobolu': '勃律',
@@ -275,7 +259,6 @@ export class CityAssetManager {
         'longwu': '明',
         // 🔴 [2026-11-09 主人令] 鲁监（鲁王朱以海监国）→ 旗号「明」（原「婺」是地名简称，无依据）
         'lujian': '明',
-        'dzungar': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」]
         'khoshut': '和硕',
         'yarkand': '叶尔',
 'khoja': '和卓',
@@ -326,7 +309,6 @@ export class CityAssetManager {
 'shi_clan': '石氏',
 
 'hongirad': '弘吉',
-'choros': '瓦剌',
 'ladakh': '玛域',
 'tsangpa': '藏巴',
 'ganden': '甘丹',
@@ -374,7 +356,6 @@ export class CityAssetManager {
 
         // ── 2026-05-28 新增：南部(根城)、萨曼(阿母城)、西域四政权 ──
         'saman': '萨曼',
-'hepan': '喝槃',
 
         // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
         'dai': '傣族',
@@ -382,15 +363,12 @@ export class CityAssetManager {
         'luohu': '罗斛',
 
         // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
-        'feiyaka': '费雅',
 
-'anushidgin': '阿努',
 
         'liren': '俚',
 
         // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
 'gling': '玉树',
-        'khyungpo': '琼波',
 'suolun': '达斡',
 
         // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
@@ -419,17 +397,14 @@ export class CityAssetManager {
 'tiemuer': '帖木',
 'kawusi': '卡乌',
         'keerkezi': '柯尔',
-        'yiduhu': '亦都',
         'yizhi': '一支',
         'duerbote': '杜尔',
         'kaerka': '喀尔',
 'huihu': '回鹘',
-'ganzhou_huihu': '回鹘',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
         // 🔴 [2026-11-01] 甘州回鹘（河西回鹘）：登记表只登记旗号、值＝旗号（与 SANDBOX_DISPLAY_NAMES 一致）
 'wuzhumuqin': '乌珠',
 'zhadalan': '扎答',
         'zhuerqi': '主儿',
-'pisha': '毗沙',
         'yumi': '扜弥',
         'xiye': '西夜',
     'panshu': 'RANDOM',   // 🔴 [2026-10-24] 叛军：旗面无字（随机 S10QZ 叛军旗面）
@@ -466,7 +441,6 @@ export class CityAssetManager {
         'hui': '濊',
         'wure': '兀惹',
         'sunite': '苏尼',
-'dayuzi': '玉兹',
 'bailian': '白莲',
 'chimei': '赤眉',
 'yiwu': '伊吾',
@@ -482,13 +456,10 @@ export class CityAssetManager {
         'qiepantuo': '朅盘',
         'eluoke': '鄂罗',
 'ewenki': '鄂温',
-        'kuye': '库页',
 'nanyue': '南越',
         'buriat': '布里',
-        'xianhai': '叶护',
 'yanda': '白匈',
 'kuman_oleshky': '库曼',
-'anxi': '安西',
 'konbaung': '贡榜',
 'tianxiong': '魏博',
 'huaixi': '淮西',
@@ -504,7 +475,6 @@ export class CityAssetManager {
 'sumuroyi': '米沙',
         'yun': '允',
         'huangwang': '齐',
-        'basha_d': '巴沙',
 'yehe': '叶赫',
 'wula': '乌拉',
 'bayegu': '拔野',
@@ -516,7 +486,6 @@ export class CityAssetManager {
         'huite': '辉特',
 'zubu': '阻卜',
         'jiashi_d': '迦尸',
-'wuhu': '乌护',
         'jiazini': '伽色',
 'danmai': '丹麦',
         'xinbuli': '辛布',
@@ -527,12 +496,10 @@ export class CityAssetManager {
 'xisi': '萨法',
 'huluo': '呼罗',
         'fanyanna': '梵衍',
-'bailong': '白龙',
         'kepantuo': '渴盘',
 'yangguan': '凉',
 'xiliangjun': '董',
         // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-'wugu_d': '乌古',
         'kumoxi': '奚',
 'shanshan': '鄯善',
 'wuyue': '吴越',
@@ -599,9 +566,7 @@ export class CityAssetManager {
         'maidina': '拉希',
         'gulaishi': '古莱',
         'xiemian': '萨维',
-        'yidier': '伊蒂',
         'salai': '诺盖',
-        'mangshi': '土库',
         'buni': '迦太',
         'baojian_qishi': '宝剑',
         // ── 2026-08-04 新增：大波兰 @ 波兹南 ──
@@ -644,7 +609,6 @@ export class CityAssetManager {
         'kaernute': '卡尔',
         'xiongren': '匈人',
         'awaer': '瓦尔',
-    'liaozu': '寮族',
     'kushi': '库施',
     'aolisha': '东恒',
     'kanata': '维查',
@@ -669,7 +633,6 @@ export class CityAssetManager {
 'qutb_shahi': '库特',
 'minangkabau': '米南',
 'tutul_xiu': '休族',
-'odrysian_late': '塞乌',
         'saierweiya': '拉什',
         'fulandesi': '阿图',
 'tuomengde': '托蒙',
@@ -678,7 +641,6 @@ export class CityAssetManager {
         'adiyabeina': '亚贝',
         'genji': '源',
         'dasaleiti': '达萨',
-        'shiyuzu': '食鱼',
         'chamorro': '查莫',
         'dalriada': '达里',
         'dublin': '都林',   // 🔴 [2026-10-28 主人批立] 都柏林王国（新势力，与 SandboxDisplayNames 同步）
@@ -776,21 +738,9 @@ export class CityAssetManager {
         'epirus_despotate': '伊庇',
         'teotihuacan': '特奥',
         'salakanagara': '萨拉',
-        'kartli_kakheti': '卡卡',
         'helvetii': '赫尔',
         'hussites': '胡斯',
         'cherusci': '切鲁',
-        'sweden_medieval': '瑞中',
-        'rus_khaganate': '罗汗',
-        'byzantium_late': '拜晚',
-        'bulgaria_second': '保二',
-        'poland_duchy': '波公',
-        'saxony_electorate': '萨选',
-        'portugal_medieval': '葡中',
-        'denmark_norway': '丹挪',
-        'denmark_medieval': '丹中',
-        'scotland_stuart': '苏斯',
-        'england_modern': '英近',
         'rashtrakuta': '拉什',
         'andean_rebellion': '安起',
         'abkhazia_kingdom': '阿布',
@@ -800,7 +750,6 @@ export class CityAssetManager {
                 // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 'jianzhou' 旗面登记删除（势力并入 manzhou_d，旗号「清」）
         'bashkir': '巴什',
         'drevlians': '德列',
-        'mongol_ancient': '蒙兀',
         'marcomanni': '马科',
         'serbia_revolution': '塞革',
         'caledonia': '喀里',
@@ -809,22 +758,17 @@ export class CityAssetManager {
         'hamdanid': '哈姆',
         'wiman_joseon': '卫',   // 🔴 [2026-11-09 主人令「改成卫」] 旗号不许用人名（原「卫满」＝武将名）
         'gusiluo': '唃厮',
-        'yarlung': '雅砻',
         'old_saxons': '古撒',
         'alamanni': '阿勒',
-        'magyar_tribes': '马部',
         'taifa_toledo': '托泰',
         'florence': '佛罗',
         'tuitonga': '汤加',
         'rapanui': '拉帕',
         'later_baekje': '后百',
         'arverni': '阿维',
-        'france_modern': '法兰',
         'imro': '内马',
         'bulgaria_third': '保公',
-        'later_le': '后黎',
         'aksum': '阿克',
-        'castile_county': '卡伯',
         'milan_duchy': '米兰',
         'lombard_league': '伦联',
         'cilicia_armenia': '奇里',
@@ -836,11 +780,7 @@ export class CityAssetManager {
         'xinmeiliyan': '辛梅',
         'aixini': '爱西',
         'taluma': '塔鲁',
-        'early_chimu': '早奇',
-        'lithuanian_tribes': '立部',
-        'hellas_theme': '海拉',
         'lugii': '卢吉',
-        'wagadu': '瓦加',
         'bulietani': '布列',
         'damolaweiya': '摩拉',
         'daniebo': '斯摩',
@@ -853,7 +793,6 @@ export class CityAssetManager {
         'habusibao': '哈布',
         'hamade': '哈马',
         'hansa': '汉萨',
-        'huohengsuolun': '勃普',
         'jialixiya': '哈尔',
         'jiatailuoniya': '加泰',
         'jinzhang': '金帐',
@@ -864,7 +803,6 @@ export class CityAssetManager {
         'luoma_diguo': '罗马',   // 🔴 [2026-11-09 主人令「罗马不要用大秦。罗马不是符号吗」] 罗马挂符号旗 EAGLE（军团鹰），旗面不画字 → 旗号恢复「罗马」（11-01「改大秦」那条前提对符号旗不成立，已撤）
         'maixiya': '麦西',
         'moerdaweiya': '摩尔',
-        'mosike_gongguo': '莫斯',
         'mulabite': '穆拉',
         'malin': '马林',   // 🔴 [2026-10-28 主人批修] 马林王朝（新势力，与 SandboxDisplayNames 同步）
         'nasier': '纳斯',

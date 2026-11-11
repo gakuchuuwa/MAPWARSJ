@@ -61,10 +61,10 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     WEST_ASIA:    'baizanting', // 西亚-君士坦丁堡 → 拜占庭
     WEST_ASIA_ANTIQUITY: 'baizanting',
     WEST_ASIA_CASTLE: 'baizanting',
-    SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
-    SLAVIC_FEUDAL: 'mosike_gongguo',
-    SLAVIC_CASTLE: 'mosike_gongguo',
-    SLAVIC_IMPERIAL: 'mosike_gongguo',
+    SLAVIC:       'eluosi_diguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
+    SLAVIC_FEUDAL: 'eluosi_diguo',
+    SLAVIC_CASTLE: 'eluosi_diguo',
+    SLAVIC_IMPERIAL: 'eluosi_diguo',
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     GERMANIC_FEUDAL: 'falanji',
     GERMANIC_IMPERIAL: 'falanji',
@@ -104,16 +104,16 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     GOTHS: 'falanji',  // 哥特 → 待建势力对齐（暂用父文化势力占位）
     HUNS: 'menggu_d',  // 匈人 → 待建势力对齐（暂用父文化势力占位）
     TEUTONS: 'falanji',  // 条顿 → 待建势力对齐（暂用父文化势力占位）
-    VIKINGS: 'mosike_gongguo',  // 维京 → 待建势力对齐（暂用父文化势力占位）
+    VIKINGS: 'eluosi_diguo',  // 维京 → 待建势力对齐（暂用父文化势力占位）
      // 凯尔特 → 待建势力对齐（暂用父文化势力占位）
     CELTS_FEUDAL: 'falanji',
     ITALIANS: 'luoma_diguo',  // 意大利 → 待建势力对齐（暂用父文化势力占位）
     SICILIANS: 'luoma_diguo',  // 西西里 → 待建势力对齐（暂用父文化势力占位）
-    BULGARIANS: 'mosike_gongguo',  // 保加利亚 → 待建势力对齐（暂用父文化势力占位）
+    BULGARIANS: 'eluosi_diguo',  // 保加利亚 → 待建势力对齐（暂用父文化势力占位）
     MAGYAR: 'menggu_d',  // 马扎尔 → 待建势力对齐（暂用父文化势力占位）
-    LITHUANIANS: 'mosike_gongguo',  // 立陶宛 → 待建势力对齐（暂用父文化势力占位）
-    POLES: 'mosike_gongguo',  // 波兰 → 待建势力对齐（暂用父文化势力占位）
-    BOHEMIANS: 'mosike_gongguo',  // 波希米亚 → 待建势力对齐（暂用父文化势力占位）
+    LITHUANIANS: 'eluosi_diguo',  // 立陶宛 → 待建势力对齐（暂用父文化势力占位）
+    POLES: 'eluosi_diguo',  // 波兰 → 待建势力对齐（暂用父文化势力占位）
+    BOHEMIANS: 'eluosi_diguo',  // 波希米亚 → 待建势力对齐（暂用父文化势力占位）
     BURGUNDIANS: 'luoma_diguo',  // 勃艮第 → 待建势力对齐（暂用父文化势力占位）
     SPANISH: 'luoma_diguo',  // 西班牙 → 待建势力对齐（暂用父文化势力占位）
     PORTUGUESE: 'luoma_diguo',  // 葡萄牙 → 待建势力对齐（暂用父文化势力占位）
@@ -198,7 +198,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     MAMLUKS: 'mamuluke',
     CRUSADERS: 'yelusalengwg',
     RUS: 'liulike',
-    KARA_KHITAN: 'xiliao',
+    KARA_KHITAN: 'liao_d',
     TIMURID: 'tiemuer',
     DELHI: 'deli',
     CASTILE: 'kasidiliya',

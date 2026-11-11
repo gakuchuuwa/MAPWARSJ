@@ -109,7 +109,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   putaoya: '葡',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'saierweiya': '拉什',
 'luosi': '罗斯',
-  mosike_gongguo: '莫斯',
   eluosi_diguo: '俄',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   daniebo: '斯摩',
   qiernigeweifu_gongguo: '切尔',
@@ -163,21 +162,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'epirus_despotate': '伊庇',
     'teotihuacan': '特奥',
     'salakanagara': '萨拉',
-    'kartli_kakheti': '卡卡',
     'helvetii': '赫尔',
     'hussites': '胡斯',
     'cherusci': '切鲁',
-    'sweden_medieval': '瑞中',
-    'rus_khaganate': '罗汗',
-    'byzantium_late': '拜晚',
-    'bulgaria_second': '保二',
-    'poland_duchy': '波公',
-    'saxony_electorate': '萨选',
-    'portugal_medieval': '葡中',
-    'denmark_norway': '丹挪',
-    'denmark_medieval': '丹中',
-    'scotland_stuart': '苏斯',
-    'england_modern': '英近',
     'rashtrakuta': '拉什',
     'andean_rebellion': '安起',
     'abkhazia_kingdom': '阿布',
@@ -187,7 +174,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
         // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 的旗号「建州」已删除（原违规：旗号含「州」；势力并入大清，旗号随大清「清」）
     'bashkir': '巴什',
     'drevlians': '德列',
-    'mongol_ancient': '蒙兀',
     'marcomanni': '马科',
     'serbia_revolution': '塞革',
     'caledonia': '喀里',
@@ -196,22 +182,17 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hamdanid': '哈姆',
     'wiman_joseon': '卫',   // 🔴 [2026-11-09 主人令「改成卫」] 原「卫满」是武将名（旗下有卫满、卫右渠），人名不许当旗号 → 取国号「朝鲜」的家族称首字「卫」（史称卫氏朝鲜）
     'gusiluo': '唃厮',
-    'yarlung': '雅砻',
     'old_saxons': '古撒',
     'alamanni': '阿勒',
-    'magyar_tribes': '马部',
     'taifa_toledo': '托泰',
     'florence': '佛罗',
     'tuitonga': '汤加',
     'rapanui': '拉帕',
     'later_baekje': '后百',
     'arverni': '阿维',
-    'france_modern': '法兰',
     'imro': '内马',
     'bulgaria_third': '保公',
-    'later_le': '后黎',
     'aksum': '阿克',
-    'castile_county': '卡伯',
     'milan_duchy': '米兰',
     'lombard_league': '伦联',
     'cilicia_armenia': '奇里',
@@ -223,11 +204,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xinmeiliyan': '辛梅',
     'aixini': '爱西',
     'taluma': '塔鲁',
-    'early_chimu': '早奇',
-    'lithuanian_tribes': '立部',
-    'hellas_theme': '海拉',
     'lugii': '卢吉',
-    'wagadu': '瓦加',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
   koln: '科隆',   // 🔴 [2026-10-28 主人批立] 科隆大主教区简称（库里无重）
@@ -235,7 +212,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   asikanani: '勃兰',
 'wende': '萨克',
   bafaliya: '巴伐',
-  huohengsuolun: '勃普',
   ruishi: '瑞士',
   damolaweiya: '摩拉',
   // 🔴 [2026-11-09 主人令「罗马不要用大秦。罗马不是符号吗」] 罗马帝国挂符号旗 `FACTION_EMBLEM['luoma_diguo'] = 'EAGLE'`（军团鹰），
@@ -254,7 +230,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'juandu': '捐毒',
   'sijitai': '斯基',
 
-    'xiajiasi': '坚昆',
     'shang': '商',
     'zhou': '周',
 'qi': '齐',
@@ -278,7 +253,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'helian': '夏',  // 🔴 [2026-11-03] 国号夏，不用姓
 'xiongnu': '匈奴',
 'xianbei': '鲜卑',
-    'jie': '羯族',
 'tuoba': '魏',  // 🔴 [2026-11-03] 北魏国号魏，不用姓
 'yuwen': '周',  // 🔴 [2026-11-03] 北周国号周，不用姓
 'chen': '陈',
@@ -295,14 +269,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'jianwen': '明',   // 🔴 [2026-11-09 主人令「建文是明」] 建文只是年号，国号仍是明（靖难中的建文朝廷 1399–1402）
 'shunde': '明',   // 🔴 [2026-11-09 主人令] 宁王朱宸濠 1519 只改元「顺德」，从未改国号，国号仍是明（原旗号「顺」不截年号首字）
 'liao_d': '辽',
-'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
-'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
 
 'rouran': '柔然',
     'baiji': '百济',
 'tubo': '吐蕃',
-'guge': '吐蕃',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'tujue': '突厥',
 
 'dayue': '越',  // 🔴 [2026-11-04 主人令「越南势力旗号只用一个越字，用颜色区分；他们是汉字区」] 李陈后黎莫国号「大越」（1054–1804），取国号本字「越」
@@ -321,12 +292,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'baibo': '黄巾',
     'wuhuan': '乌桓',
 'xianlingqiang': '先零',
-'cheshihou': '乌垒',
 'yelang': '夜郎',
 'ailao': '哀牢',
 'fuyu': '夫余',
 'shule': '疏勒',
-    'loulan': '楼兰',     // 精绝·东汉都护府楼兰属国屯戍（原扜泥城）
     'shache': '莎车',
 'qiuci': '龟兹',
 'yanqi': '焉耆',
@@ -349,7 +318,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'gaoqi_d': '齐',
     'wuzhou_d': '周',
-    'zhuang_d': '壮',
 'xibo_d': '锡伯',
 'ranwei_d': '魏',
 
@@ -415,7 +383,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'longwu': '明',
     // 🔴 [2026-11-09 主人令] 鲁监（鲁王朱以海监国，奉明正朔）→ 旗号写国号「明」（原「婺」是地名简称，无依据）
     'lujian': '明',
-'dzungar': '瓦剌',   // 🔴 [2026-11-09 主人令「统一旗号，一律改为瓦剌」] 绰罗斯部（准噶尔汗国）同属卫拉特，旗号统一「瓦剌」，靠势力色区分（原「绰罗」）
     'khoshut': '和硕',
     'yarkand': '叶尔',
 'khoja': '和卓',
@@ -456,7 +423,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀喇',   // 🔴 [2026-11-07 主人令「建立一个喀喇汗国」] 旗号＝势力简称前两字（原「喀汗」是截名凑字）
 'sogdian': '粟特',
-    'suogediyana': '索格',
     'geluolu': '葛逻',
     'yuchi': '于阗',  // 🔴 [2026-11-03] 国名于阗，不用姓
 'an': '乌兹',
@@ -464,7 +430,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     
 'hongirad': '弘吉',
-'choros': '瓦剌',   // 🔴 [2026-11-04 按历史修复] 势力改「瓦剌」，旗号随改
     // ── 2026-05-26 新增：青藏高原势力旗号（18个）──
 'ladakh': '玛域',
 'tsangpa': '藏巴',
@@ -537,7 +502,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
     'saman': '萨曼',
   'sanfoqi': '三佛',
-'hepan': '喝槃',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
     'dai': '傣族',
@@ -545,9 +509,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'luohu': '罗斛',
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
-    'feiyaka': '费雅',
 
-'anushidgin': '阿努',
 
     
 
@@ -555,7 +517,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
 'gling': '玉树',
-    'khyungpo': '琼波',
 'suolun': '达斡',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
@@ -585,13 +546,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'tiemuer': '帖木',   // 🔴 [2026-11-04 按历史修复] 势力改「帖木儿帝国」，旗号「帖木」
 'kawusi': '卡乌',
     'keerkezi': '柯尔',
-    'yiduhu': '亦都',
     'yizhi': '一支',
 'yiwu': '伊吾',
     'duerbote': '杜尔',
     'kaerka': '喀尔',
 'huihu': '回鹘',
-'ganzhou_huihu': '回鹘',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'wuzhumuqin': '乌珠',
 'zhadalan': '扎答',
     'zhuerqi': '主儿',
@@ -618,7 +577,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liuzhen': '六镇',
 
 'you': '幽',
-'pisha': '毗沙',
     'yumi': '扜弥',
     'xiye': '西夜',
     'galangdiba': '波密',
@@ -633,7 +591,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hui': '濊',
     'wure': '兀惹',
     'sunite': '苏尼',
-'dayuzi': '玉兹',
     'weiwuer': '乌第',
     'wensu': '温宿',
     'keerqin': '科尔',
@@ -651,7 +608,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qiepantuo': '朅盘',
     // ── 2026-06-11 新增：库页岛民族 ──
     'eluoke': '鄂罗',
-    'kuye': '库页',
     // ── 2026-06-11 新增：阿伊努（北海道）──
     // ── 2026-06-11 新增：北海（北海道北端）──
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
@@ -660,9 +616,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     'buriat': '布里',
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
-    'xianhai': '叶护',   // 🔴 [2026-11-04 按历史修复] 势力改「乌古斯叶护」，旗号「叶护」
 'yanda': '白匈',
-'anxi': '安西',
 'konbaung': '贡榜',
 'tianxiong': '魏博',
 'huaixi': '淮西',
@@ -678,7 +632,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'sumuroyi': '米沙',
     'yun': '允',
     'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
-    'basha_d': '巴沙',
 'yehe': '叶赫',
     
 'wula': '乌拉',
@@ -691,15 +644,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'huite': '辉特',
 'zubu': '阻卜',
     'jiashi_d': '迦尸',
-'wuhu': '乌护',
   jiazini: '伽色',
   fanyanna: '梵衍',
-'bailong': '白龙',
     'kepantuo': '渴盘',
 'yangguan': '凉',   // 🔴 [2026-10-28 主人令「势力名字用东南西北上下的，旗帜用一个国号字」] 西凉国号「凉」（史称西凉）→ 凉
 'xiliangjun': '董',   // 🔴 [2026-11-03 主人令「就叫西凉军，旗号董」] 董卓集团无国号无称号，旗号用董
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-'wugu_d': '乌古',
     xierhe: '锡尔',
     // ── Phase 1 Missing Flags ──
     'kumoxi': '奚',
@@ -774,9 +724,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'maidina': '拉希',
     'gulaishi': '古莱',
     'xiemian': '萨维',
-    'yidier': '伊蒂',
     'salai': '诺盖',
-    'mangshi': '土库',
     'aztec': '阿兹',
     'yiluokui': '易洛',
     'qimu': '奇穆',
@@ -795,17 +743,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'saimien': '塞米',
     'kaliya': '卡里',
 'adiyabeina': '亚贝',
-    'aertai': '阿勒',
     'kuman_oleshky': '库曼',
-    'feierganna': '费尔',
     'tamoyue': '塔莫',
-    'naweierbuta': '纳韦',
     'bogendigongguo': '勃公',
     'bogendi_wangguo': '勃王',   // 勃艮第王国（古典）
     'amaniyake': '阿马',
     'weiershigongguo': '威尔',
-    'miandian': '缅甸',
-    'malai': '马来',
     'taimier': '马拉',
     'xibanya': '西',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'manding': '曼丁',
@@ -821,7 +764,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhuluo': '朱罗',
     'sengjialuo': '僧伽',
     'pandiya': '潘地',
-    'liaozu': '寮族',
     'kushi': '库施',
     'aolisha': '东恒',
     'kanata': '维查',
@@ -845,9 +787,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qutb_shahi': '库特',
     'minangkabau': '米南',
     'tutul_xiu': '休族',
-    'odrysian_late': '塞乌',  // [2026-10-24] 原一字「奥」；「奥德」已被 aodesuosi 占用 → 取其王都塞乌托波利（塞乌特斯三世所建）之「塞乌」
     'aswaka': '斯瓦', // 🔴 [2026-09-19 主人指出审计警告] 原登记「阿斯」与 asikanani(阿斯坎尼) 撞车；「阿瓦」又撞 ava(阿瓦王国) → 取其所居**斯瓦特**河谷之「斯瓦」
-    'julushi': '居鲁', // 居鲁士城（公元前329年居鲁士城围攻守方）：势力名前两字，全库不撞
     'malli': '马利',
     // 🔴 [2026-10-20] 原「科塞亚」「乌克西亚」两个无城战役势力已删（武将改挂米底/埃兰），其旗号一并删除
     'genji': '源',
@@ -859,9 +799,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kapaduoxiya': '卡帕',
 
 
-    'sute': '诺塔',
     'aolitai': '奥里',
-    'shiyuzu': '食鱼',
   dalriada: '达里',  // 达尔里阿达
   dublin: '都林',   // 🔴 [2026-10-28 主人批立] 都柏林王国简称（库里无重）
   scotland: '苏',  // 苏格兰；  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字

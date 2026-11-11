@@ -138,21 +138,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'epirus_despotate': 'city_anbulajiya',   // 登记用，不改据点归属
     'teotihuacan': 'city_tikal',   // 登记用，不改据点归属
     'salakanagara': 'city_wandan',   // 登记用，不改据点归属
-    'kartli_kakheti': 'city_dibilisi',   // 登记用，不改据点归属
     'helvetii': 'city_geneva',   // 登记用，不改据点归属
     'hussites': 'city_bulage',   // 登记用，不改据点归属
     'cherusci': 'city_bulunruike',   // 登记用，不改据点归属
-    'sweden_medieval': 'city_sidedegelmo',   // 登记用，不改据点归属
-    'rus_khaganate': 'city_ladoga',   // 登记用，不改据点归属
-    'byzantium_late': 'city_junshitandingbao',   // 登记用，不改据点归属
-    'bulgaria_second': 'city_delusitaer',   // 登记用，不改据点归属
-    'poland_duchy': 'city_poznan',   // 登记用，不改据点归属
-    'saxony_electorate': 'city_magedebao',   // 登记用，不改据点归属
-    'portugal_medieval': 'city_lisiben',   // 登记用，不改据点归属
-    'denmark_norway': 'city_gebenhagen',   // 登记用，不改据点归属
-    'denmark_medieval': 'city_gebenhagen',   // 登记用，不改据点归属
-    'scotland_stuart': 'city_yinfeineisi',   // 登记用，不改据点归属
-    'england_modern': 'city_portroyal',   // 登记用，不改据点归属
     'rashtrakuta': 'city_hengbi',   // 登记用，不改据点归属
     'andean_rebellion': 'city_diyawanake',   // 登记用，不改据点归属
     'abkhazia_kingdom': 'city_kutayixi',   // 登记用，不改据点归属
@@ -162,7 +150,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou → city_tongjiajiang 的首府登记已删（浑江本属 manzhou_d）
     'bashkir': 'city_kashan',   // 登记用，不改据点归属
     'drevlians': 'city_zhytomyr',   // 登记用，不改据点归属
-    'mongol_ancient': 'city_burhan',   // 登记用，不改据点归属
     'marcomanni': 'city_bulage',   // 登记用，不改据点归属
     'serbia_revolution': 'city_nis',   // 登记用，不改据点归属
     'caledonia': 'city_scone',   // 登记用，不改据点归属
@@ -171,22 +158,17 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hamdanid': 'city_alepo',   // 登记用，不改据点归属
     'wiman_joseon': 'city_pyongyang',   // 登记用，不改据点归属
     'gusiluo': 'city_ledu',   // 登记用，不改据点归属
-    'yarlung': 'city_jiamachikang',   // 登记用，不改据点归属
     'old_saxons': 'city_magedebao',   // 登记用，不改据点归属
     'alamanni': 'city_meiyinci',   // 登记用，不改据点归属
-    'magyar_tribes': 'city_budapeisi',   // 登记用，不改据点归属
     'taifa_toledo': 'city_cordoba',   // 登记用，不改据点归属
     'florence': 'city_florence',   // 登记用，不改据点归属
     'tuitonga': 'city_mua',   // 登记用，不改据点归属
     'rapanui': 'city_rapanui',   // 登记用，不改据点归属
     'later_baekje': 'city_jeonju',   // 登记用，不改据点归属
     'arverni': 'city_bali',   // 登记用，不改据点归属
-    'france_modern': 'city_bali',   // 登记用，不改据点归属
     'imro': 'city_skopje',   // 登记用，不改据点归属
     'bulgaria_third': 'city_sofia',   // 登记用，不改据点归属
-    'later_le': 'city_xidu',   // 登记用，不改据点归属
     'aksum': 'city_aksum',   // 登记用，不改据点归属
-    'castile_county': 'city_burgos',   // 登记用，不改据点归属
     'milan_duchy': 'city_milan',   // 登记用，不改据点归属
     'lombard_league': 'city_milan',   // 登记用，不改据点归属
     'cilicia_armenia': 'city_waka',   // 登记用，不改据点归属
@@ -204,12 +186,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'asikanani': 'city_bolandengbao',
 'wende': 'city_magedebao',
   'bafaliya': 'city_leigensibao',
-  'huohengsuolun': 'city_niulunbao',
   'ruishi': 'city_basaier',
   'damolaweiya': 'city_buernuo',
 
 'luosi': 'city_jifu',
-  'mosike_gongguo': 'city_mosike',
   'eluosi_diguo': 'city_shengpidebao',
   'daniebo': 'city_simolengsike',
   'qiernigeweifu_gongguo': 'city_qiernigeweifu',
@@ -247,7 +227,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yada': 'city_xiwanjin',
 'juandu': 'city_paixiucheng',
 
-    'xiajiasi': 'city_wubusabo',
     'wei': 'city_hedong',
     'caowei': 'city_xuchang',
     'wuzhou_d': 'city_luoyang',
@@ -274,7 +253,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'helian': 'city_tongwancheng',
 'xiongnu': 'city_toumancheng',
 'xianbei': 'city_gaxian',
-    'jie': 'city_jieshuangna',
 'tuoba': 'city_datong',
 'yuwen': 'city_wuchuanzhen',
 'chen': 'city_qingyuan',
@@ -298,8 +276,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'jianwen': 'city_licheng',   // 建文（靖难中据历下·济南，铁铉守城）
 'shunde': 'city_hongzhou',   // 顺德（宁王朱宸濠据豫章·南昌）
 'liao_d': 'city_linhuang',
-'houliao': 'city_xianping',
-'xiliao': 'city_suiye',
 'gongsun_d': 'city_liaoyang',
 'murong': 'city_jicheng',
 'kong_d': 'city_qufu',
@@ -311,7 +287,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'rouran': 'city_saierwusu',
     'baiji': 'city_sabi',
 'tubo': 'city_luoxie',
-'guge': 'city_zhaburang2',
 'tujue': 'city_otuken',
 
 'dayue': 'city_shenglong',
@@ -349,14 +324,12 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'cen_d': 'city_cen',
     'baibo': 'city_baibogu',
     'wuhuan': 'city_bailangshan',
-'cheshihou': 'city_wutucheng',
 'wensu': 'city_dawushenkate',
 'yelang': 'city_puding',
 'ailao': 'city_baoshan',
 'shiwei': 'city_julunbo',
     'fuyu': 'city_fuyu',
 'shule': 'city_shule',
-    'loulan': 'city_jingjue',
     'shache': 'city_shache',
 'qiuci': 'city_yiluolucheng',
 
@@ -365,13 +338,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'fushi': 'city_lueyang',
     'hantawadi': 'city_bago',
-'wuhu': 'city_zhenzhuhe',
 'ewenki': 'city_nibuchu',
     'ouyue': 'city_taizhou_zj',
 
     'gaoqi_d': 'city_jingzhou2',
-    'zhuang_d': 'city_tianyang',
-    'basha_d': 'city_shangding',
 'ranwei_d': 'city_liyang',
 
 'sunwu_d': 'city_wuchang',
@@ -424,7 +394,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'longwu': 'city_jianning',
     'lujian': 'city_wuzhou',
     'tumed': 'city_guihua',
-'dzungar': 'city_tacheng',
 'xibo_d': 'city_yili',
     'yarkand': 'city_yinai',
 'khoja': 'city_xiuxun',
@@ -449,7 +418,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gaoche': 'city_junjishan',
 
 'hongirad': 'city_erguna',
-'choros': 'city_dzungar_basin',
 
 'kala': 'city_aoshen',
 'sogdian': 'city_varaksha',
@@ -457,13 +425,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
     //    这样该城才有锚定武将（克莱奥菲斯）与精锐（阿斯瓦卡兵），同盟军年代闸门也才上得了图
     'aswaka': 'city_masaga',
     // 🔴 [2026-09-24 主人批准] 新据点「索格狄亚那岩」要有锚定势力才上得了图（闸门读首府武将的时代）
-    'suogediyana': 'city_suogediyanayan',
     // 🔴 [2026-09-24 §二之二 授权] 新据点「奥诺斯岩」要有锚定势力才上得了图（年代闸门读首府武将的时代）
     // 🔴 [2026-09-25 §二之二 授权] 新据点「马里斯」要有锚定势力才上得了图（年代闸门读首府武将的时代）；
     //    马利势力此前一直没有首府，把马里斯给它当首府，不挤占任何现有城
     'malli': 'city_malisi',
     // 🔴 [2026-09-25] 新据点「居鲁士城」要有锚定势力才上得了图（年代闸门读首府武将的时代）
-    'julushi': 'city_julushicheng',
     'geluolu': 'city_almaliq',
 'shi_clan': 'city_tashkent',
 'ladakh': 'city_leh',
@@ -513,7 +479,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：南部(根城)、萨曼(阿母城)、西域四政权 ──
 'an': 'city_bukhara',
     'saman': 'city_amucheng',
-'hepan': 'city_hepancheng',
 
     // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
     'dai': 'city_mengle',
@@ -521,12 +486,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'luohu': 'city_khorat',
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
-'feiyaka': 'city_qiji',
     
     // ── 2026-05-31 新增：补齐缺失的初始首都 ──
     'weiwuer': 'city_yuergun',
 
-'anushidgin': 'city_khiva',
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
 
 
@@ -535,7 +498,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
 'gling': 'city_jiegu',
-    'khyungpo': 'city_qiongbu',
 'suolun': 'city_bukui',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
@@ -564,16 +526,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'tiemuer': 'city_samaerhan',
 'kawusi': 'city_jizhake',
     'keerkezi': 'city_yierkeshentan',
-    'yiduhu': 'city_gaochangcheng',
 'yiwu': 'city_hamiwei',
     'duerbote': 'city_tuokexun',
     'kaerka': 'city_duluohe',
 'huihu': 'city_woluduocheng',
-    'ganzhou_huihu': 'city_zhangye',   // 🔴 [2026-11-01] 甘州回鹘都甘州（张掖）
 'wuzhumuqin': 'city_wuliyasitai',
 'zhadalan': 'city_kuoyitian',
     'zhuerqi': 'city_sangguer',
-'pisha': 'city_mazhatage',
     'yuchi': 'city_yutian2',
     'yumi': 'city_yumi',
     'xiye': 'city_xiye',
@@ -587,7 +546,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hui': 'city_heseluo',
     'wure': 'city_niman',
     'sunite': 'city_saihantala',
-'dayuzi': 'city_sailan',
     'keerqin': 'city_daerhan',
     // -- 2026-05-31 民族起源地6势力 --
     'xiangxiong': 'city_qionglong',
@@ -606,12 +564,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'khoshut': 'city_dangxiong',
     'qiepantuo': 'city_humicheng',
     'eluoke': 'city_nuotuoluo',
-    'kuye': 'city_baizhu',
     'buriat': 'city_chita',
-    'xianhai': 'city_yangjigan',
 'yanda': 'city_huoguocheng',
   'xierhe': 'city_qihe',
-'anxi': 'city_bohuancheng',
 'konbaung': 'city_shwebo',
 'tianxiong': 'city_daming',
 'huaixi': 'city_xuanhu',
@@ -639,17 +594,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jiashi_d': 'city_walanaxi',
     'fanyanna': 'city_fanyanna',
     'jiazini': 'city_jiaseni',
-'bailong': 'city_sanlongsha',
     'kepantuo': 'city_gongzhubao',
 
 
-    'sute': 'city_nuotaka',
     'aolitai': 'city_lanbaqiya',
-    'shiyuzu': 'city_aola',
 'yangguan': 'city_yangguan',
 'xiliangjun': 'city_luoyang',   // 西凉军·董卓据洛阳
 'xihai_d': 'city_fusicheng',
-'wugu_d': 'city_zhande',
     
 'dulan_d': 'city_kandaha',
 'xisi': 'city_bosite',
@@ -716,9 +667,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'maidina': 'city_maidina',
     'gulaishi': 'city_maijia',
     'xiemian': 'city_xiemianjieer',
-    'yidier': 'city_yidier',
     'salai': 'city_salaichuke',
-    'mangshi': 'city_mangshilake',
     'aztec': 'city_tenochtitlan',
 'inca': 'city_cusco',
     'maya': 'city_tikal',
@@ -738,17 +687,12 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'saimien': 'city_saimien',
     'kaliya': 'city_halikanasu',
 'adiyabeina': 'city_aerbeila',
-    'aertai': 'city_yeerdishi',
     'kuman_oleshky': 'city_oleshky',
-    'feierganna': 'city_ahexikesi',
     'tamoyue': 'city_kabufoliwu',
-    'naweierbuta': 'city_kelipuli',
     'bogendigongguo': 'city_mengteluo',
     'bogendi_wangguo': 'city_geneva',
     'amaniyake': 'city_oushi',
     'weiershigongguo': 'city_buyiersi',
-    'miandian': 'city_santaguan',
-    'malai': 'city_danmaxi',
     'taimier': 'city_jinqi',
 'manding': 'city_timbuktu',
 'ethiopia': 'city_aksum',
@@ -767,7 +711,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yaqi': 'city_yaqi',
     'zhamolin': 'city_guli',
     'pandiya': 'city_madula',
-    'liaozu': 'city_wanxiang',
     'kushi': 'city_mailuoe',
     'aolisha': 'city_puli',
     'kanata': 'city_hengbi',
@@ -790,7 +733,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qutb_shahi': 'city_golconda',
     'minangkabau': 'city_pagaruyung',
     'tutul_xiu': 'city_uxmal',
-    'odrysian_late': 'city_seuthopolis',
     // 🔴 [2026-09-12] 新增势力必须登记首都，否则沙盒兜底会把它降格成叛军 panshu（见 five-file-sync.md 首都映射铁律）
     // 🔴 [2026-09-23 主人令「先添加据点」] 迦南重新有据点了：推罗（`city_tuile`）。
     //    按上面那条铁律，这里必须登记首都映射 —— 不登记，引擎找不到迦南的立足之地，
@@ -887,11 +829,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'wandan': 'city_wandan',       // 万丹·万丹（胡椒港）
     'yinduxila': 'city_dinggucheng',
     'asakaini': 'city_aonuosiyan',
-    'early_chimu': 'city_chanchan',
-    'lithuanian_tribes': 'city_weierniwusi',
-    'hellas_theme': 'city_yadian',
     'lugii': 'city_kelakefu',
-    'wagadu': 'city_kumubi',
 };
 
 // @ts-ignore

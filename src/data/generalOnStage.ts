@@ -39,6 +39,24 @@ export function setActiveLegionGeneralChecker(fn: (generalId: string) => boolean
     activeLegionGeneralChecker = fn;
 }
 
+/**
+ * 🔴 [2026-11-11 主人令「武将登场时势力还没成立，这不可能」] 武将所属势力的起始年（FactionLifeYears），
+ * 由 FactionGenerals 在加载时注入（本文件不直接引 FactionGenerals，避免循环依赖）。
+ * 百岁模式出场年 = max(登场年, 势力起始年)：刘邦这类二十岁以后才起兵的开国者，随势力起兵同步出场。
+ */
+let factionStartProvider: (generalId: string) => number | null = () => null;
+
+export function setGeneralFactionStartProvider(fn: (generalId: string) => number | null): void {
+    factionStartProvider = fn;
+}
+
+/** 出场年不早于本势力起始年；势力起始年晚于退场年的（挂错势力的武将）→ 窗口为空，不出场 */
+function clampToFactionStart(generalId: string, w: { from: number; to: number }): { from: number; to: number } {
+    const fs = factionStartProvider(generalId);
+    if (fs == null || fs <= w.from) return w;
+    return { from: fs, to: w.to };
+}
+
 /** 当前玩法模式（由 GameApp 注入）；编辑器 / 离线脚本未注入 → null（不按模式改行为） */
 export type GeneralGameMode = 'script' | 'centenarian' | 'melee';
 let gameModeProvider: () => GeneralGameMode | null = () => null;
@@ -162,6 +180,11 @@ function openingStaggerExitYear(generalId: string, start: number): number | unde
  *   开局之后才登场的武将不受影响，照常按生年+120 退场（再加 isGeneralOnStage 里「军团没败不退场」）。
  */
 export function getCentenarianStageWindow(generalId: string): { from: number; to: number } | null {
+    const w = rawCentenarianStageWindow(generalId);
+    return w ? clampToFactionStart(generalId, w) : null;
+}
+
+function rawCentenarianStageWindow(generalId: string): { from: number; to: number } | null {
     const life = GENERAL_LIFE_YEARS[generalId];
     if (!life) return null;
     const debut = getGeneralDebutYear(generalId);
@@ -191,6 +214,8 @@ export function isOpeningQueueGeneral(generalId: string): boolean {
     const debut = getGeneralDebutYear(generalId);
     if (debut == null) return false;
     const start = GameConfig.TIME.TIMELINE_START_YEAR;
+    const fs = factionStartProvider(generalId);
+    if (fs != null && fs > start) return false;   // 势力开局时还没成立 → 不算开局这批
     const to = Math.max(debut, centenarianYearOf(life.birth));
     return to < start || (debut <= start && to < start + OPENING_TIGHT_YEARS);
 }

@@ -670,7 +670,7 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 唐朝势力 ID 集合 */
 export const TANG_DYNASTY_FACTION_IDS = new Set([
-    'tang', 'hepan', 'anxi', 'juandu', 
+    'tang', 'juandu', 
     
     
     'wei2'

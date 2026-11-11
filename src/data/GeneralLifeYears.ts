@@ -174,7 +174,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe_albert_lombard: { birth: 1050, death: 1101, kaoju: '推定' },
     bfe_li_song: { birth: -20, death: 26, kaoju: '推定' },
     bfe3_57: { birth: -30, death: 26, kaoju: '推定' },
-    bfe3_67: { birth: 180, death: 190, kaoju: '推定' },
+    bfe3_67: { birth: 150, death: 189, kaoju: '推定' },
     bfe_yin_ziqi: { birth: 700, death: 757, kaoju: '推定' },
     bfe_chen_dong: { birth: 1500, death: 1556, kaoju: '推定' },
     bfe3_16: { birth: -250, death: -210, kaoju: '推定' },
@@ -495,7 +495,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     ante_boz: { birth: 350, death: 376, kaoju: '推定' },  // 博兹
     suweihui_requiarius: { birth: 430, death: 500, kaoju: '推定' },  // 雷基亚尔
     baizanting_nikephoros_phokas: { birth: 912, death: 969 },  // 尼基弗鲁斯
-    yibiluliya_pharnavaz: { birth: -360, death: -280, kaoju: '推定' },  // 法尔纳瓦兹一世
+    yibiluliya_pharnavaz: { birth: -329, death: -237, kaoju: '推定' },  // 法尔纳瓦兹一世
     gelujiya_erekle_ii: { birth: 1720, death: 1798 },  // 埃雷克莱二世
     litaowan_ostrogski: { birth: 1460, death: 1530 },  // 奥斯特罗格斯基
     wulaertu_davit_bek: { birth: 1650, death: 1730, kaoju: '推定' },  // 达维德
@@ -573,7 +573,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_black_prince: { birth: 1330, death: 1376 },        // 黑太子
     xuan_xuda: { birth: 1332, death: 1385 },               // 徐达
     joseon_lichenggui: { birth: 1335, death: 1408 },       // 李成桂
-    zhaowu_timuermieli: { birth: 1335, death: 1378, kaoju: '推定' },      // 帖木儿灭里
+    zhaowu_timuermieli: { birth: 1175, death: 1231, kaoju: '推定' },      // 帖木儿灭里
     gen_qutlugh: { birth: 1335, death: 1385, kaoju: '推定' },             // 忽都鲁（费尔干纳割据统治者）
     tiemuer_tiemuer: { birth: 1336, death: 1405 },         // 帖木儿
     pingnan_muying: { birth: 1345, death: 1392 },          // 沐英
@@ -1154,7 +1154,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     leloi: { birth: 1385, death: 1433 },  // 黎利
     dacheng_chenkai: { birth: 1822, death: 1861 },  // 陈开
     dayue_chenguojun: { birth: 1228, death: 1300 },  // 陈国峻
-    shengmiao_baoli: { birth: 1760, death: 1825, kaoju: '推定' },  // 包利
+    shengmiao_baoli: { birth: 1695, death: 1736, kaoju: '推定' },  // 包利
     miao_qing_yangwanzhe: { birth: 1315, death: 1358, kaoju: '推定' },  // 杨完者
     liren_funanshe: { birth: 1460, death: 1512, kaoju: '异说' },  // 符南蛇
     yelang_duotong: { birth: -160, death: -110, kaoju: '推定' },  // 多同
@@ -1348,7 +1348,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     wensu_guyi: { birth: -85, death: -25, kaoju: '推定' },  // 姑翼
     duerbote_duerbote_taiji: { birth: 1540, death: 1600, kaoju: '推定' },  // 博贝
     xiye_zihe: { birth: -75, death: -15, kaoju: '推定' },  // 子合
-    faqiang_niechizanpu: { birth: -160, death: -100, kaoju: '推定' },  // 聂赤
+    faqiang_niechizanpu: { birth: -147, death: -95, kaoju: '推定' },  // 聂赤
     zhuoshi_gaopian: { birth: 821, death: 887 },  // 高骈
     xingliao_dayanlin: { birth: 975, death: 1030, kaoju: '推定' },  // 大延琳
     xihai_d_fulianchou: { birth: 455, death: 529, kaoju: '异说' },  // 伏连筹
@@ -1448,7 +1448,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     kongque_zhantuoluo: { birth: -340, death: -297, kaoju: '异说' },  // 旃陀罗笈多
     mojietuo_pinbisuoluo: { birth: -558, death: -491, kaoju: '异说' },  // 频毗娑罗
     boluo_damoboluo: { birth: 745, death: 810, kaoju: '推定' },  // 达磨波罗
-    boluo_vijaya: { birth: -570, death: -505, kaoju: '推定' },  // 毗阇耶
+    boluo_vijaya: { birth: -563, death: -505, kaoju: '推定' },  // 毗阇耶
     sumo_sumowang: { birth: -560, death: -500, kaoju: '推定' },  // 苏摩
     jiashi_jiashiwang_d: { birth: -580, death: -520, kaoju: '推定' },  // 梵摩达
     zhuluo_lajialajia: { birth: 947, death: 1014 },  // 拉贾拉贾一世
@@ -1515,7 +1515,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gen_cipriano_figueiredo: { birth: 1540, death: 1605, kaoju: '推定' },  // 西普里亚诺
     liaozu_saitatila: { birth: 1534, death: 1571 },  // 赛塔提腊
     kushi_amanilunnasi: { birth: -60, death: -20, kaoju: '异说' },  // 阿玛尼伦纳斯
-    aimala_katali: { birth: 1740, death: 1781, kaoju: '异说' },  // 卡塔里
+    aimala_katali: { birth: 1750, death: 1781, kaoju: '异说' },  // 卡塔里
     aolisha_anatabamo: { birth: 1078, death: 1150, kaoju: '推定' },  // 阿纳塔跋摩
     kanata_lamalaya: { birth: 1510, death: 1575, kaoju: '异说' },  // 拉玛拉亚
     adile_adilesha: { birth: 1490, death: 1534, kaoju: '异说' },  // 阿迪勒沙
@@ -1535,7 +1535,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     lumiliya_lalashahin: { birth: 1330, death: 1388 },  // 拉拉沙欣
     yilaka_tundama: { birth: 1520, death: 1585, kaoju: '推定' },  // 通达马
     xingelana_dawila: { birth: 1500, death: 1560, kaoju: '异说' },  // 达维拉
-    xiyindu_batuoluome: { birth: 1450, death: 1500, kaoju: '异说' },  // 巴托洛梅
+    xiyindu_batuoluome: { birth: 1461, death: 1514, kaoju: '异说' },  // 巴托洛梅
     jialebi_brasilesuo: { birth: 1700, death: 1765, kaoju: '异说' },  // 布拉斯莱索
     gualani_nicolas: { birth: 1600, death: 1660, kaoju: '推定' },  // 尼古拉斯
     xiadunhe_sviatoslav: { birth: 942, death: 972, kaoju: '异说' },  // 斯维亚托斯拉夫
@@ -1648,7 +1648,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe_chanca_chief: { birth: 1400, death: 1450, kaoju: '推定' },  // 阿斯塔瓦兰卡
     bfe_sue_harutaka: { birth: 1521, death: 1555, kaoju: '推定' },  // 陶晴贤
     bfe_rajah_sulayman: { birth: 1520, death: 1575, kaoju: '推定' },  // 拉者苏莱曼三世
-    bfe_muzaffar_shah: { birth: 1560, death: 1611, kaoju: '推定' },  // 穆扎法尔三世
+    bfe_muzaffar_shah: { birth: 1548, death: 1593, kaoju: '推定' },  // 穆扎法尔三世
     bfe_coyett: { birth: 1615, death: 1687, kaoju: '推定' },  // 揆一
     bfe_jaya_prakash: { birth: 1711, death: 1768, kaoju: '推定' },  // 普拉卡什
     bfe_pisa_king: { birth: -830, death: -760, kaoju: '推定' },  // 潘塔琉斯
@@ -1942,7 +1942,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     joseon_shenla: { birth: 1546, death: 1592, kaoju: '推定' },  // 申砬
     joseon_liyi: { birth: 1541, death: 1592, kaoju: '推定' },  // 李镒
     joseon_jinxie: { birth: 1540, death: 1592, kaoju: '推定' },  // 金澥
-    shunga_danatipo: { birth: -80, death: -20, kaoju: '推定' },  // 达那提婆
+    shunga_danatipo: { birth: -115, death: -60, kaoju: '推定' },  // 达那提婆
     mowoer_sadatehan: { birth: 1680, death: 1739, kaoju: '推定' },  // 萨达特汗
     cueva_panjiyake: { birth: 1490, death: 1530, kaoju: '推定' },  // 潘基亚科
     han_d_wangji: { birth: -175, death: -120, kaoju: '推定' },  // 王吉

@@ -21,7 +21,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     //    新增纹章一律先有素材（{KEY}_{w|b}.png）与史实依据，再在这里加一行；不许两家共用一个 KEY。
     luoma_diguo: 'EAGLE',   // 罗马帝国·军团鹰
     baizanting: 'BYZ_CROSS',   // 拜占庭·十字
-    byzantium_late: 'BYZ_CROSS',   // 🔴 [2026-11-10 主人令「把拜占庭的旗帜统一」] 同系政权（晚期拜占庭←拜占庭，见 FactionLineage），纹章随本家
     xila: 'OWL',   // 雅典·猫头鹰
     maqidun: 'SUN',   // 马其顿·维吉纳太阳
     gaolu: 'FLEUR',   // 法兰西·鸢尾
@@ -68,12 +67,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     leangongguo: 'LEON_LION',   // 莱昂·狮
     alagong: 'ARAGON_STRIPES',   // 阿拉贡·红黄条纹
     putaoya: 'PORTUGAL_QUINAS',   // 葡萄牙·五盾（quinas）
-    portugal_medieval: 'PORTUGAL_QUINAS',   // 🔴 [2026-11-10 主人令「葡中这个旗号也不对」] 同系政权（中世纪葡萄牙←葡萄牙，见 FactionLineage），纹章随本家：勃艮第—阿维斯王朝的葡萄牙王国同样用五盾盾徽（史实）
-    sweden_medieval: 'SWEDEN_CROWNS',   // 🔴 [2026-11-10 主人令「瑞中」字旗拼凑作废] 同系政权（中世纪瑞典←瑞典，见 FactionLineage），纹章随本家：三王冠（Tre Kronor）14 世纪即见载于瑞典王室盾徽
-    denmark_medieval: 'DENMARK_CROSS',   // 🔴 [2026-11-10 主人令「丹中」字旗拼凑作废] 同系政权（中世纪丹麦←丹麦，见 FactionLineage），纹章随本家：Dannebrog 斜杆白十字 13 世纪起即为丹麦王室军旗
-    poland_duchy: 'POLISH_EAGLE',   // 🔴 [2026-11-10 主人令「波公」字旗拼凑作废] 同系政权（波兰公国←波兰，见 FactionLineage），纹章随本家：皮亚斯特王朝白鹰纹章，1025 年升王国前后相承
-    saxony_electorate: 'SAXONY_CRANCELIN',   // 🔴 [2026-11-10 主人令「萨选」字旗拼凑作废] 同系政权（萨克森选侯国←萨克森，见 FactionLineage），纹章随本家：横条十纹带斜贯菱环（Rautenkranz），韦廷王朝盾徽
-    england_modern: 'ENGLAND_CROSS',   // 🔴 [2026-11-10 主人令「英近」字旗拼凑作废] 同系政权（近代英格兰←英格兰，见 FactionLineage），纹章随本家：圣乔治十字 13 世纪起为英格兰军旗，都铎—斯图亚特沿用
     kelite: 'VENICE_LION',   // 威尼斯共和国·圣马可飞狮
     baojialiya: 'BULGARIA_LION',   // 保加利亚·狮
     saierweiya: 'SERBIA_EAGLE',   // 塞尔维亚·双头鹰
@@ -90,7 +83,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-25 第二批新增史实纹章（13 种，每家一个专属 KEY）──────────────
     litaowan: 'LITHUANIA_VYTIS',   // 立陶宛·Vytis 骑士
     luosi: 'RURIK_TRIDENT',   // 罗斯·留里克三叉戟
-    mosike_gongguo: 'MOSCOW_GEORGE',   // 莫斯公国·圣乔治屠龙
     baojian_qishi: 'SWORD_BROTHERS',   // 宝剑骑士团·双剑
     maerta_qishi: 'MALTESE_CROSS',   // 圣约翰（医院骑士团）·马耳他十字
     nidelan: 'NETHERLANDS_LION',   // 尼德兰·狮持剑
@@ -163,7 +155,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     talanduo: 'TARENTUM_DOLPHIN',   // 塔兰托·海豚骑者（城邦钱币）
     danmai: 'DENMARK_CROSS',   // 丹麦·Dannebrog偏杆侧北欧十字
     asikanani: 'BRANDENBURG_EAGLE',   // 勃兰登堡藩侯国·红鹰（无普鲁士王冠）
-    huohengsuolun: 'PRUSSIA_EAGLE',   // 勃兰登堡-普鲁士·王冠黑鹰与剑杖
     wende: 'SAXONY_CRANCELIN',   // 萨克森·横条与斜贯菱环
     pufaerci: 'PALATINATE_LION',   // 普法尔茨·戴冠狮
     habusibao: 'HABSBURG_EAGLE',   // 哈布斯堡·皇帝双头鹰与奥地利盾心
@@ -220,7 +211,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-26 大势力史实旗面第七批（3 家；甘丹无可靠专属图案，保留字旗）──
     kaerka: 'KHALKHA_SOYOMBO',   // 喀尔喀·索永布（札那巴札尔1686年创制；1911年博克多汗国旗）
     tubo: 'TIBETAN_ROYAL_TOMB_LION',   // 吐蕃·琼结藏王陵蹲坐石狮（7—9世纪王陵实物，非后世雪狮旗）
-    'guge': 'TIBETAN_ROYAL_TOMB_LION',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     kuman_oleshky: 'CUMAN_STONE_BABA',   // 库曼·12世纪草原石雕（尖帽、捧杯祖先像，非格莱塔木加）
     // ── 2026-10-26 大势力史实旗面第八批（4 家）────────────────────────────
     aiaoniya: 'IONIA_EPHESUS_BEE',   // 爱奥尼亚·以弗所蜜蜂（前6—前4世纪城邦钱币，四翼俯视形制）

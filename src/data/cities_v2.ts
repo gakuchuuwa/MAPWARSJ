@@ -916,7 +916,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     {
         id: 'city_jingjue',
         name: '精绝',
-        factionId: 'loulan',
+        factionId: 'shanshan',
         lat: 37.06, lng: 82.69,
         type: 'stockade',
         region: 'WESTERN',
@@ -1368,7 +1368,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 唐碎叶城（今托克马克）；按 2026-10-25 标准：城居 2–3 → 小城。🔴 [2026-11-08 按史改判西域·主人令] 原 CENTRAL_ASIA（中亚）不符史籍口径：碎叶是唐安西四镇之一（安西都护府治所曾驻此），属西域；突骑施苏禄可汗牙帐亦在碎叶川（《旧唐书·突厥传》），故按史改 WESTERN（西域）；「中亚／七河」是现代地理分区，不作判据。注：西辽（哈剌契丹）后期以虎思斡耳朵为都，同在这一带，城归其手不改城本身的文化判法' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'liao_d', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 唐碎叶城（今托克马克）；按 2026-10-25 标准：城居 2–3 → 小城。🔴 [2026-11-08 按史改判西域·主人令] 原 CENTRAL_ASIA（中亚）不符史籍口径：碎叶是唐安西四镇之一（安西都护府治所曾驻此），属西域；突骑施苏禄可汗牙帐亦在碎叶川（《旧唐书·突厥传》），故按史改 WESTERN（西域）；「中亚／七河」是现代地理分区，不作判据。注：西辽（哈剌契丹）后期以虎思斡耳朵为都，同在这一带，城归其手不改城本身的文化判法' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'xiaobolu', lat: 35.92, lng: 74.3, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 小勃律孽多城（今吉尔吉特—罕萨）；《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处；推算：城居 0.8 万（孽多，小勃律山城 0.8 万）→ 城寨' },
@@ -1735,7 +1735,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
     { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.78717, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 贝尔湖（明捕鱼儿海之战）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：和博克：准噶尔盆地牧地，归鞑靼（中亚草原）
-    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 和布克赛尔（准噶尔）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：和布克赛尔是准噶尔绰罗斯部（准噶尔核心氏族）的牧地，无伊斯兰—突厥绿洲城，居民为卫拉特蒙古、信仰藏传佛教；同区科布多（卫拉特）、固尔札（准噶尔王庭）判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
+    { id: 'city_dzungar_basin', name: '和博克', factionId: 'oirat_ming', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 和布克赛尔（准噶尔）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：和布克赛尔是准噶尔绰罗斯部（准噶尔核心氏族）的牧地，无伊斯兰—突厥绿洲城，居民为卫拉特蒙古、信仰藏传佛教；同区科布多（卫拉特）、固尔札（准噶尔王庭）判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
 
 
 
@@ -2012,7 +2012,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     //    今按：① 英文维基 Siege of the Sogdian Rock 正文 near Samarkand；② 阿里安《远征记》IV.18–19 记此岩在
     //    诺塔卡（今沙赫里萨布兹）冬营附近、粟特与巴克特里亚交界的山区；③ 学术认定在撒马尔罕以南吉萨尔山脉／
     //    铁门关／拜孙（Bayson）山区 —— 取 **38.21,67.02**（合理推定，见事件「史料依据·地点」栏）。旧值与那条间距特许一并作废。
-    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 38.21, lng: 67.02, type: 'stockade', troops: 10000, stockadeShape: 'oval', stockadeFence: 'FENCE',
+    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'sogdian', lat: 38.21, lng: 67.02, type: 'stockade', troops: 10000, stockadeShape: 'oval', stockadeFence: 'FENCE',
         note: '🔴 [2026-11-07 按史补依据] 粟特铁门；索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，公元前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。🔴 [2026-09-30 主人新定：**险要 = 关隘／要塞／堡垒／兵家必争之地 ＋ 有石头城墙**；两条同时满足才 PASS，缺一归城市档] 它是绝壁**岩堡**（避难的百姓上山、非城镇），人口算不出来 ⇒ 绝壁岩堡是**天然山险**，史料（英维 Siege of the Sogdian Rock、阿里安 IV.18–19）只写绝壁、山顶有泉有木，**未载石头城墙** ⇒ 不算险要，归城市档；人口算不出来 ⇒ **城寨**。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：英文维基信息框 strength2 = Unknown（史料未给守军数），本场守方 **600**（不大于 1 万）→ 不算 PASS。', region: 'SOGDIANS', buildingStyle: 'CENTRAL_ASIA' },
     // 🔴 [2026-09-25 主人令「把缺少的战役加上」] 前329 居鲁士城围攻（英文维基 Siege of Cyropolis，独立条目）必须有真据点，
     //    库里没有 → 按 §二之二 添加，并按据点完整性铁律配齐 势力（居鲁士）＋武将（卡塔涅斯）＋精锐（坚城守兵）。
@@ -2025,7 +2025,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     //    即诺塔卡 ＝ 今**乌兹别克斯坦沙赫里萨布兹**（Kesh 绿洲，撒马尔罕以南约 67 公里）；
     //    卡尔希是另一座城（Nakhshab／Nasaf），古名与诺塔卡不同。剧本路线与文案本来就写「诺塔卡（今沙赫里萨布兹）冬营」，
     //    坐标遂与之对齐；`--probe` 实测最近邻撒马尔罕 67.24 公里 ✓ 过 40 km 硬闸。
-    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 39.0578, lng: 66.83, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CENTRAL_ASIA', stockadeShape: 'rect', stockadeFence: 'FENCE', note: '🔴 [2026-11-07 按史补依据] 粟特诺塔卡；粟特南部要地诺塔卡（Nautaca），今乌兹别克斯坦沙赫里萨布兹（Kesh 绿洲）—— 英文维基 Nautaca 条目即重定向至 Shahrisabz。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）；前328/327 年冬亚历山大全军在此冬营大休整，前327 早春自此南下取索格狄亚那岩（IV.18）。类型按标准：非要塞堡垒、查不到人口史料 → 城寨。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 10000,
+    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sogdian', lat: 39.0578, lng: 66.83, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CENTRAL_ASIA', stockadeShape: 'rect', stockadeFence: 'FENCE', note: '🔴 [2026-11-07 按史补依据] 粟特诺塔卡；粟特南部要地诺塔卡（Nautaca），今乌兹别克斯坦沙赫里萨布兹（Kesh 绿洲）—— 英文维基 Nautaca 条目即重定向至 Shahrisabz。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）；前328/327 年冬亚历山大全军在此冬营大休整，前327 早春自此南下取索格狄亚那岩（IV.18）。类型按标准：非要塞堡垒、查不到人口史料 → 城寨。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'sogdian', lat: 39.91, lng: 69.0, type: 'small_city', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 粟特居鲁士城（Cyropolis，苦盏一带，亚历山大 329 BC 所破）；居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；公元前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 定级依据§6.2：史料只记「当地七座城寨中最大最坚的一座」与守军约八千，未见人口数字 → 按新规取小城。；推算：城居 1 万（居鲁士城，粟特边塞最大者，守军八千 → 1 万）→ 小城', region: 'SOGDIANS', buildingStyle: 'CENTRAL_ASIA' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'stockade', troops: 10000, 
         note: '🔴 [2026-11-07 按史补依据] 花剌子模瓦拉赫沙；粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇；按 2026-10-25 标准：粟特古城（夏宫＋商业重镇），夯土/泥砖城郭、城居 <1 万 → 城寨', region: 'SOGDIANS',
@@ -2605,7 +2605,7 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-10-25 主人令「存在就建」] 不伦瑞克＝狮亨利都城（萨克森公国）；离最近据点马格德堡 75km（>50km）故新建；文化按当地政权＝萨克森 → SAXONS
     { id: 'city_bulunruike', name: '不伦瑞克', factionId: 'wende', lat: 52.27, lng: 10.52, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'SAXONS', note: '🔴 [2026-11-07 按史补依据] 萨克森不伦瑞克；不伦瑞克（Braunschweig）：狮亨利居城/萨克森公国都城；12 世纪建城、13 世纪石墙，城居不足 1 万 → 小城' },
     { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 帝国自由市（多瑙河）；推算：城居 1.5 万（雷根斯堡，中世纪 1–2 万）→ 小城' },
-    { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 帝国自由市；推算：城居 2.5 万（纽伦堡，1500 年前后 2–3 万）→ 小城' },
+    { id: 'city_niulunbao', name: '纽伦堡', factionId: 'asikanani', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 帝国自由市；推算：城居 2.5 万（纽伦堡，1500 年前后 2–3 万）→ 小城' },
     { id: 'city_teerier', name: '特里尔', factionId: 'luoma_diguo', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '🔴 [2026-11-07 按史补依据] 高卢特里尔（罗马西部都城）；🔴 [2026-10-24 按史] 建筑风格 LATIN→ROMA：特里尔＝奥古斯塔·特雷维罗鲁姆（Augusta Treverorum），罗马帝国西部都城（黑门 Porta Nigra、罗马浴场、君士坦丁巴西利卡），最著名一段是罗马城邑；同罗马行省城杰姆/希波同口径。驻将君士坦丁（古典）军团随之变古典时代罗马军团。；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
     { id: 'city_basaier', name: '巴塞尔', factionId: 'ruishi', lat: 47.55, lng: 7.58, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 瑞士北部德语区；推算：城居 1 万（巴塞尔，中世纪 1 万上下）→ 小城' },
     { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'luoma_diguo', lat: 48.57, lng: 7.75, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'GERMANIC' , note: '🔴 [2026-11-07 按史补依据] 阿尔萨斯帝国城；推算：城居 2 万（斯特拉斯堡，中世纪 1.5–2.5 万）→ 小城' },
@@ -2616,9 +2616,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'luosi', lat: 58.52, lng: 31.27, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 罗斯古城（沃尔霍夫河口），东欧平原；商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city。🔴 [2026-10-22] 瓦良格文化改由新增的拉多加（旧拉多加）承载，本条恢复 SLAVIC（本城现存建筑层为俄罗斯／斯拉夫：圣索菲亚 1045–1052、克里姆林 15 世纪）。；推算：城居 3 万（诺夫哥罗德，14–15 世纪盛期约 2.5–4 万）→ 小城' },
     { id: 'city_ladoga', name: '拉多加', factionId: 'luosi', lat: 59.9967, lng: 32.2961, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '🔴 [2026-11-07 按史补依据] 拉多加湖拉多加（瓦良格）；旧拉多加（Staraya Ladoga／Aldeigjuborg）：8–10 世纪瓦良格人（诺斯）在伊尔门湖—沃尔霍夫河商路的第一座据点，862 年留里克据拉多加（《往年纪事》一说）；现存 12 世纪石教堂与土垒遗址。🔴 [2026-10-22 按史新增] 瓦良格分支 4 支军团均以诺夫哥罗德／拉多加为名（古典楚德林莽：伊尔门湖／拉多加；封建瓦良格：拉多加堡、旧诺夫哥罗德；城堡诺夫哥罗德：大诺夫哥罗德、圣索菲亚、德捷茨；帝国北境长斧：大诺夫哥罗德、阿尔汉格尔斯克），故拉多加为 VARANGIANS 据点；配武将留里克（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离圣彼得堡 110.6km、诺夫哥罗德约 173km（>40km）。' },
     { id: 'city_baihu', name: '白湖', factionId: 'luosi', lat: 60.03, lng: 37.79, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '🔴 [2026-11-07 按史补依据] 白湖（瓦良格）；白湖（别洛焦尔斯克／Beloozero）：862 年留里克之弟西涅乌斯（Sineus）据白湖（《往年纪事》）；9 世纪瓦良格人自伊尔门湖经姆斯塔河—伏尔加河商路的据点，后为白湖公国，今别洛焦尔斯克存 15 世纪俄罗斯石城。🔴 [2026-10-22 按史新增·据点含草原/营地层] 与拉多加同为瓦良格分支据点（城寨＝营地层，不是「只算城」）；配武将西涅乌斯（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离最近城基日岛 265.2km、拉多加约 305km（>40km）。' },
-    { id: 'city_mosike', name: '莫斯科', factionId: 'mosike_gongguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '🔴 [2026-11-07 按史补依据] 莫斯科大公国都城；按 2026-10-25 标准：城居 13–20 → 中城' },
+    { id: 'city_mosike', name: '莫斯科', factionId: 'eluosi_diguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '🔴 [2026-11-07 按史补依据] 莫斯科大公国都城；按 2026-10-25 标准：城居 13–20 → 中城' },
     { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'medium_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 俄罗斯新都圣彼得堡；彼得大帝1703年建于涅瓦河口，1712-1918俄罗斯帝国首都，俄罗斯帝国波罗的海出海口与海军基地；北方战争波尔塔瓦大捷背景下营建' },
-    { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'mosike_gongguo', lat: 54.92, lng: 37.41, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 莫斯科南谢尔普霍夫；定级依据§6.2：谢尔普霍夫非纯军事要塞（1552年有пoсад 623户），按城市判级；1552年约3000人、1646年>1500、1678年约2500，未达1万 → 城寨' },
+    { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'eluosi_diguo', lat: 54.92, lng: 37.41, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 莫斯科南谢尔普霍夫；定级依据§6.2：谢尔普霍夫非纯军事要塞（1552年有пoсад 623户），按城市判级；1552年约3000人、1646年>1500、1678年约2500，未达1万 → 城寨' },
     { id: 'city_fulajimier', name: '弗拉基米尔', factionId: 'suzidaer', lat: 56.12, lng: 40.4, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '🔴 [2026-11-07 按史补依据] 弗拉基米尔—苏兹达尔公国都城；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
     { id: 'city_simolengsike', name: '斯摩棱斯克', factionId: 'daniebo', lat: 54.78, lng: 32.04, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '🔴 [2026-11-07 按史补依据] 第聂伯河上游罗斯城；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
     { id: 'city_qiernigeweifu', name: '切尔尼戈夫', factionId: 'qiernigeweifu_gongguo', lat: 51.49, lng: 31.28, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC' , note: '🔴 [2026-11-07 按史补依据] 第聂伯河左岸罗斯城；推算：城居 1.5 万（切尔尼戈夫，罗斯公国都城 1–2 万）→ 小城' },
@@ -2695,7 +2695,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
     },
     { id: 'city_amucheng', name: '阿母城', factionId: 'saman', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 阿姆河岸城（Amul）；阿姆河要冲；萨曼王朝域内重镇；推算：城居 1 万（阿母城，阿姆河要冲，萨曼域内重镇 1 万）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：石头城（塔什库尔干）：朅盘陀/色勒库尔，葱岭
-    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 朅盘陀石头城（今塔什库尔干）；定级依据§6.2：朅盘陀石头城，石砌城垣 → 险要；按 2026-10-25 标准：朅盘陀石头城（石砌城垣）→ 险要' },
+    { id: 'city_hepancheng', name: '石头城', factionId: 'kepantuo', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 朅盘陀石头城（今塔什库尔干）；定级依据§6.2：朅盘陀石头城，石砌城垣 → 险要；按 2026-10-25 标准：朅盘陀石头城（石砌城垣）→ 险要' },
 
 
     { id: 'city_humicheng', name: '护密', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'stockade', region: 'CENTRAL_ASIA', buildingStyle: 'WESTERN', troops: 10000, tier: 4, note: '🔴 [2026-11-07 按史补依据] 瓦罕护密；🔴 [2026-11-07 按史重判] 护密＝瓦罕走廊（帕米尔），属西域区域「塔里木—费尔干纳—帕米尔」；原 CENTRAL_ASIA（巴克特里亚）不符；青藏/中亚环线共用锚点' },
@@ -2731,7 +2731,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 4,
 buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
         note: '🔴 [2026-11-07 按史补依据] 黑龙江下游瓦伦；瓦伦；那乃小城',
     },
-    { id: 'city_qiji', name: '普禄', factionId: 'feiyaka', lat: 51.5800, lng: 140.0000, type: 'stockade', region: 'MANCHU',
+    { id: 'city_qiji', name: '普禄', factionId: 'jilimi', lat: 51.5800, lng: 140.0000, type: 'stockade', region: 'MANCHU',
 buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
         note: '🔴 [2026-11-07 按史补依据] 库页岛普禄；普禄；费雅喀小城；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛渔猎聚落，取最近NORTHEAST。',
     },
@@ -2739,7 +2739,7 @@ buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
     { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'han_d', lat: 38.0011, lng: 100.9125, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '🔴 [2026-11-07 按史补依据] 祁连山大斗拔谷（扁都口）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：希瓦：花剌子模希瓦汗国，中亚
-    { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true , note: '🔴 [2026-11-07 按史补依据] 花剌子模希瓦；按 2026-10-25 标准：城居 1–2 → 小城' },
+    { id: 'city_khiva', name: '希瓦', factionId: 'huarazim', lat: 41.564038, lng: 60.710449, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true , note: '🔴 [2026-11-07 按史补依据] 花剌子模希瓦；按 2026-10-25 标准：城居 1–2 → 小城' },
     { id: 'city_rituzong', name: '日土宗', factionId: 'ladakh', lat: 33.367241, lng: 79.705811, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 阿里日土；日土宗；南杰小城',
@@ -2749,7 +2749,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
     { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'ganden', lat: 29.645092, lng: 84.171753, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 藏西南扎敦（仲巴—萨嘎一带）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 敦煌西三陇沙；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'dongjin', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 敦煌西三陇沙；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'han_d', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'KHITAN',
 buildingStyle: 'HEXI', troops: 10000, mirror: true,
@@ -2777,7 +2777,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
 
-    { id: 'city_qiongbu', name: '丁青宗', factionId: 'khyungpo', lat: 31.4100, lng: 95.5900, type: 'stockade', region: 'TIBET',
+    { id: 'city_qiongbu', name: '丁青宗', factionId: 'tubo', lat: 31.4100, lng: 95.5900, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '🔴 [2026-11-07 按史补依据] 丁青；丁青宗；琼波小城',
     },
@@ -2861,10 +2861,10 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：迪化城（乌鲁木齐）：准噶尔牧地，归鞑靼（中亚草原）
-    { id: 'city_wutucheng', name: '迪化城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 清迪化城（今乌鲁木齐），天山东段；推算：城居 0.5 万（迪化城，清边城 0.5 万）→ 城寨' },
+    { id: 'city_wutucheng', name: '迪化城', factionId: 'shanshan', lat: 43.735353, lng: 87.574768, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 清迪化城（今乌鲁木齐），天山东段；推算：城居 0.5 万（迪化城，清边城 0.5 万）→ 城寨' },
 
 
-    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'small_city', region: 'WESTERN_CASTLE',
+    { id: 'city_gaochangcheng', name: '高昌', factionId: 'huihu', lat: 42.8533, lng: 89.53, type: 'small_city', region: 'WESTERN_CASTLE',
 buildingStyle: 'WESTERN', troops: 10000, mirror: true,
         note: '🔴 [2026-11-07 按史补依据] 高昌国都城；高昌；亦都护小城；定级依据§6.2：高昌非关隘/要塞/堡垒（高昌国都/唐西州治），按城市判级；《旧唐书·地理志》西州天宝领五县户9,016、口49,476（全州，非城居），城居过万未达10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷40',
     },
@@ -2872,7 +2872,7 @@ buildingStyle: 'WESTERN', troops: 10000, mirror: true,
 
     { id: 'city_jinchangcheng', name: '晋昌', factionId: 'tang', lat: 40.5346, lng: 95.820007, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '🔴 [2026-11-07 按史补依据] 唐瓜州晋昌县；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_jieshuangna', name: '羯霜那', factionId: 'jie', lat: 40.124284, lng: 65.341187, type: 'stockade', region: 'CENTRAL_ASIA',
+    { id: 'city_jieshuangna', name: '羯霜那', factionId: 'hou_zhao', lat: 40.124284, lng: 65.341187, type: 'stockade', region: 'CENTRAL_ASIA',
 buildingStyle: 'CENTRAL_ASIA', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 史国羯霜那（今沙赫里萨布兹）；羯霜那；羯族小城',
     },
@@ -3016,7 +3016,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_shizhu', name: '石柱', factionId: 'ming_d', lat: 30, lng: 108.11, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '🔴 [2026-11-07 按史补依据] 明石柱宣抚司（今石柱），川东；推算：城居 0.8 万（石柱土司城，同期土司治所 0.5–1 万）→ 城寨' },
 
     { id: 'city_bijie', name: '毕节', factionId: 'luodian', lat: 27.302000, lng: 105.285000, type: 'stockade', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 明毕节卫，贵州；水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
-    { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 唐田州（今田阳），广西；瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地；推算：城居 0.8 万（田州土官故里，同期土司聚落 0.5–1 万）→ 城寨' },
+    { id: 'city_tianyang', name: '田阳', factionId: 'cen_d', lat: 23.720000, lng: 106.650000, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 唐田州（今田阳），广西；瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地；推算：城居 0.8 万（田州土官故里，同期土司聚落 0.5–1 万）→ 城寨' },
     { id: 'city_hailing', name: '海陵', factionId: 'nantang', lat: 32.550000, lng: 120.000000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 汉海陵县（今泰州），江苏；唐/杨吴海陵镇，后升泰州；李昪为制置使时所治发迹之地；推算：城居 1.5 万（海陵，唐镇后市/县，同期 1–2 万）→ 小城' },
     { id: 'city_jingkou', name: '濡须口', factionId: 'sunwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, mirror: true, note: '🔴 [2026-11-07 按史补依据] 濡须口（今含山）；濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.22, lng: 115.04, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '🔴 [2026-11-07 按史补依据] 秦巨鹿郡（今平乡一带），河北；推算：城居 2 万（巨鹿，汉郡治/县 2 万）→ 小城' },
@@ -3034,7 +3034,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.53, lng: 114.32, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true , note: '🔴 [2026-11-07 按史补依据] 三国武昌（今鄂州）；按 2026-10-25 标准：城居 5–8 → 中城' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', buildingStyle: 'WEI', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 晋国曲沃邑（今曲沃），山西；🔴 [2026-11-07 第一步·只看据点] 晋—赵—魏故地（山西、河北南部，河朔三镇之魏博），属 WEI 河朔区域，原 CENTRAL 不符；晋国曲沃，太原让位柴周；推算：城居 1.5 万（曲沃，晋国别都，同期 1–2 万）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：塔城（塔尔巴哈台）：准噶尔牧地，归鞑靼（中亚草原）
-    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '🔴 [2026-11-07 按史补依据] 清塔尔巴哈台（准噶尔西）；推算：城居 0.5 万（塔城，清边城 0.5 万）→ 城寨。🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：塔尔巴哈台是准噶尔（卫拉特蒙古）西境牧地，1766 年清的绥靖城只是驻防点（驻满、索伦、察哈尔、厄鲁特兵），居民主体是准噶尔/厄鲁特蒙古，不是中亚伊斯兰—突厥绿洲城；同区科布多、固尔札、和布克赛尔同判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'oirat_ming', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '🔴 [2026-11-07 按史补依据] 清塔尔巴哈台（准噶尔西）；推算：城居 0.5 万（塔城，清边城 0.5 万）→ 城寨。🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：塔尔巴哈台是准噶尔（卫拉特蒙古）西境牧地，1766 年清的绥靖城只是驻防点（驻满、索伦、察哈尔、厄鲁特兵），居民主体是准噶尔/厄鲁特蒙古，不是中亚伊斯兰—突厥绿洲城；同区科布多、固尔札、和布克赛尔同判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
 
 
 
@@ -3093,7 +3093,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 清乌什；温宿国王城常备武装' },
     { id: 'city_kungang', name: '昆岗', factionId: 'manzhou_d', lat: 40.54, lng: 81.26, type: 'pass', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 龟兹东昆岗（今拜城一带）；清代阿克苏道昆岗军台；南疆驿路要冲' },
-    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 于阗麻扎塔格；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'yuchi', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 于阗麻扎塔格；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'small_city', region: 'WESTERN_FEUDAL',
 buildingStyle: 'WESTERN', troops: 10000,
@@ -3102,7 +3102,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 于阗东境绿洲城（今于田），塔里木南道；扜弥国王都常备军；推算：城居 1 万（阿赫雅尔（扜弥），塔里木绿洲城 1 万）→ 小城' },
     { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'yuchi', lat: 35.45, lng: 81.1, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 塔里木南道阿什库尔；尉迟曜于阗王助唐守克里雅山口。🔴 [2026-10-24 按史] 建筑风格 TIBET→WESTERN：阿什库尔（克里雅山口，于阗南山）属**于阗**（尉迟氏于阗王）疆域，于阗是塔里木南道绿洲城郭（同 100km 内于阗、固玛、麻扎塔格皆 WESTERN），青藏藏式不符；无将驻守。' },
     { id: 'city_longmucuo', name: '龙木错', factionId: 'xiangxiong', lat: 34.572168, lng: 80.348511, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 阿克赛钦龙木错（阿里西）；赤松德赞征羊同驻龙木错' },
-    { id: 'city_gadake', name: '噶大克', factionId: 'guge', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 阿里噶尔（噶大克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_gadake', name: '噶大克', factionId: 'tubo', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 阿里噶尔（噶大克）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
     { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'stockade', region: 'TIBET',
@@ -3155,7 +3155,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     { id: 'city_puticheng', name: '菩提营', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '🔴 [2026-11-07 按史补依据] 巴尔蒂斯坦（小西藏）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_kajier', name: '喀吉尔', factionId: 'tang', lat: 34.55, lng: 76.13, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 拉达克卡吉尔；李玄策调克什米尔兵为唐征吐蕃' },
-    { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
+    { id: 'city_zhaburang2', name: '札布让', factionId: 'tubo', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 古格都城札布让；札布让；古格小城',
     },
@@ -3288,7 +3288,7 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_wushecheng', name: '乌舍寨', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '🔴 [2026-11-07 按史补依据] 金乌舍寨（今白城一带）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
-    { id: 'city_xianping', name: '咸平', factionId: 'houliao', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '🔴 [2026-11-07 按史补依据] 辽咸平府（今开原）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_xianping', name: '咸平', factionId: 'liao_d', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '🔴 [2026-11-07 按史补依据] 辽咸平府（今开原）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_xupin', name: '恤品', factionId: 'dongxia', lat: 42.994587, lng: 129.828186, type: 'stockade', troops: 10000, region: 'JURCHEN', buildingStyle: 'NORTHEAST' , note: '🔴 [2026-11-07 按史补依据] 金恤品路（今双城子）；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
 
@@ -3312,7 +3312,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 buildingStyle: 'XIANBEI', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 苏尼特赛汉塔拉；赛汉塔拉；苏尼特小城',
     },
-    { id: 'city_sailan', name: '讹答剌', factionId: 'dayuzi', lat: 42.2863, lng: 69.5709, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 锡尔河讹答剌；🔴 [2026-11-07 第一步·只看据点] 锡尔河—塔拉斯河一带（七河／河中北缘），属 CENTRAL_ASIA 鞑靼区域，原 WESTERN 不符；按 2026-10-25 标准：城居 1–2 → 小城' },
+    { id: 'city_sailan', name: '讹答剌', factionId: 'kazakh', lat: 42.2863, lng: 69.5709, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 锡尔河讹答剌；🔴 [2026-11-07 第一步·只看据点] 锡尔河—塔拉斯河一带（七河／河中北缘），属 CENTRAL_ASIA 鞑靼区域，原 WESTERN 不符；按 2026-10-25 标准：城居 1–2 → 小城' },
 
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'menggu_d', lat: 49.437762, lng: 101.428528, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 薛灵哥河（色楞格河）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
@@ -3347,7 +3347,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
         buildingStyle: 'WESTERN' },
     { id: 'city_yuergun', name: '玉尔滚', factionId: 'weiwuer', lat: 41.35, lng: 81.3, type: 'stockade', region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 龟兹玉尔滚；伯克统领回部治安武装' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：拨换城（阿克苏）：姑墨/跋禄迦，塔里木
-    { id: 'city_bohuancheng', name: '拨换城', factionId: 'anxi', lat: 41.17, lng: 80.25, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 唐拨换城（今阿克苏）；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
+    { id: 'city_bohuancheng', name: '拨换城', factionId: 'tang', lat: 41.17, lng: 80.25, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 唐拨换城（今阿克苏）；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
 
 
 
@@ -3445,12 +3445,12 @@ buildingStyle: 'HEXI', troops: 10000,
 
 
     // 黠戛斯（坚昆）汗庭漠北牧地
-    { id: 'city_wubusabo', name: '乌布萨泊', factionId: 'xiajiasi', lat: 49.9762, lng: 92.0929, type: 'stockade', region: 'STEPPE_FEUDAL',
+    { id: 'city_wubusabo', name: '乌布萨泊', factionId: 'keerkezi', lat: 49.9762, lng: 92.0929, type: 'stockade', region: 'STEPPE_FEUDAL',
 buildingStyle: 'MONGOL', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 乌布苏湖；乌布萨泊；坚昆小城',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：真珠河：锡尔河上游，中亚
-    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 真珠河（泽拉夫尚河）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
+    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'xierhe', lat: 41.2773, lng: 67.9312, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 真珠河（泽拉夫尚河）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
 //镜像
     { id: 'city_wuyun', name: '乌云', factionId: 'manzhou_d', lat: 49.018048, lng: 129.91539, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '🔴 [2026-11-07 按史补依据] 清乌云（今嘉荫）；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
 
@@ -3483,7 +3483,7 @@ buildingStyle: 'TIBET', troops: 10000,
     },
     // ── 2026-06-11 新增：库页岛民族据点 ──
     { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 库页岛诺托罗；库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛鄂罗克/阿伊努渔猎聚落，取最近NORTHEAST。' },
-    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 黑龙江口白主；库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛骨嵬/吉里迷渔猎聚落，取最近NORTHEAST。' },
+    { id: 'city_baizhu', name: '白主', factionId: 'jilimi', lat: 46.71, lng: 142.52, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 黑龙江口白主；库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛骨嵬/吉里迷渔猎聚落，取最近NORTHEAST。' },
     { id: 'city_bailao', name: '白老', factionId: 'ayinu_ezo', lat: 42.55, lng: 141.36, type: 'stockade', region: 'AINU', buildingStyle: 'JAPAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 胆振白老；北海道南端据泊地方，阿伊努传统聚落（白老古名）；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN。' },
     { id: 'city_zonggu', name: '宗谷', factionId: 'ayinu_ezo', lat: 45.5, lng: 141.93, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 北见宗谷；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN。' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'manzhou_d', lat: 46.9, lng: 134.1, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '🔴 [2026-11-07 按史补依据] 明锡尔喀（乌苏里江北）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
@@ -3497,9 +3497,9 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'eluosi_diguo', lat: 51.7321, lng: 115.8151, type: 'pass', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 外贝加尔石勒喀堡（文档登记飞地）；石勒喀河岸要塞城；俄罗斯哥萨克 Ostrog（木/土边疆要塞），栅栏墙按规则算城、无石砖夯土城墙 → 城寨；人口无考 → 城寨' },
     { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 外贝加尔赤塔；布里亚特酋长统林中射手世居赤塔' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：养吉干：锡尔河入咸海处要塞，花剌子模/钦察故地，归库曼 CUMAN
-    { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'stockade', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 锡尔河养吉干；中亚环线锚点；锡尔河入咸海处要塞，花剌子模东北边境；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
+    { id: 'city_yangjigan', name: '养吉干', factionId: 'xierhe', lat: 45.6, lng: 62, type: 'stockade', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 锡尔河养吉干；中亚环线锚点；锡尔河入咸海处要塞，花剌子模东北边境；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：毡的（Jand）：锡尔河下游乌古斯—钦察要城，归库曼 CUMAN
-    { id: 'city_zhande', name: '毡的', factionId: 'wugu_d', lat: 44.85, lng: 65.5, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 锡尔河毡的；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_zhande', name: '毡的', factionId: 'seljuq', lat: 44.85, lng: 65.5, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 锡尔河毡的；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
     { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 台北艋舺；清代台北府淡水厅南境要地，万华故称艋舺；定级依据§6.2：艋舺非关隘/要塞/堡垒（淡水河内河港市，"一府二鹿三艋舺"），按城市判级；1875年约1.8万人（臺北府淡水縣大加蚋堡艋舺）→ 小城；推算：城居 1.8 万（艋舺，1875 年约 1.8 万）→ 小城' },
@@ -3552,7 +3552,7 @@ buildingStyle: 'TIBET', troops: 10000,
 buildingStyle: 'BASHU', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 元思陀部（今红河），云南；思陀；哈尼小城',
     },
-    { id: 'city_shangding', name: '上丁', factionId: 'basha_d', lat: 13.5581, lng: 106.0098, type: 'stockade', region: 'SEAS',
+    { id: 'city_shangding', name: '上丁', factionId: 'lancang', lat: 13.5581, lng: 106.0098, type: 'stockade', region: 'SEAS',
         // 🔴 [2026-09-18 主人定] 原 'SEAS' 只是一级母体、无二级/三级 → 按真实地理历史归**高棉 KHMER**：
         //    上丁（Stung Treng）在今柬埔寨北部，湄公河畔高棉故地（巴沙/占巴塞一带）。
         buildingStyle: 'KHMER', troops: 10000,
@@ -3635,7 +3635,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_qingchi', name: '清池', factionId: 'you', lat: 38.3, lng: 116.83, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '🔴 [2026-11-07 按史补依据] 唐沧州清池县（今沧州），河北；推算：城居 1.5 万（清池，唐沧州治 1.5 万）→ 小城' },
-    { id: 'city_shandan', name: '删丹', factionId: 'ganzhou_huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'HEXI', note: '🔴 [2026-11-07 按史补依据] 汉张掖郡删丹县（今山丹）；🔴 [2026-11-07 按史重判·只看据点] 汉删丹县，河西走廊；原 XIANBEI 错；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
+    { id: 'city_shandan', name: '删丹', factionId: 'huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'HEXI', note: '🔴 [2026-11-07 按史补依据] 汉张掖郡删丹县（今山丹）；🔴 [2026-11-07 按史重判·只看据点] 汉删丹县，河西走廊；原 XIANBEI 错；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '🔴 [2026-11-07 按史补依据] 宋崇安县（今武夷山），福建；推算：城居 1.5 万（崇安，宋县，同期县城 1–2 万）→ 小城' },
     { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 10000, region: 'SEASIA_ANTIQUITY', buildingStyle: 'KHMER', mirror: true , note: '🔴 [2026-11-07 按史补依据] 柬埔寨毗耶陀（吴哥前期都城）；推算：城居 1 万（毗耶陀，东南亚古国都 1 万）→ 小城' },
@@ -3755,14 +3755,14 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kawunas', name: '卡乌纳斯', factionId: 'litaowan', lat: 54.90, lng: 23.91, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '🔴 [2026-11-07 按史补依据] 立陶宛卡乌纳斯；立陶宛第二城，科斯图提斯1362年在此抵御条顿骑士团；按 2026-10-25 标准：立陶宛考纳斯城堡城，城居约 1 万 → 小城' },
     { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'baojialiya', lat: 44.12, lng: 27.26, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '🔴 [2026-11-07 按史补依据] 多瑙河畔多布罗加德鲁斯塔尔（多罗斯托隆）；🔴 [2026-11-07 第一步·只看据点] 多瑙河南岸多布罗加，属保加利亚 BULGARIANS 区域，原 SLAVIC 不符；多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：也儿的石：额尔齐斯河上游乃蛮故地（屈出律退守处），归鞑靼（中亚草原）
-    { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 也儿的石河（额尔齐斯）；额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：额尔齐斯河上游乃蛮故地，蒙古—阿尔泰草原牙帐。' },
+    { id: 'city_yeerdishi', name: '也儿的石', factionId: 'naiman', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 也儿的石河（额尔齐斯）；额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部；🔴 [2026-11-11 按史改] 据点文化 CENTRAL_ASIA→MONGOL（精确）：额尔齐斯河上游乃蛮故地，蒙古—阿尔泰草原牙帐。' },
     { id: 'city_mierkefu', name: '密尔科夫', factionId: 'kuman_oleshky', lat: 45.65, lng: 27.05, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 顿河下游密尔科夫（库曼）；喀尔巴阡东麓库曼主教区要塞；吉尔根汗驻此，精锐库曼骑。🔴 [2026-10-24 按史·同阿克曼法] 建筑风格 SLAVIC→CUMAN：1228 年教廷设库曼主教区（Diocese of Cumania，1228–1241），主教座在 Milcov 河「civitas de Mylco」（后世主教称 Milkovia 主教），本地即库曼之地、无斯拉夫政权建筑层；66 分支取 CUMAN（库曼草原要塞）→ 吉尔根汗（库曼汗）文化随之为库曼，军团回「城堡时代库曼军团」。原 SLAVIC 会把库曼汗带成斯拉夫「博亚尔重骑军团」。依据：英文维基 Roman Catholic Diocese of Cumania（see 在 Milcov 河、库曼人地域）。；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_oleshky', name: '奥列什基', factionId: 'kuman_oleshky', lat: 46.61, lng: 32.72, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 第聂伯河口奥列什基；第聂伯河口木栅商埠；库曼忽炭汗驻牧，精锐库曼弓骑 T1', mirror: true },
     { id: 'city_saksin', name: '萨克辛', factionId: 'kuman_oleshky', lat: 46.72, lng: 47.92, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 伏尔加河口萨克辛；伏尔加三角洲夯土砖石要塞，水陆咽喉；钦察巴奇曼驻此，精锐斡勒轻骑 T2；萨克辛（伏尔加下游萨克斯因城），城居 2–4 万 → 小城', mirror: true },
-    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'feierganna', lat: 40.89, lng: 71.34, type: 'stockade', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 费尔干纳谷地城；费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城；推算：城居 0.8 万（卫所/边堡/镇戍，同期 0.8 万）→ 城寨' },
+    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'mowoer', lat: 40.89, lng: 71.34, type: 'stockade', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 费尔干纳谷地城；费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城；推算：城居 0.8 万（卫所/边堡/镇戍，同期 0.8 万）→ 城寨' },
     { id: 'city_hongsa', name: '洪萨', factionId: 'muisca', lat: 5.53, lng: -73.36, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '🔴 [2026-11-07 按史补依据] 穆伊斯卡洪萨（今通哈）；穆伊斯卡联盟萨奎首府（今通哈），帕坎奇克所在；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
     { id: 'city_kabufoliwu', name: '卡布弗里乌', factionId: 'tamoyue', lat: -22.88, lng: -42.03, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '🔴 [2026-11-07 按史补依据] 巴西卡布弗里乌；塔莫约联盟领地，昆汉贝贝率众抗葡萄牙' },
-    { id: 'city_kelipuli', name: '科利普利', factionId: 'naweierbuta', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '🔴 [2026-11-07 按史补依据] 阿劳卡尼亚科利普利；纳韦尔布塔山东南麓要冲，加尔瓦里诺断腕巡回动员部族血誓之地' },
+    { id: 'city_kelipuli', name: '科利普利', factionId: 'mapuche', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '🔴 [2026-11-07 按史补依据] 阿劳卡尼亚科利普利；纳韦尔布塔山东南麓要冲，加尔瓦里诺断腕巡回动员部族血誓之地' },
     { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'mapuche', lat: -35.03, lng: -71.55, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '🔴 [2026-11-07 按史补依据] 阿劳卡尼亚彼得罗阿；马塔基托河畔要塞，瓜科尔达随劳塔罗北伐战死殉难地；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '🔴 [2026-11-07 按史补依据] 勃艮第蒙特罗；塞纳河畔蒙特罗要塞，无畏的约翰1419年在此被刺；定级依据§6.2：塞纳河畔蒙特罗要塞，石砌城堡 → 险要' },
     { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '🔴 [2026-11-07 按史补依据] 加斯科涅欧什；阿马尼亚克伯爵领首府，贝尔纳·德·阿马尼亚克驻地；推算：城居 1 万（阿马尼亚克伯爵领首府，同期 1 万上下）→ 小城' },
@@ -3783,8 +3783,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'ethiopia', lat: 14.37, lng: 39.27, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '🔴 [2026-11-07 按史补依据] 埃塞俄比亚德布雷达莫；提格雷悬崖修道要塞，吉达扬避难与反击阵地；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_waka', name: '瓦卡', factionId: 'wulaertu', lat: 37.81, lng: 35.91, type: 'pass', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '🔴 [2026-11-07 按史补依据] 亚美尼亚瓦卡（卡帕多细亚一带）；陶鲁斯山岩顶城堡，托罗斯二世复国第一城（奇里乞亚亚美尼亚王国）；建筑风格按当地最著名本地政权＝亚美尼亚 → ARMENIANS（2026-10-25 主人令「全面修复」）；按 2026-10-25 标准：瓦卡岩顶城堡（石砌）→ 险要' },
     { id: 'city_debuleilibanuosi', name: '德布雷利巴诺斯', factionId: 'ethiopia', lat: 9.71, lng: 38.85, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '🔴 [2026-11-07 按史补依据] 埃塞俄比亚德布雷利巴诺斯；肖阿高原皇家修道据点，达格纳詹南征经略之地；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
-    { id: 'city_santaguan', name: '三塔关', factionId: 'miandian', lat: 14.35, lng: 98.43, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '🔴 [2026-11-07 按史补依据] 缅泰界三塔关；缅甸-暹罗边境三塔关，耸立三座缅式佛塔要塞，大元帅摩诃悉都镇守' },
-    { id: 'city_danmaxi', name: '淡马锡', factionId: 'malai', lat: 1.29, lng: 103.85, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 新加坡淡马锡；新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口；定级依据§6.2：淡马锡非关隘/要塞/堡垒（海峡贸易港市，元《岛夷志略》"单马锡"），按城市判级；14世纪峰值约1万人（Miksic 估算）→ 小城；推算：城居 1 万（note 记 1 万）→ 小城' },
+    { id: 'city_santaguan', name: '三塔关', factionId: 'konbaung', lat: 14.35, lng: 98.43, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '🔴 [2026-11-07 按史补依据] 缅泰界三塔关；缅甸-暹罗边境三塔关，耸立三座缅式佛塔要塞，大元帅摩诃悉都镇守' },
+    { id: 'city_danmaxi', name: '淡马锡', factionId: 'malacca', lat: 1.29, lng: 103.85, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 新加坡淡马锡；新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口；定级依据§6.2：淡马锡非关隘/要塞/堡垒（海峡贸易港市，元《岛夷志略》"单马锡"），按城市判级；14世纪峰值约1万人（Miksic 估算）→ 小城；推算：城居 1 万（note 记 1 万）→ 小城' },
     { id: 'city_jinqi', name: '金奇', factionId: 'taimier', lat: 12.25, lng: 79.42, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '🔴 [2026-11-07 按史补依据] 泰米尔建志（金奇）；泰米尔纳德三山连堡，东方特洛伊，马拉塔与莫卧儿反复争夺；按 2026-10-25 标准：金奇三山连堡（石砌山城）→ 险要' },
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.5131, lng: 36.3094, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 叙利亚大马士革；倭马亚都，西亚千年都会。定级按史：倭马亚期城居通行 10–20 万（各家上限 20 万）→ 中城（2026-10-25）。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 坐标按英文维基百科 Damascus 改为 33.5131,36.3094。' },
     { id: 'city_emesa', name: '埃梅萨', factionId: 'mamuluke', lat: 34.73, lng: 36.71, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 叙利亚霍姆斯（Emesa）；埃梅萨（Emesa，今叙利亚霍姆斯 Hims）。🔴 [2026-10-04 主人令建] 判定：性质＝**城市**（非要塞险要、非战场）；人口＝罗马/拜占庭及中世纪早期史料考证 2–5 万 ⇒ 按 §6.2 落**小城**。建城年代按主人 2026-10-04「据点显示标准」取 **前300（约）**：学界通行认定由塞琉古一世（Seleucus I Nicator）建于公元前 3 世纪初 ⇒ 亚历山大剧本（前334–前323）那年还没有城、不上图。势力「埃梅塞尼」（Emesene＝古代埃梅萨所在地区之名）；武将希尔库赫（霍姆斯长官、萨拉丁之叔）；精锐阿尤布重骑 T1。⚠️ 主人考据里的「哈马特-佐巴（Hamath-Zobah）」通行认定是**哈马（Hama）**、非本城，未采入。；推算：城居 2 万（埃梅萨（霍姆斯），叙利亚重镇 2 万）→ 小城' },
@@ -3862,12 +3862,12 @@ buildingStyle: 'TIBET', troops: 10000,
         { id: 'city_maijia', name: '麦加', factionId: 'gulaishi', lat: 21.4, lng: 39.8, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 汉志麦加；伊斯兰第一圣城，古莱什部落控制，克尔白天房所在地；按 2026-10-25 标准：城居 3–5（常住民） → 小城' },
     { id: 'city_baku', name: '巴库', factionId: 'safawei_d', lat: 40.4, lng: 49.9, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'SASANIAN', note: '🔴 [2026-11-07 按史补依据] 里海西岸巴库；🔴 [2026-11-07 第一步·只看据点] 巴库在里海西岸，萨珊波斯阿尔巴尼亚省地，属波斯 SASANIAN；原 ORIE 不符（SASANIAN 9 城，是波斯系最少的键，两说都通时取少的一方）；希尔万要塞/拜火教圣地；18世纪前常住人口仅约1万，19世纪石油时代后爆发增长' },
     { id: 'city_xiemianjieer', name: '谢缅杰尔', factionId: 'xiemian', lat: 43, lng: 47.4, type: 'small_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 北高加索谢缅杰尔；可萨汗国早期首都；10世纪被罗斯大公斯维亚托斯拉夫摧毁后彻底废弃淹没。🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→CUMAN：属可萨汗国（CUMAN 分支封建格＝可萨军团），与伊蒂尔同口径；驻将齐贝尔（封建）军团自动变封建时代可萨军团。；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
-        { id: 'city_yidier', name: '伊蒂尔', factionId: 'yidier', lat: 46, lng: 48, type: 'small_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 伏尔加下游伊蒂尔（可萨—库曼）；可萨汗国鼎盛期首都，伏尔加河三角洲，丝路草原枢纽。🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→CUMAN：伊蒂尔是**可萨汗国（Khazars）都城**，汗国鼎盛 7–10 世纪；CUMAN 分支的封建格正是「封建时代可萨军团」，此前无任何据点/武将使用该格。驻将约瑟夫（可萨汗，封建）→ 军团自动变封建时代可萨军团。；按 2026-10-25 标准：城居 3–6（查不到确证） → 小城' },
+        { id: 'city_yidier', name: '伊蒂尔', factionId: 'kesa', lat: 46, lng: 48, type: 'small_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 伏尔加下游伊蒂尔（可萨—库曼）；可萨汗国鼎盛期首都，伏尔加河三角洲，丝路草原枢纽。🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→CUMAN：伊蒂尔是**可萨汗国（Khazars）都城**，汗国鼎盛 7–10 世纪；CUMAN 分支的封建格正是「封建时代可萨军团」，此前无任何据点/武将使用该格。驻将约瑟夫（可萨汗，封建）→ 军团自动变封建时代可萨军团。；按 2026-10-25 标准：城居 3–6（查不到确证） → 小城' },
     { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'luosi', lat: 47.705, lng: 42.27306, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'CUMAN', note: '🔴 [2026-11-07 按史补依据] 顿河萨尔克尔；定级依据§6.2：城内守军300+平民约1000人（要塞仅2.6ha；君士坦丁七世《帝国治理论》），人口不足一万 → 按规则判城寨。🔴 [2026-10-24 按史] 建筑风格 SLAVIC→CUMAN：萨尔克尔（Sarkel）是**可萨汗国**请拜占庭工程师于 830 年代所筑的砖石要塞（名字即「白屋」），10 世纪末才被罗斯改为白韦扎；本地最著名一段是可萨砖堡（CUMAN 分支封建格＝可萨军团），非斯拉夫木城。无将驻守。' },
     { id: 'city_weishen', name: '维申斯卡亚', factionId: 'gesake', lat: 49.63, lng: 41.74, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 顿河哥萨克村镇；顿河哥萨克重镇，肖洛霍夫《静静的顿河》的故乡；真·顿河军府切尔卡斯克/新切尔卡斯克因距塔纳伊斯<50km 放不下；推算：城居 0.5 万（维申斯卡亚，顿河哥萨克镇 0.5 万）→ 城寨' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 乌拉尔河萨莱楚克；金帐汗国乌拉尔河渡口大城，草原丝路伏尔加-中亚段枢纽；按 2026-10-25 标准：城居 1–2（查不到确证） → 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：曼格什拉克：里海东岸乌古斯—塞尔柱草原，归突厥 TURKS
-    { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 里海东岸曼格什拉克；里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
+    { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'seljuq', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 里海东岸曼格什拉克；里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
     { id: 'city_kefu', name: '科孚', factionId: 'kelite', lat: 39.62, lng: 19.92, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'LATIN', note: '🔴 [2026-11-07 按史补依据] 威尼斯科孚岛；古科基拉城邦都城（前8世纪-公元前229年独立）。🔴 [2026-10-18 按史] 旧城核心为威尼斯旧堡（Palaio Frourio）与新堡（Neo Frourio）、圣马可飞狮与意式柱廊，实建为意大利/威尼斯系海防城，故 LATIN。；推算：城居 1.5 万（科基拉/科孚，同期 1–2 万）→ 小城' },
     { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN', note: '🔴 [2026-11-07 按史补依据] 医院骑士团马耳他；医院骑士团堡垒岛驻地（1530起），1565马耳他大围攻圣埃尔莫堡血战' },
     { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'stockade', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '🔴 [2026-11-07 按史补依据] 西兰岛哥本哈根；哥本哈根；丹麦，阿布萨隆 1167 建城；推算：城居 0.5 万（哥本哈根，1167 建城 0.5 万）→ 城寨' },
@@ -3955,7 +3955,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jida', name: '吉达', factionId: 'maidina', lat: 21.49, lng: 39.19, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 汉志吉达；吉达(Jeddah)，公元646年第三任哈里发奥斯曼正式定为麦加红海外港，千年朝觐门户与红海第一商港；1517年吉达守将侯赛因·库尔迪筑石砖城墙并率红海舰队击退葡萄牙远征舰队；按 2026-10-25 标准：城居 1–2 → 小城' },
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：万象：澜沧（寮）王国都城，同圈
-    { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'KHMER', note: '🔴 [2026-11-07 按史补依据] 澜沧王国万象；澜沧王国后期首都，塔銮所在地；推算：城居 1 万（万象，澜沧王国都城 1 万）→ 小城' },
+    { id: 'city_wanxiang', name: '万象', factionId: 'lancang', lat: 17.976, lng: 102.636, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'KHMER', note: '🔴 [2026-11-07 按史补依据] 澜沧王国万象；澜沧王国后期首都，塔銮所在地；推算：城居 1 万（万象，澜沧王国都城 1 万）→ 小城' },
     { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 10000, region: 'KUSH', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】麦罗埃属努比亚/库施，66 文化无库施分支，取最近东非分支埃塞俄比亚（代理，非精确）；库施王国都城，黑金字塔群；推算：城居 2 万（麦罗埃，库施都城 2 万）→ 小城' },
     { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'inca', lat: -16.554, lng: -68.673, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'INCA', note: '🔴 [2026-11-07 按史补依据] 的的喀喀湖蒂亚瓦纳科；前印加蒂亚瓦纳科文明中心；定级依据§6.2：城内1万–3万（Parsons 1968等主流；Kolata 11.5万为离群高值），未达中城10万门槛 → 小城；推算：城居 2 万（蒂亚瓦纳科，城内 1–3 万）→ 小城；🔴 [2026-11-11 补标] 【建筑风格代理】前印加蒂亚瓦纳科巨石城，取最近INCA。' },
     { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'small_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '🔴 [2026-11-07 按史补依据] 奥里萨普里；印度教圣城，贾格纳特神庙；定级依据§6.2：城内常住17世纪推断1万–3万（1901年官方49334），未达中城10万门槛 → 小城；推算：城居 2 万（普里，17 世纪约 1–3 万）→ 小城' },
@@ -4016,7 +4016,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_bedzin', name: '本津堡', factionId: 'bolan', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '🔴 [2026-11-07 按史补依据] 西里西亚本津堡；小波兰西境王家石堡，卡齐米日三世鹰巢防线节点；定级依据§6.2：波兰本津王家石堡 → 险要' },
     { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-11-07 按史补依据] 葡萄牙布拉干萨；葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土边城，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。；定级依据§6.2：葡萄牙布拉干萨城堡，石墙 → 险要' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'kasidiliya', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '🔴 [2026-11-07 按史补依据] 卡斯蒂利亚拉莫塔堡；麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
-    { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-11-07 按史补依据] 色雷斯塞乌托波利（今卡赞勒克）；塞乌特斯三世营建的奥德里西亚王都与设防城；按 2026-10-25 标准：奥德里西亚王都设防城，石砌城郭 <1 万 → 小城；按 2026-10-25 标准：奥德里西亚王都设防城，石砌城郭、城居不足 1 万 → 小城' },
+    { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'seleisi', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-11-07 按史补依据] 色雷斯塞乌托波利（今卡赞勒克）；塞乌特斯三世营建的奥德里西亚王都与设防城；按 2026-10-25 标准：奥德里西亚王都设防城，石砌城郭 <1 万 → 小城；按 2026-10-25 标准：奥德里西亚王都设防城，石砌城郭、城居不足 1 万 → 小城' },
     { id: 'city_chimarros', name: '希马鲁塔', factionId: 'xila', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 爱琴岛希马鲁塔；纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型；定级依据§6.2：纳克索斯希马鲁塔石砌设防塔楼 → 险要' },
     { id: 'city_themiskyra', name: '忒弥斯基拉', factionId: 'bendou_d', lat: 41.2, lng: 36.98, type: 'stockade', troops: 10000, region: 'ORIE', buildingStyle: 'BYZANTINE', note: '🔴 [2026-11-07 按史补依据] 本都忒弥斯基拉（黑海南岸）；特尔莫冬河口（今土耳其特尔梅），古希腊传统中亚马逊人的都城；赫拉克勒斯第九件功业「夺希波吕忒腰带」即远征此地。希罗多德四·110-117 记亚马逊人自此漂至塔奈斯河口，与斯基泰青年合流成萨尔马提亚人' },
     // 🔴 [2026-09-12 主人「加沙用什么看历史」] 亚历山大剧本第四章「加沙围城战」的攻城载体。
@@ -4036,7 +4036,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_zhalange', name: '扎兰格', factionId: 'xisi', lat: 30.96, lng: 61.86, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 锡斯坦扎兰格；🔴 [2026-09-28 主人批准新建] 古德兰吉亚(Drangiana/Zaranka)首府与锡斯坦历史名都，赫尔曼德河尾闾哈蒙湿地都会；公元前330年冬亚历山大远征驻军于此。定级依据（2026-09-28 主人定规）：非关隘险要，按城市定级；古代行省首府设防大都会，常住人口过万（约2-3万） → 小城(small_city)。建筑风格：波斯(PERSIAN)。；推算：城居 3 万（note 记 3 万）→ 小城' },
     { id: 'city_teerbate', name: '特尔巴特', factionId: 'dulan_d', lat: 26.00, lng: 63.05, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 俾路支特尔巴特；特尔巴特（Turbat），古称凯奇（Kech），今巴基斯坦俾路支省凯奇县首府，凯奇河谷绿洲农业与内陆商道枢纽；阿契美尼德铭文称马卡（Maka），希腊化时期为吉德罗西亚（Gedrosia）河谷堡，本地霍特氏族（Hot Baloch）的普纳古堡（Punnun Fort）坐落于此，为俾路支萨西-普农传说男主角普农（Punnun）的家园。定级依据§6.2：绿洲农业与内陆商道枢纽（城市性质，非纯军事险要），常驻部族民力与防戍过万 → 小城(small_city)。文化：波斯(PERSIAN)。坐标取英文维基 Turbat 26.0042,63.0606。归属：势力定「麦克兰」（Makran，凯奇王国/麦克兰邦国），旗号「麦克」。；推算：城居 0.8 万（特尔巴特（凯奇），俾路支绿洲镇 0.8 万）→ 城寨' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 奥拉＝欣戈尔河口（莫克兰，判不出→最近同风格据点卡拉奇）→ PURU；原标 INDIA
-    { id: 'city_aola', name: '奥拉', factionId: 'shiyuzu', lat: 25.51, lng: 65.51, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', stockadeShape: 'trapezoid', stockadeFence: 'FENCE', note: '🔴 [2026-11-07 按史补依据] 俾路支海岸奥拉；奥拉（Ora），欣戈尔河口（Hingol River 入海口）沿海要隘，今巴基斯坦俾路支省拉斯贝拉欣戈尔国家公园一带；古代西方地理志记作 Ora，与印度古典的欣戈尔圣地（Hinglaj Mata，兴格拉吉）同址。本地原住民为沿海渔猎的食鱼族（希腊化称呼 Ichthyophagi，本地莫德/梅德人祖先），与内陆奥里泰农耕人分界。公元前325年涅阿尔科斯舰队沿海返航时，食鱼族以毒箭与投石阻截（阿里安《远征记》/《印度记》）。定级依据§6.2：沿海峡谷要隘但渔猎聚落无石头城墙（2026-09-30 新口径：险要须有石头城墙才 PASS）→ 城寨(stockade)。文化：印度(INDIA)。坐标取欣戈尔圣地 25.5139,65.5153。归属：势力定「食鱼族」（Ichthyophagi，沿海独立渔猎部族），旗号「食鱼」。' },
+    { id: 'city_aola', name: '奥拉', factionId: 'panshu', lat: 25.51, lng: 65.51, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', stockadeShape: 'trapezoid', stockadeFence: 'FENCE', note: '🔴 [2026-11-07 按史补依据] 俾路支海岸奥拉；奥拉（Ora），欣戈尔河口（Hingol River 入海口）沿海要隘，今巴基斯坦俾路支省拉斯贝拉欣戈尔国家公园一带；古代西方地理志记作 Ora，与印度古典的欣戈尔圣地（Hinglaj Mata，兴格拉吉）同址。本地原住民为沿海渔猎的食鱼族（希腊化称呼 Ichthyophagi，本地莫德/梅德人祖先），与内陆奥里泰农耕人分界。公元前325年涅阿尔科斯舰队沿海返航时，食鱼族以毒箭与投石阻截（阿里安《远征记》/《印度记》）。定级依据§6.2：沿海峡谷要隘但渔猎聚落无石头城墙（2026-09-30 新口径：险要须有石头城墙才 PASS）→ 城寨(stockade)。文化：印度(INDIA)。坐标取欣戈尔圣地 25.5139,65.5153。归属：势力定「食鱼族」（Ichthyophagi，沿海独立渔猎部族），旗号「食鱼」。' },
     { id: 'city_wuqi', name: '乌奇', factionId: 'deli', lat: 29.24, lng: 71.05, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '🔴 [2026-11-07 按史补依据] 旁遮普乌奇；乌奇（Uch），亚历山大在阿克西内斯河与印度河汇合处所建的城「印度河畔亚历山大城」（阿里安《远征记》VI.15：下令在两河汇合处建城、造船坞，留腓力为总督；英文维基 Alexandria on the Indus：可能就是今巴基斯坦旁遮普省乌奇），公元前325年建。人口：史料无数，按驻军与居民推算不到十万、过万，小城；无法确证的按小城算。；推算：城居 1 万（乌奇，亚历山大所建印度河畔城 1 万上下）→ 小城' },
     { id: 'city_aluoer', name: '阿罗尔', factionId: 'kongque', lat: 27.68, lng: 68.9, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '🔴 [2026-11-07 按史补依据] 信德阿罗尔；阿罗尔（Aror／Alor，今信德省罗赫里），通行认定为穆西卡诺斯的首府（阿里安《远征记》VI.15：他赞赏这座城，命克拉特鲁斯修卫城、设驻军；VI.17 穆西卡诺斯叛变被处死）；是不是这座城我只核到阿罗尔是信德古都（英文维基 Aror），对应关系属通行认定。人口史料无数，小城。；推算：城居 1.5 万（阿罗尔，穆西卡诺斯首府 1–2 万）→ 小城' },
     { id: 'city_kalaqi', name: '卡拉奇', factionId: 'deli', lat: 24.86, lng: 67.01, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU' , note: '🔴 [2026-11-07 按史补依据] 信德卡拉奇；卡拉奇（Karachi），今巴基斯坦信德省港口，古称科拉奇（Kolachi）；希腊化史料中的克罗卡拉（Krokola）通行认定在此一带（涅阿尔科斯船队曾在此候风，《印度记》）；公元前325年只是渔盐聚落，没有石头城墙（马诺拉石堡是 18 世纪的），不算险要；人口史料无数，推算不出，按城寨算（主人 2026-09-30 定：险要须有石头城墙）。' },
