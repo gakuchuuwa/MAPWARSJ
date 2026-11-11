@@ -9764,7 +9764,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    tujishi: { generalId: 'tujishi_sulukehan', cityId: 'city_talas', generalName: '苏禄', portrait: '/assets/WESTERN/tujishi_sulu.png', eliteName: '突骑施骑', eliteTier: 3 },
+    tujishi: [
+        { generalId: 'tujishi_sulukehan', factionId: 'tujishi', cityId: 'city_talas', generalName: '苏禄', portrait: '/assets/WESTERN/tujishi_sulu.png', eliteName: '突骑施骑', eliteTier: 3 },
+        { generalId: 'tujishi_tuhuoxian', factionId: 'tujishi', cityId: 'city_suiye', generalName: '吐火仙', portrait: '', eliteName: '突骑施骑兵', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 苏禄之子，738 苏禄被杀后立为可汗，739 碎叶为盖嘉运所擒（《旧唐书·突厥传》）；生年推定；经典战当场敌将，普将，立绘留空
+    ],
 
 
 
@@ -12314,6 +12317,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'zhanger', factionId: 'zhao', cityId: 'city_liyang', generalName: '张耳', portrait: '/assets/WEI/zhanger.png', eliteName: '丛台绝剑', eliteTier: 2 },   // 🔴 [2026-10-25 新增] 前207 守巨鹿数月（项羽救赵解围）；赵相→常山王；普将；据点巨鹿 WEI 文化
+        { generalId: 'zhao_zhaokuo', factionId: 'zhao', cityId: 'city_shangdang', generalName: '赵括', portrait: '', eliteName: '赵军锐士', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 长平之战赵军主将，代廉颇出战，为白起所围，中箭而死（《史记·白起王翦列传》）；经典战当场敌将，普将，立绘留空
     ],
 
 
@@ -15606,7 +15610,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ansxi: [
-        { generalId: 'ansxi_surena', factionId: 'ansxi', cityId: 'city_hulewan', generalName: '苏莱纳', portrait: '/assets/CENTRAL_ASIA/ansxi_surena.png', eliteName: '帕提亚铁骑', eliteTier: 2 },   // 🔴 [2026-10-25 按史] 经典战敌将；苏林家族主帅，前53 卡莱全歼罗马军；四闸齐备（亲统、大胜、战区级、敌帅克拉苏实名）判名将；据点尼萨（中亚 CENTRAL_ASIA，安息旧都）；用势力精锐帕提亚铁骑
         { generalId: 'bfe_meherdates', cityId: 'city_nisa', generalName: '梅哈尔达特', portrait: '/assets/CENTRAL_ASIA/bfe_meherdates.png', eliteName: '安息骑兵', eliteTier: 4 },
 
 
@@ -17558,6 +17561,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'danyang_huanwen', factionId: 'dongjin', cityId: 'city_jiuzi', generalName: '桓温', portrait: '/assets/JIANGNAN/danyang_huanwen.png', eliteName: '桓家北伐', eliteTier: 3 },
+        { generalId: 'dongjin_simachi', factionId: 'dongjin', cityId: 'city_luoyang', generalName: '司马炽', portrait: '', eliteName: '洛阳宿卫', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 晋怀帝，311 永嘉之乱洛阳城破为刘聪、刘曜所俘，313 遇害平阳（《晋书·孝怀帝纪》）；经典战当场敌将，普将，立绘留空
 
         { generalId: 'bfe3_13', factionId: 'chuguo', cityId: 'city_shouxian', generalName: '项燕', portrait: '/assets/CENTRAL/bfe3_13.png' , eliteName: '楚甲锐士', eliteTier: 1},
         { generalId: 'yuan_d_manzihaiya', factionId: 'yuan_d', cityId: 'city_shangdu', generalName: '蛮子海牙', portrait: '/assets/XIANBEI/yuan_d_manzihaiya.png', eliteName: '大元骑手', eliteTier: 4 },
@@ -17723,6 +17727,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     uesugi: [
         { generalId: 'echigo_shangshanqianxin', factionId: 'uesugi', cityId: 'city_kasugayama', generalName: '上杉谦信', portrait: '/assets/JAPAN/echigo_shangshanqianxin.png', eliteName: '越后骑兵', eliteTier: 2 },
+        { generalId: 'uesugi_chaoding', factionId: 'uesugi', cityId: 'city_edo', generalName: '上杉朝定', portrait: '', eliteName: '扇谷备队', eliteTier: 4 },   // 🔴 [2026-11-11 按史补将] 扇谷上杉家末代当主，1546 河越夜战为北条氏康所败战死；经典战当场敌将，普将，立绘留空
 
     ],
     takeda: [

@@ -1724,7 +1724,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'tang_qikerang': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
     'xiongnu_hunxiewang': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
     'khon_wangzun': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
-    'ansxi_surena': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
     'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
     'qin_hengyi': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
     'dajin_wanyaneke': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
@@ -1745,6 +1744,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yuan_shidielibisi': 'castle',
     'muwaxide_axatafu': 'castle',
     'gepids_cunimund': 'feudal',
+    'uesugi_chaoding': 'imperial',   // 2026-11-11 经典战敌将（随势力时代）
+    'tujishi_tuhuoxian': 'feudal',   // 2026-11-11 经典战敌将（随势力时代）
+    'dongjin_simachi': 'antiquity',   // 2026-11-11 经典战敌将（随势力时代）
+    'zhao_zhaokuo': 'antiquity',   // 2026-11-11 经典战敌将（随势力时代）
     'kalbids_ibnhawwas': 'feudal',
     'zhanger': 'antiquity',   // 张耳（2026-10-25 新增，普将）
     'gaogouli_liuli': 'feudal',   // 琉璃明王

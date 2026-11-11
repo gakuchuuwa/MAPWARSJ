@@ -79,6 +79,7 @@ phase: production
 - 2025-11-01 — [OPTIMIZATION_ANALYSIS.md](02-design/systems/OPTIMIZATION_ANALYSIS.md)：性能瓶颈分析与建议。
 - 2026-05-24 — [势力配置说明.md](02-design/systems/势力配置说明.md)：**历史大乱斗版**——势力数据说明，含"一势力一城"模型。
 - 2025-10-31 — [历史事件说明.md](02-design/systems/历史事件说明.md)：历史事件数据结构与样例。
+- 2026-11-11 — [531场名将经典战_五要素标注与审校总表.md](AGENTS/531场名将经典战_五要素标注与审校总表.md)：名将经典战逐场时间、地点、人物、史载兵力、结果五要素，供视频口播查阅；其中「史载兵力」只作参考，游戏兵力仍按 1～2 万配平，不改代码。
 
 ### 03-runtime · 运行与测试
 - 2025-10-31 — [DEV_GUIDE.md](03-runtime/DEV_GUIDE.md)：开发环境搭建与基本命令。

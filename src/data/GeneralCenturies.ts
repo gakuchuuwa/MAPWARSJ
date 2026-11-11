@@ -1395,7 +1395,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'tang_qikerang': 9,
     'xiongnu_hunxiewang': -2,
     'khon_wangzun': 14,
-    'ansxi_surena': -1,
     'dulan_muzaffarkhan': 19,
     'qin_hengyi': -3,
     'dajin_wanyaneke': 13,
@@ -1416,6 +1415,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yuan_shidielibisi': 14,
     'muwaxide_axatafu': 13,
     'gepids_cunimund': 6,
+    'uesugi_chaoding': 16,
+    'tujishi_tuhuoxian': 8,
+    'dongjin_simachi': 4,
+    'zhao_zhaokuo': -3,
     'kalbids_ibnhawwas': 11,
     'zhanger': -3,   // 张耳（前 3 世纪：前 207 巨鹿）
     'gaogouli_liuli': 1,   // 琉璃明王（1 世纪：3 年迁都国内城）

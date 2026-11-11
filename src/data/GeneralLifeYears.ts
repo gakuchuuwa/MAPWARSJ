@@ -1734,7 +1734,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     tang_qikerang: { birth: 840, death: 885, kaoju: '推定' },
     xiongnu_hunxiewang: { birth: -160, death: -115, kaoju: '推定' },
     khon_wangzun: { birth: 1300, death: 1354, kaoju: '推定' },
-    ansxi_surena: { birth: -85, death: -52, kaoju: '推定' },
     dulan_muzaffarkhan: { birth: 1760, death: 1818, kaoju: '推定' },
     qin_hengyi: { birth: -310, death: -227, kaoju: '推定' },
     dajin_wanyaneke: { birth: 1180, death: 1232, kaoju: '推定' },
@@ -1755,6 +1754,10 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     yuan_shidielibisi: { birth: 1330, death: 1374, kaoju: '推定' },
     muwaxide_axatafu: { birth: 1190, death: 1248, kaoju: '推定' },
     gepids_cunimund: { birth: 490, death: 567, kaoju: '推定' },
+    uesugi_chaoding: { birth: 1525, death: 1546 },  // 上杉朝定
+    tujishi_tuhuoxian: { birth: 710, death: 740, kaoju: '推定' },  // 吐火仙
+    dongjin_simachi: { birth: 284, death: 313 },  // 司马炽
+    zhao_zhaokuo: { birth: -290, death: -260 },  // 赵括
     kalbids_ibnhawwas: { birth: 1010, death: 1068, kaoju: '推定' },
     zhanger: { birth: -270, death: -202, kaoju: '推定' },   // 张耳（约前 270–前 202）
     gaogouli_liuli: { birth: -50, death: 18, kaoju: '推定' },   // 类利/琉璃明王（约前 50–18），前 19 即位，3 年迁都国内城

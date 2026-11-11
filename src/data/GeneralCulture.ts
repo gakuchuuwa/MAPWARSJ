@@ -42,7 +42,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'anjou_luyisanshi': 'FRANKS',   // 安茹｜路易三世｜据点 阿维尼翁
     'anmei_yuwandaqin': 'JAPAN',   // 琉球｜与湾大亲｜据点 赤木名城
     'ansxi_aershake': 'SASANIAN',   // 安息帝国｜阿尔沙克｜据点 尼萨
-    'ansxi_surena': 'SASANIAN',   // 安息帝国｜苏莱纳｜据点 呼勒万
     'ante_boz': 'SLAVIC',   // 安特｜博兹｜据点 基辅
     'anushidgin_yile': 'CENTRAL_ASIA',   // 伊勒巴斯｜伊勒｜据点 希瓦
     'anxi_guoxin': 'WESTERN',   // 安西｜郭昕｜据点 拨换城
@@ -901,6 +900,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_zhytomyr': 'SLAVIC',   // 加利西亚｜日托米尔｜据点 日托米尔
     'geng_gengjingzhong': 'HUGUANG',   // 隆武｜耿精忠｜据点 冶城
     'gepids_cunimund': 'MAGYAR',   // 革皮德｜库尼蒙德｜据点 布达佩斯
+    'uesugi_chaoding': 'JAPAN',   // 上杉家｜上杉朝定｜据点 江户城
+    'tujishi_tuhuoxian': 'WESTERN',   // 突骑施｜吐火仙｜据点 碎叶
+    'dongjin_simachi': 'CENTRAL',   // 司马晋｜司马炽｜据点 洛阳
+    'zhao_zhaokuo': 'WEI',   // 赵国｜赵括｜据点 长子
     'gesake_bulawen': 'SLAVIC',   // 哥萨克｜布拉温｜据点 察里津
     'gesake_khmelnytsky': 'CUMAN',   // 哥萨克｜赫梅利尼茨基｜据点 奥列什基
     'ghana_tongka_manin': 'AFRICA',   // 加纳帝国｜马宁｜据点 库姆比萨利赫
