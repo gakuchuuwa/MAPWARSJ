@@ -52,7 +52,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   kelite: '威共',  // 威尼斯共和国（干地亚要塞）
   leangongguo: '莱昂',
   xixiliwangguo: '西西',
-  'liangxixili': '西西',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+  'liangxixili': '两西',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 
   yipilusi: '伊庇',
   lagoniya: '斯巴',
@@ -227,9 +227,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   fuguo: '附',
 
 'yada': '厌抵',
-'guishuang': '贵霜',
-'juandu': '捐毒',
-  'sijitai': '斯基',
+'guishuang': '贵霜',  'sijitai': '斯基',
 
     'shang': '商',
     'zhou': '周',
@@ -883,10 +881,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   wangdaer: '汪达',  // 汪达尔—阿兰王国（439 迦太基–534 拜占庭灭）
   kesaiya: '科塞',  // 科塞亚部族（扎格罗斯山，前4世纪抗亚历山大）
   muxikani: '穆西',  // 穆西卡尼部族（印度河下游，前4世纪）
-  houmojietuo: '摩揭',  // 摩揭陀·普那伐摩（7世纪初）
+  houmojietuo: '后摩',  // 摩揭陀·普那伐摩（7世纪初）
   sumo: '苏摩',  // 苏摩国（孟加拉 Suhma，前6世纪）
   gushu: '蜀',  // 古蜀·开明王朝（前4世纪–前316 秦灭）
-  yidali_odoacer: '意',  // 奥多亚克意大利王国（476–493，都拉文纳）
+  yidali_odoacer: '奥多',  // 奥多亚克意大利王国（476–493，都拉文纳）
   gaoda: '高达',  // 高达王国（设赏迦，约590–626）
   kelite_amier: '克特',  // 克里特埃米尔国（约824–961）
   kelimiya_han: '克米',  // 克里米亚汗国（1441–1783）
@@ -898,7 +896,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   biluzhi: '俾路',  // 俾路支·林德部落联盟（1480–1533）
   bonape: '波纳',  // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
   xiaweiyi: '夏威',  // 夏威夷王国（1795–1893）
-  yidali_hre: '意',  // 意大利王国（神圣罗马，962–1801）
+  yidali_hre: '比安',  // 意大利王国（神圣罗马，962–1801）
 };
 
 // @ts-ignore

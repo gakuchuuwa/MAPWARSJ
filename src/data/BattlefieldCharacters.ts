@@ -49,6 +49,7 @@ export interface BattlefieldCharacter {
  * 键 = `generalId`，方便按 id 直查；顺序无关。
  */
 export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacter>> = {
+    bfe_cb_boootiya_1: { generalId: 'bfe_cb_boootiya_1', generalName: '伊斯梅尼亚斯', factionId: 'boootiya', note: '🔴 [经典战导入] 哈利亚托斯之战敌方主将' },
     bfe_cb_yan_1: { generalId: 'bfe_cb_yan_1', generalName: '太子丹', factionId: 'yan', note: '🔴 [经典战导入] 衍水之战敌方主将' },
     bfe_cb_zhao_1: { generalId: 'bfe_cb_zhao_1', generalName: '扈辄', factionId: 'zhao', note: '🔴 [经典战导入] 平阳之战敌方主将' },
     bfe_cb_qin_2: { generalId: 'bfe_cb_qin_2', generalName: '蒙骜', factionId: 'qin', note: '🔴 [经典战导入] 河外之战敌方主将' },

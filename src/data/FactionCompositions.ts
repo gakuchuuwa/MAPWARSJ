@@ -122,7 +122,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionType: "region",
 },   // 阿布哈兹王国｜主将 巴格拉特
 "mac_dynasty": {
-    legionName: "帝国时代洛韦克军团",
+    legionName: "帝国时代安南军团",
     legionType: "region",
 },   // 莫朝｜主将 区大任
 "restored_hanthawaddy": {
@@ -537,7 +537,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "luosi": {
-        legionName: "封建时代基辅罗斯军团",
+        legionName: "封建时代瓦良格军团",
         legionType: "sub",
     },
     "qiernigeweifu_gongguo": {
@@ -819,11 +819,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "ouyue": {
         legionName: "古典时代吴越军团",
-    },
-    "juandu": {
-        legionName: "封建时代安西军团",
-    },
-    "shang": {
+    },    "shang": {
         legionName: "先秦军团",
     },
     "qi": {
@@ -1424,7 +1420,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "boximiya": {
-        legionName: "城堡时代胡斯军团",
+        legionName: "帝国时代波希米亚雇佣军团",
         legionType: "sub",
     },
     "zhuluo": {
@@ -2887,7 +2883,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "halapengcai": {
-        legionName: "封建时代蒲甘军团",
+        legionName: "城堡时代阿瓦军团",
         legionType: "sub",
     },
     "dongchahatai": {
@@ -2912,6 +2908,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yidali_hre": {
         legionName: "城堡时代意大利雇兵军团",
+        legionType: "sub",
+    },
+    "libiya": {
+        legionName: "古典时代迦太基军团",
         legionType: "sub",
     },
 };

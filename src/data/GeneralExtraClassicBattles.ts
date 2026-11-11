@@ -493,6 +493,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
+            "enemyGeneralId": "bfe_cb_boootiya_1",
             "enemyTroops": 15000,
             "introLines": [
                 {
@@ -1046,6 +1047,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "feilisidin",
             "enemyFactionName": "非利士",
+            "enemyGeneralId": "bfe_achish",
             "enemyTroops": 15000,
             "introLines": [
                 {

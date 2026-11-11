@@ -73,7 +73,6 @@ export const FACTION_PEOPLE: Readonly<Record<string, string>> = {
     aswaka: '印度-希腊',
 
     // 唐（安西诸军）
-    juandu: '唐',
 
     // 高棉 vs 占（不同民族，2026-11-07 已拆号，保留映射以免再被合并）
     chenla: '高棉',

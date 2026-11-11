@@ -305,12 +305,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_agallianos': 'feudal',   // 阿加利诺斯
     'bfe_krakus': 'antiquity',   // 克拉库斯
     'bfe_dinga_cisse': 'antiquity',   // 丁加西塞
-    'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼
-    'bfe_erekle_ii': 'imperial',   // 赫拉克留二世
-    'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
-    'bfe_divico': 'antiquity',   // 迪维科
-    'bfe_zizka': 'castle',   // 杰士卡
-    'bfe_arminius': 'antiquity',   // 阿米尼乌斯
+    'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼    'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
+    'bfe_divico': 'antiquity',   // 迪维科    'bfe_arminius': 'antiquity',   // 阿米尼乌斯
     'bfe_kinizsi': 'castle',   // 基尼日
     'bfe_jezzar': 'imperial',   // 贾扎尔
     'bfe_narses': 'feudal',   // 纳尔塞斯
@@ -336,9 +332,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_dimitriev': 'castle',
     'bfe_taycanamo': 'feudal',
     'bfe_gouras': 'imperial',
-    'bfe_karaiskakis': 'imperial',
-    'bfe_kontoskeles': 'feudal',
-    'bfe_ypsilantis': 'imperial',
+    'bfe_karaiskakis': 'imperial',    'bfe_ypsilantis': 'imperial',
     'bfe_maniakes': 'feudal',
     'bfe_rhetogenes': 'antiquity',
     'bfe_purnavarman': 'antiquity',
@@ -919,7 +913,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'jiaodong_tiandan': 'antiquity',
     'jiashi_jiashiwang_d': 'antiquity',
     'jiashi_wangxuance': 'feudal',
-    'jiaye_punafamo': 'antiquity',
+    'jiaye_punafamo': 'feudal',
     'jiazini_mahamaode': 'castle',
     'jibei2_qingshuizongzhi': 'imperial',
     'jibei_wangkuang': 'antiquity',
@@ -1464,9 +1458,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xushouhui_zhaopusheng': 'castle',
     'yada_ahexiong': 'antiquity',
     'yamato_nanmuzhengcheng': 'castle',
-    'yamato_sakanouenotamuramaro': 'feudal',
-    'yamaxun_xibolvte': 'antiquity',
-    'yan_leyi': 'antiquity',
+    'yamato_sakanouenotamuramaro': 'feudal',    'yan_leyi': 'antiquity',
     'yanchuan_d_yuefei': 'castle',
     'yanda_touluoman': 'feudal',
     'yang_aner_yangan': 'castle',
@@ -2024,6 +2016,16 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yaqi_yisikanda': 'imperial',
     'malindi_bashiri': 'castle',
     'aquidan_odo': 'feudal',
+    'aguelabu_ibrahim_i': 'feudal', // 易卜拉欣一世 · 阿格拉布 · 凯鲁万
+    'baojiaer_chelbir': 'castle', // 切尔比尔 · 保加尔 · 喀山
+    'fulandesi_robert_i': 'castle', // 罗贝尔一世 · 阿图瓦 · 加莱
+    'mac_macdengyong': 'imperial', // 莫登庸 · 莫朝 · 昇龙
+    'baizanting_ouranos': 'feudal', // 乌拉诺斯 · 拜占庭 · 底比斯
+    'ghana_bassi': 'feudal', // 巴欣 · 加纳帝国 · 库姆比萨利赫
+    'jiaohuangguo_albornoz': 'castle', // 阿尔沃诺斯 · 教皇国 · 罗马
+    'osman_piyale_pasha': 'imperial', // 皮亚莱帕夏 · 奥斯曼帝国 · 君士坦丁堡
+    'mazhaer_ulazlo_i': 'castle', // 乌拉斯洛一世 · 匈牙利 · 塞格德
+    'mazhaer_balint_torok': 'imperial', // 特勒克 · 匈牙利 · 塞格德
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

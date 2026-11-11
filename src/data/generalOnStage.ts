@@ -51,9 +51,10 @@ export function setGeneralFactionStartProvider(fn: (generalId: string) => number
 }
 
 /** 出场年不早于本势力起始年；势力起始年晚于退场年的（挂错势力的武将）→ 窗口为空，不出场 */
-function clampToFactionStart(generalId: string, w: { from: number; to: number }): { from: number; to: number } {
+function clampToFactionStart(generalId: string, w: { from: number; to: number }): { from: number; to: number } | null {
     const fs = factionStartProvider(generalId);
     if (fs == null || fs <= w.from) return w;
+    if (fs > w.to) return null;
     return { from: fs, to: w.to };
 }
 
@@ -83,6 +84,26 @@ export function getCurrentStageYear(): number | null {
     }
 }
 
+/**
+ * 🔴 [2026-11-11 修「游戏加载失败 Maximum call stack size exceeded」]
+ * 在场判定与经典战档位会互相查询，形成环：
+ *   isGeneralOnStage → getCentenarianStageWindow → firstBattleStatusProvider（GameApp 注入）
+ *   → getGeneralFirstBattle → getGeneralProfile → isGeneralOnStage → …
+ * 所以「正在判定的武将」记在栈里，同一个武将重入时不再重算窗口，直接答「在场」
+ * （窗口只由生卒年/势力起始年决定，内部这次查询不会改变它），环就断在这里。
+ */
+const stageLookupStack = new Set<string>();
+
+function withStageLookup<T>(generalId: string, onReentry: () => T, compute: () => T): T {
+    if (stageLookupStack.has(generalId)) return onReentry();
+    stageLookupStack.add(generalId);
+    try {
+        return compute();
+    } finally {
+        stageLookupStack.delete(generalId);
+    }
+}
+
 /** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年]且无在场未败军团 → 按普通守将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
@@ -102,7 +123,12 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
         if (!life) return false;
         return year <= life.death;
     }
-    const win = getCentenarianStageWindow(generalId);
+    // 重入（经典战档位又绕回来问是不是在场）→ 不再重算窗口，按「在场」处理，避免无限递归
+    const win = withStageLookup<{ from: number; to: number } | null>(
+        generalId,
+        () => ({ from: Number.NEGATIVE_INFINITY, to: Number.POSITIVE_INFINITY }),
+        () => getCentenarianStageWindow(generalId),
+    );
     if (!win || year < win.from) return false;
     if (year <= win.to) return true;
     // 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」]
@@ -121,7 +147,7 @@ export function isGeneralPastCentenarianAge(generalId: string | null | undefined
         inYearLookup = false;
     }
     if (year == null) return false;
-    const win = getCentenarianStageWindow(generalId);
+    const win = withStageLookup<{ from: number; to: number } | null>(generalId, () => null, () => getCentenarianStageWindow(generalId));
     return !!win && year > win.to;
 }
 
@@ -208,14 +234,17 @@ function rawCentenarianStageWindow(generalId: string): { from: number; to: numbe
  * 只在百岁模式有意义；判定口径与 getCentenarianStageWindow 一致。
  */
 export function isOpeningQueueGeneral(generalId: string): boolean {
-    if (firstBattleStatusProvider(generalId) !== 'pending') return false;
-    const life = GENERAL_LIFE_YEARS[generalId];
-    if (!life) return false;
-    const debut = getGeneralDebutYear(generalId);
-    if (debut == null) return false;
-    const start = GameConfig.TIME.TIMELINE_START_YEAR;
-    const fs = factionStartProvider(generalId);
-    if (fs != null && fs > start) return false;   // 势力开局时还没成立 → 不算开局这批
-    const to = Math.max(debut, centenarianYearOf(life.birth));
-    return to < start || (debut <= start && to < start + OPENING_TIGHT_YEARS);
+    // 同一条环（经典战档位 ↔ 在场窗口）的保护：重入时按「不在开局排队」处理
+    return withStageLookup(generalId, () => false, () => {
+        if (firstBattleStatusProvider(generalId) !== 'pending') return false;
+        const life = GENERAL_LIFE_YEARS[generalId];
+        if (!life) return false;
+        const debut = getGeneralDebutYear(generalId);
+        if (debut == null) return false;
+        const start = GameConfig.TIME.TIMELINE_START_YEAR;
+        const fs = factionStartProvider(generalId);
+        if (fs != null && fs > start) return false;   // 势力开局时还没成立 → 不算开局这批
+        const to = Math.max(debut, centenarianYearOf(life.birth));
+        return to < start || (debut <= start && to < start + OPENING_TIGHT_YEARS);
+    });
 }

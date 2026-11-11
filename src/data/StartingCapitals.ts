@@ -3,7 +3,7 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
-    'libiya': 'city_kailuwan',   // 利比亚（经典战导入，登记用）
+    'libiya': 'city_deliboli',   // 利比亚（经典战导入，登记用）🔴 [2026-11-11 按史] 原写凯鲁万（公元六七〇年建，前240年尚无此城）→ 改的黎波里（古典名欧亚，前七世纪腓尼基人所建，利比亚塔尼亚首邑）
     'jiaxite': 'city_babilun',   // 加喜特（经典战导入，登记用）
     'pattani': 'city_pattani',
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（登记用，不作开局依据）
@@ -145,7 +145,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'rashtrakuta': 'city_hengbi',   // 登记用，不改据点归属
     'andean_rebellion': 'city_diyawanake',   // 登记用，不改据点归属
     'abkhazia_kingdom': 'city_kutayixi',   // 登记用，不改据点归属
-    'mac_dynasty': 'city_sanpu',   // 登记用，不改据点归属
+    'mac_dynasty': 'city_shenglong',   // 登记用，不改据点归属
     'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
     'mamunid': 'city_urgench',   // 登记用，不改据点归属
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou → city_tongjiajiang 的首府登记已删（浑江本属 manzhou_d）
@@ -225,9 +225,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'heishui': 'city_lahasusu',
   'fuguo': 'city_mangkangzong',
 
-'yada': 'city_xiwanjin',
-'juandu': 'city_paixiucheng',
-
+'yada': 'city_xiwanjin',
     'wei': 'city_hedong',
     'caowei': 'city_xuchang',
     'wuzhou_d': 'city_luoyang',

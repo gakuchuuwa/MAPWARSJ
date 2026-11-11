@@ -3400,7 +3400,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
 
     { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA',
 buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 巴克特里亚（兴都库什山间）；巴米扬；梵衍那小城。🔴 [2026-10-05 主人令「建筑风格必须当地」] 巴米扬（梵衍那）在**吐火罗／巴克特里亚**（兴都库什山间，嚈哒—西突厥系），与周边中亚诸城同风格 → 挂鞑靼／中亚 CENTRAL_ASIA（一级 CEAS）；旧值 INDI（南印度达罗毗荼）与本地不符。；推算：城居 1.5 万（巴米扬，梵衍那佛教中心 1–2 万）→ 小城' },
-    { id: 'city_paixiucheng', name: '涓笃', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 汉涓笃（塔里木南道）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_paixiucheng', name: '涓笃', factionId: 'shule', lat: 39.48, lng: 76.72, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 汉涓笃（塔里木南道）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
 

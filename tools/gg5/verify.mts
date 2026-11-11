@@ -41,8 +41,9 @@ P(`# GG 第五轮核验  ${new Date().toISOString()}`);
 P(`势力总数（当前 FACTIONS）= ${factions.length}｜GG 表行数 = ${gg.size}`);
 P(`武将条目 = ${allGenerals.length}｜唯一 generalId = ${byGid.size}`);
 
-// ① 已删/已并势力残留
-const toDrop = new Set<string>();
+// ① 已删/已并势力残留（含收尾按《后汉书·西域传》「捐毒国前世属疏勒」且史无王名并入 shule 的 juandu）
+const EXTRA_MERGED = new Set<string>(['juandu']);
+const toDrop = new Set<string>(EXTRA_MERGED);
 for (const [fid, v] of gg) if (/并入|删除/.test(v.act) && root(fid) !== fid) toDrop.add(fid);
 P(`\n## ① 应消失势力（并入/删除）＝ ${toDrop.size}`);
 const residue: string[] = [];
@@ -60,7 +61,7 @@ P(`\n## ② 起止年写入情况`);
 let spanMissing = 0, spanDiff = 0, spanOk = 0;
 const spanBad: string[] = [];
 for (const [fid, v] of gg) {
-    if (root(fid) !== fid) continue;
+    if (root(fid) !== fid || EXTRA_MERGED.has(fid)) continue;
     if (!Number.isFinite(v.s) || !Number.isFinite(v.e)) continue;
     const cur = (FACTION_SPAN as any)[fid];
     if (!cur) { spanMissing++; spanBad.push(`缺失 ${fid}`); continue; }

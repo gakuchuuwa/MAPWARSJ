@@ -786,6 +786,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     suosuo: { generalId: 'gen_sumanguru', cityId: 'city_kumubi', generalName: '苏曼古鲁', portrait: '/assets/AFRICA/suosuo_sumangulu.png', eliteName: '铁匠王卫', eliteTier: 4 },
     ghana_diguo: [
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 通卡·巴欣（Tunka Bassi，约985–1062，贝克里《道里邦国志》所载加纳帝国君主，驻库姆比萨利赫统军御边）
+        { generalId: 'ghana_bassi', factionId: 'ghana_diguo', cityId: 'city_kumubi', generalName: '巴欣', portrait: '', eliteName: '瓦加杜矛兵', eliteTier: 4 },
         { generalId: 'ghana_tongka_manin', cityId: 'city_kumubi', generalName: '马宁', portrait: '/assets/AFRICA/ghana_tongka_manin.png', eliteName: '金城弓卫', eliteTier: 4 },
         { generalId: 'bfe_dinga_cisse', factionId: 'ghana_diguo', cityId: 'city_kumubi', generalName: '丁加西塞', portrait: '/assets/AFRICA/bfe_dinga_cisse.png', eliteName: '瓦加杜矛兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 wagadu 块
     ],
@@ -1720,7 +1722,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     buni: [
-        { generalId: 'buni_mathos', factionId: 'buni', cityId: 'city_jiataji', generalName: '马托斯', portrait: '/assets/BERBER/buni_mathos.png', eliteName: '迦太基骑手', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；雇佣兵战争叛军首领，前238 锯谷被擒处死；库无利比亚叛乱方势力，暂以 buni 迦太基作同势力内战处理；据点迦太基城（BERBER）；用势力精锐努米底亚骑
+        { generalId: 'buni_mathos', factionId: 'libiya', cityId: 'city_jiataji', generalName: '马托斯', portrait: '/assets/BERBER/buni_mathos.png', eliteName: '利比亚矛兵', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；雇佣兵战争叛军首领，前238 锯谷被擒处死；库无利比亚叛乱方势力，暂以 buni 迦太基作同势力内战处理；据点迦太基城（BERBER）；用势力精锐努米底亚骑
         { generalId: 'bfe_bomilcar', cityId: 'city_jiataji', generalName: '波米尔卡', portrait: '/assets/BERBER/bfe_bomilcar.png', eliteName: '迦太基骑手', eliteTier: 4 },
 
 
@@ -1772,6 +1774,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     aguelabu: [
+        // 🔴 [2026-11-11 GG第五轮·补空势力史实武将] 易卜拉欣一世·伊本·阿格拉布（756–812，800 年受封伊夫里奇亚埃米尔、定都凯鲁万立朝）
+        { generalId: 'aguelabu_ibrahim_i', factionId: 'aguelabu', cityId: 'city_kailuwan', generalName: '易卜拉欣一世', portrait: '', eliteName: '凯鲁万骑兵', eliteTier: 3 },
         
         // 🔴 [2026-10-25 补B] 阿齐兹（克里特埃米尔，961 干地亚陷落时在位；克里特埃米尔国出自阿格拉布，据凯鲁万）｜势力 阿格拉布｜据点 凯鲁万（BERBER 文化）｜普将｜精锐「克里特军」T4｜立绘留空
         { generalId: 'bfe_abdulaziz_crete', factionId: 'kelite_amier', cityId: 'city_kailuwan', generalName: '阿齐兹', portrait: '/assets/BERBER/bfe_abdulaziz_crete.png', eliteName: '克里特军', eliteTier: 4 },
@@ -1824,32 +1828,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     pomeilaniya: [
         { generalId: 'pomeilaniya_bogislaw', cityId: 'city_shiqieqing', generalName: '博吉斯拉夫十世', portrait: '/assets/GERMANIC/pomeilaniya_bojisilafu.png', eliteName: '波美海卫', eliteTier: 4 },  // 什切青·格里芬王朝公爵,
         { generalId: 'bfe_bogislaw_i', factionId: 'pomeilaniya', cityId: 'city_shiqieqing', generalName: '博吉斯拉夫一世', portrait: '/assets/GERMANIC/bfe_bogislaw_i.png', eliteName: '格里芬卫队', eliteTier: 4 },
-    ],
-
-
-
-
-
-
-    tuosikana: [
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ],
-
+    ],
 
 
 
@@ -2374,7 +2353,39 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    fulandesi: { generalId: 'gen_robert_ii', factionId: 'didi', cityId: 'city_calais', generalName: '罗贝尔二世', portrait: '/assets/FRANKS/gen_robert_ii.png', eliteName: '阿图瓦盾卫', eliteTier: 4 },
+    fulandesi: [
+
+
+
+
+
+
+
+        { generalId: 'gen_robert_ii', factionId: 'didi', cityId: 'city_calais', generalName: '罗贝尔二世', portrait: '/assets/FRANKS/gen_robert_ii.png', eliteName: '阿图瓦盾卫', eliteTier: 4 },
+
+
+
+
+
+
+
+        // 🔴 [2026-11-11 GG第五轮·补空势力史实武将] 罗贝尔一世（1216–1250，路易九世之弟，1237 年首封阿图瓦伯爵，第七次十字军前锋统帅）
+
+
+
+
+
+
+
+        { generalId: 'fulandesi_robert_i', factionId: 'fulandesi', cityId: 'city_calais', generalName: '罗贝尔一世', portrait: '', eliteName: '阿图瓦骑士', eliteTier: 3 },
+
+
+
+
+
+
+
+    ],
 
 
 
@@ -3092,17 +3103,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 曼斯菲尔德（1580–1626，新教雇佣军统帅；1626 德绍桥败于华伦斯坦）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜普将｜精锐「新教雇佣兵」T4｜立绘留空
         { generalId: 'bfe_mansfeld', factionId: 'boximiya', cityId: 'city_bulage', generalName: '曼斯菲尔德', portrait: '/assets/BOHEMIANS/bfe_mansfeld.png', eliteName: '新教雇佣兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 华伦斯坦（1583–1634，三十年战争帝国军统帅；1626 德绍桥胜）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜名将｜精锐「华伦斯坦军」T1｜立绘留空｜经典战待补
-        { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '/assets/BOHEMIANS/boximiya_wallenstein.png', eliteName: '帝国雇佣军', eliteTier: 1 },
-
-
-
-
-
-
-
-
-        { generalId: 'gen_jan_zizka', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
-        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚骑', eliteTier: 3 },
+        { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '/assets/BOHEMIANS/boximiya_wallenstein.png', eliteName: '帝国雇佣军', eliteTier: 1 },        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚骑', eliteTier: 3 },
 
 
 
@@ -3120,6 +3121,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     mazhaer: [
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 乌拉斯洛一世（1424–1444，匈牙利国王；1444 年驻跸塞格德缔结《塞格德和约》并集结瓦尔纳十字军出征）
+        { generalId: 'mazhaer_ulazlo_i', factionId: 'mazhaer', cityId: 'city_saigede', generalName: '乌拉斯洛一世', portrait: '', eliteName: '塞格德骑兵', eliteTier: 3 },
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 巴林特·特勒克（Bálint Török，1502–1551，匈牙利南境统帅兼琼格拉德—塞格德领主；1527 年于塞格德近郊击败约万·内纳德军）
+        { generalId: 'mazhaer_balint_torok', factionId: 'mazhaer', cityId: 'city_saigede', generalName: '特勒克', portrait: '', eliteName: '蒂萨河轻骑', eliteTier: 3 },
     { generalId: 'mazhaer_xiongyatilasiluo', factionId: 'mazhaer', cityId: 'city_huneiduolala', generalName: '匈雅提拉斯洛', portrait: '/assets/MAGYAR/mazhaer_xiongyatilasiluo.png', eliteName: '匈雅提家兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 匈雅提家族世领胡内多阿拉堡
         // 🔴 [2026-10-20 主人令「名将剧情要写最知名战役」] 拉约什二世＝匈牙利国王（1526 莫哈奇战死）→ 布达佩斯（MAGYAR）；帝国时代骠骑先锋军团；立绘留空
         { generalId: 'gen_lajos_ii', cityId: 'city_budapeisi', generalName: '拉约什二世', portrait: '/assets/MAGYAR/gen_lajos_ii.png', eliteName: '匈牙利黑军', eliteTier: 2 },
@@ -3439,8 +3444,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     hussites: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]
-        // 杨·杰士卡（约 1360–1424，胡斯派统帅；1420 维特科夫山、1422 库特纳霍拉以车阵屡破十字军，终生未尝一败）｜势力 胡斯派（新增）｜据点 布拉格（BOHEMIANS）｜名将｜精锐「胡斯车阵兵」T1｜立绘留空
-        { generalId: 'bfe_zizka', factionId: 'hussites', cityId: 'city_bulage', generalName: '杰士卡', portrait: '/assets/BOHEMIANS/bfe_zizka.png', eliteName: '胡斯车阵兵', eliteTier: 1 },
+        // 杨·杰士卡（约 1360–1424，胡斯派统帅；1420 维特科夫山、1422 库特纳霍拉以车阵屡破十字军，终生未尝一败）｜势力 胡斯派（新增）｜据点 布拉格（BOHEMIANS）｜名将｜精锐「胡斯车阵兵」T1｜立绘留空        { generalId: 'gen_jan_zizka', factionId: 'hussites', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
     ],
     cherusci: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]
@@ -3475,6 +3479,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '高丽倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },
     ],
     mac_dynasty: [
+        // 🔴 [2026-11-11 GG第五轮·补空势力史实武将] 莫登庸（1483–1541，越南莫朝开国太祖，1527 年于昇龙受禅立朝）
+        { generalId: 'mac_macdengyong', factionId: 'mac_dynasty', cityId: 'city_shenglong', generalName: '莫登庸', portrait: '', eliteName: '莫氏宿卫军', eliteTier: 3 },
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'shuizhen_qudaren', factionId: 'ming_d', cityId: 'city_sanpu', generalName: '区大任', portrait: '/assets/KHMER/shuizhen_qudaren.png', eliteName: '水真步兵', eliteTier: 4 },
     ],
@@ -4108,6 +4114,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baojiaer: [
+        // 🔴 [2026-11-11 GG第五轮·补空势力史实武将] 加卜杜拉·切尔比尔（约1165–1225，伏尔加保加尔君主；1223 年萨马拉河湾设伏击败哲别、速不台军）
+        { generalId: 'baojiaer_chelbir', factionId: 'baojiaer', cityId: 'city_kashan', generalName: '切尔比尔', portrait: '', eliteName: '不里阿耳骑', eliteTier: 3 },
 
 
 
@@ -4139,6 +4147,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 尼基弗鲁斯·乌拉诺斯（约950–1010，拜占庭西方家内军统帅；997 年督师希腊军区于斯佩尔依奥斯河夜袭大破保加利亚沙皇撒慕尔）
+        { generalId: 'baizanting_ouranos', factionId: 'baizanting', cityId: 'city_thebes', generalName: '乌拉诺斯', portrait: '', eliteName: '爱琴军区兵', eliteTier: 3 },
         // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
         //    纳尔塞斯（约 478–573，东罗马统帅；552 塔吉那大破托提拉、553 拉克塔里乌斯山灭东哥特、554 卡西利努姆歼法兰克—阿勒曼尼军，此后坐镇罗马治理意大利）｜势力 拜占庭｜据点 罗马（ROMA）｜名将｜精锐「东罗马甲骑」T3｜立绘留空
         { generalId: 'bfe_narses', factionId: 'baizanting', cityId: 'city_luoma', generalName: '纳尔塞斯', portrait: '/assets/BYZANTINE/bfe_narses.png', eliteName: '东罗马甲骑', eliteTier: 3 },
@@ -4148,9 +4158,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_apokaukos', factionId: 'baizanting', cityId: 'city_sparta', generalName: '阿波卡夫', portrait: '/assets/SPARTANS/bfe_apokaukos.png', eliteName: '拉科尼亚重装', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 乔治·马尼亚克（？–1043，拜占庭名将；1038–1040 西西里远征军最高统帅，罗梅塔与特罗伊纳大破阿拉伯军、收复墨西拿与叙拉古等十三城）｜势力 拜占庭｜据点 锡拉库萨（SICILIANS 文化）｜普将（存疑）｜精锐「西西里远征」T4｜立绘留空
         { generalId: 'bfe_maniakes', factionId: 'baizanting', cityId: 'city_syracuse', generalName: '马尼亚克', portrait: '/assets/SICILIANS/bfe_maniakes.png', eliteName: '诺曼佣兵', eliteTier: 3 },
-        // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空
-        { generalId: 'bfe_kontoskeles', factionId: 'baizanting', cityId: 'city_thebes', generalName: '孔托斯克莱斯', portrait: '/assets/GREECE/bfe_kontoskeles.png', eliteName: '希腊军区兵', eliteTier: 4 },
-        // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
+        // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空        // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
         { generalId: 'bfe_vitalian', factionId: 'baizanting', cityId: 'city_plovdiv', generalName: '维塔利安', portrait: '/assets/THRACIAN/bfe_vitalian.png', eliteName: '色雷斯军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 阿历克塞·布拉纳斯（？–1187，阿德里安堡将门；1185 莫西诺波利斯全歼诺曼西西里军）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化）｜普将｜精锐「色雷斯骑兵」T4｜立绘留空
         // 🔴 [2026-10-25 补B] 尼基弗鲁斯（912–969，拜占庭名将；961 收复克里特、965 奇里乞亚、969 安条克；卡帕多西亚家族）｜势力 拜占庭｜据点 伊科尼乌姆（TURKS 文化，安纳托利亚军区）｜名将｜精锐「拜占庭铁甲」T1｜立绘留空｜经典战待补
@@ -4891,6 +4899,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     tang: [
+        { generalId: 'juandu_peixingjian', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '裴行俭', portrait: '/assets/WESTERN/juandu_peixingjian.png', eliteName: '安西精兵', eliteTier: 1 },
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'sai_gaijiayun', factionId: 'tang', cityId: 'city_wosedecheng', generalName: '盖嘉运', portrait: '/assets/WESTERN/sai_gaijiayun.png', eliteName: '北庭精兵', eliteTier: 3 },
         { generalId: 'bfe_chen_jingxuan', factionId: 'tang', cityId: 'city_chengdu', generalName: '陈敬瑄', portrait: '/assets/BASHU/bfe_chen_jingxuan.png', eliteName: '西川黄头军', eliteTier: 3 },
@@ -10296,16 +10305,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 loulan 块已并入 shanshan
-
-
-
-
-
-
-
-    juandu: { generalId: 'juandu_peixingjian', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '裴行俭', portrait: '/assets/WESTERN/juandu_peixingjian.png', eliteName: '安西精兵', eliteTier: 1 },
-
+    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 loulan 块已并入 shanshan
 
 
 
@@ -14091,10 +14091,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 埃雷克莱二世（1720–1798，格鲁吉亚王、名将；抗波斯/奥斯曼）｜势力 格鲁吉亚｜据点 第比利斯（GEORGIANS 文化）｜名将｜精锐「格鲁吉亚近卫」T1｜立绘留空｜经典战待补
         { generalId: 'gelujiya_erekle_ii', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '埃雷克莱二世', portrait: '/assets/GEORGIANS/gelujiya_erekle_ii.png', eliteName: '高加索卫队', eliteTier: 2 },
         { generalId: 'gelujiya_ivane', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '伊万', portrait: '/assets/GEORGIANS/gelujiya_ivane.png', eliteName: '格鲁吉亚骑', eliteTier: 3 },
-        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '/assets/GEORGIANS/gelujiya_zakare.png', eliteName: '格鲁吉亚骑兵', eliteTier: 4 },
-    
-        { generalId: 'bfe_erekle_ii', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '赫拉克留二世', portrait: '/assets/GEORGIANS/bfe_erekle_ii.png', eliteName: '卡赫季骑兵', eliteTier: 3 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 kartli_kakheti 块
-    ],
+        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '/assets/GEORGIANS/gelujiya_zakare.png', eliteName: '格鲁吉亚骑兵', eliteTier: 4 },    ],
 
 
 
@@ -14135,9 +14132,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bendou_d_mitelidati', cityId: 'city_amaxiya', generalName: '密特里达梯', portrait: '/assets/ORIE/bendou_d_mitelidati.png', eliteName: '本都枪兵', eliteTier: 3 },
-        { generalId: 'yamaxun_faernake', factionId: 'bendou_d', cityId: 'city_themiskyra', generalName: '法尔纳克', portrait: '/assets/ORIE/yamaxun_faernake.png', eliteName: '本都步兵', eliteTier: 4 },
-        { generalId: 'yamaxun_xibolvte', factionId: 'bendou_d', cityId: 'city_themiskyra', generalName: '希波吕忒', portrait: '/assets/ORIE/yamaxun_xibolvte.png', eliteName: '本都步兵', eliteTier: 4 },
-
+        { generalId: 'yamaxun_faernake', factionId: 'bendou_d', cityId: 'city_themiskyra', generalName: '法尔纳克', portrait: '/assets/ORIE/yamaxun_faernake.png', eliteName: '本都步兵', eliteTier: 4 },
 
 
 
@@ -14217,6 +14212,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     osman: [
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 皮亚莱帕夏（1515–1578，奥斯曼卡普丹帕夏兼维齐尔；常驻君士坦丁堡统领帝国海军，1560 年杰尔巴岛大破基督教联军）
+        { generalId: 'osman_piyale_pasha', factionId: 'osman', cityId: 'city_junshitandingbao', generalName: '皮亚莱帕夏', portrait: '', eliteName: '帝国海兵队', eliteTier: 3 },
         { generalId: 'osman_muhtar_pasha', factionId: 'osman', cityId: 'city_erzurum', generalName: '穆赫塔尔帕夏', portrait: '/assets/TURKS/osman_muhtar_pasha.png', eliteName: '埃城守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1877–78 俄土战争奥斯曼安纳托利亚军统帅，退守埃尔祖鲁姆；普将，待核实阿拉贾达格战役胜绩
         // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
         //    艾哈迈德·贾扎尔帕夏（约 1720–1804，奥斯曼西顿—阿卡总督；1772 年受命守贝鲁特，1799 阿卡守城击退拿破仑）｜势力 奥斯曼｜据点 贝鲁特（ORIE）｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
@@ -17818,6 +17815,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'kalbids_ibnhawwas', factionId: 'kalbids', cityId: 'city_palermo', generalName: '哈瓦斯', portrait: '/assets/SICILIANS/kalbids_ibnhawwas.png', eliteName: '卡尔比德卫', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 卡尔比德西西里埃米尔（巴勒莫），1063 切拉米为罗杰一世所败（Malaterra《西西里史》II.33）
     ],
     jiaohuangguo: [
+        // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 吉尔·德·阿尔沃诺斯（1310–1367，枢机主教兼教皇国军务总督；1353–1367 统军削平罗马及教皇国割据并颁《埃吉迪奥宪章》）
+        { generalId: 'jiaohuangguo_albornoz', factionId: 'jiaohuangguo', cityId: 'city_luoma', generalName: '阿尔沃诺斯', portrait: '', eliteName: '教廷卫戍兵', eliteTier: 3 },
     ],     yinduxila: [
         { generalId: 'shiyuzu_aolaqiuzhang', factionId: 'yinduxila', cityId: 'city_aola', generalName: '阿波罗多洛斯', portrait: '/assets/PURU/shiyuzu_aolaqiuzhang.png', eliteName: '食鱼族标枪兵', eliteTier: 4 },   // 奥拉（格德罗西亚边缘防区希腊裔长官） ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 shiyuzu 块
     ],

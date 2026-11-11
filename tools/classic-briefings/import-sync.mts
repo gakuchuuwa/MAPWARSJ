@@ -15,6 +15,7 @@
  *   （月份＝同一名将两场落在同年时按史实排先后，写一至十二）
  *   编号＝第一场写 generalId；补选的写 `<generalId>@<年份>`（补选场次的年份不在这里改，回补选表重交）。
  */
+import { readFileSync, writeFileSync } from 'node:fs';
 import { GENERAL_FIRST_BATTLES, type GeneralFirstBattle } from '../../src/data/GeneralFirstBattles';
 import { GENERAL_EXTRA_CLASSIC_BATTLES } from '../../src/data/GeneralExtraClassicBattles';
 import { FACTIONS } from '../../src/data/factions';
@@ -26,6 +27,18 @@ import {
 
 const args = process.argv.slice(2);
 const dry = args.includes('--dry');
+
+/**
+ * 定稿表里给「还没导进游戏的补选场次」定下的敌将，暂时记在这里，
+ * 等 import-extra 导那一场时取用（补选表那一格空着也能走通）。
+ */
+const ENEMY_OVERRIDES_FILE = 'tools/classic-briefings/enemy-overrides.json';
+function loadEnemyOverrides(): Record<string, string> {
+    try { return JSON.parse(readFileSync(ENEMY_OVERRIDES_FILE, 'utf8')) as Record<string, string>; } catch { return {}; }
+}
+function saveEnemyOverrides(all: Record<string, string>): void {
+    writeFileSync(ENEMY_OVERRIDES_FILE, `${JSON.stringify(all, null, 2)}\n`, 'utf8');
+}
 const argOf = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
 const factionsFile = argOf('--factions');
 const factsFile = argOf('--facts');
@@ -69,6 +82,7 @@ if (factsFile) {
     let extrasTouched = false;
     // 同一场这次定下的敌方势力（改敌将时要用）
     const pendingEnemyFaction = new Map<string, string>();
+    const enemyOverrides = loadEnemyOverrides();
     // 🔴 [2026-11-11] 敌将最后办：它要挂到「这一批定下的敌方国号」下，而定稿表里
     //    「敌方国号」行与「敌将」行的先后是写稿方随手写的；按表里的顺序办会把敌将挂到旧的敌势力上。
     //    所以先办年份/战场/坐标/敌方国号，再办敌将。
@@ -86,6 +100,15 @@ if (factsFile) {
         const target: GeneralFirstBattle | undefined = isExtra
             ? extras[gidOfExtra]?.find((x) => x.battleId === id)
             : GENERAL_FIRST_BATTLES[id];
+        // 🔴 [2026-11-11] 补选场次的敌将写在定稿表、而这一场还没导进游戏（补选表那一行没填敌将）：
+        //    记进 enemy-overrides.json，等补选表导这一场时自动取用，不算错。
+        const pendingEnemy = isExtra && !target && item === '敌将' && !!value;
+        if (pendingEnemy) {
+            enemyOverrides[id] = value;
+            report.push(`✓ ${id}·敌将 → ${value}（这一场还没进游戏，先记下，补选表导入时用）`);
+            ok++;
+            continue;
+        }
         if (!target) errors.push('编号不在经典战表里');
         if (!value) errors.push('定值是空的（主人定：不确定也要估算一个，不能空）');
         if (!g('依据或估算')) errors.push('没写依据或估算说明');
@@ -133,6 +156,7 @@ if (factsFile) {
         ok++;
     }
     if (extrasTouched && !dry) writeExtras(extras);
+    if (!dry) saveEnemyOverrides(enemyOverrides);
 }
 
 console.log(report.join('\n'));

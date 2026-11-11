@@ -242,9 +242,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     fuguo: { start: 500, end: 650, source: '《隋书·附国传》：大业中附国王宜缯遣使；约7世纪中叶为吐蕃所并，终年不确定', note: '起年史无确载｜估算依据：《隋书》所载大业前已立的川西部落联盟，取6世纪初（500）。' },
     fushi: { start: 310, end: 394, source: '《晋书·苻洪载记》《苻登载记》：310年略阳氐推蒲洪（苻洪）为盟主统众割据（333称氐王、351苻健建前秦），394年苻崇败死｜确证', note: '2026-11-11 GG第五轮核定：原 351–394' },
     yada: { start: 440, end: 567, source: 'Wikipedia「嚈哒」：5世纪中叶兴起，557–567年为萨珊与突厥所灭' },
-    guishuang: { start: -128, end: 375, source: '《史记·大宛列传》《汉书·西域传》：约前128年大月氏臣服大夏置五翕侯之贵霜翕侯，约公元30年丘就却并四翕侯立贵霜帝国，约375年亡于萨珊｜推定（前128张骞抵月氏时五翕侯已置，30、375为学界通说）', note: '2026-11-11 GG第五轮核定：原 30–375' },
-    juandu: { start: -200, end: 100, source: '《汉书·西域传》载捐毒国（户三百八十），后并入疏勒；起止年无确载，不确定', note: '估算依据：起年与同批《汉书·西域传》绿洲国一致取前200；并入疏勒年代无载，取东汉西域都护经营期100。' },
-    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 xiajiasi 840–1207 已删（并入 keerkezi）
+    guishuang: { start: -128, end: 375, source: '《史记·大宛列传》《汉书·西域传》：约前128年大月氏臣服大夏置五翕侯之贵霜翕侯，约公元30年丘就却并四翕侯立贵霜帝国，约375年亡于萨珊｜推定（前128张骞抵月氏时五翕侯已置，30、375为学界通说）', note: '2026-11-11 GG第五轮核定：原 30–375' },    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 xiajiasi 840–1207 已删（并入 keerkezi）
     bailian: { start: 1796, end: 1804, source: 'Wikipedia「川楚白莲教起义」：1796年起事，1804年平定' },
     chimei: { start: 18, end: 27, source: '《后汉书·刘玄刘盆子列传》：天凤五年（18）樊崇起兵，建武三年（27）降汉' },
     shang: { start: -1600, end: -1046, source: 'Wikipedia「商朝」：约前1600–前1046，牧野之战亡' },
@@ -800,9 +798,9 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     bahemani: { start: 1347, end: 1527, source: 'Wikipedia「Bahmani Sultanate」：1347 年哈桑·甘古（阿拉乌丁·巴赫曼沙）据德干立国，1527 年为五国分裂所终', note: '德干巴赫曼尼苏丹国，都古尔伯加后迁比达尔；马哈茂德·加万为其首相' },
     halapengcai: { start: 750, end: 1292, source: 'Wikipedia「Hariphunchai」：约 750 年占玛黛维立孟族女王国（今南奔），1292 年为兰纳孟莱王所并', note: '泰北孟族哈利奔猜王国；库内无南奔据点，首都取同文化孟族据点直通' },
     dongchahatai: { start: 1347, end: 1680, source: 'Wikipedia「Moghulistan」：1347 年秃黑鲁帖木儿复立察合台汗国于伊犁—喀什（东察合台），1680 年为准噶尔所并', note: '东察合台汗国（蒙兀儿斯坦），与莫卧儿帝国（1469–1857）不同政权' },
-    buhala: { start: 1785, end: 1920, source: 'Wikipedia「Emirate of Bukhara」：1785 年曼吉特部沙赫穆拉德取布哈拉立埃米尔国，1920 年为苏俄所灭', note: '曼吉特王朝布哈拉埃米尔国；吉扎克为其东境重镇（原 kawusi 据点归此）' },
+    buhala: { start: 1785, end: 1900, source: 'Wikipedia「Emirate of Bukhara」：1785 年曼吉特部沙赫穆拉德取布哈拉立埃米尔国，1920 年为苏俄所灭', note: '曼吉特王朝布哈拉埃米尔国；吉扎克为其东境重镇（原 kawusi 据点归此）' },
     biluzhi: { start: 1480, end: 1533, source: 'Wikipedia「Chakar Rind」「Baloch people」：林德（Rind）部落联盟米尔·恰卡尔 1480–1533 据俾路支—信德', note: '俾路支林德部落联盟（民族势力），早于 1747 年杜兰尼帝国；起讫按恰卡尔生卒与在位估定' },
     bonape: { start: 1200, end: 1628, source: 'Wikipedia「Nan Madol」「Saudelor」：约 1200 年绍德勒王朝筑南马都尔（波纳佩岛），1628 年前后终', note: '密克罗尼西亚波纳佩绍德勒王朝，与大溪地波马雷王朝（bolinixiya）不同政权' },
-    xiaweiyi: { start: 1795, end: 1893, source: 'Wikipedia「Kingdom of Hawaii」：1795 年卡美哈梅哈一世统一群岛建王国，1893 年王政被推翻', note: '夏威夷王国，都檀香山；与大溪地波马雷王朝不同政权' },
-    yidali_hre: { start: 962, end: 1801, source: 'Wikipedia「Kingdom of Italy (Holy Roman Empire)」：962 年奥托一世加冕后意大利王国为帝国附庸，1801 年《吕内维尔和约》后废止', note: '神圣罗马帝国治下的意大利王国（regnum Italiae），比安德拉泰伯爵等帝国封臣归此；与 1861 年意大利王国不同一国' },
+    xiaweiyi: { start: 1795, end: 1893, source: 'Wikipedia「Kingdom of Hawaii」：1795 年卡美哈梅哈一世统一群岛建王国，1893 年王政被推翻', note: '夏威夷王国，都檀香山；与大溪地波马雷王朝不同政权' },    yidali_hre: { start: 1070, end: 1335, source: 'Wikipedia「Counts of Biandrate」：约 1070 年圭多一世受封比安德拉泰伯爵（阿尔伯特从征 1101 年十字军），1335 年并入米兰维斯孔蒂领', note: '皮埃蒙特比安德拉泰伯国（早于 1167 年伦巴第联盟）' },
+    libiya: { start: -241, end: -237, source: '波利比乌斯《历史》卷一、Wikipedia「Mercenary War」：前241–前237年北非利比亚诸城与雇佣军结盟反迦太基（铸 ΛΙΒΥΩΝ「利比亚人」钱币立盟）', note: '北非利比亚反迦太基同盟政权（马托斯、斯彭迪乌斯）' },
 };
