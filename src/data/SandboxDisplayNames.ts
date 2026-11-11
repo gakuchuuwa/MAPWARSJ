@@ -25,6 +25,18 @@
  *     瞿越（大瞿越）/大越/越南三朝国号本字都是「越」→ 旗号统一「越」；与阮福映同场内战的西山写「西山」（主人：「用西太泛指」）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'barakzai_afghan': '巴宰', // 巴拉克宰
+    'zand_dynasty': '赞德', // 赞德
+    'aizu_ashina': '芦名', // 芦名家
+    'aq_qoyunlu': '白羊', // 白羊王朝
+    'bulidi': '布迪', // 布里迪王朝
+    'jinong': '济农', // 济农王朝
+    'crete_emirate': '克岛', // 克里特酋长国
+    'tahirid': '塔氏', // 塔希尔王朝
+    'heruli': '赫鲁', // 赫鲁利
+    'huanchu': '桓楚', // 桓楚
+    'gallic_empire': '高卢', // 高卢帝国
+    'jingzhou': '荆州', // 荆州
     'libiya': '利比', // 利比亚
     'jiaxite': '加喜', // 加喜特
     'hulumusi': '忽鲁',

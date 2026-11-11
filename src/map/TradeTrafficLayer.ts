@@ -205,48 +205,48 @@ const EAST_ASIA_STYLES = new Set<string>([
 function landAssetDir(lat: number, lng: number): string {
     const style = resolveLocalCulture(lat, lng);
 
-    // 美洲：严格只用美洲商车（满/空）与美洲行商
+    // 美洲：严格只用美洲商车（满/空）与美洲行商（美洲前哥伦布时期无牛马骡骆驼大型驮兽，长途贸易依赖 Pochtēca 挑夫行商与商车）
     if (AMERICAS_STYLES.has(style)) {
         return pickBalanced(['TRADE_CART_MESO', 'TRADE_CART_MESO_EMPTY', 'MERCHANT_MESO'], landUsageCount);
     }
 
-    // 丝路·大漠·中东·北非驼商圈：骆驼商车（满/空）、丝路胡商、骡车均化
+    // 丝路·大漠·中东·北非驼商圈：骆驼商车（满/空）、骡车（旧大陆有驮兽大畜，长途干线商队以骆驼、骡车大队为主）
     if (SILK_CAMEL_STYLES.has(style)) {
-        return pickBalanced(['TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY', 'MERCHANT_ORIE', 'MULE_CART'], landUsageCount);
+        return pickBalanced(['TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY', 'MULE_CART'], landUsageCount);
     }
 
-    // 古典地中海·高加索圈：马车（满/空）、古典行商、骡车；拜占庭/亚美尼亚/格鲁吉亚丝路西端兼通骆驼商车与胡商
+    // 古典地中海·高加索圈：马车（满/空）、骡车；拜占庭/亚美尼亚/格鲁吉亚丝路西端兼通骆驼商车
     if (MED_ANT_STYLES.has(style)) {
         const pool = (style === 'BYZANTINE' || style === 'ARMENIANS' || style === 'GEORGIANS')
-            ? ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_ANT', 'MULE_CART', 'TRADE_CART_ORIE', 'MERCHANT_ORIE']
-            : ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_ANT', 'MULE_CART'];
+            ? ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MULE_CART', 'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY']
+            : ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MULE_CART'];
         return pickBalanced(pool, landUsageCount);
     }
 
-    // 欧洲大陆与北欧圈：马车（满/空）、欧洲行商、骡车均化
+    // 欧洲大陆与北欧圈：马车（满/空）、骡车均化
     if (EUROPE_STYLES.has(style)) {
-        return pickBalanced(['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_WEST', 'MULE_CART'], landUsageCount);
+        return pickBalanced(['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MULE_CART'], landUsageCount);
     }
 
-    // 南亚·东南亚·非洲圈：水牛商车（满/空）、非洲/南亚行商、骡车；瞿折罗（塔尔沙漠）与埃塞俄比亚（红海驼道）兼通骆驼
+    // 南亚·东南亚·非洲圈：水牛商车（满/空）、骡车；瞿折罗（塔尔沙漠）与埃塞俄比亚（红海驼道）兼通骆驼
     if (AFRI_IND_STYLES.has(style)) {
         const pool = (style === 'GURJARAS' || style === 'ETHIOPIANS')
-            ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI', 'MULE_CART', 'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY']
+            ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MULE_CART', 'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY']
             : (style === 'AFRICA')
-                ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI']
-                : ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI', 'MULE_CART'];
+                ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY']
+                : ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MULE_CART'];
         return pickBalanced(pool, landUsageCount);
     }
 
     // 东亚商贸圈（CENTRAL / WEI / JIANGNAN / HUGUANG / BASHU / TIBET / NORTHEAST / KOREA / JAPAN）：
-    // 关中陇右河西走廊（lng < 109.5°）或幽燕塞北长城沿线（lat > 38.2°）自古有胡商驼队往来，兼入丝路骆驼商车与胡商
+    // 关中陇右河西走廊（lng < 109.5°）或幽燕塞北长城沿线（lat > 38.2°）自古有胡商驼队往来，兼入丝路骆驼商车
     if ((style === 'CENTRAL' || style === 'WEI') && (lng < 109.5 || lat > 38.2)) {
         return pickBalanced([
-            'TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MERCHANT_ASIA', 'MULE_CART',
-            'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY', 'MERCHANT_ORIE',
+            'TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MULE_CART',
+            'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY',
         ], landUsageCount);
     }
-    return pickBalanced(['TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MERCHANT_ASIA', 'MULE_CART'], landUsageCount);
+    return pickBalanced(['TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MULE_CART'], landUsageCount);
 }
 
 /** 按海域与沿岸文化历史特征，返回合法的海上商船候选池并均化抽取 */

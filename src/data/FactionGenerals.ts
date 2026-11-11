@@ -2078,7 +2078,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人定「B」] 贝里格（Berig，Jordanes《哥特史》记 率哥特人自 Scandza 迁出的王；约 1–2 世纪，史源转述、传说成分）｜势力 东哥特（donggete 时代＝古典）｜据点 维斯比（哥特兰）｜普将（无实胜、无对阵）｜精锐「哥特战团」T4｜立绘留空
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：奥多亚克＝意大利王，都拉文纳，493 年在拉文纳被围杀；美因茨与他无关 → 放拉文纳（donggete，风格 GOTHS）；仍挂本政权 rierman
         // 🔴 [2026-10-24 主人口径「据点、武将、势力、精锐、军团都是一个文化」] 武将文化=GOTHS（拉文纳风格）× 时代 antiquity → 古典时代西哥特军团；不再继承法兰克势力编制
-        { generalId: 'rierman_odoacer', cityId: 'city_ravenna', factionId: 'yidali_odoacer', generalName: '奥多亚克', portrait: '/assets/GOTHS/rierman_odoacer.png', eliteName: '日耳曼佣兵', eliteTier: 4 },
+        { generalId: 'rierman_odoacer', cityId: 'city_ravenna', factionId: 'heruli', generalName: '奥多亚克', portrait: '/assets/GOTHS/rierman_odoacer.png', eliteName: '日耳曼佣兵', eliteTier: 4 },
     ],
 
 
@@ -3490,7 +3490,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     mamunid: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
-        { generalId: 'mamon_mameng', factionId: 'mamunid', cityId: 'city_urgench', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '花剌骑兵', eliteTier: 4 },
+        { generalId: 'mamon_mameng', factionId: 'jinong', cityId: 'city_urgench', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '花剌骑兵', eliteTier: 4 },
     ],
     bashkir: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
@@ -7309,7 +7309,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     seljuq: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
-        { generalId: 'gen_toghtekin', factionId: 'seljuq', cityId: 'city_damasikusi', generalName: '图格特金', portrait: '/assets/ORIE/gen_toghtekin.png' , eliteName: '大马士革军', eliteTier: 3}, // 大马士革阿塔贝格本部，非萨迈拉古拉姆
+        { generalId: 'gen_toghtekin', factionId: 'bulidi', cityId: 'city_damasikusi', generalName: '图格特金', portrait: '/assets/ORIE/gen_toghtekin.png' , eliteName: '大马士革军', eliteTier: 3}, // 大马士革阿塔贝格本部，非萨迈拉古拉姆
         { generalId: 'sailiugu_yaghi', factionId: 'seljuq', cityId: 'city_antiejiya', generalName: '雅吉西扬', portrait: '/assets/ORIE/sailiugu_yaghi.png', eliteName: '塞琉古步兵', eliteTier: 4 },
         { generalId: 'seljuq_sangjiaer', cityId: 'city_merv', generalName: '桑贾尔', portrait: '/assets/SASANIAN/seljuq_sangjiaer.png', eliteName: '塞尔柱骑兵', eliteTier: 1 },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：穆斯林＝呼罗珊总督，驻木鹿（梅尔夫）；724 年渴水日之战是呼罗珊军，不是大马士革 → 放木鹿（seljuq，风格 SASANIAN）；仍挂本政权 womaya

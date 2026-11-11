@@ -794,6 +794,18 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
 assertUniqueFixedColors(_FIXED);
 
 export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Object.freeze({
+    barakzai_afghan: '#763B9B', // 巴拉克宰（经典战导入）
+    zand_dynasty: '#3B9B92', // 赞德（经典战导入）
+    aizu_ashina: '#9B983B', // 芦名家（经典战导入）
+    aq_qoyunlu: '#3E9B3B', // 白羊王朝（经典战导入）
+    bulidi: '#9B3B66', // 布里迪王朝（经典战导入）
+    jinong: '#3B539B', // 济农王朝（经典战导入）
+    crete_emirate: '#3B469B', // 克里特酋长国（经典战导入）
+    tahirid: '#3B709B', // 塔希尔王朝（经典战导入）
+    heruli: '#4D9B3B', // 赫鲁利（经典战导入）
+    huanchu: '#453B9B', // 桓楚（经典战导入）
+    gallic_empire: '#533B9B', // 高卢帝国（经典战导入）
+    jingzhou: '#9B4E3B', // 荆州（经典战导入）
     libiya: '#3B9B41', // 利比亚（经典战导入）
     jiaxite: '#8E9B3B', // 加喜特（经典战导入）
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（沿用归并前原色）

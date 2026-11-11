@@ -2676,6 +2676,27 @@ export class PlayerQuestSystem {
         host.startPostBattleRest();   // 用现有的战后驻留设定（GameConfig TIME.POST_BATTLE_REST），不另起时长
 
         this.deps.hero.addMerit(500);
+
+        // 🔴 [2026-11-11 主人定「同一个武将多场战役的，不是立马接，是直接就下一场，除非军团打败了」]
+        //    这一场打赢（奖励、战功都已结算），这位名将还有没打过的经典战（百岁按年份到没到、乱斗不按年份）→
+        //    **同一支军团**直接开下一场：不脱队、不回城、不重新接任务、不弹会面；军团摆到下一场战场即刻开打。
+        //    打输走 failFirstBattle（军团溃散、脱队、换下一家），到不了这里。
+        const nextFb = this.nextClassicBattleForChaining(q.generalId);
+        const chainCity = this.deps.cityManager.getCity(q.cityId);
+        if (nextFb && chainCity) {
+            const rec = getGeneralRecordByGeneralId(q.generalId);
+            this.deps.notify(`⚔️ ${q.generalName}续战【${nextFb.battleName}】`);
+            gameLog('expedition', `[玩家] 经典战连战：${q.generalName} 打完【${fbState?.battleName ?? '经典战役'}】→ 直接开【${nextFb.battleName}】（同一支军团，不重新接任务）`);
+            this.startFirstBattle(
+                chainCity,
+                { generalId: q.generalId, generalName: q.generalName, portrait: rec?.portrait ?? '' },
+                nextFb,
+                host,
+                { metAtFront: true },
+            );
+            return;
+        }
+
         const hPos = host.getPosition();
         const nearestCityId =
             roadRegistry.getNearestCityId(hPos.lat, hPos.lng) ??
@@ -2808,6 +2829,17 @@ export class PlayerQuestSystem {
         }
         const enemy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
         return !enemy || enemy.isDestroyed || enemy.getTroops() <= 0;
+    }
+
+    /**
+     * 🔴 [2026-11-11 主人定「同一个武将多场战役的，不是立马接，是直接就下一场，除非军团打败了」]
+     * 连战用：这位名将眼下还没打过、且年份已到的那一场（百岁按游戏年份、乱斗没有年份就不拦）。
+     * 不在场（百岁退场到年）→ 不连战。
+     */
+    private nextClassicBattleForChaining(generalId: string | null | undefined): GeneralFirstBattle | null {
+        if (!generalId) return null;
+        if (!isGeneralOnStage(generalId)) return null;
+        return getNextClassicBattle(generalId, getCurrentStageYear());
     }
 
     /** 经典战收场：打赢 → 大捷、奖励据点、随武将继续征讨；没打赢 → 战败（军团溃散、脱离势力、去下一家） */

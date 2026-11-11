@@ -35,9 +35,18 @@ const MAX_EXTRA_PER_GENERAL = 2;
 const DEFAULT_TROOPS = 15000;
 const CITY_NEAR_KM = 30;
 
-/** 定稿表给「补选表没填敌将」的场次定下的敌将（import-sync.mts 写、这里读） */
-const ENEMY_OVERRIDES: Readonly<Record<string, string>> = (() => {
-    try { return JSON.parse(readFileSync('tools/classic-briefings/enemy-overrides.json', 'utf8')); } catch { return {}; }
+/** 定稿表给「补选表还没交全的场次」定下的值（import-sync.mts 写、这里读并套上） */
+interface PendingExtraFact {
+    month?: number;
+    enemyFactionName?: string;
+    enemyFactionId?: string;
+    enemyGeneralName?: string;
+    lat?: number;
+    lng?: number;
+    targetName?: string;
+}
+const PENDING_EXTRA: Readonly<Record<string, PendingExtraFact>> = (() => {
+    try { return JSON.parse(readFileSync('tools/classic-briefings/pending-extra-facts.json', 'utf8')); } catch { return {}; }
 })();
 
 const { rows, get } = readSheet(input, [
@@ -102,15 +111,17 @@ for (const r of rows) {
     if (year == null) errors.push(`年份「${g('年份')}」认不出（写整数，公元前写负数）`);
     const kind = KIND[g('类型')];
     if (!kind) errors.push(`类型「${g('类型')}」只能是 野战 / 攻城 / 守城`);
-    const lat = Number(g('纬度'));
-    const lng = Number(g('经度'));
+    // 定稿表给这一场定过的值（坐标、战场、敌方国号、敌将、月份）优先于补选表的格子
+    const pend = year != null ? PENDING_EXTRA[`${gid}@${year}`] : undefined;
+    const lat = pend?.lat ?? Number(g('纬度'));
+    const lng = pend?.lng ?? Number(g('经度'));
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) errors.push('纬度/经度不是有效数字');
-    const enemyFactionId = factionIdByName(g('敌方国号'));
-    if (!enemyFactionId) errors.push(`敌方国号「${g('敌方国号')}」游戏里没有——先在新增势力表登记（连同一位有名字的名将）`);
-    // 敌将：补选表这一格优先；空着就用定稿表给它定的那位（import-sync 记在 enemy-overrides.json），
+    const enemyFactionId = pend?.enemyFactionId ?? factionIdByName(g('敌方国号'));
+    if (!enemyFactionId) errors.push(`敌方国号「${pend?.enemyFactionName ?? g('敌方国号')}」游戏里没有——先在新增势力表登记（连同一位有名字的名将）`);
+    // 敌将：补选表这一格优先；空着就用定稿表给它定的那位，
     // 再不行就沿用游戏里这一场已有的敌将（早先导过、敌将写进定稿表的那种）
     const prevEntry = year != null ? (GENERAL_EXTRA_CLASSIC_BATTLES[gid] ?? []).find((x) => x.battleId === `${gid}@${year}`) : undefined;
-    const enemyGeneralName = g('敌将') || ENEMY_OVERRIDES[`${gid}@${year ?? ''}`] || '';
+    const enemyGeneralName = g('敌将') || pend?.enemyGeneralName || '';
     if (!enemyGeneralName && !prevEntry?.enemyGeneralId) errors.push('没有敌将（主人定：必须要有；主将不详就写对方当时的君主或最高统帅）');
     const life = GENERAL_LIFE_YEARS[gid];
     if (life && year != null && (year < life.birth || year > life.death)) warns.push(`年份 ${year} 不在他的生卒年 ${life.birth}~${life.death} 之内`);
@@ -138,16 +149,16 @@ for (const r of rows) {
     const enemyGeneralId = prevEntry?.enemyGeneralId ?? ensureBattlefieldCharacter(enemyGeneralName, enemyFactionId, `${g('战役')}敌方主将`, dry);
     // 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 补选表没有「月份」这一列，
     //    重新导入时不能把上一轮在定稿表里定下的 `battleMonth` 抹掉（同年两场靠它排先后）。
-    const prevMonth = (GENERAL_EXTRA_CLASSIC_BATTLES[gid] ?? []).find((x) => x.battleId === battleId)?.battleMonth;
+    const month = pend?.month ?? (GENERAL_EXTRA_CLASSIC_BATTLES[gid] ?? []).find((x) => x.battleId === battleId)?.battleMonth;
     const fb: GeneralFirstBattle = {
         generalId: gid,
         battleId,
         battleName: g('战役'),
         battleYear: year,
-        ...(prevMonth != null ? { battleMonth: prevMonth } : {}),
+        ...(month != null ? { battleMonth: month } : {}),
         battleType: kind.battleType,
         role: kind.role,
-        targetName: g('战场或目标'),
+        targetName: pend?.targetName ?? g('战场或目标'),
         ...(targetCityId ? { targetCityId } : {}),
         targetLat: lat,
         targetLng: lng,

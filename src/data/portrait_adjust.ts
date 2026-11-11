@@ -11176,6 +11176,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 15,
             "offsetY": 0
+        },
+        "/assets/CENTRAL/dongjin_simachi.png": {
+            "scale": 1.15,
+            "offsetX": 4,
+            "offsetY": -2
         }
     },
     "folderGuides": {

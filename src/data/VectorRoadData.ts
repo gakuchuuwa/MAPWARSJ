@@ -14885,33 +14885,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "大同-代县",
-                type: "road",
-                id: "road_city_datong_city_daixian_1780158230615",
-                startConnection: "city_datong",
-                endConnection: "city_daixian"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.3, 40.08],
-                    [113.631053, 40.017674],
-                    [113.730039, 40.021799],
-                    [113.796029, 40.01355],
-                    [113.841398, 40.017674],
-                    [113.932135, 40.017674],
-                    [113.977504, 40.034172],
-                    [114.026997, 40.042421],
-                    [114.158979, 40.100163],
-                    [114.204347, 40.071292],
-                    [114.274462, 39.972306],
-                    [114.408875, 39.842285],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "乐成-保定",
                 type: "road",
                 id: "road_city_hejian_city_baoding_1780158230676",
@@ -29634,53 +29607,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.875418, 26.564154],
                     [107.929861, 26.581488],
                     [108.091736, 26.573781],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "雁门关-彰国军城",
-                type: "road",
-                id: "road_city_yanmenguan_city_zhangguojuncheng_1782938008366",
-                startConnection: "city_yanmenguan",
-                endConnection: "city_zhangguojuncheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [112.87, 39.19],
-                    [112.76492385297027, 39.312398231075115],
-                    [112.77729711962067, 39.44437974201261],
-                    [112.850841, 39.475043],
-                    [112.875906, 39.489814],
-                    [112.927745, 39.503119],
-                    [112.950694, 39.531806],
-                    [113.1894, 39.5761],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "彰国军城-大同",
-                type: "road",
-                id: "road_city_zhangguojuncheng_city_datong_1782938012647",
-                startConnection: "city_zhangguojuncheng",
-                endConnection: "city_datong"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.1894, 39.5761],
-                    [113.220714, 39.763495],
-                    [113.232595, 39.779608],
-                    [113.397065, 39.854682],
-                    [113.458914, 39.8664],
-                    [113.476003, 39.874335],
-                    [113.47844889647611, 39.88156849699306],
-                    [113.44132909652494, 39.94755925246181],
-                    [113.3, 40.08],
                 ]
             }
         },
@@ -75955,6 +75881,115 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [29.30724, 40.207398],
                     [29.27012, 40.219771],
                     [29.06, 40.18],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大同-灵仙",
+                type: "road",
+                id: "road_city_datong_city_daixian_1794390426213",
+                startConnection: "city_datong",
+                endConnection: "city_daixian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.3, 40.08],
+                    [113.631053, 40.017674],
+                    [113.712413, 39.991889],
+                    [113.73821, 39.992703],
+                    [113.811697, 39.985053],
+                    [113.831065, 39.985785],
+                    [113.930105, 40.005439],
+                    [113.977504, 40.034172],
+                    [114.026997, 40.042421],
+                    [114.158979, 40.100163],
+                    [114.204347, 40.071292],
+                    [114.274462, 39.972306],
+                    [114.408875, 39.842285],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大同-彰国军城",
+                type: "road",
+                id: "road_city_datong_city_zhangguojuncheng_1794390446819",
+                startConnection: "city_datong",
+                endConnection: "city_zhangguojuncheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.3, 40.08],
+                    [113.148495, 39.893942],
+                    [113.082504, 39.807329],
+                    [113.103126, 39.753711],
+                    [113.1894, 39.5761],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大同-宣化",
+                type: "road",
+                id: "road_city_datong_city_xuanhua_1794390468462",
+                startConnection: "city_datong",
+                endConnection: "city_xuanhua"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.3, 40.08],
+                    [113.54444, 40.186776],
+                    [113.598057, 40.199149],
+                    [113.631053, 40.211522],
+                    [113.68467, 40.261015],
+                    [113.725914, 40.331131],
+                    [113.779532, 40.347628],
+                    [113.89914, 40.392997],
+                    [114.014624, 40.417743],
+                    [114.097112, 40.409495],
+                    [114.175476, 40.430117],
+                    [114.299209, 40.413619],
+                    [114.332204, 40.413619],
+                    [114.418817, 40.438365],
+                    [114.451813, 40.458988],
+                    [114.530177, 40.524978],
+                    [114.633287, 40.578596],
+                    [114.678656, 40.611591],
+                    [114.691029, 40.644587],
+                    [114.707527, 40.710577],
+                    [114.814762, 40.731199],
+                    [114.856006, 40.747697],
+                    [115.052, 40.609],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雁门关-彰国军城",
+                type: "road",
+                id: "road_city_yanmenguan_city_zhangguojuncheng_1794390528834",
+                startConnection: "city_yanmenguan",
+                endConnection: "city_zhangguojuncheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [112.87, 39.19],
+                    [112.764924, 39.312398],
+                    [112.777297, 39.44438],
+                    [112.850841, 39.475043],
+                    [112.875906, 39.489814],
+                    [112.927745, 39.503119],
+                    [112.950694, 39.531806],
+                    [113.1894, 39.5761],
                 ]
             }
         },

@@ -36,6 +36,18 @@ export interface FactionEraSegment {
 }
 
 export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>> = {
+    'barakzai_afghan': [{ from: -9999, era: 'imperial' }], // 巴拉克宰（经典战导入）
+    'zand_dynasty': [{ from: -9999, era: 'imperial' }], // 赞德（经典战导入）
+    'aizu_ashina': [{ from: -9999, era: 'castle' }], // 芦名家（经典战导入）
+    'aq_qoyunlu': [{ from: -9999, era: 'imperial' }], // 白羊王朝（经典战导入）
+    'bulidi': [{ from: -9999, era: 'castle' }], // 布里迪王朝（经典战导入）
+    'jinong': [{ from: -9999, era: 'castle' }], // 济农王朝（经典战导入）
+    'crete_emirate': [{ from: -9999, era: 'castle' }], // 克里特酋长国（经典战导入）
+    'tahirid': [{ from: -9999, era: 'castle' }], // 塔希尔王朝（经典战导入）
+    'heruli': [{ from: -9999, era: 'feudal' }], // 赫鲁利（经典战导入）
+    'huanchu': [{ from: -9999, era: 'antiquity' }], // 桓楚（经典战导入）
+    'gallic_empire': [{ from: -9999, era: 'antiquity' }], // 高卢帝国（经典战导入）
+    'jingzhou': [{ from: -9999, era: 'antiquity' }], // 荆州（经典战导入）
     'libiya': [{ from: -9999, era: 'antiquity' }], // 利比亚（经典战导入）
     'jiaxite': [{ from: -9999, era: 'antiquity' }], // 加喜特（经典战导入）
     // ══════ 一、手裁：整段一个时代 / 长命政权按史分年段 ══════

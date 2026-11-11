@@ -15,9 +15,7 @@ import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 import { preloadPlayerTourModels, TOUR_CARAVAN_CHOICES, TOUR_SHIP_CHOICES } from '../map/player/PlayerTourSpriteDrawer';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { toggleHorseStablePanel, horseBrief, horseStatusColor } from './HorseStablePanel';
-import { CityAssetManager } from '../assets/CityAssetManager';
-import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
-import { FACTION_EMBLEM } from '../data/FactionEmblems';
+import { formatBcYearChinese } from '../data/QinRegnalCalendar';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
@@ -407,6 +405,19 @@ export class PlayerHUD {
         const secLeft = document.createElement('div');
         secLeft.className = 'player-hud-section';
 
+        const yearVal = this.deps.getYear?.() ?? null;
+        if (yearVal !== null && Number.isFinite(yearVal)) {
+            const yearSpan = document.createElement('span');
+            yearSpan.style.cssText = 'color:#f0b849; font-weight:800; font-size:12px; white-space:nowrap; letter-spacing:0.5px;';
+            yearSpan.textContent = `📅 ${formatBcYearChinese(yearVal)}`;
+            secLeft.appendChild(yearSpan);
+
+            const sepYear = document.createElement('span');
+            sepYear.className = 'player-hud-divider';
+            sepYear.textContent = '|';
+            secLeft.appendChild(sepYear);
+        }
+
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = 'font-weight:900; font-size:12.5px; color:#e8c77e; letter-spacing:0.5px; white-space:nowrap;';
         nameSpan.textContent = `👤 ${hero.name}`;
@@ -499,37 +510,6 @@ export class PlayerHUD {
         sep2.textContent = '|';
         secLeft.appendChild(sep2);
 
-        if (hero.factionId) {
-            CityAssetManager.requestFactionFlagTint(hero.factionId);
-            const flagCloth = CityAssetManager.getProcessedFlag(hero.factionId);
-            const flagOverlay = CityAssetManager.getProcessedFlagTextSync(hero.factionId);
-            const flagLabel = FACTION_EMBLEM[hero.factionId] ? '' : (SANDBOX_DISPLAY_NAMES[hero.factionId] || '');
-            const flagWrap = document.createElement('span');
-            flagWrap.style.cssText = 'display:inline-block; position:relative; width:24px; height:20px; vertical-align:middle; margin-right:2px; flex-shrink:0;';
-            flagWrap.title = flagLabel ? `势力：${factionName}（旗号：${flagLabel}）` : `势力：${factionName}`;
-            const flagStage = document.createElement('span');
-            flagStage.style.cssText = 'position:absolute; left:-1px; top:-1px; width:32px; height:40px; transform:scale(0.85); transform-origin:0 0; pointer-events:none;';
-            const clothEl = document.createElement('span');
-            clothEl.style.cssText = `
-                position:absolute; left:0; top:0; width:32px; height:40px;
-                transform:scaleX(-1); transform-origin:center;
-                background-image:url('${flagCloth}');
-                background-size:128px 320px; background-position:-96px -40px; background-repeat:no-repeat;
-            `;
-            flagStage.appendChild(clothEl);
-            if (flagOverlay) {
-                const overlayEl = document.createElement('span');
-                overlayEl.style.cssText = `
-                    position:absolute; left:-3px; top:-2px; width:32px; height:40px;
-                    background-image:url('${flagOverlay}');
-                    background-size:128px 240px; background-position:-64px -120px; background-repeat:no-repeat;
-                    image-rendering:auto !important;
-                `;
-                flagStage.appendChild(overlayEl);
-            }
-            flagWrap.appendChild(flagStage);
-            secLeft.appendChild(flagWrap);
-        }
         const facSpan = document.createElement('span');
         facSpan.style.cssText = `color:${hero.factionId ? '#7cd4a0' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
         facSpan.textContent = factionName;

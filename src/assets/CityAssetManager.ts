@@ -58,6 +58,18 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+        'barakzai_afghan': '巴宰',   // 巴拉克宰（经典战导入）
+        'zand_dynasty': '赞德',   // 赞德（经典战导入）
+        'aizu_ashina': '芦名',   // 芦名家（经典战导入）
+        'aq_qoyunlu': '白羊',   // 白羊王朝（经典战导入）
+        'bulidi': '布迪',   // 布里迪王朝（经典战导入）
+        'jinong': '济农',   // 济农王朝（经典战导入）
+        'crete_emirate': '克岛',   // 克里特酋长国（经典战导入）
+        'tahirid': '塔氏',   // 塔希尔王朝（经典战导入）
+        'heruli': '赫鲁',   // 赫鲁利（经典战导入）
+        'huanchu': '桓楚',   // 桓楚（经典战导入）
+        'gallic_empire': '高卢',   // 高卢帝国（经典战导入）
+        'jingzhou': '荆州',   // 荆州（经典战导入）
         'libiya': '利比',   // 利比亚（经典战导入）
         'jiaxite': '加喜',   // 加喜特（经典战导入）
         'sesali': '色萨',

@@ -29,15 +29,34 @@ const args = process.argv.slice(2);
 const dry = args.includes('--dry');
 
 /**
- * 定稿表里给「还没导进游戏的补选场次」定下的敌将，暂时记在这里，
- * 等 import-extra 导那一场时取用（补选表那一格空着也能走通）。
+ * 定稿表给「还没导进游戏的补选场次」定下的值（月份、敌方国号、敌将、坐标、战场），
+ * 先记在这里，等 import-extra 建那一场时套上。
  */
-const ENEMY_OVERRIDES_FILE = 'tools/classic-briefings/enemy-overrides.json';
-function loadEnemyOverrides(): Record<string, string> {
-    try { return JSON.parse(readFileSync(ENEMY_OVERRIDES_FILE, 'utf8')) as Record<string, string>; } catch { return {}; }
+const PENDING_EXTRA_FILE = 'tools/classic-briefings/pending-extra-facts.json';
+export interface PendingExtraFact {
+    month?: number;
+    enemyFactionName?: string;
+    enemyFactionId?: string;
+    enemyGeneralName?: string;
+    lat?: number;
+    lng?: number;
+    targetName?: string;
 }
-function saveEnemyOverrides(all: Record<string, string>): void {
-    writeFileSync(ENEMY_OVERRIDES_FILE, `${JSON.stringify(all, null, 2)}\n`, 'utf8');
+function loadPendingExtra(): Record<string, PendingExtraFact> {
+    try { return JSON.parse(readFileSync(PENDING_EXTRA_FILE, 'utf8')) as Record<string, PendingExtraFact>; } catch { return {}; }
+}
+function savePendingExtra(all: Record<string, PendingExtraFact>): void {
+    writeFileSync(PENDING_EXTRA_FILE, `${JSON.stringify(all, null, 2)}\n`, 'utf8');
+}
+
+/** 「三」「十月」「十二」「3」都认成月份数 */
+const CN_MONTH: Record<string, number> = {
+    一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12,
+};
+function parseMonth(raw: string): number | null {
+    const t = raw.replace(/[\s月]/g, '');
+    if (/^\d{1,2}$/.test(t)) { const n = Number(t); return n >= 1 && n <= 12 ? n : null; }
+    return CN_MONTH[t] ?? null;
 }
 const argOf = (k: string) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
 const factionsFile = argOf('--factions');
@@ -45,7 +64,9 @@ const factsFile = argOf('--facts');
 if (!factionsFile && !factsFile) { console.error('至少给一张表：--factions 或 --facts'); process.exit(1); }
 
 /** 游戏原有的势力名（本次新加的不算） */
-const GAME_FACTION_NAMES = new Set(FACTIONS.map((f) => f.name));
+// 🔴 [2026-11-11] 国号只要认得出已有势力（全名相同，或互为包含：沙希王朝→沙希、汪达尔→汪达尔王国）就不再新增，
+//    免得同一個政权被写两次、编号和旗号撞车。
+const knownFaction = (name: string) => factionIdByName(name);
 const report: string[] = [];
 let bad = 0;
 let ok = 0;
@@ -56,7 +77,8 @@ if (factionsFile) {
     for (const r of rows) {
         const g = (n: string) => get(r, n);
         if (!g('国号') || g('国号') === '国号') continue;
-        if (GAME_FACTION_NAMES.has(g('国号'))) { report.push(`· ${g('国号')}：游戏里已有，跳过`); continue; }
+        const already = knownFaction(g('国号'));
+        if (already) { report.push(`· ${g('国号')}：游戏里已有（${already}），跳过`); continue; }
         const spec: NewFactionSpec = {
             id: g('势力编号'), name: g('国号'), flag: g('旗号'), era: g('时代'), capitalCityName: g('都城'),
             generalName: g('名将'), generalNote: g('名将身份'), source: g('依据'),
@@ -80,9 +102,10 @@ if (factsFile) {
     const extras: Record<string, GeneralFirstBattle[]> = {};
     for (const [gid, list] of Object.entries(GENERAL_EXTRA_CLASSIC_BATTLES)) extras[gid] = list.map((x) => ({ ...x }));
     let extrasTouched = false;
+    let pendingExtraTouched = false;
     // 同一场这次定下的敌方势力（改敌将时要用）
     const pendingEnemyFaction = new Map<string, string>();
-    const enemyOverrides = loadEnemyOverrides();
+    const pendingExtra = loadPendingExtra();
     // 🔴 [2026-11-11] 敌将最后办：它要挂到「这一批定下的敌方国号」下，而定稿表里
     //    「敌方国号」行与「敌将」行的先后是写稿方随手写的；按表里的顺序办会把敌将挂到旧的敌势力上。
     //    所以先办年份/战场/坐标/敌方国号，再办敌将。
@@ -100,12 +123,33 @@ if (factsFile) {
         const target: GeneralFirstBattle | undefined = isExtra
             ? extras[gidOfExtra]?.find((x) => x.battleId === id)
             : GENERAL_FIRST_BATTLES[id];
-        // 🔴 [2026-11-11] 补选场次的敌将写在定稿表、而这一场还没导进游戏（补选表那一行没填敌将）：
-        //    记进 enemy-overrides.json，等补选表导这一场时自动取用，不算错。
-        const pendingEnemy = isExtra && !target && item === '敌将' && !!value;
-        if (pendingEnemy) {
-            enemyOverrides[id] = value;
-            report.push(`✓ ${id}·敌将 → ${value}（这一场还没进游戏，先记下，补选表导入时用）`);
+        // 🔴 [2026-11-11] 补选场次还没导进游戏（补选表那一行还没交）时，定稿表给这一场定的值
+        //    先记进 pending-extra-facts.json，等 import-extra 建这一场时套上，不算错。
+        const isPendingExtra = isExtra && !target && !!value;
+        if (isPendingExtra) {
+            const rec = (pendingExtra[id] ??= {});
+            let err: string | null = null;
+            if (item === '年份') err = '补选场次的年份请回补选表重交（年份是它编号的一部分）';
+            else if (item === '月份') {
+                const m = parseMonth(value);
+                if (m == null) err = `月份「${value}」要写一至十二（阿拉伯数字或「三」「十月」都行）`;
+                else rec.month = m;
+            } else if (item === '敌方国号') {
+                const fid = factionIdByName(value);
+                if (!fid) err = `国号「${value}」游戏里没有——先在新增势力表登记（连同一位有名字的名将）`;
+                else { rec.enemyFactionName = value; rec.enemyFactionId = fid; }
+            } else if (item === '敌将') {
+                rec.enemyGeneralName = value;
+            } else if (item === '纬度' || item === '经度') {
+                const v = Number(value);
+                if (!Number.isFinite(v)) err = `${item}「${value}」不是有效数字`;
+                else rec[item === '纬度' ? 'lat' : 'lng'] = v;
+            } else if (item === '战场或目标') {
+                rec.targetName = value;
+            }
+            if (err) { report.push(`✗ ${id}·${item}\n    ${err}`); bad++; continue; }
+            pendingExtraTouched = true;
+            report.push(`✓ ${id}·${item} → ${value}（这一场还没进游戏，先记下，补选表导入时套上）`);
             ok++;
             continue;
         }
@@ -121,8 +165,9 @@ if (factsFile) {
                 else apply = () => patchFirstBattle(id, 'battleYear', y, dry);
             } else if (item === '月份') {
                 // 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 同一名将两场同年时按月份排先后
-                const m = Number(value);
-                if (!Number.isInteger(m) || m < 1 || m > 12) errors.push(`月份「${value}」要写一至十二的整数`);
+                //   写稿方按「不用阿拉伯数字」的规矩常写「三」「十月」，两种写法都认。
+                const m = parseMonth(value);
+                if (m == null) errors.push(`月份「${value}」要写一至十二（阿拉伯数字或「三」「十月」都行）`);
                 else apply = () => { if (isExtra) { (target as any).battleMonth = m; extrasTouched = true; } else patchFirstBattle(id, 'battleMonth', m, dry); };
             } else if (item === '纬度' || item === '经度') {
                 const v = Number(value);
@@ -156,7 +201,7 @@ if (factsFile) {
         ok++;
     }
     if (extrasTouched && !dry) writeExtras(extras);
-    if (!dry) saveEnemyOverrides(enemyOverrides);
+    if (!dry) savePendingExtra(pendingExtra);
 }
 
 console.log(report.join('\n'));

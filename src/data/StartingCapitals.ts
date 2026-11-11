@@ -3,6 +3,18 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+    'barakzai_afghan': 'city_gaofu',   // 巴拉克宰（经典战导入，登记用）
+    'zand_dynasty': 'city_yisifahan',   // 赞德（经典战导入，登记用）
+    'aizu_ashina': 'city_tsuruga',   // 芦名家（经典战导入，登记用）
+    'aq_qoyunlu': 'city_dabulishi',   // 白羊王朝（经典战导入，登记用）
+    'bulidi': 'city_damasikusi',   // 布里迪王朝（经典战导入，登记用）
+    'jinong': 'city_toledo',   // 济农王朝（经典战导入，登记用）
+    'crete_emirate': 'city_knossos',   // 克里特酋长国（经典战导入，登记用）
+    'tahirid': 'city_nishabuer',   // 塔希尔王朝（经典战导入，登记用）
+    'heruli': 'city_ravenna',   // 赫鲁利（经典战导入，登记用）
+    'huanchu': 'city_nanjing',   // 桓楚（经典战导入，登记用）
+    'gallic_empire': 'city_teerier',   // 高卢帝国（经典战导入，登记用）
+    'jingzhou': 'city_xiangyang',   // 荆州（经典战导入，登记用）
     'libiya': 'city_deliboli',   // 利比亚（经典战导入，登记用）🔴 [2026-11-11 按史] 原写凯鲁万（公元六七〇年建，前240年尚无此城）→ 改的黎波里（古典名欧亚，前七世纪腓尼基人所建，利比亚塔尼亚首邑）
     'jiaxite': 'city_babilun',   // 加喜特（经典战导入，登记用）
     'pattani': 'city_pattani',
