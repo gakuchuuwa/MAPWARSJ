@@ -23,6 +23,7 @@ const merged: Record<string, ClassicBattleBriefing> = { ...CLASSIC_BATTLE_BRIEFI
 let ok = 0;
 let bad = 0;
 let skipped = 0;
+const removed: string[] = [];
 const report: string[] = [];
 for (const r of rows) {
     const g = (n: string) => get(r, n);
@@ -32,6 +33,8 @@ for (const r of rows) {
     const errors: string[] = [];
     const warns: string[] = [];
     const fb = getClassicBattleById(id);
+    // 补选场次这一局里已经删掉的（表里还留着旧行）：跳过并报一声，不当错、不挡整批
+    if (!fb && id.includes('@')) { removed.push(id); skipped++; continue; }
     if (!fb) errors.push('编号不在经典战表里（补选的场次要先用 import-extra.mts 导入）');
     const entry = auditBriefingRow(g, errors, warns);
     const line = reportLine(fb ? `${fb.battleName}·${id}` : id, errors, warns);
@@ -44,6 +47,7 @@ for (const r of rows) {
 const total = Object.keys(GENERAL_FIRST_BATTLES).length;
 const covered = Object.keys(merged).filter((id) => GENERAL_FIRST_BATTLES[id]).length;
 console.log(report.join('\n'));
+if (removed.length) console.log(`\n跳过（这一局里已删除的补选场次，表里还留着旧行）：${removed.join('、')}`);
 console.log(`\n本次：合格 ${ok} 行、有错 ${bad} 行（未写入）、空行跳过 ${skipped} 行；第一场累计已收录 ${covered} / ${total} 场${dry ? '（--dry 未写文件）' : ''}`);
 if (!dry) writeBriefings(Object.fromEntries(Object.entries(merged).filter(([id]) => getClassicBattleById(id))));
 if (bad) process.exitCode = 2;

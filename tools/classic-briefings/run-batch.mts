@@ -65,8 +65,9 @@ const run = (script: string, args: string[]): number => {
 const steps: { kind: Kind; script: string; make: (files: string[]) => string[][] }[] = [
     { kind: 'factions', script: 'import-sync.mts', make: (fs) => fs.map((f) => ['--factions', f]) },
     { kind: 'facts', script: 'import-sync.mts', make: (fs) => fs.map((f) => ['--facts', f]) },
-    { kind: 'briefings', script: 'import.mts', make: (fs) => fs.map((f) => [f]) },
+    // 补选先导：播报表里给补选场次写的两段播报，要等这一场进游戏才认得出编号
     { kind: 'extras', script: 'import-extra.mts', make: (fs) => fs.map((f) => [f]) },
+    { kind: 'briefings', script: 'import.mts', make: (fs) => fs.map((f) => [f]) },
 ];
 
 const okFiles: string[] = [];

@@ -27,7 +27,7 @@ const csvCell = (s: string | number) => {
     return /[",]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
 };
 
-// 🔴 [2026-11-11 主人令「把1000+的经典战，全部重写」] 任务表收**全部经典战**：第一场 ＋ 补选的后几场（编号 `<generalId>@<年份>`）
+// 任务表收**全部经典战**：第一场 ＋ 补选的后几场（编号 `<generalId>@<年份>`）。
 const rows = Object.keys(GENERAL_FIRST_BATTLES)
     .flatMap((gid) => getGeneralClassicBattles(gid))
     .sort((a, b) => a.battleYear - b.battleYear || a.battleName.localeCompare(b.battleName) || battleIdOf(a).localeCompare(battleIdOf(b)));
