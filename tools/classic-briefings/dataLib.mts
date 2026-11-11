@@ -49,8 +49,18 @@ for (const entry of Object.values(FACTION_GENERALS)) {
 }
 for (const c of Object.values(BATTLEFIELD_CHARACTERS)) if (!generalByName.has(c.generalName)) generalByName.set(c.generalName, c.generalId);
 
-/** 已有武将或战场人物里按名字认人 */
+/**
+ * 译名别名：补选/定稿表里用的通行译名 → 游戏里已登记的同一人。
+ * 🔴 [2026-11-11 「同人一个身份」] 名字差一个字就会重复建人，这里有对上的就不另建。
+ */
+const GENERAL_ALIASES: Readonly<Record<string, string>> = {
+    奥诺马尔库斯: 'phokis_aonuomakusi',   // 福基斯军帅；游戏原作「奥诺马库斯」
+};
+
+/** 已有武将或战场人物里按名字认人（先认别名） */
 export function generalIdByName(name: string): string | null {
+    const alias = GENERAL_ALIASES[name];
+    if (alias) return alias;
     return generalByName.get(name) ?? addedCharacters.get(name) ?? null;
 }
 

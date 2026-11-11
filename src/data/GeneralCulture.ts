@@ -1242,7 +1242,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'maqidun_craterus': 'MACEDONIAN',   // 马其顿｜克拉特罗斯｜据点 佩拉
     'maqidun_hephaistion': 'MACEDONIAN',   // 马其顿｜赫菲斯提昂｜据点 佩拉
     'maqidun_nearchos': 'MACEDONIAN',   // 马其顿｜尼阿库斯｜据点 佩拉
-    'maya_siyaj_kak': 'MAYANS',   // 玛雅｜西亚赫卡克｜据点 蒂卡尔
     'mayapan_hunac_ceel': 'MAYANS',   // 玛雅潘｜胡纳克｜据点 乌斯马尔
     'mazhaer_bela_iv': 'MAGYAR',   // 匈牙利｜贝拉四世｜据点 布达佩斯
     'mazhaer_charles_i': 'MAGYAR',   // 匈牙利｜查理一世｜据点 布达佩斯

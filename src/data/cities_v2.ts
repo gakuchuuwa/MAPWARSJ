@@ -2878,7 +2878,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     },
     { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'medium_city', troops: 10000, region: 'TIMURID', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 河中撒马尔罕；按 2026-10-25 标准：城居 10–20 → 中城' },
 
-    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 河中泽拉夫尚河流域；推算：城居 0.8 万（吉扎克，中亚商道镇 0.8 万）→ 城寨' },
+    { id: 'city_jizhake', name: '吉扎克', factionId: 'buhala', lat: 40.1167, lng: 67.8333, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 河中泽拉夫尚河流域；推算：城居 0.8 万（吉扎克，中亚商道镇 0.8 万）→ 城寨' },
 
 
 

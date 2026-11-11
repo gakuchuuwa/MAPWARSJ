@@ -36,6 +36,7 @@ export interface FactionEraSegment {
 }
 
 export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>> = {
+    'libiya': [{ from: -9999, era: 'antiquity' }], // 利比亚（经典战导入）
     'jiaxite': [{ from: -9999, era: 'antiquity' }], // 加喜特（经典战导入）
     // ══════ 一、手裁：整段一个时代 / 长命政权按史分年段 ══════
     'jiaohuangguo': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 教皇国｜存续 756–1870：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
@@ -71,6 +72,27 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'falanji': [{ from: -9999, era: 'feudal' }], // 法兰克｜晚期古典（–476）＝古典军团；墨洛温—加洛林（476–1100）＝封建时代法兰克军团；1100 后卡佩骑士 → 城堡时代法兰西骑士军团
     'gaolu': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西｜存续 987–1870：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'menggu_d': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 蒙古｜存续 700–1635：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'wu_han': [{ from: -9999, era: 'antiquity' }], // 汉初吴国（刘濞，前195–前154，都广陵）
+    'qi_zhangbu': [{ from: -9999, era: 'antiquity' }], // 张步齐（临淄割据，23–29）
+    'wangdaer': [{ from: -9999, era: 'feudal' }], // 汪达尔—阿兰王国（439 迦太基–534 拜占庭灭）
+    'kesaiya': [{ from: -9999, era: 'antiquity' }], // 科塞亚部族（扎格罗斯山，前4世纪抗亚历山大）
+    'muxikani': [{ from: -9999, era: 'antiquity' }], // 穆西卡尼部族（印度河下游，前4世纪）
+    'houmojietuo': [{ from: -9999, era: 'feudal' }], // 摩揭陀·普那伐摩（7世纪初）
+    'sumo': [{ from: -9999, era: 'antiquity' }], // 苏摩国（孟加拉 Suhma，前6世纪）
+    'gushu': [{ from: -9999, era: 'antiquity' }], // 古蜀·开明王朝（前4世纪–前316 秦灭）
+    'yidali_odoacer': [{ from: -9999, era: 'feudal' }], // 奥多亚克意大利王国（476–493，都拉文纳）
+    'gaoda': [{ from: -9999, era: 'feudal' }], // 高达王国（设赏迦，约590–626）
+    'kelite_amier': [{ from: -9999, era: 'feudal' }], // 克里特埃米尔国（约824–961）
+    'kelimiya_han': [{ from: -9999, era: 'imperial' }], // 克里米亚汗国（1441–1783）
+    'guzigan': [{ from: -9999, era: 'feudal' }], // 古兹甘·法里贡王朝（9–11世纪初）
+    'bahemani': [{ from: -9999, era: 'castle' }], // 巴赫曼尼苏丹国（德干，1347–1527）
+    'halapengcai': [{ from: -9999, era: 'feudal' }], // 哈利奔猜王国（泰北孟族，约750–1292）
+    'dongchahatai': [{ from: -9999, era: 'imperial' }], // 东察合台汗国（蒙兀儿斯坦，1347–1680）
+    'buhala': [{ from: -9999, era: 'imperial' }], // 布哈拉埃米尔国（曼吉特，1785–1920）
+    'biluzhi': [{ from: -9999, era: 'imperial' }], // 俾路支·林德部落联盟（1480–1533）
+    'bonape': [{ from: -9999, era: 'castle' }], // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
+    'xiaweiyi': [{ from: -9999, era: 'imperial' }], // 夏威夷王国（1795–1893）
+    'yidali_hre': [{ from: -9999, era: 'castle' }], // 意大利王国（神圣罗马，962–1801）
     // ══════ 二、单时代势力（整段一个时代）══════
     'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼哈桑
     'mogadishu': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 摩加迪沙苏丹国｜存续 900–1600：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
@@ -370,7 +392,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kanata': [{ from: -9999, era: 'castle' }], // 维查耶纳伽尔 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 1336–1646 大部分年份]
     'kapaduoxiya': [{ from: -9999, era: 'antiquity' }], // 卡帕多细亚
     'karmapa': [{ from: -9999, era: 'imperial' }], // 噶玛
-    'kawusi': [{ from: -9999, era: 'imperial' }], // 卡乌斯
     'kazakh': [{ from: -9999, era: 'imperial' }], // 哈萨
     'keerkezi': [{ from: -9999, era: 'feudal' }], // 柯尔克孜
     'keernuwaye': [{ from: -9999, era: 'feudal' }], // 康沃尔（5 世纪末不列颠地方政权）→ 封建（2026-11-03 主人定）

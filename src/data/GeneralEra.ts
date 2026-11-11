@@ -342,7 +342,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_maniakes': 'feudal',
     'bfe_rhetogenes': 'antiquity',
     'bfe_purnavarman': 'antiquity',
-    'maya_siyaj_kak': 'feudal',
     'bfe_apokaukos': 'feudal',
     'baizanting_thomas': 'feudal',
     'bfe_maroboduus': 'feudal',

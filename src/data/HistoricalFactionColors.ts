@@ -309,7 +309,6 @@ desheng: '#2E6B7A', // 德胜·刘通
     // 🔴 [2026-11-10 主人令「删除这个势力」] 'dong' 已删，固定色删除
     'bailang': '#70C867', // 自动分配 (邻域相斥)
     'duolu': '#2C7268', // 咄陆（伊犁河谷深青；避开与锡伯 #3A5A7A 尾数+1撞色）
-    'kawusi': '#C4808E', // 自动分配 (邻域相斥)
     'keerkezi': '#85423B', // 自动分配 (邻域相斥)
     'yizhi': '#A8B764', // 自动分配 (邻域相斥)
     'yiwu': '#AA69CD', // 自动分配 (邻域相斥)
@@ -478,7 +477,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
     'leangongguo': '#6A3D9E', // 莱昂·萨拉曼卡（莱昂狮旗紫）
     'xixiliwangguo': '#D4880B', // 西西里王国·巴勒莫（诺曼金）
-    'liangxixili': '#D4880B',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    'liangxixili': '#B0574E',  // 两西西里王国（1816–1861）｜🔴 [2026-11-11 GG第五轮] 与西西里王国解绑（异族异朝，非同一系），原同色 #D4880B 改为波旁那不勒斯赭红，保证势力色唯一
     'aboerleiya': '#A63A32', // 阿尔博雷亚·奥里斯塔诺（判官国纹章银底红树，取树红）
     // 日耳曼
     'falanji': '#1E4E79', // 法兰克·科隆（法兰克深蓝）
@@ -755,6 +754,27 @@ desheng: '#2E6B7A', // 德胜·刘通
     // ── 2026-11-03 补势力色（校验提示「缺 HistoricalFactionColors」的两家）──
     hulumusi: '#00838F',   // 忽鲁谟斯（霍尔木兹王国·扼波斯湾口的商港，无专属尚色→按史地取海湾深青；含「霍」字青碧之色）
     bolinixiya: '#C2185B', // 波利尼西亚（波马雷王朝旗为红白红三横条，取旗面绛红）
+    wu_han: '#7A4B2A', // 汉初吴国（刘濞，前195–前154，都广陵）
+    qi_zhangbu: '#4E6E58', // 张步齐（临淄割据，23–29）
+    wangdaer: '#3F6E8C', // 汪达尔—阿兰王国（439 迦太基–534 拜占庭灭）
+    kesaiya: '#6E5B3F', // 科塞亚部族（扎格罗斯山，前4世纪抗亚历山大）
+    muxikani: '#8C6A2F', // 穆西卡尼部族（印度河下游，前4世纪）
+    houmojietuo: '#9C5B2E', // 摩揭陀·普那伐摩（7世纪初）
+    sumo: '#5F7A2F', // 苏摩国（孟加拉 Suhma，前6世纪）
+    gushu: '#2F6B6B', // 古蜀·开明王朝（前4世纪–前316 秦灭）
+    yidali_odoacer: '#7A2F2F', // 奥多亚克意大利王国（476–493，都拉文纳）
+    gaoda: '#8C4A6E', // 高达王国（设赏迦，约590–626）
+    kelite_amier: '#3F5E7A', // 克里特埃米尔国（约824–961）
+    kelimiya_han: '#5B4E7A', // 克里米亚汗国（1441–1783）
+    guzigan: '#4A6E4A', // 古兹甘·法里贡王朝（9–11世纪初）
+    bahemani: '#7A5F2F', // 巴赫曼尼苏丹国（德干，1347–1527）
+    halapengcai: '#6E3F5E', // 哈利奔猜王国（泰北孟族，约750–1292）
+    dongchahatai: '#2F5F8C', // 东察合台汗国（蒙兀儿斯坦，1347–1680）
+    buhala: '#8C5F4A', // 布哈拉埃米尔国（曼吉特，1785–1920）
+    biluzhi: '#4A5F2F', // 俾路支·林德部落联盟（1480–1533）
+    bonape: '#2F7A5F', // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
+    xiaweiyi: '#6A5F8C', // 夏威夷王国（1795–1893）
+    yidali_hre: '#8C7A2F', // 意大利王国（神圣罗马，962–1801）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
@@ -776,6 +796,7 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
 assertUniqueFixedColors(_FIXED);
 
 export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Object.freeze({
+    libiya: '#3B9B41', // 利比亚（经典战导入）
     jiaxite: '#8E9B3B', // 加喜特（经典战导入）
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（沿用归并前原色）
     qiufu: '#8B56AB',

@@ -463,7 +463,6 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     bailang: { start: 50, end: 640, source: '《后汉书·西南夷传》《新唐书·吐蕃传》：东汉永平中（约50–74）白狼王唐菆献歌内附，隋唐称白兰羌，约640年代为吐蕃松赞干布兼并｜推定（白狼—白兰部族存续上限取1世纪中叶、下限取贞观中并入吐蕃）', note: '2026-11-11 GG第五轮核定：原 74–220' },
     duolu: { start: 600, end: 657, source: '《旧唐书·突厥传》西突厥五咄陆部；657 年阿史那贺鲁被擒', note: '咄陆为西突厥左厢五部，后归突骑施' },
     tiemuer: { start: 1360, end: 1507, source: 'Wikipedia「Timur」「Timurid Empire」：1360年帖木儿统领巴鲁剌思部据渴石兴起（1370入主撒马尔罕建帝国），1507年赫拉特陷于昔班尼｜确证；开国/起事将领年逾20岁（帖木儿 生1336 登1356，起事时24岁），按规则维持信史起兵/立国年1360，建议百岁出场年取 max(登场年,势力起始年)', note: '2026-11-11 GG第五轮核定：原 1370–1507' },
-    kawusi: { start: 1700, end: 1800, source: '不确定：仅知据点吉扎克（中亚）、武将海达尔为 18 世纪人，无法判定其对应政权', note: '疑为布哈拉—浩罕间地方势力，待考｜估算依据：史源不明，按所挂武将海达尔（18世纪）与吉扎克据点归属通行年代估算。' },
     keerkezi: { start: 820, end: 1207, source: '《新唐书·黠戛斯传》《元史·太祖纪》：820年黠戛斯首领阿热自称可汗与回鹘抗战二十年（840破回鹘汗庭，已并入黠戛斯重复条目），1207年归附蒙古｜确证', note: '2026-11-11 GG第五轮核定：原 840–1207' },
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 yiduhu 866–1284 已删（并入 huihu）
     yizhi: { start: -100, end: 645, source: '不确定：一支国（壱岐）仅见《三国志·魏志倭人传》，3 世纪有官「卑狗」，无起止纪年', note: '倭国三十国之一，约三千户｜估算依据：弥生后期一支国（壱岐）已形成国邑，取前100；大化改新（645）后改设律令国。' },
@@ -785,4 +784,25 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 hellas_theme 695–1050 已删（并入 baizanting）
     lugii: { start: -100, end: 400, source: 'Wikipedia: Lugii / Krakus；塔西佗《日耳曼尼亚志》与托勒密《地理志》载维斯瓦河—奥得河流域卢吉部族联盟（普热沃尔斯克文化，约前 100–400 年）', note: '克拉库斯为《波兰编年史》所载维斯瓦河上游建克拉科夫城的传说君王。' },
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 wagadu 100–476 已删（并入 ghana_diguo）
+    wu_han: { start: -195, end: -154, source: '《史记·吴王濞列传》：高祖十二年（前195）刘濞封吴王，都广陵；景帝三年（前154）吴楚七国之乱败，濞死国除', note: '汉初同姓诸侯国吴国（荆王刘贾故地），与前 585 年寿梦之吴不同一国；刘濞据广陵（今扬州）' },
+    qi_zhangbu: { start: 23, end: 29, source: '《后汉书·张步传》：更始二年（24）张步据临淄自立为齐王，建武五年（29）为耿弇所破，降而复叛被斩', note: '新末东汉初临淄割据政权（齐王张步），与先秦姜齐、田齐不同一国；起讫取 GG 核定 23–29' },
+    wangdaer: { start: 439, end: 534, source: 'Wikipedia「Vandal Kingdom」：439 年盖萨里克取迦太基立国，534 年贝利撒留灭之（汪达尔战争）', note: '日耳曼汪达尔—阿兰王国，都迦太基；与古典腓尼基迦太基（buni）不同政权' },
+    kesaiya: { start: -360, end: -300, source: '阿里安《亚历山大远征记》卷七、Wikipedia「Kissia」：科塞亚人（Kossaîoi）居扎格罗斯山，前 324/323 年反抗马其顿', note: '扎格罗斯山科塞亚部族（民族势力），非前 550 已亡之米底王国；起讫按部族活动期估定' },
+    muxikani: { start: -350, end: -300, source: '阿里安《亚历山大远征记》卷六：印度河下游穆西卡尼人（Mousikanoí）王穆西卡诺斯，前 325 年抗亚历山大', note: '印度河下游部族（民族势力），早于前 322 年孔雀建国；起讫按部族活动期估定' },
+    houmojietuo: { start: 590, end: 640, source: '《大唐西域记》卷八、Wikipedia「Pūrṇavarman」：7 世纪初摩揭陀王普那伐摩（Pūrṇavarman），玄奘游印时其国已衰', note: '孔雀（前322–前185）之后七百年的摩揭陀政权，同国号另立一家；起讫按普那伐摩在位估定' },
+    sumo: { start: -600, end: -400, source: 'Wikipedia「Suhma kingdom」、《摩诃婆罗多》与往世书：孟加拉 Suhma 国，前 6 世纪苏摩王', note: '孟加拉古国，早于前 185 年巽伽王朝；起讫按史源系年估定' },
+    gushu: { start: -400, end: -316, source: '《华阳国志·蜀志》：开明王朝十二世，前 316 年秦惠文王遣张仪、司马错灭蜀（末王芦子，即开明氏末主）', note: '开明王朝古蜀国，都成都；与三国蜀汉（184–263）不同政权，同国号另立一家' },
+    yidali_odoacer: { start: 476, end: 493, source: 'Wikipedia「Odoacer」：476 年奥多亚克废罗慕路斯·奥古斯都，据意大利以拉文纳为治；493 年为狄奥多里克所杀', note: '奥多亚克意大利王国（476–493），都拉文纳；与 1861 年意大利王国不同一国' },
+    gaoda: { start: 590, end: 626, source: '《大唐西域记》、Wikipedia「Gauḍa kingdom」「Shashanka」：设赏迦（Śaśāṅka）约 590–626 王孟加拉高达', note: '孟加拉高达王国，早于 750 年瞿波罗所建波罗王朝' },
+    kelite_amier: { start: 824, end: 961, source: 'Wikipedia「Emirate of Crete」：约 824 年安达卢斯流亡者据克里特立国，961 年尼基弗鲁斯·福卡斯收复', note: '地中海克里特埃米尔国；库内无干地亚独立据点（干地亚属威尼斯），首都仅登记用' },
+    kelimiya_han: { start: 1441, end: 1783, source: 'Wikipedia「Crimean Khanate」：1441 年哈吉·格莱立国（巴赫奇萨赖为都），1783 年为俄国兼并', note: '克里米亚鞑靼汗国；库内无巴赫奇萨赖据点，首都取最近同文化据点奥列什基' },
+    guzigan: { start: 800, end: 1010, source: 'Wikipedia「Farighunids」「Guzgan」：9–11 世纪初阿富汗北部古兹甘法里贡王朝（法里亚布），后为伽色尼所并', note: '古兹甘法里贡王朝，非 962 年始之伽色尼王朝；起讫按王朝世系估定' },
+    bahemani: { start: 1347, end: 1527, source: 'Wikipedia「Bahmani Sultanate」：1347 年哈桑·甘古（阿拉乌丁·巴赫曼沙）据德干立国，1527 年为五国分裂所终', note: '德干巴赫曼尼苏丹国，都古尔伯加后迁比达尔；马哈茂德·加万为其首相' },
+    halapengcai: { start: 750, end: 1292, source: 'Wikipedia「Hariphunchai」：约 750 年占玛黛维立孟族女王国（今南奔），1292 年为兰纳孟莱王所并', note: '泰北孟族哈利奔猜王国；库内无南奔据点，首都取同文化孟族据点直通' },
+    dongchahatai: { start: 1347, end: 1680, source: 'Wikipedia「Moghulistan」：1347 年秃黑鲁帖木儿复立察合台汗国于伊犁—喀什（东察合台），1680 年为准噶尔所并', note: '东察合台汗国（蒙兀儿斯坦），与莫卧儿帝国（1469–1857）不同政权' },
+    buhala: { start: 1785, end: 1920, source: 'Wikipedia「Emirate of Bukhara」：1785 年曼吉特部沙赫穆拉德取布哈拉立埃米尔国，1920 年为苏俄所灭', note: '曼吉特王朝布哈拉埃米尔国；吉扎克为其东境重镇（原 kawusi 据点归此）' },
+    biluzhi: { start: 1480, end: 1533, source: 'Wikipedia「Chakar Rind」「Baloch people」：林德（Rind）部落联盟米尔·恰卡尔 1480–1533 据俾路支—信德', note: '俾路支林德部落联盟（民族势力），早于 1747 年杜兰尼帝国；起讫按恰卡尔生卒与在位估定' },
+    bonape: { start: 1200, end: 1628, source: 'Wikipedia「Nan Madol」「Saudelor」：约 1200 年绍德勒王朝筑南马都尔（波纳佩岛），1628 年前后终', note: '密克罗尼西亚波纳佩绍德勒王朝，与大溪地波马雷王朝（bolinixiya）不同政权' },
+    xiaweiyi: { start: 1795, end: 1893, source: 'Wikipedia「Kingdom of Hawaii」：1795 年卡美哈梅哈一世统一群岛建王国，1893 年王政被推翻', note: '夏威夷王国，都檀香山；与大溪地波马雷王朝不同政权' },
+    yidali_hre: { start: 962, end: 1801, source: 'Wikipedia「Kingdom of Italy (Holy Roman Empire)」：962 年奥托一世加冕后意大利王国为帝国附庸，1801 年《吕内维尔和约》后废止', note: '神圣罗马帝国治下的意大利王国（regnum Italiae），比安德拉泰伯爵等帝国封臣归此；与 1861 年意大利王国不同一国' },
 };

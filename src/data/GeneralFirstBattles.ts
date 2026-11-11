@@ -41,6 +41,12 @@ export interface GeneralFirstBattle {
     battleName: string;
     /** 历史发生年份（公元前为负） */
     battleYear: number;
+    /**
+     * 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 史实月份（1~12）。
+     * 同一名将有两场落在同一年时，按它排先后（缺省就不排，保持数组原顺序＝第一场在前）。
+     * 例：地米斯托克利前四八〇年，阿尔特米西昂在八月、萨拉米斯在九月。
+     */
+    battleMonth?: number;
     /** 战斗形态：'field' 野战（含据点位置野战） | 'siege' 攻城战 */
     battleType: 'field' | 'siege';
     /** 我方在此战中的攻守身份：'attacker' 进攻方（默认） | 'defender' 防守方（本地迎击/保卫战） */
@@ -559,6 +565,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 13300,
         enemyFactionId: 'aqimeinide',
         enemyFactionName: '波斯帝国',
+        battleMonth: 8,
         enemyGeneralId: 'bfe_achaemenes',   // 🔴 [2026-10-25 按史] 前480 优卑亚（阿特米西乌姆）波斯舰队统帅＝阿凯门尼斯（达提斯前490 已死）
         enemyTroops: 20000,
         introLines: [
@@ -852,8 +859,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.28,
         targetLng: 105.53,
         myTroops: 20000,
-        enemyFactionId: 'shu',
-        enemyFactionName: '蜀国',
+        enemyFactionId: 'gushu',
+        enemyFactionName: '古蜀',
         enemyGeneralId: 'bfe3_2',
         enemyTroops: 16000,
         introLines: [
@@ -12141,12 +12148,20 @@ function battleKeyOf(fb: Pick<GeneralFirstBattle, 'battleName' | 'battleYear'>):
     return `${fb.battleName}|${fb.battleYear}`;
 }
 
-/** 这位名将的全部经典战（只对名将生效），按年份从早到晚 */
+/**
+ * 这位名将的全部经典战（只对名将生效），按史实先后排：先年份，同一年再看月份。
+ * 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 两边都写了 `battleMonth` 才按月排；
+ *    有一边没写、或月份相同，就保持原顺序（第一场在前，补选按导入顺序），不凭空改先后。
+ */
 export function getGeneralClassicBattles(generalId: string | null | undefined): GeneralFirstBattle[] {
     const first = getGeneralFirstBattle(generalId);
     if (!first || !generalId) return [];
     const extras = GENERAL_EXTRA_CLASSIC_BATTLES[generalId] ?? [];
-    return [first, ...extras].sort((a, b) => a.battleYear - b.battleYear);
+    return [first, ...extras].sort((a, b) => {
+        if (a.battleYear !== b.battleYear) return a.battleYear - b.battleYear;
+        if (a.battleMonth != null && b.battleMonth != null && a.battleMonth !== b.battleMonth) return a.battleMonth - b.battleMonth;
+        return 0;
+    });
 }
 
 /** 按编号取一场（战斗层用：认出正在打的是哪一场） */

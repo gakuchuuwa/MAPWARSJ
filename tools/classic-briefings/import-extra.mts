@@ -126,11 +126,15 @@ for (const r of rows) {
     if (errors.length || !briefing || !kind || year == null || !enemyFactionId) { bad++; continue; }
 
     const enemyGeneralId = ensureBattlefieldCharacter(g('敌将'), enemyFactionId, `${g('战役')}敌方主将`, dry);
+    // 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 补选表没有「月份」这一列，
+    //    重新导入时不能把上一轮在定稿表里定下的 `battleMonth` 抹掉（同年两场靠它排先后）。
+    const prevMonth = (GENERAL_EXTRA_CLASSIC_BATTLES[gid] ?? []).find((x) => x.battleId === battleId)?.battleMonth;
     const fb: GeneralFirstBattle = {
         generalId: gid,
         battleId,
         battleName: g('战役'),
         battleYear: year,
+        ...(prevMonth != null ? { battleMonth: prevMonth } : {}),
         battleType: kind.battleType,
         role: kind.role,
         targetName: g('战场或目标'),

@@ -58,6 +58,7 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+        'libiya': '利比',   // 利比亚（经典战导入）
         'jiaxite': '加喜',   // 加喜特（经典战导入）
         'sesali': '色萨',
         'awraba': '奥雷',
@@ -395,7 +396,6 @@ export class CityAssetManager {
 
 'duolu': '咄陆',
 'tiemuer': '帖木',
-'kawusi': '卡乌',
         'keerkezi': '柯尔',
         'yizhi': '一支',
         'duerbote': '杜尔',
@@ -831,6 +831,27 @@ export class CityAssetManager {
         'yinggelan': '英',
         'yipilusi': '伊庇',
         'zhayan': '扎扬',
+        'wu_han': '吴',   // 汉初吴国（刘濞，前195–前154，都广陵）
+        'qi_zhangbu': '齐',   // 张步齐（临淄割据，23–29）
+        'wangdaer': '汪达',   // 汪达尔—阿兰王国（439 迦太基–534 拜占庭灭）
+        'kesaiya': '科塞',   // 科塞亚部族（扎格罗斯山，前4世纪抗亚历山大）
+        'muxikani': '穆西',   // 穆西卡尼部族（印度河下游，前4世纪）
+        'houmojietuo': '摩揭',   // 摩揭陀·普那伐摩（7世纪初）
+        'sumo': '苏摩',   // 苏摩国（孟加拉 Suhma，前6世纪）
+        'gushu': '蜀',   // 古蜀·开明王朝（前4世纪–前316 秦灭）
+        'yidali_odoacer': '意',   // 奥多亚克意大利王国（476–493，都拉文纳）
+        'gaoda': '高达',   // 高达王国（设赏迦，约590–626）
+        'kelite_amier': '克特',   // 克里特埃米尔国（约824–961）
+        'kelimiya_han': '克米',   // 克里米亚汗国（1441–1783）
+        'guzigan': '古兹',   // 古兹甘·法里贡王朝（9–11世纪初）
+        'bahemani': '巴赫',   // 巴赫曼尼苏丹国（德干，1347–1527）
+        'halapengcai': '哈利',   // 哈利奔猜王国（泰北孟族，约750–1292）
+        'dongchahatai': '察合',   // 东察合台汗国（蒙兀儿斯坦，1347–1680）
+        'buhala': '布哈',   // 布哈拉埃米尔国（曼吉特，1785–1920）
+        'biluzhi': '俾路',   // 俾路支·林德部落联盟（1480–1533）
+        'bonape': '波纳',   // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
+        'xiaweiyi': '夏威',   // 夏威夷王国（1795–1893）
+        'yidali_hre': '意',   // 意大利王国（神圣罗马，962–1801）
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

@@ -2070,10 +2070,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代蒲甘军团",
         legionType: "sub",
     },
-    "kawusi": {
-        legionName: "帝国时代突厥斯坦军团",
-        legionType: "sub",
-    },
     "badakhshan": {
         legionName: "帝国时代突厥斯坦军团",
         legionType: "sub",
@@ -2827,6 +2823,95 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yalan": {
         legionName: "古典时代近东军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-11-11 GG第五轮] 新建政权的军团兜底（按主将「势力时代 × 据点文化」实际军团名对齐）
+    "jiaxite": {
+        legionName: "古典时代近东军团",
+        legionType: "sub",
+    },
+    "wu_han": {
+        legionName: "古典时代吴越军团",
+        legionType: "sub",
+    },
+    "qi_zhangbu": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "wangdaer": {
+        legionName: "封建时代柏柏尔军团",
+        legionType: "sub",
+    },
+    "kesaiya": {
+        legionName: "古典时代阿契美尼德军团",
+        legionType: "sub",
+    },
+    "muxikani": {
+        legionName: "古典时代普鲁战象军团",
+        legionType: "sub",
+    },
+    "houmojietuo": {
+        legionName: "封建时代戒日军团",
+        legionType: "sub",
+    },
+    "sumo": {
+        legionName: "古典时代高陀军团",
+        legionType: "sub",
+    },
+    "gushu": {
+        legionName: "古典时代巴蜀军团",
+        legionType: "sub",
+    },
+    "yidali_odoacer": {
+        legionName: "封建时代阿斯图里亚斯军团",
+        legionType: "sub",
+    },
+    "gaoda": {
+        legionName: "封建时代波罗军团",
+        legionType: "sub",
+    },
+    "kelite_amier": {
+        legionName: "封建时代柏柏尔军团",
+        legionType: "sub",
+    },
+    "kelimiya_han": {
+        legionName: "帝国时代哥萨克军团",
+        legionType: "sub",
+    },
+    "guzigan": {
+        legionName: "封建时代德莱木军团",
+        legionType: "sub",
+    },
+    "bahemani": {
+        legionName: "城堡时代法尔斯军团",
+        legionType: "sub",
+    },
+    "halapengcai": {
+        legionName: "封建时代蒲甘军团",
+        legionType: "sub",
+    },
+    "dongchahatai": {
+        legionName: "帝国时代叶尔羌军团",
+        legionType: "sub",
+    },
+    "buhala": {
+        legionName: "帝国时代突厥斯坦军团",
+        legionType: "sub",
+    },
+    "biluzhi": {
+        legionName: "帝国时代赞德军团",
+        legionType: "sub",
+    },
+    "bonape": {
+        legionName: "城堡时代爪哇军团",
+        legionType: "sub",
+    },
+    "xiaweiyi": {
+        legionName: "帝国时代马六甲军团",
+        legionType: "sub",
+    },
+    "yidali_hre": {
+        legionName: "城堡时代意大利雇兵军团",
         legionType: "sub",
     },
 };

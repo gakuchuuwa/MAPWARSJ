@@ -11,7 +11,8 @@
  *
  * 新增势力表表头：势力编号、国号、旗号、时代、都城、名将、名将身份、依据
  * 史实定稿表表头：编号、项目、定值、依据或估算
- *   项目只能是：年份、战场或目标、纬度、经度、敌方国号、敌将
+ *   项目只能是：年份、月份、战场或目标、纬度、经度、敌方国号、敌将
+ *   （月份＝同一名将两场落在同年时按史实排先后，写一至十二）
  *   编号＝第一场写 generalId；补选的写 `<generalId>@<年份>`（补选场次的年份不在这里改，回补选表重交）。
  */
 import { GENERAL_FIRST_BATTLES, type GeneralFirstBattle } from '../../src/data/GeneralFirstBattles';
@@ -59,7 +60,7 @@ if (factionsFile) {
 
 // ── 二、史实定稿 ──
 const FIELD: Record<string, keyof GeneralFirstBattle> = {
-    年份: 'battleYear', 战场或目标: 'targetName', 纬度: 'targetLat', 经度: 'targetLng',
+    年份: 'battleYear', 月份: 'battleMonth', 战场或目标: 'targetName', 纬度: 'targetLat', 经度: 'targetLng',
 };
 if (factsFile) {
     const { rows, get } = readSheet(factsFile, ['编号', '项目', '定值', '依据或估算']);
@@ -95,6 +96,11 @@ if (factsFile) {
                 if (!Number.isInteger(y)) errors.push(`年份「${value}」要写整数，公元前写负数`);
                 else if (isExtra) errors.push('补选场次的年份请回补选表重交（年份是它编号的一部分）');
                 else apply = () => patchFirstBattle(id, 'battleYear', y, dry);
+            } else if (item === '月份') {
+                // 🔴 [2026-11-11 主人定「同年两场谁先，按历史」] 同一名将两场同年时按月份排先后
+                const m = Number(value);
+                if (!Number.isInteger(m) || m < 1 || m > 12) errors.push(`月份「${value}」要写一至十二的整数`);
+                else apply = () => { if (isExtra) { (target as any).battleMonth = m; extrasTouched = true; } else patchFirstBattle(id, 'battleMonth', m, dry); };
             } else if (item === '纬度' || item === '经度') {
                 const v = Number(value);
                 if (!Number.isFinite(v) || Math.abs(v) > (item === '纬度' ? 90 : 180)) errors.push(`${item}「${value}」不是有效数字`);
@@ -117,7 +123,7 @@ if (factsFile) {
                     if (!known) report.push(`  ＋新增战场人物 ${value}（${eid}，属 ${fid}）`);
                     if (isExtra) { target.enemyGeneralId = eid; extrasTouched = true; } else patchFirstBattle(id, 'enemyGeneralId', eid, dry);
                 };
-            } else errors.push(`项目「${item}」只能是 年份、战场或目标、纬度、经度、敌方国号、敌将`);
+            } else errors.push(`项目「${item}」只能是 年份、月份、战场或目标、纬度、经度、敌方国号、敌将`);
         }
         const name = target ? `${target.battleName}·${id}·${item}` : `${id}·${item}`;
         const line = reportLine(name, errors, []);

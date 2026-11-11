@@ -550,7 +550,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_maniakes: { birth: 998, death: 1043, kaoju: '推定' },  // 马尼亚克
     bfe_rhetogenes: { birth: -190, death: -133, kaoju: '推定' },  // 雷图格诺斯
     bfe_purnavarman: { birth: 375, death: 434, kaoju: '推定' },  // 普尔纳跋摩
-    maya_siyaj_kak: { birth: 340, death: 410, kaoju: '推定' },  // 西亚赫卡克
     bfe_apokaukos: { birth: 940, death: 1000, kaoju: '推定' },  // 阿波卡夫
     baizanting_thomas: { birth: 1409, death: 1465 },  // 巴列奥略
     bfe_maroboduus: { birth: -30, death: 37, kaoju: '推定' },  // 马罗博杜斯

@@ -3,6 +3,7 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+    'libiya': 'city_kailuwan',   // 利比亚（经典战导入，登记用）
     'jiaxite': 'city_babilun',   // 加喜特（经典战导入，登记用）
     'pattani': 'city_pattani',
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（登记用，不作开局依据）
@@ -524,7 +525,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'duolu': 'city_beiluocheng',
 'tiemuer': 'city_samaerhan',
-'kawusi': 'city_jizhake',
     'keerkezi': 'city_yierkeshentan',
 'yiwu': 'city_hamiwei',
     'duerbote': 'city_tuokexun',
@@ -830,6 +830,27 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yinduxila': 'city_dinggucheng',
     'asakaini': 'city_aonuosiyan',
     'lugii': 'city_kelakefu',
+  'wu_han': 'city_yangzhou',   // 汉初吴国（刘濞，前195–前154，都广陵）
+  'qi_zhangbu': 'city_linzi',   // 张步齐（临淄割据，23–29）
+  'wangdaer': 'city_jiataji',   // 汪达尔—阿兰王国（439 迦太基–534 拜占庭灭）
+  'kesaiya': 'city_hamadan',   // 科塞亚部族（扎格罗斯山，前4世纪抗亚历山大）
+  'muxikani': 'city_aluoer',   // 穆西卡尼部族（印度河下游，前4世纪）
+  'houmojietuo': 'city_putijiaye',   // 摩揭陀·普那伐摩（7世纪初）
+  'sumo': 'city_danmoledi',   // 苏摩国（孟加拉 Suhma，前6世纪）
+  'gushu': 'city_chengdu',   // 古蜀·开明王朝（前4世纪–前316 秦灭）
+  'yidali_odoacer': 'city_ravenna',   // 奥多亚克意大利王国（476–493，都拉文纳）
+  'gaoda': 'city_gaodacheng',   // 高达王国（设赏迦，约590–626）
+  'kelite_amier': 'city_kailuwan',   // 克里特埃米尔国（约824–961）
+  'kelimiya_han': 'city_oleshky',   // 克里米亚汗国（1441–1783）
+  'guzigan': 'city_fariyab',   // 古兹甘·法里贡王朝（9–11世纪初）
+  'bahemani': 'city_taibade',   // 巴赫曼尼苏丹国（德干，1347–1527）
+  'halapengcai': 'city_thaton',   // 哈利奔猜王国（泰北孟族，约750–1292）
+  'dongchahatai': 'city_ahexikesi',   // 东察合台汗国（蒙兀儿斯坦，1347–1680）
+  'buhala': 'city_jizhake',   // 布哈拉埃米尔国（曼吉特，1785–1920）
+  'biluzhi': 'city_kuida',   // 俾路支·林德部落联盟（1480–1533）
+  'bonape': 'city_nanmadol',   // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
+  'xiaweiyi': 'city_honolulu',   // 夏威夷王国（1795–1893）
+  'yidali_hre': 'city_milan',   // 意大利王国（神圣罗马，962–1801）
 };
 
 // @ts-ignore

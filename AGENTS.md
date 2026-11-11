@@ -39,13 +39,13 @@
 3. **势力划分与命名**（见 `docs/AGENTS/faction-naming.md`）：
    - 🔴 **势力＝武将所在政权**（2026-11-05）：**政权名、军阀与军队统称（董卓、西凉军、魏博）、土司与家族名、史料族称、现代少数民族名**合格。**不合格**：纯地名/战场/水源/驿站/要塞、殖民地/属地/公司/氏族（并入本国/本族）、**与本势力武将重名的人名**（本势力内重名时势力改政权全称，跨势力同名不算；`scratch/_probe_faction_same_name.mts`）。
    - **用当时自称／正史国号**（2026-10-29）：① 不用「XX朝」；② 「大XX」只给正式国号带大的政权（窦建德写「夏」）；③ **皇族姓氏＋国号防叠念**（李唐/赵宋/刘汉/慕容燕/宇文周/拓跋魏/赫连夏国/沮渠凉国/秃发凉国/乞伏秦国）。
-   - **同政权合并与同系分立**（2026-11-03）：不打的同政权合并（北汉并入后汉）；**同系未交战但跨时代的各自单立势力以保时代准确，旗号、色、纹章同本家**（`src/data/FactionLineage.ts`：西辽/东辽←大辽、古格←吐蕃、甘州回鹘←回鹘、两西西里←西西里）；打过仗的不进同系表。
+   - 🔴 **合并与新建**（2026-11-11 GG第五轮，**取代**「同系分立」）：**同族同祖的政权一律并入主干**（西辽/东辽→大辽、古格→吐蕃；`FactionLineage` 已清空）；不打同政权合并。**势力必须是历史上公认的政权**，不合格者（外来泛称、以人名命名、纯地名、属地/公司）删除；**武将缺政权时新建公认政权**（古蜀、夏威夷王国…），同批登记旗号/色/首府/时代/军团兜底。台账 `docs/AGENTS/GG第五轮落地报告-2026-11-11.md`。
 4. **旗帜与旗号**（见 `docs/AGENTS/中国旗号单字国号-2026-10-26.md`）：
-   - 🔴 **旗面四种**（2026-10-25）：**一字旗／二字旗／符号旗／叛军无字旗**。正规势力必有唯一旗号（`SANDBOX_DISPLAY_NAMES`，1–2 字，不含「州」「国」）、唯一色（同系除外）及「旗形＋色」组合；`factionFlagMap` 值＝旗号，禁填武将名。**符号旗**限史有明证专属纹章（一 `FACTION_EMBLEM` 限一家），余用字旗。验收 `scratch/_audit_flag_gaps_20261025.mts`、`scratch/_audit_flag_dupes_20261025.mts`、`scratch/_audit_flag_kinds_20261025.mts`、`scratch/_probe_flag_registry_bad.mts`。
+   - 🔴 **旗面四种**（2026-10-25）：**一字旗／二字旗／符号旗／叛军无字旗**。正规势力必有唯一旗号（`SANDBOX_DISPLAY_NAMES`，1–2 字，不含「州」「国」）、唯一色（同系除外）及「旗形＋色」组合；`factionFlagMap` 值＝旗号，禁填武将名。**符号旗**限史有明证专属纹章（一 `FACTION_EMBLEM` 限一家），余用字旗。验收 `scratch/_audit_flag_gaps_20261025.mts`、`scratch/_audit_flag_dupes_20261025.mts`、`scratch/_audit_flag_kinds_20261025.mts`。
    - 🔴 **字旗取字**（2026-11-03）：① **中国政权一字优先**：国号一字、加方位/前后前缀（东晋→晋、前凉→凉、西辽→辽）、或「大」仅尊称（大夏/大周/大燕/大梁）写单字；「大」或方位字不可拆或拆后撞异国号写两字（大理/大西/大顺/大越/东夏/南越/南诏）；**同国号可同字重旗**，靠色＋旗形区分。② **「一字＋州/国/族/氏/家/部/人/朝」缩一字**（`src/data/FlagOneChar.ts:toFlagText`）：非西方文化、单字能代表该势力、未撞他家单字旗时缩一字（傣/羯/孟/寮/石/羌/附）。③ **其余非汉字文化区一律 2 字简称**；「地名＋民族」禁各截一字。
 5. **精锐（五级制）**（见 `docs/AGENTS/精锐五级制-2026-11-01.md`）：
    - 🔴 **归属六级优先级**（2026-11-07）：**① 符合历史 → ② 跟武将 → ③ 跟势力 → ④ 跟民族（`src/data/FactionPeoples.ts`）→ ⑤ 区域 → ⑥ 据点**（⑤⑥只作取名依据，不限跨区驻防；**精锐不要求与据点文化对应**）。别国/别时代武将用自己的 `eliteName/eliteTier`。
-   - 🔴 **五档上限与字数**（2026-11-07）：按「**势力 × 番号**」计上限——**T0 限 1 人（普将禁挂）｜T1 1–2 人｜T2 1–4 人｜T3 1–8 人｜T4 1–8 人（名将禁挂）**；乘数 T0×1.5｜T1×1.4｜T2×1.3｜T3×1.2｜T4×1.1（`ELITE_TIER_MULT`）。同号限一档；除 T0 外允许史实同属一部者（含名将）共用，超限移入同文化兄弟番号。**史源原名不限字数**（`src/data/EliteNameRules.ts` `ELITE_HISTORIC_NAMES`），**自拟番号 4–8 字**。验收 `scratch/_audit_elite_caps_20261101.mts`、`scratch/audit_elite_tiers.mts`、`scratch/_audit_elite_shared_20261026.mts`。
+   - 🔴 **五档上限与字数**（2026-11-07）：按「**势力 × 番号**」计上限——**T0 限 1 人（普将禁挂）｜T1 1–2 人｜T2 1–4 人｜T3 1–8 人｜T4 1–8 人（名将禁挂）**；乘数 T0×1.5｜T1×1.4｜T2×1.3｜T3×1.2｜T4×1.1（`ELITE_TIER_MULT`）。同号限一档；除 T0 外允许史实同属一部者（含名将）共用，超限移入同文化兄弟番号。**史源原名不限字数**（`src/data/EliteNameRules.ts` `ELITE_HISTORIC_NAMES`），**自拟番号 4–8 字**。验收 `scratch/_audit_elite_caps_20261101.mts`、`scratch/_audit_elite_shared_20261026.mts`。
 6. **玩家「告辞」＝换下一位武将接任务**（2026-10-21）：`PlayerQuestSystem.leaveAndFindNextGeneral()`；进 `declinedGenerals` 立即换人；接任务/切模式/读档清空。
 
 ---
@@ -53,9 +53,9 @@
 ## 三、军团
 
 1. **时代与军团自动判定（唯一链路）**（2026-11-10）：
-   - 🔴 **四时代年段与势力时代**：**古典＝传说–476｜封建＝476–1050｜城堡＝1050–1500｜帝国＝1500–1900**（1900 后归帝国）。正规势力在 `src/data/FactionEra.ts`（`FACTION_ERA`）必填时代（`panshu` 豁免），按存续年（`FactionLifeYears.ts`）**大部分落在哪个时间段**判；新增势力同批登记。
+   - 🔴 **四时代年段与势力时代**：**古典＝传说–476｜封建＝476–1050｜城堡＝1050–1500｜帝国＝1500–1900**（1900 后归帝国）。正规势力在 `FactionEra.ts`（`FACTION_ERA`）必填时代（`panshu` 豁免），按存续年（`FactionLifeYears.ts`）判，新增同批登记。🔴 **长时代按年代分段**（2026-11-11 主人令；大夏那种前期很短的整段算一个时代）：存续 ≥500 年按四时代年段切段（不足 150 年并入邻段），不足 500 年一个时代；**武将按经典战年（无则登场年）落段取军团**（`getGeneralEra`）。
    - 🔴 **自动判定链**：① **三级军团不动**（`LEVEL_3_LEGION_MAP`：岳家军、图皮、征服者、风琴、苏丹亲兵/加齐突骑）；② **武将时代跟势力走**（李继迁属西夏＝城堡）；③ **武将文化＝据点 `buildingStyle`**；④ **军团 ＝ 势力时代 ＋ 据点文化**（`getLegionNameOfGeneral` / `resolveGeneralLegionName`：剧本 → 手写三级/特例 → 古典·先秦 17 位 → 势力时代 × 据点文化 → 势力兜底；动乱/起义/海寇不手写挂 `盗贼团伙`）。无将守城按「当年时代 × 据点 `buildingStyle`」取二级军团，无主将队（`resolveCityLegionName`）。`FACTION_COMPOSITIONS[fid].legionName` 按主将军团对齐作兜底；面板「在用武将」显实数。
-   - 🔴 **文化定义、后裔延续与空格审定**：**文化＝一片土地／区域的信仰、建筑、习惯、饮食、节日**（67 文化是地域泛称，如 `XIANBEI`＝漠南、`HUGUANG`＝湘鄂粤桂闽；政权更迭不改当地文化；**67 文化＝二级 62＋三级 5 写死，不加第 68 个**）。**已消失民族/文化**：只要该区域有**自称其后裔的一批人**或**生活方式相近的人群与留名武将**，即作为该时代延续并建军团；某「时代 × 文化」有武将名（含凡人传说）即应立军团。**空格军团禁批处理，须逐格审定报批（③档）**。**二级命名**：`时代前缀 ＋ 地区/民族泛称 ＋ 军团`（`tools/rename-legions.cjs`），禁政权名、编制词、方位字、兵种/战役/单城小地名，四代尽量不同名。验收 `tools/verify-general-legion.mts`、`scratch/audit_faction_era.mts`、`scratch/_audit_era_chain_20261103.mts`。
+   - 🔴 **文化定义、后裔延续与空格审定**：**文化＝一片土地／区域的信仰、建筑、习惯、饮食、节日**（67 文化是地域泛称，如 `XIANBEI`＝漠南、`HUGUANG`＝湘鄂粤桂闽；**67 文化＝二级 62＋三级 5 写死，不加第 68 个**）。**已消失民族/文化**：只要该区域有**自称其后裔的一批人**或**生活方式相近的人群与留名武将**，即作为该时代延续并建军团；某「时代 × 文化」有武将名（含凡人传说）即应立军团。**空格军团禁批处理，须逐格审定报批（③档）**。**二级命名**：`时代前缀 ＋ 地区/民族泛称 ＋ 军团`（`tools/rename-legions.cjs`），禁政权名、编制词、方位字、兵种/战役/单城小地名，四代尽量不同名。验收 `tools/verify-general-legion.mts`、`scratch/audit_faction_era.mts`、`scratch/_audit_era_chain_20261103.mts`。
 2. **主将队（第 10 队）**：只改 `commanderUnit`，三排、阵型、名字、兵力不动。**取兵模顺序**（2026-10-24）：**剧本 `commanderUnit` → 武将专属英雄（`GENERAL_HERO_UNITS`）→ 军团默认 `commanderUnit` → 军团前排兵种**。限战斗英雄（含三御驾战象 `porus_elephant / bayinnaung_elephant / dagnajan_elephant` 及魔法英雄）；禁精英兵、斥候、酋长、职位兵模、乘舆皇帝、马、船及攻城武器外形（`bad_neighbor / gods_own_sling / warwolf_trebuchet / hero_jeanbureau / hero_jeandelorrain / saboteur`）。时代闸：古典只用古典；封建用古典/封建；城堡用古典~城堡；帝国不限（均优先本代）。唯一检查 `isHeroUnitKey()`，与历史冲突改检查。
 3. **编制、阵型与行军海陆形态**：
    - 军团 ＝ 主将队 ＋ 前中后三排 ＋ 舰队（归 `cav / melee / ranged`；禁攻城武器；禁 `light_riders` 用 `light_cavalry`）。编制装不下时**改程序，不改编制**。
@@ -68,9 +68,9 @@
 ## 四、百岁模式与乱斗模式
 
 1. **势力、据点与时代泛称**：出城真实势力＝武将政权，另记出身判老家（`Army.syncGeneralFaction / getHomeFactionId`）。据点归当年在场将势力（`centenarianGeneralOwnersSync.ts`）；无在场将时地图旗号走 `getEraCityDisplayName(势力, 据点 buildingStyle)` 按**据点建筑文化**取时代名（`src/data/eraFactionDisplay.ts`，中原四代旗号统一「华」）；**有专属纹章的势力，武将不在场时照旧画纹章**（2026-11-03）。
-2. **首战（名将代表战）**（2026-11-09）：**只做名将代表战**（普将有问题直接删）；**双方武将须实名在场**（`enemyGeneralId` 禁泛称/职位拟名；`BattlefieldCharacters.ts` 只留真名）。敌将史失其名时，**先换该名将另一场敌将有实名的经典战，换无可换才删首战**。新增武将按四闸（`docs/AGENTS/expedition-elite.md` §12.3，缺一即普将）配齐五表，立绘留空。**攻守兵力 1 万～2 万**（`FIRST_BATTLE_MIN/MAX_TROOPS = 10000 / 20000`），**兵力比 ≤ 1:2**（史实赢家劣势 ≥1:2 拉平，败方最多 1:2 劣势；`scratch/_fix_firstbattle_troops_20261028.mts`）。本城距战场 **>300km** 去打仗处接，**≤300km** 在本城接。野战/守城全歼敌军团、攻城克城算胜；野战仅在写了史实 `rewardCityId` 时奖据点；战败军团溃散、脱离势力换下一家（`PlayerQuestSystem.ts`）。战前由 `announceBriefing` 播报背景（`GeneralFirstBattleBackgrounds.ts`，跳过开战三势句，保留战后结果播报；见 `docs/AGENTS/首战历史背景播报-单一口径.md`）。
+2. **首战（名将代表战）**（2026-11-09）：**只做名将代表战**（普将有问题直接删）；**双方武将须实名在场**（`enemyGeneralId` 禁泛称/职位拟名；`BattlefieldCharacters.ts` 只留真名）。敌将史失其名时，**先换该名将另一场敌将有实名的经典战，换无可换才删首战**。新增武将按四闸（`docs/AGENTS/expedition-elite.md` §12.3，缺一即普将）配齐五表，立绘留空。**攻守兵力 1 万～2 万**（`FIRST_BATTLE_MIN/MAX_TROOPS = 10000 / 20000`），**兵力比 ≤ 1:2**（赢家劣势 ≥1:2 拉平；`scratch/_fix_firstbattle_troops_20261028.mts`）。本城距战场 **>300km** 去打仗处接，**≤300km** 在本城接。野战/守城全歼敌军团、攻城克城算胜；野战仅在写了史实 `rewardCityId` 时奖据点；战败军团溃散、脱离势力换下一家（`PlayerQuestSystem.ts`）。战前由 `announceBriefing` 播报背景（`GeneralFirstBattleBackgrounds.ts`，见 `docs/AGENTS/首战历史背景播报-单一口径.md`）。
 3. **义军与叛军**（2026-11-05）：**义军**＝历史起义首领独立政权（按史实命名，禁用「地名＋义军」；`panjun` 已删），可出征；**叛军（`panshu`）**＝无将据点无主状态，**无字旗、不出征**，校验跳过（`skipFactions`），禁补数据。**播报战败方必冠势力名**（`SpeechAnnouncer.announceCityCapture`）。
-4. **建成年门槛、退场、长寿与默认模式**（2026-11-10）：🔴 **未到建城年的大/中/小城与险要（`pass`）降为城寨（`stockade`）**，到年恢复（`cityFoundedTypeSync.ts`）；🔴 **战场到 `scriptYear` 才显示**（`getWonderGateYear()`），奇观到 `WONDER_FOUNDED_YEAR` 才显示；🔴 **百岁模式到退场年的武将等在场军团完全覆灭后再退场**（`generalOnStage.ts` + `LegionBehaviors.ts`）；🔴 **无在场将时守将名为「去时代前缀与军团后缀的军团名＋将军」**（`formatLegionGeneralName`）；🔴 **关闭百岁模式马匹生老病死**；🔴 **开局默认＝百岁模式（`centenarian`）**，默认归属 `getDefaultCityFactionId(cityId)` 取首位当家将（名将优先）政权；乱斗每城由 `meleeRandomOwners` 随机抽一家当家并由 `setMeleeCityHomeFactionProvider` 锁定，一局一朝不串将。
+4. **建成年门槛、退场、长寿与默认模式**（2026-11-10）：🔴 **未到建城年的大/中/小城与险要（`pass`）降为城寨（`stockade`）**，到年恢复（`cityFoundedTypeSync.ts`）；🔴 **战场到 `scriptYear` 才显示**（`getWonderGateYear()`），奇观到 `WONDER_FOUNDED_YEAR` 才显示；🔴 **百岁模式到退场年的武将等在场军团完全覆灭后再退场**（`generalOnStage.ts` + `LegionBehaviors.ts`）；🔴 **无在场将时守将名为「去时代前缀与军团后缀的军团名＋将军」**（`formatLegionGeneralName`）；🔴 **关闭百岁模式马匹生老病死**；🔴 **开局默认＝百岁模式（`centenarian`）**，默认归属 `getDefaultCityFactionId(cityId)` 取首位当家将（名将优先）政权；乱斗每城由 `meleeRandomOwners` 抽一家当家并由 `setMeleeCityHomeFactionProvider` 锁定，一局一朝不串将。
 
 ---
 
@@ -78,8 +78,8 @@
 
 1. **分类与定级**（2026-10-25，离最近据点 >50km 才可新建；按最著名历史阶段判）：① 无人迹 → **战场 `bf_*`**；② 军事设施（关/隘/渡/堡/戍/镇/哨卡，有石墙/包砖/夯土墙或名带「关」/史载为关，且未成 ≥1 万居民城；「兵家必争之地」非判据）→ **险要 `pass`**；③ 居民城按 ≤1700 年城居人口峰值定级（直接史料 → 有依据推算 → 按城郭判；写进 `note`）：**≥50 万（容差 ≥40 万）大城｜≥10 万（容差 ≥8 万）中城｜≥1 万小城｜<1 万或算不出：石墙/包砖墙为小城，夯土墙/木栅/无墙为城寨**。
 2. **城型与城寨围栏**：城寨＝古典、小城＝封建、中城＝城堡、大城＝帝国。小城石墙/木栅走 `cityWallShared.smallCityUsesStoneWall()`（含石墙例外**太宰府 `city_taizaifu`**，`scratch/verify_small_city_walls.mts`）。城寨三件套（NE/SE 墙、转向必有且不相邻城垛、左下正中单门）统一 import `cityWallShared`；圆城/八角/椭圆只许 FENCE 荆篱（`legacyFenceRoundWall / legacyFenceOctagonWall`）；院内 9/8/7 栋（余量 ≥5px，`scratch/verify_stockade_shape_parity.mts`、`scratch/_measure_stockade_contain.mjs`）。战术四城型一律四门。
-3. 🔴 **海路与港口**（2026-11-10，见 `docs/02-design/海路网-单一口径-2026-10-24.md`）：**每座港口连 2–8 条海路**（史实成立即连；内陆城退港；缺线海港补 2–3 条；内河/湖港不补；全球 198 港除里海外连通，不画巴拿马运河；`VectorSeaRouteData.ts`，验收 `scratch/audit_port_degrees.mts`、`scratch/audit_march_sea_legs.mts`、`tools/audit-route-connectivity.mts`）。🔴 **战略地图码头/港口只放开放海边（`isOpenOcean`），绝不放内河/内湖；且只给大中小城，险要（`pass`）与城寨（`stockade`）不放**（`CityLifeAmbientLayer.ts`）。
-4. 🔴 **战略底图军事沙盘定式（严禁乱改）**（2026-11-10）：`HillshadeWorker.ts` 海拔 LUT、气候贴图配比（`0.35→0.42`）、农田肌理、雪线 100% 保原版；山川浮雕只认真实坡度 `slopeGrad` 与山高分级 `hillDepthT = rampWorker(zC, 120, 680)`（走廊去饱和 `16%` 微提明度；`<450m` 低丘阴影下限 `0.56`；`>680m` 陡坡去饱和 `32%`、阴影下限 `0.28` 配天光散射与山脊反差；`VectorRiverLayer.ts` 与 `StrategicWaterMaterial.ts` 水系深切保留）。
+3. 🔴 **海路与港口**（2026-11-10，见 `docs/02-design/海路网-单一口径-2026-10-24.md`）：**每座港口连 2–8 条海路**（史实成立即连；内陆城退港；缺线海港补 2–3 条；内河/湖港不补；全球 198 港除里海外连通，不画巴拿马运河；`VectorSeaRouteData.ts`，验收 `scratch/audit_port_degrees.mts`）。🔴 **战略地图码头/港口只放开放海边（`isOpenOcean`），绝不放内河/内湖；且只给大中小城，险要（`pass`）与城寨（`stockade`）不放**（`CityLifeAmbientLayer.ts`）。
+4. 🔴 **战略底图军事沙盘定式（严禁乱改）**（2026-11-10）：`HillshadeWorker.ts` 海拔 LUT、气候贴图配比（`0.35→0.42`）、农田肌理、雪线 100% 保原版；山川浮雕只认真实坡度 `slopeGrad` 与山高分级 `hillDepthT = rampWorker(zC, 120, 680)`（走廊去饱和 `16%`；`<450m` 阴影下限 `0.56`；`>680m` 去饱和 `32%`、阴影下限 `0.28` 配天光散射与山脊反差；`VectorRiverLayer.ts`、`StrategicWaterMaterial.ts` 水系深切保留）。
 
 ---
 
@@ -87,7 +87,7 @@
 
 1. **树林、飘云与地面绘制**：树由 DE 地形决定（`Scene13DeTrees.ts`），沙地不长温/寒带乔木（`guardSandTree`，`scratch/_verify_forest_on_sand.mjs`）；**飘云独立保留**。地面保持「6 张图 ＋ 平滑势场混合」（`deriveDeGroundTiles`），坡势场取**逐角连续场**（`updateCornerSlope` → `aSlope`），泥斑用低频噪声扭曲，**严禁整格直线/直角或 `abs(mod)` 镜像折线**（`scratch/_ground_seam_probe.html`）。拒马/木栅残骸不落水里或湿岸（`pruneWetBarricades`）。
 2. **高地生成定式**（2026-10-19，严禁乱改，`Scene13GroundLayerGL.ts / Scene13WarLayer.ts`）：120×120 网格（`TW=96, TH=48`）每级抬 24px；DE 平顶团块＋1 遍斜坡柔化；斜坡光照（向阳 +28%、背阳 −31%、侧坡 −10%、平顶 +7%）混 26% 土石肌理，禁画 `fract` 等高线；城池与护城河全平，外侧高地间隔 ≥12 格，按 `applySeedNoiseOffset(seedStr)` 异化。
-3. 🔴 **武将技与战术准入**（2026-11-02）：武将满槽自动计全军生效；观众替公共玩家放的技按官职定范围（斥候本人/探马本队/先锋本排/将军及以上本军，`PlayerLiveSkill.ts`）。🔴 **进战术模式双方须为实名武将**（`GameAppCombatHooks.ts:sideHasRealGeneral`，叛军 `panshu` 不进）。🔴 **武将技名称**：从史源取四字词，全库 0 重名；**通用技只用兵法泛称，禁带单一地名/战役名**（地名只许在专属技）；改名同步 `holdOrRetreatNames`；同词根（名尾两字）≤3 条；**单条技 ≤50–60 人持有**（按六计效果签名摊平六槽，三势一致）；**名将典故技本主必占、他将可共用**（每将每三势 ≤2 条自家技）。验收 `scratch/_verify_skill_rename_20261031.mts --cap 3`、`scratch/_skillname_audit_20261031.mts`、`scratch/_verify_even2_20261031.mts`、`npm run tactical:assign-audit`。
+3. 🔴 **武将技与战术准入**（2026-11-02）：武将满槽自动计全军生效；观众替公共玩家放的技按官职定范围（斥候本人/探马本队/先锋本排/将军及以上本军，`PlayerLiveSkill.ts`）。🔴 **进战术模式双方须为实名武将**（`GameAppCombatHooks.ts:sideHasRealGeneral`，叛军 `panshu` 不进）。🔴 **武将技名称**：从史源取四字词，全库 0 重名；**通用技只用兵法泛称，禁带单一地名/战役名**（地名只许在专属技）；改名同步 `holdOrRetreatNames`；同词根（名尾两字）≤3 条；**单条技 ≤50–60 人持有**（六计签名摊平六槽）；**名将典故技本主必占、他将可共用**（每将每三势 ≤2 条自家技）。验收 `scratch/_verify_skill_rename_20261031.mts --cap 3`、`scratch/_skillname_audit_20261031.mts`、`scratch/_verify_even2_20261031.mts`、`npm run tactical:assign-audit`。
 
 ---
 
