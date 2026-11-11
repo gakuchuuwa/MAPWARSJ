@@ -8,6 +8,7 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'jiaxite', name: '加喜特' },   // 🔴 [经典战导入] 第1批GG校：前1158年巴比伦之战守方为加喜特王朝而非迦勒底
   { id: 'hulumusi', name: '忽鲁谟斯' },   // 霍尔木兹王国（波斯湾咽喉·郑和四次下西洋驻泊贸易古国）
   { id: 'bolinixiya', name: '波利尼西亚' },   // 大溪地·波马雷王朝／波利尼西亚群岛（社会群岛）
   // ── 2026-11-01 C 档移将：新建史有政权（武将按同文化据点落位）──

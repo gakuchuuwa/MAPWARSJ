@@ -838,6 +838,7 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
 assertUniqueFixedColors(_FIXED);
 
 export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Object.freeze({
+    jiaxite: '#8E9B3B', // 加喜特（经典战导入）
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（沿用归并前原色）
     qiufu: '#8B56AB',
     chendiaoyan: '#AC2A72',

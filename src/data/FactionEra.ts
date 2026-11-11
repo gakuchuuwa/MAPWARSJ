@@ -36,6 +36,7 @@ export interface FactionEraSegment {
 }
 
 export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>> = {
+    'jiaxite': [{ from: -9999, era: 'antiquity' }], // 加喜特（经典战导入）
     // ══════ 一、手裁：整段一个时代 / 长命政权按史分年段 ══════
     'jiaohuangguo': [{ from: -9999, era: 'castle' }], // 教皇国｜756 丕平献土—1500＝城堡时代罗马教廷军团；1500 后＝帝国时代意大利军团
     'yalan': [{ from: -9999, era: 'antiquity' }], // 亚兰（大马士革王国）｜前 10 世纪–前 732＝古典时代近东军团

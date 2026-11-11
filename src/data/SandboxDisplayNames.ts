@@ -25,6 +25,7 @@
  *     瞿越（大瞿越）/大越/越南三朝国号本字都是「越」→ 旗号统一「越」；与阮福映同场内战的西山写「西山」（主人：「用西太泛指」）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'jiaxite': '加喜', // 加喜特
     'hulumusi': '忽鲁',
     'bolinixiya': '波利',
     'pattani': '北大',

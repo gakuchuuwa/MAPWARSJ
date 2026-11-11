@@ -58,6 +58,7 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+        'jiaxite': '加喜',   // 加喜特（经典战导入）
         'sesali': '色萨',
         'awraba': '奥雷',
         'handong': '汉东',   // 2026-10-25 补登记（刘黑闼·汉东王，邯郸）

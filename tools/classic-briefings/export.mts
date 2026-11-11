@@ -12,6 +12,7 @@ import { FIRST_BATTLE_BACKGROUNDS, firstBattleKindOf } from '../../src/data/Gene
 import { FIRST_BATTLE_STRATEGIC_BACKGROUNDS } from '../../src/data/GeneralFirstBattleStrategicBackgrounds';
 import { getRawGeneralByGeneralId } from '../../src/data/FactionGenerals';
 import { FACTIONS } from '../../src/data/factions';
+import { CLASSIC_BATTLE_BRIEFINGS } from '../../src/data/ClassicBattleBriefings.generated';
 
 const out = process.argv[2];
 const batchSize = Number(process.argv[3] ?? 30);
@@ -31,7 +32,7 @@ const rows = Object.values(GENERAL_FIRST_BATTLES)
 
 const sameBattle = new Map<string, number>();
 let sameSeq = 0;
-const header = ['批次', '序号', 'generalId', '战役', '年份', '类型', '我方统帅', '我方势力', '敌方势力', '敌将', '战场或目标', '同场标记', '现有战略播报(参考)', '现有战术播报(参考)'];
+const header = ['批次', '序号', 'generalId', '战役', '年份', '类型', '我方统帅', '我方势力', '敌方势力', '敌将', '战场或目标', '同场标记', '播报已导入', '现有战略播报(参考)', '现有战术播报(参考)'];
 const lines = [header.map(csvCell).join(',')];
 rows.forEach((fb, i) => {
     const me = getRawGeneralByGeneralId(fb.generalId);
@@ -56,6 +57,7 @@ rows.forEach((fb, i) => {
         foe?.general.generalName ?? '',
         fb.targetName,
         mark,
+        CLASSIC_BATTLE_BRIEFINGS[fb.generalId] ? '是' : '',
         FIRST_BATTLE_STRATEGIC_BACKGROUNDS[fb.generalId] ?? '',
         FIRST_BATTLE_BACKGROUNDS[fb.generalId] ?? '',
     ].map(csvCell).join(','));
