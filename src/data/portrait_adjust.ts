@@ -9273,7 +9273,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -33
         },
         "/assets/CENTRAL/bfe2_xun_linfu.png": {
-            "scale": 1.21,
+            "scale": 1.19,
             "offsetX": 21,
             "offsetY": 9
         },
@@ -11106,6 +11106,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/PERSIAN/bfe_cb_midi_1.png": {
+            "scale": 1,
+            "offsetX": 11,
+            "offsetY": -5
+        },
+        "/assets/PERSIAN/gen_cambyses.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {

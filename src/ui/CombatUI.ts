@@ -1,3 +1,4 @@
+import { getEraCityDisplayName } from '../data/eraFactionDisplay';
 import {FACTION_GENERALS, formatLegionGeneralName, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
@@ -1801,7 +1802,13 @@ export class CombatUI {
         // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 势力名一律取**显示势力**：
         //    经典战同势力时引擎用 panshu 占位，界面回到武将自己的势力，绝不显示「叛军 + 武将」。
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(this.attackerDisplayFactionId ?? init.attackerFactionId) ?? '攻方';
-        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
+        // 🔴 [2026-11-11 主人问「荆楚将军，为什么势力是巴蜀呢？」] 守城无武将时，势力时代名按**本据点**建筑文化取
+        //    （与地图据点旗 getEraCityDisplayName 同口径，AGENTS §四.1）；旧逻辑按势力首城风格取，才会出现「荆楚将军·巴蜀」。
+        const defCityEraName = (!resolvedDefGeneralId && defCityObj)
+            ? getEraCityDisplayName(this.defenderDisplayFactionId ?? init.defenderFactionId, defCityObj.buildingStyle)
+            : null;
+        const defFactionName = defCityEraName
+            ?? (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
         this.attackerDisplayName = attFactionName;
         this.defenderDisplayName = defFactionName;
 

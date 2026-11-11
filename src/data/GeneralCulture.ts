@@ -1985,6 +1985,29 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'osman_piyale_pasha': 'BYZANTINE',   // 皮亚莱帕夏 · 奥斯曼帝国 · 君士坦丁堡
     'mazhaer_ulazlo_i': 'HUNS',   // 乌拉斯洛一世 · 匈牙利 · 塞格德
     'mazhaer_balint_torok': 'HUNS',   // 特勒克 · 匈牙利 · 塞格德
+    'bfe_cb_xila_1': 'ATHENIANS',   // 战场人物｜安提奥库斯
+    'bfe_cb_libiya_1': 'BERBER',   // 战场人物｜斯彭迪乌斯
+    'bfe_cb_qin_1': 'CENTRAL',   // 战场人物｜孟明视
+    'bfe_cb_qin_2': 'CENTRAL',   // 战场人物｜蒙骜
+    'bfe_cb_wei_1': 'CENTRAL',   // 战场人物｜公孙喜
+    'bfe_cb_zhao_1': 'CENTRAL',   // 战场人物｜扈辄
+    'bfe_cb_boootiya_1': 'GREECE',   // 战场人物｜伊斯梅尼亚斯
+    'bfe_cb_kaliya_1': 'GREECE',   // 战场人物｜摩索拉斯
+    'bfe_cb_ldiya_1': 'GREECE',   // 战场人物｜克罗伊索斯
+    'bfe_cb_chuguo_1': 'JIANGNAN',   // 战场人物｜楚顷襄王
+    'bfe_cb_qi_1': 'JIANGNAN',   // 战场人物｜国书
+    'bfe_cb_wu_1': 'JIANGNAN',   // 战场人物｜阖闾
+    'bfe_cb_antigonid_1': 'MACEDONIAN',   // 战场人物｜德米特里一世
+    'bfe_cb_maqidun_1': 'MACEDONIAN',   // 战场人物｜欧墨涅斯
+    'bfe_cb_aiji_1': 'ORIE',   // 战场人物｜尼科二世
+    'bfe_cb_jialedi_1': 'ORIE',   // 战场人物｜米罗达巴拉旦
+    'bfe_cb_yalan_1': 'ORIE',   // 战场人物｜伊卢比迪
+    'bfe_cb_midi_1': 'PERSIAN',   // 战场人物｜阿斯提阿格斯
+    'bfe_cb_luoma_diguo_1': 'ROMA',   // 战场人物｜德西乌斯
+    'bfe_cb_luoma_diguo_2': 'ROMA',   // 战场人物｜登塔图斯
+    'bfe_cb_lagoniya_1': 'SPARTANS',   // 战场人物｜阿格西劳斯二世
+    'bfe_cb_seleisi_1': 'THRACIAN',   // 战场人物｜利西马科斯
+    'bfe_cb_yan_1': 'XIANBEI',   // 战场人物｜太子丹
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */
