@@ -1366,13 +1366,13 @@ export class Scene13WarLayer {
 
         const rawAttGid = init.attackerGeneralId?.trim()
 
-            || (init.attackerFactionId ? getFactionGeneral(init.attackerFactionId)?.generalId : null)
+            // 🔴 [2026-11-11 主人令「不应该有兜底吧…没有武将的据点，就只有守将，什么都不加成的」] 不再兜底取势力首位武将
 
             || null;
 
         const rawDefGid = init.defenderGeneralId?.trim()
 
-            || (init.defenderFactionId ? getFactionGeneral(init.defenderFactionId)?.generalId : null)
+            // 🔴 [2026-11-11] 同上：无将据点只有守将（无名将/精锐倍率），不兜底
 
             || null;
 
@@ -1416,23 +1416,9 @@ export class Scene13WarLayer {
 
             }
 
-            if (isDef && cityId) {
-
-                const cCfg = getCityEliteConfig(cityId);
-
-                if (cCfg) return cCfg.tier;
-
-            }
-
-            if (factionId) {
-
-                // 🔴 [2026-11-07] 势力远征番号表已删 → 取该势力武将自己的精锐档
-
-                const fCfg = getFactionEliteConfig(factionId);
-
-                if (fCfg) return fCfg.tier;
-
-            }
+            // 🔴 [2026-11-11 主人令「不应该有兜底吧…没有武将的据点，就只有守将，什么都不加成的」]
+            //    精锐只跟在场武将走：不再按据点精锐表（isDef && cityId）/ 势力精锐（factionId）兜底定档。
+            void factionId; void cityId; void isDef;
 
             return null;
 

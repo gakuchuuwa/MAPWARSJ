@@ -4,7 +4,7 @@ import {
     getGeneralEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
-import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
+import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getScriptSiegeDefenderGeneral } from '../events/scriptPeriod';
@@ -123,12 +123,12 @@ export function assignSiegeGarrisonTier(
     for (const l of defendingLegions) if (l.generalId) busyGenIds.add(l.generalId);
     for (const l of attackingLegions) if (l.generalId) busyGenIds.add(l.generalId);
     const allCityGenerals = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
+    // 🔴 [2026-11-11 主人问「怎么精锐还是梁地游兵？」] 兜底也只取**在场**武将：原兜底 getCityAnchoredGeneral 不看登场，
+    //    定陶彭越未登场仍把「梁地游兵」挂给城防。精锐全跟武将走（AGENTS §二.2），无在场将 → 不发精锐（界面显示「XX驻军」）。
     const availableCityGeneral =
-        allCityGenerals.find((g) => !busyGenIds.has(g.generalId)) ?? getCityAnchoredGeneral(city.id);
+        allCityGenerals.find((g) => !busyGenIds.has(g.generalId)) ?? allCityGenerals[0] ?? null;
     const anchoredGeneral = scriptDefender ?? availableCityGeneral;
-    const eliteName =
-        (anchoredGeneral ? getGeneralEliteLegionName(anchoredGeneral.generalId) : null) ??
-        getCityEliteLegionName(city.id);
+    const eliteName = anchoredGeneral ? getGeneralEliteLegionName(anchoredGeneral.generalId) : null;
 
     // ② 城内已有自家军团带了（守城军团或在场援军），城防就不发了
     const hasLegionElite = defendingLegions.some((l) => l.isElite && l.name === eliteName);

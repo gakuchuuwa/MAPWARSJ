@@ -11116,6 +11116,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/CENTRAL/bfe2_bao_shuya.png": {
+            "scale": 1.21,
+            "offsetX": 12,
+            "offsetY": 12
         }
     },
     "folderGuides": {

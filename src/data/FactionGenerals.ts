@@ -18221,6 +18221,17 @@ export function formatLegionGeneralName(legionName: string | null | undefined): 
     return core ? `${core}将军` : '将军';
 }
 
+/**
+ * 🔴 [2026-11-11 主人令「精锐也得统一下，也按军团的名字吧」→ 同日改定「荆楚军改为荆楚驻军」]
+ * 据点武将未登场/已退场（守城无在场武将）时，精锐栏显示「军团名去时代前缀与『军团』后缀 ＋『驻军』」：
+ * 「古典时代荆楚军团」→「荆楚驻军」。取代 2026-10-21「XX据点驻军」（按据点名）口径。
+ */
+export function formatLegionEliteName(legionName: string | null | undefined): string {
+    const general = formatLegionGeneralName(legionName);
+    const core = general.replace(/将军$/, '');
+    return core ? `${core}驻军` : '驻军';
+}
+
 function stageGeneralName(
     generalId: string,
     name: string,

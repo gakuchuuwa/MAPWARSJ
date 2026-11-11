@@ -1,5 +1,5 @@
 import { getEraCityDisplayName } from '../data/eraFactionDisplay';
-import {FACTION_GENERALS, formatLegionGeneralName, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import {FACTION_GENERALS, formatLegionEliteName, formatLegionGeneralName, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
@@ -428,7 +428,7 @@ export class CombatUI {
     private currentAttackerEliteName: string = '';
     private currentDefenderLegionName: string = '';
     private currentDefenderEliteName: string = '';
-    /** 守城无在场武将时显示「XX驻军」（此时不显示精锐） */
+    /** 守城无在场武将时显示「军团名＋驻军」（如荆楚驻军；此时不显示武将精锐，2026-11-11） */
     private defenderGarrisonLabel: string = '';
 
 
@@ -1858,8 +1858,10 @@ export class CombatUI {
         this.currentDefenderLegionName = defLegionName || '';
         // 🔴 [2026-10-21 主人令] 精锐跟着武将走（一将一精锐）：守城无在场武将 → 不显示精锐，改显示「XX据点驻军」
         //     defCityObj 已在上面取防守立绘时解析过，这里直接复用。
+        // 🔴 [2026-11-11 主人令「精锐也按军团的名字」→ 同日改定「荆楚军改为荆楚驻军」] 守城无在场武将 → 精锐栏显示「军团名＋驻军」（荆楚驻军），
+        //     取代 2026-10-21「XX据点驻军」；与守将名「荆楚将军」、势力名「荆楚」同一军团口径。
         this.defenderGarrisonLabel = (!resolvedDefGeneralId && init.defenderCityId)
-            ? `${defCityObj?.name || init.defenderCityId}驻军` : '';
+            ? formatLegionEliteName(defLegionName) : '';
         this.currentDefenderEliteName = this.defenderGarrisonLabel ? '' : ((resolvedDefGeneralId ? getGeneralEliteLegionName(resolvedDefGeneralId) : null) || (init.defenderEliteName && init.defenderEliteName.trim())
             || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId, resolvedDefGeneralId) : '')
             || (init.defenderFactionId ? (getFactionEliteConfig(init.defenderFactionId)?.name ?? '') : '') || '');
@@ -6720,6 +6722,8 @@ export class CombatUI {
         } else {
             if (legionName) this.currentDefenderLegionName = legionName;
             if (rec) this.defenderGarrisonLabel = '';
+            // 🔴 [2026-11-11 主人令「荆楚军改为荆楚驻军」] 本城守军无武将：精锐栏随军团名刷新
+            else if (nameUnit.unitType === 'city' && legionName) this.defenderGarrisonLabel = formatLegionEliteName(legionName);
             if (this.defenderGarrisonLabel) this.currentDefenderEliteName = '';
             else if (resolvedElite) this.currentDefenderEliteName = resolvedElite;
         }
@@ -7217,6 +7221,14 @@ export class CombatUI {
         //    带武将的部队一律显示武将自己的势力（经典战「同势力→panshu 占位」由此不再露出「叛军」）。
         if (isBlankRebelFaction(factionId) && generalId) {
             factionId = getFactionIdOfGeneral(generalId) ?? factionId;
+        }
+
+        // 🔴 [2026-11-11 主人问「荆楚将军，为什么势力是巴蜀呢？」] 无武将的本城守军：势力时代名按本据点建筑文化取
+        if (!generalId && unit.unitType === 'city') {
+            const cityStyle = (ent as { buildingStyle?: string } | undefined)?.buildingStyle
+                ?? (window as any).game?.cityManager?.getCity?.((ent as { id?: string } | undefined)?.id ?? '')?.buildingStyle;
+            const eraCityName = getEraCityDisplayName(factionId, cityStyle);
+            if (eraCityName) return eraCityName;
         }
 
         const dynamicName = (window as any).game?.cityManager?.getFactionName?.(factionId)

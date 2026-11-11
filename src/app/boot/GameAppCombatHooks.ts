@@ -137,13 +137,9 @@ function resolveUnitEliteName(unit: {
     }
     const entity = unit.getEntity?.();
     if (unit.unitType === 'city') {
-        const garrison = readSiegeGarrisonEliteName(entity);
-        if (garrison) return garrison;
-        const cityId = entity?.id ?? (typeof entity?.getCityId === 'function' ? entity.getCityId() : null);
-        if (cityId) {
-            const byCity = getCityEliteLegionName(cityId);
-            if (byCity) return byCity;
-        }
+        // 🔴 [2026-11-11 主人问「怎么精锐还是梁地游兵？」] 城防精锐只认本场发下的在场武将精锐（assignSiegeGarrisonTier）；
+        //    不再兜底「据点精锐表 / 势力精锐」——那会把未登场武将（定陶彭越）的番号挂给无将守军。精锐全跟武将走。
+        return readSiegeGarrisonEliteName(entity) ?? null;
     }
     const fromLegion = entity ? getLegionEliteLegionName(entity) : null;
     if (fromLegion) return fromLegion;
@@ -216,7 +212,7 @@ function startScene13War(
     const defenderCityLng = typeof defenderCityEntity?.longitude === 'number' ? defenderCityEntity.longitude : undefined;
     const attackerEliteName = resolveUnitEliteName(attacker);
     let defenderEliteName = resolveUnitEliteName(defender);
-    if (!defenderEliteName && defenderCityId) {
+    if (!defenderEliteName && defenderCityId && defender.generalId) {
         defenderEliteName = getCityEliteLegionName(defenderCityId, defender.generalId ?? undefined);
     }
     // 🔴 [2026-11-09 主人令「同名也照样进战术模式」] 精锐按档可挂多名武将，攻守两边各带同名番号是正常的，守方不再避让

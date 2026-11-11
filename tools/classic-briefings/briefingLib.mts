@@ -7,9 +7,17 @@ import type { ClassicBattleBriefing } from '../../src/data/ClassicBattleBriefing
 
 /** 一屏字幕最多几个字（字幕条一屏放得下） */
 export const SCREEN_MAX = 130;
-/** 大概字数（只提醒、不打回）：内容多少由写稿方按史料定 */
-export const STRATEGIC_RANGE = [150, 600] as const;
-export const TACTICAL_RANGE = [100, 400] as const;
+/**
+ * 🔴 [2026-11-11 主人令「GG把战略播报和战术播报都给写错了，写的字太多了。我要以前哪种：
+ *    以前战略播报：每段 89～144 字。以前战术播报：每段 89～144 字。所有，全部按这个模式执行，
+ *    可以根据内容略多点字，但是不能多太多。」] —— 取代同日「战略 150~600 / 战术 100~400」。
+ *   · 目标区间 89~144 字；落在 [HARD_MIN, 88] 或 [145, HARD_MAX] 只提醒；超出 HARD 区间整行打回。
+ */
+export const STRATEGIC_RANGE = [89, 144] as const;
+export const TACTICAL_RANGE = [89, 144] as const;
+/** 「略多点字，但是不能多太多」的硬边界：低于 / 高于即打回 */
+export const HARD_MIN = 80;
+export const HARD_MAX = 160;
 
 /** 读 CSV / TSV（看表头那一行有没有制表符来认分隔符），支持引号包住的格子 */
 export function parseTable(text: string): string[][] {
@@ -91,7 +99,8 @@ const OUTCOME_WORDS = /(大败|大破|溃败|溃散|败亡|阵亡|战死|取胜|
 /** 审一段播报：错误＝整行打回；提醒＝照写、仅供抽查 */
 export function auditText(p: string, label: string, range: readonly [number, number], errors: string[], warns: string[]): void {
     const n = len(p);
-    if (n < range[0] || n > range[1]) warns.push(`${label} 共 ${n} 字（大概 ${range[0]}~${range[1]}）`);
+    if (n < HARD_MIN || n > HARD_MAX) errors.push(`${label} 共 ${n} 字（要 ${range[0]}~${range[1]} 字，最多不超过 ${HARD_MAX}、最少不低于 ${HARD_MIN}）`);
+    else if (n < range[0] || n > range[1]) warns.push(`${label} 共 ${n} 字（目标 ${range[0]}~${range[1]}）`);
     if (/[()（）【】\[\]]/.test(p)) errors.push(`${label} 有括号`);
     if (/[0-9]/.test(p)) errors.push(`${label} 有阿拉伯数字（年份要写成「公元前二六〇年」）`);
     if (/[你您]|玩家|观众|壮士/.test(p)) errors.push(`${label} 对观众/玩家说话（只许用史书旁白口吻）`);
