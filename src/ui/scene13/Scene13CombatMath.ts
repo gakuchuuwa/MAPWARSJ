@@ -158,7 +158,25 @@ export const FALLBACK_MAPDATA_URL = '/scratch/rms-out/mapdata_vienna_danube_120.
 export const SIDE_CAP = 500;
 export const TRIGGER = 250;
 export const SPRITE_TROOPS = 20;
-export const CORPSE_KEEP = 0.4;
+/**
+ * 🔴 [2026-11-11 主人定「前期大部分是尸体，后期大部分是逃跑」「应该看比例」] 取代 08-22 的固定 40% 留尸。
+ * 一个兵倒下时留尸的概率，只看**他这一方自己**已损失的比例（阵亡人口 ÷ 开战人口）：
+ *   0–25% → 85%；25–50% 线性降到 20%；50–60% 再降到 10%；之后 10%。
+ * 损失少的一方（通常是胜方）自然几乎全留尸；打崩的一方后期成片溃逃。总尸体占比随战况走，不再定死。
+ */
+export function corpseKeepChance(lossFrac: number): number {
+    const r = Math.max(0, lossFrac);
+    if (r <= 0.25) return 0.85;
+    if (r <= 0.5) return 0.85 + (0.20 - 0.85) * ((r - 0.25) / 0.25);
+    if (r <= 0.6) return 0.20 + (0.10 - 0.20) * ((r - 0.5) / 0.1);
+    return 0.10;
+}
+/** 逃跑传染：同方在这个半径（px，约 4 格）内、刚逃不到 FLEE_CONTAGION_SEC 秒的逃兵，每个把留尸概率再压低 FLEE_CONTAGION_STEP */
+export const FLEE_CONTAGION_R = 215;
+export const FLEE_CONTAGION_SEC = 2.0;
+export const FLEE_CONTAGION_STEP = 0.08;
+/** 传染最多压低这么多（留尸概率下限仍取 0.05） */
+export const FLEE_CONTAGION_MAX = 0.4;
 export const FLEE_SPD = 150;
 export const FLEE_DUR = 4.0;
 export const FLAG_EVERY = 20;

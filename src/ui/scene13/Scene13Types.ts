@@ -517,7 +517,7 @@ export interface WarCorpse {
     t: number;
     /**
      * 已烙标记：true = 已烙进地面（待移除）。corpses 里只剩「确定保留」的尸体，
-     * 死亡动画播完即烙。留不留由 pushCorpse 在死亡时裁定。见 CORPSE_KEEP。
+     * 死亡动画播完即烙。留不留由 pushCorpse 在死亡时裁定。见 corpseKeepChance。
      */
     keep?: boolean;
 }
