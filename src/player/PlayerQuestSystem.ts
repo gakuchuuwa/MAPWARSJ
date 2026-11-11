@@ -12,7 +12,7 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
-import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode, getCurrentStageYear } from '../data/generalOnStage';
+import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode, getCurrentStageYear, setClassicBattleForcedOnStage, clearClassicBattleForcedOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName, getFactionEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { FACTIONS } from '../data/factions';
@@ -2334,6 +2334,9 @@ export class PlayerQuestSystem {
         }
 
         const factionName = this.deps.cityManager.getFactionName(myFactionId);
+        // 🔴 [2026-11-11 主人令「经典战役中，都是时间到的战役，不应该出现以军团为名字的武将和军团，都应该是真实武将，
+        //    真实武将的势力、旗号、精锐都应该挂靠武将一致」] 本场经典战攻守双方武将一律算在场（实名、本政权旗号、本人精锐）
+        setClassicBattleForcedOnStage([g.generalId, enemyGeneralId]);
         this.quest = {
             kind: 'first_battle',
             cityId: city.id,
@@ -2570,6 +2573,8 @@ export class PlayerQuestSystem {
 
     private cleanupFirstBattleState(q: PlayerQuest | null, kickAi: boolean = true): void {
         if (!q || q.kind !== 'first_battle' || !q.firstBattle) return;
+        // 🔴 [2026-11-11 主人令「经典战役都应该是真实武将」] 经典战结束：撤销攻守双方「算在场」的登记
+        clearClassicBattleForcedOnStage();
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (host && !host.isDestroyed) {
             delete (host as { __scriptPinned?: boolean }).__scriptPinned;

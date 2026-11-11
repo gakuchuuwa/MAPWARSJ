@@ -1569,7 +1569,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/MONGOL/dingling_weilu.png": {
             "scale": 1.22,
-            "offsetX": 0,
+            "offsetX": 27,
             "offsetY": -7
         },
         "/assets/CENTRAL_ASIA/geluolu_chisipijia.png": {
@@ -9063,9 +9063,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 51
         },
         "/assets/MONGOL/tujue_abo_dagan.png": {
-            "scale": 1.06,
+            "scale": 1.2,
             "offsetX": 0,
-            "offsetY": 17
+            "offsetY": 23
         },
         "/assets/XIANBEI/xihai_d_fuyun.png": {
             "scale": 1.04,
@@ -10243,8 +10243,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -22
         },
         "/assets/WEI/__闲置__daming_09.png": {
-            "scale": 1.03,
-            "offsetX": 0,
+            "scale": 0.99,
+            "offsetX": 19,
             "offsetY": -22
         },
         "/assets/WEI/__闲置__daming_11.png": {
@@ -11156,6 +11156,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.28,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/CENTRAL/bfe_cb_qin_1.png": {
+            "scale": 1.05,
+            "offsetX": 7,
+            "offsetY": -5
+        },
+        "/assets/XIANBEI/han_d_jiazong.png": {
+            "scale": 1.04,
+            "offsetX": 3,
+            "offsetY": -16
+        },
+        "/assets/XIANBEI/bfe3_74.png": {
+            "scale": 1.3,
+            "offsetX": 25,
+            "offsetY": 22
+        },
+        "/assets/XIANBEI/bfe3_87.png": {
+            "scale": 1.2,
+            "offsetX": 15,
+            "offsetY": 0
         }
     },
     "folderGuides": {

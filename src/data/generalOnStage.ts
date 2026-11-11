@@ -72,6 +72,23 @@ export function getGameMode(): GeneralGameMode | null {
 
 let inYearLookup = false;
 
+/**
+ * 🔴 [2026-11-11 主人令「经典战役中，都是时间到的战役，不应该出现以军团为名字的武将和军团，都应该是真实武将，
+ *    真实武将的势力、旗号、精锐都应该挂靠武将一致」]（AGENTS §四.2「双方武将须实名在场」）
+ * 玩家正在打的经典战，**攻守双方武将一律算在场**：经典战是「时间到了」才开的，不再被生卒窗口／势力起始年／
+ * 战场人物无生卒等闸门拦成「XX将军」「XX驻军」。随接任务登记、结算清除（PlayerQuestSystem）。
+ */
+const classicBattleForcedOnStage = new Set<string>();
+
+export function setClassicBattleForcedOnStage(generalIds: ReadonlyArray<string | null | undefined>): void {
+    classicBattleForcedOnStage.clear();
+    for (const id of generalIds) if (id) classicBattleForcedOnStage.add(id);
+}
+
+export function clearClassicBattleForcedOnStage(): void {
+    classicBattleForcedOnStage.clear();
+}
+
 /** 取当前模式下的判定年份（剧本＝事件年，百岁＝日历年，其余＝null） */
 export function getCurrentStageYear(): number | null {
     if (inYearLookup) return null;
@@ -107,6 +124,7 @@ function withStageLookup<T>(generalId: string, onReentry: () => T, compute: () =
 /** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年]且无在场未败军团 → 按普通守将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
+    if (classicBattleForcedOnStage.has(generalId)) return true;
     const scriptMode = isScriptPeriod();
     inYearLookup = true;
     let year: number | null = null;
