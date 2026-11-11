@@ -5470,7 +5470,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'heyuan_d_heichichangzhi', factionId: 'tang', cityId: 'city_huashixia', generalName: '黑齿常之', portrait: '/assets/KHITAN/heyuan_d_heichichangzhi.png', eliteName: '河源军', eliteTier: 1  },   // 按史：黑齿常之拜河源军经略大使，良非川率精骑三千夜袭破吐蕃（《旧唐书·卷一〇九·黑齿常之传》）
+        { generalId: 'heyuan_d_heichichangzhi', factionId: 'tang', cityId: 'city_ledou', generalName: '黑齿常之', portrait: '/assets/KHITAN/heyuan_d_heichichangzhi.png', eliteName: '河源军', eliteTier: 1  },   // 按史：黑齿常之拜河源军经略大使，良非川率精骑三千夜袭破吐蕃（《旧唐书·卷一〇九·黑齿常之传》）
 
 
 
@@ -7167,7 +7167,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     manzhou_d: [
     { generalId: 'jianzhou_nvzhen_limanzhu', factionId: 'manzhou_d', cityId: 'city_tongjiajiang', generalName: '李满住', portrait: '/assets/NORTHEAST/jianzhou_nvzhen_limanzhu.png', eliteName: '建州卫兵', eliteTier: 4  },   // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原势力 jianzhou 并入大清；按史：李满住为建州卫首领，八旗未建（《明史·朝鲜传》《清史稿·太祖纪》追述）
     { generalId: 'manzhou_d_sabusu', factionId: 'manzhou_d', cityId: 'city_bukui', generalName: '萨布素', portrait: '/assets/NORTHEAST/manzhou_d_sabusu.png', eliteName: '黑龙江戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 黑龙江将军 1683—1703，1699 移驻齐齐哈尔
-    { generalId: 'manzhou_d_dongtianbi', factionId: 'manzhou_d', cityId: 'city_meinuozhai', generalName: '董天弼', portrait: '/assets/BASHU/manzhou_d_dongtianbi.png', eliteName: '松潘镇兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 乾隆三十八年屯美诺，自美诺驰底木达战死（《清史稿》329）
+    { generalId: 'manzhou_d_dongtianbi', factionId: 'manzhou_d', cityId: 'city_songzhou', generalName: '董天弼', portrait: '/assets/BASHU/manzhou_d_dongtianbi.png', eliteName: '松潘镇兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 乾隆三十八年屯美诺，自美诺驰底木达战死（《清史稿》329）
         // 🔴 [2026-10-20 经典战规则] 明瑞＝清云贵总督（1768 新街之战败于缅军，自尽）→ 沈阳（NORTHEAST）；帝国时代八旗军团；立绘留空
         // 🔴 [2026-10-20 经典战规则] 傅尔丹＝清靖边将军（1731 和通泊败于噶尔丹策零）→ 沈阳（NORTHEAST）；帝国时代八旗军团；立绘留空
         // 🔴 [2026-10-20 经典战规则] 康熙帝＝清圣祖（1690 乌兰布通亲征噶尔丹）→ 沈阳（NORTHEAST）；帝国时代八旗军团；立绘留空
@@ -15560,7 +15560,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kesa: { generalId: 'kesa_bulan', cityId: 'city_daerban', generalName: '布兰', portrait: '/assets/PERSIAN/kesa_bulan.png', eliteName: '可萨步兵', eliteTier: 4 },
+    kesa: { generalId: 'kesa_bulan', cityId: 'city_xiemianjieer', generalName: '布兰', portrait: '/assets/PERSIAN/kesa_bulan.png', eliteName: '可萨步兵', eliteTier: 4 },
 
 
 
@@ -15655,7 +15655,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'kalan_suhela', factionId: 'ansxi', cityId: 'city_tusi', generalName: '苏赫拉', portrait: '/assets/PERSIAN/kalan_suhela.png', eliteName: '安息步兵', eliteTier: 4 },
+        { generalId: 'kalan_suhela', factionId: 'ansxi', cityId: 'city_feiluzhabade', generalName: '苏赫拉', portrait: '/assets/PERSIAN/kalan_suhela.png', eliteName: '安息步兵', eliteTier: 4 },
 
 
 

@@ -46,7 +46,15 @@ for (const entry of Object.values(FACTION_GENERALS)) {
         if (g?.generalName && !generalByName.has(g.generalName)) generalByName.set(g.generalName, g.generalId);
     }
 }
+/**
+ * 国号别名：写稿方给的史书国号在游戏势力表里没有同名的，人工指定对应到哪个现有势力。
+ * 只收「确实是它的一部分／同一族群」的对应，不许随便挂到不相干的势力上。
+ */
+const FACTION_ALIASES: Readonly<Record<string, string>> = {
+    基奥斯: 'aiaoniya',   // 2026-11-11 卡布里亚斯基奥斯之战：基奥斯是爱奥尼亚同盟城邦，游戏无单独势力
+};
 function factionIdByName(name: string): string | null {
+    if (FACTION_ALIASES[name]) return FACTION_ALIASES[name];
     const exact = FACTIONS.find((f) => f.name === name);
     if (exact) return exact.id;
     const loose = FACTIONS.filter((f) => f.name && (f.name.includes(name) || name.includes(f.name)));

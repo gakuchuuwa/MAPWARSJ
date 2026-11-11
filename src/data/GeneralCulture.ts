@@ -790,7 +790,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_mustafa_pasha': 'TURKS',   // 奥斯曼帝国｜穆斯塔法帕夏｜据点 布尔萨
     'gen_nanda_bayin': 'BURMESE',   // 东吁｜莽应里｜据点 勃固
     'gen_nikan': 'NORTHEAST',   // 大清｜尼堪｜据点 沈阳
-    'gen_nikola_zrinski': 'SLAVIC',   // 克罗地亚｜兹林斯基｜据点 格拉代茨
+    'gen_nikola_zrinski': 'MAGYAR',   // 克罗地亚｜兹林斯基｜据点 格拉代茨
     'gen_noli': 'PORTUGUESE',   // 葡萄牙｜诺利｜据点 里贝拉
     'gen_nur_ad_din': 'ORIE',   // 赞吉｜努尔丁｜据点 拉塔基亚
     'gen_offa_mercia': 'BRITONS',   // 麦西亚｜奥法｜据点 牛津
@@ -982,7 +982,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'hesitiya_yiasong': 'GREECE',   // 马其顿｜伊阿宋｜据点 佩利纳
     'heti_alialate': 'TURKS',   // 赫梯｜阿里阿拉特｜据点 提亚纳
     'heti_muwatali': 'TURKS',   // 赫梯｜穆瓦塔利｜据点 哈图沙
-    'heyuan_d_heichichangzhi': 'TIBET',   // 李唐｜黑齿常之｜据点 花石峡
+    'heyuan_d_heichichangzhi': 'HEXI',   // 李唐｜黑齿常之｜据点 乐都
     'hezhe_shaerhuda': 'NORTHEAST',   // 大清｜沙尔虎达｜据点 乌云
     'hezhou_wangjian': 'BASHU',   // 赵宋｜王坚｜据点 钓鱼城
     'higo_d_juchiwuguang': 'JAPAN',   // 大觉寺统｜菊池武光｜据点 熊本
@@ -1082,7 +1082,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kai_wutianxinxuan': 'JAPAN',   // 武田家｜武田信玄｜据点 躑躅崎馆
     'kakizaki_liqiqingguang': 'JAPAN',   // 松前｜蛎崎庆广｜据点 胜山馆
     'kala_satuke': 'WESTERN',   // 喀喇汗国｜萨图克｜据点 盘橐
-    'kalan_suhela': 'SASANIAN',   // 安息帝国｜苏赫拉｜据点 图斯
+    'kalan_suhela': 'SASANIAN',   // 安息帝国｜苏赫拉｜据点 菲鲁扎巴德
     'kalbids_ibnhawwas': 'SICILIANS',   // 卡尔比德｜哈瓦斯｜据点 巴勒莫
     'kaleiliya_kelimu': 'SLAVIC',   // 罗斯｜克利姆索博列夫｜据点 基日岛
     'kalun_dexinga': 'NORTHEAST',   // 杨吴｜德兴阿｜据点 沈阳
@@ -1112,7 +1112,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'keliya_fuduxin': 'WESTERN',   // 尉迟于阗｜伏阇信｜据点 于阗
     'kepantuo_dulimi': 'WESTERN',   // 渴盘陀｜阇梨密｜据点 公主堡
     'kereyid_wanghan': 'MONGOL',   // 克烈｜脱斡霖｜据点 汪吉河
-    'kesa_bulan': 'SASANIAN',   // 可萨｜布兰｜据点 打耳班
+    'kesa_bulan': 'CUMAN',   // 可萨｜布兰｜据点 谢缅杰尔
     'kesaiya_kashtiliash': 'PERSIAN',   // 米底｜卡什提利亚什｜据点 哈马丹
     'ketagalan_huangqingyun': 'JIANGNAN',   // 凯达格兰｜黄青云｜据点 艋舺
     'khoja_apakehezhuo': 'WESTERN',   // 和卓｜阿帕克和卓｜据点 盘橐
@@ -1232,7 +1232,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mangsite_bulaienbolu': 'CELTS',   // 芒斯特｜布赖恩博鲁｜据点 卡舍尔
     'manzheboyi_jayanegara': 'MALAY',   // 满者伯夷｜贾亚纳加拉｜据点 特罗武兰
     'manzheboyi_radenwijaya': 'MALAY',   // 满者伯夷｜拉登甲亮｜据点 特罗武兰
-    'manzhou_d_dongtianbi': 'TIBET',   // 大清｜董天弼｜据点 美诺寨
+    'manzhou_d_dongtianbi': 'BASHU',   // 大清｜董天弼｜据点 嘉诚
     'manzhou_d_duoergun': 'NORTHEAST',   // 大清｜多尔衮｜据点 沈阳
     'manzhou_d_sabusu': 'NORTHEAST',   // 大清｜萨布素｜据点 卜奎
     'manzhou_nuerhachi': 'NORTHEAST',   // 大清｜努尔哈赤｜据点 萨尔浒

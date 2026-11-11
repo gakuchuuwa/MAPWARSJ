@@ -2477,7 +2477,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'gesake', lat: 49.44, lng: 32.06, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 第聂伯河切尔卡瑟；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     { id: 'city_sofia', name: '索非亚', factionId: 'baojialiya', lat: 42.7, lng: 23.32, type: 'stockade', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '🔴 [2026-11-07 按史补依据] 保加利亚索非亚（塞尔迪卡）；前335 为色雷斯塞迪人聚落，非史载大军扎营驻军之地（阿里安 I.1–6 只记渡多瑙河后回师行军）⇒ 按终点铁律不能当终点，但并了会超 500 硬闸，故保留为切点；人口无史料、推算不出 ⇒ 按 §6.2 兜底落城寨；名字按「一处一名、取知名度最大者」保留「索非亚」。' },
     { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'stockade', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 波斯尼亚萨拉热窝；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
-    { id: 'city_gradeci', name: '格拉代茨', factionId: 'habusibao', lat: 45.81, lng: 15.97, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 萨格勒布格拉代茨；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_gradeci', name: '格拉代茨', factionId: 'habusibao', lat: 45.81, lng: 15.97, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'MAGYAR', note: '🔴 [2026-11-07 按史补依据] 萨格勒布格拉代茨；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-11 按史改] 据点文化 SLAVIC→MAGYAR（代理）：萨格勒布格拉代茨，1242 年金玺诏书敕建自由王城，自 1102 年起属匈牙利圣伊什特万王冠，罗马天主教、中欧哥特石构；项目 SLAVIC 为东正教罗斯体系，不适用；同贝尔格莱德先例取 MAGYAR 代理。' },
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' , note: '🔴 [2026-11-07 按史补依据] 摩洛哥马拉喀什；按 2026-10-25 标准：城居 12.5–15 → 中城' },
 
@@ -2550,7 +2550,7 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：科尔多瓦：西班牙安达卢斯
     { id: 'city_cordoba', name: '科尔多瓦', factionId: 'womaya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '🔴 [2026-11-07 按史补依据] 安达卢斯科尔多瓦；【建筑风格按史】后伍麦叶哈里发国都城（929–1031），大清真寺为伊斯兰建筑层；66 无「安达卢斯」分支，取 ORIE 萨拉森，不取卡斯蒂利亚 SPANISH（1236 收复之后）；后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city；按 2026-10-25 标准：城居 11–45（分歧极大） → 中城' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH' , note: '🔴 [2026-11-07 按史补依据] 阿拉贡王国都城；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
-    { id: 'city_eger', name: '维雷茨基', factionId: 'mazhaer', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-07 按史补依据] 沃里尼亚维雷茨基；定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
+    { id: 'city_eger', name: '维雷茨基', factionId: 'mazhaer', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'MAGYAR', note: '🔴 [2026-11-11 按史改] 维雷茨基山口（Verecke Pass，喀尔巴阡山脊海拔约 841 米）：895 年阿尔帕德率马扎尔七部越此山口入盆地立国，其后千年为匈牙利王国东北边防门户；据点文化 SLAVIC→MAGYAR（精确）。原 note 所引「埃格尔 1494-95 年 dicalis 税册约 3500 人」系匈牙利腹地同名城埃格尔的数据，与本山口无关，已删；城寨型保持原判。' },
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：都柏林：爱尔兰，凯尔特（region=CELTS_FEUDAL）
     { id: 'city_dublin', name: '都柏林', factionId: 'dalriada', lat: 53.34, lng: -6.26, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' , note: '🔴 [2026-11-07 按史补依据] 爱尔兰都柏林；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
@@ -3521,7 +3521,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     // ── 2026-06-20 新增：卡伦·图斯 ──
-    { id: 'city_tusi', name: '图斯', factionId: 'ansxi', lat: 36.45, lng: 59.57, type: 'small_city', region: 'SASANIAN', buildingStyle: 'SASANIAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 呼罗珊图斯；古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸；推算：城居 1.5 万（图斯，萨珊东北边防元帅驻跸 1.5 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 PERSIAN→SASANIAN（精确）：呼罗珊图斯，萨珊卡伦氏领地与东北边防重镇。' },
+    { id: 'city_tusi', name: '图斯', factionId: 'ansxi', lat: 36.45, lng: 59.57, type: 'small_city', region: 'SASANIAN', buildingStyle: 'SASANIAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 呼罗珊图斯；古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸；推算：城居 1.5 万（图斯，萨珊东北边防元帅驻跸 1.5 万）→ 小城；🔴 [2026-11-11 按史改] 据点文化 PERSIAN→SASANIAN（精确）：呼罗珊图斯，萨珊东北边防统帅卡纳兰吉扬家族驻地，现存图斯城堡（Arg-e Tus）。' },
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
     { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.36, type: 'stockade', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '🔴 [2026-11-07 按史补依据] 锡斯坦博斯特（今拉什卡尔加）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
