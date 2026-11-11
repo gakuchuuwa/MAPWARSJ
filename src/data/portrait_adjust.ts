@@ -11181,6 +11181,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 4,
             "offsetY": -2
+        },
+        "/assets/CENTRAL/__闲置__xianqin_08.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL/__闲置__xianqin_29.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -37
+        },
+        "/assets/CENTRAL/__闲置__xianqin_30.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/CENTRAL/__闲置__xianqin_33.png": {
+            "scale": 1.27,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/CENTRAL/__闲置__xianqin_37.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/CENTRAL/__闲置__xianqin_38.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/CENTRAL/__闲置__xianqin_39.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL/__闲置__yingqin_05.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL/__闲置__yingqin_08.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/CENTRAL/__闲置__yingqin_09.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/CENTRAL/__闲置__yingqin_10.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

@@ -85,12 +85,13 @@ const TECH_CULTURE_PARENT: Record<string, TechCulture> = {
     MONGOL: 'STEPPE',
     MOBEI_MONGOL: 'STEPPE',
     YURT: 'STEPPE',
-    XIANBEI: 'NORTHEAST',
+    XIANBEI: 'XIANBEI',
     NORTHEAST: 'NORTHEAST',
     CENTRAL: 'CENTRAL',
     WEI: 'CENTRAL',
     BASHU: 'CENTRAL',
     JIANGNAN: 'JIANGNAN',
+    HUGUANG: 'HUGUANG',
     TIBET: 'TIBET',
     KOREA: 'KOREA',
     JAPAN: 'JAPAN',
@@ -112,7 +113,7 @@ const TECH_CULTURE_PARENT: Record<string, TechCulture> = {
     // 旧区域名兼容映射
     STEPPE: 'STEPPE',
     NORTH: 'CENTRAL',
-    HEXI: 'NORTHEAST',
+    HEXI: 'HEXI',
     WEST_ASIA: 'ORIE',
     ANDE: 'ANDE',
     GREEK: 'GREEK',
@@ -177,10 +178,6 @@ export function unlockedTechs(year: number, culture: TechCulture): MilitaryTech[
     const timeGated = isEraTimeGatedMode();
     const c66 = normalizeTechCulture66(String(culture));
     const parentCulture = TECH_CULTURE_PARENT[c66] ?? TECH_CULTURE_PARENT[String(culture)] ?? c66;
-    // 🔴 [2026-10-20 主人定·66 文化 + 优先本文化特殊科技 + 四时代通用科技门控]
-    //    1) 本文化的 DE 特殊科技（isCultureUnique）始终优先解锁，确保每个文化在任何年份都首先体现自己的 DE 独有科技；
-    //    2) 通用科技按当前历史年份所属四时代门控（古典 <476 只用古典通用科技；封建用古典+封建；城堡用古典+封建+城堡；帝国用全部时代）。
-    const maxEraIdx = timeGated ? ERA_ORDER.indexOf(yearToTechEra(year)) : ERA_ORDER.length - 1;
 
     const matchCulture = (t: MilitaryTech): boolean => {
         if (t.cultures === null) return true;
@@ -190,26 +187,11 @@ export function unlockedTechs(year: number, culture: TechCulture): MilitaryTech[
         return t.cultures.includes(parentCulture) || t.cultures.includes(c66);
     };
 
-    const list = MILITARY_TECHS.filter((t) => {
+    return MILITARY_TECHS.filter((t) => {
         if (!matchCulture(t)) return false;
-        // 本文化的特殊科技始终优先出现
-        if (isCultureUnique(t)) return true;
-        return ERA_ORDER.indexOf(t.era) <= maxEraIdx;
+        if (!timeGated) return true;
+        return t.year === null || t.year <= year;
     });
-
-    // 保底满 10 个科技：若某文化在当前时代的通用池 + 特殊科技不足 10 个，按时代顺序从本文化后续时代通用科技补足至 10 个
-    if (list.length < 10) {
-        const pickedIds = new Set(list.map((t) => t.id));
-        const extra = MILITARY_TECHS
-            .filter((t) => !pickedIds.has(t.id) && matchCulture(t))
-            .sort((a, b) => ERA_ORDER.indexOf(a.era) - ERA_ORDER.indexOf(b.era));
-        for (const t of extra) {
-            list.push(t);
-            if (list.length >= 10) break;
-        }
-    }
-
-    return list;
 }
 
 /** FNV-1a 字符串哈希 → 32 位整数（确定性） */

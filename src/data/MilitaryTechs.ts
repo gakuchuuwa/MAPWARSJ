@@ -141,11 +141,11 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: null,
     },
     {
-        id: 'iron_casting', name: '铸铁', de: 'Iron casting', year: -100,
+        id: 'iron_casting', name: '铸铁', de: 'Iron casting', year: -560,
         era: 'antiquity',
-        basis: '汉代炒钢／百炼钢工艺成熟',
+        basis: '按史：春秋晚期（前 6 世纪上半叶）生铁冶铸工艺成型，江苏六合程桥春秋墓出土生铁丸与铸铁件实证',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 删 45/46/50（DE 全表 0 单位）；47=斥候（DE 确有）
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
@@ -174,7 +174,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
@@ -184,20 +184,19 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        // 🔴 [2026-11-03 KHITAN→HEXI 改名] 原写的 'HEXI' 因旧换算表 HEXI→KHITAN 从未对河西生效，改名后会突然生效 → 去掉以保持原行为
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HUGUANG', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'XIANBEI', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
     {
-        id: 'scale_barding', name: '骑兵鳞甲', de: 'Scale Barding Armor', year: -50,
+        id: 'scale_barding', name: '骑兵鳞甲', de: 'Scale Barding Armor', year: -660,
         era: 'antiquity',
-        basis: '帕提亚／萨珊具装甲骑（cataphract）成型',
+        basis: '按史：前 7 世纪新亚述阿淑尔巴尼拔王宫浮雕披甲战马，及前 660 年《诗经·郑风·清人》「驷介旁旁」四马披甲实证',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'chain_barding', name: '骑兵锁甲', de: 'Chain Barding Armor', year: 1100,
@@ -207,7 +206,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_barding', name: '骑兵钢甲', de: 'Plate Barding Armor', year: 1450,
@@ -217,7 +216,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'XIANBEI', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
@@ -252,7 +251,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', ],
+        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', ],
     },
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
@@ -274,7 +273,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'ring_archer', name: '射手锁甲', de: 'Ring Archer Armor', year: 1300,
@@ -284,21 +283,21 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 附加四条 ──────────────────────────────────────────────────────────
     {
-        id: 'husbandry', name: '畜牧', de: 'Husbandry', year: -300,
+        id: 'husbandry', name: '畜牧', de: 'Husbandry', year: -1350,
         era: 'antiquity',
-        basis: '战马驯养与官牧良马自古典时代成熟，骑兵机动力提升',
+        basis: '按史：前 14 世纪米坦尼《基库利训马法》泥板与西周马政，战马驯养与官牧体系成熟',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
-        id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
+        id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -650,
         era: 'antiquity',
-        basis: '汉武帝得大宛汗血马，良种马育种',
+        basis: '按史：前 7 世纪米底尼萨亚良马（Nisean horse）王室专育大马体系成型（希罗多德《历史》追述）',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 23, 36, 47] }],
         cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'PERSIAN', ],
     },
@@ -308,8 +307,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
-        // 🔴 [2026-11-03 KHITAN→HEXI 改名] 同上：原 'HEXI' 从未对河西生效，去掉以保持原行为
-        cultures: ['CENTRAL', 'NORTH', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', ],
+        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
@@ -320,7 +318,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [36] },
             { attr: 'bonus', op: 'add', value: 2, classes: [36], bonusClass: 27 },
         ],
-        cultures: ['CENTRAL', 'NORTH', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'PERSIAN', ],
+        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'PERSIAN', ],
     },
 
     // ── 步兵软甲／行军（兵营）─────────────────────────────────────────
@@ -330,14 +328,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '步兵软垫护甲（gambeson）工艺成熟',
         // DE 效果 = 步兵线 +1 穿刺护甲；🔴 印度/柏柏尔（DE 印度斯坦/柏柏尔）禁用
         effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'HUGUANG', 'XIANBEI', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
-        id: 'squires', name: '随军侍从', de: 'Squires', year: -200,
+        id: 'squires', name: '随军侍从', de: 'Squires', year: -650,
         era: 'antiquity',
-        basis: '古典军制步兵行军与耐力队列训练',
+        basis: '按史：前 7 世纪古希腊重装步兵方阵持盾扈从制与新亚述常备步兵行军队列确立',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],   // 🔴 [2026-10-13 治本] 同上：枪兵已归 6，删 DE 空类 46
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'tracking', name: '追踪', de: 'Tracking', year: -1274,
@@ -363,7 +361,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         //    类级只有 class 0 / 36 / 52，其余是逐个 unit 点名；**u5(HCANR 火枪) 那一项是 768 = 装甲类3 +0**，
         //    即 DE 的 Chemistry **不给火枪加穿刺**。⇒ 删掉 44，火枪 5 个兵种不再白得 +1 穿刺。
         effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'XIANBEI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 攻城技师（大学）：攻城器械/弩炮 +1 射程 ────────────────────────
@@ -375,7 +373,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [13, 55] },
             { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'HUGUANG', 'HEXI', 'XIANBEI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', 'GREEK', ],
     },
 
     // ── 文化专属特殊科技（66 建筑文化 100% 映射 DE Unique Tech，优先必选）────────
@@ -418,14 +416,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SPARTANS'],
     },
     {
-        id: 'taxiarchs', name: '希腊方阵统帅制', de: 'Taxiarchs', year: -450,
+        id: 'taxiarchs', name: '雅典方阵统帅制', de: 'Taxiarchs', year: -450,
         era: 'antiquity',
         basis: '雅典十部落方阵统帅制（DE tech 1120），步兵近战攻击与视野提升',
         effects: [
             { attr: 'meleeAttack', op: 'add', value: 1, classes: [6] },
             { attr: 'los', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: ['ATHENIANS', 'GREECE'],
+        cultures: ['ATHENIANS'],
     },
     {
         id: 'pezhetairoi', name: '马其顿伙友方阵', de: 'Pezhetairoi', year: -350,
@@ -471,18 +469,18 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SPARTANS', 'GREECE', 'MACEDONIAN', 'THRACIAN'],
     },
     {
-        id: 'vadhavadha', name: '象阵践踏', de: 'Vadhavadha', year: -326,
+        id: 'vadhavadha', name: '普鲁象阵践踏', de: 'Vadhavadha', year: -326,
         era: 'antiquity',
         basis: '普鲁王波鲁斯战象冲锋践踏（DE tech 1307），战象与骑兵近战攻击 +2',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [12] }],
-        cultures: ['PURU', 'TIBET'],
+        cultures: ['PURU'],
     },
     {
-        id: 'leaf_headed_shafts', name: '叶形箭镞', de: 'Leaf-Headed Shafts', year: -326,
+        id: 'leaf_headed_shafts', name: '普鲁叶形箭镞', de: 'Leaf-Headed Shafts', year: -326,
         era: 'antiquity',
         basis: '古印度竹制大弓与宽叶铁簇箭杆（DE tech 1308），弓兵穿刺攻击 +2',
         effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] }],
-        cultures: ['PURU', 'TIBET'],
+        cultures: ['PURU'],
     },
     {
         id: 'ballistas', name: '罗马弩机连射', de: 'Ballistas', year: -100,
@@ -536,24 +534,24 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['BASHU'],
     },
     {
-        id: 'red_cliff_tactics', name: '赤壁战术', de: 'Red Cliff Tactics', year: 208,
+        id: 'red_cliff_tactics', name: '东吴赤壁战术', de: 'Red Cliff Tactics', year: 208,
         era: 'antiquity',
         basis: '东吴赤壁火攻战术（DE tech 1080），弓箭手穿刺与对建筑加成提升',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] },
             { attr: 'bonus', op: 'add', value: 2, classes: [0, 36], bonusClass: 11 },
         ],
-        cultures: ['JIANGNAN', 'HUGUANG'],
+        cultures: ['JIANGNAN'],
     },
     {
-        id: 'sitting_tiger', name: '卧虎', de: 'Sitting Tiger', year: 222,
+        id: 'sitting_tiger', name: '东吴卧虎抛石', de: 'Sitting Tiger', year: 222,
         era: 'antiquity',
         basis: '东吴卧虎抛石车改良（DE tech 1081），攻城器械攻击与对建筑加成提升',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 55] },
             { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
         ],
-        cultures: ['JIANGNAN', 'HUGUANG'],
+        cultures: ['JIANGNAN'],
     },
     {
         id: 'kamandaran', name: '萨珊复合弓艺', de: 'Kamandaran', year: 250,
@@ -719,21 +717,21 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['BULGARIANS'],
     },
     {
-        id: 'lamellar_armor', name: '札甲', de: 'Lamellar Armor', year: 916,
+        id: 'lamellar_armor', name: '契丹铁札甲', de: 'Lamellar Armor', year: 916,
         era: 'feudal',
-        basis: '契丹/鲜卑铁札甲（DE tech 1006），步兵与射手护甲提升',
+        basis: '契丹铁札甲（DE tech 1006），步兵与射手护甲提升',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 2, classes: [6, 0] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6, 0] },
         ],
-        cultures: ['HEXI', 'XIANBEI'],
+        cultures: ['XIANBEI'],
     },
     {
         id: 'ordo_cavalry', name: '斡鲁朵骑兵', de: 'Ordo Cavalry', year: 947,
         era: 'feudal',
         basis: '辽朝宫帐斡鲁朵皮室铁骑（DE tech 1007），骑兵生命值 +30',
         effects: [{ attr: 'hp', op: 'add', value: 30, classes: [12, 36, 47] }],
-        cultures: ['HEXI', 'XIANBEI'],
+        cultures: ['XIANBEI'],
     },
     {
         id: 'thunderclap_bombs', name: '女真震天雷', de: 'Thunderclap Bombs', year: 1126,
@@ -912,24 +910,24 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['INDIA'],
     },
     {
-        id: 'silk_armor', name: '丝绸内甲', de: 'Silk Armor', year: 1300,
+        id: 'silk_armor', name: '中亚丝绸内甲', de: 'Silk Armor', year: 1300,
         era: 'castle',
-        basis: '中亚/西域丝绸内衬复合甲（DE tech 687），骑兵与骑射手双甲 +1/+1',
+        basis: '中亚鞑靼丝绸内衬复合甲（DE tech 687），骑兵与骑射手双甲 +1/+1',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 36, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 36, 47] },
         ],
-        cultures: ['CENTRAL_ASIA', 'WESTERN'],
+        cultures: ['CENTRAL_ASIA'],
     },
     {
-        id: 'timurid_siegecraft', name: '远射攻城术', de: 'Timurid Siegecraft', year: 1380,
+        id: 'timurid_siegecraft', name: '帖木儿攻城术', de: 'Timurid Siegecraft', year: 1380,
         era: 'castle',
         basis: '帖木儿帝国重型投石机与攻城战术（DE tech 688），攻城器械射程与视野 +2',
         effects: [
             { attr: 'range', op: 'add', value: 2, classes: [12, 13] },
             { attr: 'los', op: 'add', value: 2, classes: [12, 13] },
         ],
-        cultures: ['CENTRAL_ASIA', 'WESTERN'],
+        cultures: ['CENTRAL_ASIA'],
     },
     {
         id: 'maghrebi_camels', name: '柏柏尔驼队休整', de: 'Maghrebi Camels', year: 1100,
@@ -1134,6 +1132,115 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'reload', op: 'add', value: -0.35, classes: [13] },
         ],
         cultures: ['KOREA'],
+    },
+    {
+        id: 'cranequins', name: '齿条绞盘弩', de: 'Cranequins', year: 1450,
+        era: 'castle',
+        basis: '按史：15 世纪中叶欧洲齿条绞盘上弦骑弩（DE tech 1452），骑乘远程/弓骑射程 +1、视野 +1、对步兵加成 +2',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [23, 36] },
+            { attr: 'los', op: 'add', value: 1, classes: [23, 36] },
+            { attr: 'bonus', op: 'add', value: 2, classes: [23, 36], bonusClass: 1 },
+        ],
+        cultures: ['BRITONS', 'DANES', 'FRANKS', 'SAXONS', 'SICILIANS', 'VARANGIANS'],
+    },
+    // ================= 5 个项目新增文化历史专属科技（希腊 / 河西 / 青藏 / 西域 / 湖广） =================
+    {
+        id: 'greece_cretan_archery', name: '希腊克里特弓术', de: 'Cretan Archery', year: -401,
+        era: 'antiquity',
+        basis: '按史：色诺芬《长征记》（前 401 年）载克里特复合弓手射程远超波斯弓手，步弓穿刺 +1、射程 +1',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [0] },
+            { attr: 'range', op: 'add', value: 1, classes: [0] },
+        ],
+        cultures: ['GREECE'],
+    },
+    {
+        id: 'greece_oblique_phalanx', name: '希腊斜线方阵', de: 'Oblique Phalanx', year: -371,
+        era: 'antiquity',
+        basis: '按史：前 371 年留克特拉战役底比斯统帅伊巴密浓达创立加厚左翼 50 排斜线冲击方阵，步兵近攻 +2、生命值 +25',
+        effects: [
+            { attr: 'meleeAttack', op: 'add', value: 2, classes: [6] },
+            { attr: 'hp', op: 'add', value: 25, classes: [6] },
+        ],
+        cultures: ['GREECE'],
+    },
+    {
+        id: 'hexi_crossbow_array', name: '河西强弩叠射', de: 'Hexi Crossbow Volley', year: -99,
+        era: 'antiquity',
+        basis: '按史：《汉书·李陵传》载河西敦煌张掖塞防大黄强弩与神臂弓轮番叠射破骑，远程单位穿刺 +1、装填提速',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36] },
+            { attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] },
+        ],
+        cultures: ['HEXI'],
+    },
+    {
+        id: 'hexi_iron_hawks', name: '河西铁鹞军制', de: 'Iron Hawk System', year: 1038,
+        era: 'feudal',
+        basis: '按史：《宋史·夏国传》载河西西夏重甲精骑铁鹞子以钩索绊马、昼夜疾驰，骑兵近防 +2、远防 +1',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 2, classes: [12, 47] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
+        ],
+        cultures: ['HEXI'],
+    },
+    {
+        id: 'tibet_plateau_horsemanship', name: '青藏高原牧骑', de: 'Plateau Horsemanship', year: -100,
+        era: 'antiquity',
+        basis: '按史：《后汉书·西羌传》载青藏先羌与吐蕃耐高寒浩亹马骑乘术，骑兵与骑射手生命值 +25、近攻 +1',
+        effects: [
+            { attr: 'hp', op: 'add', value: 25, classes: [12, 36, 47] },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [12, 36, 47] },
+        ],
+        cultures: ['TIBET'],
+    },
+    {
+        id: 'tibet_chain_armor', name: '青藏通体锁甲', de: 'Tibetan Chain Armor', year: 634,
+        era: 'feudal',
+        basis: '按史：《新唐书·吐蕃传》载「人马俱披锁子甲，其制甚精，周体但开两眼，非劲弓利刃之所能伤」，步骑双甲 +2/+2',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 2, classes: [6, 12, 47] },
+            { attr: 'pierceArmor', op: 'add', value: 2, classes: [6, 12, 47] },
+        ],
+        cultures: ['TIBET'],
+    },
+    {
+        id: 'western_kucha_ironwork', name: '西域镔铁锻艺', de: 'Kucha Ironworking', year: 384,
+        era: 'antiquity',
+        basis: '按史：《水经注》《大唐西域记》载龟兹、疏勒盛产镔铁与精锻宿铁刀甲，步兵与骑兵近战攻击 +2',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 47] }],
+        cultures: ['WESTERN'],
+    },
+    {
+        id: 'western_oasis_horse_archery', name: '西域胡禄骑射', de: 'Oasis Horse Archery', year: 640,
+        era: 'feudal',
+        basis: '按史：《旧唐书·西戎传》载安西四镇与绿洲胡骑善用角弓胡禄箭囊驰射，步弓与骑射手射程 +1、远防 +1',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [0, 36] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 36] },
+        ],
+        cultures: ['WESTERN'],
+    },
+    {
+        id: 'huguang_rhino_armor', name: '湖广鲛革犀甲', de: 'Chu Rhino Armor', year: -690,
+        era: 'antiquity',
+        basis: '按史：《荀子·议兵》载「楚人鲛革犀兕以为甲，鞈如金石，宛钜铁鋔，惨如蜂虿，轻利僄遬」，步弓与步兵远防 +1、移速 +10%',
+        effects: [
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 6] },
+            { attr: 'speed', op: 'mul', value: 1.1, classes: [0, 6] },
+        ],
+        cultures: ['HUGUANG'],
+    },
+    {
+        id: 'huguang_fire_lance_tactics', name: '湖广火器战法', de: 'Jinghu Fire Arms', year: 1206,
+        era: 'castle',
+        basis: '按史：《宋史》与陈规《守城录》载德安、襄樊、静江荆湖守战创制长竹杆火枪与火炮破骑御敌，步弓火器穿刺 +1、对骑兵加成 +2',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 6, 44] },
+            { attr: 'bonus', op: 'add', value: 2, classes: [0, 6, 44], bonusClass: 8 },
+        ],
+        cultures: ['HUGUANG'],
     },
 ];
 
