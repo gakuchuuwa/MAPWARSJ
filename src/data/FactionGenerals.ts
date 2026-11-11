@@ -18750,7 +18750,12 @@ export function getDefaultCityFactionId(cityId: string | null | undefined): stri
     if (!cityId) return 'panshu';
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
     const refs = _cityGeneralIndex.get(cityId);
-    if (!refs || refs.length === 0) return 'panshu';
+    if (!refs || refs.length === 0) {
+        // 🔴 [2026-11-11 主人令「百岁模式统一不弄叛军，全部为守将」]
+        // 无挂载武将的据点回退到据点史实势力（cities_v2），不再落入 panshu
+        const city = CITIES_V2.find((c) => c.id === cityId);
+        return city?.factionId || 'panshu';
+    }
     const famousHit = refs.find((r) => getGeneralProfile(r.general.generalId)?.tier === 'famous');
     const picked = famousHit ?? refs[0];
     return picked.general.factionId ?? picked.blockFactionId;

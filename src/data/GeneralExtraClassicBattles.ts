@@ -756,34 +756,6 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             ]
         }
     ],
-    "maqidun_craterus": [
-        {
-            "generalId": "maqidun_craterus",
-            "battleId": "maqidun_craterus@-326",
-            "battleName": "海达斯佩斯河之战",
-            "battleYear": -326,
-            "battleType": "field",
-            "role": "attacker",
-            "targetName": "海达斯佩斯河",
-            "targetLat": 32.65,
-            "targetLng": 73.51,
-            "myTroops": 15000,
-            "enemyFactionId": "bulu",
-            "enemyFactionName": "波罗婆",
-            "enemyGeneralId": "gen_bolusi",
-            "enemyTroops": 15000,
-            "introLines": [
-                {
-                    "speaker": "general",
-                    "text": "印度王波鲁斯列巨象锁死河岸，某坐镇本营吸引其主力，壮士可愿随我强渡合击？"
-                },
-                {
-                    "speaker": "player",
-                    "text": "愿随将军强渡破象！"
-                }
-            ]
-        }
-    ],
     "qi_tianji": [
         {
             "generalId": "qi_tianji",

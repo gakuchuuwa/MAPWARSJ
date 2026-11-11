@@ -47,6 +47,7 @@ import {
     getNextClassicBattle,
     markClassicBattleCompleted,
     battleIdOf,
+    getClassicBattleById,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
@@ -2157,15 +2158,18 @@ export class PlayerQuestSystem {
         g: { generalId: string; generalName: string; portrait: string },
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
-        opts?: { metAtFront?: boolean },
+        opts?: { metAtFront?: boolean; chained?: boolean },
     ): void {        this.deps.closeDialogue();
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         this.pendingFrontGeneralId = null;
         const metAtFront = !!opts?.metAtFront;
+        // 🔴 [2026-11-11 主人令「连战遇到守城也改成开过去」] 连战不走开局摆位那三处瞬移，军团自己走过去。
+        const chained = !!opts?.chained;
         if (!isGeneralOnStage(g.generalId)) return;
         markFirstBattleCompleted(g.generalId);
         markClassicBattleCompleted(fb);   // 🔴 接下即记：这一局里这场（含攻守另一方）不再触发
         this.headingToEventGeneralId = null;
+        this.pendingClassicChain = null;   // 手上已经开打一场了，之前排的连战作废
 
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
         // 🔴 [2026-10-27 主人令] 经典战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
@@ -2236,7 +2240,7 @@ export class PlayerQuestSystem {
         //    metAtFront = 玩家已经自己走到了接任务点（被攻的城／战场）：军团就位在这里，不再把玩家瞬移过去。
         const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
             Math.hypot((a.lat - b.lat) * 111.32, (a.lng - b.lng) * 111.32 * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180));
-        if (fb.battleType === 'siege' && role === 'defender') {
+        if (fb.battleType === 'siege' && role === 'defender' && !chained) {
             const defended = targetCity ?? city;
             host.setPosition(defended.latitude, defended.longitude);
         } else if (metAtFront) {
@@ -2274,7 +2278,7 @@ export class PlayerQuestSystem {
             const updatedDefendedCity = this.deps.cityManager.getCity(defendedCity.id) ?? defendedCity;
             host.setTroops(Math.max(1, myTroops - cityGarrison));
             (updatedDefendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
-            if (isOnTheSpot) {
+            if (isOnTheSpot && !chained) {
                 host.setPosition(defendedCity.latitude, defendedCity.longitude);
             }
             const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
@@ -2327,7 +2331,7 @@ export class PlayerQuestSystem {
             }
             (updatedTargetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             (updatedTargetCity as { _firstBattlePrevFactionId?: string })._firstBattlePrevFactionId = prevEnemyCityFactionId;
-            if (isOnTheSpot) {
+            if (isOnTheSpot && !chained) {
                 const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
                 host.setPosition(targetCity.latitude, targetCity.longitude + ring);
             }
@@ -2677,24 +2681,26 @@ export class PlayerQuestSystem {
 
         this.deps.hero.addMerit(500);
 
-        // 🔴 [2026-11-11 主人定「同一个武将多场战役的，不是立马接，是直接就下一场，除非军团打败了」]
-        //    这一场打赢（奖励、战功都已结算），这位名将还有没打过的经典战（百岁按年份到没到、乱斗不按年份）→
-        //    **同一支军团**直接开下一场：不脱队、不回城、不重新接任务、不弹会面；军团摆到下一场战场即刻开打。
+        // 🔴 [2026-11-11 主人定「同一个武将多场战役的，不是立马接，是直接就下一场，除非军团打败了」
+        //    ＋「历史上相差一年以上的，改为下一年执行」「等的一年该干什么干什么」]
+        //    打完这一场（奖励、战功已结算）→ 同一支军团**不重新接、不脱队**去打下一场：
+        //      · 两场史实同年 → **马上开拔**；
+        //      · 两场史实差一年以上 → 先记下来（`pendingClassicChain`），这一年照旧随他出征打仗（该干什么干什么），
+        //        游戏年走到下一年才自动开拔。军团一路走、不瞬移。
         //    打输走 failFirstBattle（军团溃散、脱队、换下一家），到不了这里。
         const nextFb = this.nextClassicBattleForChaining(q.generalId);
         const chainCity = this.deps.cityManager.getCity(q.cityId);
         if (nextFb && chainCity) {
-            const rec = getGeneralRecordByGeneralId(q.generalId);
-            this.deps.notify(`⚔️ ${q.generalName}续战【${nextFb.battleName}】`);
-            gameLog('expedition', `[玩家] 经典战连战：${q.generalName} 打完【${fbState?.battleName ?? '经典战役'}】→ 直接开【${nextFb.battleName}】（同一支军团，不重新接任务）`);
-            this.startFirstBattle(
-                chainCity,
-                { generalId: q.generalId, generalName: q.generalName, portrait: rec?.portrait ?? '' },
-                nextFb,
-                host,
-                { metAtFront: true },
-            );
-            return;
+            const prevYear = fbState?.battleId ? getClassicBattleById(fbState.battleId)?.battleYear : undefined;
+            const gapYears = prevYear != null ? nextFb.battleYear - prevYear : 0;
+            const nowYear = this.deps.getYear?.();
+            if (gapYears >= 1 && nowYear != null) {
+                this.pendingClassicChain = { generalId: q.generalId, battleId: battleIdOf(nextFb), dueYear: nowYear + 1 };
+                gameLog('expedition', `[玩家] 连战排期：${q.generalName}下一场【${nextFb.battleName}】史实相差 ${gapYears} 年 → 游戏年 ${nowYear + 1} 开拔（这一年照常出征）`);
+            } else {
+                this.startClassicChain(q, host, nextFb, chainCity);
+                return;
+            }
         }
 
         const hPos = host.getPosition();
@@ -2829,6 +2835,47 @@ export class PlayerQuestSystem {
         }
         const enemy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
         return !enemy || enemy.isDestroyed || enemy.getTroops() <= 0;
+    }
+
+    /**
+     * 连战开拔：同一支军团（不换军、不重新接、不弹会面）走到下一场——按路网走，不瞬移。
+     * 两处调用：史实同年的当场开拔；差一年以上的等 `pendingClassicChain` 到期再调。
+     */
+    private startClassicChain(q: PlayerQuest, host: Army, fb: GeneralFirstBattle, city: City): void {
+        const rec = getGeneralRecordByGeneralId(q.generalId);
+        this.pendingClassicChain = null;
+        this.deps.notify(`⚔️ ${q.generalName}续战【${fb.battleName}】，全军开拔`);
+        gameLog('expedition', `[玩家] 经典战连战：${q.generalName} 同一支军团开拔【${fb.battleName}】`);
+        this.startFirstBattle(
+            city,
+            { generalId: q.generalId, generalName: q.generalName, portrait: rec?.portrait ?? '' },
+            fb,
+            host,
+            { metAtFront: false, chained: true },   // 连战：不瞬移，从脚下走过去（守城也一样）
+        );
+    }
+
+    /**
+     * 🔴 [2026-11-11 主人定「历史上相差一年以上的，改为下一年执行」「等的一年该干什么干什么」]
+     * 排了期的连战：这一年照旧随他出征（campaign），游戏年走到 `dueYear` 就自动开拔。
+     * 军团没了 / 人退场 / 场次没了 / 城池没了 → 这条排期作废，交给常规寻将。
+     */
+    private tickPendingClassicChain(): void {
+        const pending = this.pendingClassicChain;
+        if (!pending) return;
+        if (this.deps.isScene13Active?.()) return;
+        const nowYear = this.deps.getYear?.();
+        if (nowYear == null) return;
+        const q = this.quest;
+        const host = q?.legionId ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const fb = getClassicBattleById(pending.battleId);
+        const city = q ? this.deps.cityManager.getCity(q.cityId) : null;
+        if (!q || !host || host.isDestroyed || host.getTroops() <= 0 || !fb || !city || !isGeneralOnStage(pending.generalId)) {
+            this.pendingClassicChain = null;
+            return;
+        }
+        if (nowYear < pending.dueYear) return;
+        this.startClassicChain(q, host, fb, city);
     }
 
     /**
@@ -3519,6 +3566,7 @@ export class PlayerQuestSystem {
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
         this.tickClassicBriefing();
+        this.tickPendingClassicChain();
         if (this.deps.isScene13Active?.()) {
             if (this.quest?.kind === 'first_battle') {
                 this.tickFirstBattle(this.quest);
@@ -3838,6 +3886,12 @@ export class PlayerQuestSystem {
     // ── 经典战两段播报：战略（寻将起念）／战术（开打起念，在战术模式里）──────────
     /** 🔴 [2026-11-11 主人定] 战略大局播报器：上一支军团解散、去找下一位武将时开念，开打时当段念完即收 */
     private readonly classicBriefing = new ClassicBattleBriefingRunner(() => this.deps.announceBriefing);
+
+    /**
+     * 🔴 [2026-11-11 主人定「历史上相差一年以上的，改为下一年执行」]
+     * 排了期还没开拔的连战：`dueYear`＝该开拔的游戏年（打完那一场的年份 +1）。
+     */
+    private pendingClassicChain: { generalId: string; battleId: string; dueYear: number } | null = null;
 
     /** 为这位武将的这一场经典战开念战略大局（按场认：已在念 / 已念过不重复） */
     private beginClassicStrategicBriefing(generalId: string, fb: GeneralFirstBattle): void {
@@ -4950,6 +5004,7 @@ export class PlayerQuestSystem {
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
         this.classicBriefing.reset();        // 经典战战略播报同理
+        this.pendingClassicChain = null;     // 排了期的连战也一并清掉（读档／换局）
         this.emitChange();
     }
 
