@@ -6439,11 +6439,17 @@ export class Scene13WarLayer {
 
                     console.log('[Scene13WarLayer] ⚔️ 播放战役战斗播报:', briefingText.slice(0, 30) + '...');
 
-                    speechAnnouncer.announceBriefing(briefingText, () => {
-
-                        this.battleBriefingSpeaking = false;
-
-                    });
+                    // 🔴 [2026-11-11] 经典战战术播报可分几段（空行分段）：一段一屏，念完一段接下一段
+                    const briefingParas = briefingText.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+                    let paraIdx = 0;
+                    const speakNextPara = () => {
+                        if (!this.active || this.over || paraIdx >= briefingParas.length) {
+                            this.battleBriefingSpeaking = false;
+                            return;
+                        }
+                        speechAnnouncer.announceBriefing(briefingParas[paraIdx++], speakNextPara);
+                    };
+                    speakNextPara();
 
                 };
 

@@ -43,9 +43,12 @@ import {
     getGeneralFirstBattle,
     markFirstBattleCompleted,
     isFirstBattleCompleted,
+    isFirstBattleDoneForBattle,
     clearCompletedFirstBattles,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
+import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
+import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -2360,6 +2363,9 @@ export class PlayerQuestSystem {
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
         this.marchHostToFirstBattle(host, targetPos);
+        // 🔴 [2026-11-11 主人定] 战略大局一般在寻将路上就已开念（tickClassicBriefing）；
+        //    没赶上（直接撞见他）且还要赶路的，接任务时补开；就地开打的不念，免得与战术播报叠在开战那一刻。
+        if (!isOnTheSpot) this.beginClassicStrategicBriefing(g.generalId, fb);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
         const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
         this.deps.notify(
@@ -3466,6 +3472,7 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
+        this.tickClassicBriefing();
         if (this.deps.isScene13Active?.()) {
             if (this.quest?.kind === 'first_battle') {
                 this.tickFirstBattle(this.quest);
@@ -3780,6 +3787,59 @@ export class PlayerQuestSystem {
     private hostInBattle(): boolean {
         const host = this.journeyMover();
         return !!host && !host.isDestroyed && host.getIsInCombat?.() === true;
+    }
+
+    // ── 经典战两段播报：战略（寻将起念）／战术（开打起念，在战术模式里）──────────
+    /** 🔴 [2026-11-11 主人定] 战略大局播报器：上一支军团解散、去找下一位武将时开念，开打时当段念完即收 */
+    private readonly classicBriefing = new ClassicBattleBriefingRunner(() => this.deps.announceBriefing);
+
+    /** 为这位武将的经典战开念战略大局（已在念 / 已念过不重复） */
+    private beginClassicStrategicBriefing(generalId: string, fb: GeneralFirstBattle): void {
+        if (this.classicBriefing.hasStarted(generalId)) return;
+        const myFactionId = getFactionIdOfGeneral(generalId);
+        const myFactionName = myFactionId ? this.deps.cityManager.getFactionName(myFactionId) : '';
+        const generalName = getGeneralRecordByGeneralId(generalId)?.generalName ?? '';
+        const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
+        const paragraphs = getFirstBattleStrategicParagraphs(fb, { myFactionName, generalName, enemyFactionName });
+        this.classicBriefing.start(generalId, paragraphs);
+        gameLog('expedition', `[玩家] 经典战战略播报开念：${generalName}【${fb.battleName}】共 ${paragraphs.length} 段`);
+    }
+
+    /** 玩家眼下要去找的那位武将（没在随军、没任务时才有） */
+    private huntingGeneralId(): string | null {
+        if (this.quest || this.deps.hero.isAttached()) return null;
+        return this.pendingFrontGeneralId ?? this.preferredLiveGeneralId ?? this.headingTargetGeneralId ?? null;
+    }
+
+    /**
+     * 每次 tick 看一眼（战术模式中也看）：
+     *   · 寻将路上，目标武将有还没打的经典战 → 开念他的战略大局；改找别人 → 当段念完就换；
+     *   · 本场军团开打 → 当段念完就收，剩下的不念（战术模式那段等 S 级播报空闲就开口）。
+     */
+    private tickClassicBriefing(): void {
+        const runningFor = this.classicBriefing.currentGeneralId();
+        const q = this.quest;
+        if (q?.kind === 'first_battle') {
+            if (runningFor && (runningFor !== q.generalId || this.hostInBattle() || this.deps.isScene13Active?.())) {
+                this.classicBriefing.stopAfterCurrent();
+            }
+            return;
+        }
+        if (q) {
+            if (runningFor) this.classicBriefing.stopAfterCurrent();
+            return;
+        }
+        if (this.deps.hero.autoPlan === 'script') return;
+        const target = this.huntingGeneralId();
+        const fb = target && !isFirstBattleDoneForBattle(target) ? this.hasPendingFirstBattle(target) : null;
+        if (target && fb) {
+            if (runningFor !== target) {
+                if (runningFor) this.classicBriefing.stopAfterCurrent();
+                this.beginClassicStrategicBriefing(target, fb);
+            }
+        } else if (runningFor && runningFor !== target) {
+            this.classicBriefing.stopAfterCurrent();
+        }
     }
 
     /** 松闸（把军团放回路上）：`clearJourneyBriefing` 与 `settleBriefingHold` 共用的唯一出口 */
@@ -4842,6 +4902,7 @@ export class PlayerQuestSystem {
         clearCompletedFirstBattles();
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
+        this.classicBriefing.reset();        // 经典战战略播报同理
         this.emitChange();
     }
 

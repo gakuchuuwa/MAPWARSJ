@@ -3031,7 +3031,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_gao_zhihui',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '高智慧据浙江水险连营百里，老夫奉命率死士轻舸横渡浙江直扑敌垒！壮士，拔刀随老将抢滩登岸，焚舰破营击败高智慧！' },
+            { speaker: 'general', text: '高智慧船舰蔽江、据浙江东岸连营百里，老夫请命率奇兵乘轻舸潜渡浙江直扑敌壁！壮士，拔刀随老将直登江岸，袭营纵火击溃高智慧！' },
             { speaker: 'player', text: '愿随来护儿将军共赴会稽之战，大破高智慧军！' },
         ],
     },
@@ -5229,22 +5229,22 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     // #270 吉亚斯丁 (1140 ~ 1203) — 公元1175年拉合尔之战
     huluo_jiyasiding: {
         generalId: 'huluo_jiyasiding',
-        battleName: '尼沙布尔之战',
-        battleYear: 1200,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '尼沙布尔',
-        targetCityId: 'city_nishabuer',
-        targetLat: 36.2133,
-        targetLng: 58.7958,
+        battleName: '赫拉特之战',
+        battleYear: 1202,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '赫拉特城郊',
+        targetCityId: 'city_helate_city',
+        targetLat: 34.34,
+        targetLng: 62.19,
         myTroops: 20000,
         enemyFactionId: 'huarazim',
         enemyFactionName: '花剌子模',
-        enemyGeneralId: 'huarazim_mohemo',   // 🔴 [2026-11-11 按史] 1200 吉亚斯丁亲统西征呼罗珊攻拔尼沙布尔（1186 拉合尔系其弟穆罕默德亲统，《纳昔儿史话》）
+        enemyGeneralId: 'huarazim_mohemo',   // 🔴 [2026-11-11 按史] 1202 摩诃末亲统围赫拉特，吉亚斯丁亲率主力驰援解围、迫其纳币退兵（伊本·艾西尔《历史大全》；1201 尼沙布尔破城时摩诃末在玉龙杰赤未亲临，1186 拉合尔为其弟穆罕默德亲统）
         enemyTroops: 14300,
         introLines: [
-            { speaker: 'general', text: '花剌子模旧主新丧、摩诃末立足未稳，呼罗珊富庶名城尽在眼前！古尔的勇士，推抛石机随大苏丹攻拔尼沙布尔，饮马里海！' },
-            { speaker: 'player', text: '愿随吉亚斯丁苏丹西征呼罗珊，一鼓攻克尼沙布尔！' },
+            { speaker: 'general', text: '花剌子模沙阿摩诃末恃强东犯，亲统大军围攻我呼罗珊重镇赫拉特！本苏丹已提兵驰援驻营城郊，古尔的勇士，随大王内外夹击，挫退花剌子模之师！' },
+            { speaker: 'player', text: '愿随吉亚斯丁苏丹驰援赫拉特，击退摩诃末花剌子模大军！' },
         ],
     },
     // #271 源赖朝 (1147 ~ 1199) — 公元1180年富士川之战

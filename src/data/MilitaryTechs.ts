@@ -134,9 +134,9 @@ const HORSE_ARCHER_CULTURES: readonly RegionType[] = [
 export const MILITARY_TECHS: readonly MilitaryTech[] = [
     // ── 近战攻击线（冶金）：步兵6 / 骑兵12（含象、车）────────────────────────
     {
-        id: 'forging', name: '锻造', de: 'Forging', year: null,
+        id: 'forging', name: '锻造', de: 'Forging', year: -1200,
         era: 'antiquity',
-        basis: '铁兵器普及早于时间线起点（-334 已是铁器时代）',
+        basis: '约前 1200 年近东铁器时代开启，块炼熟铁渗碳锤锻冷兵器大规模取代范铸青铜兵器（推定）；早于时间线起点（-334 已是铁器时代）',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 删 45/46/50（DE 全表 0 单位）；47=斥候（DE 确有）
         cultures: null,
     },
@@ -157,9 +157,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
     {
-        id: 'scale_mail', name: '步兵鳞甲', de: 'Scale Mail Armor', year: null,
+        id: 'scale_mail', name: '步兵鳞甲', de: 'Scale Mail Armor', year: -1430,
         era: 'antiquity',
-        basis: '鳞甲远早于时间线起点',
+        basis: '前 15 世纪中叶古埃及阿蒙霍特普二世肯阿蒙墓壁画成套鳞甲、米坦尼努兹泥板军械库鳞甲账册（推定）；远早于时间线起点',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
@@ -222,9 +222,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
     {
-        id: 'fletching', name: '箭羽', de: 'Fletching', year: null,
+        id: 'fletching', name: '箭羽', de: 'Fletching', year: -3300,
         era: 'antiquity',
-        basis: '基础箭羽工艺',
+        basis: '约前 3300 年阿尔卑斯冰人奥茨出土最早完整三羽黏缚定型箭，同期乌鲁克与早王朝埃及步弓成军（推定）；基础箭羽工艺',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
@@ -257,9 +257,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
     {
-        id: 'padded_archer', name: '射手软甲', de: 'Padded Archer Armor', year: null,
+        id: 'padded_archer', name: '射手软甲', de: 'Padded Archer Armor', year: -600,
         era: 'antiquity',
-        basis: '织物／皮质轻甲',
+        basis: '约前 600 年前后阿尔卡埃乌斯诗篇、希罗多德所记埃及多层亚麻甲及希腊亚麻胸甲大规模军用普及（推定）；织物／皮质轻甲',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
@@ -340,16 +340,16 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
-        id: 'tracking', name: '追踪', de: 'Tracking', year: null,
+        id: 'tracking', name: '追踪', de: 'Tracking', year: -1274,
         era: 'antiquity',
-        basis: '循迹侦察自古有之（步兵 +2 视野）',
+        basis: '前 1274 年卡迭石之战铭文与浮雕完整记录赫梯与埃及专职战场斥候侦察追踪（推定，战例年确证）；循迹侦察自古有之（步兵 +2 视野）',
         effects: [{ attr: 'los', op: 'add', value: 2, classes: [6] }],
         cultures: null,
     },
     {
-        id: 'arson', name: '纵火', de: 'Arson', year: null,
+        id: 'arson', name: '纵火', de: 'Arson', year: -865,
         era: 'antiquity',
-        basis: '火攻自古有之（步兵对标准建筑 +2）',
+        basis: '约前 865 年新亚述王阿淑尔纳西尔帕二世尼姆鲁德王宫浮雕首次实证攻城步兵持火把焚毁城防木构（推定）；火攻自古有之（步兵对标准建筑 +2）',
         effects: [{ attr: 'bonus', op: 'add', value: 2, classes: [6], bonusClass: 21 }],
         cultures: null,
     },
