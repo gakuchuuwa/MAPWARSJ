@@ -13,7 +13,7 @@ import { FIRST_BATTLE_STRATEGIC_BACKGROUNDS } from '../../src/data/GeneralFirstB
 import { getRawGeneralByGeneralId } from '../../src/data/FactionGenerals';
 import { FACTIONS } from '../../src/data/factions';
 import { CLASSIC_BATTLE_BRIEFINGS } from '../../src/data/ClassicBattleBriefings.generated';
-import { HARD_MAX, HARD_MIN, len } from './briefingLib.mts';
+import { len } from './briefingLib.mts';
 
 const out = process.argv[2];
 const batchSize = Number(process.argv[3] ?? 30);
@@ -32,13 +32,10 @@ const rows = Object.keys(GENERAL_FIRST_BATTLES)
     .flatMap((gid) => getGeneralClassicBattles(gid))
     .sort((a, b) => a.battleYear - b.battleYear || a.battleName.localeCompare(b.battleName) || battleIdOf(a).localeCompare(battleIdOf(b)));
 
-/** 已按新字数（每段 89~144，硬边界 HARD_MIN~HARD_MAX）重写并导入的场次 */
+/** 已按新口径（目标 89~144，一段一屏）重写并导入的场次：两段都只有一屏 */
 const meetsNewLength = (id: string): boolean => {
     const b = CLASSIC_BATTLE_BRIEFINGS[id];
-    if (!b) return false;
-    const s = len(b.strategic.join(''));
-    const t = len(b.tactical.join(''));
-    return s >= HARD_MIN && s <= HARD_MAX && t >= HARD_MIN && t <= HARD_MAX;
+    return !!b && b.strategic.length === 1 && b.tactical.length === 1;
 };
 
 const sameBattle = new Map<string, number>();
