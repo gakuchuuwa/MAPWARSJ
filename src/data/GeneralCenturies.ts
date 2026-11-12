@@ -755,8 +755,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_agallianos': 8,                     // 阿加利诺斯
     'bfe_krakus': 4,                         // 克拉库斯
     'bfe_dinga_cisse': 4,                    // 丁加西塞
-    'bfe_dewawarman': 2,                      // 德瓦瓦尔曼    'bfe_joseph_brant': 18,                      // 约瑟夫布兰特
-    'bfe_divico': -2,                      // 迪维科    'bfe_arminius': 1,                      // 阿米尼乌斯
+    'bfe_dewawarman': 2,                      // 德瓦瓦尔曼
+    'bfe_joseph_brant': 18,                      // 约瑟夫布兰特
+    'bfe_divico': -2,                      // 迪维科
+    'bfe_arminius': 1,                      // 阿米尼乌斯
     'bfe_kinizsi': 15,                      // 基尼日
     'bfe_jezzar': 18,                      // 贾扎尔
     'bfe_narses': 6,                      // 纳尔塞斯
@@ -782,7 +784,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_dimitriev': 19,                    // 卡拉·费兹 · osman · 普罗夫迪夫
     'bfe_taycanamo': 9,                       // 塔卡伊纳莫 · qimu · 昌昌
     'bfe_gouras': 19,                         // 古拉斯 · xilawangguo · 雅典
-    'bfe_karaiskakis': 19,                   // 卡拉伊斯卡基斯 · xilawangguo · 雅典    'bfe_ypsilantis': 19,                      // 科贾·穆萨帕夏 · osman · 君士坦丁堡
+    'bfe_karaiskakis': 19,                   // 卡拉伊斯卡基斯 · xilawangguo · 雅典
+    'bfe_ypsilantis': 19,                      // 科贾·穆萨帕夏 · osman · 君士坦丁堡
     'bfe_maniakes': 11,                       // 马尼亚克 · baizanting · 锡拉库萨
     'bfe_rhetogenes': -2,                    // 雷图格诺斯 · arevaci · 努曼提亚
     'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巴达维亚
@@ -1234,7 +1237,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（公元前323年普拉塔纳斯战役马其顿守帅；该战役已删除）
     'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（公元前322年克兰农战役希腊同盟总司令；该战役已删除）
     // 🔴 [2026-09-19 主人令「都给我删了」] 欧迈尼斯（gen_eumenes）的记录已删除 —— 他挂的势力 kapaduoxiya 已删。
-    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（公元前321年赫勒斯滂战役守帅；该战役已删除）    'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
+    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（公元前321年赫勒斯滂战役守帅；该战役已删除）
+    'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
     'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约公元前2112年）
     'fujisi_fujiweng':                   -4,    // 福基翁 · fujisi · 雅典城邦政治家军事家（前4世纪）
     'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（公元前776年）

@@ -183,7 +183,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'abkhazia_kingdom': '阿布',
     'mac_dynasty': '莫朝',
     'restored_hanthawaddy': '复汉',
-    'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 马蒙王朝＝花剌子模 Ma'munids（995–1017），都玉龙杰赤；原旗号「马蒙」与旗下武将名同字（播报叠念），且「花剌」已被花剌子模帝国(huarazim)占用 → 取都城名「玉龙」
         // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 的旗号「建州」已删除（原违规：旗号含「州」；势力并入大清，旗号随大清「清」）
     'bashkir': '巴什',
     'drevlians': '德列',
@@ -239,7 +238,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   fuguo: '附',
 
 'yada': '厌抵',
-'guishuang': '贵霜',  'sijitai': '斯基',
+'guishuang': '贵霜',
+  'sijitai': '斯基',
 
     'shang': '商',
     'zhou': '周',
@@ -896,7 +896,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   houmojietuo: '后摩',  // 摩揭陀·普那伐摩（7世纪初）
   sumo: '苏摩',  // 苏摩国（孟加拉 Suhma，前6世纪）
   gushu: '蜀',  // 古蜀·开明王朝（前4世纪–前316 秦灭）
-  yidali_odoacer: '奥多',  // 奥多亚克意大利王国（476–493，都拉文纳）
   gaoda: '高达',  // 高达王国（设赏迦，约590–626）
   kelite_amier: '克特',  // 克里特埃米尔国（约824–961）
   kelimiya_han: '克米',  // 克里米亚汗国（1441–1783）

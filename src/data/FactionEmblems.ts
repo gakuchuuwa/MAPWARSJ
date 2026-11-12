@@ -74,7 +74,8 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     ruidian_si: 'SWEDEN_CROWNS',   // 瑞典·三王冠
     scotland: 'SCOTLAND_SALTIRE',   // 苏格兰·圣安德鲁斜十字
     weiershigongguo: 'WALES_DRAGON',   // 威尔士公国·红龙
-    xixiliwangguo: 'SICILY_TRINACRIA',   // 西西里·三曲腿    ruishi: 'SWISS_CROSS',   // 瑞士·白十字
+    xixiliwangguo: 'SICILY_TRINACRIA',   // 西西里·三曲腿
+    ruishi: 'SWISS_CROSS',   // 瑞士·白十字
     didi: 'FLANDERS_LION',   // 佛兰德·狮
     bulietani: 'BRITTANY_ERMINE',   // 布列塔尼·貂纹
     nuowei: 'NORWAY_LION_AXE',   // 挪威·狮持斧

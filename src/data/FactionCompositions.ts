@@ -129,10 +129,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "帝国时代缅甸军团",
     legionType: "region",
 },   // 复兴汉达瓦底｜主将 彬尼亚达拉
-"mamunid": {
-    legionName: "封建时代图兰军团",
-    legionType: "region",
-},   // 马蒙王朝｜主将 马蒙
 "bashkir": {
     legionName: "帝国时代突厥斯坦军团",
     legionType: "region",
@@ -819,7 +815,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "ouyue": {
         legionName: "古典时代吴越军团",
-    },    "shang": {
+    },
+    "shang": {
         legionName: "先秦军团",
     },
     "qi": {
@@ -2856,10 +2853,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "gushu": {
         legionName: "古典时代巴蜀军团",
-        legionType: "sub",
-    },
-    "yidali_odoacer": {
-        legionName: "封建时代阿斯图里亚斯军团",
         legionType: "sub",
     },
     "gaoda": {

@@ -75,8 +75,10 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'baizanting': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 拜占庭｜存续 395–1453：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     'luoma_diguo': [{ from: -9999, era: 'antiquity' }], // 罗马帝国｜罗马帝国（–476）＝古典时代罗马军团
     'aqimeinide': [{ from: -9999, era: 'antiquity' }], // 阿契美尼德｜阿契美尼德（前550–前330）＝古典时代阿契美尼德军团
-    'seljuq': [{ from: -9999, era: 'castle' }], // 塞尔柱｜塞尔柱（1037–1194）＝城堡时代加齐突骑军团（桑贾尔）    'luosi': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 罗斯｜存续 830–1294：留里克—基辅罗斯早期封建→1050起城堡（2026-11-11 GG第五轮·长时代分段）
-    'osman': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 奥斯曼帝国｜存续 1230–1900：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）    'bolan': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 波兰｜存续 960–1795：早期皮亚斯特封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代分段）
+    'seljuq': [{ from: -9999, era: 'castle' }], // 塞尔柱｜塞尔柱（1037–1194）＝城堡时代加齐突骑军团（桑贾尔）
+    'luosi': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 罗斯｜存续 830–1294：留里克—基辅罗斯早期封建→1050起城堡（2026-11-11 GG第五轮·长时代分段）
+    'osman': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 奥斯曼帝国｜存续 1230–1900：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
+    'bolan': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 波兰｜存续 960–1795：早期皮亚斯特封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代分段）
     'mazhaer': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 匈牙利｜存续 830–1900：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'yinggelan': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 英格兰｜存续 927–1707：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'falanji': [{ from: -9999, era: 'feudal' }], // 法兰克｜晚期古典（–476）＝古典军团；墨洛温—加洛林（476–1100）＝封建时代法兰克军团；1100 后卡佩骑士 → 城堡时代法兰西骑士军团
@@ -90,12 +92,12 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'houmojietuo': [{ from: -9999, era: 'feudal' }], // 摩揭陀·普那伐摩（7世纪初）
     'sumo': [{ from: -9999, era: 'antiquity' }], // 苏摩国（孟加拉 Suhma，前6世纪）
     'gushu': [{ from: -9999, era: 'antiquity' }], // 古蜀·开明王朝（前4世纪–前316 秦灭）
-    'yidali_odoacer': [{ from: -9999, era: 'feudal' }], // 奥多亚克意大利王国（476–493，都拉文纳）
     'gaoda': [{ from: -9999, era: 'feudal' }], // 高达王国（设赏迦，约590–626）
     'kelite_amier': [{ from: -9999, era: 'feudal' }], // 克里特埃米尔国（约824–961）
     'kelimiya_han': [{ from: -9999, era: 'imperial' }], // 克里米亚汗国（1441–1783）
     'guzigan': [{ from: -9999, era: 'feudal' }], // 古兹甘·法里贡王朝（9–11世纪初）
-    'bahemani': [{ from: -9999, era: 'castle' }], // 巴赫曼尼苏丹国（德干，1347–1527）    'halapengcai': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 哈利奔猜王国（约750–1292）：封建→1050起城堡
+    'bahemani': [{ from: -9999, era: 'castle' }], // 巴赫曼尼苏丹国（德干，1347–1527）
+    'halapengcai': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 哈利奔猜王国（约750–1292）：封建→1050起城堡
     'dongchahatai': [{ from: -9999, era: 'imperial' }], // 东察合台汗国（蒙兀儿斯坦，1347–1680）
     'buhala': [{ from: -9999, era: 'imperial' }], // 布哈拉埃米尔国（曼吉特，1785–1920）
     'biluzhi': [{ from: -9999, era: 'imperial' }], // 俾路支·林德部落联盟（1480–1533）
@@ -217,7 +219,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'abkhazia_kingdom': [{ from: -9999, era: 'feudal' }], // 阿布哈兹王国（巴格拉特三世）｜存续 778–1008 大部分年份
     'mac_dynasty': [{ from: -9999, era: 'imperial' }], // 莫朝｜存续 1527–1677 大部分年份
     'restored_hanthawaddy': [{ from: -9999, era: 'imperial' }], // 复兴汉达瓦底（彬尼亚达拉）｜存续 1740–1757 大部分年份
-    'mamunid': [{ from: -9999, era: 'feudal' }], // 马蒙王朝（花剌子模）｜存续 995–1017 大部分年份
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 'jianzhou': [{ from: -9999, era: 'imperial' }] 已删（并入大清）
     'bashkir': [{ from: -9999, era: 'imperial' }], // 巴什基尔起义（卡拉萨卡尔）｜存续 1550–1798 大部分年份
     'drevlians': [{ from: -9999, era: 'feudal' }], // 德列夫利安人｜存续 600–946 大部分年份
@@ -386,7 +387,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'jin': [{ from: -9999, era: 'antiquity' }], // 晋国
     'jinchuan_g': [{ from: -9999, era: 'imperial' }], // 金川
     'jingpozu': [{ from: -9999, era: 'imperial' }], // 景颇
-    'jinzhang': [{ from: -9999, era: 'castle' }], // 金帐    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'julushi' 已删（并入 sogdian）
+    'jinzhang': [{ from: -9999, era: 'castle' }], // 金帐
+    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'julushi' 已删（并入 sogdian）
     'juqu_d': [{ from: -9999, era: 'antiquity' }], // 沮渠
     'kaerka': [{ from: -9999, era: 'imperial' }], // 喀尔喀
     'kaernute': [{ from: -9999, era: 'antiquity' }], // 卡尔努特
@@ -766,7 +768,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kuman_oleshky': [{ from: -9999, era: 'castle' }], // 库曼｜库曼人 11–13 世纪 → 城堡（2026-11-03 主人定「库曼算城堡」）
     'kumoxi': [{ from: -9999, era: 'feudal' }], // 库莫奚｜按现存名将成名年推定：–∞起封建 → 1095起城堡
     'leangongguo': [{ from: -9999, era: 'castle' }], // 莱昂｜阿斯图里亚斯—莱昂（718 起）封建 → 1050 起城堡 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }] → castle｜存续 910–1230 大部分年份]
-    'liren': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 俚族｜存续 400–1900：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）    'litaowan': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 立陶宛｜存续 980–1795：早期波罗的部族封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代分段）
+    'liren': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 俚族｜存续 400–1900：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
+    'litaowan': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 立陶宛｜存续 980–1795：早期波罗的部族封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代分段）
     'lunbadi': [{ from: -9999, era: 'feudal' }], // 伦巴第｜按现存名将成名年推定：–∞起封建 → 1070起城堡 → 1513起帝国
     'gepids': [{ from: -9999, era: 'feudal' }], // 革皮德（5–6 世纪）
     'kalbids': [{ from: -9999, era: 'feudal' }], // 卡尔比德（948–1053 西西里埃米尔）

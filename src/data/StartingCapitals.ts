@@ -159,7 +159,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'abkhazia_kingdom': 'city_kutayixi',   // 登记用，不改据点归属
     'mac_dynasty': 'city_shenglong',   // 登记用，不改据点归属
     'restored_hanthawaddy': 'city_bago',   // 登记用，不改据点归属
-    'mamunid': 'city_urgench',   // 登记用，不改据点归属
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou → city_tongjiajiang 的首府登记已删（浑江本属 manzhou_d）
     'bashkir': 'city_kashan',   // 登记用，不改据点归属
     'drevlians': 'city_zhytomyr',   // 登记用，不改据点归属
@@ -237,7 +236,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'heishui': 'city_lahasusu',
   'fuguo': 'city_mangkangzong',
 
-'yada': 'city_xiwanjin',
+'yada': 'city_xiwanjin',
+
     'wei': 'city_hedong',
     'caowei': 'city_xuchang',
     'wuzhou_d': 'city_luoyang',
@@ -848,7 +848,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'houmojietuo': 'city_putijiaye',   // 摩揭陀·普那伐摩（7世纪初）
   'sumo': 'city_danmoledi',   // 苏摩国（孟加拉 Suhma，前6世纪）
   'gushu': 'city_chengdu',   // 古蜀·开明王朝（前4世纪–前316 秦灭）
-  'yidali_odoacer': 'city_ravenna',   // 奥多亚克意大利王国（476–493，都拉文纳）
   'gaoda': 'city_gaodacheng',   // 高达王国（设赏迦，约590–626）
   'kelite_amier': 'city_kailuwan',   // 克里特埃米尔国（约824–961）
   'kelimiya_han': 'city_oleshky',   // 克里米亚汗国（1441–1783）

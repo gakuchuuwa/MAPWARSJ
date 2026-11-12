@@ -305,8 +305,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_agallianos': 'feudal',   // 阿加利诺斯
     'bfe_krakus': 'antiquity',   // 克拉库斯
     'bfe_dinga_cisse': 'antiquity',   // 丁加西塞
-    'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼    'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
-    'bfe_divico': 'antiquity',   // 迪维科    'bfe_arminius': 'antiquity',   // 阿米尼乌斯
+    'bfe_dewawarman': 'antiquity',   // 德瓦瓦尔曼
+    'bfe_joseph_brant': 'imperial',   // 约瑟夫布兰特
+    'bfe_divico': 'antiquity',   // 迪维科
+    'bfe_arminius': 'antiquity',   // 阿米尼乌斯
     'bfe_kinizsi': 'castle',   // 基尼日
     'bfe_jezzar': 'imperial',   // 贾扎尔
     'bfe_narses': 'feudal',   // 纳尔塞斯
@@ -332,7 +334,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_dimitriev': 'castle',
     'bfe_taycanamo': 'feudal',
     'bfe_gouras': 'imperial',
-    'bfe_karaiskakis': 'imperial',    'bfe_ypsilantis': 'imperial',
+    'bfe_karaiskakis': 'imperial',
+    'bfe_ypsilantis': 'imperial',
     'bfe_maniakes': 'feudal',
     'bfe_rhetogenes': 'antiquity',
     'bfe_purnavarman': 'antiquity',
@@ -1458,7 +1461,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xushouhui_zhaopusheng': 'castle',
     'yada_ahexiong': 'antiquity',
     'yamato_nanmuzhengcheng': 'castle',
-    'yamato_sakanouenotamuramaro': 'feudal',    'yan_leyi': 'antiquity',
+    'yamato_sakanouenotamuramaro': 'feudal',
+    'yan_leyi': 'antiquity',
     'yanchuan_d_yuefei': 'castle',
     'yanda_touluoman': 'feudal',
     'yang_aner_yangan': 'castle',

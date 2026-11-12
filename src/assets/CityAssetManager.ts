@@ -129,7 +129,8 @@ export class CityAssetManager {
 'fushi': '秦',
 'heishui': '黑水',
         'fuguo': '附',
-'yada': '厌抵','xianbei': '鲜卑',
+'yada': '厌抵',
+'xianbei': '鲜卑',
 'wuhuan': '乌桓',
 'sijitai': '斯基',
 'lunbadi': '伦巴',
@@ -756,7 +757,6 @@ export class CityAssetManager {
         'abkhazia_kingdom': '阿布',
         'mac_dynasty': '莫朝',
         'restored_hanthawaddy': '复汉',
-        'mamunid': '玉龙',   // 🔴 [2026-11-09 主人令] 原「马蒙」＝武将名，改取都城玉龙杰赤
                 // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 'jianzhou' 旗面登记删除（势力并入 manzhou_d，旗号「清」）
         'bashkir': '巴什',
         'drevlians': '德列',
@@ -849,7 +849,6 @@ export class CityAssetManager {
         'houmojietuo': '后摩',   // 摩揭陀·普那伐摩（7世纪初）
         'sumo': '苏摩',   // 苏摩国（孟加拉 Suhma，前6世纪）
         'gushu': '蜀',   // 古蜀·开明王朝（前4世纪–前316 秦灭）
-        'yidali_odoacer': '奥多',   // 奥多亚克意大利王国（476–493，都拉文纳）
         'gaoda': '高达',   // 高达王国（设赏迦，约590–626）
         'kelite_amier': '克特',   // 克里特埃米尔国（约824–961）
         'kelimiya_han': '克米',   // 克里米亚汗国（1441–1783）

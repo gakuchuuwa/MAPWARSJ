@@ -155,7 +155,6 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     abkhazia_kingdom: { start: 778, end: 1008, source: 'Wikipedia「Kingdom of Abkhazia」：778 立国、都库塔伊西，1008 巴格拉特三世合并为格鲁吉亚王国' },
     mac_dynasty: { start: 1527, end: 1677, source: 'Wikipedia「Mạc dynasty」：1527–1677' },
     restored_hanthawaddy: { start: 1740, end: 1757, source: 'Wikipedia「Restored Hanthawaddy Kingdom」：1740–1757' },
-    mamunid: { start: 995, end: 1017, source: 'Wikipedia「Ma\'munids」：995–1017 花剌子模沙' },
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 1403–1616 已删（并入大清 manzhou_d）
     bashkir: { start: 1550, end: 1798, source: 'Wikipedia「Bashkir uprisings」：1550 年代归附莫斯科，1704–1740 多次起义' },
     drevlians: { start: 600, end: 946, source: 'Wikipedia「Drevlians」：6–10 世纪东斯拉夫部族，946 为奥尔加所灭' },
@@ -242,7 +241,8 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     fuguo: { start: 500, end: 650, source: '《隋书·附国传》：大业中附国王宜缯遣使；约7世纪中叶为吐蕃所并，终年不确定', note: '起年史无确载｜估算依据：《隋书》所载大业前已立的川西部落联盟，取6世纪初（500）。' },
     fushi: { start: 310, end: 394, source: '《晋书·苻洪载记》《苻登载记》：310年略阳氐推蒲洪（苻洪）为盟主统众割据（333称氐王、351苻健建前秦），394年苻崇败死｜确证', note: '2026-11-11 GG第五轮核定：原 351–394' },
     yada: { start: 440, end: 567, source: 'Wikipedia「嚈哒」：5世纪中叶兴起，557–567年为萨珊与突厥所灭' },
-    guishuang: { start: -128, end: 375, source: '《史记·大宛列传》《汉书·西域传》：约前128年大月氏臣服大夏置五翕侯之贵霜翕侯，约公元30年丘就却并四翕侯立贵霜帝国，约375年亡于萨珊｜推定（前128张骞抵月氏时五翕侯已置，30、375为学界通说）', note: '2026-11-11 GG第五轮核定：原 30–375' },    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 xiajiasi 840–1207 已删（并入 keerkezi）
+    guishuang: { start: -128, end: 375, source: '《史记·大宛列传》《汉书·西域传》：约前128年大月氏臣服大夏置五翕侯之贵霜翕侯，约公元30年丘就却并四翕侯立贵霜帝国，约375年亡于萨珊｜推定（前128张骞抵月氏时五翕侯已置，30、375为学界通说）', note: '2026-11-11 GG第五轮核定：原 30–375' },
+    // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 xiajiasi 840–1207 已删（并入 keerkezi）
     bailian: { start: 1796, end: 1804, source: 'Wikipedia「川楚白莲教起义」：1796年起事，1804年平定' },
     chimei: { start: 18, end: 27, source: '《后汉书·刘玄刘盆子列传》：天凤五年（18）樊崇起兵，建武三年（27）降汉' },
     shang: { start: -1600, end: -1046, source: 'Wikipedia「商朝」：约前1600–前1046，牧野之战亡' },
@@ -790,7 +790,6 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     houmojietuo: { start: 590, end: 640, source: '《大唐西域记》卷八、Wikipedia「Pūrṇavarman」：7 世纪初摩揭陀王普那伐摩（Pūrṇavarman），玄奘游印时其国已衰', note: '孔雀（前322–前185）之后七百年的摩揭陀政权，同国号另立一家；起讫按普那伐摩在位估定' },
     sumo: { start: -600, end: -400, source: 'Wikipedia「Suhma kingdom」、《摩诃婆罗多》与往世书：孟加拉 Suhma 国，前 6 世纪苏摩王', note: '孟加拉古国，早于前 185 年巽伽王朝；起讫按史源系年估定' },
     gushu: { start: -400, end: -316, source: '《华阳国志·蜀志》：开明王朝十二世，前 316 年秦惠文王遣张仪、司马错灭蜀（末王芦子，即开明氏末主）', note: '开明王朝古蜀国，都成都；与三国蜀汉（184–263）不同政权，同国号另立一家' },
-    yidali_odoacer: { start: 476, end: 493, source: 'Wikipedia「Odoacer」：476 年奥多亚克废罗慕路斯·奥古斯都，据意大利以拉文纳为治；493 年为狄奥多里克所杀', note: '奥多亚克意大利王国（476–493），都拉文纳；与 1861 年意大利王国不同一国' },
     gaoda: { start: 590, end: 626, source: '《大唐西域记》、Wikipedia「Gauḍa kingdom」「Shashanka」：设赏迦（Śaśāṅka）约 590–626 王孟加拉高达', note: '孟加拉高达王国，早于 750 年瞿波罗所建波罗王朝' },
     kelite_amier: { start: 824, end: 961, source: 'Wikipedia「Emirate of Crete」：约 824 年安达卢斯流亡者据克里特立国，961 年尼基弗鲁斯·福卡斯收复', note: '地中海克里特埃米尔国；库内无干地亚独立据点（干地亚属威尼斯），首都仅登记用' },
     kelimiya_han: { start: 1441, end: 1783, source: 'Wikipedia「Crimean Khanate」：1441 年哈吉·格莱立国（巴赫奇萨赖为都），1783 年为俄国兼并', note: '克里米亚鞑靼汗国；库内无巴赫奇萨赖据点，首都取最近同文化据点奥列什基' },
@@ -801,6 +800,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     buhala: { start: 1785, end: 1900, source: 'Wikipedia「Emirate of Bukhara」：1785 年曼吉特部沙赫穆拉德取布哈拉立埃米尔国，1920 年为苏俄所灭', note: '曼吉特王朝布哈拉埃米尔国；吉扎克为其东境重镇（原 kawusi 据点归此）' },
     biluzhi: { start: 1480, end: 1533, source: 'Wikipedia「Chakar Rind」「Baloch people」：林德（Rind）部落联盟米尔·恰卡尔 1480–1533 据俾路支—信德', note: '俾路支林德部落联盟（民族势力），早于 1747 年杜兰尼帝国；起讫按恰卡尔生卒与在位估定' },
     bonape: { start: 1200, end: 1628, source: 'Wikipedia「Nan Madol」「Saudelor」：约 1200 年绍德勒王朝筑南马都尔（波纳佩岛），1628 年前后终', note: '密克罗尼西亚波纳佩绍德勒王朝，与大溪地波马雷王朝（bolinixiya）不同政权' },
-    xiaweiyi: { start: 1795, end: 1893, source: 'Wikipedia「Kingdom of Hawaii」：1795 年卡美哈梅哈一世统一群岛建王国，1893 年王政被推翻', note: '夏威夷王国，都檀香山；与大溪地波马雷王朝不同政权' },    yidali_hre: { start: 1070, end: 1335, source: 'Wikipedia「Counts of Biandrate」：约 1070 年圭多一世受封比安德拉泰伯爵（阿尔伯特从征 1101 年十字军），1335 年并入米兰维斯孔蒂领', note: '皮埃蒙特比安德拉泰伯国（早于 1167 年伦巴第联盟）' },
+    xiaweiyi: { start: 1795, end: 1893, source: 'Wikipedia「Kingdom of Hawaii」：1795 年卡美哈梅哈一世统一群岛建王国，1893 年王政被推翻', note: '夏威夷王国，都檀香山；与大溪地波马雷王朝不同政权' },
+    yidali_hre: { start: 1070, end: 1335, source: 'Wikipedia「Counts of Biandrate」：约 1070 年圭多一世受封比安德拉泰伯爵（阿尔伯特从征 1101 年十字军），1335 年并入米兰维斯孔蒂领', note: '皮埃蒙特比安德拉泰伯国（早于 1167 年伦巴第联盟）' },
     libiya: { start: -241, end: -237, source: '波利比乌斯《历史》卷一、Wikipedia「Mercenary War」：前241–前237年北非利比亚诸城与雇佣军结盟反迦太基（铸 ΛΙΒΥΩΝ「利比亚人」钱币立盟）', note: '北非利比亚反迦太基同盟政权（马托斯、斯彭迪乌斯）' },
 };

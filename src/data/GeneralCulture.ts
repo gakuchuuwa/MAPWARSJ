@@ -160,7 +160,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_kalinga_king': 'INDIA',   // 羯陵伽｜婆摩｜据点 丹塔普拉
     'bfe_karaiskakis': 'ATHENIANS',   // 希腊王国｜卡拉伊斯卡基斯｜据点 雅典
     'bfe_kehaya_mustafa': 'TURKS',   // 奥斯曼帝国｜穆斯塔法｜据点 埃迪尔内
-    'bfe_kniprode': 'GERMANIC',   // 条顿骑士团｜克尼普罗德｜据点 柯尼斯堡    'bfe_landi': 'SICILIANS',   // 两西西里｜兰迪｜据点 巴勒莫
+    'bfe_kniprode': 'GERMANIC',   // 条顿骑士团｜克尼普罗德｜据点 柯尼斯堡
+    'bfe_landi': 'SICILIANS',   // 两西西里｜兰迪｜据点 巴勒莫
     'bfe_leo_phokas': 'BYZANTINE',   // 拜占庭｜利奥福卡斯｜据点 君士坦丁堡
     'bfe_li_song': 'CENTRAL',   // 李唐｜李松｜据点 长安
     'bfe_lifu': 'WEI',   // 燕国｜栗腹｜据点 范阳
@@ -227,8 +228,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_agallianos': 'ATHENIANS',   // 阿加利诺斯｜据点 city_yadian
     'bfe_krakus': 'POLES',   // 克拉库斯｜据点 city_kelakefu
     'bfe_dinga_cisse': 'AFRICA',   // 丁加西塞｜据点 city_kumubi
-    'bfe_dewawarman': 'MALAY',   // 德瓦瓦尔曼｜据点 city_wandan    'bfe_joseph_brant': 'AMERICA',   // 约瑟夫布兰特｜据点 city_onondaga
-    'bfe_divico': 'BURGUNDIANS',   // 迪维科｜据点 city_geneva    'bfe_arminius': 'SAXONS',   // 阿米尼乌斯｜据点 city_bulunruike
+    'bfe_dewawarman': 'MALAY',   // 德瓦瓦尔曼｜据点 city_wandan
+    'bfe_joseph_brant': 'AMERICA',   // 约瑟夫布兰特｜据点 city_onondaga
+    'bfe_divico': 'BURGUNDIANS',   // 迪维科｜据点 city_geneva
+    'bfe_arminius': 'SAXONS',   // 阿米尼乌斯｜据点 city_bulunruike
     'bfe_kinizsi': 'MAGYAR',   // 基尼日｜据点 贝尔格莱德
     'bfe_jezzar': 'ORIE',   // 贾扎尔｜据点 city_beirut
     'bfe_narses': 'ROMA',   // 纳尔塞斯｜据点 city_luoma
@@ -1807,7 +1810,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yadian_gongguo_otto': 'ATHENIANS',   // 雅典公国｜拉罗什｜据点 雅典
     'yamato_nanmuzhengcheng': 'JAPAN',   // 大觉寺统｜楠木正成｜据点 千早城
     'yamato_sakanouenotamuramaro': 'JAPAN',   // 大和｜坂上田村麻吕｜据点 京都
-    'yamaxun_faernake': 'BYZANTINE',   // 本都｜法尔纳克｜据点 忒弥斯基拉    'yan_leyi': 'CENTRAL',   // 燕国｜乐毅｜据点 临淄
+    'yamaxun_faernake': 'BYZANTINE',   // 本都｜法尔纳克｜据点 忒弥斯基拉
+    'yan_leyi': 'CENTRAL',   // 燕国｜乐毅｜据点 临淄
     'yanchuan_d_yuefei': 'HUGUANG',   // 赵宋｜岳飞｜据点 武昌
     'yanda_touluoman': 'CENTRAL_ASIA',   // 阿尔洪｜头罗曼｜据点 德拉普萨卡
     'yang_aner_yangan': 'CENTRAL',   // 天顺｜杨安｜据点 蓬莱

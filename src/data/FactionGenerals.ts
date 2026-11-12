@@ -3117,7 +3117,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 曼斯菲尔德（1580–1626，新教雇佣军统帅；1626 德绍桥败于华伦斯坦）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜普将｜精锐「新教雇佣兵」T4｜立绘留空
         { generalId: 'bfe_mansfeld', factionId: 'boximiya', cityId: 'city_bulage', generalName: '曼斯菲尔德', portrait: '/assets/BOHEMIANS/bfe_mansfeld.png', eliteName: '布拉格火枪团', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 华伦斯坦（1583–1634，三十年战争帝国军统帅；1626 德绍桥胜）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜名将｜精锐「华伦斯坦军」T1｜立绘留空｜经典战待补
-        { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '/assets/BOHEMIANS/boximiya_wallenstein.png', eliteName: '波西米重骑', eliteTier: 1 },        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚重骑', eliteTier: 2 },
+        { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '/assets/BOHEMIANS/boximiya_wallenstein.png', eliteName: '波西米重骑', eliteTier: 1 },
+        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚重骑', eliteTier: 2 },
 
 
 
@@ -3458,7 +3459,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     hussites: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]
-        // 杨·杰士卡（约 1360–1424，胡斯派统帅；1420 维特科夫山、1422 库特纳霍拉以车阵屡破十字军，终生未尝一败）｜势力 胡斯派（新增）｜据点 布拉格（BOHEMIANS）｜名将｜精锐「胡斯车阵兵」T1｜立绘留空        { generalId: 'gen_jan_zizka', factionId: 'hussites', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
+        // 杨·杰士卡（约 1360–1424，胡斯派统帅；1420 维特科夫山、1422 库特纳霍拉以车阵屡破十字军，终生未尝一败）｜势力 胡斯派（新增）｜据点 布拉格（BOHEMIANS）｜名将｜精锐「胡斯车阵兵」T1｜立绘留空
+        { generalId: 'gen_jan_zizka', factionId: 'hussites', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
     ],
     cherusci: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]
@@ -3502,7 +3504,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'gen_binnya_dala', factionId: 'restored_hanthawaddy', cityId: 'city_bago', generalName: '彬尼亚达拉', portrait: '/assets/BURMESE/gen_binnya_dala.png', eliteName: '汉达象兵', eliteTier: 3 },
     ],
-    mamunid: [
+    jinong: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'mamon_mameng', factionId: 'jinong', cityId: 'city_urgench', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '花剌骑兵', eliteTier: 4 },
     ],
@@ -4172,7 +4174,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_apokaukos', factionId: 'baizanting', cityId: 'city_sparta', generalName: '阿波卡夫', portrait: '/assets/SPARTANS/bfe_apokaukos.png', eliteName: '拉科尼亚重步', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 乔治·马尼亚克（？–1043，拜占庭名将；1038–1040 西西里远征军最高统帅，罗梅塔与特罗伊纳大破阿拉伯军、收复墨西拿与叙拉古等十三城）｜势力 拜占庭｜据点 锡拉库萨（SICILIANS 文化）｜普将（存疑）｜精锐「西西里远征」T4｜立绘留空
         { generalId: 'bfe_maniakes', factionId: 'baizanting', cityId: 'city_syracuse', generalName: '马尼亚克', portrait: '/assets/SICILIANS/bfe_maniakes.png', eliteName: '锡拉库萨重骑', eliteTier: 3 },
-        // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空        // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
+        // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空
+        // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
         { generalId: 'bfe_vitalian', factionId: 'baizanting', cityId: 'city_plovdiv', generalName: '维塔利安', portrait: '/assets/THRACIAN/bfe_vitalian.png', eliteName: '色雷斯哥特骑', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 阿历克塞·布拉纳斯（？–1187，阿德里安堡将门；1185 莫西诺波利斯全歼诺曼西西里军）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化）｜普将｜精锐「色雷斯骑兵」T4｜立绘留空
         // 🔴 [2026-10-25 补B] 尼基弗鲁斯（912–969，拜占庭名将；961 收复克里特、965 奇里乞亚、969 安条克；卡帕多西亚家族）｜势力 拜占庭｜据点 伊科尼乌姆（TURKS 文化，安纳托利亚军区）｜名将｜精锐「拜占庭铁甲」T1｜立绘留空｜经典战待补
@@ -14105,7 +14108,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 埃雷克莱二世（1720–1798，格鲁吉亚王、名将；抗波斯/奥斯曼）｜势力 格鲁吉亚｜据点 第比利斯（GEORGIANS 文化）｜名将｜精锐「格鲁吉亚近卫」T1｜立绘留空｜经典战待补
         { generalId: 'gelujiya_erekle_ii', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '埃雷克莱二世', portrait: '/assets/GEORGIANS/gelujiya_erekle_ii.png', eliteName: '高加索卫队', eliteTier: 2 },
         { generalId: 'gelujiya_ivane', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '伊万', portrait: '/assets/GEORGIANS/gelujiya_ivane.png', eliteName: '第比利斯重骑', eliteTier: 3 },
-        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '/assets/GEORGIANS/gelujiya_zakare.png', eliteName: '格鲁吉亚骑兵', eliteTier: 4 },    ],
+        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '/assets/GEORGIANS/gelujiya_zakare.png', eliteName: '格鲁吉亚骑兵', eliteTier: 4 },
+    ],
 
 
 
