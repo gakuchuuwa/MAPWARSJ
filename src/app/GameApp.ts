@@ -353,12 +353,12 @@ export class GameApp {
             this.cityManager.bindViewportCitySync();
             // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
-            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'centenarian') === 'script');
+            setScriptPeriodProvider(() => false);
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的百岁模式算（非剧本期）。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
-                () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
+                () => false,
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
@@ -746,7 +746,7 @@ export class GameApp {
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
             //    玩家对象晚于此处创建 → 取不到时按默认的百岁模式算（非剧本期）。
-            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script';
+            const isScriptPeriod = () => false;
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -949,7 +949,7 @@ export class GameApp {
     private syncScriptOwners(): void {
         syncScriptHistoricalOwners(
             this.cityManager,
-            (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
+            false,
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
     }
@@ -1114,7 +1114,7 @@ export class GameApp {
         //    剧本期据点**建筑风格**换成那一年该有的那一套（scriptBuildingStyles.ts），切回乱斗原样换回。
         //    （`buildingStyle` 与乱斗 `factionId` 同一个病：取的是这城最有名那段历史的风格 ——
         //      阿卡挂十字军、索非亚挂保加利亚，放进前 335 就是穿越。）
-        const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, hero.autoPlan === 'script');
+        const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, false);
         //    名字不随模式变（上面已套完），故这里不再有 syncCityNames()
         syncBuildingStyles();
         this.syncEraFactionDisplays();

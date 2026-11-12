@@ -1156,6 +1156,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'dibisi_phoinix', cityId: 'city_thebes', generalName: '菲尼克斯', portrait: '/assets/GREECE/dibisi_phoinix.png', eliteName: '底比斯重步兵', eliteTier: 4 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 佩洛皮达斯（底比斯将军、圣队统领；前379 光复底比斯，前371 留克特拉，前364 犬头山战死；修昔底德/普鲁塔克《佩洛皮达斯传》）｜势力 维奥蒂亚｜据点 底比斯（GREECE 文化）｜普将（五表待补）｜精锐「底比斯重步兵」T4（圣队番号已挂伊巴密浓达，按重步兵）｜立绘留空
+        { generalId: 'boootiya_pelopidas', factionId: 'boootiya', cityId: 'city_thebes', generalName: '佩洛皮达斯', portrait: '', eliteName: '底比斯重步兵', eliteTier: 4 },
 
 
 
@@ -1368,6 +1370,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'gen_lysander', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '吕山德', portrait: '/assets/SPARTANS/gen_lysander.png', eliteName: '斯巴达重步', eliteTier: 1 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 阿格西劳斯二世（斯巴达王，前399–前359 在位；前395 小亚细亚远征、前394 科罗尼亚、前371 留克特拉后守国；色诺芬《希腊史》、普鲁塔克《阿格西劳斯传》）｜势力 拉科尼亚｜据点 斯巴达（SPARTANS 文化）｜普将（五表待补）｜精锐「斯巴达王卫队」T2｜立绘留空
+        { generalId: 'lagoniya_agesilaus', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '阿格西劳斯二世', portrait: '', eliteName: '斯巴达王卫队', eliteTier: 2 },
 
 
 
@@ -2338,6 +2342,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'gen_chabrias', factionId: 'xila', cityId: 'city_yadian', generalName: '卡布里亚斯', portrait: '/assets/ATHENIANS/gen_chabrias.png', eliteName: '雅典重步阵', eliteTier: 2 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 客蒙（雅典将军，前466 欧里梅敦河口大捷、前450 卒于塞浦路斯；修昔底德 I.98–112、普鲁塔克《客蒙传》）｜势力 雅典｜据点 雅典（ATHENIANS 文化）｜普将（五表待补）｜精锐「雅典水师」T4｜立绘留空
+        { generalId: 'xila_cimon', factionId: 'xila', cityId: 'city_yadian', generalName: '客蒙', portrait: '', eliteName: '雅典水师', eliteTier: 4 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 伯里克利（雅典首席将军，前5世纪中后期主政；前440 萨摩斯战争、伯罗奔尼撒战争初期染疫卒于前429；修昔底德 II.65、普鲁塔克《伯里克利传》）｜势力 雅典｜据点 雅典（ATHENIANS 文化）｜普将（五表待补）｜精锐「雅典水师」T4｜立绘留空
+        { generalId: 'xila_pericles', factionId: 'xila', cityId: 'city_yadian', generalName: '伯里克利', portrait: '', eliteName: '雅典水师', eliteTier: 4 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 亚西比德（雅典将军，前432 波提狄亚从军、前415 西西里远征、后转投斯巴达/波斯，前404 遇刺；修昔底德 V–VI、普鲁塔克《亚西比德传》）｜势力 雅典｜据点 雅典（ATHENIANS 文化）｜普将（五表待补）｜精锐「雅典骑兵」T3｜立绘留空
+        { generalId: 'xila_alcibiades', factionId: 'xila', cityId: 'city_yadian', generalName: '亚西比德', portrait: '', eliteName: '雅典骑兵', eliteTier: 3 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 色诺芬（雅典人，前401 库纳克萨后率万人北撤，后随斯巴达阿格西劳斯；《长征记》《希腊史》）｜势力 雅典｜据点 雅典（ATHENIANS 文化）｜普将（五表待补）｜精锐「希腊雇佣兵」T3｜立绘留空
+        { generalId: 'xila_xenophon', factionId: 'xila', cityId: 'city_yadian', generalName: '色诺芬', portrait: '', eliteName: '希腊雇佣兵', eliteTier: 3 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 德摩斯梯尼（雅典将军，非演说家；前425 皮洛斯/斯发克特里亚、前413 西西里远征败亡；修昔底德 IV、VII）｜势力 雅典｜据点 雅典（ATHENIANS 文化）｜普将（五表待补）｜精锐「雅典轻步兵」T3｜立绘留空
+        { generalId: 'xila_demosthenes', factionId: 'xila', cityId: 'city_yadian', generalName: '德摩斯梯尼', portrait: '', eliteName: '雅典轻步兵', eliteTier: 3 },
 
 
 
@@ -15157,6 +15171,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_achaemenes', factionId: 'aqimeinide', cityId: 'city_latajiya', generalName: '阿凯门尼斯', portrait: '/assets/ORIE/bfe_achaemenes.png', eliteName: '腓尼基舟师', eliteTier: 3 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 哈尔帕古斯（米底/波斯宿将，前550 帕萨尔加德阵前倒戈助居鲁士，前546–前540 平定伊奥尼亚与吕基亚；希罗多德《历史》I.108–130、I.162–177）｜势力 阿契美尼德｜据点 苏萨（PERSIAN 文化；撒狄总督任所在外，按波斯本城锚定）｜普将（五表待补）｜精锐「不死军」T2｜立绘留空
+        { generalId: 'aqimeinide_harpagus', factionId: 'aqimeinide', cityId: 'city_susa', generalName: '哈尔帕古斯', portrait: '', eliteName: '不死军', eliteTier: 2 },
     ],
 
 
@@ -17093,6 +17109,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'sijitai_satraces', cityId: 'city_asu', generalName: '萨特拉克斯', portrait: '/assets/GREECE/sijitai_satraces.png', eliteName: '斯基泰步兵', eliteTier: 4 },
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 托米丽司（马萨革泰女王，前530 击败并杀居鲁士二世；希罗多德《历史》I.205–214）｜势力 斯基泰（马萨革泰按同族塞种并入斯基泰）｜据点 养吉干（锡尔河/药杀水入咸海处，STEPPE·CENTRAL_ASIA 文化，马萨革泰故地；城原主花剌子模，百岁模式随在场将归斯基泰）｜普将（五表待补）｜精锐「马萨革泰骑射」T2｜立绘留空
+        { generalId: 'sijitai_tomyris', factionId: 'sijitai', cityId: 'city_yangjigan', generalName: '托米丽司', portrait: '', eliteName: '马萨革泰骑射', eliteTier: 2 },
 
 
 

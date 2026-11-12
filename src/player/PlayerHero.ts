@@ -62,8 +62,13 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { PlayerLifeLog, type LifeEventKind, type LifeLogSave } from './PlayerLifeLog';
 import { downloadLifeStoryPack } from './PlayerLifeStoryPack';
 
-/** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
-export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
+/** 自动模式的两套玩法：百岁模式（默认，按登场年～百岁出现，玩家自动随编年史推进）、乱斗模式（全部武将恒在场）。 */
+/**
+ * 玩家玩法档。🔴 [2026-11-12 主人令「删除剧本模式」] 剧本模式已删除：
+ * `'script'` 只作**旧存档迁移字面量**保留，任何入口进来都会被 `setAutoPlan` 迁成 `'centenarian'`；
+ * 面板不再提供该选项，运行期也不会再进入剧本期。
+ */
+export type PlayerAutoPlan = 'centenarian' | 'melee' | 'script';
 export type PlayerPlayMode = 'auto' | 'rest' | 'globe';
 
 /** 从 fromLng 往西走到 toLng 要跨多少经度（0~360，跨 180° 经线自动接续） */
@@ -492,7 +497,7 @@ export class PlayerHero {
     /** 自动模式：自动选据点（兵多 + 名将）、自动入伍、军团战败自动换下一个势力。
      *  🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将，去掉其他的条件」——判据只剩这两条。
      *  🔴 [2026-10-05 主人令] 开局默认**关闭**（原 2026-09-09「开局默认自动」作废）：
-     *     先选好乱斗还是剧本（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
+     *     先选好百岁还是乱斗（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
     public autoMode = true;
     /** 玩家面板四选一模式（autoMode 仅在 'auto' 时为真，保持旧读取口径不变） */
     public playMode: PlayerPlayMode = 'auto';
@@ -502,21 +507,11 @@ export class PlayerHero {
     /** 🔴 [2026-10-22] 马厩：自己的马（坐骑状态决定单骑行军快慢）、通灵马谱系 */
     public readonly horses: HorseStable;
     /**
-     * 自动模式走哪套玩法（🔴 2026-09-17 主人定「剧本和乱斗模式分开。因为我还无法确定要不要做剧本。
-     *   现在的自动模式分为两种，一种是剧本模式，到了年份，玩家优先去战场。乱斗模式的话，玩家不去战场。」）
+     * 自动模式走哪套玩法（2026-11-12 删除剧本模式后只剩两档）：
+     *   · `'centenarian'` 百岁模式 —— 默认；武将按年份登场/退场，玩家自动随编年史推进；
+     *   · `'melee'` 乱斗模式 —— 完全不碰历史战场，一直找武将入伍打乱斗。
      *
-     *   · `'script'` 剧本模式 —— 到了年份优先奔赴历史战场，没有可打的战场才去找武将乱斗（9-16 定的那套）；
-     *   · `'melee'`  乱斗模式 —— **完全不碰战场**，一直找武将入伍打乱斗。
-     *
-     * 🔴 [2026-11-11 主人令「把项目的默认模式，改为百岁模式」] 默认＝`'centenarian'` 百岁模式。
-     * 🔴 [2026-10-08 主人令「开局默认模式从剧本改为乱斗」] 默认改为 'melee' 乱斗（取代 2026-09-23 的默认剧本）。
-     * 🔴 [2026-09-23 主人定] 默认改回 `'script'` 剧本模式，且剧本模式是**整个世界的模式**：
-     *   「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。
-     *     军团在历史剧本期间，不能随意寻敌，只有等剧本都结束后，自动切换到乱斗模式。」
-     *   · 剧本模式 → 募兵系统不生军团（开局首发 + 季末），AI 行为树不驱动非剧本军团；
-     *   · 全部战场打完 → PlayerQuestSystem.tick 自动切到 `'melee'`，募兵与 AI 恢复。
-     *   原面板「🚫 不出军团」勾选已并入本项（主人：把不出军团功能放到剧本模式中）。
-     *   （9-17 曾定默认乱斗，已被本条取代。）
+     * 旧存档里的 `'script'` 由 `setAutoPlan` 迁移为 `'centenarian'`。
      */
     public autoPlan: PlayerAutoPlan = 'centenarian';
     /** 玩家自定义名（改名功能写入；默认「探马者」） */
@@ -1232,15 +1227,16 @@ export class PlayerHero {
         return [];
     }
     /**
-     * 切换自动模式的玩法（百岁 / 剧本 / 乱斗）。
-     * 🔴 切到非剧本时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则「非剧本模式玩家不去战场」
-     *    这条会被一趟已经出发的行程架空，玩家照样一路走到战场再触发。`travelPointLabel` 只在
-     *    `travelToPoint` 里设，而全项目只有战场引导会调它，所以它非空就等于「正在奔赴战场」。
+     * 切换自动模式的玩法（百岁 / 乱斗）。
+     * 🔴 [2026-11-12 删除剧本模式] 旧存档里的 `'script'` 一律迁移为百岁；不再有剧本档。
+     * 切玩法时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则新玩法会被一趟已经出发的行程架空。
+     * `travelPointLabel` 只在 `travelToPoint` 里设，全项目只有战场引导会调它。
      */
-    public setAutoPlan(plan: PlayerAutoPlan): void {
-        if (this.autoPlan === plan) return;
-        this.autoPlan = plan;
-        if (plan !== 'script' && this.travelPointLabel !== null) this.cancelTravel();
+    public setAutoPlan(plan: PlayerAutoPlan | 'script'): void {
+        const next: PlayerAutoPlan = plan === 'script' ? 'centenarian' : plan;
+        if (this.autoPlan === next) return;
+        this.autoPlan = next;
+        if (this.travelPointLabel !== null) this.cancelTravel();
         this.emitChange();
     }
     public getHostLegion(): Army | undefined {

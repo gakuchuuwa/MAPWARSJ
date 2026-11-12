@@ -1,18 +1,20 @@
 /**
- * 历史剧本期开关（全局只读）—— 🔴 [2026-09-23 主人定]
+ * 历史剧本期开关（已删除剧本模式）—— 🔴 [2026-11-12 主人令「删除剧本模式」]
  *
- * 剧本模式 = 整个世界的模式（`PlayerHero.autoPlan === 'script'`；开局默认乱斗模式）；
- * 剧本全部打完自动切乱斗。各系统据此区分剧本 / 乱斗，不各自去找玩家对象。
- * 由 GameApp 注入判据；未注入（离线脚本 / 测试）时按乱斗算，不改变旧行为。
+ * 剧本模式已从玩家可选模式中删除；本文件只保留同名导出给旧调用点：
+ *   · `isScriptPeriod()` 恒 false；
+ *   · 所有 `getScript...` 解析器恒 null（不再套剧本军团/主将队/事件起点/事件守将）。
+ * 历史事件数据与 `HistoricalEventManager` 仍保留给战场点击与即时战斗，不再由玩家模式驱动。
  */
-let provider: () => boolean = () => true;
+let provider: () => boolean = () => false;
 
 export function setScriptPeriodProvider(fn: () => boolean): void {
-    provider = fn;
+    // 旧入口保留为空实现：任何调用都不会再把世界切回剧本期
+    void fn;
 }
 
 export function isScriptPeriod(): boolean {
-    return provider();
+    return false;
 }
 
 /**

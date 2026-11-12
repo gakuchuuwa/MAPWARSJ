@@ -38,6 +38,12 @@ Thumbs.db
 
 # Temporary files
 *.tmp
+# Google Drive 桌面版在同步目录里放的上传缓存（隐藏目录，实测 5 万个纯数字分块 / 4.2GB）。
+# 它不是项目内容，上传过程中又在不断增删：`git add .` 会撞上「文件已消失」直接 fatal，
+# 自动备份整轮失败（2026-11-12 14:29 就是这么挂的）。万一恰好稳定，还会把 4GB 塞进历史
+# ——同 2026-08-01 误入库瓦片推爆 GitHub 那一类事故。注意 `*.tmp` 挡不住它（名字不以 .tmp 结尾）。
+.tmp.driveupload/
+.tmp.drivetmp/
 *.swp
 
 # Large resource folders (not needed in version control)

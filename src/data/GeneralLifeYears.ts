@@ -763,6 +763,16 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_themistocles: { birth: -524, death: -459 },  // 地米斯托
     gen_miltiades: { birth: -550, death: -489, kaoju: '推定' },  // 米太亚德（马拉松雅典主将；生年约前550）
     gen_cambyses: { birth: -560, death: -522, kaoju: '推定' },  // 冈比西斯二世（前530–522 在位）
+    // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 编年史主角补录（生卒多无确载，标推定）
+    aqimeinide_harpagus: { birth: -600, death: -530, kaoju: '推定' },  // 哈尔帕古斯（前550 帕萨尔加德倒戈，前546–前540 平定伊奥尼亚）
+    sijitai_tomyris: { birth: -570, death: -520, kaoju: '推定' },  // 托米丽司（马萨革泰女王，前530 杀居鲁士二世）
+    xila_cimon: { birth: -510, death: -450, kaoju: '推定' },  // 客蒙（前466 欧里梅敦河口，前450 卒于塞浦路斯）
+    xila_pericles: { birth: -495, death: -429, kaoju: '推定' },  // 伯里克利（前429 染疫卒）
+    xila_demosthenes: { birth: -460, death: -413, kaoju: '推定' },  // 德摩斯梯尼（雅典将军，前413 西西里败亡；非演说家）
+    xila_alcibiades: { birth: -450, death: -404, debut: -432, kaoju: '推定' },  // 亚西比德（前432 波提狄亚从军，前404 遇刺）
+    lagoniya_agesilaus: { birth: -445, death: -359, kaoju: '推定' },  // 阿格西劳斯二世（前399–前359 在位）
+    xila_xenophon: { birth: -430, death: -354, kaoju: '推定' },  // 色诺芬（前401 库纳克萨后率万人北撤）
+    boootiya_pelopidas: { birth: -410, death: -364, kaoju: '推定' },  // 佩洛皮达斯（前364 犬头山战死）
     wu_fuchai: { birth: -528, death: -473, kaoju: '推定' },  // 夫差（吴王，前495–473 在位）
     xila_leosthenes: { birth: -365, death: -323, kaoju: '推定' },  // 莱奥斯塞尼斯
     xila_antiphilus: { birth: -360, death: -315, kaoju: '推定' },  // 安提菲洛斯

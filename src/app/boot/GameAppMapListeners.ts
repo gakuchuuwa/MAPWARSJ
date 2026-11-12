@@ -91,8 +91,7 @@ export function setupGameAppMapListeners(app: GameApp): void {
         // 🔴 [2026-09-24 主人报「一点就回到玩家了」] 编辑器开着时点击是给编辑器的，不开战、不动玩家；
         //    乱斗模式玩家不去战场（主人 2026-09-17 定「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场」）。
         if (editorOpen()) return;
-        if (app.playerHero && app.playerHero.autoPlan !== 'script') return;
-        // 抵达判定、武将在城判定、选边对话全在任务系统里（它握着 hero 与对话 UI）
+        // 🔴 [2026-11-12 删除剧本模式] 不再按 autoPlan 闸战场点击；点击战场照旧打那一场真实战役。
         app.playerQuests?.onBattlefieldClicked(d.id, d.name ?? '战场');
     });
 

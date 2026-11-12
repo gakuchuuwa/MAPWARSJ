@@ -53,6 +53,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aqimeinide_aertabazanuosi': 'PERSIAN',   // 阿契美尼德｜阿里奥巴赞斯｜据点 波斯波利斯
     'aqimeinide_aerxitesi': 'PERSIAN',   // 阿契美尼德｜阿尔西特斯｜据点 达斯基利翁
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
+    'aqimeinide_harpagus': 'PERSIAN',   // 阿契美尼德｜哈尔帕古斯｜据点 苏萨
     'arakan_mingbin': 'BURMESE',   // 阿拉干｜明彬｜据点 妙乌
     'asaibaijiang_xuliewu': 'SASANIAN',   // 伊利汗国｜旭烈兀｜据点 马拉盖
     'ashide_ashidejieli': 'MONGOL',   // 突厥｜阿史德颉利｜据点 黑沙牙帐
@@ -680,6 +681,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_el_cid': 'SPANISH',   // 阿拉贡｜熙德｜据点 巴伦西亚
     'gen_eleanor': 'SICILIANS',   // 阿拉贡｜埃莱奥诺拉｜据点 奥里斯塔诺
     'gen_epaminondas': 'GREECE',   // 底比斯｜伊巴密浓达｜据点 底比斯
+    'boootiya_pelopidas': 'GREECE',   // 底比斯｜佩洛皮达斯｜据点 底比斯
     'gen_eric_bloodaxe': 'BRITONS',   // 约维克｜埃里克｜据点 约克
     'gen_ezana': 'ETHIOPIANS',   // 埃塞俄比亚｜埃扎纳｜据点 阿克苏姆
     'gen_fasilides': 'ETHIOPIANS',   // 埃塞俄比亚｜法西里德｜据点 法西尔堡
@@ -760,6 +762,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_louis_xi': 'FRANKS',   // 法兰西｜路易十一｜据点 巴黎
     'gen_ludwig_iv': 'GERMANIC',   // 普法尔茨｜路德维希｜据点 海德堡
     'gen_lysander': 'SPARTANS',   // 斯巴达｜吕山德｜据点 斯巴达
+    'lagoniya_agesilaus': 'SPARTANS',   // 斯巴达｜阿格西劳斯二世｜据点 斯巴达
     'gen_magas': 'GREECE',   // 昔兰尼｜马加斯｜据点 班加西
     'gen_maha_thiha_thura': 'BURMESE',   // 缅甸｜摩诃悉都｜据点 因瓦
     'gen_mamai': 'CENTRAL_ASIA',   // 金帐｜马麦｜据点 萨莱
@@ -1508,6 +1511,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'siam_zhengxin': 'KHMER',   // 暹罗｜郑信｜据点 吞武里
     'sijitai_ateas': 'GREECE',   // 斯基泰｜阿泰阿斯｜据点 塔纳伊斯
     'sijitai_satraces': 'GREECE',   // 斯基泰｜萨特拉克斯｜据点 塔纳伊斯
+    'sijitai_tomyris': 'CENTRAL_ASIA',   // 斯基泰｜托米丽司｜据点 养吉干
     'sima_d_simayi': 'CENTRAL',   // 魏国｜司马懿｜据点 洛阳
     'sizhou_hanshizhong': 'CENTRAL',   // 赵宋｜韩世忠｜据点 淮安
     'so_zongyizhi': 'JAPAN',   // 对马｜宗义智｜据点 金石馆
@@ -1752,6 +1756,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xila_hagenong': 'ATHENIANS',   // 雅典｜哈格农｜据点 安菲波利斯
     'xila_leosthenes': 'ATHENIANS',   // 雅典｜莱奥斯塞尼斯｜据点 雅典
     'xila_nixiyasi': 'ATHENIANS',   // 雅典｜尼西亚斯｜据点 提洛
+    'xila_alcibiades': 'ATHENIANS',   // 雅典｜亚西比德｜据点 雅典
+    'xila_cimon': 'ATHENIANS',   // 雅典｜客蒙｜据点 雅典
+    'xila_demosthenes': 'ATHENIANS',   // 雅典｜德摩斯梯尼｜据点 雅典
+    'xila_pericles': 'ATHENIANS',   // 雅典｜伯里克利｜据点 雅典
+    'xila_xenophon': 'ATHENIANS',   // 雅典｜色诺芬｜据点 雅典
     'xilawangguo_kolokotronis': 'GREECE',   // 希腊王国｜科洛科特罗尼斯｜据点 底比斯
     'xilawangguo_petros': 'SPARTANS',   // 希腊王国｜马夫罗米哈利斯｜据点 斯巴达
     'xiliao_uthman': 'CENTRAL_ASIA',   // 喀喇汗国｜奥斯曼｜据点 撒马尔罕
@@ -2008,6 +2017,92 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_cb_lagoniya_1': 'SPARTANS',   // 战场人物｜阿格西劳斯二世
     'bfe_cb_seleisi_1': 'THRACIAN',   // 战场人物｜利西马科斯
     'bfe_cb_yan_1': 'XIANBEI',   // 战场人物｜太子丹
+    'bfe_cb_aq_qoyunlu_1': 'SASANIAN',   // 战场人物｜乌尊哈桑
+    'bfe_cb_manzhou_d_1': 'NORTHEAST',   // 战场人物｜傅恒
+    'bfe_cb_yanqi_1': 'WESTERN',   // 战场人物｜元孟
+    'bfe_cb_gongsun_d_1': 'WEI',   // 战场人物｜公孙渊
+    'bfe_cb_xiongnu_1': 'XIANBEI',   // 战场人物｜军臣单于
+    'bfe_cb_luoma_diguo_7': 'ROMA',   // 战场人物｜凯里亚利斯
+    'bfe_cb_liusong_1': 'JIANGNAN',   // 战场人物｜刘义真
+    'bfe_cb_luoma_diguo_5': 'ROMA',   // 战场人物｜卢基乌斯西庇阿
+    'bfe_cb_zand_dynasty_1': 'PERSIAN',   // 战场人物｜卢特夫阿里汗
+    'bfe_cb_tuoba_1': 'XIANBEI',   // 战场人物｜叔孙建
+    'bfe_cb_dongjin_2': 'CENTRAL',   // 战场人物｜司马越
+    'bfe_cb_dongjin_4': 'CENTRAL',   // 战场人物｜司马邺
+    'bfe_cb_sailiugu_2': 'GREECE',   // 战场人物｜吕西亚斯
+    'bfe_cb_chuguo_2': 'JIANGNAN',   // 战场人物｜周章
+    'bfe_cb_sunwu_d_2': 'JIANGNAN',   // 战场人物｜周贺
+    'bfe_cb_menggu_d_2': 'MONGOL',   // 战场人物｜塔尔吉
+    'bfe_cb_tahirid_1': 'SASANIAN',   // 战场人物｜塔希尔·本·侯赛因
+    'bfe_cb_luoma_diguo_3': 'ROMA',   // 战场人物｜塞姆普罗尼乌斯
+    'bfe_cb_caowei_1': 'CENTRAL',   // 战场人物｜夏侯惇
+    'bfe_cb_bohai_1': 'NORTHEAST',   // 战场人物｜大諲譔
+    'bfe_cb_hou_qin_2': 'CENTRAL',   // 战场人物｜姚平
+    'bfe_cb_hou_qin_3': 'CENTRAL',   // 战场人物｜姚泓
+    'bfe_cb_hou_qin_1': 'CENTRAL',   // 战场人物｜姚洸
+    'bfe_cb_yinggelan_1': 'BRITONS',   // 战场人物｜威廉·德·拉·波尔
+    'bfe_cb_dianguo_1': 'BASHU',   // 战场人物｜孟获
+    'bfe_cb_xianbei_1': 'XIANBEI',   // 战场人物｜宇文逸豆归
+    'bfe_cb_chagatai_1': 'WESTERN',   // 战场人物｜安得
+    'bfe_cb_xibanya_1': 'SPANISH',   // 战场人物｜布拉卡蒙特
+    'bfe_cb_heishi_1': 'JAPAN',   // 战场人物｜平维盛
+    'bfe_cb_shanshan_1': 'WESTERN',   // 战场人物｜广
+    'bfe_cb_baibo_1': 'WEI',   // 战场人物｜张梁
+    'bfe_cb_fushi_3': 'CENTRAL',   // 战场人物｜彭超
+    'bfe_cb_murong_1': 'XIANBEI',   // 战场人物｜慕容庄
+    'bfe_cb_luoma_diguo_8': 'ROMA',   // 战场人物｜戈尔迪安三世
+    'bfe_cb_tuolemi_1': 'ORIE',   // 战场人物｜托勒密四世
+    'bfe_cb_dalriada_1': 'CELTS',   // 战场人物｜敦加尔
+    'bfe_cb_sashan_1': 'SASANIAN',   // 战场人物｜斯姆巴特
+    'bfe_cb_seleisi_2': 'THRACIAN',   // 战场人物｜斯巴达克斯
+    'bfe_cb_luoma_diguo_10': 'ROMA',   // 战场人物｜斯提里科
+    'bfe_cb_tahirid_2': 'SASANIAN',   // 战场人物｜易卜拉欣·本·伊利亚斯
+    'bfe_cb_caowei_3': 'CENTRAL',   // 战场人物｜曹休
+    'bfe_cb_dongjin_5': 'CENTRAL',   // 战场人物｜曹嶷
+    'bfe_cb_caowei_2': 'CENTRAL',   // 战场人物｜朱光
+    'bfe_cb_sunwu_d_1': 'JIANGNAN',   // 战场人物｜朱桓
+    'bfe_cb_ming_d_1': 'WEI',   // 战场人物｜朱祁镇
+    'bfe_cb_menggu_d_1': 'MONGOL',   // 战场人物｜朵儿伯朵黑申
+    'bfe_cb_yangguan_1': 'HEXI',   // 战场人物｜李歆
+    'bfe_cb_luoma_diguo_9': 'ROMA',   // 战场人物｜李锡尼
+    'bfe_cb_huanchu_1': 'JIANGNAN',   // 战场人物｜桓玄
+    'bfe_cb_tujue_1': 'MONGOL',   // 战场人物｜欲谷设
+    'bfe_cb_xianbei_2': 'XIANBEI',   // 战场人物｜段龛
+    'bfe_cb_sashan_2': 'SASANIAN',   // 战场人物｜沙普尔二世
+    'bfe_cb_bendou_d_1': 'BYZANTINE',   // 战场人物｜法尔纳克二世
+    'bfe_cb_gallic_empire_1': 'ROMA',   // 战场人物｜泰特里库斯一世
+    'bfe_cb_han_d_1': 'CENTRAL',   // 战场人物｜王朗
+    'bfe_cb_dongjin_3': 'CENTRAL',   // 战场人物｜王浚
+    'bfe_cb_zhao_3': 'WEI',   // 战场人物｜王郎
+    'bfe_cb_oda_1': 'JAPAN',   // 战场人物｜真锅贞友
+    'bfe_cb_hou_zhao_1': 'WEI',   // 战场人物｜石祗
+    'bfe_cb_tufa_d_1': 'HEXI',   // 战场人物｜秃发虎台
+    'bfe_cb_luoma_diguo_6': 'ROMA',   // 战场人物｜科塔
+    'bfe_cb_tahirid_3': 'SASANIAN',   // 战场人物｜穆罕默德·本·塔希尔
+    'bfe_cb_toyotomi_1': 'JAPAN',   // 战场人物｜细川忠兴
+    'bfe_cb_dongjin_1': 'CENTRAL',   // 战场人物｜罗尚
+    'bfe_cb_aizu_ashina_1': 'JAPAN',   // 战场人物｜芦名盛氏
+    'bfe_cb_xiaobolu_1': 'TIBET',   // 战场人物｜苏失利之
+    'bfe_cb_fushi_2': 'CENTRAL',   // 战场人物｜苻丕
+    'bfe_cb_fushi_1': 'CENTRAL',   // 战场人物｜苻健
+    'bfe_cb_fushi_4': 'CENTRAL',   // 战场人物｜苻登
+    'bfe_cb_liao_d_1': 'XIANBEI',   // 战场人物｜萧绰
+    'bfe_cb_luoma_diguo_4': 'ROMA',   // 战场人物｜西庇阿
+    'bfe_cb_qi_2': 'CENTRAL',   // 战场人物｜费邑
+    'bfe_cb_baibo_2': 'WEI',   // 战场人物｜赵弘
+    'bfe_cb_zhao_2': 'WEI',   // 战场人物｜赵葱
+    'bfe_cb_tubo_1': 'TIBET',   // 战场人物｜跋地设
+    'bfe_cb_ladakh_1': 'TIBET',   // 战场人物｜释迦嘉措
+    'bfe_cb_caowei_4': 'CENTRAL',   // 战场人物｜钟会
+    'bfe_cb_barakzai_afghan_1': 'MUGHAL',   // 战场人物｜阿克巴尔汗
+    'bfe_cb_crete_emirate_1': 'ORIE',   // 战场人物｜阿布·哈夫斯
+    'bfe_cb_tubo_2': 'TIBET',   // 战场人物｜阿旺策凌
+    'bfe_cb_lunbadi_1': 'FRANKS',   // 战场人物｜雷蒙德四世
+    'bfe_cb_yuan_shao_1': 'CENTRAL',   // 战场人物｜颜良
+    'bfe_cb_sailiugu_1': 'GREECE',   // 战场人物｜高尔吉亚
+    'bfe_cb_gaogouli_1': 'KOREA',   // 战场人物｜高钊
+    'bfe_cb_jingzhou_1': 'CENTRAL',   // 战场人物｜黄祖
+    'bfe_cb_chuguo_3': 'JIANGNAN',   // 战场人物｜龙且
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */
