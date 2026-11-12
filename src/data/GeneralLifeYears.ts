@@ -88,7 +88,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     huaiyang_zhouyafu: { birth: -199, death: -143, kaoju: '推定' },       // 周亚夫
     li_lx_d_liguang: { birth: -184, death: -119, kaoju: '异说' },         // 李广
     shuofang_weiqing: { birth: -154, death: -106, kaoju: '推定' },        // 卫青
-    suzhou_huoqubing: { birth: -140, death: -117 },        // 霍去病
+    suzhou_huoqubing: { birth: -140, death: -117, debut: -123 },        // 霍去病（17岁随大将军卫青击匈奴封冠军侯）
     lanzhou_zhaochongguo: { birth: -137, death: -52 },     // 赵充国
     qiliqiya_pangpei: { birth: -106, death: -48 },         // 庞培
     gen_julius_caesar: { birth: -100, death: -44 },        // 恺撒
@@ -151,7 +151,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     zhongxiang_zhongxiang: { birth: 1077, death: 1130, kaoju: '推定' },
     shuofang_sujian: { birth: -150, death: -110, kaoju: '推定' },
     mixiya_arsames: { birth: -380, death: -334, kaoju: '推定' },
-    bfe2_pollis: { birth: -410, death: -376, kaoju: '推定' },
+    bfe2_pollis: { birth: -410, death: -375, kaoju: '推定' },
     bfe3_86: { birth: 320, death: 366, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 克诺多马尔：357 被俘，流放中卒（原 250–300 误）
     bfe_su_ding: { birth: -30, death: 40, kaoju: '推定' },
     bfe_sonom: { birth: 1740, death: 1776, kaoju: '推定' },
@@ -1963,7 +1963,8 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     wuyue_caoxin: { birth: 830, death: 900, kaoju: '推定' },  // 曹信
     tang_tianjun: { birth: 850, death: 903, kaoju: '推定' },  // 田頵
     tang_qinyan: { birth: 840, death: 890, kaoju: '推定' },  // 秦彦
-    chalkidike_lasiteniesi: { birth: -400, death: -348, kaoju: '推定' },  // 拉斯特涅斯
+    chalkidike_lasiteniesi: { birth: -400, death: -346, kaoju: '推定' },  // 拉斯特涅斯
+    bfe_cb_zhao_2: { birth: -275, death: -228, kaoju: '推定' },  // 赵葱（战国末赵将，代李牧为帅，前228东阳之战战死）
     chalkidike_outikelatesi: { birth: -400, death: -340, kaoju: '推定' },  // 欧提克拉特斯
     naxos_lgedamisi: { birth: -580, death: -520, kaoju: '推定' },  // 吕格达米斯
     phokis_feiluomoluosi: { birth: -400, death: -354, kaoju: '推定' },  // 菲洛墨洛斯

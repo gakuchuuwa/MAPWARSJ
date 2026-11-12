@@ -2307,11 +2307,11 @@ function hasStageGeneral(generalId: string | null | undefined): generalId is str
     return !!generalId && (isBattlefieldCharacter(generalId) || isGeneralOnStage(generalId));
 }
 
-/** 当前游戏年份：剧本期取当前事件年份，否则取日历年份；都取不到（编辑器/离线脚本）按开局前 500 年（= GameConfig.TIME.TIMELINE_START_YEAR） */
+/** 当前游戏年份：剧本期取当前事件年份，否则取日历年份；都取不到（编辑器/离线脚本）按开局前 550 年（= GameConfig.TIME.TIMELINE_START_YEAR） */
 function currentGameYear(): number {
     const g = typeof window !== 'undefined' ? (window as any).game : null;
     const y = g?.scriptCityVisibility?.getCurrentEvent?.()?.year ?? g?.timeSystem?.getYear?.();
-    return typeof y === 'number' && !Number.isNaN(y) ? y : -500;
+    return typeof y === 'number' && !Number.isNaN(y) ? y : -550;
 }
 
 function cityBuildingStyleOf(cityId?: string | null, buildingStyle?: string | null): string | null {

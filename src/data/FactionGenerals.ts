@@ -1356,7 +1356,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'lagoniya_kelierlidasi', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '克利尔里达斯', portrait: '/assets/SPARTANS/lagoniya_kelierlidasi.png', eliteName: '斯巴达戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 前422 任安菲波利斯斯巴达驻军统领（harmost），守城取胜（修昔底德 V.21、V.108）｜安菲波利斯＝雅典据点、将属斯巴达→② 移回民族起源地斯巴达（同文化 SPARTANS）
         { generalId: 'bfe2_pollis', cityId: 'city_sparta', generalName: '波利斯', portrait: '/assets/SPARTANS/bfe2_pollis.png', eliteName: '斯巴达红袍步', eliteTier: 4 },
         { generalId: 'bfe_cleombrotus', cityId: 'city_sparta', generalName: '克里奥姆布罗图斯', portrait: '/assets/SPARTANS/bfe_cleombrotus.png', eliteName: '斯巴达红袍步', eliteTier: 4 },
-        { generalId: 'gen_leonidas', cityId: 'city_sparta', generalName: '列奥尼达', portrait: '/assets/SPARTANS/gen_leonidas.png', eliteName: '温泉关三百士', eliteTier: 2 },
+        { generalId: 'gen_leonidas', cityId: 'city_sparta', generalName: '列奥尼达一世', portrait: '/assets/SPARTANS/gen_leonidas.png', eliteName: '温泉关三百士', eliteTier: 2 },
         { generalId: 'bfe2_cleombrotus_i', cityId: 'city_sparta', generalName: '克勒翁布罗图斯一世', portrait: '/assets/SPARTANS/bfe2_cleombrotus_i.png', eliteName: '斯巴达红袍步', eliteTier: 4 },
     
         { generalId: 'gen_brasidas', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '巴西达斯', portrait: '/assets/SPARTANS/gen_brasidas.png', eliteName: '斯巴达重步', eliteTier: 1 },
@@ -14202,7 +14202,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ldiya: { generalId: 'ldiya_keluoyisi', cityId: 'city_sifaerde', generalName: '克罗伊斯', portrait: '/assets/GREECE/ldiya_keluoyisi.png', eliteName: '吕底亚骑兵', eliteTier: 3 },
+    ldiya: { generalId: 'ldiya_keluoyisi', cityId: 'city_sifaerde', generalName: '克罗伊索斯', portrait: '/assets/GREECE/ldiya_keluoyisi.png', eliteName: '吕底亚骑兵', eliteTier: 3 },
 
 
 
