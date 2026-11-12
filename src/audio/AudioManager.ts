@@ -1002,7 +1002,9 @@ const DUCK = {
 
 
 
-    bgmUnderSpeech: 1,
+    // 🔴 [2026-11-12 主人定] 仅「战事两段播报」（战略段/战术段）时压背景音乐到 0.45（约 -7dB，人声高出音乐约 11dB）；
+    //    武将技、战报等其余播报不压（见 setBriefingBgmDuck）。行军/战斗/音效几路仍为 1。
+    bgmUnderSpeech: 0.45,
 
 
 
@@ -6759,6 +6761,8 @@ export class AudioManager {
 
 
     private speechDucking = false;
+    /** 战事两段播报进行中（含念完后 1.5 秒延迟），背景音乐压到 DUCK.bgmUnderSpeech */
+    private briefingBgmDuck = false;
 
 
 
@@ -10246,6 +10250,13 @@ export class AudioManager {
 
 
 
+
+    /** 🔴 [2026-11-12 主人定] 战事两段播报压背景音乐：压下 600ms 渐弱，恢复 1000ms 渐强（释放延迟由 SpeechAnnouncer 控制） */
+    public setBriefingBgmDuck(active: boolean): void {
+        if (this.briefingBgmDuck === active) return;
+        this.briefingBgmDuck = active;
+        this.updateBgmDuckVolume(active ? 600 : 1000);
+    }
 
     public isSpeechDucking(): boolean {
 
@@ -14974,7 +14985,8 @@ export class AudioManager {
 
 
 
-        if (this.speechDucking) return { factor: DUCK.bgmUnderSpeech, reason: '播报' };
+        if (this.briefingBgmDuck) return { factor: DUCK.bgmUnderSpeech, reason: '战事播报' };
+        if (this.speechDucking) return { factor: 1, reason: '播报' };
 
 
 
@@ -15102,7 +15114,8 @@ export class AudioManager {
 
 
 
-            if (this.speechDucking) return DUCK.bgmUnderSpeech;
+            if (this.briefingBgmDuck) return DUCK.bgmUnderSpeech;
+            if (this.speechDucking) return 1;   // 其余播报（武将技/战报）不压音乐
 
 
 

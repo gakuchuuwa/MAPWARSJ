@@ -273,7 +273,48 @@ export default defineConfig({
             ],
         },
     },
+    // [2026-11-12 主人令] 构建产物本地预览同样不许浏览器缓存：dist/assets 是哈希文件名不会旧，
+    //   真正会旧的是 index.html ——它一被缓存就会一直引用上一版的哈希文件，F5 怎么刷都是旧页面。
+    preview: {
+        headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        },
+    },
     plugins: [
+        {
+            // [2026-11-12 主人令] 开发服务器一律不给浏览器缓存：普通 F5 即等价于 Ctrl+F5。
+            //   Vite 默认只发 Cache-Control: no-cache（允许缓存 + 复验），浏览器会带 If-None-Match 来问，
+            //   服务端一旦回 304 就沿用旧代码 —— 这就是「改完必须 Ctrl+F5 才生效」的来源。
+            //   这里把 cache-control 改成 no-store：浏览器根本不存，F5 必拿新响应。
+            //   只放过图片/音频/模型/JSON/GeoJSON 等大体积资源（几百 MB 每次刷新重下会把页面拖慢），
+            //   它们仍走 Vite 默认的 no-cache + ETag 复验，内容基于磁盘 stat，不会读到旧文件。
+            name: 'dev-no-store',
+            apply: 'serve',
+            configureServer(server) {
+                const heavyBinary = /\.(png|jpe?g|webp|gif|svg|ico|bmp|ogg|mp3|wav|m4a|mp4|webm|woff2?|ttf|otf|bin|glb|gltf|atlas|zip|json|geojson|aud)(\?|$)/i;
+                server.middlewares.use((req, res, next) => {
+                    const url = req.url || '';
+                    if (heavyBinary.test(url)) {
+                        next();
+                        return;
+                    }
+                    // sirv / send / transform 三个中间件都会各自 setHeader('Cache-Control', ...)，
+                    // 在它们之前把 setHeader 拦一层，凡是设 cache-control 的调用一律换成禁用缓存。
+                    // （res.writeHead(status, headers) 内部也是逐项走 setHeader，同样被覆盖。）
+                    const origSetHeader = res.setHeader.bind(res);
+                    res.setHeader = ((name: string, value: any) => {
+                        if (String(name).toLowerCase() === 'cache-control') {
+                            return origSetHeader(name, 'no-store, no-cache, must-revalidate, max-age=0');
+                        }
+                        return origSetHeader(name, value);
+                    }) as typeof res.setHeader;
+                    origSetHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+                    origSetHeader('Pragma', 'no-cache');
+                    origSetHeader('Expires', '0');
+                    next();
+                });
+            },
+        },
         {
             // 立绘清单虚拟模块：扫描 public/assets 生成「纯路径数组」供 portrait_defaults 用。
             // 取代旧的 import.meta.glob('?url')——后者会把每张图字节也打包一遍（dist 多出 700 张

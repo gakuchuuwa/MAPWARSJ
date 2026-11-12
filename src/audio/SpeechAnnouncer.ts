@@ -228,6 +228,8 @@ export class SpeechAnnouncer {
   private skillSpeaking = false;
   /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
   private speechDuckSession = false;
+  /** 战事播报念完后延迟恢复背景音乐的计时器 */
+  private briefingBgmReleaseTimer = 0;
 
   /** 缓存系统语音列表（getVoices 首帧常为空，须等 voiceschanged） */
   private cachedVoices: SpeechSynthesisVoice[] = [];
@@ -543,6 +545,17 @@ export class SpeechAnnouncer {
     const line = text.trim();
     if (!line) { onDone?.(); return; }
     const isTactical = mode === "tactical";
+    // 战事两段播报压低背景音乐；念完后多等 1.5 秒再恢复，段与段之间连成一次压低，不忽高忽低
+    if (this.briefingBgmReleaseTimer) { window.clearTimeout(this.briefingBgmReleaseTimer); this.briefingBgmReleaseTimer = 0; }
+    audioManager.setBriefingBgmDuck(true);
+    const doneWithRelease = (): void => {
+      if (this.briefingBgmReleaseTimer) window.clearTimeout(this.briefingBgmReleaseTimer);
+      this.briefingBgmReleaseTimer = window.setTimeout(() => {
+        this.briefingBgmReleaseTimer = 0;
+        audioManager.setBriefingBgmDuck(false);
+      }, 1500);
+      onDone?.();
+    };
     this.speak(line, {
       onStart,
       sTier: true,
@@ -556,7 +569,7 @@ export class SpeechAnnouncer {
       breakMs: isTactical ? 280 : 450,
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
-      onDone,
+      onDone: doneWithRelease,
     });
   }
 

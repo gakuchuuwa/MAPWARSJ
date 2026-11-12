@@ -15,7 +15,7 @@
  *   · 敌将 → 🔴 主人定「必须要有」：已有武将／战场人物按名字认出，认不出就新登记为战场人物（属敌方势力）；
  *   · 攻城 / 守城：取离坐标 30 公里内最近的据点当目标城，没有就打回；野战按坐标打，不挂城；
  *   · 兵力：双方一律 15000（经典战兵力本来就按 1~2 万上钳，胜负按游戏走向）。
- * 规则：只收名将（已有第一场的）；每位最多补两场；不许与他第一场同名同年；同一场（战役名＋年份）
+ * 规则：只收名将（已有第一场的）；每位补几场按史实（🔴 [2026-11-12 主人令「没有这个规则」] 原「每位最多补两场」已删）；不许与他第一场同名同年；同一场（战役名＋年份）
  *       若已是别人的经典战，照收（一局里攻守两方只会触发一次）。增量导入，同编号整条覆盖。
  */
 import { readFileSync } from 'node:fs';
@@ -31,7 +31,6 @@ const input = process.argv[2];
 const dry = process.argv.includes('--dry');
 if (!input) { console.error('缺补选表路径'); process.exit(1); }
 
-const MAX_EXTRA_PER_GENERAL = 2;
 const DEFAULT_TROOPS = 15000;
 const CITY_NEAR_KM = 30;
 
@@ -175,11 +174,6 @@ for (const r of rows) {
     const list = (extras[gid] ?? []).filter((x) => x.battleId !== battleId);
     list.push(fb);
     list.sort((a, b) => a.battleYear - b.battleYear);
-    if (list.length > MAX_EXTRA_PER_GENERAL) {
-        report.push(`✗ ${g('战役')}·${battleId}\n    ${gid} 已补满 ${MAX_EXTRA_PER_GENERAL} 场，这一场没收`);
-        bad++;
-        continue;
-    }
     extras[gid] = list;
     briefings[battleId] = briefing;
     allBattleKeys.set(key, allBattleKeys.get(key) ?? battleId);
