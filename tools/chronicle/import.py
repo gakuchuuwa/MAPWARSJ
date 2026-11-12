@@ -6,10 +6,9 @@
 
 真源：docs/战争编年史（纯史实重写）/战争编年史_双段播报总表_2026-11-12.xlsx
 人工裁定：tools/chronicle/overrides.json（主将 / 地名别名 / 非战斗写法）
-产出：src/data/chronicle/ChronicleSegment01..03.ts
+产出：src/data/chronicle/ChronicleSegment01..09.ts
       docs/02-design/systems/编年史-导入审计-2026-11-12.md
       scratch/_chr/import_report.json
-
 原则：解析不了就记 MISSING 并进审计清单，不猜、不编战斗、不编武将。
 """
 import json, os, re, sys, collections
@@ -339,6 +338,12 @@ SEG_TITLES = {
     1: '第一段 · 波斯至亚历山大（前550—前323）',
     2: '第二段 · 继业者至战国秦汉白登（前322—前200）',
     3: '第三段 · 匈奴北道至罗马安息与汉武北伐（前199—前87）',
+    4: '第四段 · 西域都护至陈汤昆阳（前86—公元23）',
+    5: '第五段 · 东汉突骑至三国虎豹骑（24—220）',
+    6: '第六段 · 三国街亭至淝水参合陂（221—395）',
+    7: '第七段 · 北魏虎骑至白袍军与府兵一统（396—589）',
+    8: '第八段 · 隋唐玄甲至香积寺（590—763）',
+    9: '第九段 · 沙陀鸦儿军至高平立宋（764—960）',
 }
 
 
@@ -393,8 +398,9 @@ def write_report(report, events, written, by_seg):
     L = []
     L.append('# 战争编年史 · 导入审计（2026-11-12）\n')
     L.append('> 生成：`python tools/chronicle/dbindex.py && python tools/chronicle/import.py`\n')
-    L.append('> 真源：`docs/战争编年史（纯史实重写）/战争编年史_双段播报总表_2026-11-12.xlsx`（第一至第三段，141 场）\n')
-    L.append('> 产出：`src/data/chronicle/ChronicleSegment01..03.ts` + `ChronicleRegistry.ts`\n')
+    L.append('> 真源：`docs/战争编年史（纯史实重写）/战争编年史_双段播报总表_2026-11-12.xlsx`'
+             f'（第 1—{written[-1][0]} 段，{len(events)} 场）\n')
+    L.append(f'> 产出：`src/data/chronicle/ChronicleSegment01..{written[-1][0]:02d}.ts` + `ChronicleRegistry.ts`\n')
     L.append('\n## 一、总量\n')
     L.append('| 段 | 事件 | 战斗 | 叙事 | 年份 |')
     L.append('|---|---:|---:|---:|---|')

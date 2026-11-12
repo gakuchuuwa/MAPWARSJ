@@ -1016,7 +1016,7 @@ export const CHRONICLE_SEGMENT_01: readonly ChronicleEvent[] = [
         place: { name: "小亚细亚格拉尼库斯河", cityId: "city_gelanikusi", lat: 40.32, lng: 27.28 },
         leadGeneralId: "gen_alexander_great",
         cameraGeneralId: "gen_alexander_great",
-        enemyGeneralIds: ["aqimeinide_aerxitesi", "halikanasu_memnon"],
+        enemyGeneralIds: ["xiaofulijiya_aerxitis", "halikanasu_memnon"],
         enemyFactionId: "aqimeinide",
         battles: [
             { order: 1, battleId: "gen_alexander_great", role: "attacker", label: "格拉尼库斯河之战", briefing: "event" },

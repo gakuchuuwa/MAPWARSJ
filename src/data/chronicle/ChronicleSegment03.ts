@@ -336,6 +336,7 @@ export const CHRONICLE_SEGMENT_03: readonly ChronicleEvent[] = [
     },
     {
         id: "chron_03_24_05", segment: 3, baton: 24,
+        relay: {from: "bfe3_36", to: "lanzhou_zhaochongguo"},
         year: -89, season: 1,
         kind: "operation", rawType: "西路威慑＋诏书罢兵交棒", title: "马通出酒泉服车师、燕然山折戟与轮台罪己罢兵",
         place: { name: "酒泉天山、车师交河、燕然山至长安五柞宫", cityId: "city_yanran" },

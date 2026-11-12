@@ -365,7 +365,7 @@ export const CHRONICLE_SEGMENT_02: readonly ChronicleEvent[] = [
         kind: "operation", rawType: "灭国＋关隘防卫战", title: "秦灭东周、河外之战与蕞城破合纵",
         place: { name: "洛邑巩城、大梁河外与函谷关内蕞城", anchorMissing: true },
         leadGeneralId: "MISSING:蒙骜",
-        enemyGeneralIds: ["MISSING:庞暖"],
+        enemyGeneralIds: ["shang_weiwuji"],
         battles: [],
         strategic: ["公元前二四一年夏，秦国历经新旧君位更迭，少主秦王政嗣位，相邦吕不韦执政东扩。此前老将蒙骜已攻灭洛邑东周君置三川郡、蚕食三晋城邑；虽在大梁河外一度遭信陵君魏无忌统五国联军击退闭守函谷关，秦势旋即复振。趁赵将李牧在雁门大破匈奴头曼稳固北塞，赵帅庞暖复合赵楚魏燕韩精锐西叩秦境。"],
         tactical: ["函谷关雄踞崤山深谷，庞暖探知正关难破，统合纵联军绕道蒲坂渡河，一直杀至关中腹地咸阳东门外的蕞城。面对关东诸侯最后一次合力叩关，吕不韦与蒙骜等调集关中劲旅依托渭水壁垒沉着迎击，乘联军师老粮远、号令不一之隙趁夜突袭楚营；合纵各军惊溃东逃，关东列国自此再无合兵叩秦之力。"],
@@ -415,7 +415,7 @@ export const CHRONICLE_SEGMENT_02: readonly ChronicleEvent[] = [
         place: { name: "井陉、漳水东阳与赵都邯郸", lat: 36.75, lng: 114.95 },
         leadGeneralId: "ruo_wangjian",
         cameraGeneralId: "ruo_wangjian",
-        enemyGeneralIds: ["bfe_cb_zhao_2"],
+        enemyGeneralIds: ["wuzhou_limu"],
         enemyFactionId: "zhao",
         battles: [
             { order: 1, battleId: "ruo_wangjian@-228", role: "attacker", label: "东阳之战", briefing: "event" },

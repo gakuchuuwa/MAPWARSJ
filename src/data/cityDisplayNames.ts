@@ -62,4 +62,59 @@ export const CITY_DISPLAY_NAMES: readonly CityDisplayName[] = [
             + '现代中文通作「苦盏」（中文维基百科条目名即《苦盏》 https://zh.wikipedia.org/wiki/苦盏 ，'
             + '百度百科「胡占德」条目亦由「苦盏」跳转）→ 取「苦盏」为唯一显示名（与上一条 斯法尔德→萨迪斯 同一先例；id 不动）。',
     },
+    // ── 🔴 [2026-11-12 GG第1批大城中城核定] 9座生僻库名覆盖为最知名通行名 ──
+    {
+        cityId: 'city_lanshi',
+        dbName: '蓝氏城',
+        displayName: '巴尔赫',
+        source: '蓝氏城为汉代译名，现代与通史最知名通行名为「巴尔赫」，古典播报念「巴克特拉」（Wikipedia: Balkh）。',
+    },
+    {
+        cityId: 'city_jiaseni',
+        dbName: '哥疾宁',
+        displayName: '加兹尼',
+        source: '哥疾宁仅见于《元史》，中文世界史最知名通行名为「加兹尼」（Wikipedia: Ghazni）。',
+    },
+    {
+        cityId: 'city_antiejiya',
+        dbName: '安提俄基亚',
+        displayName: '安条克',
+        source: '中文世界史及正卷最知名通行名为「安条克」（Wikipedia: Antioch）。',
+    },
+    {
+        cityId: 'city_wasaite',
+        dbName: '瓦塞特',
+        displayName: '底比斯',
+        source: '瓦塞特为古埃及语本音转写，上埃及古都最知名通行名为「底比斯」或「卢克索」（Wikipedia: Thebes, Egypt）。',
+    },
+    {
+        cityId: 'city_dali_city',
+        dbName: '羊苴咩',
+        displayName: '大理',
+        source: '羊苴咩为南诏专名，最知名通行名为「大理」（Wikipedia: Dali City）。',
+    },
+    {
+        cityId: 'city_luoxie',
+        dbName: '逻些',
+        displayName: '拉萨',
+        source: '逻些为唐代音译，最知名通行名为「拉萨」（中文维基《拉萨市》）。',
+    },
+    {
+        cityId: 'city_anulade',
+        dbName: '阿努拉德',
+        displayName: '阿努拉德普勒',
+        source: '原名尾字截断，斯里兰卡古都最知名通行全称为「阿努拉德普勒」（Wikipedia: Anuradhapura）。',
+    },
+    {
+        cityId: 'city_edo',
+        dbName: '江户城',
+        displayName: '江户',
+        source: '去掉尾字「城」，与京都、大阪、镰仓体例统一（Wikipedia: Edo）。',
+    },
+    {
+        cityId: 'city_jincheng_silla',
+        dbName: '金城',
+        displayName: '庆州',
+        source: '避免与中国甘肃兰州古名金城混淆，新罗千年王都最知名通行名为「庆州」（Wikipedia: Gyeongju）。',
+    },
 ];
