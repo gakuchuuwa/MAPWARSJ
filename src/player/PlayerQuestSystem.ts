@@ -2379,10 +2379,10 @@ export class PlayerQuestSystem {
         this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
+        // 🔴 [2026-11-12 主人定] 每场经典战分两段播报：第 1 段战略播报在寻将/赶路/城下对峙期间念完，再进战术模式念第 2 段战术播报。
+        //    先于 marchHostToFirstBattle 启动第 1 段，保证就地开打（isOnTheSpot）或短途抵达时 onHostReachFirstBattle 能感知并驻足听完。
+        this.beginClassicStrategicBriefing(g.generalId, fb);
         this.marchHostToFirstBattle(host, targetPos);
-        // 🔴 [2026-11-11 主人定] 战略大局一般在寻将路上就已开念（tickClassicBriefing）；
-        //    没赶上（直接撞见他）且还要赶路的，接任务时补开；就地开打的不念，免得与战术播报叠在开战那一刻。
-        if (!isOnTheSpot) this.beginClassicStrategicBriefing(g.generalId, fb);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
         const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
         this.deps.notify(
@@ -2431,10 +2431,22 @@ export class PlayerQuestSystem {
         if (!host || host.isDestroyed) return;
         const fbState = q.firstBattle;
         if (fbState.engaged) return;
+
+        if (fbState.battleType === 'field' && fbState.enemySpawnPending) {
+            this.spawnFirstBattleFieldEnemy(q, host);
+            const spawnedEnemy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
+            if (spawnedEnemy) spawnedEnemy.scriptMarchExempt = true;
+        }
+        // 🔴 [2026-11-12 主人定] 城下/战场外驻足听完第 1 段战略播报再进战术模式播第 2 段：
+        //    短途行军或就地接战时若第 1 段尚未念完，双方在战场/城下保持列阵对峙（scriptMarchExempt），念完下一拍立即接战。
+        if (this.classicBriefing.isBusy()) {
+            host.scriptMarchExempt = true;
+            host.stopMovement(false);
+            return;
+        }
         host.scriptMarchExempt = false;
 
         if (fbState.battleType === 'field') {
-            if (fbState.enemySpawnPending) this.spawnFirstBattleFieldEnemy(q, host);
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (enemyArmy && !enemyArmy.isDestroyed) {
                 enemyArmy.scriptMarchExempt = false;

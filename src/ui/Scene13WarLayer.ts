@@ -6433,7 +6433,7 @@ export class Scene13WarLayer {
                             this.battleBriefingSpeaking = false;
                             return;
                         }
-                        speechAnnouncer.announceBriefing(briefingParas[paraIdx++], speakNextPara);
+                        speechAnnouncer.announceBriefing(briefingParas[paraIdx++], speakNextPara, undefined, undefined, 'tactical');
                     };
                     speakNextPara();
 

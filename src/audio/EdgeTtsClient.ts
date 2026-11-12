@@ -31,6 +31,10 @@ export interface EdgeTtsOptions {
     voice?: EdgeVoice;
     /** Web Speech 风格语速（1=正常），转成 SSML 百分比 */
     rate?: number;
+    /** 音高微调（Hz，如 -2 沉稳叙事、-4 冷峻紧迫；默认 0） */
+    pitchHz?: number;
+    /** 句中分号（；）与句号（。）后的呼吸停顿毫秒数（如战略 450ms、战术 280ms） */
+    breakMs?: number;
     /** 合成超时（ms）；超时 reject 让调用方回落 */
     timeoutMs?: number;
 }
@@ -54,13 +58,24 @@ function ratePercent(rate?: number): string {
     return `${pct >= 0 ? '+' : ''}${pct}%`;
 }
 
-function buildSsml(text: string, voice: EdgeVoice, rate?: number): string {
+function pitchHzStr(pitchHz?: number): string {
+    if (pitchHz === undefined || !isFinite(pitchHz)) return '+0Hz';
+    const hz = Math.round(pitchHz);
+    return `${hz >= 0 ? '+' : ''}${hz}Hz`;
+}
+
+function buildSsml(text: string, voice: EdgeVoice, rate?: number, pitchHz?: number, breakMs?: number): string {
     // 转义 SSML 特殊字符，防播报文本里的 & < > 破坏 XML
-    const safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // 句中分号（；）与非句尾句号（。）注入气口停顿，增强半文半白历史叙述的呼吸与顿挫感
+    if (breakMs && breakMs > 0) {
+        const ms = Math.round(breakMs);
+        safe = safe.replace(/([；。])(?=.)/g, `$1<break time='${ms}ms'/>`);
+    }
     return (
         `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-CN'>` +
         `<voice name='${voice}'>` +
-        `<prosody pitch='+0Hz' rate='${ratePercent(rate)}' volume='+0%'>${safe}</prosody>` +
+        `<prosody pitch='${pitchHzStr(pitchHz)}' rate='${ratePercent(rate)}' volume='+0%'>${safe}</prosody>` +
         `</voice></speak>`
     );
 }
@@ -80,10 +95,12 @@ class EdgeTtsClient {
     async synthesize(text: string, opts: EdgeTtsOptions = {}): Promise<Blob> {
         const voice: EdgeVoice = opts.voice ?? 'zh-CN-YunjianNeural';
         const rate = opts.rate;
+        const pitchHz = opts.pitchHz;
+        const breakMs = opts.breakMs;
         // 7s 对播报太长：连不上时第一段开口前就得干等 7 秒。
         // 云健正常时合成一般 1~2s，3.5s 足够，失败也能早点回落 Web Speech。
         const timeoutMs = opts.timeoutMs ?? 3500;
-        const key = `${voice}|${ratePercent(rate)}|${text}`;
+        const key = `${voice}|${ratePercent(rate)}|${pitchHzStr(pitchHz)}|${breakMs ?? 0}|${text}`;
 
         const cached = this.cache.get(key);
         if (cached) return cached;
@@ -146,7 +163,7 @@ class EdgeTtsClient {
                 ws.send(
                     `X-RequestId:${reqId}\r\nContent-Type:application/ssml+xml\r\n` +
                     `X-Timestamp:${now}\r\nPath:ssml\r\n\r\n` +
-                    buildSsml(text, voice, rate),
+                    buildSsml(text, voice, rate, pitchHz, breakMs),
                 );
             };
 

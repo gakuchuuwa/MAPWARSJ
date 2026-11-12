@@ -36,6 +36,10 @@ interface SpeakOptions {
    */
   maxWaitMs?: number;
   rate?: number;
+  /** SSML 音高微调（Hz，如战略 -2Hz、战术 -4Hz） */
+  pitchHz?: number;
+  /** SSML 句中分号/句号后的呼吸停顿毫秒数 */
+  breakMs?: number;
   /** 技能句已做人名校正，跳过全文 prepareSpeechText（防误替技能名/精锐名） */
   skipGlobalNameReplace?: boolean;
   /** 直连微软时用哪个音色（不填＝当前战争播报男声云健/云希） */
@@ -529,9 +533,16 @@ export class SpeechAnnouncer {
    *    所以走 sTier（略慢语速、期间不被常规播报打断），字幕用 multiline 长段排版。
    *    `onDone` 在**念完**时回调 —— 调用方据此推下一段，别用定时器瞎猜时长。
    */
-  public announceBriefing(text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number): void {
+  public announceBriefing(
+    text: string,
+    onDone?: () => void,
+    onStart?: () => void,
+    minBannerMs?: number,
+    mode: "strategic" | "tactical" = "strategic",
+  ): void {
     const line = text.trim();
     if (!line) { onDone?.(); return; }
+    const isTactical = mode === "tactical";
     this.speak(line, {
       onStart,
       sTier: true,
@@ -539,7 +550,10 @@ export class SpeechAnnouncer {
       bannerMultiline: true,
       bannerSingleScreen: true,   // 一路一句＝一路一屏：不切片、不轮播
       bannerMinMs: minBannerMs,
-      rate: 0.92,
+      // 同一云健男声，两段变奏：战略段沉稳厚重（rate 0.90 / -2Hz / 停顿 450ms），战术段冷峻紧迫（rate 0.97 / -4Hz / 停顿 280ms）
+      rate: isTactical ? 0.97 : 0.90,
+      pitchHz: isTactical ? -4 : -2,
+      breakMs: isTactical ? 280 : 450,
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
       onDone,
@@ -1061,7 +1075,12 @@ export class SpeechAnnouncer {
   ): void {
     if (edgeTtsClient.isTemporarilyDisabled()) { cb.fallback(); return; }
     edgeTtsClient
-      .synthesize(text, { voice: opts?.voice ?? this.currentEdgeVoice(), rate: opts?.rate })
+      .synthesize(text, {
+        voice: opts?.voice ?? this.currentEdgeVoice(),
+        rate: opts?.rate,
+        pitchHz: opts?.pitchHz,
+        breakMs: opts?.breakMs,
+      })
       .then((blob) => {
         if (cb.isSettled()) return;
         const url = URL.createObjectURL(blob);
