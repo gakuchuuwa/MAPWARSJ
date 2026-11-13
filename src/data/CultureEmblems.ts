@@ -17,10 +17,10 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     KOREA: 'koreans',            // 🔴 [2026-11-13 主人令] 朝鲜：三色三太极（素白神旗，红蓝黄天地人）
     JAPAN: 'japanese',           // 🔴 [2026-11-13 主人令] 日本：十六瓣金菊纹（胜色深绀蓝旗）
     // ── 南亚 / 东南亚 ─────────────────────────────────────────────
-    INDIA: 'dravidians',         // 南印（达罗毗荼/朱罗）：DE dravidians 九宝珠盾饰
-    MUGHAL: 'indians',           // 北印（莫卧儿）：DE indians 八角星章
-    BENGALIS: 'bengalis',       // 孟加拉（波罗）：DE bengalis 吉祥纹
-    GURJARAS: 'gurjaras',       // 瞿折罗：DE gurjaras 六钉铜盾芯
+    INDIA: 'dravidians',         // 🔴 [2026-11-13 主人令] 南印/达罗毗荼：象牙白朱罗腾跃神虎（藏红花金橘旗）
+    MUGHAL: 'indians',           // 🔴 [2026-11-13 主人令] 北印/印度斯坦：恒河神狮旭日金轮（深翡翠祖母绿旗）
+    BENGALIS: 'bengalis',       // 🔴 [2026-11-13 主人令] 孟加拉：波罗双鹿金法轮国玺（孟加拉深靛蓝旗）
+    GURJARAS: 'gurjaras',       // 🔴 [2026-11-13 主人令] 古吉拉特/瞿折罗：莫德拉太阳神轮天马（索姆纳特圣白旗）
     PURU: 'puru',                // 旁遮普（婆罗/孔雀）：DE puru 浮雕战象章
     KHMER: 'khmer',              // 高棉（真腊）：DE khmer 巴戎佛面
     MALAY: 'malay',              // 马来（三佛齐）：DE malay 六芒花星盾芯
