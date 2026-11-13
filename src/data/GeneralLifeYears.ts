@@ -768,6 +768,17 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_miltiades: { birth: -550, death: -489, kaoju: '推定' },  // 米太亚德（马拉松雅典主将；生年约前550）
     gen_cambyses: { birth: -560, death: -522, kaoju: '推定' },  // 冈比西斯二世（前530–522 在位）
     // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 编年史主角补录（生卒多无确载，标推定）
+    // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 1—3 棒（卒年有史载者照录，生年史失推定）
+    midi_astyages: { birth: -620, death: -545, kaoju: '推定' },  // 阿斯提阿格斯（前585—前550 在位；前550 兵败被擒，卒年不详）
+    midi_gaumata: { birth: -560, death: -522, kaoju: '推定' },  // 高墨达（前522 被诛，贝希斯敦铭文）
+    midi_phraortes: { birth: -560, death: -521, kaoju: '推定' },  // 弗拉奥尔特斯（前521 受刑，贝希斯敦铭文）
+    aqimeinide_gobryas: { birth: -590, death: -539, kaoju: '推定' },  // 戈布里亚斯（前539 卒，那波尼德编年史）
+    aqimeinide_megabazus: { birth: -560, death: -490, kaoju: '推定' },  // 梅加巴佐斯（前512 征色雷斯）
+    aqimeinide_megabates: { birth: -550, death: -490, kaoju: '推定' },  // 梅加巴特斯（前499 纳克索斯之役）
+    sijitai_idanthyrsus: { birth: -560, death: -500, kaoju: '推定' },  // 伊达尔苏斯（前513 拒大流士）
+    aiaoniya_charopinus: { birth: -540, death: -490, kaoju: '推定' },  // 卡罗皮努斯（前498 奇袭撒狄）
+    aiaoniya_dionysius: { birth: -530, death: -470, kaoju: '推定' },  // 狄奥尼修斯（前494 拉德海战，后赴西西里）
+    xila_callimachus: { birth: -540, death: -490, kaoju: '推定' },  // 卡利马科斯（前490 战殁马拉松）
     aqimeinide_harpagus: { birth: -600, death: -530, kaoju: '推定' },  // 哈尔帕古斯（前550 帕萨尔加德倒戈，前546–前540 平定伊奥尼亚）
     sijitai_tomyris: { birth: -570, death: -520, kaoju: '推定' },  // 托米丽司（马萨革泰女王，前530 杀居鲁士二世）
     xila_cimon: { birth: -510, death: -450, kaoju: '推定' },  // 客蒙（前466 欧里梅敦河口，前450 卒于塞浦路斯）

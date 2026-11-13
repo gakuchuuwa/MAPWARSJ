@@ -2220,6 +2220,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xila: [
+    // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 3 棒
+    { generalId: 'xila_callimachus', factionId: 'xila', cityId: 'city_yadian', generalName: '卡利马科斯', portrait: '', eliteName: '雅典枭卫', eliteTier: 4 },   // 雅典军事执政官，前490 马拉松统右翼，战殁（希罗多德 VI.109–114）
     { generalId: 'xila_hagenong', factionId: 'xila', cityId: 'city_anfeibolisi', generalName: '哈格农', portrait: '/assets/ATHENIANS/xila_hagenong.png', eliteName: '雅典枭卫', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 前437 建安菲波利斯并任建城者（修昔底德 IV.102）
     { generalId: 'xila_nixiyasi', factionId: 'xila', cityId: 'city_tiluo', generalName: '尼西亚斯', portrait: '/assets/ATHENIANS/xila_nixiyasi.png', eliteName: '雅典枭卫', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 前426 奉命净化提洛岛、主持提洛竞技会
     { generalId: 'xila_feiluokelisi', factionId: 'xila', cityId: 'city_yanghe', generalName: '菲洛克利斯', portrait: '/assets/ATHENIANS/xila_feiluokelisi.png', eliteName: '雅典水师', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 前405 率雅典舰队泊羊河，被吕山德突袭
@@ -14902,6 +14904,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     midi: [
+        // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 1—3 棒
+        { generalId: 'midi_astyages', factionId: 'midi', cityId: 'city_hamadan', generalName: '阿斯提阿格斯', portrait: '', eliteName: '米底步兵', eliteTier: 4 },   // 米底末王，前550 自埃克巴坦那亲征居鲁士，帕萨尔加德兵败被擒（那波尼德编年史；希罗多德 I.127–128）
+        { generalId: 'midi_gaumata', factionId: 'midi', cityId: 'city_hamadan', generalName: '高墨达', portrait: '', eliteName: '米底步兵', eliteTier: 4 },   // 米底祭司（玛哥斯），前522 冒称巴尔迪亚篡位，据米底锡卡亚乌瓦提什堡被大流士所诛（贝希斯敦铭文 §11–13）
+        { generalId: 'midi_phraortes', factionId: 'midi', cityId: 'city_hamadan', generalName: '弗拉奥尔特斯', portrait: '', eliteName: '米底步兵', eliteTier: 4 },   // 自称基亚克萨雷斯后裔起兵复米底，前521 昆杜鲁什败于大流士，于埃克巴坦那受刑（贝希斯敦铭文 §24–32）
 
 
 
@@ -15029,6 +15035,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     aqimeinide: [
+        // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 1—3 棒
+        { generalId: 'aqimeinide_gobryas', factionId: 'aqimeinide', cityId: 'city_bageda', generalName: '戈布里亚斯', portrait: '', eliteName: '波斯骑兵', eliteTier: 3 },   // 古提乌姆总督乌格巴鲁，前539 俄庇斯战后率军入巴比伦，同年卒（那波尼德编年史 III.15–22）
+        { generalId: 'aqimeinide_megabazus', factionId: 'aqimeinide', cityId: 'city_teluoyi', generalName: '梅加巴佐斯', portrait: '', eliteName: '赫勒斯滂铁骑', eliteTier: 3 },   // 大流士自塞斯托斯渡赫勒斯滂东归后留其统军，前512 征服佩林索斯、色雷斯与佩奥尼亚（希罗多德 IV.143–144、V.1–15）
+        { generalId: 'aqimeinide_megabates', factionId: 'aqimeinide', cityId: 'city_miletus', generalName: '梅加巴特斯', portrait: '', eliteName: '腓尼基舟师', eliteTier: 3 },   // 前499 统波斯舰队自米利都出征纳克索斯，围城四月无功（希罗多德 V.32–34）
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'zhalange_barsaentes', factionId: 'aqimeinide', cityId: 'city_zhalange', generalName: '巴尔塞恩特斯', portrait: '/assets/PERSIAN/zhalange_baersaientesi.png', eliteName: '锡斯坦步兵', eliteTier: 4 },
 
@@ -15555,6 +15565,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     aiaoniya: [
+        // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 3 棒（伊奥尼亚起义）
+        { generalId: 'aiaoniya_charopinus', factionId: 'aiaoniya', cityId: 'city_miletus', generalName: '卡罗皮努斯', portrait: '', eliteName: '爱奥尼步兵', eliteTier: 4 },   // 阿里斯塔哥拉斯之弟，前498 统米利都军自以弗所上溯奇袭撒狄（希罗多德 V.99–102）
+        { generalId: 'aiaoniya_dionysius', factionId: 'aiaoniya', cityId: 'city_kelazuomeinai', generalName: '狄奥尼修斯', portrait: '', eliteName: '爱奥尼步兵', eliteTier: 4 },   // 福西亚人，前494 统伊奥尼亚联合舰队操练于拉德岛（希罗多德 VI.11–17）
 
 
 
@@ -17090,6 +17103,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     sijitai: [
+        // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 3 棒
+        { generalId: 'sijitai_idanthyrsus', factionId: 'sijitai', cityId: 'city_asu', generalName: '伊达尔苏斯', portrait: '', eliteName: '斯基泰骑兵', eliteTier: 3 },   // 斯基泰王，前513 坚壁清野、诱敌深入，迫大流士退过多瑙河（希罗多德 IV.120–142）
 
 
 

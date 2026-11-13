@@ -30,12 +30,12 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     SASANIAN: 'persians',        // 🔴 [2026-11-13 主人令] 伊朗东部/呼罗珊（阿契美尼德）：纯金法拉瓦哈万王之翼（玄铁黑旗）
     ORIE: 'saracens',            // 🔴 [2026-11-13 主人令] 近东/萨拉森：祖勒菲卡尔双刃神剑新月（萨拉森正统翠绿旗）
     TURKS: 'turks',              // 🔴 [2026-11-13 主人令] 安纳托利亚：科尼亚金双头神鹰（塞尔柱深钴青旗）
-    ARMENIANS: 'armenians',      // 亚美尼亚：DE armenians 双十字瑞狮
-    GEORGIANS: 'georgians',      // 格鲁吉亚：DE georgians 五十字
-    BYZANTINE: 'byzantines',     // 拜占庭：DE byzantines 四 B 十字
+    ARMENIANS: 'armenians',      // 🔴 [2026-11-13 主人令] 亚美尼亚：巴格拉提德神狮十字架（深石榴茜红旗）
+    GEORGIANS: 'georgians',      // 🔴 [2026-11-13 主人令] 格鲁吉亚：玻尔尼西五十字（雪峰素白旗，偏右微调）
+    BYZANTINE: 'byzantines',     // 🔴 [2026-11-13 主人令] 拜占庭：巴列奥略纯金四B帝国十字（生于紫室深紫红旗）
     // ── 欧洲 ─────────────────────────────────────────────────────
-    ROMA: 'romans',              // 罗马：DE romans 鹰徽月桂
-    LATIN: 'italians',           // 意大利（拉丁）：DE italians 圣乔治红十字
+    ROMA: 'romans',              // 🔴 [2026-11-13 主人令] 罗马（拉丁姆）：罗马神鹰闪电月桂冠（军团猩红旗）
+    LATIN: 'italians',           // 🔴 [2026-11-13 主人令] 意大利半岛城邦：纯金圣马可飞天翼狮（亚得里亚海权深绀蓝旗）
     SICILIANS: 'sicilians',      // 西西里：DE sicilians 斜分红白格蓝盾芯
     FRANKS: 'franks',            // 法兰克/法兰西：DE franks 三鸢尾花
     BRITONS: 'britons',          // 不列颠/英格兰：DE britons 三金狮
@@ -58,10 +58,10 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     SPANISH: 'spanish',          // 西班牙：DE spanish 卡斯蒂利亚莱昂四分盾
     PORTUGUESE: 'portuguese',    // 葡萄牙：DE portuguese 五蓝盾（Quinas）
     // ── 希腊城邦（各自一级文化，非三级 GREECE）──────────────────────
-    ATHENIANS: 'athenians',      // 雅典：DE athenians 雅典娜猫头鹰与橄榄枝
-    SPARTANS: 'spartans',        // 斯巴达：DE spartans Λ 纹
-    MACEDONIAN: 'macedonians',   // 马其顿：DE macedonians 十六芒维吉纳太阳
-    THRACIAN: 'thracians',       // 色雷斯：DE thracians 色雷斯红面盾
+    ATHENIANS: 'athenians',      // 🔴 [2026-11-13 主人令] 雅典（阿提卡）：雅典娜猫头鹰与橄榄枝（萨拉米斯海权深绀蓝旗）
+    SPARTANS: 'spartans',        // 🔴 [2026-11-13 主人令] 斯巴达（拉科尼亚）：纯金青铜圆盾大写Λ（战袍猩红旗）
+    MACEDONIAN: 'macedonians',   // 🔴 [2026-11-13 主人令] 马其顿：纯金十六芒维吉纳太阳（皇家帝王深紫红旗）
+    THRACIAN: 'thracians',       // 🔴 [2026-11-13 主人令] 色雷斯：佩尔塔新月神盾与西卡战刀（铁血深赭红旗）
     // ── 北非 / 撒哈拉以南 ─────────────────────────────────────────
     BERBER: 'berber',            // 柏柏尔：DE berber 柏柏尔 Yaz 纹
     ETHIOPIANS: 'ethiopians',    // 埃塞俄比亚：DE ethiopians 埃塞俄比亚金十字
@@ -76,7 +76,7 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     // ── 其余三级/区域文化（自绘同风格符号）─────────────────────────
     TIBET: 'tibet',              // 🔴 [2026-11-13 主人令] 青藏：八辐金宝轮（金日轮，藏绛红旗）
     WESTERN: 'western',          // 🔴 [2026-11-13 主人令] 西域：丝路双峰金驼（绿洲翡翠碧绿旗）
-    GREECE: 'greece',            // 希腊：金月桂花环与橄榄枝
+    GREECE: 'greece',            // 🔴 [2026-11-13 主人令] 希腊（爱琴海）：阿波罗金月桂圣火（爱琴海翡翠天青旗）
 };
 
 /** 🔴 [2026-11-10 主人令「这些还是用字更好」] 不用图案、四代统一走单字旗的 7 个文化 */

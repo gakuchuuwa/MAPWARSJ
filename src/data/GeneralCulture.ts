@@ -54,6 +54,17 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aqimeinide_aerxitesi': 'PERSIAN',   // 阿契美尼德｜阿尔西特斯｜据点 达斯基利翁
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
     'aqimeinide_harpagus': 'PERSIAN',   // 阿契美尼德｜哈尔帕古斯｜据点 苏萨
+    // 🔴 [2026-11-13 主人授权补开篇武将] 武将文化＝据点 buildingStyle
+    'midi_astyages': 'PERSIAN',   // 米底｜阿斯提阿格斯｜据点 哈马丹
+    'midi_gaumata': 'PERSIAN',   // 米底｜高墨达｜据点 哈马丹
+    'midi_phraortes': 'PERSIAN',   // 米底｜弗拉奥尔特斯｜据点 哈马丹
+    'aqimeinide_gobryas': 'ORIE',   // 阿契美尼德｜戈布里亚斯｜据点 巴格达
+    'aqimeinide_megabazus': 'GREECE',   // 阿契美尼德｜梅加巴佐斯｜据点 特洛伊
+    'aqimeinide_megabates': 'GREECE',   // 阿契美尼德｜梅加巴特斯｜据点 米利都
+    'sijitai_idanthyrsus': 'GREECE',   // 斯基泰｜伊达尔苏斯｜据点 塔纳伊斯
+    'aiaoniya_charopinus': 'GREECE',   // 爱奥尼亚｜卡罗皮努斯｜据点 米利都
+    'aiaoniya_dionysius': 'GREECE',   // 爱奥尼亚｜狄奥尼修斯｜据点 克拉佐美奈
+    'xila_callimachus': 'ATHENIANS',   // 雅典｜卡利马科斯｜据点 雅典
     'arakan_mingbin': 'BURMESE',   // 阿拉干｜明彬｜据点 妙乌
     'asaibaijiang_xuliewu': 'SASANIAN',   // 伊利汗国｜旭烈兀｜据点 马拉盖
     'ashide_ashidejieli': 'MONGOL',   // 突厥｜阿史德颉利｜据点 黑沙牙帐
