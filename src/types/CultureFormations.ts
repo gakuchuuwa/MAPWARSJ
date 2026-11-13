@@ -230,7 +230,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     IMPERIAL_ROME: 'CAVALRY',    // 古典罗马禁卫：全员铁骑禁卫突击
     GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
     MAGNA_GRAECIA:   'MIXED',     // 古典大希腊：步骑标枪综合战阵体系
-    ACHAEMENIDS:     'MIXED',     // 古典阿契美尼德：万人不死卫队步骑弓协同体系
+    ACHAEMENIDS:     'MIXED',     // 古典阿契美尼德：万人长生卫队步骑弓协同体系
     AMAZONS:         'MIXED',     // 古典亚马逊：女骑射为主力，步战女武士护阵
     SONG:            'MIXED',     // 城堡赵宋：步骑弩协同体系
     GORYEO:          'MIXED',     // 城堡高丽：别武班步骑协同体系
@@ -1008,7 +1008,7 @@ export function isBerberDynasty(factionId?: string | null, generalId?: string | 
 
 /** 势力专属军团查表。
  *  🔴 [2026-09-06 主人拍板] 铁律「一个文化 = 一个军团 = 一种编制」：
- *     这里**只剩一层** —— 势力有自己的番号军团（如【不死军团】【翼骑兵军团】）就用它，
+ *     这里**只剩一层** —— 势力有自己的番号军团（如【长生军团】【翼骑兵军团】）就用它，
  *     否则返回 null，交给调用方按**募兵据点所属文化**回落到该文化军团。
  *  已删除原来的第 2 层「武将专属」和第 3 层「朝代判定」（QIN/HAN/WEI/TANG/SONG/MING/
  *  ROMAN/PERSIAN/POLISH/TEUTONIC/BYZANTINE/BERBER/SENGOKU）：它们让 97 个势力拿到

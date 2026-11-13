@@ -55,6 +55,7 @@ import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
 import { isFactionIdle } from '../data/eraFactionDisplay';
+import { marchTimeRecorder } from '../debug/MarchTimeRecorder';
 
 /** 编年史随行军团「途经据点」判定半径（度，约 9 km；与环游经过据点同口径） */
 const ROUTE_CLAIM_RADIUS_DEG = 0.08;
@@ -2415,6 +2416,9 @@ export class PlayerQuestSystem {
         // 🔴 [2026-11-12 主人定] 每场经典战分两段播报：第 1 段战略播报在寻将/赶路/城下对峙期间念完，再进战术模式念第 2 段战术播报。
         //    先于 marchHostToFirstBattle 启动第 1 段，保证就地开打（isOnTheSpot）或短途抵达时 onHostReachFirstBattle 能感知并驻足听完。
         this.beginClassicStrategicBriefing(g.generalId, fb);
+        if (isChronicleBattleId(battleIdOf(fb))) {
+            marchTimeRecorder.begin(battleIdOf(fb), fb.battleName, host.name, chained ? '上一战场' : city.name, host.getPosition(), chained);
+        }
         this.marchHostToFirstBattle(host, targetPos);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
         const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
@@ -2441,7 +2445,9 @@ export class PlayerQuestSystem {
         }
         if (routed.__routeRest) {
             while (routed.__routeRest.length && getEuclideanDistance(host.getPosition(), routed.__routeRest[0]) <= 0.15) {
-                routed.__routeRest.shift();
+                const reached = routed.__routeRest.shift()!;
+                const bid = (host as Army & { classicBattleId?: string }).classicBattleId;
+                if (bid) marchTimeRecorder.stop(bid, reached.name, host.getPosition());
             }
             const stop = routed.__routeRest[0];
             if (stop) {
@@ -2505,6 +2511,7 @@ export class PlayerQuestSystem {
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || host.isDestroyed) return;
         const fbState = q.firstBattle;
+        if (fbState.battleId) marchTimeRecorder.arrive(fbState.battleId, host.getPosition());
         if (fbState.engaged) return;
         if (this.awaitingPlayerLegionId === host.id) return;   // 玩家还没追到军中：到了战场原地等会合
 
@@ -2886,7 +2893,10 @@ export class PlayerQuestSystem {
             }
         }
 
-        if (isChronicleBattleId(fbState.battleId)) this.claimRouteCities(q, host);
+        if (isChronicleBattleId(fbState.battleId)) {
+            this.claimRouteCities(q, host);
+            marchTimeRecorder.sample(fbState.battleId!, host.getPosition());
+        }
 
         const targetPos = { lat: fbState.targetLat, lng: fbState.targetLng };
         const distToTarget = getEuclideanDistance(host.getPosition(), targetPos);

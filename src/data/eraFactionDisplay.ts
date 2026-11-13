@@ -88,7 +88,7 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
  *     「山城」是**工事／战术形态**（南宋四川山城防御体系），不是政权／地区通称，且容易和日本山城国、
  *     朝鲜山城混；改为**川峡**（北宋川峡四路＝宋元巴蜀的正式行政区统称，与「剑南」「四川」同一脉络）；
  *   · 阿契美尼德·古典那一支（2026-10-20 主人问「古典时代长生军团这个名字要改吗？」→ 又否掉「波斯」）：
- *     **长生／不死是部队番号**（阿契美尼德「长生军」Immortals），按规则不能当军团名；**「波斯」也不能用** ——
+ *     **长生军是部队番号**（阿契美尼德「长生军」Immortals），按规则不能当军团名；**「波斯」也不能用** ——
  *     那已经是另一支波斯建筑文化（`SASANIAN`，势力名「波斯」）的招牌。改为**阿契美尼德**（王朝正名，
  *     与那支波斯的「古典时代萨珊军团」正好对称）；军团全名「古典时代阿契美尼德军团」不与剧本军团「阿契美尼德军团」重名；
  *   · 越南那一段主人点名：丁黎→**静海**（用行政名，不用两朝并列）；
@@ -138,7 +138,7 @@ const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
     'HEXI|feudal': { flagText: '凉' },          // 封建时代河西；旗面写「凉」
     'HEXI|castle': { flagText: '凉' },          // 城堡时代大夏军团；旗面统一写「凉」
     'HEXI|imperial': { flagText: '凉' },        // 帝国时代河西；旗面写「凉」
-    'PERSIAN|antiquity': { name: '阿契美尼德' }, // 古典时代阿契美尼德军团（原长生／不死军团；长生军是部队番号，不能当军团名）
+    'PERSIAN|antiquity': { name: '阿契美尼德' }, // 古典时代阿契美尼德军团（原长生军团；长生军是部队番号，不能当军团名）
     'VIETNAMESE|antiquity': { flagText: '越' }, // 古典时代交趾；旗面统一写「越」
     'VIETNAMESE|feudal': { name: '静海', flagText: '越' },      // 封建时代瞿越军团（原丁黎军团）；旗面写「越」
     'VIETNAMESE|castle': { flagText: '越' },    // 城堡时代大越军团 → 大越；旗面只写「越」
