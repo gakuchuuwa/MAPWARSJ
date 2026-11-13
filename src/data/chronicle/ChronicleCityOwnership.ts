@@ -40,16 +40,23 @@ export const CHRONICLE_CITY_OWNERSHIP: Readonly<Record<string, readonly (readonl
     city_junshitandingbao: [[-512, 'aqimeinide'], [-476, 'xila'], [-411, 'lagoniya'], [-405, 'lagoniya']],
     // 雅典：前 480 年薛西斯焚卫城（希罗多德 VIII.53）；前 403 年民主复辟（色诺芬《希腊史》II.4）；前 322 年克兰农战后马其顿驻军穆尼基亚（狄奥多罗斯 XVIII.18）
     city_yadian: [[-550, 'xila'], [-480, 'aqimeinide'], [-479, 'xila'], [-403, 'xila'], [-322, 'maqidun']],
-    // 底比斯：前 382 年福比达斯袭占卡德米亚（色诺芬《希腊史》V.2.25–31）
-    city_thebes: [[-550, 'boootiya'], [-382, 'lagoniya']],
+    // 底比斯：据点内卡尔基斯前 446 年为雅典所平，底比斯本城仍属维奥蒂亚（前 447 科罗尼亚后独立，修昔底德 I.113）；
+    // 前 382 年福比达斯袭占卡德米亚（色诺芬《希腊史》V.2.25–31）
+    city_thebes: [[-550, 'boootiya'], [-445, 'boootiya'], [-382, 'lagoniya']],
     // 叙拉古
     city_syracuse: [[-550, 'syracuse']],
-    // 奥林索斯：前 479 年波斯将其城予卡尔基季基人（希罗多德 VIII.127）
-    city_aolinsuosi: [[-479, 'chalkidike']],
+    // 曼丁尼亚：前 385 年斯巴达析城为村；前 370 年复建，入阿卡迪亚同盟（色诺芬《希腊史》VI.5.3–6）
+    city_mantinea: [[-700, 'mantinea'], [-370, 'arcadia']],
+    // 科林斯：据点内埃皮道鲁斯前 419 年遭围（修昔底德 V.53–56），科林斯本城属科林斯
+    city_corinth: [[-750, 'corinth'], [-418, 'corinth']],
+    // 奥林索斯：前 479 年波斯将其城予卡尔基季基人（希罗多德 VIII.127）；据点内斯基奥内（前 421）、托罗尼与波提狄亚（前 363）入雅典，
+    // 奥林索斯本城仍属卡尔基季基同盟（修昔底德 V.18；狄奥多罗斯 XV.81）
+    city_aolinsuosi: [[-479, 'chalkidike'], [-420, 'chalkidike'], [-362, 'chalkidike']],
 
     // ── 中国 ──
     // 洛阳：周王城；前 256 年秦灭西周（《史记·周本纪》）
-    city_luoyang: [[-550, 'zhou'], [-256, 'qin']],
+    // 据点内韩新城前 294 年为白起所拔，洛阳王城仍属周至前 256 年
+    city_luoyang: [[-550, 'zhou'], [-293, 'zhou'], [-256, 'qin']],
     // 咸阳（据点长安）：秦孝公迁都（《史记·秦本纪》）；前 206 年刘邦入关、还定三秦（《史记·高祖本纪》）
     city_changan: [[-350, 'qin'], [-206, 'han_d']],
     // 新郑：韩灭郑徙都（《史记·韩世家》）；前 230 年秦灭韩

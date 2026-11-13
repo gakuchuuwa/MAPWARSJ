@@ -748,6 +748,21 @@ desheng: '#2E6B7A', // 德胜·刘通
     rhodes: '#D4A017',   // 罗得（太阳神赫利俄斯金）
     zhongshan: '#4B6F44',   // 中山
     linhu: '#8C7A5B',   // 林胡
+    chalcis: '#1F6F8B',   // 卡尔基斯
+    plataea: '#9C8B2E',   // 普拉提亚
+    methone: '#7F5539',   // 梅托涅
+    macedon_royal: '#5B3F8C',   // 马其顿王军
+    arcadia: '#3A7CA5',   // 阿卡迪亚同盟
+    lycia: '#A0522D',   // 吕基亚
+    dolopes: '#4A4A4A',   // 多洛佩斯
+    thasos: '#B8860B',   // 萨索斯
+    corinth: '#8E2C48',   // 科林斯
+    melos: '#5F9EA0',   // 米洛斯
+    argos: '#C9A227',   // 阿尔戈斯
+    epidaurus: '#6A8D73',   // 埃皮道鲁斯
+    corcyra: '#2F4F7F',   // 科西拉
+    mytilene: '#7B68AE',   // 米蒂利尼
+    mantinea: '#8B6F47',   // 曼丁尼亚
     phokis: '#0F766E',   // 福基斯
     wuguobu: '#7C2D12',   // 五国部
     balti: '#4D7C0F',   // 巴尔蒂

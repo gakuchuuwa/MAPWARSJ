@@ -820,6 +820,21 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'rhodes': [{ from: -9999, era: 'antiquity' }], // 罗得
     'zhongshan': [{ from: -9999, era: 'antiquity' }], // 中山
     'linhu': [{ from: -9999, era: 'antiquity' }], // 林胡
+    'chalcis': [{ from: -9999, era: 'antiquity' }], // 卡尔基斯
+    'plataea': [{ from: -9999, era: 'antiquity' }], // 普拉提亚
+    'methone': [{ from: -9999, era: 'antiquity' }], // 梅托涅
+    'macedon_royal': [{ from: -9999, era: 'antiquity' }], // 马其顿王军
+    'arcadia': [{ from: -9999, era: 'antiquity' }], // 阿卡迪亚同盟
+    'lycia': [{ from: -9999, era: 'antiquity' }], // 吕基亚
+    'dolopes': [{ from: -9999, era: 'antiquity' }], // 多洛佩斯
+    'thasos': [{ from: -9999, era: 'antiquity' }], // 萨索斯
+    'corinth': [{ from: -9999, era: 'antiquity' }], // 科林斯
+    'melos': [{ from: -9999, era: 'antiquity' }], // 米洛斯
+    'argos': [{ from: -9999, era: 'antiquity' }], // 阿尔戈斯
+    'epidaurus': [{ from: -9999, era: 'antiquity' }], // 埃皮道鲁斯
+    'corcyra': [{ from: -9999, era: 'antiquity' }], // 科西拉
+    'mytilene': [{ from: -9999, era: 'antiquity' }], // 米蒂利尼
+    'mantinea': [{ from: -9999, era: 'antiquity' }], // 曼丁尼亚
     'phokis': [{ from: -9999, era: 'antiquity' }], // 福基斯
     'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部｜存续 960–1125：封建（2026-11-11 GG第五轮·长时代按年代分段）
     'balti': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 巴尔蒂｜存续 1190–1840：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）

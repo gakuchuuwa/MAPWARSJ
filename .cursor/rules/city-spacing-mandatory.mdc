@@ -21,7 +21,7 @@ alwaysApply: true
    ```bash
    npx tsx scratch/audit_city_spacing.mjs --probe <lat> <lng> <据点名>
    ```
-   必须 **exit 0**；含 ❌ 或 ⚠️ 卡线（50–55 km）→ **不写**，须问主人
+   必须 **exit 0**；含 ❌（<50 km）→ **不写**；≥50 km 即合格，**不设 50–55 km 卡线**（2026-11-13 主人定：规则就是 50 km）
 3. **改 `cities_v2.ts` 之后**：`npm run city:spacing`（全图 ≥50 km 硬顶，exit 0）
 
 ## 禁止

@@ -1369,13 +1369,20 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'paiwan_alugu': 'MALAY',   // 排湾｜阿禄古｜据点 牡丹社
     'paiyao_huangguasi': 'HUGUANG',   // 南越｜黄瓜四｜据点 阳山关
     'pajiama_oumainisi': 'GREECE',   // 帕加马｜欧迈尼斯一世｜据点 佩尔加蒙
-    'maqidun_eumenes': 'TURKS',   // 马其顿｜欧迈尼斯｜据点 提亚纳
+    'maqidun_eumenes': 'TURKS',   // 马其顿王军｜欧迈尼斯｜据点 提亚纳
+    'xila_callias': 'ATHENIANS',   // 雅典｜卡利亚斯｜据点 雅典
+    'xila_cleomedes': 'ATHENIANS',   // 雅典｜克莱奥梅德斯｜据点 雅典
+    'xila_paches': 'ATHENIANS',   // 雅典｜帕凯斯｜据点 雅典
+    'corinth_timanor': 'GREECE',   // 科林斯｜提马诺尔｜据点 科林斯
+    'corinth_xenocleides': 'GREECE',   // 科林斯｜克塞诺克利德斯｜据点 科林斯
+    'lagoniya_agesipolis_i': 'SPARTANS',   // 斯巴达｜阿格西波利斯一世｜据点 斯巴达
     // ── 2026-11-13 编年史第一、二段补将 ──
     'lagoniya_leotychidas': 'GREECE',   // 斯巴达｜列奥提基达斯｜据点 希马鲁塔
     'lagoniya_archidamus_ii': 'SPARTANS',   // 斯巴达｜阿基达穆斯二世｜据点 斯巴达
     'lagoniya_agis_ii': 'SPARTANS',   // 斯巴达｜阿基斯二世｜据点 斯巴达
     'lagoniya_callicratidas': 'GREECE',   // 斯巴达｜卡利克拉提达斯｜据点 佩尔加蒙
     'lagoniya_phoebidas': 'SPARTANS',   // 斯巴达｜福比达斯｜据点 斯巴达
+    'lagoniya_archidamus_iii': 'SPARTANS',   // 斯巴达｜阿基达穆斯三世｜据点 斯巴达
     'lagoniya_teleutias': 'SPARTANS',   // 斯巴达｜特琉提亚斯｜据点 斯巴达
     'xila_myronides': 'ATHENIANS',   // 雅典｜米隆尼德斯｜据点 雅典
     'xila_tolmides': 'ATHENIANS',   // 雅典｜托尔米德斯｜据点 雅典

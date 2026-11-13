@@ -883,6 +883,21 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'rhodes': '罗得',   // 罗得
     'zhongshan': '中山',   // 中山
     'linhu': '林胡',   // 林胡
+    'chalcis': '卡基',   // 卡尔基斯
+    'plataea': '普拉',   // 普拉提亚
+    'methone': '梅托',   // 梅托涅
+    'macedon_royal': '王军',   // 马其顿王军
+    'arcadia': '阿卡',   // 阿卡迪亚同盟
+    'lycia': '吕基',   // 吕基亚
+    'dolopes': '多洛',   // 多洛佩斯
+    'thasos': '萨索',   // 萨索斯
+    'corinth': '科林',   // 科林斯
+    'melos': '米洛',   // 米洛斯
+    'argos': '阿戈',   // 阿尔戈斯
+    'epidaurus': '埃皮',   // 埃皮道鲁斯
+    'corcyra': '科西',   // 科西拉
+    'mytilene': '米蒂',   // 米蒂利尼
+    'mantinea': '丁尼',   // 曼丁尼亚
     'phokis': '福基',   // 福基斯
     'wuguobu': '五部',   // 五国部（旗号不含「国」）
     'balti': '巴尔',   // 巴尔蒂

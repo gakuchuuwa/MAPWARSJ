@@ -18,7 +18,7 @@ npx tsx scratch/audit_city_spacing.mjs --probe <lat> <lng> <据点名>
 ```
 
 须 **exit 0**：与**每一座**已有城 **≥50 km**；不设最近邻距离上限（见 AGENTS §2.1.1）。  
-❌ 或 ⚠️ 卡线 → **不写** `cities_v2`。
+❌（<50 km）→ **不写** `cities_v2`；≥50 km 即合格，不设卡线。
 
 ## 1. 势力 + 据点 + 旗号 + 首都（五文件）
 

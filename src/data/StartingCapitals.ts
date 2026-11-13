@@ -827,6 +827,21 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'rhodes': 'city_rhodes',   // 罗得
   'zhongshan': 'city_zhongshan',   // 中山（中山武公居顾，即定州）
   'linhu': 'city_yunzhongcheng',   // 林胡（云中一带）
+  'chalcis': 'city_thebes',   // 卡尔基斯（在底比斯据点 50km 内）
+  'plataea': 'city_thebes',   // 普拉提亚（在底比斯据点 50km 内）
+  'methone': 'city_salonica',   // 梅托涅（在佩拉据点 50km 内）
+  'macedon_royal': 'city_tiyana',   // 马其顿王军（欧迈尼斯卡帕多细亚总督辖地）
+  'arcadia': 'city_sparta',   // 阿卡迪亚同盟（都梅格洛波利斯，在斯巴达据点 50km 内）
+  'lycia': 'city_xanthos',   // 吕基亚（克桑托斯）
+  'dolopes': 'city_skyros',   // 多洛佩斯（斯库罗斯）
+  'thasos': 'city_thasos',   // 萨索斯
+  'corinth': 'city_corinth',   // 科林斯
+  'melos': 'city_melos',   // 米洛斯
+  'argos': 'city_corinth',   // 阿尔戈斯（在科林斯据点 50km 内）
+  'epidaurus': 'city_corinth',   // 埃皮道鲁斯（在科林斯据点 50km 内）
+  'corcyra': 'city_kefu',   // 科西拉（据点科孚）
+  'mytilene': 'city_mytilene',   // 米蒂利尼
+  'mantinea': 'city_mantinea',   // 曼丁尼亚
   'phokis': 'city_deerfei',   // 福基斯
   'wuguobu': 'city_wuguo',   // 五国部
   'balti': 'city_puticheng',   // 巴尔蒂

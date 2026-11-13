@@ -678,7 +678,14 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     lagoniya_agis_ii: { birth: -470, death: -400, kaoju: '推定' },  // 阿基斯二世（前427–前400 在位）
     lagoniya_callicratidas: { birth: -440, death: -406, kaoju: '推定' },  // 卡利克拉提达斯（阿吉努萨伊阵亡）
     lagoniya_phoebidas: { birth: -420, death: -377, kaoju: '推定' },  // 福比达斯（前377 战死于泰斯皮埃，色诺芬《希腊史》V.4.45）
+    lagoniya_archidamus_iii: { birth: -400, death: -338, kaoju: '推定' },  // 阿基达穆斯三世（前338 战死于意大利曼杜里亚）
     lagoniya_teleutias: { birth: -430, death: -381, kaoju: '推定' },  // 特琉提亚斯（奥林索斯城下战死）
+    xila_paches: { birth: -470, death: -427, kaoju: '推定' },  // 帕凯斯（受审时于庭上自刃，普鲁塔克《尼西亚斯传》6）
+    xila_cleomedes: { birth: -460, death: -400, kaoju: '推定' },  // 克莱奥梅德斯（前416 米洛斯）
+    corinth_timanor: { birth: -480, death: -420, kaoju: '推定' },  // 提马诺尔（前435 琉喀墨）
+    corinth_xenocleides: { birth: -480, death: -420, kaoju: '推定' },  // 克塞诺克利德斯（前433 叙博塔）
+    lagoniya_agesipolis_i: { birth: -410, death: -380, kaoju: '推定' },  // 阿格西波利斯一世（前395 幼年即位，前380 卒）
+    xila_callias: { birth: -480, death: -432, kaoju: '推定' },  // 卡利亚斯（波提狄亚阵亡）
     xila_myronides: { birth: -510, death: -440, kaoju: '推定' },  // 米隆尼德斯（前479 普拉提亚使节，前457 奥诺菲塔）
     xila_tolmides: { birth: -500, death: -447, kaoju: '推定' },  // 托尔米德斯（科罗尼亚战死）
     xila_thrasybulus: { birth: -440, death: -388, kaoju: '推定' },  // 斯拉叙布卢斯（前388 死于阿斯彭杜斯）

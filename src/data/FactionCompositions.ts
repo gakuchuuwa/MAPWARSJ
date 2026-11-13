@@ -81,6 +81,66 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代漠南游牧军团",
     legionType: "region",
 },   // 林胡｜无名将
+"chalcis": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 卡尔基斯｜无名将
+"plataea": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 普拉提亚｜无名将
+"methone": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 梅托涅｜无名将
+"macedon_royal": {
+    legionName: "古典时代马其顿军团",
+    legionType: "region",
+},   // 马其顿王军｜主将 欧迈尼斯
+"arcadia": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 阿卡迪亚同盟｜无名将
+"lycia": {
+    legionName: "古典时代安纳托利亚军团",
+    legionType: "region",
+},   // 吕基亚｜无名将
+"dolopes": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 多洛佩斯｜无名将
+"thasos": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 萨索斯｜无名将
+"corinth": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 科林斯｜主将 提马诺尔、克塞诺克利德斯
+"melos": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 米洛斯｜无名将
+"argos": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 阿尔戈斯｜无名将
+"epidaurus": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 埃皮道鲁斯｜无名将
+"corcyra": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 科西拉｜无名将
+"mytilene": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 米蒂利尼｜无名将
+"mantinea": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 曼丁尼亚｜无名将
 "phokis": {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",

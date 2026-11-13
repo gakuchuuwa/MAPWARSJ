@@ -10,7 +10,8 @@
  * 第 4 棒起按 GG《主线大纲_审定版_2026-11-13》棒次，逐场按史定案（出处写在每行注释）。
  * 主线每场都开战：玩家去该场出发据点找随行主将（路上念战略播报）→ 随军行军（有史载途经地按站走）→ 战场进战术模式（念战术播报）。
  * 同一主将连战：军团自上一战场续行；换主将：战后离队去下一场出发据点。
- * 史无交战、或须新建据点 / 据点归属冲突的场次「移出主线」，原因写在注释。
+ * 史无两军交战的不收；据点代表方圆 50km，被攻城落在某据点 50km 内即按该据点打；同据点同场战争只留最知名一场（注「不收」）；
+ * 距现有据点均超过 50km 的注「待定」（须新建据点）。
  */
 
 export interface ChronicleScriptEntry {
@@ -63,7 +64,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // 希罗多德 I.162–167：哈尔帕古斯筑土山破福西亚（据点克拉佐美奈 34km 代表）
     { eventId: 'evt_0008', baton: 1, leadGeneralId: 'aqimeinide_harpagus', kind: 'battle', role: 'attacker', enemyFactionId: 'aiaoniya',
         winner: 'attacker', city: { cityId: 'city_kelazuomeinai', before: 'aiaoniya', after: 'aqimeinide' } },
-    // 移出主线：evt_0009 克桑托斯（城在罗得据点 99km 外，须新建据点「克桑托斯」，待主人批）；evt_0011 居鲁士东征（史无确载会战）
+    { eventId: 'evt_0009', baton: 1, leadGeneralId: 'aqimeinide_harpagus', kind: 'battle', role: 'attacker', enemyFactionId: 'lycia', winner: 'attacker', city: { cityId: 'city_xanthos', before: 'lycia', after: 'aqimeinide' } },   // 希罗多德 I.176：克桑托斯人焚家室后出战尽殁
     // 那波尼德编年史 III.12–15：俄庇斯胜，西帕尔不战而降（据点巴格达代表俄庇斯—西帕尔一带）
     // 途经：希罗多德 I.189「进军巴比伦途中渡金德斯河（迪亚拉河），分其水为三百六十渠」
     { eventId: 'evt_0013', baton: 1, leadGeneralId: 'ailan_julushi', kind: 'battle', role: 'attacker', enemyFactionId: 'jialedi', enemyGeneralId: 'bfe2_nabonidus',
@@ -88,7 +89,6 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // 希罗多德 III.25：远征库施粮尽折返；途经：III.25「至底比斯，分兵五万攻阿蒙人，自率余众南进」
     { eventId: 'evt_0028', baton: 2, leadGeneralId: 'gen_cambyses', kind: 'battle', role: 'attacker', enemyFactionId: 'kushi', winner: 'defender',
         route: [{ name: '底比斯', lat: 25.7, lng: 32.64 }] },
-    // 移出主线：evt_0030 七人堡中刺杀高墨达（非两军对阵）
     // ── 第 3 棒 · 大流士 ──
     // 贝希斯敦铭文 §18–20：扎扎纳胜，攻取巴比伦
     // 途经：贝希斯敦铭文 §18「尼丁图-贝尔之军据底格里斯河，朕渡河击之」（渡口位置史失，取巴比伦以北河段）
@@ -99,7 +99,6 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // 贝希斯敦铭文 §31–32：昆杜鲁什胜，弗拉奥尔特斯于埃克巴坦那受刑
     { eventId: 'evt_0032', baton: 3, leadGeneralId: 'aqimeinide_daliushi', kind: 'battle', role: 'attacker', enemyFactionId: 'midi', enemyGeneralId: 'midi_phraortes',
         winner: 'attacker', city: { cityId: 'city_hamadan', before: 'midi', after: 'aqimeinide' } },
-    // 移出主线：evt_0040 大流士征斯基泰（斯基泰坚壁清野，史无会战）
     // 希罗多德 IV.143–144、V.1–2：梅加巴佐斯留统欧罗巴之军，先破佩林索斯，再西进色雷斯；V.12–17 斯特鲁马河征服佩奥尼亚
     { eventId: 'evt_0041', baton: 3, leadGeneralId: 'aqimeinide_megabazus', kind: 'battle', role: 'attacker', enemyFactionId: 'paeonia', winner: 'attacker',
         route: [{ name: '佩林索斯', lat: 40.98, lng: 27.96 }] },
@@ -148,36 +147,34 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
 
     // ── 第 5 棒 · 客蒙与提洛同盟 ──
     B('evt_0087', '5', 'xila_cimon', 'attacker', 'aqimeinide', 'attacker', { city: at('city_anfeibolisi', 'aqimeinide', 'xila') }),   // 埃伊翁在安菲波利斯据点 50km 内；希罗多德 VII.107、修昔底德 I.98
-    // 移出主线：evt_0088 斯库罗斯（距最近据点 100km，须新建据点，待主人批）
+    B('evt_0088', '5', 'xila_cimon', 'attacker', 'dolopes', 'attacker', { city: at('city_skyros', 'dolopes', 'xila') }),   // 修昔底德 I.98；普鲁塔克《客蒙传》8
     B('evt_0092', '5', 'xila_cimon', 'attacker', 'naxos', 'attacker', { city: at('city_chimarros', 'naxos', 'xila') }),   // 修昔底德 I.98：纳克索斯叛盟，被围降服
     // 普鲁塔克《客蒙传》12：客蒙自克尼多斯、法塞利斯出航，于欧律墨冬河口水陆两胜
     B('evt_0094', '5', 'xila_cimon', 'attacker', 'aqimeinide', 'attacker', { route: [p('克尼多斯', 36.69, 27.37), p('法塞利斯', 36.52, 30.55)] }),
-    // 移出主线：evt_0095 萨索斯海战（萨索斯距安菲波利斯 73km，须新建据点「萨索斯」作该势力首府，待主人批）
+    B('evt_0095', '5', 'xila_cimon', 'attacker', 'thasos', 'attacker'),   // 修昔底德 I.100：海战胜，登岛围城
     B('evt_0096', '5', 'lagoniya_archidamus_ii', 'defender', 'messenia', 'defender', { city: at('city_sparta', 'lagoniya', 'lagoniya') }),   // 普鲁塔克《客蒙传》16：地震后黑劳士来攻斯巴达，阿基达穆斯集众击退，起事者退据伊托美
-    // 移出主线：evt_0097 萨索斯围城（同上，须新建据点「萨索斯」）
-    // 移出主线：evt_0098 斯巴达遣回客蒙（史无交战）
+    B('evt_0097', '5', 'xila_cimon', 'attacker', 'thasos', 'attacker', { city: at('city_thasos', 'thasos', 'xila') }),   // 修昔底德 I.101：围三年降，拆墙交舰
 
     // ── 第 6A 棒 · 伯里克利 ──
     B('evt_0102', '6A', 'xila_pericles', 'attacker', 'lagoniya', 'defender'),   // 普鲁塔克《伯里克利传》10：伯里克利身与塔纳格拉之战；修昔底德 I.108 斯巴达胜
     B('evt_0103', '6A', 'xila_myronides', 'attacker', 'boootiya', 'attacker'),   // 修昔底德 I.108
     B('evt_0105', '6A', 'xila_tolmides', 'attacker', 'lagoniya', 'attacker'),   // 修昔底德 I.108；狄奥多罗斯 XI.84
     B('evt_0109', '6A', 'xila_cimon', 'attacker', 'aqimeinide', 'attacker'),   // 修昔底德 I.112：客蒙卒于围基提翁，舰队于萨拉米斯水陆两胜
-    // 移出主线：evt_0110 第二次神圣战争（史无对阵）
     B('evt_0111', '6A', 'xila_tolmides', 'defender', 'boootiya', 'attacker'),   // 修昔底德 I.113：托尔米德斯战死
-    // 移出主线：evt_0112 优卑亚平叛（卡尔基斯落底比斯据点内，据点属底比斯）
+    B('evt_0112', '6A', 'xila_pericles', 'attacker', 'chalcis', 'attacker', { city: at('city_thebes', 'chalcis', 'xila') }),   // 修昔底德 I.114：伯里克利平优卑亚；卡尔基斯在底比斯据点 50km 内
     B('evt_0117', '6A', 'xila_pericles', 'attacker', 'aiaoniya', 'attacker'),   // 修昔底德 I.116：特拉吉亚海战伯里克利胜萨摩斯（伊奥尼亚城邦）
     B('evt_0118', '6A', 'xila_pericles', 'attacker', 'aiaoniya', 'attacker', { city: at('city_miletus', 'aiaoniya', 'xila') }),   // 修昔底德 I.117：围九月降；萨摩斯在米利都据点 50km 内
 
     // ── 第 6B 棒 · 伯罗奔尼撒战争前夜 ──
     B('evt_0121', '6B', 'xila_hagenong', 'attacker', 'seleisi', 'attacker', { city: at('city_anfeibolisi', 'seleisi', 'xila') }),   // 修昔底德 IV.102：哈格农逐埃多尼人，建安菲波利斯
-    // 移出主线：evt_0122 琉喀墨海角（科林斯须新建据点作首府；科林斯主将与波提狄亚的阿里斯泰乌斯同名异人）
-    // 移出主线：evt_0123 叙博塔海战（须新建据点「科林斯」）
-    // 移出主线：evt_0124 波提狄亚（须新建据点「科林斯」；波提狄亚在奥林索斯据点内，该据点属卡尔基季基）
-    // 移出主线：evt_0125 普拉提亚夜袭（普拉提亚落底比斯据点 12km 内）
+    B('evt_0122', '6B', 'corinth_timanor', 'attacker', 'corcyra', 'defender'),   // 修昔底德 I.29–30：科西拉胜
+    B('evt_0123', '6B', 'corinth_xenocleides', 'attacker', 'corcyra', 'attacker'),   // 修昔底德 I.46–54：科林斯胜，雅典援舰至乃退
+    B('evt_0124', '6B', 'xila_callias', 'attacker', 'chalkidike', 'attacker'),   // 修昔底德 I.58–63：波提狄亚与卡尔基季基人同叛，卡利亚斯地峡会战胜而阵亡
+    // 不收：evt_0125 普拉提亚夜袭（同据点同场战争只留最知名一场，留 evt_0128 普拉提亚之围）
     // 出发：修昔底德 II.84–86：伯罗奔尼撒舰队集结于埃利斯之基利尼
     B('evt_0126', '6B', 'gen_brasidas', 'attacker', 'xila', 'defender', { from: 'city_aolinpiya' }),   // 修昔底德 II.86–92：福尔米奥以寡胜众
-    // 移出主线：evt_0127 米蒂利尼（距佩尔加蒙 54km，须新建据点，待主人批）
-    // 移出主线：evt_0128 普拉提亚陷落（同 evt_0125）
+    // 待定：evt_0127 米蒂利尼：新建点距佩尔加蒙 53.9km，落 50–55km 卡线，待主人批
+    B('evt_0128', '6B', 'lagoniya_archidamus_ii', 'attacker', 'plataea', 'attacker', { city: at('city_thebes', 'plataea', 'boootiya') }),   // 修昔底德 II.71–78、III.52–68：围二年陷城，地归底比斯；普拉提亚在底比斯据点 50km 内
     // 出发：修昔底德 III.105–107：德摩斯梯尼自瑙帕克都赴援（最近据点德尔斐）
     B('evt_0129', '6B', 'xila_demosthenes', 'defender', 'lagoniya', 'defender', { from: 'city_deerfei' }),   // 修昔底德 III.105–108
 
@@ -185,14 +182,14 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_0130', '7A', 'xila_demosthenes', 'defender', 'lagoniya', 'defender', { enemyGeneralId: 'gen_brasidas' }),   // 修昔底德 IV.11–12：布拉西达斯抢滩负伤
     B('evt_0131', '7A', 'bfe2_cleon', 'attacker', 'lagoniya', 'attacker'),   // 修昔底德 IV.29–38
     B('evt_0132', '7A', 'boootiya_pagondas', 'attacker', 'xila', 'attacker'),   // 修昔底德 IV.91–96
-    // 移出主线：evt_0133 门德（落奥林索斯据点，该据点属卡尔基季基、未易手）
+    // 不收：evt_0133 门德（同据点同场战争只留最知名一场，留 evt_0135 斯基奥内）
     // 途经：修昔底德 V.2–3：克里昂先取托罗尼，再至埃伊翁
     B('evt_0134', '7A', 'bfe2_cleon', 'attacker', 'lagoniya', 'defender', { enemyGeneralId: 'gen_brasidas', route: [p('托罗尼', 39.98, 23.89)] }),   // 修昔底德 V.6–11：两将俱殁，斯巴达胜
-    // 移出主线：evt_0135 斯基奥内（同上）
-    // 移出主线：evt_0136 埃皮道鲁斯（无据点 50km 内，须新建据点，待主人批）
-    // 移出主线：evt_0137 第一次曼丁尼亚（阿尔戈斯须新建据点作首府，待主人批）
-    // 移出主线：evt_0138 希西亚伊（无据点 50km 内，须新建据点，待主人批）
-    // 移出主线：evt_0139 米洛斯（无据点 50km 内，须新建据点，待主人批）
+    B('evt_0135', '7A', 'xila_nixiyasi', 'attacker', 'lagoniya', 'attacker', { from: 'city_yadian', city: at('city_aolinsuosi', 'lagoniya', 'xila') }),   // 修昔底德 IV.123、V.32：波吕达米达斯所留伯罗奔尼撒守军，城破；斯基奥内在奥林索斯据点 50km 内
+    B('evt_0136', '7A', 'xila_alcibiades', 'attacker', 'epidaurus', 'defender', { city: at('city_corinth', 'epidaurus', 'epidaurus') }),   // 修昔底德 V.53–56：围攻不克；埃皮道鲁斯在科林斯据点 50km 内
+    B('evt_0137', '7A', 'lagoniya_agis_ii', 'attacker', 'argos', 'attacker'),   // 修昔底德 V.65–74
+    // 不收：evt_0138 希西亚伊（与 evt_0136 同落科林斯据点、同场战争，只留最知名一场）
+    B('evt_0139', '7A', 'xila_cleomedes', 'attacker', 'melos', 'attacker', { city: at('city_melos', 'melos', 'xila') }),   // 修昔底德 V.84–116
     // 修昔底德 VI.30–52：舰队自雅典经科西拉、利吉翁，以卡塔纳为基地；VI.67–70 阿纳波斯河畔首战雅典胜
     // 出发：修昔底德 VI.30–32：舰队自比雷埃夫斯出航
     B('evt_0140', '7A', 'xila_nixiyasi', 'attacker', 'syracuse', 'attacker', { route: [p('科西拉', 39.62, 19.92), p('利吉翁', 38.11, 15.65), p('卡塔纳', 37.5, 15.09)], from: 'city_yadian' }),
@@ -229,23 +226,22 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_0166', '8B', 'bfe2_conon', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》IV.8.8：守军协议弃城
     B('evt_0168', '8B', 'xila_iphicrates', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》IV.5.11–17
     B('evt_0171', '8B', 'gen_chabrias', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》V.1.10–13：戈尔戈帕斯战死
-    // 移出主线：evt_0174 曼丁尼亚围城（距斯巴达 61km，须新建据点「曼丁尼亚」，待主人批）
+    // 待定：evt_0174 曼丁尼亚围城：新建点距科林斯 53.6km，落 50–55km 卡线，待主人批
 
     // ── 第 9 棒 · 底比斯霸权 ──
     B('evt_0176', '9', 'lagoniya_phoebidas', 'attacker', 'boootiya', 'attacker', { city: at('city_thebes', 'boootiya', 'lagoniya') }),   // 色诺芬《希腊史》V.2.25–31
     B('evt_0177', '9', 'lagoniya_teleutias', 'attacker', 'chalkidike', 'defender'),   // 色诺芬《希腊史》V.3.3–6
-    // 移出主线：evt_0179 托罗尼（距奥林索斯 59km，须新建据点，待主人批）
+    B('evt_0179', '9', 'lagoniya_agesipolis_i', 'attacker', 'chalkidike', 'attacker', { city: at('city_torone', 'chalkidike', 'lagoniya') }),   // 色诺芬《希腊史》V.3.18
     B('evt_0180', '9', 'boootiya_pelopidas', 'attacker', 'lagoniya', 'attacker', { city: at('city_thebes', 'lagoniya', 'boootiya') }),   // 色诺芬《希腊史》V.4.2–12
     B('evt_0182', '9', 'gen_chabrias', 'defender', 'lagoniya', 'defender', { enemyGeneralId: 'bfe2_pollis' }),   // 狄奥多罗斯 XV.34–35
     B('evt_0183', '9', 'boootiya_pelopidas', 'attacker', 'lagoniya', 'attacker'),   // 普鲁塔克《佩洛皮达斯传》16–17
     B('evt_0184', '9', 'xila_timotheus', 'defender', 'lagoniya', 'defender'),   // 色诺芬《希腊史》V.4.63–66
     B('evt_0186', '9', 'xila_iphicrates', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》VI.2.27–38
     B('evt_0187', '9', 'gen_epaminondas', 'defender', 'lagoniya', 'defender', { enemyGeneralId: 'bfe2_cleombrotus_i' }),   // 色诺芬《希腊史》VI.4.4–15
-    // 移出主线：evt_0188 伊巴密浓达进逼斯巴达（阿格西劳斯拒战，史无会战）
-    // 移出主线：evt_0190 无泪之战（阿卡迪亚须新建据点「曼丁尼亚」作首府，待主人批）
+    B('evt_0190', '9', 'lagoniya_archidamus_iii', 'attacker', 'arcadia', 'attacker'),   // 色诺芬《希腊史》VII.1.28–32；战场在斯巴达据点 50km 内
     B('evt_0192', '9', 'xila_timotheus', 'attacker', 'aqimeinide', 'attacker', { city: at('city_miletus', 'aqimeinide', 'xila') }),   // 伊索克拉底《论财产交换》111；狄奥多罗斯 XV.47：围十月下之；萨摩斯在米利都据点 50km 内
     B('evt_0194', '9', 'boootiya_pelopidas', 'attacker', 'sesali', 'attacker'),   // 普鲁塔克《佩洛皮达斯传》32：费莱僭主亚历山大，佩洛皮达斯胜而战死
-    // 移出主线：evt_0195 波提狄亚与托罗尼（落奥林索斯据点，该据点属卡尔基季基、未易手）
+    B('evt_0195', '9', 'xila_timotheus', 'attacker', 'chalkidike', 'attacker', { city: at('city_aolinsuosi', 'chalkidike', 'xila') }),   // 狄奥多罗斯 XV.81：提莫修斯取托罗尼、波提狄亚；两城在奥林索斯据点 50km 内
     B('evt_0196', '9', 'gen_epaminondas', 'attacker', 'lagoniya', 'attacker', { enemyGeneralId: 'lagoniya_agesilaus' }),   // 色诺芬《希腊史》VII.5.18–27
 
     // ── 第 10 棒 · 腓力二世 ──
@@ -253,11 +249,10 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_0199', '10', 'gen_philip_ii', 'defender', 'xila', 'defender'),   // 狄奥多罗斯 XVI.3：阿尔盖乌斯率雅典曼提亚斯所部三千重步兵
     B('evt_0200', '10', 'gen_philip_ii', 'attacker', 'yili', 'attacker'),   // 狄奥多罗斯 XVI.4：伊利里亚王巴尔迪利斯
     B('evt_0203', '10', 'phokis_feiluomoluosi', 'defender', 'boootiya', 'attacker'),   // 狄奥多罗斯 XVI.30–31：菲洛墨洛斯坠崖死
-    // 移出主线：evt_0204 梅托涅（落佩拉据点，据点属马其顿）
+    B('evt_0204', '10', 'gen_philip_ii', 'attacker', 'methone', 'attacker', { city: at('city_salonica', 'methone', 'maqidun') }),   // 狄奥多罗斯 XVI.34：腓力围梅托涅失一目，陷城夷之；梅托涅在佩拉据点 50km 内
     B('evt_0206', '10', 'gen_philip_ii', 'attacker', 'phokis', 'attacker', { enemyGeneralId: 'phokis_aonuomakusi' }),   // 狄奥多罗斯 XVI.35
-    // 移出主线：evt_0209 斯塔吉拉（落安菲波利斯据点，时属马其顿）
+    B('evt_0209', '10', 'gen_philip_ii', 'attacker', 'chalkidike', 'attacker', { enemyGeneralId: 'chalkidike_outikelatesi', city: at('city_anfeibolisi', 'chalkidike', 'maqidun') }),   // 狄奥多罗斯 XVI.52；斯塔吉拉在安菲波利斯据点 50km 内
     B('evt_0210', '10', 'gen_philip_ii', 'attacker', 'chalkidike', 'attacker', { enemyGeneralId: 'chalkidike_lasiteniesi', city: at('city_aolinsuosi', 'chalkidike', 'maqidun') }),   // 狄奥多罗斯 XVI.53
-    // 移出主线：evt_0211 温泉关受降（法莱库斯议降，史无会战）
     B('evt_0212', '10', 'gen_philip_ii', 'attacker', 'yili', 'attacker'),   // 狄奥多罗斯 XVI.69：伊利里亚王普莱乌拉图斯
     B('evt_0216', '10', 'gen_philip_ii', 'attacker', 'seleisi', 'attacker'),   // 狄奥多罗斯 XVI.71
     B('evt_0219', '10', 'gen_philip_ii', 'attacker', 'sijitai', 'attacker', { enemyGeneralId: 'sijitai_ateas' }),   // 查士丁 IX.2
@@ -295,15 +290,15 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
 
     // ══ 第二段 · 继业者与战国秦汉（第 12—18 棒） ══
     // ── 第 12A 棒 · 拉米亚战争 ──
-    // 移出主线：evt_0238 拉米亚（落德尔斐据点，围城无易手）
+    B('evt_0238', '12A', 'maqidun_antipater', 'defender', 'xila', 'defender', { enemyGeneralId: 'xila_leosthenes', city: at('city_deerfei', 'maqidun', 'maqidun') }),   // 狄奥多罗斯 XVIII.12–15：莱奥斯塞尼斯殁于围城，安提帕特待援突围；拉米亚在德尔斐据点 50km 内
     B('evt_0239', '12A', 'maqidun_antipater', 'attacker', 'xila', 'attacker', { enemyGeneralId: 'xila_antiphilus' }),   // 狄奥多罗斯 XVIII.17
     // ── 第 12B 棒 · 继业者 ──
-    // 移出主线：evt_0240 赫勒斯滂会战（克拉特罗斯与欧迈尼斯库内同属马其顿）
+    B('evt_0240', '12B', 'maqidun_craterus', 'attacker', 'macedon_royal', 'defender', { enemyGeneralId: 'maqidun_eumenes', from: 'city_teluoyi' }),   // 狄奥多罗斯 XVIII.29–32：克拉特罗斯渡赫勒斯滂入亚洲，为欧迈尼斯所败阵亡
     // 出发：狄奥多罗斯 XVIII.29–33：佩尔狄卡斯自奇里乞亚进兵埃及
     B('evt_0242', '12B', 'gen_perdiccas', 'attacker', 'tuolemi', 'defender', { enemyGeneralId: 'tuolemi_tuolemi', city: at('city_peiluximu', 'tuolemi', 'tuolemi'), from: 'city_adana' }),   // 狄奥多罗斯 XVIII.33–36
-    B('evt_0243', '12B', 'bfe_antigonus', 'attacker', 'maqidun', 'attacker', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XVIII.40
-    B('evt_0246', '12B', 'bfe_antigonus', 'attacker', 'maqidun', 'draw', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XIX.26–31：胜负未分
-    B('evt_0248', '12B', 'bfe_antigonus', 'attacker', 'maqidun', 'attacker', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XIX.39–43
+    B('evt_0243', '12B', 'bfe_antigonus', 'attacker', 'macedon_royal', 'attacker', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XVIII.40
+    B('evt_0246', '12B', 'bfe_antigonus', 'attacker', 'macedon_royal', 'draw', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XIX.26–31：胜负未分
+    B('evt_0248', '12B', 'bfe_antigonus', 'attacker', 'macedon_royal', 'attacker', { enemyGeneralId: 'maqidun_eumenes' }),   // 狄奥多罗斯 XIX.39–43
     // ── 第 13A 棒 · 塞琉古与托勒密 ──
     B('evt_0253', '13A', 'tuolemi_tuolemi', 'attacker', 'antigonid', 'attacker', { enemyGeneralId: 'antigonid_demetrius' }),   // 狄奥多罗斯 XIX.80–85
     // 出发：狄奥多罗斯 XIX.91–92：塞琉古已复据巴比伦
@@ -318,7 +313,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_0266', '14', 'lingqiu_zhaowuling', 'attacker', 'linhu', 'attacker'),   // 《史记·赵世家》：破林胡、楼烦
     B('evt_0270', '14', 'lingqiu_zhaowuling', 'attacker', 'zhongshan', 'attacker', { city: at('city_zhending', 'zhongshan', 'zhao') }),   // 《史记·赵世家》：灵寿在真定据点 50km 内
     // ── 第 15A 棒 · 白起 ──
-    // 移出主线：evt_0272 新城（落洛阳据点，时属周室）
+    B('evt_0272', '15A', 'xin_baiqi', 'attacker', 'han', 'attacker', { city: at('city_luoyang', 'han', 'qin') }),   // 《史记·白起王翦列传》：攻韩新城；新城在洛阳据点 50km 内
     B('evt_0273', '15A', 'xin_baiqi', 'attacker', 'han', 'attacker', { enemyGeneralId: 'han_baoyuan' }),   // 《史记·白起王翦列传》
     B('evt_0274', '15A', 'xin_baiqi', 'attacker', 'wei', 'attacker', { city: at('city_zhiguan', 'wei', 'qin') }),   // 《史记·白起王翦列传》：攻魏取垣
     // 出发：《史记·乐毅列传》：乐毅自燕统五国之兵
