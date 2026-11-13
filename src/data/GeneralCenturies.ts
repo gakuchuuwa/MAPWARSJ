@@ -15,7 +15,6 @@
  */
 export const GENERAL_CENTURIES: Record<string, number> = {
     // ── 2026-10-25 归位/新增势力补世纪 ──
-    'aliya_muhammad_tahir': 9,   // 塔希尔 · 阿拔斯呼罗珊总督（820–873）
     'luoma_diguo_leo_ix': 11,     // 利奥九世 · 教皇（1049–1054，奇维塔泰之战）
     'bfe2_rezin': -8,             // 利汛 · 亚兰（大马士革）王（前 8 世纪，前 732 亡）
     'bfe3_46': -1,                // 维钦托利 · 高卢联军首领（前 82–前 46）

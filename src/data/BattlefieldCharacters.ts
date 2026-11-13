@@ -117,7 +117,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_cb_lunbadi_1: { generalId: 'bfe_cb_lunbadi_1', generalName: '雷蒙德四世', factionId: 'lunbadi', portrait: '/assets/FRANKS/bfe_cb_lunbadi_1.png', note: '🔴 [经典战导入] 梅尔济丰战役敌方主将' },
     bfe_cb_liao_d_1: { generalId: 'bfe_cb_liao_d_1', generalName: '萧绰', factionId: 'liao_d', portrait: '/assets/XIANBEI/bfe_cb_liao_d_1.png', note: '🔴 [经典战导入] 遂城之战敌方主将' },
     bfe_cb_bohai_1: { generalId: 'bfe_cb_bohai_1', generalName: '大諲譔', factionId: 'bohai', portrait: '/assets/NORTHEAST/bfe_cb_bohai_1.png', note: '🔴 [经典战导入] 忽汗城之战敌方主将' },
-    bfe_cb_tahirid_3: { generalId: 'bfe_cb_tahirid_3', generalName: '穆罕默德·本·塔希尔', factionId: 'tahirid', portrait: '/assets/SASANIAN/bfe_cb_tahirid_3.png', note: '🔴 [经典战导入] 内沙布尔之战敌方主将' },
     bfe_cb_tahirid_2: { generalId: 'bfe_cb_tahirid_2', generalName: '易卜拉欣·本·伊利亚斯', factionId: 'tahirid', portrait: '/assets/SASANIAN/bfe_cb_tahirid_2.png', note: '🔴 [经典战导入] 赫拉特之战敌方主将' },
     bfe_cb_xiaobolu_1: { generalId: 'bfe_cb_xiaobolu_1', generalName: '苏失利之', factionId: 'xiaobolu', portrait: '/assets/TIBET/bfe_cb_xiaobolu_1.png', note: '🔴 [经典战导入] 连云堡之战敌方主将' },
     bfe_cb_dalriada_1: { generalId: 'bfe_cb_dalriada_1', generalName: '敦加尔', factionId: 'dalriada', portrait: '/assets/CELTS/bfe_cb_dalriada_1.png', note: '🔴 [经典战导入] 邓哈芬之战敌方主将' },

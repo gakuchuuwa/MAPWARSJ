@@ -35,7 +35,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aki_maoliyuanjiu': 'JAPAN',   // 毛利家｜毛利元就｜据点 吉田郡山
     'alabo_qiyade': 'ORIE',   // 倭马亚｜齐亚德｜据点 巴士拉
     'ali_gandancaiwang': 'TIBET',   // 古格｜甘丹才旺｜据点 噶大克
-    'aliya_muhammad_tahir': 'SASANIAN',   // 阿契美尼德｜塔希尔｜据点 尼沙布尔
     'aliya_satibazanishi': 'PERSIAN',   // 阿契美尼德｜萨提巴扎尼斯｜据点 赫拉特
     'ameng_jisi': 'ORIE',   // 埃及｜阿曼阿托｜据点 锡瓦绿洲
     'an_xibanni': 'CENTRAL_ASIA',   // 乌兹别克｜昔班尼｜据点 布哈拉
@@ -125,7 +124,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'beileinisi_tuolemiershi': 'ORIE',   // 托勒密｜托勒密二世｜据点 贝雷尼斯
     'bendou_alikesai': 'BYZANTINE',   // 特拉布宗｜阿历克塞｜据点 特拉布宗
     'bendou_d_mitelidati': 'BYZANTINE',   // 本都｜密特里达梯｜据点 阿马西亚
-    'bfe_abdulaziz_crete': 'BERBER',   // 阿格拉布｜阿齐兹｜据点 凯鲁万
+    'bfe_abdulaziz_crete': 'LATIN',   // 克里特埃米尔国｜阿齐兹｜据点 干地亚要塞
     'bfe_abdullah_ali': 'ORIE',   // 阿拔斯王朝｜阿卜杜拉｜据点 大马士革
     'bfe_achaemenes': 'ORIE',   // 阿契美尼德｜阿凯门尼斯｜据点 拉塔基亚
     'bfe_achish': 'ORIE',   // 非利士｜亚吉｜据点 加沙
@@ -2159,7 +2158,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_cb_ladakh_1': 'TIBET',   // 战场人物｜释迦嘉措
     'bfe_cb_caowei_4': 'CENTRAL',   // 战场人物｜钟会
     'bfe_cb_barakzai_afghan_1': 'MUGHAL',   // 战场人物｜阿克巴尔汗
-    'bfe_cb_crete_emirate_1': 'LATIN',   // 克里特酋长国｜阿布·哈夫斯｜据点 干地亚要塞
+    'bfe_cb_crete_emirate_1': 'LATIN',   // 克里特埃米尔国｜阿布·哈夫斯｜据点 干地亚要塞
     'bfe_cb_tubo_2': 'TIBET',   // 战场人物｜阿旺策凌
     'bfe_cb_lunbadi_1': 'FRANKS',   // 战场人物｜雷蒙德四世
     'bfe_cb_yuan_shao_1': 'CENTRAL',   // 战场人物｜颜良

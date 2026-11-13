@@ -64,7 +64,6 @@ export class CityAssetManager {
         'aq_qoyunlu': '白羊',   // 白羊王朝（经典战导入）
         'bulidi': '布迪',   // 布里迪王朝（经典战导入）
         'jinong': '济农',   // 济农王朝（经典战导入）
-        'crete_emirate': '克岛',   // 克里特酋长国（经典战导入）
         'tahirid': '塔氏',   // 塔希尔王朝（经典战导入）
         'heruli': '赫鲁',   // 赫鲁利（经典战导入）
         'huanchu': '桓楚',   // 桓楚（经典战导入）

@@ -42,7 +42,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'aq_qoyunlu': [{ from: -9999, era: 'imperial' }], // 白羊王朝（经典战导入）
     'bulidi': [{ from: -9999, era: 'castle' }], // 布里迪王朝（经典战导入）
     'jinong': [{ from: -9999, era: 'castle' }], // 济农王朝（经典战导入）
-    'crete_emirate': [{ from: -9999, era: 'castle' }], // 克里特酋长国（经典战导入）
     'tahirid': [{ from: -9999, era: 'castle' }], // 塔希尔王朝（经典战导入）
     'heruli': [{ from: -9999, era: 'feudal' }], // 赫鲁利（经典战导入）
     'huanchu': [{ from: -9999, era: 'antiquity' }], // 桓楚（经典战导入）

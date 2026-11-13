@@ -46,7 +46,9 @@ for (const s of CHRONICLE_SCRIPT) {
     };
     if (s.kind !== 'battle') errors.push(`${s.eventId} 主线每场都要开战（不收只播报的场）`);
     if (s.kind === 'battle') {
-        const from = s.from ?? generals.get(s.leadGeneralId);
+        // 主人定：跟守方武将守城 → 直接从被守的据点出发（就地守城，不行军）
+        const defendsCity = e['战斗类型'] === '攻城战' && s.role === 'defender' && s.city;
+        const from = defendsCity ? s.city!.cityId : (s.from ?? generals.get(s.leadGeneralId));
         if (!from || !cityIds.has(from)) errors.push(`${s.eventId} 出发据点 ${from} 不在库`);
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
         if (s.enemyGeneralId && !generals.has(s.enemyGeneralId)) errors.push(`${s.eventId} 对手武将 ${s.enemyGeneralId} 不在库`);

@@ -9,7 +9,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aq_qoyunlu': 'city_dabulishi',   // 白羊王朝（经典战导入，登记用）
     'bulidi': 'city_damasikusi',   // 布里迪王朝（经典战导入，登记用）
     'jinong': 'city_toledo',   // 济农王朝（经典战导入，登记用）
-    'crete_emirate': 'city_knossos',   // 克里特酋长国（经典战导入，登记用）
     'tahirid': 'city_nishabuer',   // 塔希尔王朝（经典战导入，登记用）
     'heruli': 'city_ravenna',   // 赫鲁利（经典战导入，登记用）
     'huanchu': 'city_nanjing',   // 桓楚（经典战导入，登记用）
@@ -869,7 +868,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'sumo': 'city_danmoledi',   // 苏摩国（孟加拉 Suhma，前6世纪）
   'gushu': 'city_chengdu',   // 古蜀·开明王朝（前4世纪–前316 秦灭）
   'gaoda': 'city_gaodacheng',   // 高达王国（设赏迦，约590–626）
-  'kelite_amier': 'city_kailuwan',   // 克里特埃米尔国（约824–961）
+  'kelite_amier': 'city_knossos',   // 克里特埃米尔国（约824–961，都干地亚）
   'kelimiya_han': 'city_oleshky',   // 克里米亚汗国（1441–1783）
   'guzigan': 'city_fariyab',   // 古兹甘·法里贡王朝（9–11世纪初）
   'bahemani': 'city_taibade',   // 巴赫曼尼苏丹国（德干，1347–1527）

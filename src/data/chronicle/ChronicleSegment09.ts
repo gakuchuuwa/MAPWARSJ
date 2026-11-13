@@ -402,7 +402,7 @@ export const CHRONICLE_SEGMENT_09: readonly ChronicleEvent[] = [
         leadGeneralId: "chanzhou_chairong",
         cameraGeneralId: "baizanting_nikephoros_phokas",
         enemyGeneralIds: ["chuzhou_d_huangfuhui", "bfe_liurenshan"],
-        enemyFactionId: "crete_emirate",
+        enemyFactionId: "kelite_amier",
         battles: [
             { order: 1, battleId: "baizanting_nikephoros_phokas", role: "attacker", label: "干地亚之战", briefing: "event" },
         ],

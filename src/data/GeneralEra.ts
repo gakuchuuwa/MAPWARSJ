@@ -641,7 +641,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xisi_amr': 'feudal',
     'baizanting_romanosi': 'feudal',
     'danmai_guthrum': 'feudal',
-    'aliya_muhammad_tahir': 'feudal',
     'huihu_wusa': 'feudal',
     'abasi_muwafake': 'feudal',
     'falanji_kalman': 'feudal',

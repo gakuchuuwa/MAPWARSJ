@@ -1366,11 +1366,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'bfe_cb_aq_qoyunlu_1', factionId: 'aq_qoyunlu', cityId: 'city_dabulishi', generalName: '乌尊哈桑', portrait: '/assets/SASANIAN/bfe_cb_aq_qoyunlu_1.png', eliteName: '巴彦杜尔部骑兵', eliteTier: 3 },   // 1467 破杀黑羊王朝贾汉沙，1469 擒帖木儿朝卜撒因，迁都大不里士
     ],
-    crete_emirate: [
+    kelite_amier: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'bfe_cb_crete_emirate_1', factionId: 'crete_emirate', cityId: 'city_knossos', generalName: '阿布·哈夫斯', portrait: '/assets/LATIN/bfe_cb_crete_emirate_1.png', eliteName: '安达卢斯水军', eliteTier: 3 },   // 安达卢斯流亡者首领，约 827 年据克里特筑干地亚，败杀拜占庭统帅克拉特罗斯（《狄奥法尼斯续编》）
+        { generalId: 'bfe_cb_crete_emirate_1', factionId: 'kelite_amier', cityId: 'city_knossos', generalName: '阿布·哈夫斯', portrait: '/assets/LATIN/bfe_cb_crete_emirate_1.png', eliteName: '安达卢斯水军', eliteTier: 3 },   // 安达卢斯流亡者首领，约 827 年据克里特筑干地亚，败杀拜占庭统帅克拉特罗斯（《狄奥法尼斯续编》）
     ],
     tahirid: [
+        { generalId: 'bfe_cb_tahirid_3', factionId: 'tahirid', cityId: 'city_nishabuer', generalName: '穆罕默德·本·塔希尔', portrait: '/assets/SASANIAN/bfe_cb_tahirid_3.png', eliteName: '尼沙布尔骑兵', eliteTier: 4 },   // 塔希尔王朝末主（862–873 在位），873 雅库布·本·莱斯陷内沙布尔被执（塔巴里）；原「塔希尔」(aliya_muhammad_tahir) 误挂阿拔斯，已并入本条
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'bfe_cb_tahirid_1', factionId: 'tahirid', cityId: 'city_nishabuer', generalName: '塔希尔·本·侯赛因', portrait: '/assets/SASANIAN/bfe_cb_tahirid_1.png', eliteName: '呼罗珊精骑', eliteTier: 3 },   // 811 雷伊以寡破阿明大将阿里·本·伊萨（塔巴里），821 受任呼罗珊总督开塔希尔王朝
     ],
@@ -1384,75 +1385,75 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     zhongshan: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'zhongshan_simazhou', factionId: 'zhongshan', cityId: 'city_zhongshan', generalName: '司马赒', portrait: '', eliteName: '中山车兵', eliteTier: 4 },   // 中山相邦；中山王鼎铭「命相邦赒……伐燕」，约前314 统军伐燕
+        { generalId: 'zhongshan_simazhou', factionId: 'zhongshan', cityId: 'city_zhongshan', generalName: '司马赒', portrait: '/assets/WEI/zhongshan_simazhou.png', eliteName: '中山车兵', eliteTier: 4 },   // 中山相邦；中山王鼎铭「命相邦赒……伐燕」，约前314 统军伐燕
     ],
     corcyra: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'corcyra_meiciades', factionId: 'corcyra', cityId: 'city_kefu', generalName: '梅基阿德斯', portrait: '', eliteName: '科西拉舰队', eliteTier: 3 },   // 前433 叙博塔科西拉舰队三将之首（修昔底德 I.47）
+        { generalId: 'corcyra_meiciades', factionId: 'corcyra', cityId: 'city_kefu', generalName: '梅基阿德斯', portrait: '/assets/LATIN/corcyra_meiciades.png', eliteName: '科西拉舰队', eliteTier: 3 },   // 前433 叙博塔科西拉舰队三将之首（修昔底德 I.47）
     ],
     argos: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'argos_thrasyllus', factionId: 'argos', cityId: 'city_corinth', generalName: '斯拉叙卢斯', portrait: '', eliteName: '阿尔戈斯千人队', eliteTier: 3 },   // 前418 阿尔戈斯五将之一，与阿基斯二世议和（修昔底德 V.59–60）
+        { generalId: 'argos_thrasyllus', factionId: 'argos', cityId: 'city_corinth', generalName: '斯拉叙卢斯', portrait: '/assets/GREECE/argos_thrasyllus.png', eliteName: '阿尔戈斯千人队', eliteTier: 3 },   // 前418 阿尔戈斯五将之一，与阿基斯二世议和（修昔底德 V.59–60）
     ],
     arcadia: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'arcadia_lycomedes', factionId: 'arcadia', cityId: 'city_mantinea', generalName: '吕科墨德斯', portrait: '', eliteName: '埃帕里托伊常备军', eliteTier: 3 },   // 曼丁尼亚人，阿卡迪亚同盟创立者，前369 起率阿卡迪亚军转战伯罗奔尼撒（色诺芬《希腊史》VII.1.23–26）
+        { generalId: 'arcadia_lycomedes', factionId: 'arcadia', cityId: 'city_mantinea', generalName: '吕科墨德斯', portrait: '/assets/GREECE/arcadia_lycomedes.png', eliteName: '埃帕里托伊常备军', eliteTier: 3 },   // 曼丁尼亚人，阿卡迪亚同盟创立者，前369 起率阿卡迪亚军转战伯罗奔尼撒（色诺芬《希腊史》VII.1.23–26）
     ],
     plataea: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'plataea_eupompides', factionId: 'plataea', cityId: 'city_thebes', generalName: '欧蓬皮德斯', portrait: '', eliteName: '普拉提亚重步兵', eliteTier: 4 },   // 前428 冬率普拉提亚守军半数越围墙突围赴雅典（修昔底德 III.20–24）
+        { generalId: 'plataea_eupompides', factionId: 'plataea', cityId: 'city_thebes', generalName: '欧蓬皮德斯', portrait: '/assets/GREECE/plataea_eupompides.png', eliteName: '普拉提亚重步兵', eliteTier: 4 },   // 前428 冬率普拉提亚守军半数越围墙突围赴雅典（修昔底德 III.20–24）
     ],
     paeonia: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'paeonia_shouling', factionId: 'paeonia', cityId: 'city_anfeibolisi', generalName: '佩奥尼亚统帅', portrait: '', eliteName: '佩奥尼亚标枪兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'paeonia_shouling', factionId: 'paeonia', cityId: 'city_anfeibolisi', generalName: '佩奥尼亚统帅', portrait: '/assets/ATHENIANS/paeonia_shouling.png', eliteName: '佩奥尼亚标枪兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     messenia: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'messenia_shouling', factionId: 'messenia', cityId: 'city_sparta', generalName: '美塞尼亚首领', portrait: '', eliteName: '美塞尼亚轻盾兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'messenia_shouling', factionId: 'messenia', cityId: 'city_sparta', generalName: '美塞尼亚首领', portrait: '/assets/SPARTANS/messenia_shouling.png', eliteName: '美塞尼亚轻盾兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     rhodes: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'rhodes_shouling', factionId: 'rhodes', cityId: 'city_rhodes', generalName: '罗得执政官', portrait: '', eliteName: '罗得投石兵', eliteTier: 3 },   // 泛指：史失其名
+        { generalId: 'rhodes_shouling', factionId: 'rhodes', cityId: 'city_rhodes', generalName: '罗得执政官', portrait: '/assets/FRANKS/rhodes_shouling.png', eliteName: '罗得投石兵', eliteTier: 3 },   // 泛指：史失其名
     ],
     linhu: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'linhu_shouling', factionId: 'linhu', cityId: 'city_yunzhongcheng', generalName: '林胡王', portrait: '', eliteName: '林胡骑兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'linhu_shouling', factionId: 'linhu', cityId: 'city_yunzhongcheng', generalName: '林胡王', portrait: '/assets/XIANBEI/linhu_shouling.png', eliteName: '林胡骑兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     chalcis: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'chalcis_shouling', factionId: 'chalcis', cityId: 'city_thebes', generalName: '卡尔基斯首领', portrait: '', eliteName: '卡尔基斯重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'chalcis_shouling', factionId: 'chalcis', cityId: 'city_thebes', generalName: '卡尔基斯首领', portrait: '/assets/GREECE/chalcis_shouling.png', eliteName: '卡尔基斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     methone: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'methone_shouling', factionId: 'methone', cityId: 'city_salonica', generalName: '梅托涅守将', portrait: '', eliteName: '梅托涅重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'methone_shouling', factionId: 'methone', cityId: 'city_salonica', generalName: '梅托涅守将', portrait: '/assets/MACEDONIAN/methone_shouling.png', eliteName: '梅托涅重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     epidaurus: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'epidaurus_shouling', factionId: 'epidaurus', cityId: 'city_corinth', generalName: '埃皮道鲁斯守将', portrait: '', eliteName: '埃皮道鲁斯重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'epidaurus_shouling', factionId: 'epidaurus', cityId: 'city_corinth', generalName: '埃皮道鲁斯守将', portrait: '/assets/GREECE/epidaurus_shouling.png', eliteName: '埃皮道鲁斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     lycia: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'lycia_shouling', factionId: 'lycia', cityId: 'city_xanthos', generalName: '克桑托斯守将', portrait: '', eliteName: '吕基亚弓兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'lycia_shouling', factionId: 'lycia', cityId: 'city_xanthos', generalName: '克桑托斯守将', portrait: '/assets/GREECE/lycia_shouling.png', eliteName: '吕基亚弓兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     dolopes: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'dolopes_shouling', factionId: 'dolopes', cityId: 'city_skyros', generalName: '多洛佩斯首领', portrait: '', eliteName: '多洛佩斯海寇', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'dolopes_shouling', factionId: 'dolopes', cityId: 'city_skyros', generalName: '多洛佩斯首领', portrait: '/assets/GREECE/dolopes_shouling.png', eliteName: '多洛佩斯海寇', eliteTier: 4 },   // 泛指：史失其名
     ],
     thasos: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'thasos_shouling', factionId: 'thasos', cityId: 'city_thasos', generalName: '萨索斯守将', portrait: '', eliteName: '萨索斯重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'thasos_shouling', factionId: 'thasos', cityId: 'city_thasos', generalName: '萨索斯守将', portrait: '/assets/GREECE/thasos_shouling.png', eliteName: '萨索斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     melos: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'melos_shouling', factionId: 'melos', cityId: 'city_melos', generalName: '米洛斯守将', portrait: '', eliteName: '米洛斯重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'melos_shouling', factionId: 'melos', cityId: 'city_melos', generalName: '米洛斯守将', portrait: '/assets/GREECE/melos_shouling.png', eliteName: '米洛斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     mytilene: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'mytilene_shouling', factionId: 'mytilene', cityId: 'city_mytilene', generalName: '米蒂利尼守将', portrait: '', eliteName: '莱斯博斯重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'mytilene_shouling', factionId: 'mytilene', cityId: 'city_mytilene', generalName: '米蒂利尼守将', portrait: '/assets/GREECE/mytilene_shouling.png', eliteName: '莱斯博斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     mantinea: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
-        { generalId: 'mantinea_shouling', factionId: 'mantinea', cityId: 'city_mantinea', generalName: '曼丁尼亚守将', portrait: '', eliteName: '曼丁尼亚重步兵', eliteTier: 4 },   // 泛指：史失其名
+        { generalId: 'mantinea_shouling', factionId: 'mantinea', cityId: 'city_mantinea', generalName: '曼丁尼亚守将', portrait: '/assets/GREECE/mantinea_shouling.png', eliteName: '曼丁尼亚重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
     kesaiya: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
@@ -1461,6 +1462,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     malli: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'malli_shouling', factionId: 'malli', cityId: 'city_malisi', generalName: '马利人首领', portrait: '/assets/PURU/malli_malavapala.png', eliteName: '摩腊婆强弓兵', eliteTier: 4 },   // 泛指：史失其名
+    ],
+    aizu_ashina: [
+        // 🔴 [2026-11-13] 改挂本势力（原挂错分组）
+        { generalId: 'bfe_ashina_yoshihiro', factionId: 'aizu_ashina', cityId: 'city_tsuruga', generalName: '芦名义广', portrait: '/assets/JAPAN/bfe_ashina_yoshihiro.png', eliteName: '会津芦名骑武', eliteTier: 4 },
+    ],
+    jingzhou: [
+        // 🔴 [2026-11-13] 改挂本势力（原挂错分组）
+        { generalId: 'han_liubiao', factionId: 'jingzhou', cityId: 'city_xiangyang', generalName: '刘表', portrait: '/assets/JIANGNAN/han_liubiao.png', eliteName: '荆州劲卒', eliteTier: 3 },
     ],
     corinth: [
         // 🔴 [2026-11-13 编年史第一段补将·新建势力] 修昔底德 I.29：琉喀墨海战科林斯舰队三将之一；I.46：叙博塔科林斯五将之首
@@ -1910,7 +1919,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'aguelabu_ibrahim_i', factionId: 'aguelabu', cityId: 'city_kailuwan', generalName: '易卜拉欣一世', portrait: '/assets/BERBER/aguelabu_ibrahim_i.png', eliteName: '凯鲁万骑兵', eliteTier: 3 },
         
         // 🔴 [2026-10-25 补B] 阿齐兹（克里特埃米尔，961 干地亚陷落时在位；克里特埃米尔国出自阿格拉布，据凯鲁万）｜势力 阿格拉布｜据点 凯鲁万（BERBER 文化）｜普将｜精锐「克里特军」T4｜立绘留空
-        { generalId: 'bfe_abdulaziz_crete', factionId: 'kelite_amier', cityId: 'city_kailuwan', generalName: '阿齐兹', portrait: '/assets/BERBER/bfe_abdulaziz_crete.png', eliteName: '克里特私掠师', eliteTier: 4 },
+        { generalId: 'bfe_abdulaziz_crete', factionId: 'kelite_amier', cityId: 'city_knossos', generalName: '阿齐兹', portrait: '/assets/LATIN/bfe_abdulaziz_crete.png', eliteName: '克里特私掠师', eliteTier: 4 },
     ],
 
 
@@ -7160,7 +7169,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yumen_suoban', generalName: '索班', factionId: 'han_d', cityId: 'city_yumenguan', portrait: '/assets/KHITAN/han_d_suoban.png', eliteName: '伊吾戍卒', eliteTier: 4 },
         // 🔴 [2026-10-25 险要补将·镇守] 李息＝汉武帝元鼎六年与徐自为营筑阳关、玉门关，屯兵镇守丝路南道；普将；精锐「阳关戍卒」T4
         { generalId: 'yangguan_lixi', generalName: '李息', factionId: 'han_d', cityId: 'city_yangguan', portrait: '/assets/KHITAN/han_d_lixi.png', eliteName: '阳关戍卒', eliteTier: 4 },
-        { generalId: 'han_liubiao', factionId: 'jingzhou', cityId: 'city_xiangyang', generalName: '刘表', portrait: '/assets/JIANGNAN/han_liubiao.png', eliteName: '荆州劲卒', eliteTier: 3 },
         { generalId: 'han_yanbaihu', factionId: 'han_d', cityId: 'city_kuaiji', generalName: '严白虎', portrait: '/assets/JIANGNAN/han_yanbaihu.png', eliteName: '江东豪强', eliteTier: 4 },
         { generalId: 'han_yuji', factionId: 'han_d', cityId: 'city_gusu', generalName: '于吉', portrait: '/assets/JIANGNAN/han_yuji.png', eliteName: '符水道众', eliteTier: 4 },
         { generalId: 'han_lubode', factionId: 'han_d', cityId: 'city_juyansai', generalName: '路博德', portrait: '/assets/KHITAN/han_lubode.png', eliteName: '居延戍卒', eliteTier: 4 },   // 汉伏波将军：元鼎六年与公孙贺出九原，筑遮虏障、屯守居延边塞（镇守遮虏障）
@@ -15275,7 +15283,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'aliya_satibazanishi', factionId: 'aqimeinide', cityId: 'city_helate_city', generalName: '萨提巴扎尼斯', portrait: '/assets/PERSIAN/aliya_satibazanishi.png', eliteName: '波斯骑兵', eliteTier: 3 },   // 赫拉特守将（立绘留空）
-        { generalId: 'aliya_muhammad_tahir', factionId: 'abasi', cityId: 'city_nishabuer', generalName: '塔希尔', portrait: '/assets/SASANIAN/aliya_muhammad_tahir.png', eliteName: '阿拔斯骑手', eliteTier: 4 },
 
 
 
@@ -17919,7 +17926,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_ukita_hideie', factionId: 'toyotomi', cityId: 'city_guizhicheng', generalName: '宇喜多秀家', portrait: '/assets/JAPAN/bfe_ukita_hideie.png', eliteName: '备前武士', eliteTier: 3 },
         { generalId: 'bfe_todo_takakage', factionId: 'toyotomi', cityId: 'city_songshan', generalName: '藤堂高虎', portrait: '/assets/JAPAN/bfe_todo_takakage.png', eliteName: '藤堂安宅水师', eliteTier: 4 },
         { generalId: 'bfe_sogo_kazumasa', factionId: 'toyotomi', cityId: 'city_kyoto', generalName: '十河存保', portrait: '/assets/JAPAN/bfe_sogo_kazumasa.png', eliteName: '阿波三好足轻', eliteTier: 4 },
-        { generalId: 'bfe_ashina_yoshihiro', factionId: 'aizu_ashina', cityId: 'city_tsuruga', generalName: '芦名义广', portrait: '/assets/JAPAN/bfe_ashina_yoshihiro.png', eliteName: '会津芦名骑武', eliteTier: 4 },
     ],
     utsunomiya: [
         { generalId: 'shimotsuke_yudougongguanggang', factionId: 'utsunomiya', cityId: 'city_utsunomiya', generalName: '宇都宫广纲', portrait: '/assets/JAPAN/shimotsuke_yudougongguanggang.png', eliteName: '宇都宫足轻', eliteTier: 4 },

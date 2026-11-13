@@ -3203,7 +3203,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "lagoniya"
             },
-            "chronicleFrom": "city_dasijiliweng",
+            "chronicleFrom": "city_teluoyi",
             "targetLat": 39.958,
             "targetLng": 26.239,
             "myTroops": 15000,
@@ -5336,7 +5336,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "maqidun",
                 "after": "maqidun"
             },
-            "chronicleFrom": "city_salonica",
+            "chronicleFrom": "city_deerfei",
             "targetLat": 38.9,
             "targetLng": 22.433,
             "myTroops": 15000,

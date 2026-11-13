@@ -31,7 +31,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aq_qoyunlu': '白羊', // 白羊王朝
     'bulidi': '布迪', // 布里迪王朝
     'jinong': '济农', // 济农王朝
-    'crete_emirate': '克岛', // 克里特酋长国
     'tahirid': '塔氏', // 塔希尔王朝
     'heruli': '赫鲁', // 赫鲁利
     'huanchu': '桓楚', // 桓楚

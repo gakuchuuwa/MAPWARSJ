@@ -819,7 +819,6 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     aq_qoyunlu: '#3E9B3B', // 白羊王朝（经典战导入）
     bulidi: '#9B3B66', // 布里迪王朝（经典战导入）
     jinong: '#3B539B', // 济农王朝（经典战导入）
-    crete_emirate: '#3B469B', // 克里特酋长国（经典战导入）
     tahirid: '#3B709B', // 塔希尔王朝（经典战导入）
     heruli: '#4D9B3B', // 赫鲁利（经典战导入）
     huanchu: '#453B9B', // 桓楚（经典战导入）

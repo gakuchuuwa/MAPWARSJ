@@ -293,7 +293,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     xiongren: 'HUNNIC_GOLDEN_STAG',   // 匈人帝国·草原飞跃金鹿图腾
     heruli: 'HERULI_ODOACER_ROMA_EAGLE',   // 赫鲁利·拉温纳罗马飞鹰与长矛十字
     tahirid: 'TAHIRID_HORASAN_EAGLE',   // 塔希尔王朝·呼罗珊总督黑鹰战旗
-    crete_emirate: 'CRETE_EMIRATE_DHOW',   // 克里特酋长国·干地亚阿拉伯战船与斜帆
+    kelite_amier: 'CRETE_EMIRATE_DHOW',   // 克里特埃米尔国·干地亚阿拉伯战船与斜帆（2026-11-13 自重复势力「克里特酋长国」并入）
     yidelisi: 'IDRISID_EIGHT_POINT_STAR',   // 伊德里斯王朝·摩洛哥非斯八角星徽
     mogadishu: 'MOGADISHU_MINARET_SPEARS',   // 摩加迪沙苏丹国·法赫尔丁宣礼塔与双投矛
     malindi: 'MALINDI_CORAL_PILLAR',   // 马林迪苏丹国·马林迪珊瑚石柱与领航塔
@@ -318,6 +318,40 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     goto: 'GOTO_SHICHIYO_MON',   // 五岛家·五岛氏家纹「七曜纹」
     genji_iyo: 'GENJI_IYO_OSHIKI_SAN',   // 伊予源氏·河野氏家纹「折敷に三文字」
     xisi: 'SAFFARID_SIMURGH_SUN',   // 萨法尔王朝·锡斯坦波斯神鸟西摩格
+    // ── 2026-11-13 多字势力图标化第十九批（16 家，罗斯公国/凯尔特/东南亚/突厥汗国）──
+    daniebo: 'SMOLENSK_CANNON_GAMAYUN',   // 斯摩棱斯克·加农炮与加马云天堂鸟
+    teweier_gongguo: 'TVER_PRINCELY_THRONE',   // 特维尔·大公宝座与莫诺马赫冠
+    peilieya_gongguo: 'PEREYASLAVL_EAGLE_SPEAR',   // 佩列亚斯拉夫·双翼长矛十字
+    arevaci: 'NUMANTIA_CELTIC_HORSE',   // 阿雷瓦西·努曼提亚战马与太阳轮盘
+    keernuwaye: 'CORNWALL_BEZANT_SHIELD',   // 康沃尔·十五金币纹章
+    yaqi: 'ACEH_ALAM_CRESCENT_SWORDS',   // 亚齐苏丹国·阿拉曼战旗新月双弯刀
+    minangkabau: 'MINANGKABAU_BUFFALO_HORNS',   // 米南加保·鲁马戈当水牛角金冠屋脊
+    gujarat: 'GUJARAT_CRESCENT_BULL',   // 古吉拉特苏丹国·金角水牛与星月
+    kalinga: 'KALINGA_CONCH_ELEPHANT',   // 羯陵伽·战象与右旋海螺
+    bulidi: 'BURID_DAMASCUS_SCIMITAR',   // 布里迪王朝·大马士革花纹弯刀与新月
+    aosiruowen: 'OSROENE_ABGAR_TIARA',   // 奥斯若恩·埃德萨阿布加尔王室珍珠高冠
+    samtskhe: 'SAMTSKHE_GEORGIAN_LION',   // 萨姆茨赫·格鲁吉亚立狮持长剑
+    mallabhum: 'MALLA_TERRACOTTA_WHEEL',   // 末罗王国·比什努布尔赤陶神庙金刚神轮
+    taiyuan: 'LANNA_WHITE_ELEPHANT',   // 泰沅·清迈白象与王室宝伞
+    tujishi: 'TURGESH_BOW_TAMGA',   // 突骑施·碎叶城圆环弓矢王室塔木加
+    xierhe: 'OGHUZ_YABGU_FALCON',   // 乌古斯叶护国·二十四部神鹰弓矢塔木加
+    // ── 2026-11-13 多字势力图标化第二十批（16 家，希腊城邦/古代中东/印度/西非）─────
+    rhodes: 'RHODES_ROSE_HELIOS',   // 罗得岛·赫利俄斯日芒与罗得玫瑰
+    corinth: 'CORINTH_PEGASOS',   // 科林斯·科林斯飞马珀伽索斯
+    argos: 'ARGOS_WOLF_FOREPART',   // 阿尔戈斯·阿波罗战狼半身首级与字母A
+    corcyra: 'CORCYRA_COW_CALF',   // 科西拉·母牛吮乳幼犊
+    chalcis: 'CHALCIS_EAGLE_SERPENT',   // 卡尔基斯·优卑亚神鹰展翅抓蛇
+    messenia: 'MESSENIA_ZEUS_THUNDER',   // 美塞尼亚·伊托墨山进击雷神宙斯
+    plataea: 'PLATAEA_FREEDOM_SHIELD',   // 普拉提亚·普拉提亚自由战盾与常春藤花环
+    epidaurus: 'EPIDAURUS_THRONE_SERPENT',   // 埃皮道鲁斯·医神阿斯克勒庇俄斯圣座神蛇
+    mantinea: 'MANTINEA_BEAR_KALLISTO',   // 曼丁尼亚·阿卡迪亚喀里斯托母熊
+    paeonia: 'PAEONIA_KING_HELMET',   // 佩奥尼亚王国·佩奥尼亚王室雅典娜高冠头盔
+    jiaxite: 'KASSITE_KUDURRU_DISC',   // 加喜特巴比伦·库杜鲁界石星盘与多角神冠
+    libiya: 'LIBYA_SILPHIUM_PLANT',   // 古代利比亚·昔兰尼加塞耳菲翁神草
+    zhamolin: 'CALICUT_ZAMORIN_PALM',   // 卡利卡特·马拉巴尔双椰树与南印度战刀
+    aolisha: 'EASTERN_GANGA_WHEEL',   // 东恒伽王朝·奥里萨科纳克太阳神车轮
+    suosuo: 'SOSSO_MAGIC_BOW_ANVIL',   // 索索王国·苏曼古鲁铁匠铁砧与魔弓
+    xiwasi: 'ERETNA_DOUBLE_EAGLE',   // 埃雷特纳侯国·安纳托利亚突厥双头神鹰
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

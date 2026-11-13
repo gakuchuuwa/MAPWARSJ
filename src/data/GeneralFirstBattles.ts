@@ -95,8 +95,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.34,
         targetLng: 25.13,
         myTroops: 20000,
-        enemyFactionId: 'crete_emirate',
-        enemyFactionName: '克里特酋长国',
+        enemyFactionId: 'kelite_amier',
+        enemyFactionName: '克里特埃米尔国',
         enemyGeneralId: 'bfe_abdulaziz_crete',
         enemyTroops: 10000,
         introLines: [

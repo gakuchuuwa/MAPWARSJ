@@ -350,7 +350,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     xisi_amr: { birth: 830, death: 902, kaoju: '推定' },            // 阿姆尔（萨法尔埃米尔）
     baizanting_romanosi: { birth: 870, death: 948 },                // 罗曼努斯一世（拜占庭皇帝）
     danmai_guthrum: { birth: 840, death: 890, kaoju: '推定' },        // 古思伦（丹麦维京首领）
-    aliya_muhammad_tahir: { birth: 820, death: 873, kaoju: '推定' },  // 塔希尔（塔希尔末王）
+    bfe_cb_tahirid_3: { birth: 830, death: 890, kaoju: '推定' },  // 穆罕默德·本·塔希尔（873 被执，后获释；生卒不详推定）
     huihu_wusa: { birth: 790, death: 840, kaoju: '推定' },      // 㕎馺可汗（回鹘末代可汗）
     abasi_muwafake: { birth: 844, death: 891 },                // 穆瓦法克（阿拔斯摄政）
     falanji_kalman: { birth: 830, death: 880 },                // 卡洛曼（巴伐利亚王）
