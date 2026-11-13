@@ -24,7 +24,6 @@ import {
 } from '../types/CultureFormations';
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
-import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import {
     DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
@@ -58,7 +57,7 @@ const MODE_LABEL: Record<FormationMode, string> = {
     balance_yoke: '衡轭 4+2+3',
 };
 
-type Layer = '一级' | '二级' | '三级' | '四级';
+type Layer = '一级' | '二级' | '三级';
 interface LegionRow {
     name: string;
     layer: Layer;
@@ -154,14 +153,7 @@ function buildRows(): LegionRow[] {
     const push = (rawName: string, layer: Layer) => {
         // 改名后静态表还是旧名（要等 HMR），这里先换成新名再查编制
         const name = resolveRenamedLegion(rawName);
-        // 🔴 [2026-10-02 主人报障「编辑器中为什么显示不全呢」] 四级剧本军团的编制**必须直接读 scriptLegions.ts**：
-        //    按名字走 `getLegionCompositionByName` 会撞名 —— 四级「色雷斯军团」与**色雷斯文化区那支同名**，
-        //    运行时名字表里被文化区占了，于是这一行显示成 衡轭4+2+3／希腊雇佣重步兵高级/色雷斯标枪手高级/塔兰丁骑兵
-        //    ＋希腊旗舰伦博斯重装，而它自己的 雁行4-3-2／色雷斯标枪手/长刃斩手/古典轻骑兵 反而看不见。
-        //    实测：getLegionCompositionByName('色雷斯军团') = balance_yoke + ELITE_LEMBOS；
-        //          SCRIPT_LEGION_MAP.get('色雷斯军团') = echelon、无船。以脚本表为准。
-        const scriptDef = layer === '四级' ? SCRIPT_LEGION_MAP.get(name) : undefined;
-        const c = scriptDef ?? getLegionCompositionByName(name);
+        const c = getLegionCompositionByName(name);
         if (!c) return;
         // 🔴 [2026-10-20 修] 改名后静态表里还是**旧名**（要等 HMR / 刷新才变），
         //    所以查「建筑文化」必须用 push 传进来的 rawName（静态表原名）兜底 ——
@@ -177,15 +169,13 @@ function buildRows(): LegionRow[] {
             shipId: c.shipId ?? '',
             buildingStyle,
             commanderUnit: c.commanderUnit ?? l2?.commanderUnit ?? l3?.commanderUnit ?? '',
-            source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
+            source: '',
         });
     };
     // 🔴 [2026-11-09 主人令「删除所有的一级军团」] 不再列一级母体军团
     void BASE_16_LEGION_NAMES;
     for (const l of LEVEL_2_CIV_62_LEGIONS) push(l.name, '二级');
     for (const l of LEVEL_3_LEGIONS) push(l.name, '三级');
-    // 🔴 [2026-10-02 主人令「军团编辑里加四级」] 四级：剧本军团（scriptLegions.ts，只给历史剧本事件用）
-    for (const l of SCRIPT_LEGIONS) push(l.name, '四级');
     // 🔴 [2026-09-16] 本次会话里新建的三级军团：静态表要等 HMR 才有它，
     //    先从内存补进列表，新建完立刻能看见、能接着编（与保存编制「不等 HMR」同一套路）。
     for (const n of runtimeCreated) if (!out.some(r => r.name === n)) push(n, '三级');
@@ -602,7 +592,6 @@ function formatLegionInfoText(r: LegionRow, useDraft = false): string {
         : [r.slots[0]?.type, r.slots[1]?.type, r.slots[2]?.type];
     const rShip = d ? d.shipId : r.shipId;
     const rCmdr = d ? d.commanderUnit : r.commanderUnit;
-    const rSource = d ? d.source : r.source;
     const styleText = r.buildingStyle
         ? `${STYLE_LABELS[r.buildingStyle] ?? r.buildingStyle}（${r.buildingStyle}）`
         : '—';
@@ -619,7 +608,6 @@ function formatLegionInfoText(r: LegionRow, useDraft = false): string {
         }),
         `舰队：${shipLabel(rShip)}`,
         `在用武将：${r.users ? `${r.users} 位` : '无'}`,
-        ...(r.layer === '四级' && rSource ? [`史料出处：${rSource}`] : []),
     ];
     return lines.join('\n');
 }
@@ -648,7 +636,7 @@ function render(): void {
     if (sel && !draft) {
         draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''], shipId: sel.shipId ?? '', commanderUnit: sel.commanderUnit ?? '', source: sel.source ?? '' };
     }
-    const counts = { 一级: 0, 二级: 0, 三级: 0, 四级: 0 } as Record<Layer, number>;
+    const counts = { 一级: 0, 二级: 0, 三级: 0 } as Record<Layer, number>;
     for (const r of rows) counts[r.layer]++;
     const rowCnt = draft ? MODE_ROWS[draft.mode] : [0, 0, 0];
     const dirty = !!(sel && draft && (draft.mode !== sel.mode
@@ -666,7 +654,7 @@ function render(): void {
       <input id="lp-search" placeholder="搜军团名 / 兵种 / 建筑风格" value="${esc(keyword)}"
         style="width:230px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
       <select id="lp-layer" style="background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
-        ${(['全部', '一级', '二级', '三级', '四级'] as const).map(l =>
+        ${(['全部', '一级', '二级', '三级'] as const).map(l =>
             `<option value="${l}" ${layerFilter === l ? 'selected' : ''}>${l}${l === '全部' ? `（${rows.length} 支）` : `（${counts[l as Layer]} 支）`}</option>`).join('')}
       </select>
       <span style="color:#8a8378;font-size:12px;">列出 ${list.length} 支</span>
@@ -740,7 +728,7 @@ function render(): void {
                     ${rShip ? `<canvas class="le-unit-thumb" data-uid="${esc(shipUnitId(rShip))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
                     <span>${esc(shipLabel(rShip))}</span>
                   </div></td>
-                <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};"${r.users ? '' : ` title="${r.layer === '二级' ? '这一格＝某建筑文化 × 某时代，目前没有任何武将（跨时代空格，规则允许空置，不是缺将）' : r.layer === '一级' ? '一级 16 母体只作素材底座，武将不直接使用' : r.layer === '四级' ? '四级剧本军团只在对应剧本事件里用' : '目前没有武将挂这支军团'}"`}>${r.users || '无'}</td>
+                <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};"${r.users ? '' : ` title="${r.layer === '二级' ? '这一格＝某建筑文化 × 某时代，目前没有任何武将（跨时代空格，规则允许空置，不是缺将）' : r.layer === '一级' ? '一级 16 母体只作素材底座，武将不直接使用' : '目前没有武将挂这支军团'}"`}>${r.users || '无'}</td>
                 <td style="padding:4px 10px;">
                   <button type="button" class="lp-copy-row" data-name="${esc(r.name)}" data-layer="${r.layer}" title="复制【${esc(r.name)}】的军团信息"
                     style="padding:3px 8px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:12px;cursor:pointer;white-space:nowrap;">📋 复制</button>
@@ -775,12 +763,12 @@ function render(): void {
             </div>` : `
             <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
               建筑文化：${sel.buildingStyle ? `<b style="color:#e8d8b0;">${esc(STYLE_LABELS[sel.buildingStyle] ?? sel.buildingStyle)}</b>（${esc(sel.buildingStyle)}）` : '—'}
-              ${sel.layer === '一级' ? '　·　一级母体军团不设建筑文化（风格由母体素材决定），不可改。' : '　·　四级剧本军团没有建筑文化字段。'}
+              　·　一级母体军团不设建筑文化（风格由母体素材决定），不可改。
             </div>`}
 
-          ${sel.layer === '一级' || sel.layer === '四级' ? `
+          ${sel.layer === '一级' ? `
             <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
-              ${sel.layer === '四级' ? '四级剧本军团名被战场事件引用，不可改名。' : '一级 16 母体是底座军团，不可改名。'}
+              一级 16 母体是底座军团，不可改名。
             </div>` : `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
             <div style="display:flex;gap:6px;margin-bottom:14px;">
@@ -856,11 +844,6 @@ function render(): void {
             <span style="color:#8a8378;font-size:16px;">▾</span>
           </div>
 
-          ${sel.layer === '四级' ? `
-          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">史料出处（必填）</div>
-          <textarea id="lp-source" rows="6" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;font-size:12px;line-height:1.5;resize:vertical;">${esc(draft!.source ?? '')}</textarea>
-          ` : ''}
-
           <button id="lp-save" style="width:100%;padding:10px;background:${dirty ? '#5a3c28' : '#2a2520'};border:1px solid ${dirty ? '#8a6038' : '#3a342c'};color:#fff;border-radius:4px;font-size:14px;cursor:pointer;">
             💾 保存军团编制${dirty ? '（有改动未保存）' : ''}
           </button>
@@ -872,7 +855,7 @@ function render(): void {
               🗑 删除这支军团${sel.users ? `（${sel.users} 位武将在用，删除后按格位重套）` : ''}
             </button>` : `
             <div style="font-size:11px;color:#6a6358;margin-top:18px;line-height:1.7;">
-              ${sel.layer === '四级' ? '四级剧本军团不可删除（被战场事件引用）。' : `${sel.layer}军团不可删除（一级 16 母体是底座，二级 62 文明是定数）。`}
+              ${sel.layer}军团不可删除（一级 16 母体是底座，二级 62 文明是定数）。
             </div>`}
           <div style="font-size:11px;color:#6a6358;margin-top:14px;line-height:1.7;">
             保存只写这一支军团那一条记录，<b>不碰势力归属</b>。<br>
@@ -1389,45 +1372,8 @@ async function createLegion(
     }
 }
 
-/** 保存一支四级剧本军团（scriptLegions.ts）：三排 + 阵型 + 战船 + 史料出处。 */
-async function saveScriptLegion(): Promise<void> {
-    if (!selected || !draft) return;
-    if (!draft.source.trim()) { toast('❌ 四级剧本军团必须写史料出处', true); return; }
-    const counts = MODE_ROWS[draft.mode];
-    const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
-    try {
-        const res = await fetch('/api/save-script-legion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ legionName: selected, formationMode: draft.mode, slots, shipId: draft.shipId || null, commanderUnit: draft.commanderUnit || null, source: draft.source }),
-        });
-        const json = await res.json();
-        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        const scrDef = SCRIPT_LEGION_MAP.get(selected);
-        if (scrDef) {
-            scrDef.formationMode = draft.mode;
-            scrDef.slots = slots.map(s => ({ ...s }));
-            scrDef.shipId = draft.shipId || undefined;
-            scrDef.commanderUnit = draft.commanderUnit || undefined;
-            scrDef.source = draft.source;
-        }
-        patchLegionComposition(selected, slots, draft.mode, draft.shipId || undefined, draft.commanderUnit || null);
-        rows = buildRows();
-        draft = null;
-        render();
-        toast(`✅ 剧本军团【${selected}】已保存（写入 scriptLegions.ts）`);
-    } catch (e) {
-        toast('❌ 保存失败：' + ((e as Error)?.message ?? String(e)), true);
-    }
-}
-
 async function save(): Promise<void> {
     if (!selected || !draft) return;
-    // 🔴 [2026-10-02] 四级剧本军团走 scriptLegions.ts（含史料出处），单独保存
-    if (currentRow()?.layer === '四级') {
-        await saveScriptLegion();
-        return;
-    }
     const counts = MODE_ROWS[draft.mode];
     const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
     const prevShip = currentRow()?.shipId ?? '';

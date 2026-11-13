@@ -74,7 +74,6 @@ import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { getScriptFactionLegionName } from '../events/scriptPeriod';
 const T = COMBAT_UI_TOKENS;
 
 /**

@@ -36,14 +36,11 @@ import { checkRoute, ROUTE_LIMITS } from './routeCheck';
 import { resolveEventStartCityId, type StartEventInfo } from '../events/scriptEventStart';
 import { findEventSite } from '../data/eventSites';
 import { cityAbsentReason } from '../events/cityInYear';
-import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import { SCRIPT_PARTS, SCRIPT_SEGMENTS } from './scriptSegments';
 import { SCRIPT_ROAD_SEGMENTS, type ScriptRoadSegment } from './scriptSegments';
 import { SPRITE_PATHS } from '../config/UnitAssets';
-import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
 import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
-import { slotsMatchFormation } from '../types/CultureFormations';
 // 🔴 [2026-09-24 主人定] 本场特殊建筑：库里现成的奇观表（一城主奇观 + 同城第二三座 + 官方中文名）
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
@@ -582,29 +579,6 @@ function validate(d: BattleDraft): Issue[] {
             out.push({ level: 'error', msg: `史料依据「${it.label}」没写：先查；查不到用知名度最大的说法；再没有就合理推定并写明理由，绝不留空` });
         }
     }
-    // 🔴 [2026-09-23] 剧本军团三兵种 / 史料 / 名实相符
-    out.push(...checkSideLegion('攻方', d.attackerLegionName, resolveCurrentLegion(d.attackerFactionId, d.attackerSourceCityId)));
-    out.push(...checkSideLegion('守方', d.defenderLegionName,
-        resolveCurrentLegion(d.defenderFactionId, d.type === 'siege' ? d.defenderCityId : d.defenderSourceCityId)));
-    // 🔴 [2026-10-02 主人令] 全库剧本军团名一次扫（不选它也得合规矩）
-    out.push(...checkScriptLegionNames());
-    // 🔴 [2026-09-23 主人：「这是亚历山大率领的远征军……下一场还要换军团吗？」]
-    //    剧本军团是一支历史军队本身，同一武将的各场事件用同一支；只有史书记载编成确实变了才另立。
-    for (const [side, gid, legion] of [['攻方', d.attackerGeneralId, d.attackerLegionName], ['守方', d.defenderGeneralId, d.defenderLegionName]] as const) {
-        if (!gid) continue;
-        const others = new Set<string>();
-        for (const x of drafts) {
-            if (x.title === d.title) continue;
-            if (x.attackerGeneralId === gid && x.attackerLegionName) others.add(x.attackerLegionName);
-            if (x.defenderGeneralId === gid && x.defenderLegionName) others.add(x.defenderLegionName);
-        }
-        others.delete(legion);
-        if (others.size) {
-            const name = GENERAL_BY_ID.get(gid)?.generalName ?? gid;
-            out.push({ level: 'warn', msg: `${side}【${name}】在别的事件里用的是「${[...others].join('、')}」，这里是「${legion || '未指定'}」：`
-                + '同一支军队整场战争用同一支剧本军团，除非史书记载它的编成确实变了' });
-        }
-    }
 
     return out;
 }
@@ -764,18 +738,6 @@ function resolveCurrentLegion(factionId: string, sourceCityId: string): string {
     return getCultureLegionName(getCityRegion({ latitude: city.lat, longitude: city.lng })) || '';
 }
 /**
- * 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 事件里只许选**第四层剧本军团**：
- * 前三层的名字填进事件，运行时只改名字、兵种仍按势力取 —— 名不副实就是幽灵军团。
- * 已存数据里若还有前三层的名字，照样列出来（标 ✖），好让校验指出来改。
- */
-function legionOptions(cur: string, currentLegion: string): string {
-    const tip = currentLegion ? `（不指定 · 用势力乱斗那支：${currentLegion}）` : '（不指定）';
-    const legacy = cur && !SCRIPT_LEGION_MAP.has(cur) ? opt(cur, `✖ ${cur}（前三层军团，事件里不能用）`, cur) : '';
-    return `<option value="">${escapeHtml(tip)}</option>` + legacy
-        + `<optgroup label="四级 · 剧本军团（按这一仗史实配三兵种）">${SCRIPT_LEGIONS.map((l) => opt(l.name, l.name, cur)).join('')}</optgroup>`;
-}
-
-/**
  * 🔴 [2026-09-23 主人定「样式从兵模素材中找，不要名字，要看样子符合就行」] 兵种素材样貌缩略图：
  * 画该兵种 idle 动作第 2 方向的第一帧（DE 素材按 _meta.json 的帧宽裁；老素材按正方形帧裁）。
  */
@@ -856,124 +818,6 @@ function heroPicker(id: string, cur: string): string {
                 </button>`).join('')}</div>
             ${ships.length ? `<div class="hp-ships">船（舰队兵模，<b>不能当第 10 队</b>）：${ships.map(([, v]) => escapeHtml(v.name)).join('、')}</div>` : ''}
         </div>`;
-}
-
-/** 选中的剧本军团长什么样：阵型 + 前中后三排兵种 + 史料出处（没选就显示乱斗那支的兵种，提醒没按史实核对） */
-function legionPreview(name: string, fallback: string): string {
-    const def = name ? SCRIPT_LEGION_MAP.get(name) : undefined;
-    if (!def) {
-        return `<span class="hint">${fallback ? `未指定剧本军团：将用势力乱斗那支「${escapeHtml(fallback)}」，兵种没按此役史实核对` : '未指定剧本军团'}</span>`;
-    }
-    const rows = ['前排', '中排', '后排'];
-    const CLS: Record<string, string> = { cav: '骑兵', melee: '步兵', ranged: '远程' };
-    const cells = def.slots.map((sl, i) =>
-        `${rows[i] ?? '第' + (i + 1) + '排'}${CLS[WAR_TYPES[sl.type]?.cls ?? ''] ?? ''} ×${sl.count}（${escapeHtml(WAR_TYPES[sl.type]?.name ?? sl.type)}）`).join(' · ');
-    const thumbs = def.slots.map((sl) => spriteThumb(sl.type, 48)).join('');
-    return `<div style="display:flex;gap:4px;margin:4px 0;">${thumbs}</div>`
-        + `<span class="hint" style="color:#cbb98e">${escapeHtml(FORMATION_LABEL[def.formationMode] ?? def.formationMode)} · ${cells}<br>史料：${escapeHtml(def.source)}</span>`;
-}
-
-const FORMATION_LABEL: Record<string, string> = {
-    square: '方阵 3-3-3', echelon: '雁行阵 4-3-2', fish_scale: '鱼鳞阵 3-4-2', crane_wing: '鹤翼阵 2-4-3',
-    triangle: '锥形阵 2-3-4', crescent: '偃月阵 3-2-4', balance_yoke: '衡轭阵 4-2-3',
-};
-
-/**
- * 剧本军团硬规则（2026-09-23 主人：「确保以后新的军团都要符合历史」「军团都是三兵种构成的」）：
- *   · 只许选第四层剧本军团（否则名不副实）；
- *   · 三排 = 三个**不同**兵种（普通 / 高级 / 精锐只是档位，算同一兵种）；
- *   · 九格位合计 9 且与阵型对得上；兵种必须在兵种库里；必须写史料出处。
- */
-function checkSideLegion(side: string, name: string, fallback: string): Issue[] {
-    const out: Issue[] = [];
-    if (!name) {
-        out.push({ level: 'warn', msg: `${side}没指定剧本军团：会用势力乱斗那支「${fallback || '？'}」，兵种没按此役史实核对，建议按史料配一支剧本军团` });
-        return out;
-    }
-    const def = SCRIPT_LEGION_MAP.get(name);
-    if (!def) {
-        out.push({ level: 'error', msg: `${side}军团「${name}」不是剧本军团：前三层的名字填进事件，运行时只改名不改兵（幽灵军团），请改选剧本军团` });
-        return out;
-    }
-    // 🔴 [2026-10-02 主人令「三排不是骑／步／远各一排 —— **没有这个规定**」（看第 9 场推罗那一红时说）]
-    //    主人 2026-09-23 的原话是「军团中只有骑兵，步兵，远程，**不要分的那么细**」——
-    //    管的是**兵种分类的粒度**（只许归入这三类，不许再分出别的类别），
-    //    **不是**要求三排各占一类、也不要求三类齐全。
-    //    实例：推罗军团 前远程3（城头弓弩）／中步兵4（守城主力）／后投掷2（掷矛手，归远程类）
-    //    —— 海岛城邦无战马无战象，史料如此，合法。
-    //    旧尺子写成 `['cav','melee','ranged'].every(c => classes.includes(c))`＝要求三类齐全，
-    //    把主人的合法编制判成红、逼着改历史（正是血训 21／23 禁的「为了过检查动数据」）。
-    const clsOf = (t: string) => WAR_TYPES[t]?.cls;
-    const CLS3 = ['cav', 'melee', 'ranged'];
-    if (def.slots.length !== 3) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」不是三排（现 ${def.slots.length} 排）：军团按前／中／后三排编成` });
-    }
-    const outsideCls = def.slots.filter((sl) => !CLS3.includes(String(clsOf(sl.type) ?? '')));
-    if (outsideCls.length) {
-        out.push({
-            level: 'error',
-            msg: `${side}剧本军团「${name}」有兵种不属于骑兵／步兵／远程这三类：`
-                + `${outsideCls.map((s) => s.type).join('、')}（军团只分这三类，不许分得更细）`,
-        });
-    }
-    // 🔴🔴 [2026-10-02 主人令「你不要总是卡在步骑远上，**哪有军团一定是步骑远呀，你把这个规则取消吧，符合历史就行**」]
-    //    —— **「三排尽量骑／步／远各一」这条规则已取消，编辑器不再检查、不再提示。**
-    //    剧本军团的三排只有一个判据：**符合历史**（史料怎么写就怎么编）。
-    //    （本条上面那句「每个兵种必须归入骑／步／远三类」仍然保留：那管的是**兵种分类的粒度**
-    //     —— 2026-09-23 主人「军团中只有骑兵，步兵，远程，不要分的那么细」—— 与编制怎么排无关。）
-    if (!slotsMatchFormation(def.slots, def.formationMode)) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排人数与阵型对不上（合计必须 9，按阵型分排）` });
-    }
-    for (const sl of def.slots) {
-        if (!WAR_TYPES[sl.type]) out.push({ level: 'error', msg: `${side}剧本军团「${name}」的兵种不存在：${sl.type}` });
-    }
-    if (!def.source.trim()) out.push({ level: 'error', msg: `${side}剧本军团「${name}」没写史料出处` });
-    // 🔴 [2026-09-23 主人定] 剧本军团不加时代：用真实历史名或后世通称
-    if (/^(古典|封建|城堡|帝国)时代/.test(name)) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」带了时代前缀：剧本军团用真实历史名或后世通称（如「马其顿军团」），不加时代` });
-    }
-    // 🔴 [2026-10-02 主人令「应该叫XX军团，不是XXX军」] 剧本军团名一律以「军团」结尾（与前三层同一构词）
-    if (!name.endsWith('军团')) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」名字不以「军团」结尾：剧本军团一律叫「XX军团」（如「马其顿军团」「阿契美尼德军团」「波斯驻军团」）` });
-    }
-    // 名字用史实原名，不硬加「军团」；但不许与精锐番号同名（军团 ≠ 精锐）
-    if (Object.values(CITY_ELITE_LEGIONS).some((e) => e.name === name)) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」和一个精锐番号同名：军团与精锐不能混用一个名字` });
-    }
-    return out;
-}
-/**
- * 🔴 [2026-10-02 主人令「应该叫XX军团，不是XXX军」] 全库剧本军团名一次扫：
- *   名字必须以「军团」结尾、不带时代前缀、不与精锐番号同名 —— 定义在数据文件里，不选它也得合规矩。
- */
-function checkScriptLegionNames(): Issue[] {
-    const out: Issue[] = [];
-    for (const l of SCRIPT_LEGIONS) {
-        if (!l.name.endsWith('军团')) {
-            out.push({ level: 'error', msg: `剧本军团「${l.name}」名字不以「军团」结尾：一律叫「XX军团」（如「马其顿军团」「阿契美尼德军团」「波斯驻军团」）` });
-        }
-        if (/^(古典|封建|城堡|帝国)时代/.test(l.name)) {
-            out.push({ level: 'error', msg: `剧本军团「${l.name}」带了时代前缀：剧本军团用真实历史名或后世通称，不加时代` });
-        }
-        if (Object.values(CITY_ELITE_LEGIONS).some((e) => e.name === l.name)) {
-            out.push({ level: 'error', msg: `剧本军团「${l.name}」和一个精锐番号同名：军团与精锐不能混用一个名字` });
-        }
-    }
-    return out;
-}
-/** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */function filterLegionSelect(selectId: string, searchId: string): void {
-    const sel = document.getElementById(selectId) as HTMLSelectElement | null;
-    const inp = document.getElementById(searchId) as HTMLInputElement | null;
-    if (!sel || !inp) return;
-    const q = inp.value.trim().toLowerCase();
-    for (const optEl of Array.from(sel.options)) {
-        if (optEl.value === '') { optEl.hidden = false; continue; }
-        optEl.hidden = q !== '' && !optEl.textContent.toLowerCase().includes(q);
-    }
-    for (const g of Array.from(sel.querySelectorAll('optgroup'))) {
-        const anyVisible = Array.from(g.querySelectorAll('option')).some((o) => !(o as HTMLOptionElement).hidden);
-        (g as HTMLOptGroupElement).hidden = !anyVisible;
-    }
 }
 
 function render(): void {
@@ -1140,10 +984,8 @@ function render(): void {
                         <input type="number" id="f-attTroops" value="${working.attackerTroops}"></div>
                     <div class="fld"><label>出兵据点</label>
                         <select id="f-attCity">${cityOptions(working.attackerSourceCityId)}</select></div>
-                    <div class="fld"><label>军团</label>
-                        <input id="f-attLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-attLegion">${legionOptions(working.attackerLegionName, attCurrentLegion)}</select>
-                        ${legionPreview(working.attackerLegionName, attCurrentLegion)}</div>
+                    <div class="fld"><label>军团（按规则自动：势力时代 × 文化）</label>
+                        <span class="hint">${escapeHtml(attCurrentLegion || '—')}</span></div>
                 </div>
             </fieldset>
 
@@ -1161,10 +1003,8 @@ function render(): void {
                     : `
                     <div class="fld"><label>出兵据点</label>
                         <select id="f-defSrcCity">${cityOptions(working.defenderSourceCityId)}</select></div>`}
-                    <div class="fld"><label>军团</label>
-                        <input id="f-defLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-defLegion">${legionOptions(working.defenderLegionName, defCurrentLegion)}</select>
-                        ${legionPreview(working.defenderLegionName, defCurrentLegion)}</div>
+                    <div class="fld"><label>军团（按规则自动：势力时代 × 文化）</label>
+                        <span class="hint">${escapeHtml(defCurrentLegion || '—')}</span></div>
                 </div>
             </fieldset>
 
@@ -1408,8 +1248,6 @@ function bind(): void {
     on<HTMLInputElement>('f-attTroops', 'change', (el) => { working.attackerTroops = num(el.value); render(); });
     on<HTMLInputElement>('f-defTroops', 'change', (el) => { working.defenderTroops = num(el.value); render(); });
     on<HTMLSelectElement>('f-attCity', 'change', (el) => { working.attackerSourceCityId = el.value; render(); });
-    on<HTMLSelectElement>('f-attLegion', 'change', (el) => { working.attackerLegionName = el.value; render(); });
-    on<HTMLInputElement>('f-attLegionSearch', 'input', () => { filterLegionSelect('f-attLegion', 'f-attLegionSearch'); });
     on<HTMLSelectElement>('f-defCity', 'change', (el) => {
         working.defenderCityId = el.value;
         // 攻城战守方就是这座城：势力跟着城走，省得手写写歪
@@ -1426,8 +1264,6 @@ function bind(): void {
     // 🔴 [2026-09-19 主人定] 攻城战战场标注套用哪一档据点样式（大中小城寨）
     on<HTMLSelectElement>('f-siegeCastle', 'change', (el) => { working.bfSiegeCastleType = el.value; render(); });
     on<HTMLSelectElement>('f-defSrcCity', 'change', (el) => { working.defenderSourceCityId = el.value; render(); });
-    on<HTMLSelectElement>('f-defLegion', 'change', (el) => { working.defenderLegionName = el.value; render(); });
-    on<HTMLInputElement>('f-defLegionSearch', 'input', () => { filterLegionSelect('f-defLegion', 'f-defLegionSearch'); });
     on<HTMLSelectElement>('f-result', 'change', (el) => { working.result = el.value as BattleDraft['result']; });
     on<HTMLTextAreaElement>('f-desc', 'input', (el) => {
         working.description = el.value;

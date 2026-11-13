@@ -24,7 +24,7 @@
  *    （`vite.config.ts` 未设 `publicDir`，用默认值），`src/public/` 不被任何代码引用、
  *    也不对外可访问。数据放 `src/data/` 是本项目惯例，且能被 import + 类型校验。
  *
- * 命名口径：`attackerLegionName` / `defenderLegionName` **只许填剧本军团**（第四层 `src/data/scriptLegions.ts`，2026-09-23 起）。
+ * 军团：不在事件里指定，一律按规则自动判定（四级剧本军团 2026-11-13 已删）。
  *    军团名有唯一真源（`FactionCompositions.legionName`，马其顿 =「古典时代马其顿军团」；
  *    未配置的势力走 `getCultureLegionName(region)`），此处再写一份就是第二处真源，
  *    且极易把**精锐番号**（伙伴骑兵/希腊雇佣兵）误当**军团名**——那是命名铁律明令禁止的。
@@ -68,11 +68,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
             attackerSourceCityId: 'city_salonica',      // 第一场：自马其顿本土（佩拉）起兵
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'seleisi',
             defenderGeneralId: 'gen_seuthes_iii',
             defenderTroops: 8000,
-            defenderLegionName: '色雷斯军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -114,11 +112,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
             attackerSourceCityId: 'city_plovdiv',      // 出兵据点＝军团此刻在哪：上一场海姆斯山战场，取那年离战场最近且已存在的据点（普罗夫迪夫）
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'seleisi',
             defenderGeneralId: 'jite_shouling',
             defenderTroops: 14000,
-            defenderLegionName: '色雷斯军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -162,12 +158,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
             attackerSourceCityId: 'city_delusitaer',   // 出兵据点＝军团此刻在哪：上一场多瑙河渡河战场（打完撤回南岸德鲁斯塔尔渡口）
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'dasaleiti',
             defenderGeneralId: 'dasaleiti_kleitos',
             defenderTroops: 7000,
             defenderCityId: 'city_peiliang',
-            defenderLegionName: '伊利里亚军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -216,12 +210,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 33000,
             attackerSourceCityId: 'city_peiliang',   // 出兵据点＝军团此刻在哪：上一场佩利昂攻城，就在那座城
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'boootiya',
             defenderGeneralId: 'dibisi_phoinix',
             defenderTroops: 15000,
             defenderCityId: 'city_thebes',
-            defenderLegionName: '底比斯军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -276,8 +268,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 18100,
             // 🔴 [2026-09-28 主人定死四大铁律] 第二片起点为【佩拉】（春季自佩拉开拔东征，实测 0 公里）
             attackerSourceCityId: 'city_salonica',
-            // 🔴 [2026-09-23] 剧本军团（第四层，src/data/scriptLegions.ts）：按此役史实配三兵种，乱斗不受影响
-            attackerLegionName: '马其顿军团',
 
             // ── 守方：小弗里吉亚（赫勒斯滂弗里吉亚，波斯）阿尔西提斯 ──
             // 🔴 [2026-09-11 主人定] 守方统帅 = **阿尔西提斯**（`xiaofulijiya_aerxitis`）。
@@ -291,7 +281,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 英文维基信息框：骑兵一万五千、步兵一万二千 = 27000；播报写同一组数字。
             defenderTroops: 27000,
             defenderSourceCityId: 'city_dasijiliweng',
-            defenderLegionName: '波斯总督军团',   // 剧本军团：小亚细亚诸总督联军
 
             result: 'attacker_win',                     // 写真历史：马其顿必胜
             autoEnterRTS: true,                          // 进战术模式（13）
@@ -332,12 +321,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 18000,
             attackerSourceCityId: 'city_yanghe',   // 出兵据点＝军团此刻在哪＝格拉尼库斯战场最近的据点（羊河）；萨迪斯是途经，写在路标里（AGENTS §三.1：史料里中途去过的地方一律是路标）
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'yiaoniya_hegesistratus',
             defenderTroops: 6000,
             defenderCityId: 'city_miletus',
             // 🔴 [2026-10-02 主人令「另立一支波斯驻军就该新建一个四级军团」] 城防守军改用新立的第四层军团「波斯驻军团」
-            defenderLegionName: '波斯驻军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -380,12 +367,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 18000,
             attackerSourceCityId: 'city_miletus',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'halikanasu_memnon',
             defenderTroops: 6000,
             defenderCityId: 'city_halikanasu',
             // 🔴 [2026-10-02 主人令] 城防守军改用新立的第四层军团「波斯驻军团」（门农麾下守军＝希腊雇佣军主力＋波斯守军）
-            defenderLegionName: '波斯驻军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -419,7 +404,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军团',   // 剧本军团：亚历山大所率马其顿军团，整场东征同一支
             attackerTroops: 37000,                 // 英文维基 Battle of Issus 信息框：约 37000
             attackerSourceCityId: 'city_halikanasu',   // 出兵据点＝军团此刻在哪：上一场（公元前334年冬哈利卡纳苏斯围城）打完就停在那座城；戈尔迪乌姆是沿途路标
 
@@ -438,7 +422,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderTroops: 74000,                 // 英文维基信息框：现代估计 5 万–10 万；中值 75000 超出守方≤攻方 2 倍（37000×2），取区间内最近的 74000
             // 🔴 出兵据点必须是**真城**（原写 `city_yisusi` —— 伊苏斯已改独立战场，那座城不存在了，属历史遗留缺陷）
             defenderSourceCityId: 'city_bosibolisi',
-            defenderLegionName: '阿契美尼德军团',   // 剧本军团：大流士三世所率阿契美尼德王军
 
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -491,7 +474,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             marchWaypoints: ['city_latajiya'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 3-1 途经点为「比布鲁斯、西顿」（库里无此二据点），改用沿海现成据点拉塔基亚作路标：自阿达纳沿腓尼基海岸南下
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军团',   // 剧本军团：亚历山大所率马其顿军团，整场东征同一支
             attackerTroops: 37500,                   // 史料 35000–40000 步骑
             // 🔴 [2026-09-23 主人报「船队不对呀」同源问题] 攻方出兵据点原写佩拉（马其顿本土）——公元前332年亚历山大在腓尼基海岸。
             // 🔴 [2026-09-24 主人「历史上哪年有了哪个据点，就显示哪个据点」] 后改的拉塔基亚（古劳迪西亚）约公元前300年塞琉古才建，
@@ -507,7 +489,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderTroops: 9000,                   // 史料守军约 8,000–10,000
             result: 'attacker_win',                  // 写真历史：攻城彻底胜利
             autoEnterRTS: true,                      // 进战术模式（13）
-            defenderLegionName: '推罗军团',
             defenderCityId: 'city_tuile',
         },
         generalId: 'gen_alexander_great',
@@ -544,12 +525,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 45000,                   // 英文维基 Siege of Gaza (332 BC) 信息框 strength1 = 45,000
             attackerSourceCityId: 'city_tuile',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'feilisidin_batisi',
             defenderTroops: 15000,                   // 信息框 strength2 = 15,000（Engels 1980《Alexander the Great and the Logistics of the Macedonian Army》）
             defenderCityId: 'city_jiasa',
             // 🔴 [2026-10-02 主人令] 城防守军改用新立的第四层军团「波斯驻军团」（巴提斯所部＝波斯守军＋阿拉伯雇佣兵）
-            defenderLegionName: '波斯驻军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -586,7 +565,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿与希腊联军 亚历山大 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军团',   // 剧本军团：亚历山大所率马其顿军团，整场东征同一支
             attackerTroops: 47000,                   // 史料 47,000 人（约 40,000 步兵 + 7,000 骑兵）
             attackerSourceCityId: 'city_jiasa',
 
@@ -598,7 +576,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
 
             result: 'attacker_win',                  // 写真历史：马其顿决定性胜利
             autoEnterRTS: true,                      // 进战术模式（13）
-            defenderLegionName: '阿契美尼德军团',
         },
         // 🔴 [2026-09-24 主人定「野战后，根据历史，据点也要有归属问题」] 高加米拉战后按史实易主的据点：
         //    英文维基百科 Battle of the Uxian Defile 背景节：亚历山大进抵巴比伦，总督马扎欧斯献城，
@@ -636,11 +613,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 8000,
             attackerSourceCityId: 'city_niniwei',   // 出兵据点＝军团此刻在哪：上一场高加米拉战场，按 §三.1 取那年离战场最近且已存在的据点＝尼尼微（34 公里）；巴比伦是沿途路标
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'ailan',   // 🔴 [2026-10-20] 原「乌克西亚」无城战役势力已删 → 守方改挂埃兰（苏萨），守将马达泰斯随势力
             defenderGeneralId: 'wukexiya_madates',
             defenderTroops: 5000,
-            defenderLegionName: '乌克西亚军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -672,13 +647,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 17000,
             attackerSourceCityId: 'city_susa',
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'aqimeinide',
             defenderGeneralId: 'aqimeinide_aertabazanuosi',
             defenderTroops: 34000,
             defenderSourceCityId: 'city_bosibolisi',
             // 🔴 [2026-10-02 主人令] 隘口守军改用新立的第四层军团「波斯驻军团」（阿里奥巴赞斯据石垒的守军，非大流士主力野战军）
-            defenderLegionName: '波斯驻军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -739,11 +712,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 10000,
             attackerSourceCityId: 'city_bosibolisi',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'julushi_catanes',
             defenderTroops: 15000,
             defenderCityId: 'city_julushicheng',
-            defenderLegionName: '粟特军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -782,7 +753,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 🔴 [2026-09-25 补录居鲁士城之后改链] 军团此刻在上一场落点＝居鲁士城（前329 夏），故本场自居鲁士城开拔；
             //    路标只留忽毡（亚历山大·埃斯哈塔，前329 建于苦盏），战场就在忽毡以南 5 公里处。
             attackerSourceCityId: 'city_julushicheng',
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'sijitai',
             defenderGeneralId: 'sijitai_satraces',
             defenderTroops: 6000,
@@ -793,7 +763,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    对阵位上（`stand`），本字段只用于「军团不存在时在哪儿生成」的兜底。
             //    ⚠️ 编辑器会因此提示「野战建议填守方出兵据点」—— 史实上这一带无城可填，如实留空。
             defenderSourceCityId: '',
-            defenderLegionName: '斯基泰军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -840,11 +809,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 300,
             // 🔴 出兵据点＝军团此刻在哪：上一场落点（锡尔河战场/忽毡）＝忽毡（前329 所筑最远亚历山大城，归马其顿）
             attackerSourceCityId: 'city_huzhan',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'suogediyana_arimazes',
             defenderTroops: 600,
             defenderCityId: 'city_suogediyanayan',
-            defenderLegionName: '粟特军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -904,11 +871,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 20000,
             attackerSourceCityId: 'city_suogediyanayan',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'aswaka_cleophis',
             defenderTroops: 10000,
             defenderCityId: 'city_masaga',
-            defenderLegionName: '阿斯瓦卡军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -960,11 +925,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 15000,
             attackerSourceCityId: 'city_masaga',
-            attackerLegionName: '马其顿军团',
             defenderGeneralId: 'aornos_aphrikes',
             defenderTroops: 6000,
             defenderCityId: 'city_aonuosiyan',
-            defenderLegionName: '阿斯瓦卡军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -1014,12 +977,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 46000,
             attackerSourceCityId: 'city_aonuosiyan',
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'bulu',
             defenderGeneralId: 'gen_bolusi',
             defenderTroops: 38000,
             defenderSourceCityId: 'city_meng',
-            defenderLegionName: '保拉瓦军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -1069,10 +1030,8 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 20000,
             attackerSourceCityId: 'city_meng',
-            attackerLegionName: '马其顿军团',
             defenderTroops: 12000,
             defenderCityId: 'city_malisi',
-            defenderLegionName: '马利军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -1125,11 +1084,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 12000,
             attackerSourceCityId: 'city_malisi',
-            attackerLegionName: '马其顿军团',
             defenderFactionId: 'midi',   // 🔴 [2026-10-20] 原「科塞亚」无城战役势力已删 → 守方改挂米底（哈马丹），守将卡什提利亚什随势力
             defenderTroops: 8000,
             defenderSourceCityId: '',
-            defenderLegionName: '科塞亚军团',
             result: 'attacker_win',
             autoEnterRTS: true,
         },

@@ -33,8 +33,6 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
-import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
-import { getScriptFactionLegionName } from '../events/scriptPeriod';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { withCommander } from '../data/generalHeroUnits';
@@ -1026,20 +1024,6 @@ export function getFactionLegionComposition(
     factionId: string,
     generalId?: string | null,   // 🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」] 武将自己有军团就用武将的
 ): { formationMode: FormationMode; slots: CompositionSlot[]; commanderUnit?: string } | null {
-    // 🔴 [2026-09-23] 剧本期：当前这一仗的攻 / 守方改用事件指名的剧本军团（第四层）；乱斗恒走下面原路
-    const scriptLegion = getScriptFactionLegionName(factionId);
-    if (scriptLegion) {
-        // 🔴 [2026-10-02 主人报障「编辑器中为什么显示不全呢」查出的同名撞车]
-        //    剧本军团必须**直接读 scriptLegions.ts 自己的定义**，不许按名字走三层表：
-        //    四级「色雷斯军团」与**色雷斯文化区那支同名**，`getLegionCompositionByName('色雷斯军团')`
-        //    实测返回的是文化区编制（衡轭 4+2+3／希腊雇佣重步兵高级/色雷斯标枪手高级/塔兰丁骑兵＋希腊旗舰伦博斯重装），
-        //    而剧本军团自己的是 雁行 4-3-2／色雷斯标枪手/色雷斯长刃斩手/古典轻骑兵、无船。
-        //    → 不修的话，第 1、2 场（守方＝色雷斯军团）真机上阵的是文化区那套编制，等于剧本白配。
-        const scr = SCRIPT_LEGION_MAP.get(scriptLegion);
-        if (scr) return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })), commanderUnit: scr.commanderUnit };
-        const c = getLegionCompositionByName(scriptLegion);
-        if (c) return c;
-    }
     return getLegionCompositionByName(getLegionNameOfGeneral(factionId, generalId));
 }
 
@@ -1970,9 +1954,6 @@ export function getLegionCompositionByName(
         const l3Ship = l3.shipId;
         return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship, commanderUnit: l3.commanderUnit };
     }
-    // 第四层：剧本军团（只有剧本事件指名时才会被查到；名字与前三层不重）
-    const l4 = SCRIPT_LEGION_MAP.get(name);
-    if (l4) return { formationMode: l4.formationMode, slots: l4.slots.map(s => ({ ...s })), shipId: l4.shipId, commanderUnit: l4.commanderUnit };
     return null;
 }
 
@@ -2263,12 +2244,12 @@ export function getEraByYear(year: number): DefenseEraAge {
 
 /**
  * 🔴 [2026-10-21 主人令「所有军团必须只挂靠武将」「防守的也是武将，武将是什么军团，就出什么军团。军团只看武将，删除一切无关逻辑」]
- * 军团名的唯一入口（攻、守、战略、战术、面板同一条）：剧本期事件指名的剧本军团 → 武将自己的军团 → 势力挂的军团。
+ * 军团名的唯一入口（攻、守、战略、战术、面板同一条）：武将自己的军团 → 势力挂的军团。
  * 原「据点建筑文化 × 当前时代 → 守城军团」（2026-10-18）已删。
  */
 export function resolveGeneralLegionName(factionId?: string | null, generalId?: string | null): string | undefined {
     if (!factionId) return undefined;
-    return getScriptFactionLegionName(factionId) ?? getLegionNameOfGeneral(factionId, generalId);
+    return getLegionNameOfGeneral(factionId, generalId);
 }
 
 /**
@@ -2333,8 +2314,6 @@ export function resolveCityLegionName(
     ctx: CityLegionContext = {},
 ): string | undefined {
     if (hasStageGeneral(generalId)) return resolveGeneralLegionName(factionId, generalId);
-    const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
-    if (scriptLegion) return scriptLegion;
     const year = typeof ctx.year === 'number' && !Number.isNaN(ctx.year) ? ctx.year : currentGameYear();
     return resolveCultureEraLegionName(year, cityBuildingStyleOf(ctx.cityId, ctx.buildingStyle))
         ?? resolveGeneralLegionName(factionId, null);
@@ -2348,10 +2327,6 @@ export function resolveCityLegionComposition(
     if (hasStageGeneral(generalId) && factionId) return getFactionLegionComposition(factionId, generalId);
     const name = resolveCityLegionName(factionId, null, ctx);
     if (!name) return null;
-    const scr = SCRIPT_LEGION_MAP.get(name);
-    if (scr && factionId && getScriptFactionLegionName(factionId) === name) {
-        return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })), shipId: scr.shipId, commanderUnit: scr.commanderUnit };
-    }
     return getLegionCompositionByName(name);
 }
 

@@ -403,6 +403,57 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     tuitonga: 'TUI_TONGA_ROYAL_WAR_CLUB',   // 汤加帝国·汤加阿帕帕伊雕花战棍
     rapanui: 'RAPANUI_MOAI_BIRDMAN',   // 拉帕努伊·复活节岛鸟人与摩艾石像剪影
     arverni: 'ARVERNI_VERCINGETORIX_TORC',   // 阿维尔尼·维钦托利高卢野猪军标与战矛扭环
+    // ── 2026-11-13 多字势力图标化第二十四批（16 家，阿克苏姆/米兰/伦巴第/亚美尼亚/盎撒/不列颠等）─
+    aksum: 'AKSUM_OBELISK_CRESCENT_DISC',   // 阿克苏姆王国·巨石方尖碑与埃扎纳日月盘
+    milan_duchy: 'MILAN_VISCONTI_BISCIONE',   // 米兰公国·维斯孔蒂家族吞人食人草蓝蛇
+    lombard_league: 'LOMBARD_LEAGUE_LEGNANO_CROSS',   // 伦巴第联盟·莱尼亚诺战役红底白平十字战旗
+    cilicia_armenia: 'CILICIAN_ARMENIA_ROUPENID_LION',   // 奇里乞亚亚美尼亚·鲁本王朝加冕持十字立狮
+    armenia_arsacid: 'ARSACID_ARMENIA_TIARA_EAGLES',   // 阿萨息斯亚美尼亚·提格兰大帝王冠双鹰对望太阳
+    syunik_bek: 'SYUNIK_BEK_EAGLE_KEY',   // 休尼克·大卫·贝克金鹰抓锁钥与要塞
+    northumbria: 'NORTHUMBRIA_ST_OSWALD_CROSS',   // 诺森布里亚·圣奥斯瓦尔德金红条纹与林迪斯法恩十字
+    wessex: 'WESSEX_GOLDEN_WYVERN',   // 威塞克斯·阿尔弗雷德大帝双足金双翼飞龙
+    subroman_britain: 'SUBROMAN_BRITAIN_ARTHUR_DRAGON',   // 后罗马不列颠·彭德拉贡红龙首与风筒军标
+    xinmeiliyan: 'CIMMERIAN_NOMAD_BOW_IBEX',   // 辛梅里安·草原反曲弓与野山羊青铜牌饰
+    aixini: 'ICENI_BOADICEA_HORSE_COIN',   // 爱西尼·布狄卡女王爱西尼银币三尾跃马
+    taluma: 'TARUMANAGARA_PURNAWARMAN_FOOTPRINT',   // 塔鲁玛迦拉·普纳瓦曼国王神圣足印与金刚轮
+    koln: 'KOLN_ARCHBISHOP_CROSS_KEYS',   // 科隆大主教区·圣伯多禄钥匙与科隆大主教黑平十字
+    qiernigeweifu_gongguo: 'CHERNIGOV_BLACK_EAGLE_CROSS',   // 切尔尼戈夫·左倾单头黑鹰抓金十字
+    xideweina: 'POLOTSK_RURIK_IZYASLAV_TAMGA',   // 波洛茨克·伊贾斯拉夫留里克双叉拔剑塔木加
+    xinbuli: 'CIMBRI_SACRED_BRONZE_BULL',   // 辛布里·日耳曼辛布里神圣青铜圣牛军标
+    // ── 2026-11-13 多字势力图标化第二十五批（16 家，马里王国/苏尔/诺盖/泰诺/关切/勃艮第等）─
+    mari_ancient: 'MARI_ZIMRI_LIM_LION_TREE',   // 幼发拉底马里王国·齐姆里·利姆王宫伊什塔尔圣狮与生命树
+    saerbadaer: 'SARBADAR_GREEN_BANNER_SCIMITAR',   // 萨尔巴达尔·起义军弯刀与新月
+    sur: 'SURI_EMPIRE_GOLD_COIN_LION',   // 苏尔帝国·舍尔沙金币太阳轮与行狮
+    dedan: 'DEDAN_LHYAN_COLOSSUS_PALM',   // 德丹王国·欧拉绿洲巨像神庙立柱与椰枣树
+    salai: 'NOGAI_TAMGA_HORSE',   // 诺盖汗国·曼吉特三叉塔木加与草原烈马
+    taino_d: 'TAINO_ZEMI_SOLAR_SPIRIT',   // 泰诺·加勒比三尖泽米神石与太阳面
+    guanche: 'GUANCHE_PINTADERA_TRIANGLES',   // 关切人·加那利群岛品塔德拉几何泥印
+    ghana_diguo: 'GHANA_WAGADU_GOLDEN_BULL',   // 加纳帝国·瓦加杜帝国黄金神牛与双投矛
+    saimien: 'SIMIEN_BETA_ISRAEL_STAR',   // 塞米恩王国·贝塔以色列大卫之星与基达内剑
+    bogendi_wangguo: 'BURGUNDY_ST_ANDREW_CROSS',   // 勃艮第王国·粗糙树枝圣安德鲁交叉十字
+    zhagewei: 'ZAGWE_LALIBELA_ROCK_CHURCH',   // 扎格维王朝·圣乔治岩石凿成十字教堂
+    sulu: 'SULU_SULTANATE_KRIS_GATE',   // 苏禄苏丹国·波浪形马来克力士剑与珍珠贝
+    suomunate: 'SOLANKI_CHALUKYA_SUN_TEMPLE',   // 索兰基·莫德赫拉太阳神庙日轮与三叉戟
+    jienei: 'DJENNE_MUD_MOSQUE_CRESCENT',   // 杰内·大清真寺萨赫勒土坯神塔与新月
+    yilaka: 'IRACA_MUISCA_GOLD_RAFT',   // 伊拉卡·穆伊斯卡神圣黄金神筏与神盘
+    dublin: 'DUBLIN_VIKING_RAVEN_SHIP',   // 都柏林王国·维京乌鸦旗与都柏林战船
+    // ── 2026-11-13 多字势力图标化第二十六批（16 家，古莱什/萨维尔/查莫罗/泰罗纳/赞吉/波罗婆等）─
+    gulaishi: 'QURAYSH_EAGLE_BANNER',   // 古莱什部落·麦加黑鹰战旗与双弯刀
+    xiemian: 'SAVIR_TURKIC_STEPPE_EAGLE',   // 萨维尔·达吉斯坦双头神鹰与弯刀
+    chamorro: 'CHAMORRO_LATTE_STONE_CANOE',   // 查莫罗·关岛拉提石柱与飞翼独木舟
+    tailuona: 'TAIRONA_GOLD_BAT_SHAMAN',   // 泰罗纳·哥伦比亚黄金蝙蝠萨满神像
+    teweierqie: 'TEHUELCHE_BOLAS_GUANACO',   // 特维尔切·巴塔哥尼亚石球投石索与原驼
+    antiaokegongguo: 'ZANGID_NUR_AL_DIN_EAGLE',   // 赞吉王朝·努尔丁双头神鹰与弯刀
+    adiyabeina: 'ADIABENE_HELENA_ROYAL_CROWN',   // 阿迪亚贝纳·海伦娜王后三重王冠与竖琴
+    tamoyue: 'TAMOYO_WAR_FEATHER_CLUB',   // 塔莫约·图皮南巴双头羽饰战木槌
+    gualani: 'GUARANI_JAGUAR_BOW',   // 瓜拉尼·美洲豹神弓与神木箭
+    bulu: 'PAURAVA_PORUS_ELEPHANT_BOW',   // 波罗婆·波鲁斯国王战象与长弓
+    vidin_tsardom: 'VIDIN_SRATSIMIR_LION_SHIELD',   // 维丁国·斯拉齐米尔加冕立狮金币
+    tomara_gwalior: 'TOMARA_GWALIOR_VARSHAPURA_SUN',   // 托摩罗·瓜廖尔城堡双日轮与城堡
+    qutb_shahi: 'QUTB_SHAHI_DECCAN_CRESCENT_MINAR',   // 戈尔康达·查尔米纳拱门与双新月
+    tutul_xiu: 'TUTUL_XIU_UXMAL_MASK',   // 休族·乌斯马尔雨神恰克长鼻面具
+    malli: 'MALLI_MULTAN_SOLAR_VAJRA',   // 马利·木尔坦太阳神庙金刚杵与日轮
+    aolitai: 'OREITAI_COASTAL_TRIDENT_FISH',   // 奥里泰·俾路支海岸三叉海戟与双鱼
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

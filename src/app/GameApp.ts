@@ -88,9 +88,8 @@ import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChro
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
-import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
+import { setScriptPeriodProvider, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { setCityStyleSessionSeed } from '../systems/cityWallShared';
-import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { ViewerLive } from '../live/ViewerLive';
 import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
 import { clearAllFieldDefeats } from '../legion/FieldDefeatRecord';
@@ -401,24 +400,6 @@ export class GameApp {
             //    渲染放宽到全库（名字都要看得见）；样貌照旧由年代闸门决定 —— 不过闸的只画灰字名字。
             this.cityManager.setRenderFilter(() => true);
             TerritorySystem.setSpriteFilter((city: any) => this.scriptCityVisibility!.isCityVisible(city));
-            // 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗的攻 / 守方用事件指名的剧本军团
-            setScriptFactionLegionResolver((factionId) => {
-                const ev = this.scriptCityVisibility?.getCurrentEvent();
-                const d = ev?.siegeData ?? ev?.fieldBattleData;
-                if (!d) return null;
-                // 🔴 [2026-10-02 修复] 攻城守方双重匹配：既匹配事件中声明的 defenderFactionId，
-                //    也匹配被攻据点当前在地图上的实际势力（如推罗据点在剧本期为 aqimeinide，事件声明为 kanan）。
-                //    两处任一命中，均精准返回剧本指名的 defenderLegionName（推罗军团），绝不回退至带大象的常规军团！
-                const defCityId = (d as { defenderCityId?: string }).defenderCityId;
-                const currentCityFaction = defCityId ? this.cityManager.getCity(defCityId)?.factionId : undefined;
-                const defFactionId = (d as { defenderFactionId?: string }).defenderFactionId;
-                const isDefender = (defFactionId && defFactionId === factionId)
-                    || (currentCityFaction && currentCityFaction === factionId);
-                const name = d.attackerFactionId === factionId ? d.attackerLegionName
-                    : isDefender ? d.defenderLegionName
-                        : undefined;
-                return name && SCRIPT_LEGION_MAP.has(name) ? name : null;
-            });
             // 🔴 [2026-09-23] 剧本期：当前这一场归属武将的军团出发据点（事件 startCityId）
             setScriptEventStartResolver(() => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();

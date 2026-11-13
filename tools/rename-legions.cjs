@@ -25,7 +25,7 @@ const l2src = read('src/data/level2Civ62Legions.ts');
 const l2names = [...l2src.matchAll(/name: '([^']+)', civ: '([^']*)', age: '(\w+)'/g)].map((m) => m[1]);
 const l2set = new Set(l2names);
 const others = [];
-for (const f of ['src/data/level3CustomLegions.ts', 'src/data/scriptLegions.ts']) for (const m of read(f).matchAll(/name: '([^']+)'/g)) others.push(m[1]);
+for (const f of ['src/data/level3CustomLegions.ts']) for (const m of read(f).matchAll(/name: '([^']+)'/g)) others.push(m[1]);
 const bad = [];
 const news = Object.values(map);
 for (const [o, n] of Object.entries(map)) {
