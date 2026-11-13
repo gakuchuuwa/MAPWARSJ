@@ -14890,5 +14890,572 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-米蒂利尼",
+                type: "sea",
+                id: "sea_city_torone_city_mytilene_1794567776319",
+                startConnection: "city_torone",
+                endConnection: "city_mytilene"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.74807, 39.76929],
+                    [25.01478, 39.76395],
+                    [25.3211, 39.7578],
+                    [25.70021, 39.60021],
+                    [25.73261, 39.58675],
+                    [25.76431, 39.57357],
+                    [25.95347, 39.49498],
+                    [26.08051, 39.4422],
+                    [26.34506, 39.42346],
+                    [26.41787, 39.37657],
+                    [26.555, 39.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_torone_city_kalisituosi_1794567803335",
+                startConnection: "city_torone",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.53305, 39.46608],
+                    [24.58341, 39.27226],
+                    [24.70688, 38.79477],
+                    [24.65729, 38.11586],
+                    [24.42, 38.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-希马鲁塔",
+                type: "sea",
+                id: "sea_city_melos_city_chimarros_1794568035252",
+                startConnection: "city_melos",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [24.46665, 37.0503],
+                    [24.64371, 36.87383],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-提洛",
+                type: "sea",
+                id: "sea_city_melos_city_tiluo_1794568038347",
+                startConnection: "city_melos",
+                endConnection: "city_tiluo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [24.7035, 37.1926],
+                    [25.27, 37.39],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_melos_city_kalisituosi_1794568042009",
+                startConnection: "city_melos",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [24.15979, 37.35615],
+                    [24.42, 38.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-雅典",
+                type: "sea",
+                id: "sea_city_melos_city_yadian_1794568045134",
+                startConnection: "city_melos",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [24.15979, 37.35615],
+                    [23.9657, 37.5496],
+                    [23.88591, 37.61615],
+                    [23.72, 37.98],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-科林斯",
+                type: "sea",
+                id: "sea_city_melos_city_corinth_1794568049751",
+                startConnection: "city_melos",
+                endConnection: "city_corinth"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [24.05801, 37.20049],
+                    [23.77168, 37.62684],
+                    [23.6425, 37.8192],
+                    [22.88, 37.906],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-锡拉库萨",
+                type: "sea",
+                id: "sea_city_melos_city_syracuse_1794568076315",
+                startConnection: "city_melos",
+                endConnection: "city_syracuse"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [23.82499, 36.08752],
+                    [23.44932, 36.07632],
+                    [22.83815, 36.09734],
+                    [22.37763, 36.11317],
+                    [21.84608, 36.13144],
+                    [21.7, 36.3],
+                    [18.12396, 36.79162],
+                    [15.58584, 37.11657],
+                    [15.28, 37.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯库罗斯-米蒂利尼",
+                type: "sea",
+                id: "sea_city_skyros_city_mytilene_1794568109512",
+                startConnection: "city_skyros",
+                endConnection: "city_mytilene"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.563, 38.904],
+                    [25.4689, 39.10213],
+                    [25.51787, 39.08333],
+                    [25.71185, 39.00888],
+                    [26.02296, 38.88948],
+                    [26.28903, 38.78757],
+                    [26.555, 39.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米蒂利尼-克拉佐美奈",
+                type: "sea",
+                id: "sea_city_mytilene_city_kelazuomeinai_1794568123420",
+                startConnection: "city_mytilene",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.555, 39.11],
+                    [26.67756, 38.60315],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米蒂利尼-特洛伊",
+                type: "sea",
+                id: "sea_city_mytilene_city_teluoyi_1794568128713",
+                startConnection: "city_mytilene",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.555, 39.11],
+                    [26.41787, 39.37657],
+                    [26.34506, 39.42346],
+                    [26.08051, 39.4422],
+                    [25.95347, 39.49498],
+                    [26.2389, 39.9575],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-萨索斯",
+                type: "sea",
+                id: "sea_city_torone_city_thasos_1794568135938",
+                startConnection: "city_torone",
+                endConnection: "city_thasos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.4893, 39.94452],
+                    [24.711, 40.779],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-特洛伊",
+                type: "sea",
+                id: "sea_city_torone_city_teluoyi_1794568140476",
+                startConnection: "city_torone",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.74807, 39.76929],
+                    [25.01478, 39.76395],
+                    [25.3211, 39.7578],
+                    [26.2389, 39.9575],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-斯库罗斯",
+                type: "sea",
+                id: "sea_city_torone_city_skyros_1794568144490",
+                startConnection: "city_torone",
+                endConnection: "city_skyros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.53305, 39.46608],
+                    [24.563, 38.904],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "托罗尼-安菲波利斯",
+                type: "sea",
+                id: "sea_city_torone_city_anfeibolisi_1794568150897",
+                startConnection: "city_torone",
+                endConnection: "city_anfeibolisi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.888, 39.977],
+                    [24.4893, 39.94452],
+                    [24.95604, 39.99433],
+                    [24.58785, 40.51203],
+                    [23.85, 40.82],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安菲波利斯-特洛伊",
+                type: "sea",
+                id: "sea_city_anfeibolisi_city_teluoyi_1794568155400",
+                startConnection: "city_anfeibolisi",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.85, 40.82],
+                    [24.58785, 40.51203],
+                    [25.03787, 40.32427],
+                    [25.25892, 40.23204],
+                    [25.63637, 40.07455],
+                    [26.2389, 39.9575],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安菲波利斯-斯库罗斯",
+                type: "sea",
+                id: "sea_city_anfeibolisi_city_skyros_1794568168209",
+                startConnection: "city_anfeibolisi",
+                endConnection: "city_skyros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.85, 40.82],
+                    [24.58785, 40.51203],
+                    [24.95604, 39.99433],
+                    [24.4893, 39.94452],
+                    [24.50297, 39.7951],
+                    [24.53305, 39.46608],
+                    [24.563, 38.904],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科林斯-干地亚要塞",
+                type: "sea",
+                id: "sea_city_corinth_city_knossos_1794568205091",
+                startConnection: "city_corinth",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.88, 37.906],
+                    [23.6425, 37.8192],
+                    [23.7233, 37.63137],
+                    [23.96792, 37.0627],
+                    [23.99954, 36.98919],
+                    [24.02239, 36.93608],
+                    [24.10253, 36.82236],
+                    [24.34218, 36.48225],
+                    [24.37519, 36.4354],
+                    [24.58347, 36.41804],
+                    [24.7862, 36.11617],
+                    [24.75, 36],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科林斯-以弗所",
+                type: "sea",
+                id: "sea_city_corinth_city_yifusuo_1794568212773",
+                startConnection: "city_corinth",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.88, 37.906],
+                    [23.6425, 37.8192],
+                    [23.77168, 37.62684],
+                    [23.88591, 37.61615],
+                    [23.9657, 37.5496],
+                    [24.15979, 37.35615],
+                    [24.23668, 37.27952],
+                    [24.45763, 37.27678],
+                    [24.7035, 37.1926],
+                    [24.83077, 37.26906],
+                    [24.95974, 37.34657],
+                    [25.01586, 37.33031],
+                    [25.16928, 37.45968],
+                    [25.17264, 37.48348],
+                    [25.42036, 37.64279],
+                    [25.65789, 37.82153],
+                    [25.76963, 37.90562],
+                    [25.93489, 38.02998],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科林斯-塔兰托",
+                type: "sea",
+                id: "sea_city_corinth_city_talanduo_1794568223915",
+                startConnection: "city_corinth",
+                endConnection: "city_talanduo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.88, 37.906],
+                    [23.6425, 37.8192],
+                    [23.63671, 37.63947],
+                    [23.6, 36.5],
+                    [23.44932, 36.07632],
+                    [22.83815, 36.09734],
+                    [22.39158, 36.3728],
+                    [22.119, 36.4492],
+                    [21.93546, 36.48611],
+                    [21.4687, 36.57999],
+                    [21.33333, 36.41667],
+                    [21, 36.91667],
+                    [20.66667, 36.91667],
+                    [20.58333, 37.16667],
+                    [20.08333, 37.5],
+                    [19.91667, 37.83333],
+                    [19.91667, 38.66667],
+                    [19.16667, 39.41667],
+                    [19, 39.41667],
+                    [18.83333, 39.75],
+                    [18.66667, 39.41667],
+                    [18.82344, 39.77362],
+                    [18.52063, 39.76278],
+                    [18.1859, 39.7508],
+                    [17.1, 40.4],
+                    [17.24, 40.47],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科林斯-锡拉库萨",
+                type: "sea",
+                id: "sea_city_corinth_city_syracuse_1794568240792",
+                startConnection: "city_corinth",
+                endConnection: "city_syracuse"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.88, 37.906],
+                    [23.6425, 37.8192],
+                    [23.63671, 37.63947],
+                    [23.6, 36.5],
+                    [23.44932, 36.07632],
+                    [22.83815, 36.09734],
+                    [22.37763, 36.11317],
+                    [21.84608, 36.13144],
+                    [21.7, 36.3],
+                    [18.12396, 36.79162],
+                    [15.58584, 37.11657],
+                    [15.28, 37.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨索斯-特洛伊",
+                type: "sea",
+                id: "sea_city_thasos_city_teluoyi_1794568294815",
+                startConnection: "city_thasos",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.711, 40.779],
+                    [25.25892, 40.23204],
+                    [25.63637, 40.07455],
+                    [26.2389, 39.9575],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨索斯-米蒂利尼",
+                type: "sea",
+                id: "sea_city_thasos_city_mytilene_1794568301345",
+                startConnection: "city_thasos",
+                endConnection: "city_mytilene"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.711, 40.779],
+                    [25.25892, 40.23204],
+                    [25.63637, 40.07455],
+                    [25.76672, 39.66672],
+                    [25.76431, 39.57357],
+                    [25.95347, 39.49498],
+                    [26.08051, 39.4422],
+                    [26.34506, 39.42346],
+                    [26.41787, 39.37657],
+                    [26.555, 39.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨索斯-羊河",
+                type: "sea",
+                id: "sea_city_thasos_city_yanghe_1794568309241",
+                startConnection: "city_thasos",
+                endConnection: "city_yanghe"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.711, 40.779],
+                    [25.25892, 40.23204],
+                    [25.63637, 40.07455],
+                    [25.76672, 39.66672],
+                    [26.2, 40.1],
+                    [26.76819, 40.44068],
+                    [26.6, 40.332],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米洛斯-罗得城",
+                type: "sea",
+                id: "sea_city_melos_city_rhodes_1794568340316",
+                startConnection: "city_melos",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.423, 36.725],
+                    [25.34258, 36.33181],
+                    [25.31531, 36.13194],
+                    [26.43243, 36.1521],
+                    [26.80425, 36.06149],
+                    [26.91887, 36.10161],
+                    [27.2, 36.2],
+                    [28.22, 36.44],
+                ]
+            }
+        },
     ]
 };

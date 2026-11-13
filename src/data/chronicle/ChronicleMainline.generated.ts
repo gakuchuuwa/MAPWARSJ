@@ -5839,7 +5839,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetLng": 114.769,
             "myTroops": 15000,
             "enemyFactionId": "zhongshan",
-            "enemyFactionName": "中山",
+            "enemyFactionName": "中山国",
             "enemyGeneralId": "zhongshan_simazhou",
             "enemyTroops": 15000,
             "introLines": []
@@ -5925,7 +5925,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetLng": 114.59,
             "myTroops": 15000,
             "enemyFactionId": "zhongshan",
-            "enemyFactionName": "中山",
+            "enemyFactionName": "中山国",
             "enemyTroops": 15000,
             "introLines": []
         }

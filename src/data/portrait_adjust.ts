@@ -3658,9 +3658,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GREECE/ldiya_keluoyisi.png": {
-            "scale": 0.87,
+            "scale": 0.85,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": 9
         },
         "/assets/GREECE/pajiama_oumainisi.png": {
             "scale": 0.99,
@@ -11251,6 +11251,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 1,
             "offsetY": -17
+        },
+        "/assets/PERSIAN/midi_astyages.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/GREECE/aqimeinide_mazares.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/GREECE/ldiya_pactyes.png": {
+            "scale": 1.08,
+            "offsetX": 3,
+            "offsetY": -15
+        },
+        "/assets/GREECE/aqimeinide_harpagus.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/GREECE/aiaoniya_charopinus.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

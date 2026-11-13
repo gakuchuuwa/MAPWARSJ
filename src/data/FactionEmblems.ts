@@ -352,6 +352,57 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     aolisha: 'EASTERN_GANGA_WHEEL',   // 东恒伽王朝·奥里萨科纳克太阳神车轮
     suosuo: 'SOSSO_MAGIC_BOW_ANVIL',   // 索索王国·苏曼古鲁铁匠铁砧与魔弓
     xiwasi: 'ERETNA_DOUBLE_EAGLE',   // 埃雷特纳侯国·安纳托利亚突厥双头神鹰
+    // ── 2026-11-13 多字势力图标化第二十一批（16 家，希腊同盟/部族/西非苏丹国/古邦）─
+    arcadia: 'ARCADIAN_PAN_SYRINX',   // 阿卡迪亚同盟·牧神潘之神圣七管排箫与立松
+    malin: 'MERINID_OCTAGRAM_BANNERS',   // 马林苏丹国·马林王朝金双旗与八角星
+    maixiya: 'MERCIA_ALBAN_SALTIRE',   // 麦西亚王国·圣阿尔班斜十字与撒克逊三冠
+    batawei: 'BATAVI_GERMANIC_SHIELD',   // 巴塔维人·莱茵河日耳曼长六角盾与标枪
+    gepids: 'GEPID_EAGLE_FIBULA',   // 革皮德王国·多瑙河金鹰首胸针与宝石盘
+    kalbids: 'KALBID_PALERMO_PALM',   // 卡尔比德·巴勒莫双色月轮与椰枣树
+    kaernute: 'CARNUTES_DRUIDIC_SICKLE',   // 卡尔努特·高卢森林德鲁伊金镰刀与橡树叶
+    tuomengde: 'THOMOND_OBRIEN_ARMS',   // 托蒙德王国·奥布赖恩云端持剑装甲手臂
+    awaer: 'AVAR_KHAGANATE_GRIFFIN',   // 阿瓦尔汗国·阿瓦尔可汗王陵咬尾格里芬金饰
+    luxitaniya: 'LUSITANIAN_CAETRA_DAGGER',   // 卢西塔尼亚·维里阿托斯凯尔特小圆盾与短剑
+    methone: 'METHONE_WINE_AMPHORA',   // 梅托涅·双耳细颈酒瓮与倒三角葡萄串
+    dolopes: 'DOLOPES_MOUNTAIN_HELM',   // 多洛佩斯·塞萨利山地高顶战盔与投枪
+    balti: 'BALTI_MAKPON_SNOW_EAGLE',   // 巴尔蒂斯坦·马克彭王朝斯卡杜雪山飞鹰
+    awraba: 'AWRABA_KAHINA_CROSS',   // 奥雷巴·卡西娜女王新月柏柏尔十字
+    asakaini: 'ASAKAINI_VAJRA_HORSE',   // 阿萨凯尼·犍陀罗斯瓦特金刚杵与战马
+    dasaleiti: 'DASARETI_ILLYRIAN_AXE',   // 达萨雷提·伊利里亚双刃战斧与神蛇
+    // ── 2026-11-13 多字势力图标化第二十二批（16 家，王军/中美洲/东欧斯拉夫/西萨特拉普/巴尔干等）─
+    macedon_royal: 'MACEDON_ROYAL_16_STAR',   // 马其顿王军·维吉纳十六芒马其顿王室太阳徽记
+    tuoerkete: 'TOLTEC_ATLANTEAN_BREAST',   // 托尔特克·图拉武士胸甲蝴蝶神徽与羽箭
+    mayapan: 'MAYAPAN_KUKULKAN_TEMPLE',   // 玛雅潘·库库尔坎阶梯金字塔与羽蛇神光环
+    songhai: 'SONGHAI_CANOE_SPEARS',   // 桑海帝国·尼日尔河战舟与双交长矛战盾
+    xisa: 'WESTERN_SATRAPS_CRESCENT_HILL',   // 西萨特拉普·查什塔纳三峰拱顶山与日月
+    ante: 'ANTES_FIBULA_TRIDENT',   // 安特·早期斯拉夫七芒放射弓形胸针
+    suweihui: 'SUEBI_SUEBIAN_KNOT',   // 苏维汇王国·经典苏维汇发结与日耳曼战斧
+    yibiluliya: 'IBERIA_CAUCASUS_STAG',   // 高加索伊比利亚·姆茨赫塔卡特利金鹿与葡萄树
+    yicha: 'ITZA_MAYA_JAGUAR',   // 伊察玛雅·佩滕湖玛雅黑曜石美洲豹面具
+    mengjiala: 'BENGAL_SULTANATE_COIN',   // 孟加拉苏丹国·金币双重同心几何星纹与弯刀
+    yili: 'ILLYRIAN_SHIP_RAM',   // 伊利里亚王国·莱姆波斯海盗战船与公羊撞角
+    daqiya: 'DACIAN_DRACO_DRAGON',   // 达契亚王国·达契亚龙形军旗（Draco狼龙军标）
+    teotihuacan: 'TEOTIHUACAN_FEATHERED_DISC',   // 特奥蒂瓦坎·太阳金字塔羽毛日盘与黑曜石镜
+    salakanagara: 'SALAKANAGARA_SEA_CONCH',   // 萨拉卡那加拉·巽他海峡早期银国法螺与海戟
+    helvetii: 'HELVETII_CELTIC_TORC',   // 赫尔维蒂部族·凯尔特黄金扭线项圈与阿尔卑斯山
+    hussites: 'HUSSITE_CHALICE_BANNER',   // 胡斯派·著名的胡斯派圣餐圣杯战车战旗
+    // ── 2026-11-13 多字势力图标化第二十三批（16 家，切鲁西/德干/安第斯/阿布哈兹/皮克特/叙拉古等）─
+    cherusci: 'CHERUSCI_ARMINIUS_SWORD_OAK',   // 切鲁西·阿米尼乌斯胜利之剑与神圣橡叶
+    rashtrakuta: 'RASHTRAKUTA_GARUDA_SEAL',   // 拉什特拉库塔·丹蒂杜尔加金石铜版迦楼罗神鸟
+    andean_rebellion: 'TUPAC_AMARU_SUN_SERPENT',   // 安第斯起义军·图帕克阿马鲁金日盘与阿马鲁神蛇
+    abkhazia_kingdom: 'ABKHAZIA_BAGRAT_LION_CROSS',   // 阿布哈兹王国·巴格拉特行进圣狮与格鲁吉亚十字
+    bashkir: 'BASHKIR_QURAY_FLOWER',   // 巴什基尔·乌拉尔巴什基尔七瓣库莱神花图腾
+    drevlians: 'DREVLIAN_FOREST_AXE_PINE',   // 德列夫利安人·斯拉夫密林伐木战斧与古松
+    marcomanni: 'MARCOMANNI_MARBOD_BOAR',   // 马科曼尼·马尔博杜斯野猪图腾与骨柄标枪
+    caledonia: 'CALEDONIAN_PICTISH_BEAST',   // 喀里多尼亚·皮克特巨石海兽与新月V形杖
+    goths_migration: 'GOTHS_MIGRATION_EAGLE_FIBULA',   // 哥特人（大迁徙）·多瑙河宝石哥特金鹰胸针
+    syracuse: 'SYRACUSE_ARETHUSA_DOLPHINS',   // 叙拉古·阿瑞图萨仙女与四游海豚
+    hamdanid: 'HAMDANID_SWORD_SHIELD',   // 哈姆丹王朝·阿勒颇弯刀与星盾
+    old_saxons: 'OLD_SAXON_WHITE_HORSE',   // 古撒克逊·威杜金德萨克逊奔腾白马
+    alamanni: 'ALAMANNI_SNAKE_BROOCH',   // 阿勒曼尼·双蛇盘曲金盘扣与日耳曼战矛
+    tuitonga: 'TUI_TONGA_ROYAL_WAR_CLUB',   // 汤加帝国·汤加阿帕帕伊雕花战棍
+    rapanui: 'RAPANUI_MOAI_BIRDMAN',   // 拉帕努伊·复活节岛鸟人与摩艾石像剪影
+    arverni: 'ARVERNI_VERCINGETORIX_TORC',   // 阿维尔尼·维钦托利高卢野猪军标与战矛扭环
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

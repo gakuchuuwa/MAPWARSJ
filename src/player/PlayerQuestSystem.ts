@@ -645,10 +645,11 @@ export class PlayerQuestSystem {
         // 🔴 [2026-11-13 编年史] 到了这一场的出发据点：与随行主将会面（他不一定常驻此城）
         const lead = isChronicleActive() && !this.quest ? this.chronicleLeadTarget() : null;
         const leadFb = lead && lead.city.id === city.id ? this.hasPendingFirstBattle(lead.general.generalId) : null;
-        // 🔴 [2026-11-13 主人令「把对话一律删除」] 编年史不弹会面对话，到了就入军开拔（战略播报照念）
         if (lead && leadFb) {
             this.headingTargetGeneralId = null;
-            this.startFirstBattle(city, lead.general, leadFb, null);
+            const fid = getFactionIdOfGeneral(lead.general.generalId) ?? city.factionId;
+            const portrait = resolveGeneralPortraitPath(lead.general.portrait, { factionId: fid, region: getCityRegion(city) });
+            this.showFirstBattleDialogue(city, lead.general, portrait, this.deps.cityManager.getFactionName(fid), leadFb, null);
             return;
         }
         // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距经典战：玩家自己走到了被攻的城（接任务点）
