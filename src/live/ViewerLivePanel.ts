@@ -21,7 +21,8 @@ export class ViewerLivePanel {
     private toggleBtn: HTMLButtonElement;
     private dev: HTMLDivElement;
     private devOpen = false;
-    private collapsed = false;
+    // 🔴 [2026-11-13 主人令「控将开局最小化」]
+    private collapsed = true;
     private inScene13Bar = false;
     private lastBodyHtml = '';
     private ytStatusEl: HTMLDivElement | null = null;

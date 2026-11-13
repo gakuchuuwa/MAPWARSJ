@@ -25,7 +25,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aiji_lameisisi': 'ORIE',   // 埃及｜拉美西斯｜据点 孟菲斯
     'aiji_neiketaneibu': 'ORIE',   // 埃及｜内克塔内布｜据点 佩鲁西姆
     'aiji_psamtik_iii': 'ORIE',   // 埃及｜普萨美提克三世｜据点 孟菲斯
-    'ailan_julushi': 'PERSIAN',   // 埃兰｜居鲁士二世｜据点 苏萨
+    'ailan_julushi': 'PERSIAN',   // 埃兰｜居鲁士二世｜据点 波斯波利斯
     'ailan_shuteluke': 'PERSIAN',   // 埃兰｜纳克昆特｜据点 苏萨
     'ailao_leilao': 'BASHU',   // 哀牢｜类牢｜据点 永昌
     'aimala_katali': 'INCA',   // 艾马拉｜卡塔里｜据点 蒂亚瓦纳科

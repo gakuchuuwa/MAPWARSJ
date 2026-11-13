@@ -629,6 +629,14 @@ export class ViewerLive {
             return this.note(`${name} 现有 ${acc.n} 积分（押注、放计与战略竞拍通用）`);
         }
 
+        // 🔴 [2026-11-13 主人令] 历史推演只受理战术放计（可定输赢，不改势力走势）；其余控将口令只在乱斗受理
+        const skillCmd = !!SIX_BY_WORD[word]
+            || !!SIX_BY_WORD[word.match(/^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/)?.[1] ?? '']
+            || /^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word);
+        if (!skillCmd && !this.duel && this.app.playerHero && this.app.playerHero.autoPlan !== 'melee') {
+            return `${name}：历史推演中不受理控将口令`;
+        }
+
         // 0.5 押注（开局 9 秒窗口：押1/押乱、押2/押维、押平；统一用积分）
         const betCmd = parseBetCommand(word);
         if (betCmd) {

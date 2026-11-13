@@ -7833,8 +7833,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/PERSIAN/gen_artaphernes.png": {
-            "scale": 0.96,
-            "offsetX": 0,
+            "scale": 0.92,
+            "offsetX": 6,
             "offsetY": 0
         },
         "/assets/MACEDONIAN/gen_parmenion.png": {
@@ -8248,8 +8248,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/PERSIAN/ailan_julushiershi.png": {
-            "scale": 1.38,
-            "offsetX": -7,
+            "scale": 1.4,
+            "offsetX": -5,
             "offsetY": 0
         },
         "/assets/ORIE/sumeier_nabopalasa.png": {
@@ -11236,6 +11236,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/PERSIAN/yisatisi_yisatisi.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/PERSIAN/kamanniyaxingsheng_asipulansi.png": {
+            "scale": 1.24,
+            "offsetX": -13,
+            "offsetY": -8
         }
     },
     "folderGuides": {

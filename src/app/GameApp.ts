@@ -84,6 +84,7 @@ import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump 
 import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
+import { getAllChronicleEvents } from '../data/chronicle/ChronicleRegistry';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -1048,7 +1049,12 @@ export class GameApp {
         const eurasia = isCentenarianStart ? allCities.filter((c) => c.longitude >= -30) : allCities;
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
         // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
-        const startCity = spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
+        // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
+        const chronicleLeadId = isCentenarianStart ? getAllChronicleEvents()[0]?.leadGeneralId : undefined;
+        const chronicleStart = chronicleLeadId
+            ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
+            : undefined;
+        const startCity = chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
@@ -1062,7 +1068,7 @@ export class GameApp {
             // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]
             //    剧本模式出生在归属武将城外约 0.6°（≈65 公里）的路上，要先走一段才见到他；
             //    路比这短就生在这条路的另一头。乱斗模式照旧只要出城（到达判定距离之外）。
-            const minDist = scriptStart ? SCRIPT_SPAWN_DIST_DEG : PLAYER_CITY_ARRIVE_DIST;
+            const minDist = (scriptStart || chronicleStart) ? SCRIPT_SPAWN_DIST_DEG : PLAYER_CITY_ARRIVE_DIST;
             let picked: [number, number] | null = null;
             for (let i = 1; i < edge.coordinates.length; i++) {
                 const c = edge.coordinates[i];

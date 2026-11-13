@@ -15476,7 +15476,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'ailan_julushi', cityId: 'city_susa', generalName: '居鲁士二世', portrait: '/assets/PERSIAN/ailan_julushiershi.png', factionId: 'aqimeinide' , eliteName: '帕萨尔加德卫', eliteTier: 1 }, // 阿契美尼德开国征服军本部
+        // 🔴 [2026-11-13 主人令「武将按事件出发点挂」] 前550年自安善/帕萨尔加德起兵（均在波斯波利斯据点50km内），苏萨前539年后才归波斯
+        { generalId: 'ailan_julushi', cityId: 'city_bosibolisi', generalName: '居鲁士二世', portrait: '/assets/PERSIAN/ailan_julushiershi.png', factionId: 'aqimeinide' , eliteName: '帕萨尔加德卫', eliteTier: 1 }, // 阿契美尼德开国征服军本部
 
 
 
