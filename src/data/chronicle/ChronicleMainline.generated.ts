@@ -271,6 +271,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "lycia",
             "enemyFactionName": "吕基亚",
+            "enemyGeneralId": "lycia_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -702,6 +703,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "paeonia",
             "enemyFactionName": "佩奥尼亚",
+            "enemyGeneralId": "paeonia_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1361,6 +1363,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "dolopes",
             "enemyFactionName": "多洛佩斯",
+            "enemyGeneralId": "dolopes_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1496,6 +1499,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "thasos",
             "enemyFactionName": "萨索斯",
+            "enemyGeneralId": "thasos_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1541,6 +1545,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "messenia",
             "enemyFactionName": "美塞尼亚",
+            "enemyGeneralId": "messenia_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1586,6 +1591,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "thasos",
             "enemyFactionName": "萨索斯",
+            "enemyGeneralId": "thasos_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1826,6 +1832,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "chalcis",
             "enemyFactionName": "卡尔基斯",
+            "enemyGeneralId": "chalcis_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -1993,6 +2000,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "corcyra",
             "enemyFactionName": "科西拉",
+            "enemyGeneralId": "corcyra_meiciades",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2032,6 +2040,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "corcyra",
             "enemyFactionName": "科西拉",
+            "enemyGeneralId": "corcyra_meiciades",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2155,6 +2164,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "mytilene",
             "enemyFactionName": "米蒂利尼",
+            "enemyGeneralId": "mytilene_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2200,6 +2210,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "plataea",
             "enemyFactionName": "普拉提亚",
+            "enemyGeneralId": "plataea_eupompides",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2494,6 +2505,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "epidaurus",
             "enemyFactionName": "埃皮道鲁斯",
+            "enemyGeneralId": "epidaurus_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2533,6 +2545,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "argos",
             "enemyFactionName": "阿尔戈斯",
+            "enemyGeneralId": "argos_thrasyllus",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -2578,6 +2591,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "melos",
             "enemyFactionName": "米洛斯",
+            "enemyGeneralId": "melos_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -3441,6 +3455,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "mantinea",
             "enemyFactionName": "曼丁尼亚",
+            "enemyGeneralId": "mantinea_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -3851,6 +3866,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "arcadia",
             "enemyFactionName": "阿卡迪亚同盟",
+            "enemyGeneralId": "arcadia_lycomedes",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -4221,6 +4237,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "methone",
             "enemyFactionName": "梅托涅",
+            "enemyGeneralId": "methone_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5239,6 +5256,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "malli",
             "enemyFactionName": "马利",
+            "enemyGeneralId": "malli_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5278,6 +5296,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "kesaiya",
             "enemyFactionName": "科塞亚",
+            "enemyGeneralId": "kesaiya_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5735,6 +5754,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "rhodes",
             "enemyFactionName": "罗得",
+            "enemyGeneralId": "rhodes_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5820,6 +5840,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "zhongshan",
             "enemyFactionName": "中山",
+            "enemyGeneralId": "zhongshan_simazhou",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5859,6 +5880,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "linhu",
             "enemyFactionName": "林胡",
+            "enemyGeneralId": "linhu_shouling",
             "enemyTroops": 15000,
             "introLines": []
         }

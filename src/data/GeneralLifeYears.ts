@@ -673,6 +673,34 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     maqidun_eumenes: { birth: -361, death: -316, kaoju: '推定' },  // 欧迈尼斯（卡迪亚人；伽比埃奈战后被银盾兵执送安提柯处死，卒年四十五，普鲁塔克《欧迈尼斯传》20）
     qin_mengao: { birth: -300, death: -240, kaoju: '推定' },  // 蒙骜（生年不详推定；始皇七年卒，《史记·秦始皇本纪》）
     // ── 2026-11-13 编年史第一、二段补将 ──
+    // ── 2026-11-13 0 据点势力补将（泛指武将生卒取势力存续期，供在场判定）──
+    bfe_cb_barakzai_afghan_1: { birth: 1816, death: 1847, kaoju: '推定' },  // 阿克巴尔汗
+    bfe_cb_zand_dynasty_1: { birth: 1769, death: 1794, kaoju: '推定' },  // 卢特夫阿里汗
+    bfe_cb_aq_qoyunlu_1: { birth: 1423, death: 1478, kaoju: '推定' },  // 乌尊哈桑
+    bfe_cb_crete_emirate_1: { birth: 790, death: 855, kaoju: '推定' },  // 阿布·哈夫斯
+    bfe_cb_tahirid_1: { birth: 776, death: 822, kaoju: '推定' },  // 塔希尔·本·侯赛因
+    bfe_cb_huanchu_1: { birth: 369, death: 404, kaoju: '推定' },  // 桓玄
+    bfe_cb_gallic_empire_1: { birth: 230, death: 290, kaoju: '推定' },  // 泰特里库斯一世
+    zhongshan_simazhou: { birth: -360, death: -300, kaoju: '推定' },  // 司马赒
+    corcyra_meiciades: { birth: -480, death: -420, kaoju: '推定' },  // 梅基阿德斯
+    argos_thrasyllus: { birth: -460, death: -400, kaoju: '推定' },  // 斯拉叙卢斯
+    arcadia_lycomedes: { birth: -410, death: -366, kaoju: '推定' },  // 吕科墨德斯
+    plataea_eupompides: { birth: -470, death: -420, kaoju: '推定' },  // 欧蓬皮德斯
+    paeonia_shouling: { birth: -620, death: -217, kaoju: '推定' },  // 佩奥尼亚统帅（泛指，取势力存续期）
+    messenia_shouling: { birth: -484, death: -146, kaoju: '推定' },  // 美塞尼亚首领（泛指，取势力存续期）
+    rhodes_shouling: { birth: -428, death: -42, kaoju: '推定' },  // 罗得执政官（泛指，取势力存续期）
+    linhu_shouling: { birth: -495, death: -300, kaoju: '推定' },  // 林胡王（泛指，取势力存续期）
+    chalcis_shouling: { birth: -720, death: -338, kaoju: '推定' },  // 卡尔基斯首领（泛指，取势力存续期）
+    methone_shouling: { birth: -750, death: -354, kaoju: '推定' },  // 梅托涅守将（泛指，取势力存续期）
+    epidaurus_shouling: { birth: -770, death: -146, kaoju: '推定' },  // 埃皮道鲁斯守将（泛指，取势力存续期）
+    lycia_shouling: { birth: -720, death: 43, kaoju: '推定' },  // 克桑托斯守将（泛指，取势力存续期）
+    dolopes_shouling: { birth: -820, death: -475, kaoju: '推定' },  // 多洛佩斯首领（泛指，取势力存续期）
+    thasos_shouling: { birth: -700, death: -202, kaoju: '推定' },  // 萨索斯守将（泛指，取势力存续期）
+    melos_shouling: { birth: -820, death: -416, kaoju: '推定' },  // 米洛斯守将（泛指，取势力存续期）
+    mytilene_shouling: { birth: -720, death: -167, kaoju: '推定' },  // 米蒂利尼守将（泛指，取势力存续期）
+    mantinea_shouling: { birth: -720, death: -146, kaoju: '推定' },  // 曼丁尼亚守将（泛指，取势力存续期）
+    kesaiya_shouling: { birth: -400, death: -300, kaoju: '推定' },  // 科赛亚首领（泛指，取势力存续期）
+    malli_shouling: { birth: -400, death: -300, kaoju: '推定' },  // 马利人首领（泛指，取势力存续期）
     lagoniya_leotychidas: { birth: -545, death: -469, kaoju: '推定' },  // 列奥提基达斯（前491–前476 在位，流亡卒于泰盖亚）
     lagoniya_archidamus_ii: { birth: -510, death: -427, kaoju: '推定' },  // 阿基达穆斯二世（前469–前427 在位）
     lagoniya_agis_ii: { birth: -470, death: -400, kaoju: '推定' },  // 阿基斯二世（前427–前400 在位）

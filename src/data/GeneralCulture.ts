@@ -1375,6 +1375,26 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'corinth_xenocleides': 'GREECE',   // 科林斯｜克塞诺克利德斯｜据点 科林斯
     'lagoniya_agesipolis_i': 'SPARTANS',   // 斯巴达｜阿格西波利斯一世｜据点 斯巴达
     // ── 2026-11-13 编年史第一、二段补将 ──
+    'zhongshan_simazhou': 'WEI',   // zhongshan｜司马赒｜据点 city_zhongshan
+    'corcyra_meiciades': 'LATIN',   // corcyra｜梅基阿德斯｜据点 city_kefu
+    'argos_thrasyllus': 'GREECE',   // argos｜斯拉叙卢斯｜据点 city_corinth
+    'arcadia_lycomedes': 'GREECE',   // arcadia｜吕科墨德斯｜据点 city_mantinea
+    'plataea_eupompides': 'GREECE',   // plataea｜欧蓬皮德斯｜据点 city_thebes
+    'paeonia_shouling': 'ATHENIANS',   // paeonia｜佩奥尼亚统帅｜据点 city_anfeibolisi
+    'messenia_shouling': 'SPARTANS',   // messenia｜美塞尼亚首领｜据点 city_sparta
+    'rhodes_shouling': 'FRANKS',   // rhodes｜罗得执政官｜据点 city_rhodes
+    'linhu_shouling': 'XIANBEI',   // linhu｜林胡王｜据点 city_yunzhongcheng
+    'chalcis_shouling': 'GREECE',   // chalcis｜卡尔基斯首领｜据点 city_thebes
+    'methone_shouling': 'MACEDONIAN',   // methone｜梅托涅守将｜据点 city_salonica
+    'epidaurus_shouling': 'GREECE',   // epidaurus｜埃皮道鲁斯守将｜据点 city_corinth
+    'lycia_shouling': 'GREECE',   // lycia｜克桑托斯守将｜据点 city_xanthos
+    'dolopes_shouling': 'GREECE',   // dolopes｜多洛佩斯首领｜据点 city_skyros
+    'thasos_shouling': 'GREECE',   // thasos｜萨索斯守将｜据点 city_thasos
+    'melos_shouling': 'GREECE',   // melos｜米洛斯守将｜据点 city_melos
+    'mytilene_shouling': 'GREECE',   // mytilene｜米蒂利尼守将｜据点 city_mytilene
+    'mantinea_shouling': 'GREECE',   // mantinea｜曼丁尼亚守将｜据点 city_mantinea
+    'kesaiya_shouling': 'PERSIAN',   // kesaiya｜科赛亚首领｜据点 city_hamadan
+    'malli_shouling': 'PURU',   // malli｜马利人首领｜据点 city_malisi
     'lagoniya_leotychidas': 'GREECE',   // 斯巴达｜列奥提基达斯｜据点 希马鲁塔
     'lagoniya_archidamus_ii': 'SPARTANS',   // 斯巴达｜阿基达穆斯二世｜据点 斯巴达
     'lagoniya_agis_ii': 'SPARTANS',   // 斯巴达｜阿基斯二世｜据点 斯巴达
@@ -2139,7 +2159,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_cb_ladakh_1': 'TIBET',   // 战场人物｜释迦嘉措
     'bfe_cb_caowei_4': 'CENTRAL',   // 战场人物｜钟会
     'bfe_cb_barakzai_afghan_1': 'MUGHAL',   // 战场人物｜阿克巴尔汗
-    'bfe_cb_crete_emirate_1': 'ORIE',   // 战场人物｜阿布·哈夫斯
+    'bfe_cb_crete_emirate_1': 'LATIN',   // 克里特酋长国｜阿布·哈夫斯｜据点 干地亚要塞
     'bfe_cb_tubo_2': 'TIBET',   // 战场人物｜阿旺策凌
     'bfe_cb_lunbadi_1': 'FRANKS',   // 战场人物｜雷蒙德四世
     'bfe_cb_yuan_shao_1': 'CENTRAL',   // 战场人物｜颜良
