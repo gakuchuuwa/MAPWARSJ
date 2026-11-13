@@ -24,7 +24,7 @@ export const ELITE_HISTORIC_NAMES: ReadonlySet<string> = new Set([
     '白甲兵',
     '背嵬军',
     '别武班',
-    '不死军',
+    '长生军',
     '从马直',
     '大村众',
     '大戟士',

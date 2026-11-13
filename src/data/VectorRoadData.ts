@@ -68560,30 +68560,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "罗得城-哈利卡纳苏斯",
-                type: "road",
-                id: "road_city_rhodes_city_halikanasu_1793635551303",
-                startConnection: "city_rhodes",
-                endConnection: "city_halikanasu",
-                hasSeaLeg: true
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.22, 36.44],
-                    [28.008502, 36.494001],
-                    [27.871663, 36.48859],
-                    [27.405673, 36.63869300000001],
-                    [27.344997, 36.700987],
-                    [27.364413, 36.809881],
-                    [27.386256, 36.866211],
-                    [27.43, 37.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "松山-能岛城",
                 type: "road",
                 id: "road_city_songshan_city_noshima_1793635583841",

@@ -11306,6 +11306,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": -17,
             "offsetY": -27
+        },
+        "/assets/ATHENIANS/paeonia_shouling.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/GREECE/aqimeinide_megabazus.png": {
+            "scale": 0.96,
+            "offsetX": 7,
+            "offsetY": 15
+        },
+        "/assets/GREECE/aqimeinide_megabates.png": {
+            "scale": 1.2,
+            "offsetX": 13,
+            "offsetY": 1
+        },
+        "/assets/GREECE/naxos_lgedamisi.png": {
+            "scale": 1.1,
+            "offsetX": 4,
+            "offsetY": 15
         }
     },
     "folderGuides": {

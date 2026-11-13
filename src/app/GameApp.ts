@@ -81,7 +81,7 @@ import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays, isFactionIdle } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
-import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
+import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage, getGameMode } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
@@ -1293,6 +1293,15 @@ export class GameApp {
                     return;
                 }
                 scriptHudMinimizedOnce = false;   // 剧本打完切乱斗：下次再进剧本时重新最小化一次
+                // 🔴 [2026-11-14 主人令「百岁模式中，把军团面板，和军情面板默认最小化，不自动展开」]
+                //    军团／军情两块在百岁模式里**不参与轮播**：轮播的展开相不去开它们（＝不自动展开），
+                //    收起相也不去动它们（主人手点开的就留着，不按回去 —— 与 2026-09-26「我说的隐藏是最小化」同口径）。
+                //    进百岁模式那一下由下面 `hero` 的 onChange 一次性收起（默认最小化），
+                //    两块自己的抽屉按钮照常能点开。玩家面板与右下角信息面板仍按原规则走。
+                if (getGameMode() === 'centenarian') {
+                    this.gameTimeHUD?.setCollapsed(!expanded, false);
+                    return;
+                }
                 if (expanded) this.cameraFollowUI.openList();
                 else this.cameraFollowUI.closeList();
                 this.brawlFeedPanel?.setExpanded(expanded);
@@ -1323,6 +1332,7 @@ export class GameApp {
             this.livePanel?.setCollapsed(true);
         };
         let lastPlayMode = hero.playMode;
+        let lastAutoPlan = hero.autoPlan;
         hero.onChange(() => {
             if (hero.playMode !== lastPlayMode) {
                 lastPlayMode = hero.playMode;
@@ -1330,9 +1340,24 @@ export class GameApp {
                     minimizeTourPanels();
                 }
             }
+            if (hero.autoPlan !== lastAutoPlan) {
+                lastAutoPlan = hero.autoPlan;
+                // 🔴 [2026-11-14 主人令「百岁模式中，把军团面板，和军情面板默认最小化，不自动展开」]
+                //    切进百岁模式那一下把两块收起来（只收这一次，之后轮播再也不替主人展开它们）。
+                if (lastAutoPlan === 'centenarian') {
+                    this.cameraFollowUI.closeList();
+                    this.brawlFeedPanel?.setExpanded(false);
+                }
+            }
         });
         if (hero.isTourMode()) {
             minimizeTourPanels();
+        }
+        // 🔴 [2026-11-14 主人令] 百岁模式开局即最小化：军团／军情两块收成侧边抽屉，
+        //    只留「军团」「军情」两个展开按钮（面板自己的抽屉按钮照常能点开）。
+        if (hero.autoPlan === 'centenarian') {
+            this.cameraFollowUI.closeList();
+            this.brawlFeedPanel?.setExpanded(false);
         }
         // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
         const lMap = this.map.getLeafletMap();

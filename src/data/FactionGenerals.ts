@@ -15191,7 +15191,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    // 🔴 [2026-09-12 主人「据点：波斯波利斯（29.93,52.89）· 阿契美尼德 · 旗号阿契 · 精锐不死军 T2
+    // 🔴 [2026-09-12 主人「据点：波斯波利斯（29.93,52.89）· 阿契美尼德 · 旗号阿契 · 精锐长生军 T2
 
 
 
@@ -15248,7 +15248,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'aqimeinide_aerxitesi', factionId: 'aqimeinide', cityId: 'city_dasijiliweng', generalName: '阿尔西特斯', portrait: '/assets/PERSIAN/aqimeinide_aerxitesi.png', eliteName: '赫勒斯滂铁骑', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 前334 赫勒斯滂弗里吉亚总督，格拉尼库斯河迎击亚历山大兵败（阿里安 I.12–16）｜格拉尼库斯＝希腊据点、将属波斯→② 移回其总督治所达斯基利翁（同文化 PERSIAN，69km）
-        { generalId: 'aqimeinide_daliushi', cityId: 'city_bosibolisi', generalName: '大流士一世', portrait: '/assets/PERSIAN/aqimeinide_daliushi.png', eliteName: '不死军', eliteTier: 2 },
+        { generalId: 'aqimeinide_daliushi', cityId: 'city_bosibolisi', generalName: '大流士一世', portrait: '/assets/PERSIAN/aqimeinide_daliushi.png', eliteName: '长生军', eliteTier: 2 },
 
 
 
@@ -15281,7 +15281,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_artaphernes', factionId: 'aqimeinide', cityId: 'city_sifaerde', generalName: '阿尔塔弗涅斯', portrait: '/assets/PERSIAN/gen_artaphernes.png', eliteName: '不死军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 撒狄总督（希罗多德 V.25），出发据点撒狄
+        { generalId: 'gen_artaphernes', factionId: 'aqimeinide', cityId: 'city_sifaerde', generalName: '阿尔塔弗涅斯', portrait: '/assets/PERSIAN/gen_artaphernes.png', eliteName: '长生军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 撒狄总督（希罗多德 V.25），出发据点撒狄
         { generalId: 'bfe2_pharnabazus', factionId: 'aqimeinide', cityId: 'city_kelazuomeinai', generalName: '法那巴佐斯', portrait: '/assets/GREECE/bfe2_pharnabazus.png', eliteName: '波斯柳条盾兵', eliteTier: 4 },
 
 
@@ -15303,7 +15303,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_datis', factionId: 'aqimeinide', cityId: 'city_adana', generalName: '达提斯', portrait: '/assets/PERSIAN/gen_datis.png', eliteName: '不死军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 前490 自奇里乞亚阿勒伊昂平原出征（希罗多德 VI.95），出发据点阿达纳
+        { generalId: 'gen_datis', factionId: 'aqimeinide', cityId: 'city_adana', generalName: '达提斯', portrait: '/assets/PERSIAN/gen_datis.png', eliteName: '长生军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 前490 自奇里乞亚阿勒伊昂平原出征（希罗多德 VI.95），出发据点阿达纳
 
 
 
@@ -15383,8 +15383,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_achaemenes', factionId: 'aqimeinide', cityId: 'city_latajiya', generalName: '阿凯门尼斯', portrait: '/assets/ORIE/bfe_achaemenes.png', eliteName: '腓尼基舟师', eliteTier: 3 },
-        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 哈尔帕古斯（米底/波斯宿将，前550 帕萨尔加德阵前倒戈助居鲁士，前546–前540 平定伊奥尼亚与吕基亚；希罗多德《历史》I.108–130、I.162–177）｜势力 阿契美尼德｜据点 苏萨（PERSIAN 文化；撒狄总督任所在外，按波斯本城锚定）｜普将（五表待补）｜精锐「不死军」T2｜立绘留空
-        { generalId: 'aqimeinide_harpagus', factionId: 'aqimeinide', cityId: 'city_sifaerde', generalName: '哈尔帕古斯', portrait: '/assets/GREECE/aqimeinide_harpagus.png', eliteName: '不死军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 马扎雷斯卒后于撒狄接掌兵权征伊奥尼亚（希罗多德 I.162），出发据点撒狄
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 哈尔帕古斯（米底/波斯宿将，前550 帕萨尔加德阵前倒戈助居鲁士，前546–前540 平定伊奥尼亚与吕基亚；希罗多德《历史》I.108–130、I.162–177）｜势力 阿契美尼德｜据点 苏萨（PERSIAN 文化；撒狄总督任所在外，按波斯本城锚定）｜普将（五表待补）｜精锐「长生军」T2｜立绘留空
+        { generalId: 'aqimeinide_harpagus', factionId: 'aqimeinide', cityId: 'city_sifaerde', generalName: '哈尔帕古斯', portrait: '/assets/GREECE/aqimeinide_harpagus.png', eliteName: '长生军', eliteTier: 2 },   // 🔴 [2026-11-13 按史] 马扎雷斯卒后于撒狄接掌兵权征伊奥尼亚（希罗多德 I.162），出发据点撒狄
     ],
 
 

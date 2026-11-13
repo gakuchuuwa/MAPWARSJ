@@ -464,7 +464,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe2_nidintu_bel',
         enemyTroops: 14000,
         introLines: [
-            { speaker: 'general', text: '巴比伦叛首尼丁图贝尔妄称先王之子，据巴比伦举兵谋逆。我亲率不死军与波斯主力西征讨逆，你可愿随王师出战？' },
+            { speaker: 'general', text: '巴比伦叛首尼丁图贝尔妄称先王之子，据巴比伦举兵谋逆。我亲率长生军与波斯主力西征讨逆，你可愿随王师出战？' },
             { speaker: 'player', text: '愿奉万王之王号令，随大军西征巴比伦！' },
         ],
     },

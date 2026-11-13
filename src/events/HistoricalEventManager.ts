@@ -591,7 +591,7 @@ export class HistoricalEventManager {
     }
 
     /** 战役一方的军团名（不含番号）。⚠️ 军团名 ≠ 精锐番号（项目铁律）：军团名走「时代+文化+军团」，
-     *  番号（如「不死军」「背嵬军」）是另一回事，只显示在战力倍率词语标签里。 */
+     *  番号（如「长生军」「背嵬军」）是另一回事，只显示在战力倍率词语标签里。 */
     private sideBaseLegionName(fb: FieldBattleData, side: 'attacker' | 'defender'): string {
         const isAtk = side === 'attacker';
         const factionId = isAtk ? fb.attackerFactionId : fb.defenderFactionId;

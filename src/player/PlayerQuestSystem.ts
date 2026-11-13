@@ -54,6 +54,10 @@ import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicl
 import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
+import { isFactionIdle } from '../data/eraFactionDisplay';
+
+/** 编年史随行军团「途经据点」判定半径（度，约 9 km；与环游经过据点同口径） */
+const ROUTE_CLAIM_RADIUS_DEG = 0.08;
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -2882,6 +2886,8 @@ export class PlayerQuestSystem {
             }
         }
 
+        if (isChronicleBattleId(fbState.battleId)) this.claimRouteCities(q, host);
+
         const targetPos = { lat: fbState.targetLat, lng: fbState.targetLng };
         const distToTarget = getEuclideanDistance(host.getPosition(), targetPos);
 
@@ -3094,6 +3100,27 @@ export class PlayerQuestSystem {
         gameLog('expedition', `[编年史] ${g.generalName} 自【${city.name}】先行开拔【${fb.battleName}】，玩家追往军中`);
         this.emitChange();
         return true;
+    }
+
+    /**
+     * 编年史随行军团沿途改旗：路过的空白据点（其势力无在场武将）与本场敌方据点归本方；
+     * 有其他在场势力守着的不动；本场被攻打的城由 chronicleCity 按史载前后归属，不在此列。
+     * 记入编年史归属改写，跳年不回滚。
+     */
+    private claimRouteCities(q: PlayerQuest, host: Army): void {
+        const fbState = q.firstBattle;
+        if (!fbState) return;
+        const mine = q.factionId;
+        const pos = host.getPosition();
+        const skip = getClassicBattleById(fbState.battleId)?.chronicleCity?.cityId;
+        for (const c of this.deps.cityManager.getCities()) {
+            if (!c.factionId || c.factionId === mine || c.id === skip || c.id === fbState.targetCityId) continue;
+            if (getEuclideanDistance(pos, { lat: c.latitude, lng: c.longitude }) > ROUTE_CLAIM_RADIUS_DEG) continue;
+            if (c.factionId !== fbState.enemyFactionId && !isFactionIdle(c.factionId)) continue;
+            setChronicleCityOwner(c.id, mine);
+            this.deps.cityManager.updateCity(c.id, { factionId: mine }, { skipCaptureLog: true });
+            gameLog('expedition', `[编年史] ${host.name} 途经【${c.name}】→ 归 ${q.factionName}`);
+        }
     }
 
     /** 一场编年史之战收场（胜负都走这里）：被攻打的城按史载结果归属，再推进主线 */
@@ -3953,7 +3980,7 @@ export class PlayerQuestSystem {
 
         if (q.kind === 'first_battle') {
             const hero = this.deps.hero;
-            if (this.awaitingPlayerLegionId === q.legionId && !hero.isAttached() && !hero.getChaseArmyId() && !hero.isHeld?.()) {
+            if (hero.autoMode && this.awaitingPlayerLegionId === q.legionId && !hero.isAttached() && !hero.getChaseArmyId() && !hero.isHeld?.()) {
                 hero.travelToArmy(q.legionId, q.generalName);
             }
             this.tickFirstBattle(q);

@@ -2419,7 +2419,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IBIRAPEMAWARRIOR/death_${dir}.png`),
         },
         'immortal': {
-            // 【不死军】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            // 【长生军】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/idle_${dir}.png`),
@@ -2434,7 +2434,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/death_${dir}.png`),
         },
         'immortal_ranged': {
-            // 【不死军弓手】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            // 【长生军弓手】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/idle_${dir}.png`),

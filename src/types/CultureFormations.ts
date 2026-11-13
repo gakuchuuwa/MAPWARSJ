@@ -512,12 +512,12 @@ export const ROMAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 波斯阿契美尼德帝国·鹤翼阵（2+4+3）：不死军长矛步兵(2) + 萨珊萨瓦尔铁骑(4) + 不死军复合弓箭手(3)
+ * 波斯阿契美尼德帝国·鹤翼阵（2+4+3）：长生军长矛步兵(2) + 萨珊萨瓦尔铁骑(4) + 长生军复合弓箭手(3)
  */
 export const PERSIAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'immortal', count: 2 },        // Row 0 步兵前锋 = 不死军长矛步兵 2人
+    { type: 'immortal', count: 2 },        // Row 0 步兵前锋 = 长生军长矛步兵 2人
     { type: 'savar', count: 4 },           // Row 1 骑兵主力两翼合围 = 萨珊萨瓦尔铁骑 4人
-    { type: 'immortal_ranged', count: 3 }, // Row 2 中军后排支援 = 不死军复合弓箭手 3人
+    { type: 'immortal_ranged', count: 3 }, // Row 2 中军后排支援 = 长生军复合弓箭手 3人
 ];
 
 /**
