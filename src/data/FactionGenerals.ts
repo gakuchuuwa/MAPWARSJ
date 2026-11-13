@@ -1389,6 +1389,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     maqidun: [
+        // 🔴 [2026-11-13 编年史第二段补将] 卡迪亚人，亚历山大书记官；前322 受封卡帕多细亚总督，前319 安提柯自北来攻，于卡帕多细亚奥尔基尼亚迎战（狄奥多罗斯 XVIII.40），所募卡帕多细亚骑兵见普鲁塔克《欧迈尼斯传》4
+        { generalId: 'maqidun_eumenes', factionId: 'maqidun', cityId: 'city_tiyana', generalName: '欧迈尼斯', portrait: '', eliteName: '卡帕多细亚骑兵', eliteTier: 3 },
         // 🔴 [2026-10-20 史实] 腓力二世＝马其顿国王，都城佩拉（非奥林索斯战场）；马其顿军团
         { generalId: 'gen_philip_ii', cityId: 'city_salonica', generalName: '腓力二世', portrait: '/assets/MACEDONIAN/gen_philip_ii.png', eliteName: '马其顿方阵', eliteTier: 1 },
         // 🔴 [2026-10-20 史实] 帕曼纽＝马其顿老将，随王驻佩拉；马其顿军团
@@ -4748,6 +4750,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     qin: [
+        // 🔴 [2026-11-13 编年史第二段补将] 齐人入秦，庄襄王二年（前248）攻赵定太原，三年河外为魏无忌所败；始皇七年（前240）卒（《史记·秦始皇本纪》《蒙恬列传》）
+        { generalId: 'qin_mengao', factionId: 'qin', cityId: 'city_changan', generalName: '蒙骜', portrait: '', eliteName: '秦关中甲士', eliteTier: 3 },
         { generalId: 'qin_huigong', factionId: 'qin', cityId: 'city_changan', generalName: '秦惠公', portrait: '/assets/CENTRAL/qin_huigong.png', eliteName: '秦关中甲士', eliteTier: 3 },
         { generalId: 'qin_hengyi', factionId: 'qin', cityId: 'city_changan', generalName: '桓齮', portrait: '/assets/CENTRAL/qin_hengyi.png', eliteName: '咸阳锐甲铁骑', eliteTier: 2 },   // 🔴 [2026-10-25 按史] 经典战敌将；秦将，前233 肥下败走桓齮；据点长安（CENTRAL，秦本部同文化）；用势力精锐铁鹰锐士
 
@@ -14220,7 +14224,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    pajiama: { generalId: 'pajiama_oumainisi', cityId: 'city_peierjiameng', generalName: '欧迈尼斯', portrait: '/assets/GREECE/pajiama_oumainisi.png', eliteName: '帕加马骑兵', eliteTier: 3 },
+    pajiama: { generalId: 'pajiama_oumainisi', cityId: 'city_peierjiameng', generalName: '欧迈尼斯一世', portrait: '/assets/GREECE/pajiama_oumainisi.png', eliteName: '帕加马骑兵', eliteTier: 3 },
 
 
 
@@ -17513,7 +17517,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    antigonid: { generalId: 'bfe_antigonus', cityId: 'city_kailaina', generalName: '安提柯一世', portrait: '/assets/MACEDONIAN/bfe_antigonus.png' , eliteName: '独眼伙友骑', eliteTier: 2 },
+    antigonid: [
+        { generalId: 'bfe_antigonus', cityId: 'city_kailaina', generalName: '安提柯一世', portrait: '/assets/MACEDONIAN/bfe_antigonus.png' , eliteName: '独眼伙友骑', eliteTier: 2 },
+        // 🔴 [2026-11-13 编年史第二段补将] 安提柯一世之子，随父居弗里吉亚治所凯莱奈；前312 加沙败于托勒密，前306 塞浦路斯萨拉米斯海战大胜，前305 围罗得得「攻城者」之号（狄奥多罗斯 XIX.80–84、XX.49–52、XX.81–99）；与父同部伙友骑
+        { generalId: 'antigonid_demetrius', factionId: 'antigonid', cityId: 'city_kailaina', generalName: '德米特里一世', portrait: '', eliteName: '独眼伙友骑', eliteTier: 2 },
+    ],
 
 
 

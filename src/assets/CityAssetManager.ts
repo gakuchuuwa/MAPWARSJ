@@ -1,6 +1,6 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
-import { getEraFactionDisplayName, getEraFactionDisplayFlagText, getEraCityDisplayName, getEraCityDisplayFlagText } from '../data/eraFactionDisplay';
+import { isFactionIdle } from '../data/eraFactionDisplay';
 import { getCultureEmblemFile } from '../data/CultureEmblems';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
@@ -1985,20 +1985,13 @@ export class CityAssetManager {
         if (this.isBlankRebelFlagFaction(factionId)) {
             return { factionId, variantKey: `blank_${factionId}`, text: '', fill: '', stroke: '' };
         }
-        // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
-        //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
-        //   🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] 个别时代名单独定了旗号文字的，
-        //   优先用那一份（凉州 → 只写「凉」）。
-        //   🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」] 有据点建筑文化的场景（据点旗）
-        //   必须按**本据点**的建筑文化取时代名 —— 同一势力可同时拥有中原/江南/河朔的据点，
-        //   旧口径按势力首城风格取，才会让中原的函谷关/潼关顶出「吴越」「太行」。
-        const cityName = getEraCityDisplayName(factionId, buildingStyle);
-        const eraName = cityName ?? getEraFactionDisplayName(factionId);
+        // 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 旗面文字一律用势力本名的旗号，不再用时代泛称；
+        //   百岁模式该势力无在场武将（idle）：不画势力纹章，有文化符号的据点贴文化符号。
+        const idle = isFactionIdle(factionId);
 
         // 🔴 [2026-10-24 试水] 登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
         //   表见 src/data/FactionEmblems.ts（删条目即回退汉字；生成/查缓存/军团旗共用本 spec）。
-        // 🔴 [2026-11-13 主人令] 百岁模式该势力无在场武将（eraName != null）不画势力纹章，走下方文化符号 / 时代字旗
-        const emblemKey = eraName == null ? getFactionEmblemKey(factionId) : null;
+        const emblemKey = idle ? null : getFactionEmblemKey(factionId);
         if (emblemKey) {
             const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
             return {
@@ -2010,10 +2003,10 @@ export class CityAssetManager {
                 emblemPath: `/emblem-flags/${emblemKey}_${useWhiteEmblem ? 'w' : 'b'}.png`,
             };
         }
-        // 🔴 [2026-11-10 主人令] 百岁模式：该势力此刻**一个在场武将都没有**（`cityName` 已由 eraFactionDisplay 判定），
+        // 🔴 [2026-11-10 主人令] 百岁模式：该势力此刻**一个在场武将都没有**，
         //   且本据点建筑文化配有文化符号（非华/魏/吴/蜀/荆/越/凉 7 个单字旗文化）→ 旗面贴布料融合文化符号雪碧图。
-        //   顺序：势力专属纹章 > 文化符号 > 时代字旗。
-        if (cityName != null) {
+        //   顺序：势力专属纹章 > 文化符号 > 势力本名旗号。
+        if (idle && buildingStyle) {
             const cultureEmblem = getCultureEmblemFile(buildingStyle);
             if (cultureEmblem) {
                 return {
@@ -2026,10 +2019,7 @@ export class CityAssetManager {
                 };
             }
         }
-        const eraFlagText = cityName != null
-            ? getEraCityDisplayFlagText(factionId, buildingStyle)
-            : getEraFactionDisplayFlagText(factionId);
-        let textToRender = eraName != null ? (eraFlagText ?? eraName) : SANDBOX_DISPLAY_NAMES[factionId];
+        let textToRender = SANDBOX_DISPLAY_NAMES[factionId];
 
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;

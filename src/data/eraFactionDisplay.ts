@@ -217,6 +217,14 @@ let overrides = new Map<string, EraNameDef>();
 /** 百岁模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非百岁模式），供据点级时代名用 */
 let activeEra: DefenseEraAge | null = null;
 
+/**
+ * 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 该势力此刻在百岁模式里有没有在场武将（无 → true）。
+ * 只用于「无在场武将不挂势力色、旗面用文化符号」的判断；势力名一律显示本名，不再用时代泛称顶替。
+ */
+export function isFactionIdle(factionId: string | null | undefined): boolean {
+    return !!factionId && getGameMode() === 'centenarian' && overrides.has(factionId);
+}
+
 /** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名；只在百岁模式生效） */
 export function getEraFactionDisplayName(factionId: string | null | undefined): string | null {
     if (!factionId || getGameMode() !== 'centenarian') return null;

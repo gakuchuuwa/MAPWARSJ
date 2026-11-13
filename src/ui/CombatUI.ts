@@ -1,4 +1,3 @@
-import { getEraCityDisplayName } from '../data/eraFactionDisplay';
 import {FACTION_GENERALS, formatLegionEliteName, formatLegionGeneralName, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
@@ -1802,13 +1801,8 @@ export class CombatUI {
         // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 势力名一律取**显示势力**：
         //    经典战同势力时引擎用 panshu 占位，界面回到武将自己的势力，绝不显示「叛军 + 武将」。
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(this.attackerDisplayFactionId ?? init.attackerFactionId) ?? '攻方';
-        // 🔴 [2026-11-11 主人问「荆楚将军，为什么势力是巴蜀呢？」] 守城无武将时，势力时代名按**本据点**建筑文化取
-        //    （与地图据点旗 getEraCityDisplayName 同口径，AGENTS §四.1）；旧逻辑按势力首城风格取，才会出现「荆楚将军·巴蜀」。
-        const defCityEraName = (!resolvedDefGeneralId && defCityObj)
-            ? getEraCityDisplayName(this.defenderDisplayFactionId ?? init.defenderFactionId, defCityObj.buildingStyle)
-            : null;
-        const defFactionName = defCityEraName
-            ?? (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
+        // 🔴 [2026-11-13 主人令「一切按历史」] 守方势力名一律显示本名，不再用时代泛称
+        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
         this.attackerDisplayName = attFactionName;
         this.defenderDisplayName = defFactionName;
 
@@ -7223,14 +7217,7 @@ export class CombatUI {
             factionId = getFactionIdOfGeneral(generalId) ?? factionId;
         }
 
-        // 🔴 [2026-11-11 主人问「荆楚将军，为什么势力是巴蜀呢？」] 无武将的本城守军：势力时代名按本据点建筑文化取
-        if (!generalId && unit.unitType === 'city') {
-            const cityStyle = (ent as { buildingStyle?: string } | undefined)?.buildingStyle
-                ?? (window as any).game?.cityManager?.getCity?.((ent as { id?: string } | undefined)?.id ?? '')?.buildingStyle;
-            const eraCityName = getEraCityDisplayName(factionId, cityStyle);
-            if (eraCityName) return eraCityName;
-        }
-
+        // 🔴 [2026-11-13 主人令「一切按历史」] 无武将守军的势力名也显示本名，不再用时代泛称
         const dynamicName = (window as any).game?.cityManager?.getFactionName?.(factionId)
             ?? (window as any).game?.factionManager?.getFactionName?.(factionId);
         if (dynamicName && typeof dynamicName === 'string') return dynamicName;

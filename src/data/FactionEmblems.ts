@@ -266,6 +266,24 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     dongxu: 'TAUNGOO_SUN_PEACOCK',   // 东吁王朝·光芒日轮环抱左向昂首跃立孔雀（区别于贡榜正面开屏孔雀）
     talasike: 'TARASCAN_IRECHEKWA_AXE_SUN',   // 塔拉斯科·米却肯纯佩查王室T形青铜仪式钺（Tajadera）叠嵌太阳神盘
     imagawa: 'IMAGAWA_AKADORI_HIKIRYO',   // 今川氏·《见闻诸家纹》足利一门今川氏丸内二引两家纹
+    // ── 2026-11-13 多字势力图标化第十六批（17 家，消除截断二字旗）──────────────────
+    liangxixili: 'TWO_SICILIES_LESSER_ARMS',   // 两西西里·波旁两西西里王徽小纹章
+    epirus_despotate: 'EPIRUS_EAGLE',   // 伊庇鲁斯专制国·拜占庭科穆宁-杜卡斯金鹰
+    latin_empire: 'LATIN_EMPIRE_CROSS',   // 拉丁帝国·君士坦丁堡四角小十字金十字
+    anjou: 'ANJOU_FLEUR',   // 安茹王朝·卡佩安茹双百合与红色标签
+    pisa: 'PISA_CROSS',   // 比萨共和国·比萨十二尖十字
+    florence: 'FLORENCE_GIGLIO',   // 佛罗伦萨共和国·佛罗伦萨红百合
+    gallic_empire: 'GALLIC_EMPIRE_HELM',   // 高卢帝国·波斯图穆斯罗马高卢战冠战盔
+    mulabite: 'ALMORAVID_BANNER',   // 穆拉比特王朝·柏柏尔双刃剑与圣战新月
+    aq_qoyunlu: 'AQ_QOYUNLU_TAMGA',   // 白羊王朝·土库曼巴扬杜尔部白羊图腾塔木加
+    barakzai_afghan: 'AFGHAN_BARAKZAI_GATE',   // 巴拉克宰王朝·阿富汗清真寺拱门与双战旗
+    zand_dynasty: 'ZAND_SUN_SWORD',   // 赞德王朝·波斯金日与舍施尔弯刀
+    jinong: 'TOLEDO_DHUNNUN_STAR',   // 济农王朝·安达卢斯托莱多八角星印徽
+    kilwa: 'KILWA_COIN_GEOMETRY',   // 基尔瓦苏丹国·斯瓦希里海皇金币八角几何徽
+    mombasa: 'MOMBASA_DHOW_DAGGERS',   // 蒙巴萨苏丹国·东非达乌帆船与交错弯刀
+    pattani: 'PATTANI_CANNON_CRESCENT',   // 北大年苏丹国·马来青铜大炮与星月
+    hulumusi: 'HORMUZ_CARAVEL',   // 忽鲁谟斯·霍尔木兹大帆船
+    aizu_ashina: 'ASHINA_MITSU_HIKIRYO',   // 会津芦名家·芦名氏家纹「丸之内三引两」
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

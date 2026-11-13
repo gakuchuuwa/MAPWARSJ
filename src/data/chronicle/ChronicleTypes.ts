@@ -107,7 +107,7 @@ export interface ChronicleSegment {
 export interface ChronicleMainlineEvent {
     /** 编年史 json 事件 ID（evt_0001） */
     id: string;
-    baton: number;
+    baton: number | string;
     year: number;
     /** 春0 夏1 秋2 冬3 */
     season: 0 | 1 | 2 | 3;

@@ -137,6 +137,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_andronikos_komnenos': 'BYZANTINE',   // 拜占庭｜科穆宁｜据点 君士坦丁堡
     'bfe_anga_king': 'MUGHAL',   // 鸯伽｜达摩婆罗｜据点 瞻波
     'bfe_antigonus': 'MACEDONIAN',   // 安提柯｜安提柯一世｜据点 凯莱奈
+    'antigonid_demetrius': 'MACEDONIAN',   // 安提柯｜德米特里一世｜据点 凯莱奈
     'bfe_apokaukos': 'SPARTANS',   // 拜占庭｜阿波卡夫｜据点 斯巴达
     'bfe_arslan_shah': 'PERSIAN',   // 伽色尼｜阿尔斯兰沙｜据点 哥疾宁
     'bfe_ashina_duzhi': 'WESTERN',   // 突厥｜阿史那都支｜据点 碎叶
@@ -1367,7 +1368,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'pagan_anulvtuo': 'BURMESE',   // 蒲甘｜阿奴律陀｜据点 蒲甘
     'paiwan_alugu': 'MALAY',   // 排湾｜阿禄古｜据点 牡丹社
     'paiyao_huangguasi': 'HUGUANG',   // 南越｜黄瓜四｜据点 阳山关
-    'pajiama_oumainisi': 'GREECE',   // 帕加马｜欧迈尼斯｜据点 佩尔加蒙
+    'pajiama_oumainisi': 'GREECE',   // 帕加马｜欧迈尼斯一世｜据点 佩尔加蒙
+    'maqidun_eumenes': 'TURKS',   // 马其顿｜欧迈尼斯｜据点 提亚纳
     'pandiya_jiatawaerman': 'INDIA',   // 潘地亚｜贾塔瓦尔曼｜据点 马杜赖
     'panfeiliya_apollonios': 'GREECE',   // 阿契美尼德｜阿波罗尼奥斯｜据点 阿斯彭杜斯
     'pangzha_halixinge': 'PURU',   // 锡克帝国｜哈里辛格｜据点 阿托克
@@ -1783,6 +1785,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiliao_uthman': 'CENTRAL_ASIA',   // 喀喇汗国｜奥斯曼｜据点 撒马尔罕
     'xiliao_yelvdashi': 'CENTRAL_ASIA',   // 哈剌契丹｜耶律大石｜据点 撒马尔罕
     'xin_baiqi': 'CENTRAL',   // 秦国｜白起｜据点 长安
+    'qin_mengao': 'CENTRAL',   // 秦国｜蒙骜｜据点 长安
     'xin_liuchong': 'WEI',   // 李唐｜刘崇｜据点 晋阳
     'xinbuli_boiorix': 'DANES',   // 辛布里｜波伊奥里克斯｜据点 耶灵
     'xindu_bahelamuhan': 'PURU',   // 德里苏丹国｜巴赫拉姆汗｜据点 拉合尔

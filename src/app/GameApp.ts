@@ -79,7 +79,7 @@ import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityI
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
-import { refreshEraFactionDisplays, getEraFactionDisplayName } from '../data/eraFactionDisplay';
+import { refreshEraFactionDisplays, isFactionIdle } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
 import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
@@ -543,7 +543,7 @@ export class GameApp {
                     .filter((c) => this.cityManager.isCityVisible(c))
                     .map((c) => {
                         // 🔴 [2026-11-13 主人令] 百岁模式：势力此刻无在场武将 → 小地图不涂势力色（与据点旗同口径）
-                        const idle = getEraFactionDisplayName(c.factionId) != null;
+                        const idle = isFactionIdle(c.factionId);
                         return {
                             id: c.id, lat: c.latitude, lng: c.longitude, type: c.type,
                             factionId: idle ? undefined : c.factionId,

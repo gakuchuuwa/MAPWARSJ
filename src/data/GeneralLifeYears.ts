@@ -669,7 +669,9 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_brasidas: { birth: -465, death: -422, kaoju: '推定' },  // 巴西达斯
     gen_lysander: { birth: -445, death: -395, kaoju: '推定' },  // 吕山德
     gen_parmenion: { birth: -400, death: -330, kaoju: '推定' },  // 帕曼纽
-    gen_perdiccas: { birth: -355, death: -321, kaoju: '异说' },  // 佩尔狄卡斯
+    gen_perdiccas: { birth: -355, death: -320, kaoju: '异说' },  // 佩尔狄卡斯（尼罗河渡河失败后被部将所杀；按低年代学前320，与编年史同口径）
+    maqidun_eumenes: { birth: -361, death: -316, kaoju: '推定' },  // 欧迈尼斯（卡迪亚人；伽比埃奈战后被银盾兵执送安提柯处死，卒年四十五，普鲁塔克《欧迈尼斯传》20）
+    qin_mengao: { birth: -300, death: -240, kaoju: '推定' },  // 蒙骜（生年不详推定；始皇七年卒，《史记·秦始皇本纪》）
     gen_artemisia: { birth: -520, death: -460, kaoju: '推定' },  // 阿尔特米西亚
     halikanasu_memnon: { birth: -380, death: -333 },  // 门农
     gen_artaphernes: { birth: -530, death: -485, kaoju: '推定' },  // 阿尔塔弗涅斯
@@ -1435,7 +1437,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bendou_d_mitelidati: { birth: -135, death: -63 },  // 密特里达梯
     fulijiya_maidasi: { birth: -760, death: -696, kaoju: '推定' },  // 迈达斯
     ldiya_keluoyisi: { birth: -595, death: -546, kaoju: '异说' },  // 克罗伊斯
-    pajiama_oumainisi: { birth: -310, death: -241, kaoju: '异说' },  // 欧迈尼斯
+    pajiama_oumainisi: { birth: -310, death: -241, kaoju: '异说' },  // 欧迈尼斯一世（帕加马）
     bitiniya_diaoduoer: { birth: 1174, death: 1221, kaoju: '异说' },  // 狄奥多尔
     luomu_jilijie: { birth: 1079, death: 1107 },  // 基利杰
     sailiugu_antiaoke: { birth: -241, death: -187 },  // 安条克
@@ -1677,6 +1679,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe_anga_king: { birth: -580, death: -530, kaoju: '推定' },  // 达摩婆罗
     bfe_pushyamitra: { birth: -240, death: -149, kaoju: '推定' },  // 普沙密多罗
     bfe_antigonus: { birth: -382, death: -301, kaoju: '推定' },  // 安提柯一世
+    antigonid_demetrius: { birth: -337, death: -283, kaoju: '推定' },  // 德米特里一世（攻城者；卒于塞琉古软禁中，普鲁塔克《德米特里传》52）
     bfe_dian_chief: { birth: -330, death: -270, kaoju: '推定' },  // 苴兰
     bfe_niu_han: { birth: -5, death: 45, kaoju: '推定' },  // 牛邯
     bfe_ngo_nhat_khanh: { birth: 925, death: 971, kaoju: '推定' },  // 吴日庆
