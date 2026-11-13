@@ -1070,7 +1070,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 20000,
             attackerSourceCityId: 'city_meng',
             attackerLegionName: '马其顿军团',
-            defenderGeneralId: 'malli_malavapala',
             defenderTroops: 12000,
             defenderCityId: 'city_malisi',
             defenderLegionName: '马利军团',
@@ -1128,7 +1127,6 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_malisi',
             attackerLegionName: '马其顿军团',
             defenderFactionId: 'midi',   // 🔴 [2026-10-20] 原「科塞亚」无城战役势力已删 → 守方改挂米底（哈马丹），守将卡什提利亚什随势力
-            defenderGeneralId: 'kesaiya_kashtiliash',
             defenderTroops: 8000,
             defenderSourceCityId: '',
             defenderLegionName: '科塞亚军团',

@@ -173,7 +173,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // 不收：evt_0125 普拉提亚夜袭（同据点同场战争只留最知名一场，留 evt_0128 普拉提亚之围）
     // 出发：修昔底德 II.84–86：伯罗奔尼撒舰队集结于埃利斯之基利尼
     B('evt_0126', '6B', 'gen_brasidas', 'attacker', 'xila', 'defender', { from: 'city_aolinpiya' }),   // 修昔底德 II.86–92：福尔米奥以寡胜众
-    // 待定：evt_0127 米蒂利尼：新建点距佩尔加蒙 53.9km，落 50–55km 卡线，待主人批
+    B('evt_0127', '6B', 'xila_paches', 'attacker', 'mytilene', 'attacker', { city: at('city_mytilene', 'mytilene', 'xila') }),   // 修昔底德 III.18、III.27–28：筑墙围城，萨莱托斯所领斯巴达援军未至，城降
     B('evt_0128', '6B', 'lagoniya_archidamus_ii', 'attacker', 'plataea', 'attacker', { city: at('city_thebes', 'plataea', 'boootiya') }),   // 修昔底德 II.71–78、III.52–68：围二年陷城，地归底比斯；普拉提亚在底比斯据点 50km 内
     // 出发：修昔底德 III.105–107：德摩斯梯尼自瑙帕克都赴援（最近据点德尔斐）
     B('evt_0129', '6B', 'xila_demosthenes', 'defender', 'lagoniya', 'defender', { from: 'city_deerfei' }),   // 修昔底德 III.105–108
@@ -226,7 +226,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_0166', '8B', 'bfe2_conon', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》IV.8.8：守军协议弃城
     B('evt_0168', '8B', 'xila_iphicrates', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》IV.5.11–17
     B('evt_0171', '8B', 'gen_chabrias', 'attacker', 'lagoniya', 'attacker'),   // 色诺芬《希腊史》V.1.10–13：戈尔戈帕斯战死
-    // 待定：evt_0174 曼丁尼亚围城：新建点距科林斯 53.6km，落 50–55km 卡线，待主人批
+    B('evt_0174', '8B', 'lagoniya_agesipolis_i', 'attacker', 'mantinea', 'attacker', { city: at('city_mantinea', 'mantinea', 'lagoniya') }),   // 色诺芬《希腊史》V.2.1–7：壅奥菲斯河冲毁城墙，析为四村
 
     // ── 第 9 棒 · 底比斯霸权 ──
     B('evt_0176', '9', 'lagoniya_phoebidas', 'attacker', 'boootiya', 'attacker', { city: at('city_thebes', 'boootiya', 'lagoniya') }),   // 色诺芬《希腊史》V.2.25–31

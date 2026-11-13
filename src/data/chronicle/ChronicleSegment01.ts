@@ -1251,7 +1251,7 @@ export const CHRONICLE_SEGMENT_01: readonly ChronicleEvent[] = [
         place: { name: "格德罗西亚、苏萨、俄庇斯、埃克巴坦那至科塞亚山区", cityId: "city_susa" },
         leadGeneralId: "gen_alexander_great",
         cameraGeneralId: "gen_alexander_great",
-        enemyGeneralIds: ["kesaiya_kashtiliash"],
+        enemyGeneralIds: [],
         battles: [],
         scriptScene: "亚历山大剧本第21场",
         strategic: ["公元前三二四年冬，箭伤痊愈的亚历山大抵海口帕塔拉，命克拉特罗斯走北路、尼阿库斯航外海；自统主力苦穿格德罗西亚沙海，返苏萨办联姻盛典并平俄庇斯哗变。秋季挚友赫菲斯提昂病逝埃克巴坦那，悲痛的亚历山大南返巴比伦途中，挥师进剿扎格罗斯山中的科塞亚部族。"],

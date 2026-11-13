@@ -1128,7 +1128,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kepantuo_dulimi': 'WESTERN',   // 渴盘陀｜阇梨密｜据点 公主堡
     'kereyid_wanghan': 'MONGOL',   // 克烈｜脱斡霖｜据点 汪吉河
     'kesa_bulan': 'CUMAN',   // 可萨｜布兰｜据点 谢缅杰尔
-    'kesaiya_kashtiliash': 'PERSIAN',   // 米底｜卡什提利亚什｜据点 哈马丹
     'ketagalan_huangqingyun': 'JIANGNAN',   // 凯达格兰｜黄青云｜据点 艋舺
     'khoja_apakehezhuo': 'WESTERN',   // 和卓｜阿帕克和卓｜据点 盘橐
     'khon_basiba': 'TIBET',   // 萨迦昆｜八思巴｜据点 萨迦
@@ -1237,7 +1236,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'maidina_kuerdi': 'ORIE',   // 拉希顿｜库尔迪｜据点 吉达
     'maikelan_punong': 'PERSIAN',   // 杜兰尼｜普农｜据点 特尔巴特
     'malin_abulhasan': 'BERBER',   // 摩洛哥｜阿布哈桑｜据点 非斯
-    'malli_malavapala': 'PURU',   // 马利｜摩罗波罗｜据点 马里斯
     'malwan_ibn_marwan': 'ORIE',   // 倭马亚｜伊本·马尔万｜据点 梅里达
     'mamon_mameng': 'CENTRAL_ASIA',   // 花剌子模｜马蒙｜据点 玉龙杰赤
     'mamuluke_baibaisi': 'ORIE',   // 马穆鲁克｜拜巴尔斯｜据点 大马士革

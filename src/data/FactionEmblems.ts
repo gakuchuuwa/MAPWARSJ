@@ -284,6 +284,40 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     pattani: 'PATTANI_CANNON_CRESCENT',   // 北大年苏丹国·马来青铜大炮与星月
     hulumusi: 'HORMUZ_CARAVEL',   // 忽鲁谟斯·霍尔木兹大帆船
     aizu_ashina: 'ASHINA_MITSU_HIKIRYO',   // 会津芦名家·芦名氏家纹「丸之内三引两」
+    // ── 2026-11-13 多字势力图标化第十七批（16 家，希腊同盟/早期伊斯兰/环印度洋海邦）─
+    phokis: 'PHOKIS_BULL_HEAD',   // 福基斯·正面公牛首级
+    naxos: 'NAXOS_KANTHAROS_IVY',   // 纳克索斯·狄奥尼索斯双耳饮杯与葡萄藤
+    chalkidike: 'CHALKIDIKE_APOLLO_LYRE',   // 卡尔基季基同盟·阿波罗七弦琴
+    yinduxila: 'INDO_GREEK_ATHENA_THUNDER',   // 印度希腊王国·米南德一世掷雷雅典娜
+    midi: 'MEDIAN_WINGED_DISC',   // 米底王国·埃克巴塔那古代翼日盘
+    xiongren: 'HUNNIC_GOLDEN_STAG',   // 匈人帝国·草原飞跃金鹿图腾
+    heruli: 'HERULI_ODOACER_ROMA_EAGLE',   // 赫鲁利·拉温纳罗马飞鹰与长矛十字
+    tahirid: 'TAHIRID_HORASAN_EAGLE',   // 塔希尔王朝·呼罗珊总督黑鹰战旗
+    crete_emirate: 'CRETE_EMIRATE_DHOW',   // 克里特酋长国·干地亚阿拉伯战船与斜帆
+    yidelisi: 'IDRISID_EIGHT_POINT_STAR',   // 伊德里斯王朝·摩洛哥非斯八角星徽
+    mogadishu: 'MOGADISHU_MINARET_SPEARS',   // 摩加迪沙苏丹国·法赫尔丁宣礼塔与双投矛
+    malindi: 'MALINDI_CORAL_PILLAR',   // 马林迪苏丹国·马林迪珊瑚石柱与领航塔
+    zuraid: 'ZURAIDID_ADEN_GATE',   // 祖拉伊德王朝·亚丁海湾石砌双塔水门要塞
+    bolinixiya: 'POLYNESIA_TIKI_MASK',   // 波利尼西亚·蒂基神面木雕与螺旋纹
+    ayinu_ezo: 'AINU_IKUPASUY_CARVING',   // 阿伊努·伊库帕西祭木螺旋神雕纹
+    omura: 'OMURA_CHRISTIAN_STAR',   // 大村家·大村纯忠切支丹五芒星木瓜纹
+    // ── 2026-11-13 多字势力图标化第十八批（16 家，希腊群岛/北非/东南亚/武家）─────────
+    lycia: 'LYCIA_TRISKELES',   // 吕基亚·三曲枝旋臂纹
+    thasos: 'THASOS_AMPHORA_DOLPHIN',   // 萨索斯·双耳陶罐与海豚
+    melos: 'MELOS_POMEGRANATE',   // 米洛斯·石榴果实与花萼
+    mytilene: 'MYTILENE_LION_HEAD',   // 米蒂利尼·莱斯博斯咆哮狮首
+    zhayan: 'ZHAYAN_CRESCENT_STAR',   // 扎扬王朝·特莱姆森新月八角星
+    hamade: 'HAMMADID_PORT_SAIL',   // 哈马德苏丹国·贝贾亚三角斜帆达乌船
+    aguelabu: 'AGHLABID_KAIRAOUAN_DOME',   // 阿格拉布王朝·凯鲁万宣礼塔与圆顶
+    teluoyi: 'TROY_WOODEN_HORSE',   // 特洛伊·荷马史诗特洛伊木马
+    mangsite: 'MUNSTER_THREE_CROWNS',   // 芒斯特王国·爱尔兰芒斯特三金冠
+    ternate: 'TERNATE_CLOVES_CROWN',   // 特尔纳特苏丹国·摩鹿加丁香花枝与苏丹冠
+    ava: 'AVA_HAMSA_PEACOCK',   // 阿瓦王国·缅甸阿瓦神鸟妙音鸟
+    funan: 'FUNAN_SUN_SRIVATSA',   // 扶南王国·扶南太阳神轮与室利筏娑
+    jialatai: 'GALATIAN_CELTIC_ROOSTER',   // 加拉太王国·小亚细亚高卢公鸡与战盾
+    goto: 'GOTO_SHICHIYO_MON',   // 五岛家·五岛氏家纹「七曜纹」
+    genji_iyo: 'GENJI_IYO_OSHIKI_SAN',   // 伊予源氏·河野氏家纹「折敷に三文字」
+    xisi: 'SAFFARID_SIMURGH_SUN',   // 萨法尔王朝·锡斯坦波斯神鸟西摩格
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

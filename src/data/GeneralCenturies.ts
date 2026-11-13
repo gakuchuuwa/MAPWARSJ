@@ -1214,8 +1214,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（公元前327年马萨加战役守帅）
     'aornos_aphrikes':                   -4,    // 阿夫里凯斯 · aornos · 奥诺斯岩（公元前326年奥诺斯岩围城战守帅）
     'julushi_catanes':                   -4,    // 卡塔涅斯 · julushi · 居鲁士城（公元前329年居鲁士城围攻守帅）
-    'malli_malavapala':                  -4,    // 摩罗波罗 · malli · 马里斯（公元前325年马里斯战役守帅）
-    'kesaiya_kashtiliash':               -4,    // 卡什提利亚什 · kesaiya · 科塞亚（加喜特战王名，科塞亚地区；旧写「阿古姆二世」已改，2026-10-02）
     'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（公元前334年哈利卡纳苏斯围城战守帅）
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（扎格罗斯及乌克西亚部落首领；旧写「提里巴斯」已改，2026-10-02）
     'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（公元前335年佩利昂围城战守帅）

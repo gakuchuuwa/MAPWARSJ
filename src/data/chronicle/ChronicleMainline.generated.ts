@@ -2115,6 +2115,51 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
+        "id": "evt_0127",
+        "baton": "6B",
+        "year": -428,
+        "season": 2,
+        "title": "米蒂利尼叛乱与筑墙封锁战",
+        "kind": "battle",
+        "place": {
+            "name": "莱斯博斯岛米蒂利尼港",
+            "lat": 39.104,
+            "lng": 26.555
+        },
+        "leadGeneralId": "xila_paches",
+        "strategic": [
+            "公元前四二八年秋，伯里克利染疫病逝后雅典国力受创，爱琴海北翼拥有独立舰队的强邦米蒂利尼密谋兼并莱斯博斯全岛脱离提洛同盟，并遣使赴奥林匹亚向斯巴达求援。雅典获密报先发制人，增派名将帕凯斯率重步兵登岛合围，全力扑灭海上叛火。"
+        ],
+        "tactical": [
+            "米蒂利尼拥有南北双港与坚固海陆城防。帕凯斯登岛后驱军环绕陆侧修筑单层石墙并增设高地堡垒，同时以三层桨战船严锁南北两港；斯巴达虽派督帅萨莱托斯潜入城中督守，但伯罗奔尼撒救援舰队畏惧雅典海上锋芒迟迟未至，孤城终陷绝粮重围。"
+        ],
+        "source": "修昔底德·伯罗奔尼撒战争史·第三卷；狄奥多罗斯·历史丛书·第十二卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_paches",
+            "battleId": "chron:evt_0127",
+            "battleName": "米蒂利尼叛乱与筑墙封锁战",
+            "battleYear": -428,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "莱斯博斯岛米蒂利尼港",
+            "targetCityId": "city_mytilene",
+            "chronicleCity": {
+                "cityId": "city_mytilene",
+                "before": "mytilene",
+                "after": "xila"
+            },
+            "chronicleFrom": "city_yadian",
+            "targetLat": 39.104,
+            "targetLng": 26.555,
+            "myTroops": 15000,
+            "enemyFactionId": "mytilene",
+            "enemyFactionName": "米蒂利尼",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
+    },
+    {
         "id": "evt_0128",
         "baton": "6B",
         "year": -427,
@@ -2829,7 +2874,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "莱斯博斯东南阿吉努萨伊海域",
-            "chronicleFrom": "city_peierjiameng",
+            "chronicleFrom": "city_mytilene",
             "targetLat": 39.12,
             "targetLng": 27.18,
             "myTroops": 15000,
@@ -3351,6 +3396,51 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
+    },
+    {
+        "id": "evt_0174",
+        "baton": "8B",
+        "year": -385,
+        "season": 2,
+        "title": "曼丁尼亚壅河塌墙围城战",
+        "kind": "battle",
+        "place": {
+            "name": "阿卡迪亚曼丁尼亚城",
+            "lat": 37.618,
+            "lng": 22.393
+        },
+        "leadGeneralId": "lagoniya_agesipolis_i",
+        "strategic": [
+            "公元前三八五年秋，斯巴达借口执行和约自治条款打压异己，勒令阿卡迪亚强邦曼丁尼亚拆毁城墙分散回村落。曼丁尼亚严词拒绝，斯巴达王阿格西波利斯一世遂征调含底比斯青年战士伊巴密浓达与佩洛皮达斯在内的同盟军合围曼丁尼亚。"
+        ],
+        "tactical": [
+            "曼丁尼亚地处低洼盆地，奥菲斯河穿城而过，高墙系日晒泥砖砌于石基之上。前哨血战中佩洛皮达斯重伤倒地，伊巴密浓达持盾死守待援获救；针对城内充足存粮，阿格西波利斯筑坝截断下游河道，河水倒灌泡塌泥砖城墙，曼丁尼亚被迫降拆城邑。"
+        ],
+        "source": "色诺芬·希腊史·第五卷；普鲁塔克·佩洛皮达斯传；狄奥多罗斯·历史丛书·第十五卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lagoniya_agesipolis_i",
+            "battleId": "chron:evt_0174",
+            "battleName": "曼丁尼亚壅河塌墙围城战",
+            "battleYear": -385,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "阿卡迪亚曼丁尼亚城",
+            "targetCityId": "city_mantinea",
+            "chronicleCity": {
+                "cityId": "city_mantinea",
+                "before": "mantinea",
+                "after": "lagoniya"
+            },
+            "chronicleFrom": "city_sparta",
+            "targetLat": 37.618,
+            "targetLng": 22.393,
+            "myTroops": 15000,
+            "enemyFactionId": "mantinea",
+            "enemyFactionName": "曼丁尼亚",
             "enemyTroops": 15000,
             "introLines": []
         }

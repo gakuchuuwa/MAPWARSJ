@@ -1612,8 +1612,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     aswaka_cleophis: { birth: -350, death: -295, kaoju: '推定' },  // 克莱奥菲斯
     aornos_aphrikes: { birth: -370, death: -326, kaoju: '推定' },  // 阿夫里凯斯
     julushi_catanes: { birth: -375, death: -323, kaoju: '推定' },  // 卡塔涅斯
-    malli_malavapala: { birth: -350, death: -290, kaoju: '推定' },  // 摩罗波罗
-    kesaiya_kashtiliash: { birth: -360, death: -320, kaoju: '推定' },  // 卡什提利亚什（前324年亚历山大征科塞亚之战守帅）
     wukexiya_madates: { birth: -370, death: -324, kaoju: '推定' },  // 马达泰斯
     dasaleiti_kleitos: { birth: -365, death: -325, kaoju: '推定' },  // 克莱图斯
     hesitiya_yiasong: { birth: -400, death: -370, kaoju: '推定' },  // 伊阿宋（斐赖僭主、色萨利 tagus；前 370 遇刺，Xen. Hell. 6.4.30）

@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-13T08:40:40.009Z",
+ "generatedAt": "2026-11-13T08:46:17.314Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -17168,6 +17168,34 @@
    "reliefM": 117,
    "cliffs": 0,
    "top": "Grass 3 54.4% · Water, Shallow 38% · Forest, Mediterranean 4.5% · Beach 1.5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_mytilene",
+   "file": "site_city_mytilene.json",
+   "bytes": 244302,
+   "koppen": "Csa",
+   "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "water": "WorldCover",
+   "waterCells": 5472,
+   "waterPct": 38,
+   "reliefM": 210,
+   "cliffs": 0,
+   "top": "Grass 3 51.5% · Water, Shallow 38% · Forest, Mediterranean 4.9% · Beach 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_mantinea",
+   "file": "site_city_mantinea.json",
+   "bytes": 271948,
+   "koppen": "Csa",
+   "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 288,
+   "cliffs": 0,
+   "top": "Grass 3 91.9% · Forest, Mediterranean 5% · Pine Forest 2.2% · Forest, Bush 0.5%",
    "verify": "ok"
   }
  ],
