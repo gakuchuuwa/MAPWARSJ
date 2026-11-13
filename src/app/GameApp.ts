@@ -27,7 +27,7 @@ import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
 import { TerritorySystem } from '../systems/TerritorySystem';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { GAME_CONSTANTS, GameConfig } from '../config/GameConfig';
+import { GAME_CONSTANTS, GameConfig, MOVEMENT_MATRIX, PLAYER_SPEED_TIERS } from '../config/GameConfig';
 import { AIController, RecruitmentSystem } from '../ai';
 import { FollowResupplySystem } from '../legion/FollowResupplySystem';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -62,7 +62,7 @@ import { PlayerHero } from '../player/PlayerHero';
 import { PlayerQuestSystem } from '../player/PlayerQuestSystem';
 import { PlayerHUD } from '../player/PlayerHUD';
 import { PlayerScene13Control } from '../player/PlayerScene13Control';
-import { PLAYER_START_CITY_ID, PLAYER_START_OFFSET, PLAYER_CITY_ARRIVE_DIST } from '../player/PlayerConfig';
+import { PLAYER_START_CITY_ID, PLAYER_START_OFFSET, PLAYER_CITY_ARRIVE_DIST, PLAYER_HERO_SPEED_MULT } from '../player/PlayerConfig';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import type { LegionManager } from '../legion/LegionManager';
 import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
@@ -113,8 +113,10 @@ export { STARTING_CAPITALS } from '../data/StartingCapitals';
 
 /** 剧本模式开局：玩家出生点离归属武将所在城的距离（度，≈65 公里） */
 const SCRIPT_SPAWN_DIST_DEG = 0.6;
-/** 🔴 [2026-11-13 主人令「玩家在约 200 公里外出生」] 百岁模式编年史开局：离主将据点约 200 公里 */
+/** 🔴 [2026-11-13 主人令「玩家在约 200 公里外出生」] 百岁模式编年史开局：离主将据点约 200 公里（路网找不到远城时的兜底） */
 const CHRONICLE_SPAWN_DIST_DEG = 1.8;
+/** 🔴 [2026-11-13 主人令「人物起始位置和第一个人物地点放远一点」「30 秒左右移动到武将处」] 开局沿陆路约走这么多秒才到第一位主将 */
+const CHRONICLE_SPAWN_TRAVEL_SEC = 30;
 
 declare global {
     interface Window {
@@ -1065,12 +1067,47 @@ export class GameApp {
         const startCity = chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
-        const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
+        // 编年史开局：沿陆路找一座「走到第一位主将约 CHRONICLE_SPAWN_TRAVEL_SEC 秒」的城，出生在它城外
+        //    玩家单骑速度＝统一行军速度 × 骑兵平原倍率 × 单骑倍率（度／秒）；路程按道路坐标的经纬度长度累计
+        const farSpawn = chronicleStart && roadRegistry.isInitialized() ? (() => {
+            const targetDeg = CHRONICLE_SPAWN_TRAVEL_SEC * PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * MOVEMENT_MATRIX.CAVALRY.plain * PLAYER_HERO_SPEED_MULT;
+            const adj = roadRegistry.getAdjacencyList();
+            const cityById = new Map(allCities.map((c) => [c.id, c]));
+            const degLen = (co: [number, number][]) => co.reduce((s, p, i) => i ? s + Math.hypot(p[0] - co[i - 1][0], p[1] - co[i - 1][1]) : 0, 0);
+            const dist = new Map<string, number>([[startCity.id, 0]]);
+            const todo = [startCity.id];
+            while (todo.length) {
+                todo.sort((a, b) => dist.get(a)! - dist.get(b)!);
+                const cur = todo.shift()!;
+                const d0 = dist.get(cur)!;
+                if (d0 > targetDeg * 1.5) continue;
+                for (const e of adj.get(cur) ?? []) {
+                    if (e.isSea || !e.coordinates || e.coordinates.length < 2) continue;
+                    const nxt = e.from === cur ? e.to : e.from;
+                    const d1 = d0 + degLen(e.coordinates);
+                    if (d1 < (dist.get(nxt) ?? Infinity)) { dist.set(nxt, d1); todo.push(nxt); }
+                }
+            }
+            let best: { city: (typeof allCities)[number]; gap: number } | null = null;
+            for (const [id, d] of dist) {
+                const c = cityById.get(id);
+                if (!c || id === startCity.id) continue;
+                const gap = Math.abs(d - targetDeg);
+                if (!best || gap < best.gap) best = { city: c, gap };
+            }
+            return best?.city ?? null;
+        })() : null;
+        if (farSpawn) {
+            gameLog('expedition', `[编年史] 开局出生于【${farSpawn.name}】城外，沿陆路约 ${CHRONICLE_SPAWN_TRAVEL_SEC} 秒到【${startCity.name}】`);
+        }
+        const edges = farSpawn ? undefined : (roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined);
         // 优先连通的陆地道路，保证玩家落在合法陆地路网上
         const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
         const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
 
-        if (candidateEdges.length > 0) {
+        if (farSpawn) {
+            spawnPos = { lat: farSpawn.latitude + PLAYER_CITY_ARRIVE_DIST + 0.02, lng: farSpawn.longitude };
+        } else if (candidateEdges.length > 0) {
             const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
             // 沿道路挑一个离开据点一定距离的节点（>= 判定到达阈值，保证在城外）
             // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]

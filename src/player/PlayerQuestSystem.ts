@@ -647,6 +647,8 @@ export class PlayerQuestSystem {
         const leadFb = lead && lead.city.id === city.id ? this.hasPendingFirstBattle(lead.general.generalId) : null;
         if (lead && leadFb) {
             this.headingTargetGeneralId = null;
+            if (this.chronicleMeetCityId === city.id) return;
+            this.chronicleMeetCityId = city.id;
             const fid = getFactionIdOfGeneral(lead.general.generalId) ?? city.factionId;
             const portrait = resolveGeneralPortraitPath(lead.general.portrait, { factionId: fid, region: getCityRegion(city) });
             this.showFirstBattleDialogue(city, lead.general, portrait, this.deps.cityManager.getFactionName(fid), leadFb, null);
@@ -829,6 +831,7 @@ export class PlayerQuestSystem {
      */
     private leaveAndFindNextGeneral(city: City | null, generalId: string | null): void {
         this.deps.closeDialogue();
+        this.chronicleMeetCityId = null;
         if (this.preferredLiveGeneralId) {
             const failedId = this.preferredLiveGeneralId;
             this.preferredLiveGeneralId = null;
@@ -2178,6 +2181,7 @@ export class PlayerQuestSystem {
         existingArmy: Army | null,
         opts?: { metAtFront?: boolean; chained?: boolean },
     ): void {        this.deps.closeDialogue();
+        this.chronicleMeetCityId = null;
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         this.pendingFrontGeneralId = null;
         const metAtFront = !!opts?.metAtFront;
@@ -3051,6 +3055,8 @@ export class PlayerQuestSystem {
     private chronicleNarrating = false;
     /** 上一场的任务与军团（叙事念完后续战用） */
     private chronicleLast: { q: PlayerQuest; hostId: string } | null = null;
+    /** 编年史会面对话已在此据点弹出（等接任务／告辞）：寻将逻辑不再重复下「前往」，否则对话每拍重建、倒计时永远归零 */
+    private chronicleMeetCityId: string | null = null;
 
     /** 当前这一场的随行主将与他所在据点（叙事场或找不到人返回 null） */
     private chronicleLeadTarget(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
@@ -3790,7 +3796,9 @@ export class PlayerQuestSystem {
         // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
         // 🔴 [2026-09-17 主人定]「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场。」
         //    乱斗模式下整条战场分支不走，直接去找武将入伍。切模式时已出发的行程由 setAutoPlan 掐掉。
-        if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && !this.deps.hero.isTourMode() && this.deps.hero.isTraveling()) {
+        // 编年史：出发据点不一定挂着随行主将，不按「目标城无在场将」掐行程，也不改道追军
+        if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && !this.deps.hero.isTourMode() && this.deps.hero.isTraveling()
+            && !isChronicleActive()) {
             const targetCityId = this.deps.hero.getTravelCityId();
             const chaseArmyId = this.deps.hero.getChaseArmyId();
             // 🔴 [2026-10-25] 正去远距经典战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
@@ -3953,6 +3961,7 @@ export class PlayerQuestSystem {
         this.rememberVisit(city, g?.generalId);
         // 🔴 [2026-11-13 编年史] 一律去这一场的出发据点与随行主将会合
         if (isChronicleActive() && queued) {
+            if (this.chronicleMeetCityId === city.id) return;
             this.chaseCityId = null;
             this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
             return;
@@ -5202,6 +5211,7 @@ export class PlayerQuestSystem {
         this.classicBriefing.reset();        // 经典战战略播报同理
         this.chronicleNarrating = false;
         this.chronicleLast = null;
+        this.chronicleMeetCityId = null;
         this.pendingClassicChain = null;     // 排了期的连战也一并清掉（读档／换局）
         this.emitChange();
     }

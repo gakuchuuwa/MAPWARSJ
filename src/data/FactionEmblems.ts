@@ -454,6 +454,23 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     tutul_xiu: 'TUTUL_XIU_UXMAL_MASK',   // 休族·乌斯马尔雨神恰克长鼻面具
     malli: 'MALLI_MULTAN_SOLAR_VAJRA',   // 马利·木尔坦太阳神庙金刚杵与日轮
     aolitai: 'OREITAI_COASTAL_TRIDENT_FISH',   // 奥里泰·俾路支海岸三叉海戟与双鱼
+    // ── 2026-11-13 多字势力图标化第二十七批（16 家，昌卡/库埃瓦/马尼拉/拘萨罗/汪达尔/克里米亚等）─
+    chanka: 'CHANKA_WAR_PUMA_AXE',   // 昌卡·美洲狮头战盔与青铜星斧
+    cueva: 'CUEVA_DARIEN_GOLD_BREASTPLATE',   // 库埃瓦·达连地峡黄金胸甲与双矛
+    maynila: 'MAYNILA_RAJAH_SULAIMAN_CANNON',   // 马尼拉土邦·兰达卡旋回炮与马来剑
+    wandan: 'BANTEN_SULTANATE_PEPPER_DAGGER',   // 万丹·爪哇胡椒枝叶与克里斯短剑
+    kosala: 'KOSALA_SOLAR_IKSHVAKU_ARROW',   // 拘萨罗·甘蔗王族日神金弓神箭
+    anga: 'ANGA_CHAMPA_RIVER_ELEPHANT',   // 鸯伽·恒河下游战象与白水莲花
+    yalan: 'ALANIA_CAUCASUS_GOLD_LEOPARD',   // 亚兰（阿兰）·高加索阿兰金雪豹与三峰
+    lugii: 'LUGII_CELTO_GERMANIC_SOLAR_WHEEL',   // 卢吉联盟·维斯瓦河太阳战轮与骨剑
+    wangdaer: 'VANDAL_CARTHAGE_NAVAL_CROSS',   // 汪达尔王国·迦太基战舰与北非金十字
+    kesaiya: 'COSSAEI_ZAGROS_MOUNTAIN_BOW',   // 科塞亚·扎格罗斯复合弓与山羊角
+    muxikani: 'MUSIKANOS_INDUS_BRAHMIN_TEMPLE',   // 穆西卡尼·印度河古神殿与神圣水罐
+    houmojietuo: 'LATER_MAGADHA_PURNAVARMAN_TREE',   // 后摩揭陀·普那伐摩大菩提神树与金轮
+    gaoda: 'GAUDA_SHASHANKA_SHIVA_NANDI',   // 高达王国·设赏迦金币神牛南迪坐像
+    kelimiya_han: 'CRIMEAN_KHANATE_GIRAY_TAREK_TAMGA',   // 克里米亚汗国·格来王朝天秤塔拉克塔木加
+    guzigan: 'GUZGAN_FARIGHUNID_CROWN_LION',   // 古兹甘·法里贡王朝王冠金立狮与剑
+    bahemani: 'BAHMANI_DECCAN_CRESCENT_GLOBE',   // 巴赫曼尼苏丹国·德干双新月与苏丹天球仪
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */
