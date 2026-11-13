@@ -84,7 +84,7 @@ import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump 
 import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
-import { getAllChronicleEvents } from '../data/chronicle/ChronicleRegistry';
+import { firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -294,6 +294,7 @@ export class GameApp {
             // Managers & Systems
             // this.contactEngine ... moved down
             this.timeSystem = new TimeSystem();
+            this.timeSystem.setCalendarFreezeProvider(() => isChronicleActive());
             // 战败冷却时间源：游戏秒（暂停冻结、倍速加速）
             setDefeatCooldownTimeSource(() => this.timeSystem.getElapsedGameSeconds());
 
@@ -754,7 +755,8 @@ export class GameApp {
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
             //    玩家对象晚于此处创建 → 取不到时按默认的百岁模式算（非剧本期）。
-            const isScriptPeriod = () => false;
+            // 🔴 [2026-11-13 编年史] 主线推演中后台 AI 不出征、不募兵（据点归属只按史实跳年重算）
+            const isScriptPeriod = () => isChronicleActive();
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -1057,7 +1059,8 @@ export class GameApp {
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
         // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
         // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
-        const chronicleLeadId = isCentenarianStart ? getAllChronicleEvents()[0]?.leadGeneralId : undefined;
+        if (isCentenarianStart) startChronicle();
+        const chronicleLeadId = isCentenarianStart ? firstChronicleEvent()?.leadGeneralId : undefined;
         const chronicleStart = chronicleLeadId
             ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
             : undefined;
@@ -1170,6 +1173,7 @@ export class GameApp {
             feed: this.brawlFeedPanel,
             // 自动模式去接"当年剧本任务"用（主人 2026-09-11 定：-334 年必须去找亚历山大）
             getYear: () => this.timeSystem.getYear(),
+            jumpToYear: (year) => { this.jumpToYear(year); },
             // 🔴 [2026-09-14] 战场玩法：点击战场 → 选边 → 开打（规则全在 HistoricalEventManager 里）
             battlefields: {
                 checkReady: (bfId, pos, ignoreArmyId) => this.historicalEventManager.checkBattlefieldReady(bfId, pos, ignoreArmyId),

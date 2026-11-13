@@ -50,6 +50,8 @@ import {
     getClassicBattleById,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
+import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicleActive, isChronicleBattleId } from '../data/chronicle/ChronicleDirector';
+import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
 
@@ -310,6 +312,8 @@ export interface PlayerQuestDeps {
      *    GameApp 照旧传，不传也不影响。
      */
     getYear?: () => number;
+    /** 🔴 [2026-11-13 编年史] 跳到某年（据点归属、在场武将按史重算） */
+    jumpToYear?: (year: number) => void;
     /**
      * 🔴 [2026-09-14 主人定] 战场玩法的接口（只用得着这三个，不整个 import 管理器免得绕成循环依赖）。
      */
@@ -1992,6 +1996,8 @@ export class PlayerQuestSystem {
     private hasPendingFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {
         if (!generalId) return null;
         if (this.deps.hero.autoPlan === 'script') return null;
+        // 🔴 [2026-11-13 编年史] 主线推演中只认当前这一场的随行主将与这一仗
+        if (isChronicleActive()) return chronicleBattleFor(generalId);
         // 🔴 [2026-11-11 主人令「不要在一局中触发同一场战役」「一名将多场、按年份触发」]
         //    取他眼下能接的那一场：没接过（攻守任何一方接过都算接过）、游戏年份已到、最早的一场。
         return getNextClassicBattle(generalId, getCurrentStageYear());
@@ -2700,6 +2706,11 @@ export class PlayerQuestSystem {
         //      · 两场史实差一年以上 → 先记下来（`pendingClassicChain`），这一年照旧随他出征打仗（该干什么干什么），
         //        游戏年走到下一年才自动开拔。军团一路走、不瞬移。
         //    打输走 failFirstBattle（军团溃散、脱队、换下一家），到不了这里。
+        // 🔴 [2026-11-13 编年史] 编年史之战：跟谁、离开谁只看下一场的随行主将，与胜负无关
+        if (isChronicleBattleId(fbState?.battleId)) {
+            this.chronicleAfterBattle(q, host);
+            return;
+        }
         const nextFb = this.nextClassicBattleForChaining(q.generalId);
         const chainCity = this.deps.cityManager.getCity(q.cityId);
         if (nextFb && chainCity) {
@@ -2959,13 +2970,94 @@ export class PlayerQuestSystem {
             host.stopMovement(false);
             host.destroy();
         }
-        if (q.generalId) this.declinedGenerals.add(q.generalId);
+        const chronicle = isChronicleBattleId(fbState?.battleId);
+        if (q.generalId && !chronicle) this.declinedGenerals.add(q.generalId);
         this.deps.notify(`❌ 【${fbState?.battleName ?? '经典战役'}】战败：${q.generalName}的军团被打散，你脱离${q.factionName}，另投他处`);
         gameLog('expedition', `[玩家] 经典战战败：${q.generalName}【${fbState?.battleName ?? ''}】→ 军团战败，脱离 ${q.factionName}`);
         this.postDefeatHunt = true;
         this.deps.hero.holdAfterDefeat();
         this.finishQuest(false, { silent: true });
+        // 🔴 [2026-11-13 编年史] 战败不改主线：照常推进到下一场
+        if (chronicle) {
+            this.chronicleAfterBattle(q, null);
+            return;
+        }
         this.findNextGeneralNow();
+    }
+
+    // ── 编年史导演层（2026-11-13）─────────────────────────────────────────
+    /** 叙事正在念 */
+    private chronicleNarrating = false;
+    /** 上一场的任务与军团（叙事念完后续战用） */
+    private chronicleLast: { q: PlayerQuest; hostId: string } | null = null;
+
+    /** 当前这一场的随行主将与他所在据点（叙事场或找不到人返回 null） */
+    private chronicleLeadTarget(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
+        const ev = currentChronicleEvent();
+        if (!ev || ev.kind !== 'battle' || this.chronicleNarrating) return null;
+        const city = this.generalHomeCity(ev.leadGeneralId);
+        const rec = getGeneralRecordByGeneralId(ev.leadGeneralId);
+        if (!city || !rec) return null;
+        return { city, general: { generalId: ev.leadGeneralId, generalName: rec.generalName, portrait: rec.portrait ?? '' } };
+    }
+
+    /** 一场编年史之战收场（胜负都走这里）：推进主线 */
+    private chronicleAfterBattle(q: PlayerQuest, host: Army | null): void {
+        this.chronicleLast = host && !host.isDestroyed ? { q, hostId: host.id } : null;
+        if (this.quest === q) this.quest = null;
+        advanceChronicle();
+        this.chronicleProceed();
+    }
+
+    /** 处理当前场：先跳年；叙事念完再推进；战斗按随行主将续战或辞别离营 */
+    private chronicleProceed(): void {
+        const ev = currentChronicleEvent();
+        const last = this.chronicleLast;
+        const host = last ? this.deps.legionManager.getLegionById(last.hostId) : null;
+        if (!ev) {
+            // 主线演完：历法自动恢复（冻结只认 isChronicleActive），回到普通百岁玩法
+            this.chronicleLast = null;
+            if (this.deps.hero.isAttached() && !this.quest) this.deps.hero.detach();
+            this.findNextGeneralNow();
+            return;
+        }
+        const nowYear = this.deps.getYear?.();
+        if (nowYear != null && nowYear < ev.year) this.deps.jumpToYear?.(ev.year);
+        if (ev.kind === 'narrative') {
+            this.playChronicleNarrative(ev);
+            return;
+        }
+        const city = last ? this.deps.cityManager.getCity(last.q.cityId) : null;
+        this.chronicleLast = null;
+        if (last && host && !host.isDestroyed && host.getTroops() > 0 && host.generalId === ev.leadGeneralId
+            && city && ev.battle && this.deps.hero.isAttached()) {
+            this.startClassicChain(last.q, host, ev.battle, city);
+            return;
+        }
+        // 换人：辞别离营（军团照旧由 AI 管），去找下一位随行主将
+        if (this.deps.hero.isAttached()) this.deps.hero.detach();
+        if (host && !host.isDestroyed) this.deps.kickLegionAi(host.id);
+        gameLog('expedition', `[编年史] 下一场【${ev.title}】随行主将 ${ev.leadGeneralId} → 前往会合`);
+        this.findNextGeneralNow();
+    }
+
+    /** 叙事场：两段播报依次念完（语音＋现有字幕条），再推进到下一场 */
+    private playChronicleNarrative(ev: ChronicleMainlineEvent): void {
+        if (this.chronicleNarrating) return;
+        this.chronicleNarrating = true;
+        const lines = [...ev.strategic, ...ev.tactical].map((s) => s.trim()).filter(Boolean);
+        const speak = this.deps.announceBriefing;
+        gameLog('expedition', `[编年史] 叙事【${ev.title}】${lines.length} 段`);
+        const next = (i: number): void => {
+            if (i >= lines.length || !speak) {
+                this.chronicleNarrating = false;
+                advanceChronicle();
+                this.chronicleProceed();
+                return;
+            }
+            speak(lines[i], () => next(i + 1));
+        };
+        next(0);
     }
 
     /**
@@ -3785,6 +3877,8 @@ export class PlayerQuestSystem {
      */
     private autoTravelToBestCity(): void {
         const queued = this.pickOpeningQueueGeneral();
+        // 🔴 [2026-11-13 编年史] 主线推演中只去找当前这一场的随行主将；叙事中或找不到就原地等
+        if (isChronicleActive() && !queued) return;
         const city = queued?.city ?? this.pickAutoCity();
         if (!city) return;
         const g = queued?.general ?? this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
@@ -4252,6 +4346,7 @@ export class PlayerQuestSystem {
      */
     private pickOpeningQueueGeneral(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
         if (getGameMode() !== 'centenarian') return null;
+        if (isChronicleActive()) return this.chronicleLeadTarget();
         const me = this.deps.hero.getPosition();
         let best: { city: City; general: { generalId: string; generalName: string; portrait: string }; d: number } | null = null;
         for (const c of this.deps.cityManager.getCities()) {
@@ -5032,6 +5127,8 @@ export class PlayerQuestSystem {
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
         this.classicBriefing.reset();        // 经典战战略播报同理
+        this.chronicleNarrating = false;
+        this.chronicleLast = null;
         this.pendingClassicChain = null;     // 排了期的连战也一并清掉（读档／换局）
         this.emitChange();
     }

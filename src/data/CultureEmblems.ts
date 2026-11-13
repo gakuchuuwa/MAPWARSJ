@@ -36,43 +36,43 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     // ── 欧洲 ─────────────────────────────────────────────────────
     ROMA: 'romans',              // 🔴 [2026-11-13 主人令] 罗马（拉丁姆）：罗马神鹰闪电月桂冠（军团猩红旗）
     LATIN: 'italians',           // 🔴 [2026-11-13 主人令] 意大利半岛城邦：纯金圣马可飞天翼狮（亚得里亚海权深绀蓝旗）
-    SICILIANS: 'sicilians',      // 西西里：DE sicilians 斜分红白格蓝盾芯
-    FRANKS: 'franks',            // 法兰克/法兰西：DE franks 三鸢尾花
-    BRITONS: 'britons',          // 不列颠/英格兰：DE britons 三金狮
-    CELTS: 'celts',              // 凯尔特/苏格兰：DE celts 三旋涡纹
-    GERMANIC: 'teutons',         // 日耳曼/条顿：DE teutons 黑帝国鹰
-    SAXONS: 'saxons',            // 萨克森：DE saxons 白跃马
-    VIKINGS: 'vikings',          // 维京：DE vikings 渡鸦纹
-    DANES: 'danes',              // 丹麦：DE danes 红黑木盾渡鸦
-    VARANGIANS: 'varangians',    // 瓦兰吉/罗斯：DE varangians 蓝黄旋盾
-    SLAVIC: 'slavs',             // 斯拉夫/俄罗斯：DE slavs 留里克三叉戟
-    POLES: 'poles',              // 波兰：DE poles 戴冠白鹰
-    LITHUANIANS: 'lithuanians',  // 立陶宛：DE lithuanians 格迪米纳斯金柱
-    BOHEMIANS: 'bohemians',      // 波西米亚：DE bohemians 戴冠双尾银狮
-    BURGUNDIANS: 'burgundians',  // 勃艮第：DE burgundians 勃艮第锯齿斜十字
-    BULGARIANS: 'bulgarians',    // 保加利亚：DE bulgarians 三头黑狮
-    MAGYAR: 'magyars',           // 马扎尔/匈牙利：DE magyars 阿尔帕德红白条盾
+    SICILIANS: 'sicilians',      // 🔴 [2026-11-13 主人令] 西西里：纯金三曲腿麦穗神轮Trinacria（埃特纳火山玄铁黑旗）
+    FRANKS: 'franks',            // 🔴 [2026-11-13 主人令] 法兰克：三金鸢尾花（卡佩皇家深绀蓝旗）
+    BRITONS: 'britons',          // 🔴 [2026-11-13 主人令] 不列颠：三金狮巡行金跃（金雀花猩红旗）
+    CELTS: 'celts',              // 🔴 [2026-11-13 主人令] 凯尔特：金竖琴与三曲结（翡翠岛祖母绿旗）
+    GERMANIC: 'teutons',         // 🔴 [2026-11-13 主人令] 条顿/日耳曼：大教长黑金花头十字（条顿素白旗）
+    SAXONS: 'saxons',            // 🔴 [2026-11-13 主人令] 萨克森：象牙素白跃马金蹄（深绯红旗）
+    VIKINGS: 'vikings',          // 🔴 [2026-11-13 主人令] 维京：展翅奥丁神鸦与卢恩战轮（奥丁深血红旗）
+    DANES: 'danes',              // 🔴 [2026-11-13 主人令] 丹麦：三戴冠金狮与水百合红心（北海深绀蓝旗）
+    VARANGIANS: 'varangians',    // 🔴 [2026-11-13 主人令] 瓦良格：纯金龙首战船与交错金战斧（极北寒洋深深海青旗）
+    SLAVIC: 'slavs',             // 🔴 [2026-11-13 主人令] 斯拉夫：弗拉基米尔留里克神圣金三叉戟（基辅罗斯深绛红旗）
+    POLES: 'poles',              // 🔴 [2026-11-13 主人令] 波兰：皮雅斯特戴冠白鹰与纯金利爪（正统深绯红旗）
+    LITHUANIANS: 'lithuanians',  // 🔴 [2026-11-13 主人令] 立陶宛：格迪米纳斯神柱金塔（大公深赤绯红旗）
+    BOHEMIANS: 'bohemians',      // 🔴 [2026-11-13 主人令] 波希米亚：双尾白银立狮戴金冠（查理四世玄铁黑旗）
+    BURGUNDIANS: 'burgundians',  // 🔴 [2026-11-13 主人令] 勃艮第：纯金锯齿圣安德鲁十字与金羊毛火石（瓦卢瓦玄铁黑旗）
+    BULGARIANS: 'bulgarians',    // 🔴 [2026-11-13 主人令] 保加利亚：西蒙大帝戴冠金立狮（特尔诺沃深山墨绿旗）
+    MAGYAR: 'magyars',           // 🔴 [2026-11-13 主人令] 马扎尔：圣史蒂芬宗主教双横金十字架与金冠绿山（潘诺尼亚祖母绿旗）
     HUNS: 'huns',                // 🔴 [2026-11-13 主人令] 匈人/蒂萨河草原：纯金阿提拉战雕图鲁尔（阿提拉深绯红旗）
     CUMAN: 'cumans',             // 🔴 [2026-11-13 主人令] 库曼/钦察草原：天穹反曲神弓（麦秆金黄旗）
-    GOTHS: 'goths',              // 哥特：DE goths 红白鹰饰
-    SPANISH: 'spanish',          // 西班牙：DE spanish 卡斯蒂利亚莱昂四分盾
-    PORTUGUESE: 'portuguese',    // 葡萄牙：DE portuguese 五蓝盾（Quinas）
+    GOTHS: 'goths',              // 🔴 [2026-11-13 主人令] 哥特：狄奥多里克纯金宝石飞鹰带扣神饰（拉文纳深海青蓝旗）
+    SPANISH: 'spanish',          // 🔴 [2026-11-13 主人令] 西班牙：鲜血猩红勃艮第锯齿红十字（大方阵素白旗）
+    PORTUGUESE: 'portuguese',    // 🔴 [2026-11-13 主人令] 葡萄牙：大航海五蓝盾与浑天仪（深海青蓝旗）
     // ── 希腊城邦（各自一级文化，非三级 GREECE）──────────────────────
     ATHENIANS: 'athenians',      // 🔴 [2026-11-13 主人令] 雅典（阿提卡）：雅典娜猫头鹰与橄榄枝（萨拉米斯海权深绀蓝旗）
     SPARTANS: 'spartans',        // 🔴 [2026-11-13 主人令] 斯巴达（拉科尼亚）：纯金青铜圆盾大写Λ（战袍猩红旗）
     MACEDONIAN: 'macedonians',   // 🔴 [2026-11-13 主人令] 马其顿：纯金十六芒维吉纳太阳（皇家帝王深紫红旗）
     THRACIAN: 'thracians',       // 🔴 [2026-11-13 主人令] 色雷斯：佩尔塔新月神盾与西卡战刀（铁血深赭红旗）
     // ── 北非 / 撒哈拉以南 ─────────────────────────────────────────
-    BERBER: 'berber',            // 柏柏尔：DE berber 柏柏尔 Yaz 纹
-    ETHIOPIANS: 'ethiopians',    // 埃塞俄比亚：DE ethiopians 埃塞俄比亚金十字
-    AFRICA: 'malians',           // 西非（马里）：DE malians 西非几何木盾
+    BERBER: 'berber',            // 🔴 [2026-11-13 主人令] 柏柏尔：纯矢量自由人Yaz神符与八角吉星（马格里布地中海青蓝旗）
+    ETHIOPIANS: 'ethiopians',    // 🔴 [2026-11-13 主人令] 埃塞俄比亚：纯矢量犹大之狮戴冠持圣杖（所罗门王朝皇家深绛红旗）
+    AFRICA: 'malians',           // 🔴 [2026-11-13 主人令] 马里：纯矢量萨赫勒几何神盾与交错战矛（黄金帝国玄铁黑旗）
     // ── 美洲 ─────────────────────────────────────────────────────
-    AMERICA: 'aztecs',           // 中美（阿兹特克）：DE aztecs 金新月羽穗
-    MAYANS: 'mayans',            // 玛雅：DE mayans 玛雅兽首铭文
-    INCA: 'inca',                // 印加：DE inca 安第斯织锦
-    MUISCA: 'muisca',            // 穆伊斯卡：DE muisca 黄金头饰人像
-    MAPUCHE: 'mapuche',          // 马普切：DE mapuche 金阶梯十字与八角白星
-    TUPI: 'tupi',                // 图皮：DE tupi 图皮几何彩纹
+    AMERICA: 'aztecs',           // 🔴 [2026-11-13 主人令] 阿兹特克：纯金仙人掌神鹰衔蛇（特诺奇提特兰战神玄铁黑旗）
+    MAYANS: 'mayans',            // 🔴 [2026-11-13 主人令] 玛雅：羽蛇神库库尔坎与太阳纪年日轮（玛雅天青靛蓝旗）
+    INCA: 'inca',                // 🔴 [2026-11-13 主人令] 印加：因蒂太阳神神圣放射金面具（库斯科王家帝王紫红旗）
+    MUISCA: 'muisca',            // 🔴 [2026-11-13 主人令] 穆伊斯卡：黄金国祭司高冠金人神像（瓜塔维塔圣湖碧绿旗）
+    MAPUCHE: 'mapuche',          // 🔴 [2026-11-13 主人令] 马普切：八角战神星Guñelve与金神鼓（阿劳卡尼亚深海青蓝旗）
+    TUPI: 'tupi',                // 🔴 [2026-11-13 主人令] 图皮：图皮战士金羽战冠与战弓（亚马逊素白帆旗）
     // ── 其余三级/区域文化（自绘同风格符号）─────────────────────────
     TIBET: 'tibet',              // 🔴 [2026-11-13 主人令] 青藏：八辐金宝轮（金日轮，藏绛红旗）
     WESTERN: 'western',          // 🔴 [2026-11-13 主人令] 西域：丝路双峰金驼（绿洲翡翠碧绿旗）

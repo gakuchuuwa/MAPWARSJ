@@ -14208,7 +14208,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ldiya: { generalId: 'ldiya_keluoyisi', cityId: 'city_sifaerde', generalName: '克罗伊索斯', portrait: '/assets/GREECE/ldiya_keluoyisi.png', eliteName: '吕底亚骑兵', eliteTier: 3 },
+    ldiya: [
+        { generalId: 'ldiya_keluoyisi', cityId: 'city_sifaerde', generalName: '克罗伊索斯', portrait: '/assets/GREECE/ldiya_keluoyisi.png', eliteName: '吕底亚骑兵', eliteTier: 3 },
+        // 🔴 [2026-11-13 补开篇武将] 吕底亚人，受居鲁士托管撒狄府库；前546 离撒狄赴海岸募兵反叛、回师围撒狄，马扎雷斯至即溃逃库麦（希罗多德 I.153–161）
+        { generalId: 'ldiya_pactyes', cityId: 'city_sifaerde', generalName: '帕克提亚斯', portrait: '', eliteName: '吕底亚骑兵', eliteTier: 3 },
+    ],
 
 
 
@@ -15036,8 +15040,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     aqimeinide: [
         // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 1—3 棒
+        { generalId: 'aqimeinide_mazares', factionId: 'aqimeinide', cityId: 'city_sifaerde', generalName: '马扎雷斯', portrait: '', eliteName: '波斯骑兵', eliteTier: 3 },   // 米底人，居鲁士部将；前546 自撒狄出兵平帕克提亚斯之乱，攻破普里埃内，旋病卒（希罗多德 I.156–161）
         { generalId: 'aqimeinide_gobryas', factionId: 'aqimeinide', cityId: 'city_bageda', generalName: '戈布里亚斯', portrait: '', eliteName: '波斯骑兵', eliteTier: 3 },   // 古提乌姆总督乌格巴鲁，前539 俄庇斯战后率军入巴比伦，同年卒（那波尼德编年史 III.15–22）
         { generalId: 'aqimeinide_megabazus', factionId: 'aqimeinide', cityId: 'city_teluoyi', generalName: '梅加巴佐斯', portrait: '', eliteName: '赫勒斯滂铁骑', eliteTier: 3 },   // 大流士自塞斯托斯渡赫勒斯滂东归后留其统军，前512 征服佩林索斯、色雷斯与佩奥尼亚（希罗多德 IV.143–144、V.1–15）
+        { generalId: 'aqimeinide_artaphernes_younger', factionId: 'aqimeinide', cityId: 'city_adana', generalName: '小阿尔塔弗涅斯', portrait: '', eliteName: '波斯骑兵', eliteTier: 3 },   // 撒狄总督阿尔塔弗涅斯之子，前490 与达提斯共统远征军，自奇里乞亚阿勒伊昂平原集结出征，马拉松战败（希罗多德 VI.94–95、VI.119）
         { generalId: 'aqimeinide_megabates', factionId: 'aqimeinide', cityId: 'city_miletus', generalName: '梅加巴特斯', portrait: '', eliteName: '腓尼基舟师', eliteTier: 3 },   // 前499 统波斯舰队自米利都出征纳克索斯，围城四月无功（希罗多德 V.32–34）
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'zhalange_barsaentes', factionId: 'aqimeinide', cityId: 'city_zhalange', generalName: '巴尔塞恩特斯', portrait: '/assets/PERSIAN/zhalange_baersaientesi.png', eliteName: '锡斯坦步兵', eliteTier: 4 },

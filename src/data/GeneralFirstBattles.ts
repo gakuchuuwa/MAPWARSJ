@@ -23,6 +23,7 @@
 import { getGeneralProfile } from './general-skills/profiles';
 import { GENERAL_EXTRA_CLASSIC_BATTLES } from './GeneralExtraClassicBattles';
 import { getCurrentStageYear } from './generalOnStage';
+import { getChronicleBattleById } from './chronicle/ChronicleDirector';
 
 export interface FirstBattleDialogueLine {
     speaker: 'general' | 'player';
@@ -12195,6 +12196,8 @@ export function getGeneralClassicBattles(generalId: string | null | undefined): 
 /** 按编号取一场（战斗层用：认出正在打的是哪一场） */
 export function getClassicBattleById(battleId: string | null | undefined): GeneralFirstBattle | null {
     if (!battleId) return null;
+    const chron = getChronicleBattleById(battleId);   // 🔴 [2026-11-13] 编年史之战（battleId＝chron:<事件ID>）
+    if (chron) return chron;
     const first = GENERAL_FIRST_BATTLES[battleId];
     if (first) return first;
     const at = battleId.indexOf('@');

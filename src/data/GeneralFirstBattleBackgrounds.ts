@@ -34,6 +34,7 @@
 
 import type { GeneralFirstBattle } from './GeneralFirstBattles';
 import { CLASSIC_BATTLE_BRIEFINGS } from './ClassicBattleBriefings.generated';
+import { getChronicleBriefing } from './chronicle/ChronicleDirector';
 
 /** 知名战三分类（主人 2026-11-09 定）：野战 / 攻城 / 防守 */
 export type FirstBattleKind = 'field' | 'siege_attack' | 'siege_defend';
@@ -1689,6 +1690,9 @@ export const FIRST_BATTLE_BACKGROUNDS: Readonly<Record<string, string>> = {
  * 🔴 [2026-11-11] 云盘回填表导入的战术播报优先（多段之间空一行，战术模式按段一屏一屏念），没有再用本表。
  */
 export function getFirstBattleBackground(generalId: string): string {
+    // 🔴 [2026-11-13] 编年史之战：文案只认编年史 json（唯一真源）
+    const chron = getChronicleBriefing(generalId)?.tactical.map((p) => p.trim()).filter(Boolean);
+    if (chron?.length) return chron.join('\n\n');
     const imported = CLASSIC_BATTLE_BRIEFINGS[generalId]?.tactical?.map((p) => p.trim()).filter(Boolean);
     if (imported?.length) return imported.join('\n\n');
     return FIRST_BATTLE_BACKGROUNDS[generalId] ?? '';

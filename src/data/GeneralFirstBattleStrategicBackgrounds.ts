@@ -21,6 +21,7 @@
 
 import type { GeneralFirstBattle } from './GeneralFirstBattles';
 import { CLASSIC_BATTLE_BRIEFINGS } from './ClassicBattleBriefings.generated';
+import { getChronicleBriefing } from './chronicle/ChronicleDirector';
 
 export const FIRST_BATTLE_STRATEGIC_BACKGROUNDS: Readonly<Record<string, string>> = {
     // 前632 城濮
@@ -221,6 +222,9 @@ export function getFirstBattleStrategicParagraphs(
     names: { myFactionName: string; generalName: string; enemyFactionName: string },
 ): string[] {
     const id = fb.battleId ?? fb.generalId;   // 🔴 一名将多场：按这一场的编号取（第一场＝generalId）
+    // 🔴 [2026-11-13] 编年史之战：文案只认编年史 json（唯一真源）
+    const chron = getChronicleBriefing(id)?.strategic.filter((p) => p.trim());
+    if (chron?.length) return chron;
     const imported = CLASSIC_BATTLE_BRIEFINGS[id]?.strategic?.filter((p) => p.trim());
     if (imported?.length) return imported;
     const hand = FIRST_BATTLE_STRATEGIC_BACKGROUNDS[id];

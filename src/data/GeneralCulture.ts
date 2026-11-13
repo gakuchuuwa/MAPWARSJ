@@ -55,12 +55,15 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
     'aqimeinide_harpagus': 'PERSIAN',   // 阿契美尼德｜哈尔帕古斯｜据点 苏萨
     // 🔴 [2026-11-13 主人授权补开篇武将] 武将文化＝据点 buildingStyle
+    'aqimeinide_mazares': 'GREECE',   // 阿契美尼德｜马扎雷斯｜据点 斯法尔德
+    'ldiya_pactyes': 'GREECE',   // 吕底亚｜帕克提亚斯｜据点 斯法尔德
     'midi_astyages': 'PERSIAN',   // 米底｜阿斯提阿格斯｜据点 哈马丹
     'midi_gaumata': 'PERSIAN',   // 米底｜高墨达｜据点 哈马丹
     'midi_phraortes': 'PERSIAN',   // 米底｜弗拉奥尔特斯｜据点 哈马丹
     'aqimeinide_gobryas': 'ORIE',   // 阿契美尼德｜戈布里亚斯｜据点 巴格达
     'aqimeinide_megabazus': 'GREECE',   // 阿契美尼德｜梅加巴佐斯｜据点 特洛伊
     'aqimeinide_megabates': 'GREECE',   // 阿契美尼德｜梅加巴特斯｜据点 米利都
+    'aqimeinide_artaphernes_younger': 'TURKS',   // 阿契美尼德｜小阿尔塔弗涅斯｜据点 阿达纳
     'sijitai_idanthyrsus': 'GREECE',   // 斯基泰｜伊达尔苏斯｜据点 塔纳伊斯
     'aiaoniya_charopinus': 'GREECE',   // 爱奥尼亚｜卡罗皮努斯｜据点 米利都
     'aiaoniya_dionysius': 'GREECE',   // 爱奥尼亚｜狄奥尼修斯｜据点 克拉佐美奈

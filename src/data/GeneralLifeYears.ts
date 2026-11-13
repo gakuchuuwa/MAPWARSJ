@@ -769,12 +769,15 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_cambyses: { birth: -560, death: -522, kaoju: '推定' },  // 冈比西斯二世（前530–522 在位）
     // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 编年史主角补录（生卒多无确载，标推定）
     // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 1—3 棒（卒年有史载者照录，生年史失推定）
+    aqimeinide_mazares: { birth: -590, death: -545, kaoju: '推定' },  // 马扎雷斯（前546 平帕克提亚斯，旋病卒）
+    ldiya_pactyes: { birth: -580, death: -540, kaoju: '推定' },  // 帕克提亚斯（前546 叛乱，后被希俄斯人交出）
     midi_astyages: { birth: -620, death: -545, kaoju: '推定' },  // 阿斯提阿格斯（前585—前550 在位；前550 兵败被擒，卒年不详）
     midi_gaumata: { birth: -560, death: -522, kaoju: '推定' },  // 高墨达（前522 被诛，贝希斯敦铭文）
     midi_phraortes: { birth: -560, death: -521, kaoju: '推定' },  // 弗拉奥尔特斯（前521 受刑，贝希斯敦铭文）
     aqimeinide_gobryas: { birth: -590, death: -539, kaoju: '推定' },  // 戈布里亚斯（前539 卒，那波尼德编年史）
     aqimeinide_megabazus: { birth: -560, death: -490, kaoju: '推定' },  // 梅加巴佐斯（前512 征色雷斯）
     aqimeinide_megabates: { birth: -550, death: -490, kaoju: '推定' },  // 梅加巴特斯（前499 纳克索斯之役）
+    aqimeinide_artaphernes_younger: { birth: -530, death: -470, kaoju: '推定' },  // 小阿尔塔弗涅斯（前490 马拉松；前480 随薛西斯统吕底亚军）
     sijitai_idanthyrsus: { birth: -560, death: -500, kaoju: '推定' },  // 伊达尔苏斯（前513 拒大流士）
     aiaoniya_charopinus: { birth: -540, death: -490, kaoju: '推定' },  // 卡罗皮努斯（前498 奇袭撒狄）
     aiaoniya_dionysius: { birth: -530, death: -470, kaoju: '推定' },  // 狄奥尼修斯（前494 拉德海战，后赴西西里）

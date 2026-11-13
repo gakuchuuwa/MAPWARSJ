@@ -100,6 +100,29 @@ export interface ChronicleSegment {
     events: readonly ChronicleEvent[];
 }
 
+/**
+ * 🔴 [2026-11-13] 编年史主线事件（新版）：由 `tools/chronicle/import-mainline.mts`
+ * 从「编年史 json（唯一真源）＋ 导演编排表 `ChronicleDirectorScript.ts`」合成，禁手改。
+ */
+export interface ChronicleMainlineEvent {
+    /** 编年史 json 事件 ID（evt_0001） */
+    id: string;
+    baton: number;
+    year: number;
+    /** 春0 夏1 秋2 冬3 */
+    season: 0 | 1 | 2 | 3;
+    title: string;
+    kind: 'battle' | 'narrative';
+    place: { name: string; lat: number; lng: number };
+    /** 随行主将 */
+    leadGeneralId: string;
+    /** kind=battle 时的战斗参数（经典战管线格式，battleId＝`chron:<事件ID>`） */
+    battle?: import('../GeneralFirstBattles').GeneralFirstBattle;
+    strategic: string[];
+    tactical: string[];
+    source: string;
+}
+
 /** 缺库主角判定 */
 export function isMissingLead(generalId: string): boolean {
     return !generalId || generalId.startsWith('MISSING:');

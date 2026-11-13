@@ -43,10 +43,17 @@ export class TimeSystem {
      */
     private static readonly MAX_SEASON_CATCHUP_PER_UPDATE = 4;
 
+    /** 🔴 [2026-11-13 编年史] 冻结历法：游戏照常走，季节与年份只由编年史跳年改变 */
+    private calendarFrozen: () => boolean = () => false;
+    public setCalendarFreezeProvider(fn: () => boolean): void {
+        this.calendarFrozen = fn;
+    }
+
     public update(gameDelta: number): void {
         if (this.isPaused || gameDelta <= 0) return;
 
         this.elapsedGameSeconds += gameDelta;
+        if (this.calendarFrozen()) return;
         this.accumulatedTime += gameDelta;
 
         const seasonDuration = GameTime.SEASON_DURATION;
