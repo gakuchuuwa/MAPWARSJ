@@ -1401,6 +1401,8 @@ export class PlayerHero {
 
     /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number, opponent?: any): void {
+        // 编年史之战按史推进：随行军团打输也算胜利
+        if (result === 'defeat' && this.getHostLegion()?.chronicleKeep) result = 'victory';
         // 这一仗主角有没有亲身上战术战场（进 13 时由 buildScene13Setup 记下），结算后作废
         const fought = this.battleArmed;
         this.battleArmed = false;
@@ -2083,7 +2085,7 @@ export class PlayerHero {
         const r = this.army.getRenderer();
         if (this.hostLegionId) {
             const host = this.getHostLegion();
-            if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat())) {
+            if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat() && !host.chronicleKeep)) {
                 const lastId = this.hostLegionId;
                 // 🔴 [2026-09-11 修「玩家依然是军团一战败就移动，不等」] 停顿必须**也**落在这条路上。
                 //    原来只有 onHostBattleEnd('defeat') 里落停顿，而那个回调的触发条件是

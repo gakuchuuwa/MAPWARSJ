@@ -11276,6 +11276,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/GREECE/lycia_shouling.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {

@@ -2246,6 +2246,7 @@ export class PlayerQuestSystem {
         (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
         (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
         (host as Army & { classicBattleId?: string }).classicBattleId = battleIdOf(fb);
+        host.chronicleKeep = isChronicleBattleId(battleIdOf(fb));
         delete (host as Army & { __routeRest?: unknown }).__routeRest;   // 换了一场：上一场没走完的途经地作废
         (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId =
             fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined);
@@ -2673,6 +2674,7 @@ export class PlayerQuestSystem {
             delete (host as { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
+            host.chronicleKeep = false;
             if (kickAi) {
                 this.deps.kickLegionAi(host.id);
             }
@@ -2800,8 +2802,9 @@ export class PlayerQuestSystem {
             }
             this.quest = null;
             this.deps.hero.detach();
+            host.isRetreatingHome = true;
             this.deps.kickLegionAi(host.id);
-            gameLog('expedition', `[玩家] 经典战大捷：${q.generalName} 已无下一场经典战 → 辞别离营，寻下一位武将`);
+            gameLog('expedition', `[玩家] 经典战大捷：${q.generalName} 已无下一场经典战 → 辞别离营，军团回城解散，寻下一位武将`);
             this.emitChange();
             this.findNextGeneralNow();
             return;
@@ -3009,6 +3012,11 @@ export class PlayerQuestSystem {
      */
     private failFirstBattle(q: PlayerQuest, host: Army | null): void {
         const fbState = q.firstBattle;
+        // 编年史之战按史推进：随行军团不解散，算胜利收场（据点由 chronicleAfterBattle 按史载归属）
+        if (host && !host.isDestroyed && isChronicleBattleId(fbState?.battleId)) {
+            this.completeFirstBattleAndContinueCampaign(q, host);
+            return;
+        }
         this.cleanupFirstBattleState(q, false);
         // 军队战败：还活着的那支（打平 300 秒未克、攻城被击退）也一并溃散，不许它继续打下一座
         if (host && !host.isDestroyed) {
@@ -3091,6 +3099,10 @@ export class PlayerQuestSystem {
             // 主线演完：历法自动恢复（冻结只认 isChronicleActive），回到普通百岁玩法
             this.chronicleLast = null;
             if (this.deps.hero.isAttached() && !this.quest) this.deps.hero.detach();
+            if (host && !host.isDestroyed) {
+                host.isRetreatingHome = true;
+                this.deps.kickLegionAi(host.id);
+            }
             this.findNextGeneralNow();
             return;
         }
@@ -3107,9 +3119,12 @@ export class PlayerQuestSystem {
             this.startClassicChain(last.q, host, ev.battle, city);
             return;
         }
-        // 换人：辞别离营（军团照旧由 AI 管），去找下一位随行主将
+        // 换人：辞别离营，旧军团回出发据点解散，去找下一位随行主将
         if (this.deps.hero.isAttached()) this.deps.hero.detach();
-        if (host && !host.isDestroyed) this.deps.kickLegionAi(host.id);
+        if (host && !host.isDestroyed) {
+            host.isRetreatingHome = true;
+            this.deps.kickLegionAi(host.id);
+        }
         gameLog('expedition', `[编年史] 下一场【${ev.title}】随行主将 ${ev.leadGeneralId} → 前往会合`);
         this.findNextGeneralNow();
     }

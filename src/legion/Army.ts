@@ -636,6 +636,8 @@ export class Army implements IBattleUnit {
     public wasDisbanded: boolean = false;
     /** 撤退意图锁：兵力 < DISBAND_TROOP_THRESHOLD 后锁定，途中补兵不掉头，抵家解散或老家沦陷才解除 */
     public isRetreatingHome: boolean = false;
+    /** 编年史之战玩家随行军团：输赢都按史收场，战败不覆灭（destroy 只脱离战斗），由 PlayerQuestSystem 收场后清除 */
+    public chronicleKeep: boolean = false;
     /**
      * 残兵判定闸：只有**刚打完一仗**才置 true，行为树 IsWeakLegion 判过即消耗掉。
      *
@@ -1499,6 +1501,11 @@ export class Army implements IBattleUnit {
     }
 
     public destroy(): void {
+        if (this.chronicleKeep) {
+            this.feedAnnihilation = undefined;
+            this.setCombatState(false);
+            return;
+        }
         this.isDestroyed = true;
         // 清掉运行时战略技 override 与「已脉冲」记录：否则 Map/Set 只增不减，
         // 且军团 id 若被复用，新军团会继承前任随机到的技。
