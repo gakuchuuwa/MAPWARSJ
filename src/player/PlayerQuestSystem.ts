@@ -50,7 +50,7 @@ import {
     getClassicBattleById,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
-import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicleActive, isChronicleBattleId } from '../data/chronicle/ChronicleDirector';
+import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicleActive, isChronicleBattleId, setChronicleCityOwner } from '../data/chronicle/ChronicleDirector';
 import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
@@ -2019,6 +2019,8 @@ export class PlayerQuestSystem {
         if (!generalId) return null;
         const fb = this.hasPendingFirstBattle(generalId);
         if (!fb) return null;
+        // 🔴 [2026-11-13 历史模拟器] 编年史之战一律从主将出发据点起兵、按史载路线行军，不去前线就地会合
+        if (isChronicleBattleId(battleIdOf(fb))) return null;
         const role = fb.role ?? 'attacker';
         const home = this.generalHomeCity(generalId);
         if (!home) return null;
@@ -2172,6 +2174,11 @@ export class PlayerQuestSystem {
         // 🔴 [2026-11-11 主人令「连战遇到守城也改成开过去」] 连战不走开局摆位那三处瞬移，军团自己走过去。
         const chained = !!opts?.chained;
         if (!isGeneralOnStage(g.generalId)) return;
+        // 🔴 [2026-11-13 历史模拟器] 被攻打的城开战前归史实守方（不按游戏当下的归属）
+        if (fb.chronicleCity) {
+            setChronicleCityOwner(fb.chronicleCity.cityId, fb.chronicleCity.before);
+            this.deps.cityManager.updateCity(fb.chronicleCity.cityId, { factionId: fb.chronicleCity.before }, { skipCaptureLog: true });
+        }
         markFirstBattleCompleted(g.generalId);
         markClassicBattleCompleted(fb);   // 🔴 接下即记：这一局里这场（含攻守另一方）不再触发
         this.headingToEventGeneralId = null;
@@ -2225,6 +2232,7 @@ export class PlayerQuestSystem {
         (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
         (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
         (host as Army & { classicBattleId?: string }).classicBattleId = battleIdOf(fb);
+        delete (host as Army & { __routeRest?: unknown }).__routeRest;   // 换了一场：上一场没走完的途经地作废
         (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId =
             fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined);
         host.scriptMarchExempt = true;
@@ -2406,6 +2414,25 @@ export class PlayerQuestSystem {
             this.onHostReachFirstBattle();
             return;
         }
+        // 🔴 [2026-11-13 历史模拟器] 有史载途经地 → 一站一站走（到站再出发下一站，中途被打断从当前站续走，不回头）
+        const routed = host as Army & { __routeRest?: { name: string; lat: number; lng: number }[] };
+        if (!routed.__routeRest) {
+            const via = getClassicBattleById((host as Army & { classicBattleId?: string }).classicBattleId)?.routeVia;
+            if (via?.length) routed.__routeRest = via.map((p) => ({ ...p }));
+        }
+        if (routed.__routeRest) {
+            while (routed.__routeRest.length && getEuclideanDistance(host.getPosition(), routed.__routeRest[0]) <= 0.15) {
+                routed.__routeRest.shift();
+            }
+            const stop = routed.__routeRest[0];
+            if (stop) {
+                gameLog('expedition', `[编年史] ${host.name} 行军途经【${stop.name}】`);
+                this.marchHostLeg(host, stop, () => this.marchHostToFirstBattle(host, targetPos));
+                return;
+            }
+            this.marchHostLeg(host, targetPos, () => this.onHostReachFirstBattle());
+            return;
+        }
         if (roadRegistry.isInitialized()) {
             let path = findPathFromPoint(from, targetPos);
             if (!path || path.length < 2) {
@@ -2428,6 +2455,29 @@ export class PlayerQuestSystem {
         host.setTargetCity(null);
         host.setOnArriveCallback(() => this.onHostReachFirstBattle());
         host.moveAlongPath([{ lat: targetPos.lat, lng: targetPos.lng }]);
+    }
+
+    /** 一段行军：沿路网走到 to（路网不通则直行），到站回调 */
+    private marchHostLeg(host: Army, to: { lat: number; lng: number }, onArrive: () => void): void {
+        const from = host.getPosition();
+        host.setTargetCity(null);
+        host.setOnArriveCallback(onArrive);
+        if (roadRegistry.isInitialized()) {
+            let path = findPathFromPoint(from, to);
+            if (!path || path.length < 2) {
+                const anchor = roadRegistry.getNearestCityPos(to.lat, to.lng, 5);
+                if (anchor) {
+                    const via = findPathFromPoint(from, anchor);
+                    if (via && via.length >= 2) path = [...via, to];
+                }
+            }
+            if (path && path.length >= 2) {
+                const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
+                host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
+                return;
+            }
+        }
+        host.moveAlongPath([{ lat: to.lat, lng: to.lng }]);
     }
 
     private onHostReachFirstBattle(): void {
@@ -2657,7 +2707,8 @@ export class PlayerQuestSystem {
             }
         }
         const fbTargetCity = fbState?.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
-        if (fbState?.battleType === 'siege' && fbTargetCity) {
+        // 🔴 [2026-11-13 历史模拟器] 编年史之战不按游戏胜负占城（战后归属由 chronicleAfterBattle 按史载结果设定）
+        if (fbState?.battleType === 'siege' && fbTargetCity && !isChronicleBattleId(fbState.battleId)) {
             this.deps.cityManager.updateCity(
                 fbTargetCity.id,
                 { factionId: q.factionId, troops: Math.max(fbTargetCity.troops || 0, 3000) },
@@ -2708,7 +2759,7 @@ export class PlayerQuestSystem {
         //    打输走 failFirstBattle（军团溃散、脱队、换下一家），到不了这里。
         // 🔴 [2026-11-13 编年史] 编年史之战：跟谁、离开谁只看下一场的随行主将，与胜负无关
         if (isChronicleBattleId(fbState?.battleId)) {
-            this.chronicleAfterBattle(q, host);
+            this.chronicleAfterBattle(q, host, fbState?.battleId);
             return;
         }
         const nextFb = this.nextClassicBattleForChaining(q.generalId);
@@ -2979,7 +3030,7 @@ export class PlayerQuestSystem {
         this.finishQuest(false, { silent: true });
         // 🔴 [2026-11-13 编年史] 战败不改主线：照常推进到下一场
         if (chronicle) {
-            this.chronicleAfterBattle(q, null);
+            this.chronicleAfterBattle(q, null, fbState?.battleId);
             return;
         }
         this.findNextGeneralNow();
@@ -3001,8 +3052,13 @@ export class PlayerQuestSystem {
         return { city, general: { generalId: ev.leadGeneralId, generalName: rec.generalName, portrait: rec.portrait ?? '' } };
     }
 
-    /** 一场编年史之战收场（胜负都走这里）：推进主线 */
-    private chronicleAfterBattle(q: PlayerQuest, host: Army | null): void {
+    /** 一场编年史之战收场（胜负都走这里）：被攻打的城按史载结果归属，再推进主线 */
+    private chronicleAfterBattle(q: PlayerQuest, host: Army | null, battleId: string | undefined): void {
+        const city = getClassicBattleById(battleId)?.chronicleCity;
+        if (city) {
+            setChronicleCityOwner(city.cityId, city.after);
+            this.deps.cityManager.updateCity(city.cityId, { factionId: city.after }, { skipCaptureLog: true });
+        }
         this.chronicleLast = host && !host.isDestroyed ? { q, hostId: host.id } : null;
         if (this.quest === q) this.quest = null;
         advanceChronicle();

@@ -118,6 +118,8 @@ export interface ChronicleMainlineEvent {
     leadGeneralId: string;
     /** kind=battle 时的战斗参数（经典战管线格式，battleId＝`chron:<事件ID>`） */
     battle?: import('../GeneralFirstBattles').GeneralFirstBattle;
+    /** 史载胜方（按史，不按游戏胜负） */
+    winner?: 'attacker' | 'defender' | 'draw';
     strategic: string[];
     tactical: string[];
     source: string;

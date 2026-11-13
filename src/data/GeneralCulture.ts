@@ -53,7 +53,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aqimeinide_aertabazanuosi': 'PERSIAN',   // 阿契美尼德｜阿里奥巴赞斯｜据点 波斯波利斯
     'aqimeinide_aerxitesi': 'PERSIAN',   // 阿契美尼德｜阿尔西特斯｜据点 达斯基利翁
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
-    'aqimeinide_harpagus': 'PERSIAN',   // 阿契美尼德｜哈尔帕古斯｜据点 苏萨
+    'aqimeinide_harpagus': 'GREECE',   // 阿契美尼德｜哈尔帕古斯｜据点 斯法尔德（撒狄）
     // 🔴 [2026-11-13 主人授权补开篇武将] 武将文化＝据点 buildingStyle
     'aqimeinide_mazares': 'GREECE',   // 阿契美尼德｜马扎雷斯｜据点 斯法尔德
     'ldiya_pactyes': 'GREECE',   // 吕底亚｜帕克提亚斯｜据点 斯法尔德
@@ -626,7 +626,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_arariboia': 'TUPI',   // 图皮｜阿拉里博亚｜据点 瓜纳巴拉
     'gen_aristides': 'ATHENIANS',   // 雅典｜阿里斯提德｜据点 雅典
     'gen_aristobulus_ii': 'ORIE',   // 以色列｜阿里斯托布鲁斯二世｜据点 耶路撒冷
-    'gen_artaphernes': 'PERSIAN',   // 阿契美尼德｜阿尔塔弗涅斯｜据点 达斯基利翁
+    'gen_artaphernes': 'GREECE',   // 阿契美尼德｜阿尔塔弗涅斯｜据点 斯法尔德（撒狄）
     'gen_artemisia': 'GREECE',   // 卡里亚｜阿尔特米西亚｜据点 哈利卡纳苏斯
     'gen_aspurgus': 'GREECE',   // 博斯普鲁斯｜阿斯普尔｜据点 潘提卡彭
     'gen_astrakhan_khan': 'CENTRAL_ASIA',   // 金帐｜阿斯特拉｜据点 萨莱
@@ -686,7 +686,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_dagnajan': 'ETHIOPIANS',   // 埃塞俄比亚｜达格纳詹｜据点 德布雷利巴诺斯
     'gen_dandolo': 'LATIN',   // 威尼斯共和国｜丹多洛｜据点 威尼斯
     'gen_daniel_galitsky': 'SLAVIC',   // 加利西亚｜丹尼尔｜据点 加利奇
-    'gen_datis': 'PERSIAN',   // 阿契美尼德｜达提斯｜据点 达斯基利翁
+    'gen_datis': 'TURKS',   // 阿契美尼德｜达提斯｜据点 阿达纳
     'gen_daumantas': 'SLAVIC',   // 普斯科夫｜道曼塔斯｜据点 普斯科夫
     'gen_dinhle': 'VIETNAMESE',   // 大瞿越｜丁礼｜据点 义安
     'gen_dmitry_donskoy': 'SLAVIC',   // 莫斯科｜顿斯科伊｜据点 莫斯科

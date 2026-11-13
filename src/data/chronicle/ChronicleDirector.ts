@@ -7,9 +7,32 @@ import type { GeneralFirstBattle } from '../GeneralFirstBattles';
 import { getGameMode } from '../generalOnStage';
 import { CHRONICLE_MAINLINE } from './ChronicleMainline.generated';
 import type { ChronicleMainlineEvent } from './ChronicleTypes';
+import { CHRONICLE_CITY_OWNERSHIP } from './ChronicleCityOwnership';
 
 let active = false;
 let index = 0;
+/** 编年史战事按史载结果改写的归属（据点 → 势力 ＋ 改写当年）：优先于同年及更早的历年归属表项 */
+const cityOwners = new Map<string, { factionId: string; year: number }>();
+
+export function setChronicleCityOwner(cityId: string, factionId: string): void {
+    cityOwners.set(cityId, { factionId, year: currentChronicleEvent()?.year ?? Number.NEGATIVE_INFINITY });
+}
+
+/** 编年史推演中某年各据点的史实归属（历年归属表 ＋ 战事改写）；不在推演中返回空 */
+export function chronicleOwnershipAt(year: number): ReadonlyMap<string, string> {
+    const out = new Map<string, string>();
+    if (!isChronicleActive()) return out;
+    const tableYear = new Map<string, number>();
+    for (const [cityId, rows] of Object.entries(CHRONICLE_CITY_OWNERSHIP)) {
+        let hit: readonly [number, string] | undefined;
+        for (const row of rows) if (row[0] <= year) hit = row;
+        if (hit) { out.set(cityId, hit[1]); tableYear.set(cityId, hit[0]); }
+    }
+    for (const [cityId, o] of cityOwners) {
+        if (o.year <= year && o.year >= (tableYear.get(cityId) ?? Number.NEGATIVE_INFINITY)) out.set(cityId, o.factionId);
+    }
+    return out;
+}
 const BY_BATTLE_ID = new Map<string, ChronicleMainlineEvent>(
     CHRONICLE_MAINLINE.filter((e) => e.battle).map((e) => [e.battle!.battleId!, e]),
 );
@@ -18,6 +41,7 @@ const BY_BATTLE_ID = new Map<string, ChronicleMainlineEvent>(
 export function startChronicle(): void {
     active = CHRONICLE_MAINLINE.length > 0;
     index = 0;
+    cityOwners.clear();
 }
 
 /** 编年史正在推演（百岁模式、已开演、主线未演完） */

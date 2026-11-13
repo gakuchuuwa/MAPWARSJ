@@ -22,6 +22,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "帕萨尔加德群峰夹峙、谷口逼仄，居鲁士二世依托高坡列阵。阿斯提阿格斯分兵迂回两翼高山夹击，首日压迫波斯军退保山巅；波斯妇孺出帐激愤将士，全军死志顿起。次日居鲁士二世率众自山顶呐喊俯冲，迎头撞碎仰攻敌阵，米底前军哈尔帕古斯临阵倒戈，米底大军崩溃，阿斯提阿格斯被擒，波斯霸业由此奠基。"
         ],
         "source": "那波尼德编年史；希罗多德·历史·第一卷；大马士革的尼古拉残篇",
+        "winner": "defender",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0001",
@@ -30,6 +31,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "帕萨尔加德",
+            "chronicleCity": {
+                "cityId": "city_hamadan",
+                "before": "midi",
+                "after": "aqimeinide"
+            },
             "targetLat": 30.194,
             "targetLng": 53.167,
             "myTroops": 15000,
@@ -60,6 +66,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "普特里亚位处哈吕斯河东岸卡帕多细亚高原丘陵，城寨与荒原相连。克罗伊索斯纵吕底亚精锐长矛重骑猛冲波斯战线，居鲁士二世督率波斯步弓与山地步卒结成严阵硬顶；两军自白昼肉搏至夜幕降临，尸横原野仍未决胜负。克罗伊索斯见波斯兵势浩大且严冬将临，遂趁夜拔营西渡哈吕斯河退回都城撒狄。"
         ],
         "source": "希罗多德·历史·第一卷；波利艾努斯·战略·第七卷",
+        "winner": "draw",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0005",
@@ -68,6 +75,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "普特里亚",
+            "routeVia": [
+                {
+                    "name": "阿尔贝拉",
+                    "lat": 36.19,
+                    "lng": 44.01
+                }
+            ],
             "targetLat": 39.846,
             "targetLng": 35.333,
             "myTroops": 15000,
@@ -98,6 +112,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "提姆布拉平原开阔平坦，克罗伊索斯仓促尽起吕底亚本土长矛重骑张开两翼包抄。居鲁士二世将步弓与战车收拢为纵深方阵，更采纳哈尔帕古斯计策卸下辎重骆驼列于前锋。吕底亚战马冲近闻及骆驼异味顿时惊骇倒窜，骑阵自溃；居鲁士二世挥军掩杀并追围撒狄，遣敢死士攀南侧绝壁破城，一举覆灭吕底亚王国。"
         ],
         "source": "希罗多德·历史·第一卷；色诺芬·居鲁士的教育·第七卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0006",
@@ -106,6 +121,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "撒狄提姆布拉平原",
+            "chronicleCity": {
+                "cityId": "city_sifaerde",
+                "before": "ldiya",
+                "after": "aqimeinide"
+            },
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -136,14 +156,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "撒狄卫城高踞绝壁之上，塔巴卢斯凭险苦撑待援。马扎雷斯统精骑疾驰抵近撒狄平原，帕克提亚斯慑于波斯主力军威未敢野战，弃围西逃滨海希腊城邦库迈与希俄斯，终被希俄斯人交出受俘。马扎雷斯解撒狄之围后挥师南下梅安德河平原，强攻曾协从叛乱的伊奥尼亚重镇普里埃内并破城惩戒，震慑爱琴海东岸。"
         ],
         "source": "希罗多德·历史·第一卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "aqimeinide_mazares",
             "battleId": "chron:evt_0007",
             "battleName": "撒狄平叛与普里埃内攻城战",
             "battleYear": -546,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "撒狄卫城与普里埃内",
+            "targetCityId": "city_sifaerde",
+            "chronicleCity": {
+                "cityId": "city_sifaerde",
+                "before": "ldiya",
+                "after": "aqimeinide"
+            },
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -174,14 +201,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "福西亚三面环海，陆侧砌有严丝合缝的巨石高墙。哈尔帕古斯摒弃强爬云梯的消耗战法，驱策大军于城外昼夜运土垒石，堆筑直抵女墙高度的攻城土山，以密集波斯步弓居高临下压制守军。福西亚守将见土山迫顶、孤城难支，佯求停战一日商议投降，趁波斯军后撤之隙携全城妇孺尽登快船扬帆西遁，哈尔帕古斯遂入占空城。"
         ],
         "source": "希罗多德·历史·第一卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "aqimeinide_harpagus",
             "battleId": "chron:evt_0008",
             "battleName": "福西亚筑山攻城战",
             "battleYear": -545,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "福西亚港城",
+            "targetCityId": "city_kelazuomeinai",
+            "chronicleCity": {
+                "cityId": "city_kelazuomeinai",
+                "before": "aiaoniya",
+                "after": "aqimeinide"
+            },
             "targetLat": 38.67,
             "targetLng": 26.754,
             "myTroops": 15000,
@@ -253,6 +287,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "俄庇斯控扼底格里斯河渡口与米底防线北端要冲，巴比伦军依托河岸运河结阵防守。居鲁士二世督波斯精骑与步弓主力强渡迪亚拉河猛攻俄庇斯正翼，归附波斯的古提姆总督戈布里亚斯率熟悉地形的当地劲旅侧击配合。巴比伦野战军一触即溃、死伤惨重，那波尼德仓皇南逃，波斯军继而不血刃占领西帕尔，直叩巴比伦城门。"
         ],
         "source": "那波尼德编年史；希罗多德·历史·第一卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0013",
@@ -261,6 +296,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "底格里斯河畔俄庇斯",
+            "chronicleCity": {
+                "cityId": "city_bageda",
+                "before": "jialedi",
+                "after": "aqimeinide"
+            },
+            "routeVia": [
+                {
+                    "name": "金德斯河",
+                    "lat": 33.9,
+                    "lng": 44.9
+                }
+            ],
             "targetLat": 33.18,
             "targetLng": 44.7,
             "myTroops": 15000,
@@ -291,14 +338,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "幼发拉底河自北向南贯通巴比伦内城，河口虽设铜栅却疏于防范河道干涸。趁城内彻夜欢庆宗教节庆、守卒醉卧松懈之夜，波斯工兵掘开上游堤岸将河水导入古蓄水大泽，城中水位骤降至齐膝浅滩。戈布里亚斯率突击死士顺河床涉水潜入内城，抢开铜门直捣王宫诛杀伯沙撒，居鲁士二世随即整军入城受降，巴比伦灭亡。"
         ],
         "source": "那波尼德编年史；居鲁士圆柱；希罗多德·历史·第一卷；色诺芬·居鲁士的教育",
+        "winner": "attacker",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0014",
             "battleName": "巴比伦导河夺城战",
             "battleYear": -539,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "巴比伦都城",
+            "targetCityId": "city_babilun",
+            "chronicleCity": {
+                "cityId": "city_babilun",
+                "before": "jialedi",
+                "after": "aqimeinide"
+            },
+            "routeVia": [
+                {
+                    "name": "西帕尔",
+                    "lat": 33.06,
+                    "lng": 44.25
+                }
+            ],
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -329,6 +390,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "药杀水北岸旷野无垠，马萨革泰骑士善使青铜战斧与强弓，连战马亦披护胸铜甲。居鲁士二世初以美酒佳肴设空营诱伏，擒杀女王之子斯帕尔加皮塞斯；托米丽司悲怒交加，倾全族铁骑发动决死总攻。两军先对射至箭矢俱尽，继而挺矛挥斧短兵肉搏，波斯中军久战崩裂，居鲁士二世力战阵亡，冈比西斯二世嗣登王位。"
         ],
         "source": "希罗多德·历史·第一卷；克特西亚斯·波斯史残篇",
+        "winner": "defender",
         "battle": {
             "generalId": "ailan_julushi",
             "battleId": "chron:evt_0021",
@@ -367,14 +429,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "加沙筑于滨海高丘之上，控扼黎凡特通往尼罗河三角洲的唯一沿海大道，城中亲埃守军凭坚厚土砖高墙顽强死守。冈比西斯二世以腓尼基舰队封锁海面断其外援，陆上督波斯工兵顶盾填壕、架设攻城冲车昼夜猛撞城垣。历经连旬惨烈仰攻，波斯军终破加沙城防，清空进兵西奈沙漠与埃及国门的最后路障。"
         ],
         "source": "希罗多德·历史·第三卷；波利比乌斯史述补遗",
+        "winner": "attacker",
         "battle": {
             "generalId": "gen_cambyses",
             "battleId": "chron:evt_0025",
             "battleName": "加沙要塞攻坚战",
             "battleYear": -526,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "加沙要塞",
+            "targetCityId": "city_jiasa",
+            "chronicleCity": {
+                "cityId": "city_jiasa",
+                "before": "feilisidin",
+                "after": "aqimeinide"
+            },
             "targetLat": 31.502,
             "targetLng": 34.467,
             "myTroops": 15000,
@@ -404,6 +473,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "佩卢西姆地处沼泽与滨海沙脊夹道，两军展开正面血战，希腊与卡里亚雇佣兵拼死搏杀，波斯步弓与铁骑轮番猛冲，阵斩埃及军无数并彻底击溃防线。普萨美提克三世败退孟菲斯闭城固守，冈比西斯二世遣水陆大军溯尼罗河合围猛攻，终破孟菲斯生擒普萨美提克三世，埃及遂入并波斯。"
         ],
         "source": "希罗多德·历史·第三卷；波利艾努斯·战略·第七卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "gen_cambyses",
             "battleId": "chron:evt_0026",
@@ -412,6 +482,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "佩卢西姆至孟菲斯",
+            "chronicleCity": {
+                "cityId": "city_mengfeisi",
+                "before": "aiji",
+                "after": "aqimeinide"
+            },
+            "routeVia": [
+                {
+                    "name": "佩卢西姆",
+                    "lat": 31.04,
+                    "lng": 32.54
+                }
+            ],
             "targetLat": 29.85,
             "targetLng": 31.25,
             "myTroops": 15000,
@@ -442,6 +524,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "尼罗河上游努比亚河谷怪石嶙峋、赤地千里，库施长弓武士依托河岸险滩与要塞逐段袭扰阻击，并以焦土坚壁断绝波斯补给。波斯大军深入荒漠未远便耗尽随军粮草，不得不宰杀驮兽果腹；面对库施守军严密控扼的险恶峡谷与酷热荒漠，冈比西斯二世损兵折将被迫下令北撤孟菲斯，止步于象岛防线。"
         ],
         "source": "希罗多德·历史·第三卷；斯特拉波·地理志·第十七卷",
+        "winner": "defender",
         "battle": {
             "generalId": "gen_cambyses",
             "battleId": "chron:evt_0028",
@@ -450,6 +533,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "尼罗河上游第一瀑布南境",
+            "routeVia": [
+                {
+                    "name": "底比斯",
+                    "lat": 25.7,
+                    "lng": 32.64
+                }
+            ],
             "targetLat": 24.088,
             "targetLng": 32.899,
             "myTroops": 15000,
@@ -500,6 +590,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "大流士一世先令士卒分乘充气皮囊与战马强行泅渡底格里斯河击破阻截河防，尼丁图-贝尔急率巴比伦主力退至幼发拉底河畔的扎扎纳背水列阵。波斯铁骑与步弓在河滩原野发起雷霆突击，将巴比伦战线拦腰冲断，大批败兵被挤入幼发拉底河急流溺毙；大流士一世乘胜尾追破入巴比伦城，擒斩尼丁图-贝尔。"
         ],
         "source": "贝希斯敦铭文第一至第二栏；希罗多德·历史·第三卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "aqimeinide_daliushi",
             "battleId": "chron:evt_0031",
@@ -508,6 +599,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "幼发拉底河畔扎扎纳与巴比伦",
+            "chronicleCity": {
+                "cityId": "city_babilun",
+                "before": "jialedi",
+                "after": "aqimeinide"
+            },
+            "routeVia": [
+                {
+                    "name": "底格里斯河",
+                    "lat": 33.35,
+                    "lng": 44.4
+                }
+            ],
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -538,6 +641,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "昆杜鲁什山谷地势开阔起伏，弗拉奥尔特斯集结米底全境骑步精兵排开厚重战线迎击。大流士一世以不死军重步兵稳住中军阵脚，亲督波斯骑兵配合长弓箭雨猛砸米底两翼结合部；激战半日米底大军全线崩溃、死伤枕藉，弗拉奥尔特斯率少数亲骑北逃拉伽被波斯追兵生擒押回埃克巴坦那处死，高原核心重归大流士一世掌控。"
         ],
         "source": "贝希斯敦铭文第二栏",
+        "winner": "attacker",
         "battle": {
             "generalId": "aqimeinide_daliushi",
             "battleId": "chron:evt_0032",
@@ -546,6 +650,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "米底昆杜鲁什与埃克巴坦那",
+            "chronicleCity": {
+                "cityId": "city_hamadan",
+                "before": "midi",
+                "after": "aqimeinide"
+            },
             "targetLat": 34.8,
             "targetLng": 48.51,
             "myTroops": 15000,
@@ -618,14 +727,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "纳克索斯主城背靠海岛险峰，高筑石垣控扼港湾。因联军两帅航途失和走漏风声，岛民早已敛粮入城深沟固垒；波斯与伊奥尼亚联军登岸合围猛攻，奈何城坚粮足久攻不下。待联军军饷耗尽士气低迷，只得焚垒撤回小亚细亚，伊奥尼亚起义由此引爆。"
         ],
         "source": "希罗多德·历史·第五卷",
+        "winner": "defender",
         "battle": {
             "generalId": "aqimeinide_megabates",
             "battleId": "chron:evt_0056",
             "battleName": "纳克索斯围城战",
             "battleYear": -499,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "纳克索斯岛主城",
+            "targetCityId": "city_chimarros",
+            "chronicleCity": {
+                "cityId": "city_chimarros",
+                "before": "naxos",
+                "after": "naxos"
+            },
+            "routeVia": [
+                {
+                    "name": "考卡萨",
+                    "lat": 38.21,
+                    "lng": 25.93
+                }
+            ],
             "targetLat": 36.965,
             "targetLng": 25.53,
             "myTroops": 15000,
@@ -655,14 +778,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "撒狄下城铺展于特莫卢斯山麓河谷，内卫城高踞险峻陡崖之上。希腊重装步兵猝然杀入下城，波斯总督阿尔塔弗涅斯仓促收拢精兵退守悬崖卫城死战；混战中下城芦苇民居失火延烧全城，阿尔塔弗涅斯督守军突入集市反击，联军攻堡不克遂趁夜撤返海滨。"
         ],
         "source": "希罗多德·历史·第五卷",
+        "winner": "defender",
         "battle": {
             "generalId": "gen_artaphernes",
             "battleId": "chron:evt_0058",
             "battleName": "撒狄奇袭战",
             "battleYear": -498,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "defender",
             "targetName": "吕底亚首府撒狄",
+            "targetCityId": "city_sifaerde",
+            "chronicleCity": {
+                "cityId": "city_sifaerde",
+                "before": "aqimeinide",
+                "after": "aqimeinide"
+            },
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -693,6 +823,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "以弗所城外滨海平原开阔无险，疲惫撤退的希腊联军被迫背城结成重步兵横阵应战。波斯军发挥轻重骑兵机动优势，先以密集骑射箭雨反复杀伤希腊盾阵，继而乘联军阵脚松动发起铁骑突击；希腊防线彻底崩溃，埃雷特里亚主帅欧阿尔基德斯阵亡，雅典残军登船西返。"
         ],
         "source": "希罗多德·历史·第五卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "gen_artaphernes",
             "battleId": "chron:evt_0059",
@@ -731,6 +862,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "拉德岛控扼米利都海湾咽喉，福西亚名将狄奥尼修斯连日苦练穿插撞击战术，但部分盟军畏苦懈怠并暗通波斯招抚使者。决战当日两军桨舰迎面冲撞，萨摩斯与莱斯博斯分舰队竟临阵扬帆脱逃，唯希俄斯战船浴血死战冲穿敌线终因寡不敌众覆没，伊奥尼亚制海权彻底丧失。"
         ],
         "source": "希罗多德·历史·第六卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "gen_artaphernes",
             "battleId": "chron:evt_0066",
@@ -769,14 +901,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "米利都坐落梅安德河入海半岛，三面环水、陆墙厚重。波斯军调集近东精湛攻城工兵，一面于墙根开掘地道掏空地基，一面架设重型撞车与攻城高塔昼夜猛砸城垣；外墙终告崩塌，波斯甲士蜂拥入城巷战破敌，将余众迁往两河口岸，持续数载的伊奥尼亚起义至此瓦解。"
         ],
         "source": "希罗多德·历史·第六卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "gen_artaphernes",
             "battleId": "chron:evt_0067",
             "battleName": "米利都攻城战",
             "battleYear": -494,
-            "battleType": "field",
+            "battleType": "siege",
             "role": "attacker",
             "targetName": "伊奥尼亚首府米利都",
+            "targetCityId": "city_miletus",
+            "chronicleCity": {
+                "cityId": "city_miletus",
+                "before": "aiaoniya",
+                "after": "aqimeinide"
+            },
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -806,6 +945,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "波斯舰队迫降萨索斯岛后绕行险峻突出的阿索斯海角，骤遭狂猛北风巨浪袭击，大批战船撞碎于悬崖礁石；与此同时，马尔多尼乌斯陆军在马其顿营地遭悍勇的色雷斯布里吉人乘夜奇袭，马尔多尼乌斯亲冒矢石负伤督战，反击彻底征服布里吉人并收服马其顿，方收兵东返。"
         ],
         "source": "希罗多德·历史·第六卷",
+        "winner": "attacker",
         "battle": {
             "generalId": "bfe2_mardonius",
             "battleId": "chron:evt_0070",
@@ -814,6 +954,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "马其顿东境与阿索斯海角",
+            "routeVia": [
+                {
+                    "name": "奇里乞亚",
+                    "lat": 36.95,
+                    "lng": 35.2
+                },
+                {
+                    "name": "伊奥尼亚",
+                    "lat": 37.94,
+                    "lng": 27.34
+                },
+                {
+                    "name": "赫勒斯滂",
+                    "lat": 40.23,
+                    "lng": 26.4
+                }
+            ],
             "targetLat": 40.39,
             "targetLng": 24.17,
             "myTroops": 15000,
@@ -843,6 +1000,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "马拉松平原三面环山、一面临海，两侧沼泽限制骑兵迂回。米太亚德针对波斯宽大战线，刻意削薄中路纵深而加厚两翼重装步兵，全军高歌跑步冲锋避开敌弓箭雨；波斯精兵虽突破希腊薄弱中路，雅典厚实两翼却击溃敌侧后迅速向内合围绞杀，追至海滩夺船大获全胜。"
         ],
         "source": "希罗多德·历史·第六卷",
+        "winner": "defender",
         "battle": {
             "generalId": "gen_datis",
             "battleId": "chron:evt_0072",
@@ -851,6 +1009,33 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阿提卡东岸马拉松平原",
+            "routeVia": [
+                {
+                    "name": "萨摩斯",
+                    "lat": 37.69,
+                    "lng": 26.94
+                },
+                {
+                    "name": "纳克索斯",
+                    "lat": 37.1,
+                    "lng": 25.38
+                },
+                {
+                    "name": "提洛",
+                    "lat": 37.4,
+                    "lng": 25.27
+                },
+                {
+                    "name": "卡里斯托斯",
+                    "lat": 38.02,
+                    "lng": 24.42
+                },
+                {
+                    "name": "埃雷特里亚",
+                    "lat": 38.39,
+                    "lng": 23.79
+                }
+            ],
             "targetLat": 37.98,
             "targetLng": 23.72,
             "myTroops": 15000,

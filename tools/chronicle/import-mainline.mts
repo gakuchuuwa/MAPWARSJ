@@ -8,6 +8,7 @@ import { CHRONICLE_SCRIPT } from '../../src/data/chronicle/ChronicleDirectorScri
 import type { ChronicleMainlineEvent } from '../../src/data/chronicle/ChronicleTypes';
 import { FACTION_GENERALS } from '../../src/data/FactionGenerals';
 import { FACTIONS } from '../../src/data/factions';
+import { CITIES_V2 } from '../../src/data/cities_v2';
 
 const SRC = 'docs/战争编年史（纯史实重写）/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json';
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
@@ -19,6 +20,7 @@ const events = new Map((JSON.parse(readFileSync(SRC, 'utf-8')).events as Record<
 const generals = new Set<string>();
 for (const e of Object.values(FACTION_GENERALS)) for (const g of (Array.isArray(e) ? e : [e]) as { generalId: string }[]) generals.add(g.generalId);
 const factionName = new Map(FACTIONS.map((f) => [f.id, f.name]));
+const cityIds = new Set(CITIES_V2.map((c) => c.id));
 
 const errors: string[] = [];
 const out: ChronicleMainlineEvent[] = [];
@@ -45,14 +47,24 @@ for (const s of CHRONICLE_SCRIPT) {
     if (s.kind === 'battle') {
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
         if (s.enemyGeneralId && !generals.has(s.enemyGeneralId)) errors.push(`${s.eventId} 对手武将 ${s.enemyGeneralId} 不在库`);
+        if (!s.winner) errors.push(`${s.eventId} 缺史载胜方`);
+        // 按史：战斗类型照 json 原文，攻城战必须写明被攻的城
+        const isSiege = e['战斗类型'] === '攻城战';
+        if (isSiege && !s.city) errors.push(`${s.eventId} 攻城战缺被攻据点`);
+        for (const c of [s.city?.cityId]) if (c && !cityIds.has(c)) errors.push(`${s.eventId} 据点 ${c} 不在库`);
+        for (const f of [s.city?.before, s.city?.after]) if (f && !factionName.has(f)) errors.push(`${s.eventId} 归属势力 ${f} 不在库`);
+        ev.winner = s.winner;
         ev.battle = {
             generalId: s.leadGeneralId,
             battleId: `chron:${s.eventId}`,
             battleName: e['事件名称'],
             battleYear: year,
-            battleType: 'field',
+            battleType: isSiege ? 'siege' : 'field',
             role: s.role ?? 'attacker',
             targetName: e['战场地点'],
+            ...(isSiege && s.city ? { targetCityId: s.city.cityId } : {}),
+            ...(s.city ? { chronicleCity: s.city } : {}),
+            ...(s.route?.length ? { routeVia: s.route } : {}),
             targetLat: lat,
             targetLng: lng,
             myTroops: TROOPS,

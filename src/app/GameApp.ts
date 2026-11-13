@@ -84,7 +84,7 @@ import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump 
 import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
-import { firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
+import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -1016,6 +1016,14 @@ export class GameApp {
      * 只在百岁模式生效。据点归属按「开局」口径重来（先还原原主，再归给新年份的在场武将）；
      * 武将登场、时代名旗号、大中城降级、特殊建筑建成年代全部按新年份重算。返回实际跳到的年份。
      */
+    private applyChronicleCityOwnership(year: number): void {
+        for (const [cityId, factionId] of chronicleOwnershipAt(year)) {
+            if (this.cityManager.getCity(cityId)?.factionId !== factionId) {
+                this.cityManager.updateCity(cityId, { factionId }, { skipCaptureLog: true });
+            }
+        }
+    }
+
     public jumpToYear(input: number): number | null {
         if ((this.playerHero?.autoPlan ?? 'centenarian') !== 'centenarian') return null;
         if (!Number.isFinite(input)) return null;
@@ -1028,6 +1036,8 @@ export class GameApp {
         this.playerHero?.horses.shiftYears(this.timeSystem.getYear(), year);
         // setYear → onYearChange：地图道路/河流、时间 HUD、武将在场与据点归属、时代名旗号
         this.timeSystem.setYear(year);
+        // 🔴 [2026-11-13 历史模拟器] 编年史推演中：据点历年归属表 ＋ 战事改写，优先于「按在场武将」的重算
+        this.applyChronicleCityOwnership(year);
         // 暂停时主循环不跑 updateYear → 这里直接推：大中城降级、特殊建筑建成年代
         this.cityManager.updateYear(year);
         this.syncCityFoundedTypes();
@@ -1059,7 +1069,10 @@ export class GameApp {
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
         // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
         // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
-        if (isCentenarianStart) startChronicle();
+        if (isCentenarianStart) {
+            startChronicle();
+            this.applyChronicleCityOwnership(this.timeSystem.getYear());
+        }
         const chronicleLeadId = isCentenarianStart ? firstChronicleEvent()?.leadGeneralId : undefined;
         const chronicleStart = chronicleLeadId
             ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))

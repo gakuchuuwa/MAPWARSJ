@@ -74,6 +74,10 @@ export interface GeneralFirstBattle {
     enemyTroops: number;
     /** 玩家首次会面时的历史场景对话 */
     introLines: FirstBattleDialogueLine[];
+    /** 🔴 [2026-11-13 编年史] 史载行军途经地（按先后）；有则军团自出发据点逐站行军，不就地摆放 */
+    routeVia?: { name: string; lat: number; lng: number }[];
+    /** 🔴 [2026-11-13 编年史] 受这一战影响的据点：开战前归史实守方、战后归史载结果 */
+    chronicleCity?: { cityId: string; before: string; after: string };
 }
 
 export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>> = {
