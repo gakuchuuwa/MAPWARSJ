@@ -22,9 +22,9 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     BENGALIS: 'bengalis',       // 🔴 [2026-11-13 主人令] 孟加拉：波罗双鹿金法轮国玺（孟加拉深靛蓝旗）
     GURJARAS: 'gurjaras',       // 🔴 [2026-11-13 主人令] 古吉拉特/瞿折罗：莫德拉太阳神轮天马（索姆纳特圣白旗）
     PURU: 'puru',                // 旁遮普（婆罗/孔雀）：DE puru 浮雕战象章
-    KHMER: 'khmer',              // 高棉（真腊）：DE khmer 巴戎佛面
-    MALAY: 'malay',              // 马来（三佛齐）：DE malay 六芒花星盾芯
-    BURMESE: 'burmese',          // 缅甸：DE burmese 开屏孔雀金章
+    KHMER: 'khmer',              // 🔴 [2026-11-13 主人令] 高棉/湄公河：巴戎微笑圣面微右倾（高棉暗莲茜赤旗）
+    MALAY: 'malay',              // 🔴 [2026-11-13 主人令] 马来/南洋群岛：满者伯夷纯金八芒太阳花（南洋深海青蓝旗）
+    BURMESE: 'burmese',          // 🔴 [2026-11-13 主人令] 缅甸/伊洛瓦底：贡榜开屏纯金孔雀（贡榜圣白旗）
     // ── 西亚 / 中亚伊斯兰 ─────────────────────────────────────────
     PERSIAN: 'achaemenids',      // 波斯（阿契美尼德）：DE achaemenids 翼狮
     SASANIAN: 'persians',        // 萨珊波斯：DE persians 西摩格神鸟

@@ -93,7 +93,7 @@ type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: 
 /**
  * 🔴 [2026-10-31 主人令「对手是叛军为什么还进入战术模式了？战术模式双方必须是武将」]
  *    这一方是不是「真武将」：有实名武将（军团 generalId／经典战守将／城池守将），且不是叛军（panshu，无主状态、没有武将）。
- *    进战术模式的**硬门槛**，剧本战、经典战、普通战一律适用（原来剧本/经典战会绕过武将判定）。
+ *    只用于普通战（区域战 / 遭遇战）进战术模式的门槛；🔴 [2026-11-13 主人令] 剧本战、经典战不再要求双方实名武将。
  */
 function sideHasRealGeneral(u: Scene13GateUnit): boolean {
     if (isBlankRebelFaction(u.factionId) && !isStoryOrFirstBattleUnit(u)) return false;
@@ -449,8 +449,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
         const eligible = isQuickBattleUnit(battle.attacker) || isQuickBattleUnit(battle.defender)
-            || (tacticalModeOn(app) && bothSidesHaveRealGenerals([battle.attacker], [battle.defender])
-            && (isBattlefieldEvent || (bigEnough && !bothNaval
+            // 🔴 [2026-11-13 主人令] 剧本战不再要求双方实名武将（原规则为乱斗经典战所设，已删）
+            || (tacticalModeOn(app)
+            && (isBattlefieldEvent || (bothSidesHaveRealGenerals([battle.attacker], [battle.defender]) && bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite))));
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
@@ -562,8 +563,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         // 战场事件与武将首次剧情战进战术模式：HistoricalEventManager 设置 isScriptArmy，PlayerQuestSystem 设置 isFirstBattleMarch。
         // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
         const eligible = allUnits.some(isQuickBattleUnit)
-            || (tacticalModeOn(app) && bothSidesHaveRealGenerals(attackers, defenders)
-            && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders)));
+            || (tacticalModeOn(app) && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders)));
         if (eligible && (!battleField?.scene13Frozen || isBattlefieldEvent)) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
@@ -692,7 +692,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (joinedUnit.id !== followedId) {
             if (!battleField.hasParticipant(followedId)) return;
             const anyStory = isStory || attackers.some(isStoryOrFirstBattleUnit) || defenders.some(isStoryOrFirstBattleUnit);
-            if (!tacticalModeOn(app) || !(anyStory ? bothSidesHaveRealGenerals(attackers, defenders) : regionalMeetsScene13Gate(attackers, defenders))) return;
+            if (!tacticalModeOn(app) || !(anyStory || regionalMeetsScene13Gate(attackers, defenders))) return;
         }
 
         gameLog(
