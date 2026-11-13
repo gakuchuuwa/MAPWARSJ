@@ -7717,11 +7717,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/PERSIAN/__闲置__PERSIAN_01.png": {
-            "scale": 1.1,
-            "offsetX": -17,
-            "offsetY": -25
-        },
         "/assets/CENTRAL_ASIA/suogediyana_alimazeshi.png": {
             "scale": 1.17,
             "offsetX": 0,
@@ -11113,7 +11108,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/PERSIAN/gen_cambyses.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -11281,6 +11276,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/ORIE/wuer_boshasha.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/sijitai_tomyris.png": {
+            "scale": 1.25,
+            "offsetX": 12,
+            "offsetY": 13
+        },
+        "/assets/ORIE/bfe_achish.png": {
+            "scale": 1.18,
+            "offsetX": 4,
+            "offsetY": -37
+        },
+        "/assets/ORIE/aiji_psamtik_iii.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/ORIE/bfe2_nidintu_bel.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/PERSIAN/midi_phraortes.png": {
+            "scale": 1.12,
+            "offsetX": -17,
+            "offsetY": -27
         }
     },
     "folderGuides": {

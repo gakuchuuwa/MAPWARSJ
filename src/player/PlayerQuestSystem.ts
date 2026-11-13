@@ -2179,7 +2179,7 @@ export class PlayerQuestSystem {
         g: { generalId: string; generalName: string; portrait: string },
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
-        opts?: { metAtFront?: boolean; chained?: boolean },
+        opts?: { metAtFront?: boolean; chained?: boolean; detached?: boolean },
     ): void {        this.deps.closeDialogue();
         this.chronicleMeetCityId = null;
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
@@ -2405,7 +2405,7 @@ export class PlayerQuestSystem {
         // 🔴 [2026-10-21] 接任务时敌将若已带兵在外，先把那支军团撤掉，免得地图上同时有两个他
         if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, true);
 
-        this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
+        if (!opts?.detached) this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
         // 🔴 [2026-11-12 主人定] 每场经典战分两段播报：第 1 段战略播报在寻将/赶路/城下对峙期间念完，再进战术模式念第 2 段战术播报。
@@ -2414,7 +2414,7 @@ export class PlayerQuestSystem {
         this.marchHostToFirstBattle(host, targetPos);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
         const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
-        this.deps.notify(
+        if (!opts?.detached) this.deps.notify(
             isOnTheSpot
                 ? `⚔️ 随【${g.generalName}】率军 ${myTroops} 于【${fb.targetName}】${roleLabel}（迎战 ${enemyDisplayName} ${enemyTroops} 军）`
                 : `⚔️ 随【${g.generalName}】率军 ${myTroops} 直奔【${fb.battleName}】（迎战 ${enemyDisplayName} ${enemyTroops} 军）`,
@@ -2502,6 +2502,7 @@ export class PlayerQuestSystem {
         if (!host || host.isDestroyed) return;
         const fbState = q.firstBattle;
         if (fbState.engaged) return;
+        if (this.awaitingPlayerLegionId === host.id) return;   // 玩家还没追到军中：到了战场原地等会合
 
         if (fbState.battleType === 'field' && fbState.enemySpawnPending) {
             this.spawnFirstBattleFieldEnemy(q, host);
@@ -3077,8 +3078,27 @@ export class PlayerQuestSystem {
         return { city, general: { generalId: ev.leadGeneralId, generalName: rec.generalName, portrait: rec.portrait ?? '' } };
     }
 
+    /** 已先行开拔、等玩家追来会合的编年史军团（会合前不开战） */
+    private awaitingPlayerLegionId: string | null = null;
+
+    /** 编年史攻城战／野战：随行主将先从出发据点起兵按史载路线开拔，玩家直接追去军中；守城战返回 false */
+    private launchChronicleLegion(city: City, g: { generalId: string; generalName: string; portrait: string }): boolean {
+        const fb = this.hasPendingFirstBattle(g.generalId);
+        if (!fb || (fb.battleType === 'siege' && fb.role === 'defender')) return false;
+        this.startFirstBattle(city, g, fb, null, { detached: true });
+        const q = this.quest;
+        if (!q || q.kind !== 'first_battle') return false;
+        this.awaitingPlayerLegionId = q.legionId;
+        this.deps.hero.travelToArmy(q.legionId, g.generalName);
+        this.deps.notify(`🐎 ${g.generalName}已率军开拔，前往其军中会合`);
+        gameLog('expedition', `[编年史] ${g.generalName} 自【${city.name}】先行开拔【${fb.battleName}】，玩家追往军中`);
+        this.emitChange();
+        return true;
+    }
+
     /** 一场编年史之战收场（胜负都走这里）：被攻打的城按史载结果归属，再推进主线 */
     private chronicleAfterBattle(q: PlayerQuest, host: Army | null, battleId: string | undefined): void {
+        this.awaitingPlayerLegionId = null;
         const city = getClassicBattleById(battleId)?.chronicleCity;
         if (city) {
             setChronicleCityOwner(city.cityId, city.after);
@@ -3932,6 +3952,10 @@ export class PlayerQuestSystem {
         }
 
         if (q.kind === 'first_battle') {
+            const hero = this.deps.hero;
+            if (this.awaitingPlayerLegionId === q.legionId && !hero.isAttached() && !hero.getChaseArmyId() && !hero.isHeld?.()) {
+                hero.travelToArmy(q.legionId, q.generalName);
+            }
             this.tickFirstBattle(q);
             return;
         }
@@ -3974,10 +3998,11 @@ export class PlayerQuestSystem {
         const g = queued?.general ?? this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
         this.headingTargetGeneralId = g?.generalId ?? null;
         this.rememberVisit(city, g?.generalId);
-        // 🔴 [2026-11-13 编年史] 一律去这一场的出发据点与随行主将会合
+        // 🔴 [2026-11-13 编年史] 攻城战、野战：军团先从出发据点开拔，玩家直接追去军中会合；守城战去被守之城
         if (isChronicleActive() && queued) {
             if (this.chronicleMeetCityId === city.id) return;
             this.chaseCityId = null;
+            if (this.launchChronicleLegion(city, queued.general)) return;
             this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
             return;
         }
@@ -4234,6 +4259,17 @@ export class PlayerQuestSystem {
         // 已经追上了 → 「赶去与武将碰头」这一轮作废
         this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
+        // 编年史先行开拔的军团：追上即入伍，随军走完剩下的路
+        const aq = this.quest;
+        if (aq && army.id === this.awaitingPlayerLegionId && !hero.isAttached()) {
+            this.awaitingPlayerLegionId = null;
+            this.chaseCityId = null;
+            this.recordJoinAndAttach(aq.factionId, army, aq.generalId, this.deps.cityManager.getCity(aq.cityId) ?? null);
+            this.deps.notify(`🐎 于军中会合${aq.generalName}，随军奔赴【${aq.targetCityName}】`);
+            gameLog('expedition', `[编年史] 玩家追上 ${army.name}，入伍随军`);
+            this.emitChange();
+            return;
+        }
         if (hero.isAttached() || this.quest || hero.isHeld?.()) return;
         const cityId = this.chaseCityId;
         this.chaseCityId = null;
@@ -5227,6 +5263,7 @@ export class PlayerQuestSystem {
         this.chronicleNarrating = false;
         this.chronicleLast = null;
         this.chronicleMeetCityId = null;
+        this.awaitingPlayerLegionId = null;
         this.pendingClassicChain = null;     // 排了期的连战也一并清掉（读档／换局）
         this.emitChange();
     }
