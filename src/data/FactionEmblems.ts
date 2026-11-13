@@ -69,6 +69,8 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     putaoya: 'PORTUGAL_QUINAS',   // 葡萄牙·五盾（quinas）
     kelite: 'VENICE_LION',   // 威尼斯共和国·圣马可飞狮
     baojialiya: 'BULGARIA_LION',   // 保加利亚·狮
+    baojialiya2: 'BULGARIA_LION',   // 保加利亚第二帝国·狮
+    bulgaria_third: 'BULGARIA_LION',   // 保加利亚公国·狮
     saierweiya: 'SERBIA_EAGLE',   // 塞尔维亚·双头鹰
     eluosi_diguo: 'RUSSIA_EAGLE',   // 俄罗斯帝国·双头鹰
     ruidian_si: 'SWEDEN_CROWNS',   // 瑞典·三王冠

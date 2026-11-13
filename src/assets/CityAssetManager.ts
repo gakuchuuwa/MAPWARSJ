@@ -2019,6 +2019,12 @@ export class CityAssetManager {
         keys.add(variantKey);
     }
 
+    private static readonly CHINESE_DYNASTY_CHARS = new Set([
+        '夏', '商', '周', '秦', '汉', '魏', '蜀', '吴', '晋', '隋', '唐', '宋',
+        '齐', '梁', '陈', '辽', '金', '元', '明', '清', '燕', '赵', '韩', '楚', '凉', '越',
+        '鲁', '巴', '滇', '成', '代'
+    ]);
+
     private static factionNameMap: Map<string, string> | null = null;
     private static getFactionFullName(factionId: string): string {
         if (!this.factionNameMap) {
@@ -2088,9 +2094,10 @@ export class CityAssetManager {
 
         // 🔴 [2026-11-13 主人令] 乱斗模式 / 势力旗帜规则：
         //   如果势力的名字是二字，就保留二字旗帜，例如匈奴、龟兹。
-        //   三个字以上的改符号（已定 1 字单字国号政权保留 1 字旗；其余 3 字以上无专属纹章者改贴该势力文化的符号旗帜）。
+        //   三个字以上的改符号（已定 1 字单字国号政权如汉/唐/宋/魏等保留 1 字旗；保加利亚等 3 字以上非单字国号政权一律改贴符号旗）。
         const fullName = this.getFactionFullName(factionId);
-        if (fullName.length >= 3 && textToRender && textToRender.length !== 1) {
+        const isChineseDynasty = textToRender && textToRender.length === 1 && this.CHINESE_DYNASTY_CHARS.has(textToRender);
+        if (fullName.length >= 3 && !isChineseDynasty) {
             const culture = getFactionCultureAt(factionId, undefined) ?? buildingStyle;
             const cultureEmblem = getCultureEmblemFile(culture);
             if (cultureEmblem) {
