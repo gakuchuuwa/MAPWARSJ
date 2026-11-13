@@ -78,6 +78,8 @@ export interface GeneralFirstBattle {
     routeVia?: { name: string; lat: number; lng: number }[];
     /** 🔴 [2026-11-13 编年史] 受这一战影响的据点：开战前归史实守方、战后归史载结果 */
     chronicleCity?: { cityId: string; before: string; after: string };
+    /** 🔴 [2026-11-13 编年史] 这一场的出发据点：玩家到此与随行主将会合，军团自此起兵 */
+    chronicleFrom?: string;
 }
 
 export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>> = {

@@ -1130,6 +1130,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     boootiya: [
+        // 🔴 [2026-11-13 编年史第一段补将] 前424 自底比斯出兵，德利乌姆以二十五列纵深阵破雅典军（修昔底德 IV.91–96）
+        { generalId: 'boootiya_pagondas', factionId: 'boootiya', cityId: 'city_thebes', generalName: '帕贡达斯', portrait: '', eliteName: '底比斯重步兵', eliteTier: 4 },
         { generalId: 'bfe2_theagenes', cityId: 'city_thebes', generalName: '特阿格尼斯', portrait: '/assets/GREECE/bfe2_theagenes.png', eliteName: '底比斯重步兵', eliteTier: 4 },
         { generalId: 'bfe_callias', cityId: 'city_thebes', generalName: '卡利斯', portrait: '/assets/GREECE/bfe_callias.png', factionId: 'boootiya', eliteName: '底比斯重步兵', eliteTier: 4 },
 
@@ -1353,6 +1355,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     lagoniya: [
+        // 🔴 [2026-11-13 编年史第一段补将]
+        { generalId: 'lagoniya_leotychidas', factionId: 'lagoniya', cityId: 'city_chimarros', generalName: '列奥提基达斯', portrait: '', eliteName: '斯巴达王卫队', eliteTier: 2 },   // 斯巴达王；前479 统希腊舰队自提洛出航萨摩斯，米卡列登岸破波斯营（希罗多德 IX.90–106）；提洛在纳克索斯据点 50km 内
+        { generalId: 'lagoniya_archidamus_ii', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '阿基达穆斯二世', portrait: '', eliteName: '斯巴达王卫队', eliteTier: 2 },   // 斯巴达王；前464 大地震后黑劳士来攻，鸣号集众守斯巴达（普鲁塔克《客蒙传》16）
+        { generalId: 'lagoniya_agis_ii', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '阿基斯二世', portrait: '', eliteName: '斯巴达王卫队', eliteTier: 2 },   // 斯巴达王；前402 自斯巴达出兵征伊利斯（色诺芬《希腊史》III.2.21–31）
+        { generalId: 'lagoniya_callicratidas', factionId: 'lagoniya', cityId: 'city_peierjiameng', generalName: '卡利克拉提达斯', portrait: '', eliteName: '斯巴达红袍步', eliteTier: 4 },   // 斯巴达海军统帅；前406 留兵围米蒂利尼，自莱斯博斯对岸南下迎战阿吉努萨伊，落海阵亡（色诺芬《希腊史》I.6.26–33）
+        { generalId: 'lagoniya_phoebidas', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '福比达斯', portrait: '', eliteName: '斯巴达红袍步', eliteTier: 4 },   // 前382 自斯巴达率军北援，途经底比斯袭占卡德米亚（色诺芬《希腊史》V.2.24–31）
+        { generalId: 'lagoniya_teleutias', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '特琉提亚斯', portrait: '', eliteName: '斯巴达红袍步', eliteTier: 4 },   // 阿格西劳斯之弟；前381 统伯罗奔尼撒联军攻奥林索斯，城下战死（色诺芬《希腊史》V.2.37、V.3.3–6）
         { generalId: 'lagoniya_kelierlidasi', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '克利尔里达斯', portrait: '/assets/SPARTANS/lagoniya_kelierlidasi.png', eliteName: '斯巴达戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 前422 任安菲波利斯斯巴达驻军统领（harmost），守城取胜（修昔底德 V.21、V.108）｜安菲波利斯＝雅典据点、将属斯巴达→② 移回民族起源地斯巴达（同文化 SPARTANS）
         { generalId: 'bfe2_pollis', cityId: 'city_sparta', generalName: '波利斯', portrait: '/assets/SPARTANS/bfe2_pollis.png', eliteName: '斯巴达红袍步', eliteTier: 4 },
         { generalId: 'bfe_cleombrotus', cityId: 'city_sparta', generalName: '克里奥姆布罗图斯', portrait: '/assets/SPARTANS/bfe_cleombrotus.png', eliteName: '斯巴达红袍步', eliteTier: 4 },
@@ -1391,6 +1400,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     maqidun: [
         // 🔴 [2026-11-13 编年史第二段补将] 卡迪亚人，亚历山大书记官；前322 受封卡帕多细亚总督，前319 安提柯自北来攻，于卡帕多细亚奥尔基尼亚迎战（狄奥多罗斯 XVIII.40），所募卡帕多细亚骑兵见普鲁塔克《欧迈尼斯传》4
         { generalId: 'maqidun_eumenes', factionId: 'maqidun', cityId: 'city_tiyana', generalName: '欧迈尼斯', portrait: '', eliteName: '卡帕多细亚骑兵', eliteTier: 3 },
+        // 🔴 [2026-11-13 编年史第一段补将] 方阵营统领；前328 冬驻索格狄亚那，于加拜迎击斯皮塔米尼斯大胜（阿里安 IV.17）
+        { generalId: 'maqidun_coenus', factionId: 'maqidun', cityId: 'city_bukhara', generalName: '科伊诺斯', portrait: '', eliteName: '马其顿重步兵', eliteTier: 4 },
         // 🔴 [2026-10-20 史实] 腓力二世＝马其顿国王，都城佩拉（非奥林索斯战场）；马其顿军团
         { generalId: 'gen_philip_ii', cityId: 'city_salonica', generalName: '腓力二世', portrait: '/assets/MACEDONIAN/gen_philip_ii.png', eliteName: '马其顿方阵', eliteTier: 1 },
         // 🔴 [2026-10-20 史实] 帕曼纽＝马其顿老将，随王驻佩拉；马其顿军团
@@ -2222,6 +2233,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xila: [
+        // 🔴 [2026-11-13 编年史第一段补将]
+        { generalId: 'xila_myronides', factionId: 'xila', cityId: 'city_yadian', generalName: '米隆尼德斯', portrait: '', eliteName: '雅典重装步兵', eliteTier: 3 },   // 前457 塔纳格拉败后六十二日，自雅典出兵奥诺菲塔大破维奥蒂亚人（修昔底德 I.108）
+        { generalId: 'xila_tolmides', factionId: 'xila', cityId: 'city_yadian', generalName: '托尔米德斯', portrait: '', eliteName: '雅典水师', eliteTier: 4 },   // 前455 自雅典绕航伯罗奔尼撒焚吉雄船坞；前447 科罗尼亚战死（修昔底德 I.108、I.113）
+        { generalId: 'xila_thrasybulus', factionId: 'xila', cityId: 'city_thebes', generalName: '斯拉叙布卢斯', portrait: '', eliteName: '雅典水师', eliteTier: 4 },   // 前403 自流亡地底比斯起兵占菲莱、下比雷埃夫斯，穆尼基亚破三十僭主（色诺芬《希腊史》II.4.2–19）
+        { generalId: 'xila_iphicrates', factionId: 'xila', cityId: 'city_yadian', generalName: '伊菲克拉特斯', portrait: '', eliteName: '雅典轻步兵', eliteTier: 3 },   // 轻盾兵改革者；前391 勒卡乌姆以轻盾兵歼斯巴达营（色诺芬《希腊史》IV.5.11–17）；前372 自雅典航援科孚
+        { generalId: 'xila_timotheus', factionId: 'xila', cityId: 'city_yadian', generalName: '提莫修斯', portrait: '', eliteName: '雅典水师', eliteTier: 4 },   // 科农之子；前375 自雅典绕航伯罗奔尼撒，阿吕齐亚胜斯巴达舰队（色诺芬《希腊史》V.4.63–66）；前365 围萨摩斯十月下之
     // 🔴 [2026-11-13 主人授权补开篇武将] 编年史第一段第 3 棒
     { generalId: 'xila_callimachus', factionId: 'xila', cityId: 'city_yadian', generalName: '卡利马科斯', portrait: '', eliteName: '雅典枭卫', eliteTier: 4 },   // 雅典军事执政官，前490 马拉松统右翼，战殁（希罗多德 VI.109–114）
     { generalId: 'xila_hagenong', factionId: 'xila', cityId: 'city_anfeibolisi', generalName: '哈格农', portrait: '/assets/ATHENIANS/xila_hagenong.png', eliteName: '雅典枭卫', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 前437 建安菲波利斯并任建城者（修昔底德 IV.102）
@@ -3414,6 +3431,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'mengjiala_shamsuddin', factionId: 'mengjiala', cityId: 'city_geergang', generalName: '沙姆斯丁', portrait: '/assets/BENGALIS/mengjiala_shamsuddin.png', eliteName: '孟加拉弓兵', eliteTier: 4 },
     ],
     yili: [
+        // 🔴 [2026-11-13 编年史第一段补将] 伊利里亚王；前360 自达萨雷提方向入上马其顿，杀佩尔狄卡斯三世；前358 年九十败死于腓力二世（狄奥多罗斯 XVI.2、XVI.4；琉善《长寿者》10）
+        { generalId: 'yili_bardylis', factionId: 'yili', cityId: 'city_peiliang', generalName: '巴尔迪利斯', portrait: '', eliteName: '伊利里亚矛兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 巴托（Bato，前 6–9 年 伊利里亚/潘诺尼亚大起义领袖，有实名）｜势力 伊利里亚｜据点 布达佩斯（MAGYAR 文化，潘诺尼亚）｜普将｜精锐「伊利里亚军」T4｜立绘留空
         { generalId: 'yili_bato', factionId: 'yili', cityId: 'city_gradeci', generalName: '巴托', portrait: '/assets/MAGYAR/yili_bato.png', eliteName: '伊利里亚矛兵', eliteTier: 4 },
     ],
@@ -4752,6 +4771,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     qin: [
         // 🔴 [2026-11-13 编年史第二段补将] 齐人入秦，庄襄王二年（前248）攻赵定太原，三年河外为魏无忌所败；始皇七年（前240）卒（《史记·秦始皇本纪》《蒙恬列传》）
         { generalId: 'qin_mengao', factionId: 'qin', cityId: 'city_changan', generalName: '蒙骜', portrait: '', eliteName: '秦关中甲士', eliteTier: 3 },
+        // 🔴 [2026-11-13 编年史第二段补将]
+        { generalId: 'qin_jiu', factionId: 'qin', cityId: 'city_changan', generalName: '摎', portrait: '', eliteName: '秦军甲士', eliteTier: 3 },   // 秦昭王五十一年（前256）将军摎攻西周，西周君献邑三十六（《史记·秦本纪》《周本纪》）
+        { generalId: 'qin_teng', factionId: 'qin', cityId: 'city_nanyang', generalName: '腾', portrait: '', eliteName: '秦国甲士', eliteTier: 4 },   // 始皇十六年为南阳假守，十七年以内史攻韩，得韩王安（《史记·秦始皇本纪》）
+        { generalId: 'qin_wangben', factionId: 'qin', cityId: 'city_changan', generalName: '王贲', portrait: '', eliteName: '秦锐士', eliteTier: 1 },   // 王翦之子；始皇二十二年攻魏，引河沟灌大梁（《史记·秦始皇本纪》）
         { generalId: 'qin_huigong', factionId: 'qin', cityId: 'city_changan', generalName: '秦惠公', portrait: '/assets/CENTRAL/qin_huigong.png', eliteName: '秦关中甲士', eliteTier: 3 },
         { generalId: 'qin_hengyi', factionId: 'qin', cityId: 'city_changan', generalName: '桓齮', portrait: '/assets/CENTRAL/qin_hengyi.png', eliteName: '咸阳锐甲铁骑', eliteTier: 2 },   // 🔴 [2026-10-25 按史] 经典战敌将；秦将，前233 肥下败走桓齮；据点长安（CENTRAL，秦本部同文化）；用势力精锐铁鹰锐士
 

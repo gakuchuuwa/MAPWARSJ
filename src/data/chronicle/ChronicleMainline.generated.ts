@@ -36,6 +36,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "midi",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 30.194,
             "targetLng": 53.167,
             "myTroops": 15000,
@@ -82,6 +83,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 44.01
                 }
             ],
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 39.846,
             "targetLng": 35.333,
             "myTroops": 15000,
@@ -126,6 +128,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "ldiya",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -171,6 +174,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "ldiya",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -216,6 +220,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aiaoniya",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 38.67,
             "targetLng": 26.754,
             "myTroops": 15000,
@@ -224,48 +229,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0009",
-        "baton": 1,
-        "year": -544,
-        "season": 0,
-        "title": "克桑托斯卫城决死战",
-        "kind": "narrative",
-        "place": {
-            "name": "克桑托斯城",
-            "lat": 36.356,
-            "lng": 29.318
-        },
-        "leadGeneralId": "aqimeinide_harpagus",
-        "strategic": [
-            "公元前五四四年春，波斯统帅哈尔帕古斯平定伊奥尼亚海岸后，征发归附的伊奥尼亚与埃奥利亚希腊步兵编入队列，挥师南下经略卡里亚与吕基亚山地。哈利卡纳苏斯等卡里亚诸邦相继震慑归降，唯独盘踞小亚细亚西南河谷的吕基亚核心重镇克桑托斯拒绝纳贡，集结全城武士迎击数倍于己的波斯联军。"
-        ],
-        "tactical": [
-            "克桑托斯城北临险峻山谷、南控入海平原。吕基亚武士先在城外平原列阵迎敌，披坚执锐反复冲击波斯前锋，终因兵力悬殊被哈尔帕古斯大军压回城内。守军退入高耸卫城后自知突围无望，将家属财宝尽数聚入内堡纵火焚毁，全体披甲壮士开门杀入波斯攻城阵中力战至最后一人，吕基亚与小亚细亚全境自此尽入波斯版图。"
-        ],
-        "source": "希罗多德·历史·第一卷"
-    },
-    {
-        "id": "evt_0011",
-        "baton": 1,
-        "year": -542,
-        "season": 0,
-        "title": "巴克特拉东征与药杀水筑城战",
-        "kind": "narrative",
-        "place": {
-            "name": "巴克特拉绿洲",
-            "lat": 36.712,
-            "lng": 67.083
-        },
-        "leadGeneralId": "ailan_julushi",
-        "strategic": [
-            "公元前五四二年春，摩揭陀经略恒河东口之际，波斯王居鲁士二世已由伊朗高原挥师东指中亚腹地。其时兴都库什山北麓的巴克特里亚诸绿洲与索格狄亚那游牧部族趁米底覆亡各自拥兵自立，威胁波斯东方侧背。居鲁士二世为免日后南攻巴比伦时两线受敌，亲统波斯主力东进重镇巴克特拉。"
-        ],
-        "tactical": [
-            "巴克特拉北临乌浒水流域，绿洲城郭与荒漠草场犬牙交错。巴克特里亚精骑凭险设阵迎击，居鲁士二世以波斯步弓密集攒射迟滞敌骑冲击，再纵本土重骑两翼包抄击破联军，迫使巴克特拉贵族献城臣服。波斯军继而北越乌浒水驱退侵边塞种骑兵，于药杀水南岸筑起居鲁士城等连环戍堡，锁死北方草原南下孔道。"
-        ],
-        "source": "希罗多德·历史·第一卷；克特西亚斯·波斯史残篇；斯特拉波·地理志·第十一卷"
     },
     {
         "id": "evt_0013",
@@ -308,6 +271,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 44.9
                 }
             ],
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 33.18,
             "targetLng": 44.7,
             "myTroops": 15000,
@@ -360,6 +324,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 44.25
                 }
             ],
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -399,6 +364,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "药杀水北岸草原",
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 40.28,
             "targetLng": 69.62,
             "myTroops": 15000,
@@ -444,6 +410,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "feilisidin",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_susa",
             "targetLat": 31.502,
             "targetLng": 34.467,
             "myTroops": 15000,
@@ -494,6 +461,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 32.54
                 }
             ],
+            "chronicleFrom": "city_susa",
             "targetLat": 29.85,
             "targetLng": 31.25,
             "myTroops": 15000,
@@ -540,6 +508,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 32.64
                 }
             ],
+            "chronicleFrom": "city_susa",
             "targetLat": 24.088,
             "targetLng": 32.899,
             "myTroops": 15000,
@@ -548,27 +517,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0030",
-        "baton": 2,
-        "year": -522,
-        "season": 2,
-        "title": "锡卡亚乌瓦提什堡诛高墨达之战",
-        "kind": "narrative",
-        "place": {
-            "name": "米底锡卡亚乌瓦提什堡",
-            "lat": 34.4,
-            "lng": 47.45
-        },
-        "leadGeneralId": "aqimeinide_daliushi",
-        "strategic": [
-            "公元前五二二年秋，波斯政局骤生惊变，祭司高墨达冒充居鲁士次子巴尔迪亚在本土自立为王并免除各省累年兵役赋税；冈比西斯二世自埃及回师途中伤重暴卒于叙利亚。随驾持矛侍卫、宗室贵族大流士一世迅速收拢波斯禁军返国，联合奥塔涅斯、戈布里亚斯等宗室贵族直扑米底尼斯亚山地要塞。"
-        ],
-        "tactical": [
-            "锡卡亚乌瓦提什堡筑于米底险峰之上，高墨达携亲信卫队深居内堡戒备森严。大流士一世与诸位贵族盟友率精锐死士趁晨光未露策马疾驱叩关，斩杀外门值守卫兵后持短剑强突内殿长廊；戈布里亚斯在幽暗室中死死抱住高墨达，大流士一世挥剑刺杀高墨达及其亲党，随即获拥登基并率波斯常备军迎击四方叛乱。"
-        ],
-        "source": "贝希斯敦铭文第一栏；希罗多德·历史·第三卷"
     },
     {
         "id": "evt_0031",
@@ -611,6 +559,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 44.4
                 }
             ],
+            "chronicleFrom": "city_hamadan",
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -655,6 +604,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "midi",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_bosibolisi",
             "targetLat": 34.8,
             "targetLng": 48.51,
             "myTroops": 15000,
@@ -666,33 +616,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
-        "id": "evt_0040",
-        "baton": 3,
-        "year": -513,
-        "season": 1,
-        "title": "多瑙河北岸远征斯基泰之战",
-        "kind": "narrative",
-        "place": {
-            "name": "多瑙河下游北岸草原",
-            "lat": 45.22,
-            "lng": 28.78
-        },
-        "leadGeneralId": "aqimeinide_daliushi",
-        "strategic": [
-            "公元前五一三年夏，波斯王大流士一世为断绝黑海北岸游牧骑兵南侵之患并打通欧洲东门，调集大军架设博斯普鲁斯海峡浮桥首次跨入欧洲大陆。波斯军沿黑海西岸北上降服色雷斯盖塔人，命米太亚德等伊奥尼亚僭主看守多瑙河浮桥后，亲统主力深入多瑙河北岸苍茫草原追寻斯基泰大王伊达尔苏斯。"
-        ],
-        "tactical": [
-            "黑海北岸大草原无城无郭，伊达尔苏斯严拒正面决战，将妇孺畜群尽数北撤并填塞水井、焚毁牧草，仅以精锐骑射手昼夜游击波斯军侧翼与粮队。波斯骑兵数度追击皆陷入无边荒野，步兵饥疲交困；伊达尔苏斯更送鸟鼠蛙箭示威，大流士一世见诱敌不成且浮桥限期将满，遂留老弱篝火疑兵趁夜退回多瑙河南岸。"
-        ],
-        "source": "希罗多德·历史·第四卷；克特西亚斯·波斯史残篇"
-    },
-    {
         "id": "evt_0041",
         "baton": 3,
         "year": -512,
         "season": 1,
         "title": "斯特鲁马河征服佩奥尼亚之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "斯特鲁马河下游山口",
             "lat": 41.1,
@@ -705,7 +634,32 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "佩奥尼亚各部闻波斯军西进，尽集主力封锁通往海岸的滨海大道严阵待敌。梅加巴佐斯探明敌军虚实后，雇请色雷斯向导引波斯精锐改走人迹罕至的内陆崇山小径，绕过正面防线直插佩奥尼亚后方空虚城邑。前方佩奥尼亚联军闻家园失守顿时各自溃散回救，被波斯军分段击破，马其顿王阿明塔斯一世亦随之向波斯奉土献水。"
         ],
-        "source": "希罗多德·历史·第五卷"
+        "source": "希罗多德·历史·第五卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "aqimeinide_megabazus",
+            "battleId": "chron:evt_0041",
+            "battleName": "斯特鲁马河征服佩奥尼亚之战",
+            "battleYear": -512,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "斯特鲁马河下游山口",
+            "routeVia": [
+                {
+                    "name": "佩林索斯",
+                    "lat": 40.98,
+                    "lng": 27.96
+                }
+            ],
+            "chronicleFrom": "city_teluoyi",
+            "targetLat": 41.1,
+            "targetLng": 23.55,
+            "myTroops": 15000,
+            "enemyFactionId": "paeonia",
+            "enemyFactionName": "佩奥尼亚",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0056",
@@ -749,6 +703,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 25.93
                 }
             ],
+            "chronicleFrom": "city_miletus",
             "targetLat": 36.965,
             "targetLng": 25.53,
             "myTroops": 15000,
@@ -793,6 +748,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -832,6 +788,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "以弗所城外平原",
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 37.94,
             "targetLng": 27.34,
             "myTroops": 15000,
@@ -871,6 +828,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "米利都港外拉德岛海域",
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -916,6 +874,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aiaoniya",
                 "after": "aqimeinide"
             },
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -971,6 +930,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 26.4
                 }
             ],
+            "chronicleFrom": "city_susa",
             "targetLat": 40.39,
             "targetLng": 24.17,
             "myTroops": 15000,
@@ -1036,6 +996,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 23.79
                 }
             ],
+            "chronicleFrom": "city_adana",
             "targetLat": 37.98,
             "targetLng": 23.72,
             "myTroops": 15000,
@@ -1087,6 +1048,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 23.32
                 }
             ],
+            "chronicleFrom": "city_sparta",
             "targetLat": 38.482,
             "targetLng": 22.501,
             "myTroops": 15000,
@@ -1126,6 +1088,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "雅典西侧萨拉米斯海峡",
+            "chronicleFrom": "city_yadian",
             "targetLat": 37.98,
             "targetLng": 23.72,
             "myTroops": 15000,
@@ -1165,6 +1128,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "维奥蒂亚南境普拉提亚原野",
+            "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -1181,20 +1145,45 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -479,
         "season": 2,
         "title": "米卡列之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "小亚细亚西岸米卡列海角",
             "lat": 37.53,
             "lng": 27.278
         },
-        "leadGeneralId": "gen_aristides",
+        "leadGeneralId": "lagoniya_leotychidas",
         "strategic": [
             "公元前四七九年秋，普拉提亚陆战决胜同期，斯巴达王莱奥提基达斯与雅典统帅克桑提普斯率希腊联合舰队驻泊提洛岛，应萨摩斯秘密使者之请横渡爱琴海反攻小亚细亚。驻守萨摩斯的波斯舰队慑于海战失利，退往对岸米卡列山麓拖船上滩筑寨与陆军合营。"
         ],
         "tactical": [
             "米卡列山脉直插爱琴海面，波斯统帅提格拉涅斯沿海滩修筑木石营垒护卫战船，并收缴伊奥尼亚仆从军兵械。克桑提普斯率雅典重步兵沿海岸率先猛扑破垒，莱奥提基达斯率斯巴达军翻山自侧后杀到，阵中伊奥尼亚人临阵倒戈，联军斩杀提格拉涅斯并焚毁波斯舰队。"
         ],
-        "source": "希罗多德·历史·第九卷；西西里的狄奥多罗斯·历史丛书·第十一卷"
+        "source": "希罗多德·历史·第九卷；西西里的狄奥多罗斯·历史丛书·第十一卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lagoniya_leotychidas",
+            "battleId": "chron:evt_0084",
+            "battleName": "米卡列之战",
+            "battleYear": -479,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "小亚细亚西岸米卡列海角",
+            "routeVia": [
+                {
+                    "name": "萨摩斯",
+                    "lat": 37.69,
+                    "lng": 26.94
+                }
+            ],
+            "chronicleFrom": "city_chimarros",
+            "targetLat": 37.53,
+            "targetLng": 27.278,
+            "myTroops": 15000,
+            "enemyFactionId": "aqimeinide",
+            "enemyFactionName": "阿契美尼德",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0085",
@@ -1231,6 +1220,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "lagoniya"
             },
+            "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
             "myTroops": 15000,
@@ -1275,6 +1265,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "xila"
             },
+            "chronicleFrom": "city_yadian",
             "targetLat": 40.82,
             "targetLng": 23.85,
             "myTroops": 15000,
@@ -1283,27 +1274,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0088",
-        "baton": "5",
-        "year": -475,
-        "season": 1,
-        "title": "斯库罗斯岛讨伐战",
-        "kind": "narrative",
-        "place": {
-            "name": "北斯波拉泽斯群岛斯库罗斯岛",
-            "lat": 38.903,
-            "lng": 24.565
-        },
-        "leadGeneralId": "xila_cimon",
-        "strategic": [
-            "公元前四七五年夏，东方周元王初立、越王勾践发兵合围吴都姑苏之际，爱琴海航道正受海盗劫掠困扰。盘踞爱琴海中部斯库罗斯岛的多洛佩斯人长期袭扰往来商船并劫掠色萨利客商，雅典统帅客蒙借德尔斐神谕寻回英雄忒修斯遗骸之名，统领同盟舰队跨海讨伐该岛。"
-        ],
-        "tactical": [
-            "斯库罗斯岛海岸陡峭、岩洞密布，多洛佩斯人倚仗险峻山城与快船负隅顽抗。客蒙指挥三列桨战船封锁全岛港湾，亲率雅典重装步兵抢滩仰攻岛上石寨，一举击溃海盗武装并驱逐多洛佩斯原住民；雅典随即派遣公民屯田团进驻该岛，彻底打通往返黑海海峡的粮食航线。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·客蒙传"
     },
     {
         "id": "evt_0092",
@@ -1340,6 +1310,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "naxos",
                 "after": "xila"
             },
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
             "myTroops": 15000,
@@ -1390,6 +1361,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 30.55
                 }
             ],
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.939,
             "targetLng": 31.172,
             "myTroops": 15000,
@@ -1400,88 +1372,49 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
-        "id": "evt_0095",
-        "baton": "5",
-        "year": -465,
-        "season": 1,
-        "title": "萨索斯海战",
-        "kind": "narrative",
-        "place": {
-            "name": "北爱琴海萨索斯岛海域",
-            "lat": 40.778,
-            "lng": 24.709
-        },
-        "leadGeneralId": "xila_cimon",
-        "strategic": [
-            "公元前四六五年夏，波斯宫廷突发禁卫长阿尔塔巴努斯弑杀薛西斯一世之变，东方霸主越王勾践亦于同年薨逝。在北爱琴海，富庶盟邦萨索斯岛因与雅典争夺色雷斯对岸商站及金矿收益决裂，公开举兵脱离提洛同盟；雅典急命统帅客蒙率主力舰队北上镇压。"
-        ],
-        "tactical": [
-            "萨索斯岛扼守色雷斯海湾，拥有坚固海防石墙与精良舰队。萨索斯战船主动出港在近海列阵迎击，客蒙指挥久经战阵的雅典三列桨战船穿插包抄，一举击溃敌阵并缴获大批战舰；客蒙随即登岛修筑围墙全面封锁萨索斯主城，牢牢锁住北爱琴海制海权。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·客蒙传"
-    },
-    {
         "id": "evt_0096",
         "baton": "5",
         "year": -464,
         "season": 1,
         "title": "伊托美山黑劳士起义战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "拉科尼亚斯巴达至伊托美山",
             "lat": 37.185,
             "lng": 21.925
         },
-        "leadGeneralId": "xila_cimon",
+        "leadGeneralId": "lagoniya_archidamus_ii",
         "strategic": [
             "公元前四六四年夏，波斯新王阿尔塔薛西斯一世稳定王位、东方晋知瑶与赵襄子伐郑结怨之际，伯罗奔尼撒霸主斯巴达突遭灭顶强震。泰格托斯山崩夷平城舍，美塞尼亚黑劳士农奴与边民乘机揭竿暴动，正欲暗助萨索斯的斯巴达瞬间陷入存亡绝境。"
         ],
         "tactical": [
             "起义军蜂拥杀向毫无城墙的斯巴达市区，国王阿基达姆斯二世临危吹响战号，召集幸存公民武士抢占郊外高地结成重步兵盾阵。起义军见斯巴达主力严整未敢强冲，遂西退美塞尼亚天险伊托美山绝顶筑石垒据守；斯巴达军追至山下仰攻受挫，由此陷入旷日持久的山地围困战。"
         ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；西西里的狄奥多罗斯·历史丛书·第十一卷"
-    },
-    {
-        "id": "evt_0097",
-        "baton": "5",
-        "year": -463,
-        "season": 1,
-        "title": "萨索斯破城降服战",
-        "kind": "narrative",
-        "place": {
-            "name": "北爱琴海萨索斯岛主城",
-            "lat": 40.778,
-            "lng": 24.709
-        },
-        "leadGeneralId": "xila_cimon",
-        "strategic": [
-            "公元前四六三年夏，斯巴达因深陷美塞尼亚黑劳士起义泥潭，彻底无力兑现入侵阿提卡以解萨索斯之围的密约。独守孤岛的萨索斯军民已被雅典统帅客蒙海陆铁桶封锁逾两载，海外商路断绝且城内饥馑蔓延，客蒙遂收紧围城工事迫敌作最后决断。"
-        ],
-        "tactical": [
-            "萨索斯主城虽凭山海重垣力拒强攻，然雅典战船日夜巡弋海峡滴水不漏，攻城器械直逼女墙，守军储粮终告枯竭。绝望之下萨索斯被迫开城向客蒙乞降，接受拆毁城墙、交出战舰、放弃色雷斯对岸金矿领地并按岁缴纳巨额罚金的严苛条件，雅典海上霸权愈发巩固。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·客蒙传"
-    },
-    {
-        "id": "evt_0098",
-        "baton": "5",
-        "year": -462,
-        "season": 1,
-        "title": "伊托美山联军攻坚战",
-        "kind": "narrative",
-        "place": {
-            "name": "美塞尼亚中部伊托美山要塞",
-            "lat": 37.185,
-            "lng": 21.925
-        },
-        "leadGeneralId": "xila_cimon",
-        "strategic": [
-            "公元前四六二年夏，斯巴达久围伊托美山起义军不下，因素乏攻坚拔城之术，被迫向反波斯同盟诸邦求援。雅典民主派领袖厄菲阿尔特斯力主坐视劲敌困顿，亲斯巴达的名帅客蒙则力劝公民大会不可坐视盟友折翼，获准亲率雅典精锐重装步兵南下助战。"
-        ],
-        "tactical": [
-            "伊托美山孤峰耸立、悬崖如削，起义军依托先祖古垒滚石飞矢严密设防。客蒙督雅典重步兵会同斯巴达军猛烈仰攻，因山势奇险一时未克；斯巴达当局见雅典人锐意革新，唯恐其暗通起义者生变，竟借词单独遣返客蒙所部，此辱促使雅典放逐客蒙并转结阿尔戈斯对抗斯巴达。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·客蒙传"
+        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；西西里的狄奥多罗斯·历史丛书·第十一卷",
+        "winner": "defender",
+        "battle": {
+            "generalId": "lagoniya_archidamus_ii",
+            "battleId": "chron:evt_0096",
+            "battleName": "伊托美山黑劳士起义战",
+            "battleYear": -464,
+            "battleType": "siege",
+            "role": "defender",
+            "targetName": "拉科尼亚斯巴达至伊托美山",
+            "targetCityId": "city_sparta",
+            "chronicleCity": {
+                "cityId": "city_sparta",
+                "before": "lagoniya",
+                "after": "lagoniya"
+            },
+            "chronicleFrom": "city_sparta",
+            "targetLat": 37.185,
+            "targetLng": 21.925,
+            "myTroops": 15000,
+            "enemyFactionId": "messenia",
+            "enemyFactionName": "美塞尼亚",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0102",
@@ -1512,6 +1445,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "维奥蒂亚东南塔纳格拉原野",
+            "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -1527,20 +1461,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -457,
         "season": 2,
         "title": "奥诺菲塔之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "阿索波斯河谷奥诺菲塔",
             "lat": 38.32,
             "lng": 23.31
         },
-        "leadGeneralId": "xila_pericles",
+        "leadGeneralId": "xila_myronides",
         "strategic": [
             "公元前四五七年秋，斯巴达大军自塔纳格拉撤返伯罗奔尼撒甫逾两月，不屈的雅典人已重整军备决意反击。为拔除斯巴达在中希腊扶持的维奥蒂亚盟友、屏护阿提卡北疆，雅典宿将米隆尼德斯再度统领公民重装步兵翻越帕尔奈斯山脉，疾扑奥诺菲塔与维奥蒂亚联军决战。"
         ],
         "tactical": [
             "奥诺菲塔控扼阿索波斯河谷平坝，维奥蒂亚诸邦集结重步兵与精良骑兵严阵阻截。米隆尼德斯不待右翼完全展开便抓住战机挥左翼精锐猛扑敌阵，酣战击溃维奥蒂亚主力；雅典军乘胜拆毁塔纳格拉城墙，将维奥蒂亚诸城与福基斯纳入霸权，同年迫降埃吉纳并建成雅典长墙。"
         ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；西西里的狄奥多罗斯·历史丛书·第十一卷"
+        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；西西里的狄奥多罗斯·历史丛书·第十一卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_myronides",
+            "battleId": "chron:evt_0103",
+            "battleName": "奥诺菲塔之战",
+            "battleYear": -457,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "阿索波斯河谷奥诺菲塔",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 38.32,
+            "targetLng": 23.31,
+            "myTroops": 15000,
+            "enemyFactionId": "boootiya",
+            "enemyFactionName": "底比斯",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0105",
@@ -1548,20 +1500,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -455,
         "season": 1,
         "title": "吉雄港奇袭焚舰战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "拉科尼亚海湾吉雄军港",
             "lat": 37.07,
             "lng": 22.42
         },
-        "leadGeneralId": "xila_pericles",
+        "leadGeneralId": "xila_tolmides",
         "strategic": [
             "公元前四五五年夏，东方晋国知瑶联合韩魏举兵围困赵襄子于晋阳之际，希腊战场雅典借中希腊大捷之威向伯罗奔尼撒本土发动海上攻势。雅典猛将托尔米德斯奉命率精挑重装步兵与三列桨舰队南绕马利亚海角，直插斯巴达腹地唯一的海军造船基地吉雄港。"
         ],
         "tactical": [
             "吉雄港深藏拉科尼亚海湾西岸，为斯巴达海防咽喉。托尔米德斯舰队猝然突入港湾，雅典士兵抢滩击溃港口守卫，将斯巴达船坞、战船与军械库尽数焚毁；舰队旋即环航西进科林斯湾攻取卡尔基斯，并将撤离伊托美山的美塞尼亚人安置在要塞纳夫帕克托斯锁扼海口。"
         ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；保萨尼亚斯·希腊志·第一卷"
+        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；保萨尼亚斯·希腊志·第一卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_tolmides",
+            "battleId": "chron:evt_0105",
+            "battleName": "吉雄港奇袭焚舰战",
+            "battleYear": -455,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "拉科尼亚海湾吉雄军港",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 37.07,
+            "targetLng": 22.42,
+            "myTroops": 15000,
+            "enemyFactionId": "lagoniya",
+            "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0109",
@@ -1592,6 +1562,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "塞浦路斯东岸萨拉米斯海域",
+            "chronicleFrom": "city_yadian",
             "targetLat": 35.12,
             "targetLng": 33.94,
             "myTroops": 15000,
@@ -1602,67 +1573,43 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
-        "id": "evt_0110",
-        "baton": "6A",
-        "year": -448,
-        "season": 1,
-        "title": "伯里克利规复德尔斐之战",
-        "kind": "narrative",
-        "place": {
-            "name": "帕尔纳索斯山麓德尔斐圣地",
-            "lat": 38.482,
-            "lng": 22.501
-        },
-        "leadGeneralId": "xila_pericles",
-        "strategic": [
-            "公元前四四八年夏，斯巴达大军扶植德尔斐独立并撤返伯罗奔尼撒后，中希腊盟邦福基斯紧急向雅典求援。雅典首席统帅伯里克利深知德尔斐神谕关乎全希腊人心向背与同盟声望，决意避开斯巴达锋芒采取后发制人之策，亲统雅典公民重装步兵北出阿提卡疾趋德尔斐。"
-        ],
-        "tactical": [
-            "帕尔纳索斯山谷道路险仄，此时维奥蒂亚尚受雅典节制，伯里克利大军畅行无阻直抵德尔斐山城之下。面对雅典精锐重步兵压境，失去斯巴达驻军庇护的德尔斐亲斯巴达政权无力拒守，伯里克利驱散守备重将神庙交还福基斯执掌，并在青铜狼像右侧铭刻雅典优先问卜权。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·伯里克利传"
-    },
-    {
         "id": "evt_0111",
         "baton": "6A",
         "year": -447,
         "season": 2,
         "title": "科罗尼亚之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "科帕伊斯湖西岸科罗尼亚",
             "lat": 38.32,
             "lng": 23.31
         },
-        "leadGeneralId": "xila_pericles",
+        "leadGeneralId": "xila_tolmides",
         "strategic": [
             "公元前四四七年秋，东方楚惠王发兵东扩攻灭下蔡之际，雅典在中希腊的陆上霸权突发剧震。遭流放的维奥蒂亚寡头贵族据占奥尔霍迈诺斯与喀罗尼亚反叛，伯里克利力劝稳妥集结大军再战，素以悍勇著称的将领托尔米德斯却轻敌急进，仅率偏师志愿重步兵仓促北征。"
         ],
         "tactical": [
             "托尔米德斯初克喀罗尼亚留兵驻守，拔营南返途经科帕伊斯湖畔科罗尼亚狭窄原野时，突遭底比斯主帅斯帕尔顿统领的维奥蒂亚与优卑亚流亡联军伏击。联军凭优势兵力与精骑截断雅典行军纵队，托尔米德斯力战阵亡、残部被俘，雅典为赎战俘被迫放弃维奥蒂亚霸权。"
         ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·伯里克利传"
-    },
-    {
-        "id": "evt_0112",
-        "baton": "6A",
-        "year": -446,
-        "season": 2,
-        "title": "优卑亚平叛战",
-        "kind": "narrative",
-        "place": {
-            "name": "优卑亚岛卡尔基斯至希斯提亚亚",
-            "lat": 38.32,
-            "lng": 23.31
-        },
-        "leadGeneralId": "xila_pericles",
-        "strategic": [
-            "公元前四四六年秋，叙拉古大捷希梅拉河、罗马战胜科尔比奥之际，科罗尼亚之败引发雅典盟邦连环叛变。粮道命脉优卑亚全岛起兵，伯里克利刚渡海讨伐，墨伽拉又倒戈杀雅典守兵，并引斯巴达王普莱斯托阿纳克斯率军直逼阿提卡埃琉西斯。"
-        ],
-        "tactical": [
-            "伯里克利火速撤军回防阿提卡，暗遣使以重金游说普莱斯托阿纳克斯与军师克莱安德里达斯不战退兵。解除本土危机后，伯里克利亲统大批战船与精锐重步兵重返优卑亚雷霆扫荡，逐走卡尔基斯贵族，强攻拔除北端重镇希斯提亚亚并迁入雅典公民屯田锁控全岛。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·伯里克利传"
+        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·希腊罗马名人传·伯里克利传",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_tolmides",
+            "battleId": "chron:evt_0111",
+            "battleName": "科罗尼亚之战",
+            "battleYear": -447,
+            "battleType": "field",
+            "role": "defender",
+            "targetName": "科帕伊斯湖西岸科罗尼亚",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 38.32,
+            "targetLng": 23.31,
+            "myTroops": 15000,
+            "enemyFactionId": "boootiya",
+            "enemyFactionName": "底比斯",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0117",
@@ -1693,6 +1640,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "特拉吉亚岛海面至萨摩斯主城",
+            "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -1737,6 +1685,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aiaoniya",
                 "after": "xila"
             },
+            "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -1780,6 +1729,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "seleisi",
                 "after": "xila"
             },
+            "chronicleFrom": "city_anfeibolisi",
             "targetLat": 40.82,
             "targetLng": 23.85,
             "myTroops": 15000,
@@ -1788,90 +1738,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0122",
-        "baton": "6B",
-        "year": -435,
-        "season": 1,
-        "title": "琉喀墨海角破敌战",
-        "kind": "narrative",
-        "place": {
-            "name": "科孚岛南端琉喀墨海域",
-            "lat": 39.62,
-            "lng": 19.92
-        },
-        "leadGeneralId": "xila_hagenong",
-        "strategic": [
-            "公元前四三五年夏，希腊西海亚得里亚门户因埃皮达姆诺斯内乱引爆母邦冲突。埃皮达姆诺斯民主派遭流亡贵族与伊利里亚人围攻，越过建城母邦科孚径向科林斯求援；科孚震怒出师围城，科林斯遂发庞大舰队西航，直扑科孚南端琉喀墨海角决战。"
-        ],
-        "tactical": [
-            "琉喀墨海角外水阔流急，科孚主力舰队背靠海岛南岸严阵以待，另留分舰队继续锁死埃皮达姆诺斯海口。两军三层桨战船在海角外展开激烈撞角冲犁与接舷白刃战，科孚舰队凭娴熟操舟术击沉俘获多艘敌舰；同日埃皮达姆诺斯守军亦粮尽开城向科孚投降。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；狄奥多罗斯·历史丛书·第十二卷"
-    },
-    {
-        "id": "evt_0123",
-        "baton": "6B",
-        "year": -433,
-        "season": 2,
-        "title": "科孚叙博塔大海战",
-        "kind": "narrative",
-        "place": {
-            "name": "科孚东南叙博塔群岛水道",
-            "lat": 39.62,
-            "lng": 19.92
-        },
-        "leadGeneralId": "xila_hagenong",
-        "strategic": [
-            "公元前四三三年秋，科林斯建成空前规模的远征舰队，集结安布拉基亚与莱夫卡斯盟军直扑科孚岛。科孚自知独力难支，遣使赴雅典缔结防御同盟；伯里克利派客蒙之子拉凯代莫尼乌斯率雅典分舰队西援，严令仅在科孚本土遭登陆威胁时方可参战。"
-        ],
-        "tactical": [
-            "叙博塔群岛与大陆间海峡狭窄，两军战船密布海面，甲板重步兵与弓箭手贴身混战宛如陆战。科孚左翼虽击溃敌右翼却贪恋劫营，科林斯主力乘隙猛攻压垮科孚右翼；危急关头雅典战船横插战线阻截追击，傍晚雅典增援船队现身海平线，科林斯遂敛船退兵。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；普鲁塔克·伯里克利传"
-    },
-    {
-        "id": "evt_0124",
-        "baton": "6B",
-        "year": -432,
-        "season": 2,
-        "title": "波提狄亚地峡会战与合围",
-        "kind": "narrative",
-        "place": {
-            "name": "帕勒涅地峡波提狄亚城北",
-            "lat": 40.29,
-            "lng": 23.35
-        },
-        "leadGeneralId": "xila_hagenong",
-        "strategic": [
-            "公元前四三二年秋，叙博塔海战引燃雅典与科林斯全面敌对。雅典勒令同属提洛同盟纳贡邦的科林斯殖民城波提狄亚拆毁南墙并驱逐母邦监察官；波提狄亚在马其顿王怂恿下举城反叛，科林斯名将阿里斯泰乌斯星夜驰援，雅典主帅卡利亚斯遂统军强攻。"
-        ],
-        "tactical": [
-            "波提狄亚雄踞帕勒涅狭窄地峡咽喉，东西两面临海。阿里斯泰乌斯亲领科林斯精兵击退当面雅典部队追出甚远，雅典主力却压垮波提狄亚本军，卡利亚斯战死而雅典军乘胜收拢；阿里斯泰乌斯涉浪贴海墙冒险杀回城内，雅典军旋即筑南北双墙铁桶围城。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第一卷；柏拉图·会饮篇"
-    },
-    {
-        "id": "evt_0125",
-        "baton": "6B",
-        "year": -431,
-        "season": 0,
-        "title": "普拉提亚雨夜奇袭战",
-        "kind": "narrative",
-        "place": {
-            "name": "维奥蒂亚南境普拉提亚城",
-            "lat": 38.32,
-            "lng": 23.31
-        },
-        "leadGeneralId": "xila_hagenong",
-        "strategic": [
-            "公元前四三一年春，波提狄亚围城与麦加拉禁令彻底撕裂三十年和约，斯巴达与伯罗奔尼撒同盟决议讨伐雅典。底比斯政务官欧律马库斯勾结城内寡头内应，率精锐重步兵趁春夜晦暗潜入雅典盟邦普拉提亚，正式揭开伯罗奔尼撒战争序幕。"
-        ],
-        "tactical": [
-            "普拉提亚坐落基泰龙山北麓，街巷曲折泥泞。底比斯军初凭内应占领广场，普拉提亚公民在黑夜大雨中察觉敌军兵少，当即凿通民宅墙壁串联，推大车堵塞街口；黎明前全城军民自屋顶掷瓦呐喊反扑，底比斯军迷失巷道大败受俘，斯巴达王随即统军入侵阿提卡。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第二卷；狄奥多罗斯·历史丛书·第十二卷"
     },
     {
         "id": "evt_0126",
@@ -1902,6 +1768,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科林斯湾口诺帕克都外海",
+            "chronicleFrom": "city_aolinpiya",
             "targetLat": 38.392,
             "targetLng": 21.828,
             "myTroops": 15000,
@@ -1910,48 +1777,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0127",
-        "baton": "6B",
-        "year": -428,
-        "season": 2,
-        "title": "米蒂利尼叛乱与筑墙封锁战",
-        "kind": "narrative",
-        "place": {
-            "name": "莱斯博斯岛米蒂利尼港",
-            "lat": 39.104,
-            "lng": 26.555
-        },
-        "leadGeneralId": "gen_brasidas",
-        "strategic": [
-            "公元前四二八年秋，伯里克利染疫病逝后雅典国力受创，爱琴海北翼拥有独立舰队的强邦米蒂利尼密谋兼并莱斯博斯全岛脱离提洛同盟，并遣使赴奥林匹亚向斯巴达求援。雅典获密报先发制人，增派名将帕凯斯率重步兵登岛合围，全力扑灭海上叛火。"
-        ],
-        "tactical": [
-            "米蒂利尼拥有南北双港与坚固海陆城防。帕凯斯登岛后驱军环绕陆侧修筑单层石墙并增设高地堡垒，同时以三层桨战船严锁南北两港；斯巴达虽派督帅萨莱托斯潜入城中督守，但伯罗奔尼撒救援舰队畏惧雅典海上锋芒迟迟未至，孤城终陷绝粮重围。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第三卷；狄奥多罗斯·历史丛书·第十二卷"
-    },
-    {
-        "id": "evt_0128",
-        "baton": "6B",
-        "year": -427,
-        "season": 1,
-        "title": "普拉提亚绝粮陷落战",
-        "kind": "narrative",
-        "place": {
-            "name": "基泰龙山麓普拉提亚",
-            "lat": 38.32,
-            "lng": 23.31
-        },
-        "leadGeneralId": "gen_brasidas",
-        "strategic": [
-            "公元前四二七年夏，斯巴达王阿基达穆斯二世与底比斯联军对普拉提亚的围困已历两载寒暑。此前部分守军虽冒风雪夜翻越双层围墙突围退往雅典，但雅典忙于平定米蒂利尼无力北救基泰龙山麓，城内残余普拉提亚与雅典守军陷入彻底孤立。"
-        ],
-        "tactical": [
-            "普拉提亚城外筑有斯巴达军严密的内外双层砖墙与深壕，守军曾掘地道掏空攻城土山并以硫磺松脂挫败火攻。至仲夏存粮耗尽，斯巴达军试探攻城时守军已无力登陴抵抗，被迫开城受审；底比斯人借机尽诛守城壮士并将普拉提亚城池夷为平地。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第三卷"
     },
     {
         "id": "evt_0129",
@@ -1982,6 +1807,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "安布拉基亚湾奥尔派山岗",
+            "chronicleFrom": "city_deerfei",
             "targetLat": 39.16,
             "targetLng": 20.98,
             "myTroops": 15000,
@@ -2020,6 +1846,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "美塞尼亚西岸派洛斯海岬",
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.96,
             "targetLng": 21.66,
             "myTroops": 15000,
@@ -2059,6 +1886,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "派洛斯湾口斯法克特里亚岛",
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.93,
             "targetLng": 21.665,
             "myTroops": 15000,
@@ -2074,41 +1902,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -424,
         "season": 3,
         "title": "德利乌姆深阵破敌战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "维奥蒂亚东岸德利乌姆",
             "lat": 38.32,
             "lng": 23.31
         },
-        "leadGeneralId": "bfe2_cleon",
+        "leadGeneralId": "boootiya_pagondas",
         "strategic": [
             "公元前四二四年冬，派洛斯大捷令雅典锐气高涨，遂策划海陆钳击维奥蒂亚。因西路机密败露未能如期策应，东路雅典将军希波克拉底孤军进占海滨神庙德利乌姆筑壕设防，撤返边境途中，遭底比斯老将帕贡达斯统率的维奥蒂亚联军越山追及。"
         ],
         "tactical": [
             "德利乌姆城外丘陵起伏，两侧溪壑限制翼侧展开。帕贡达斯首创在右翼排布远超常规纵深的厚重底比斯方阵，正面压垮雅典左翼；雅典右翼虽胜敌左翼，帕贡达斯果断暗调精骑绕山突现雅典胜翼背后，雅典全军误以为敌新援杀至瞬间惊溃，希波克拉底阵亡。"
         ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第四卷；柏拉图·会饮篇"
-    },
-    {
-        "id": "evt_0133",
-        "baton": "7A",
-        "year": -423,
-        "season": 1,
-        "title": "门德强攻与斯基奥内合围战",
-        "kind": "narrative",
-        "place": {
-            "name": "帕勒涅半岛门德与斯基奥内",
-            "lat": 40.29,
-            "lng": 23.35
-        },
-        "leadGeneralId": "xila_nixiyasi",
-        "strategic": [
-            "公元前四二三年夏，雅典与斯巴达刚缔结一年休战协定，帕勒涅半岛城邑斯基奥内与门德却接连倒向远征北方的斯巴达名将巴西达斯。雅典趁巴西达斯随马其顿王西征未归之机，命稳健宿将尼西亚斯统舰队与色雷斯轻盾兵北上讨伐。"
-        ],
-        "tactical": [
-            "门德与斯基奥内同处滨海台地，卫城高耸易守。尼西亚斯先攻门德城外山岗负伤，旋即绕城猛攻时恰逢城内民主派与斯巴达守将波吕达米达斯内讧，市民开门迎入雅典军，敌守将退锁卫城；尼西亚斯破门德后移师南下，筑起长墙将斯基奥内严密围困。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第四卷；普鲁塔克·尼西亚斯传"
+        "source": "修昔底德·伯罗奔尼撒战争史·第四卷；柏拉图·会饮篇",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "boootiya_pagondas",
+            "battleId": "chron:evt_0132",
+            "battleName": "德利乌姆深阵破敌战",
+            "battleYear": -424,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "维奥蒂亚东岸德利乌姆",
+            "chronicleFrom": "city_thebes",
+            "targetLat": 38.32,
+            "targetLng": 23.31,
+            "myTroops": 15000,
+            "enemyFactionId": "xila",
+            "enemyFactionName": "雅典",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0134",
@@ -2139,6 +1964,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "斯特里蒙河东岸安菲波利斯",
+            "routeVia": [
+                {
+                    "name": "托罗尼",
+                    "lat": 39.98,
+                    "lng": 23.89
+                }
+            ],
+            "chronicleFrom": "city_yadian",
             "targetLat": 40.82,
             "targetLng": 23.85,
             "myTroops": 15000,
@@ -2148,111 +1981,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0135",
-        "baton": "7A",
-        "year": -421,
-        "season": 1,
-        "title": "斯基奥内破城惩戒战",
-        "kind": "narrative",
-        "place": {
-            "name": "帕勒涅半岛南岸斯基奥内",
-            "lat": 40.29,
-            "lng": 23.35
-        },
-        "leadGeneralId": "xila_nixiyasi",
-        "strategic": [
-            "公元前四二一年夏，克里昂与巴西达斯双双陨落后，雅典统帅尼西亚斯与斯巴达国王达成尼西亚斯和约，终结十年阿基达穆斯战争；然而和约明确将违约背叛的斯基奥内交由雅典自行处置，雅典围城军遂对孤城发起最后收网。"
-        ],
-        "tactical": [
-            "斯基奥内三面临海，北侧早被雅典筑起的封锁长墙彻底截断陆路补给。城中守军在长墙内苦熬两载，弹尽粮绝且彻底丧失斯巴达救援希望，终被雅典军强行攻破城防；雅典严厉执行惩处法令，并将城池土地移交流亡的普拉提亚遗民定居。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第五卷；狄奥多罗斯·历史丛书·第十二卷"
-    },
-    {
-        "id": "evt_0136",
-        "baton": "7A",
-        "year": -419,
-        "season": 1,
-        "title": "埃皮道鲁斯侵掠破约战",
-        "kind": "narrative",
-        "place": {
-            "name": "阿尔戈利斯东岸埃皮道鲁斯",
-            "lat": 37.633,
-            "lng": 23.155
-        },
-        "leadGeneralId": "xila_alcibiades",
-        "strategic": [
-            "公元前四一九年夏，新任雅典将军亚西比德率重步兵横穿伯罗奔尼撒巡视盟邦，力劝阿尔戈斯夺取萨罗尼克湾要冲埃皮道鲁斯，以打通雅典自海路驰援阿尔戈斯的近捷航线并孤立科林斯。阿尔戈斯遂借口祭礼纠纷大举发兵围攻埃皮道鲁斯。"
-        ],
-        "tactical": [
-            "埃皮道鲁斯背靠山地、东临良港，城垣险峻难拔。阿尔戈斯军在亚西比德协同下纵兵焚掠城郊庄园，斯巴达王阿基斯二世两赴边境因献祭不吉退兵，岁末改由海路暗遣驻军潜入协防；阿尔戈斯架云梯仰攻遭守军击退，伯罗奔尼撒大战一触即发。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第五卷；普鲁塔克·亚西比德传"
-    },
-    {
-        "id": "evt_0137",
-        "baton": "7A",
-        "year": -418,
-        "season": 1,
-        "title": "第一次曼丁尼亚主力决战",
-        "kind": "narrative",
-        "place": {
-            "name": "阿卡迪亚曼丁尼亚平原",
-            "lat": 37.618,
-            "lng": 22.393
-        },
-        "leadGeneralId": "xila_alcibiades",
-        "strategic": [
-            "公元前四一八年夏，阿尔戈斯、曼丁尼亚与雅典联军攻占奥尔霍迈诺斯并进逼泰格亚，斯巴达霸权濒临瓦解。此前备受指责的斯巴达王阿基斯二世誓以大胜雪耻，倾发公民重步兵与黑劳士劲旅疾驰北上，在曼丁尼亚平原诱敌下山决战。"
-        ],
-        "tactical": [
-            "曼丁尼亚谷地开阔，两军方阵推进时均自然右偏。曼丁尼亚与阿尔戈斯精兵冲入斯巴达左翼裂口追杀，阿基斯二世统领的斯巴达中右翼却如铁壁碾碎雅典与阿尔戈斯左翼，阵斩雅典双帅拉凯斯与尼科斯特拉图斯，旋即回师横扫敌右翼，一战重振斯巴达陆霸声威。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第五卷；狄奥多罗斯·历史丛书·第十二卷"
-    },
-    {
-        "id": "evt_0138",
-        "baton": "7A",
-        "year": -417,
-        "season": 3,
-        "title": "希西亚伊攻占毁城战",
-        "kind": "narrative",
-        "place": {
-            "name": "阿尔戈利斯西境希西亚伊",
-            "lat": 37.53,
-            "lng": 22.56
-        },
-        "leadGeneralId": "xila_alcibiades",
-        "strategic": [
-            "公元前四一七年冬，曼丁尼亚败后一度被迫接纳亲斯巴达寡头政权的阿尔戈斯公民再次起义，驱逐寡头党羽重投雅典，全城男女日夜赶筑直通海岸的护卫长墙。斯巴达王阿基斯二世闻变统联军北进阿尔戈利斯，决意摧毁长墙并剪除门户据点。"
-        ],
-        "tactical": [
-            "希西亚伊坐落帕尔农山北麓险要山谷，扼守拉科尼亚北出孔道。阿基斯二世因城内内应失约未能夺取阿尔戈斯主城，遂挥师推毁其正在修筑的海滨长墙，返程顺势强攻拔除边境重镇希西亚伊，尽诛被俘守军后退兵，令阿尔戈斯西境门户洞开。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第五卷；狄奥多罗斯·历史丛书·第十二卷"
-    },
-    {
-        "id": "evt_0139",
-        "baton": "7A",
-        "year": -416,
-        "season": 3,
-        "title": "米洛斯岛筑垒围灭战",
-        "kind": "narrative",
-        "place": {
-            "name": "基克拉泽斯群岛米洛斯城",
-            "lat": 36.745,
-            "lng": 24.426
-        },
-        "leadGeneralId": "xila_nixiyasi",
-        "strategic": [
-            "公元前四一六年冬，雅典决意肃清爱琴海中拒不入盟的独立岛邦。多利亚人殖民建立的米洛斯岛自恃中立拒绝向提洛同盟纳贡，雅典将领克莱奥梅德斯与提西亚斯登岛摊牌，在著名的强权对话破裂后，立即对米洛斯城展开海陆围攻。"
-        ],
-        "tactical": [
-            "米洛斯城盘踞海湾高岩之上，难以强攻。雅典军环城修筑封锁墙断绝海上粮援，米洛斯守军两度夜袭围墙局部得手，雅典随即增派菲洛克拉底率重兵收紧铁箍；隆冬城中粮尽且有内奸动摇，米洛斯被迫无条件投降，雅典尽戮成年男丁并迁民屯垦。"
-        ],
-        "source": "修昔底德·伯罗奔尼撒战争史·第五卷；普鲁塔克·亚西比德传"
     },
     {
         "id": "evt_0140",
@@ -2300,6 +2028,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 15.09
                 }
             ],
+            "chronicleFrom": "city_yadian",
             "targetLat": 37.07,
             "targetLng": 15.28,
             "myTroops": 15000,
@@ -2344,6 +2073,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "syracuse",
                 "after": "syracuse"
             },
+            "chronicleFrom": "city_tiluo",
             "targetLat": 37.07,
             "targetLng": 15.28,
             "myTroops": 15000,
@@ -2382,6 +2112,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "叙拉古大港与阿西纳罗斯河",
+            "chronicleFrom": "city_tiluo",
             "targetLat": 37.07,
             "targetLng": 15.28,
             "myTroops": 15000,
@@ -2420,6 +2151,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "赫勒斯滂海峡阿比多斯水域",
+            "chronicleFrom": "city_miletus",
             "targetLat": 40.332,
             "targetLng": 26.6,
             "myTroops": 15000,
@@ -2458,6 +2190,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "普罗滂提斯海库梓库斯湾",
+            "chronicleFrom": "city_yadian",
             "targetLat": 40.132,
             "targetLng": 28.05,
             "myTroops": 15000,
@@ -2502,6 +2235,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lagoniya",
                 "after": "xila"
             },
+            "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
             "myTroops": 15000,
@@ -2517,20 +2251,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -406,
         "season": 2,
         "title": "阿吉努萨伊群岛大海战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "莱斯博斯东南阿吉努萨伊海域",
             "lat": 39.12,
             "lng": 27.18
         },
-        "leadGeneralId": "gen_lysander",
+        "leadGeneralId": "lagoniya_callicratidas",
         "strategic": [
             "公元前四零六年秋，接替吕山德的斯巴达提督卡利克拉提达斯强攻米蒂利尼港，将雅典名将科农封锁于港内。危亡关头雅典熔化神庙金像、解放奴隶充当桨手拼凑救援舰队赶赴阿吉努萨伊群岛，卡利克拉提达斯分兵留围科农，亲率主力迎战。"
         ],
         "tactical": [
             "阿吉努萨伊三岛横亘海峡之间。因雅典新募水手操舟生疏，诸将军反常排布双层厚重战列严防敌舰穿插；两翼混战中卡利克拉提达斯座舰猛撞敌船时坠海溺亡，斯巴达右翼崩溃损失惨重，科农之围立解，然战后风暴阻碍打捞竟引发雅典冤杀胜将悲剧。"
         ],
-        "source": "色诺芬·希腊史·第一卷；狄奥多罗斯·历史丛书·第十三卷"
+        "source": "色诺芬·希腊史·第一卷；狄奥多罗斯·历史丛书·第十三卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lagoniya_callicratidas",
+            "battleId": "chron:evt_0150",
+            "battleName": "阿吉努萨伊群岛大海战",
+            "battleYear": -406,
+            "battleType": "field",
+            "role": "defender",
+            "targetName": "莱斯博斯东南阿吉努萨伊海域",
+            "chronicleFrom": "city_peierjiameng",
+            "targetLat": 39.12,
+            "targetLng": 27.18,
+            "myTroops": 15000,
+            "enemyFactionId": "xila",
+            "enemyFactionName": "雅典",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0152",
@@ -2568,6 +2320,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 26.69
                 }
             ],
+            "chronicleFrom": "city_rhodes",
             "targetLat": 40.332,
             "targetLng": 26.6,
             "myTroops": 15000,
@@ -2613,6 +2366,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xila",
                 "after": "lagoniya"
             },
+            "chronicleFrom": "city_sparta",
             "targetLat": 37.98,
             "targetLng": 23.72,
             "myTroops": 15000,
@@ -2628,20 +2382,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -403,
         "season": 0,
         "title": "穆尼基亚山复辟民主之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "比雷埃夫斯港穆尼基亚山",
             "lat": 37.98,
             "lng": 23.72
         },
-        "leadGeneralId": "gen_lysander",
+        "leadGeneralId": "xila_thrasybulus",
         "strategic": [
             "公元前四零三年春，斯巴达扶植的雅典寡头政权大肆杀戮异己，前海军名将斯拉叙布卢斯自底比斯率流亡义士夺取边塞菲莱并两挫讨伐军。壮大的民主军趁夜潜入比雷埃夫斯港，寡头领袖克里提亚斯急调斯巴达驻军与重步兵追至，民主军遂据穆尼基亚陡坡迎战。"
         ],
         "tactical": [
             "穆尼基亚山坡道狭窄陡峭，迫使寡头联军只能排成深纵队仰攻。斯拉叙布卢斯将重步兵列于坡前，背后密布投石手与标枪手居高攒射；激励士气后民主军顺陡坡雷霆俯冲，当场击毙寡头元凶克里提亚斯，随后斯巴达王帕萨尼亚斯调停议和，雅典恢复民主政体。"
         ],
-        "source": "色诺芬·希腊史·第二卷；狄奥多罗斯·历史丛书·第十四卷"
+        "source": "色诺芬·希腊史·第二卷；狄奥多罗斯·历史丛书·第十四卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_thrasybulus",
+            "battleId": "chron:evt_0155",
+            "battleName": "穆尼基亚山复辟民主之战",
+            "battleYear": -403,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "比雷埃夫斯港穆尼基亚山",
+            "chronicleFrom": "city_thebes",
+            "targetLat": 37.98,
+            "targetLng": 23.72,
+            "myTroops": 15000,
+            "enemyFactionId": "lagoniya",
+            "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0156",
@@ -2649,20 +2421,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -402,
         "season": 1,
         "title": "斯巴达征讨伊利斯之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "伯罗奔尼撒西岸伊利斯河谷",
             "lat": 37.639,
             "lng": 21.631
         },
-        "leadGeneralId": "gen_lysander",
+        "leadGeneralId": "lagoniya_agis_ii",
         "strategic": [
             "公元前四零二年夏，稳坐希腊霸主的斯巴达开始清算旧怨，矛头直指昔日曾禁赛羞辱斯巴达并倒向雅典的西邻伊利斯邦。斯巴达勒令伊利斯释放周边属邑自治遭拒，国王阿基斯二世遂统领伯罗奔尼撒联军越过边界河谷，全面攻入伊利斯腹地。"
         ],
         "tactical": [
             "伊利斯平原农庄富庶且不设外郭城墙，北倚阿克罗雷亚山地。阿基斯二世连拔山城进抵奥林匹亚献祭；城内亲斯巴达寡头企图刺杀民主领袖色拉绪代乌斯引发巷战被挫败，然面对斯巴达长年筑塞劫掠，伊利斯终被迫拆毁港墙释放属城求和。"
         ],
-        "source": "色诺芬·希腊史·第三卷；狄奥多罗斯·历史丛书·第十四卷"
+        "source": "色诺芬·希腊史·第三卷；狄奥多罗斯·历史丛书·第十四卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lagoniya_agis_ii",
+            "battleId": "chron:evt_0156",
+            "battleName": "斯巴达征讨伊利斯之战",
+            "battleYear": -402,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "伯罗奔尼撒西岸伊利斯河谷",
+            "chronicleFrom": "city_sparta",
+            "targetLat": 37.639,
+            "targetLng": 21.631,
+            "myTroops": 15000,
+            "enemyFactionId": "yilisi",
+            "enemyFactionName": "埃利斯",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0157",
@@ -2695,11 +2485,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "幼发拉底河左岸库纳克萨",
             "routeVia": [
                 {
-                    "name": "撒狄",
-                    "lat": 38.49,
-                    "lng": 28.04
-                },
-                {
                     "name": "科洛赛",
                     "lat": 37.79,
                     "lng": 29.26
@@ -2720,6 +2505,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 36.2
                 }
             ],
+            "chronicleFrom": "city_sifaerde",
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -2758,6 +2544,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "亚美尼亚高原至特拉佩祖斯山隘",
+            "chronicleFrom": "city_yadian",
             "targetLat": 41,
             "targetLng": 39.73,
             "myTroops": 15000,
@@ -2802,6 +2589,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "lagoniya"
             },
+            "chronicleFrom": "city_dasijiliweng",
             "targetLat": 39.958,
             "targetLng": 26.239,
             "myTroops": 15000,
@@ -2846,6 +2634,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boootiya",
                 "after": "boootiya"
             },
+            "chronicleFrom": "city_deerfei",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -2884,6 +2673,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡里亚西南端克尼多斯外海",
+            "chronicleFrom": "city_rhodes",
             "targetLat": 37.03,
             "targetLng": 27.43,
             "myTroops": 15000,
@@ -2922,6 +2712,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "拉科尼亚南海外基西拉岛",
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.15,
             "targetLng": 22.99,
             "myTroops": 15000,
@@ -2937,20 +2728,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -391,
         "season": 1,
         "title": "勒卡乌姆轻盾兵歼灭重步兵战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "科林斯西港勒卡乌姆平原",
             "lat": 37.933,
             "lng": 22.882
         },
-        "leadGeneralId": "bfe2_conon",
+        "leadGeneralId": "xila_iphicrates",
         "strategic": [
             "公元前三九一年夏，科林斯地峡拉锯正烈，斯巴达控制西港勒卡乌姆，雅典派青年名将伊菲克拉特斯统轻盾标枪兵协防科林斯城。适值斯巴达驻港重步兵营团护送同乡南归祭礼后单独折返，竟在无骑兵与轻兵掩护下横穿科林斯城外平原。"
         ],
         "tactical": [
             "勒卡乌姆滨海大道平坦无遮，伊菲克拉特斯令雅典重步兵远距压阵，自统轻捷无重甲的轻盾兵扑向斯巴达纵队无盾右侧，抵近投出密集标枪旋即疾退；斯巴达重步兵负重追击莫及，折返又遭背射，往复消耗至全团崩溃奔逃，创下轻兵歼灭斯巴达重阵奇迹。"
         ],
-        "source": "色诺芬·希腊史·第四卷；普鲁塔克·阿格西莱传"
+        "source": "色诺芬·希腊史·第四卷；普鲁塔克·阿格西莱传",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_iphicrates",
+            "battleId": "chron:evt_0168",
+            "battleName": "勒卡乌姆轻盾兵歼灭重步兵战",
+            "battleYear": -391,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "科林斯西港勒卡乌姆平原",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 37.933,
+            "targetLng": 22.882,
+            "myTroops": 15000,
+            "enemyFactionId": "lagoniya",
+            "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0171",
@@ -2981,6 +2790,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "萨罗尼克湾埃吉纳岛山道",
+            "chronicleFrom": "city_yadian",
             "targetLat": 37.98,
             "targetLng": 23.72,
             "myTroops": 15000,
@@ -2991,46 +2801,49 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
-        "id": "evt_0174",
-        "baton": "8B",
-        "year": -385,
-        "season": 2,
-        "title": "曼丁尼亚壅河塌墙围城战",
-        "kind": "narrative",
-        "place": {
-            "name": "阿卡迪亚曼丁尼亚城",
-            "lat": 37.618,
-            "lng": 22.393
-        },
-        "leadGeneralId": "gen_epaminondas",
-        "strategic": [
-            "公元前三八五年秋，斯巴达借口执行和约自治条款打压异己，勒令阿卡迪亚强邦曼丁尼亚拆毁城墙分散回村落。曼丁尼亚严词拒绝，斯巴达王阿格西波利斯一世遂征调含底比斯青年战士伊巴密浓达与佩洛皮达斯在内的同盟军合围曼丁尼亚。"
-        ],
-        "tactical": [
-            "曼丁尼亚地处低洼盆地，奥菲斯河穿城而过，高墙系日晒泥砖砌于石基之上。前哨血战中佩洛皮达斯重伤倒地，伊巴密浓达持盾死守待援获救；针对城内充足存粮，阿格西波利斯筑坝截断下游河道，河水倒灌泡塌泥砖城墙，曼丁尼亚被迫降拆城邑。"
-        ],
-        "source": "色诺芬·希腊史·第五卷；普鲁塔克·佩洛皮达斯传；狄奥多罗斯·历史丛书·第十五卷"
-    },
-    {
         "id": "evt_0176",
         "baton": "9",
         "year": -382,
         "season": 1,
         "title": "底比斯卫城卡德米亚奇袭战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "底比斯卫城卡德米亚",
             "lat": 38.32,
             "lng": 23.31
         },
-        "leadGeneralId": "gen_epaminondas",
+        "leadGeneralId": "lagoniya_phoebidas",
         "strategic": [
             "公元前三八二年夏，应马其顿与阿坎苏斯求援，斯巴达向奥林索斯宣战，开启第一次奥林索斯战争。斯巴达将领福比达斯统兵北上途经底比斯扎营，底比斯亲斯巴达寡头执政列昂提亚德斯为铲除政敌伊斯梅尼亚斯，竟密邀福比达斯乘虚夺取本国卫城。"
         ],
         "tactical": [
             "卡德米亚卫城高耸于底比斯中央岩丘之上。时值仲夏得墨忒耳节，卫城按宗教惯例专供妇女献祭而全无守兵，列昂提亚德斯趁正午街巷空寂亲引福比达斯重步兵径直冲入卫城锁门，随即逮捕伊斯梅尼亚斯；佩洛皮达斯率众流亡雅典，埋下复仇火种。"
         ],
-        "source": "色诺芬·希腊史·第五卷；普鲁塔克·佩洛皮达斯传；狄奥多罗斯·历史丛书·第十五卷"
+        "source": "色诺芬·希腊史·第五卷；普鲁塔克·佩洛皮达斯传；狄奥多罗斯·历史丛书·第十五卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lagoniya_phoebidas",
+            "battleId": "chron:evt_0176",
+            "battleName": "底比斯卫城卡德米亚奇袭战",
+            "battleYear": -382,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "底比斯卫城卡德米亚",
+            "targetCityId": "city_thebes",
+            "chronicleCity": {
+                "cityId": "city_thebes",
+                "before": "boootiya",
+                "after": "lagoniya"
+            },
+            "chronicleFrom": "city_sparta",
+            "targetLat": 38.32,
+            "targetLng": 23.31,
+            "myTroops": 15000,
+            "enemyFactionId": "boootiya",
+            "enemyFactionName": "底比斯",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0177",
@@ -3038,41 +2851,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -381,
         "season": 0,
         "title": "奥林索斯城下反冲锋歼敌战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "卡尔基季基奥林索斯城外",
             "lat": 40.29,
             "lng": 23.35
         },
-        "leadGeneralId": "gen_epaminondas",
+        "leadGeneralId": "lagoniya_teleutias",
         "strategic": [
             "公元前三八一年春，斯巴达王之弟特琉提亚斯统领伯罗奔尼撒大军与马其顿援骑推进至奥林索斯近郊。继前秋初胜后，特琉提亚斯再度进逼城下砍伐果林挑衅，奥林索斯精锐骑兵渡过城外小河从容袭扰，激怒了急于速胜的特琉提亚斯。"
         ],
         "tactical": [
             "奥林索斯盘踞高岗，城外河道横切原野。特琉提亚斯令轻盾兵过河追敌遭敌骑回马砍杀，盛怒之下竟命全军重步兵加速追入城墙弓矢射程之内，致方阵散乱受创；奥林索斯守帅见机开门，骑兵与重步兵全线呼啸反扑，当场阵斩特琉提亚斯并击溃斯巴达军。"
         ],
-        "source": "色诺芬·希腊史·第五卷；狄奥多罗斯·历史丛书·第十五卷"
-    },
-    {
-        "id": "evt_0179",
-        "baton": "9",
-        "year": -380,
-        "season": 0,
-        "title": "托罗尼强攻夺城战",
-        "kind": "narrative",
-        "place": {
-            "name": "西托尼亚半岛托罗尼港城",
-            "lat": 39.977,
-            "lng": 23.904
-        },
-        "leadGeneralId": "gen_epaminondas",
-        "strategic": [
-            "公元前三八零年春，特琉提亚斯在奥林索斯城下败亡的消息震动斯巴达，监察官决意挽回北方战局，命年轻国王阿格西波利斯一世携志愿名门子弟、获释黑劳士重步兵及色萨利精骑北上接掌帅印，扫荡敌郊后转兵强攻海防重镇托罗尼。"
-        ],
-        "tactical": [
-            "托罗尼坐落西托尼亚半岛西南深湾，环山面海且筑有内外石墙。阿格西波利斯一世趁奥林索斯主力缩守主城不敢远救，指挥重步兵冒箭石架设云梯四面猛攻，一鼓作气踏破托罗尼城防；然盛夏阿格西波利斯突发高热病逝军中，由波吕比阿达斯继任锁困敌都。"
-        ],
-        "source": "色诺芬·希腊史·第五卷；狄奥多罗斯·历史丛书·第十五卷"
+        "source": "色诺芬·希腊史·第五卷；狄奥多罗斯·历史丛书·第十五卷",
+        "winner": "defender",
+        "battle": {
+            "generalId": "lagoniya_teleutias",
+            "battleId": "chron:evt_0177",
+            "battleName": "奥林索斯城下反冲锋歼敌战",
+            "battleYear": -381,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "卡尔基季基奥林索斯城外",
+            "chronicleFrom": "city_sparta",
+            "targetLat": 40.29,
+            "targetLng": 23.35,
+            "myTroops": 15000,
+            "enemyFactionId": "chalkidike",
+            "enemyFactionName": "卡尔基季基同盟",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0180",
@@ -3109,6 +2919,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lagoniya",
                 "after": "boootiya"
             },
+            "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -3147,6 +2958,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "爱琴海纳克索斯海峡",
+            "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
             "myTroops": 15000,
@@ -3186,6 +2998,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "维奥蒂亚泰吉拉山口",
+            "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -3201,20 +3014,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -374,
         "season": 1,
         "title": "科孚岛收复与阿吕齐亚海战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "伊奥尼亚海阿卡纳尼亚阿吕齐亚外海",
             "lat": 38.705,
             "lng": 20.935
         },
-        "leadGeneralId": "gen_epaminondas",
+        "leadGeneralId": "xila_timotheus",
         "strategic": [
             "公元前三七四年夏，底比斯借泰吉拉大捷整合维奥蒂亚诸城；雅典亦遣科农之子提莫修斯率舰队绕过伯罗奔尼撒经略西海，一举收服战略要地科孚岛。斯巴达深恐西海航道断绝，急命提督尼科洛库斯统领联合舰队北上阿吕齐亚强行寻战。"
         ],
         "tactical": [
             "阿吕齐亚海岸港湾曲折，提莫修斯见敌求战心切，先令主力桨船疏开佯退诱敌；待骄躁的斯巴达船队在追逐中桨手力疲、队形散乱之际，骤然吹号掉头发起集中冲角突击；雅典舰队重创斯巴达西海船队并竖立胜碑，迫使斯巴达首次承认雅典海上霸权。"
         ],
-        "source": "色诺芬·希腊史·第五卷；波利艾努斯·战略·第三卷"
+        "source": "色诺芬·希腊史·第五卷；波利艾努斯·战略·第三卷",
+        "winner": "defender",
+        "battle": {
+            "generalId": "xila_timotheus",
+            "battleId": "chron:evt_0184",
+            "battleName": "科孚岛收复与阿吕齐亚海战",
+            "battleYear": -374,
+            "battleType": "field",
+            "role": "defender",
+            "targetName": "伊奥尼亚海阿卡纳尼亚阿吕齐亚外海",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 38.705,
+            "targetLng": 20.935,
+            "myTroops": 15000,
+            "enemyFactionId": "lagoniya",
+            "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0186",
@@ -3222,20 +3053,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -372,
         "season": 1,
         "title": "科孚岛解围与截击叙拉古舰队战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "科孚岛滩头及北侧外海",
             "lat": 39.62,
             "lng": 19.92
         },
-        "leadGeneralId": "gen_epaminondas",
+        "leadGeneralId": "xila_iphicrates",
         "strategic": [
             "公元前三七二年夏，自埃及返国的雅典名将伊菲克拉特斯受命接掌西海帅印；率舰队兼程驰援正遭斯巴达将领姆纳西普斯水陆围困的科孚岛。沿途伊菲克拉特斯强训桨手提升航速，并侦知叙拉古僭主派出的增援船队正驶近科孚。"
         ],
         "tactical": [
             "科孚守军趁姆纳西普斯克扣军饷、营防松懈率先突围出击，阵斩姆纳西普斯迫敌弃营。紧接着伊菲克拉特斯赶抵科孚近海，凭山岬瞭望精准设伏航道；叙拉古统领克里尼普斯毫无戒备分段靠岸，遭雅典快船合围猛撞，敌舰尽数被俘，斯巴达西海攻势破产。"
         ],
-        "source": "色诺芬·希腊史·第六卷；狄奥多罗斯·历史丛书·第十五卷"
+        "source": "色诺芬·希腊史·第六卷；狄奥多罗斯·历史丛书·第十五卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_iphicrates",
+            "battleId": "chron:evt_0186",
+            "battleName": "科孚岛解围与截击叙拉古舰队战",
+            "battleYear": -372,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "科孚岛滩头及北侧外海",
+            "chronicleFrom": "city_yadian",
+            "targetLat": 39.62,
+            "targetLng": 19.92,
+            "myTroops": 15000,
+            "enemyFactionId": "lagoniya",
+            "enemyFactionName": "斯巴达",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0187",
@@ -3266,6 +3115,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "维奥蒂亚留克特拉平原",
+            "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -3277,67 +3127,49 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         }
     },
     {
-        "id": "evt_0188",
-        "baton": "9",
-        "year": -370,
-        "season": 3,
-        "title": "欧罗塔斯河进逼斯巴达与复建梅塞尼亚之战",
-        "kind": "narrative",
-        "place": {
-            "name": "拉科尼亚欧罗塔斯河畔与伊托美山",
-            "lat": 37.07,
-            "lng": 22.42
-        },
-        "leadGeneralId": "gen_epaminondas",
-        "strategic": [
-            "公元前三七零年冬，留克特拉惨败引发伯罗奔尼撒震荡，阿卡迪亚诸邦结盟自立却遭斯巴达威逼。底比斯统帅伊巴密浓达应盟友急请南下，分兵突破拉科尼亚北境风雪山隘会师塞拉西亚；首次将战火烧至不设城墙的斯巴达本土。"
-        ],
-        "tactical": [
-            "欧罗塔斯河因冬雪暴涨流急，斯巴达王阿格西劳斯二世严令守军凭险设伏拒不出战。伊巴密浓达见强渡无益，遂焚掠拉科尼亚庄园与吉雄军港；随即西进伊托美山麓号召黑劳士起义重建独立的梅塞尼亚邦，一举夺去斯巴达赖以立国的半壁膏腴根基。"
-        ],
-        "source": "色诺芬·希腊史·第六卷；狄奥多罗斯·历史丛书·第十五卷；普鲁塔克·阿格西劳斯传"
-    },
-    {
-        "id": "evt_0190",
-        "baton": "9",
-        "year": -368,
-        "season": 1,
-        "title": "梅莱亚无泪之战",
-        "kind": "narrative",
-        "place": {
-            "name": "阿卡迪亚南境梅莱亚峡谷",
-            "lat": 37.07,
-            "lng": 22.42
-        },
-        "leadGeneralId": "gen_epaminondas",
-        "strategic": [
-            "公元前三六八年夏，底比斯重心暂移北方色萨利；新崛起的阿卡迪亚同盟自恃强悍，撇开底比斯联结阿尔戈斯进犯拉科尼亚边镇。斯巴达王储阿基达姆斯三世统领公民军会合叙拉古支援的凯尔特雇佣兵主动北出反击。"
-        ],
-        "tactical": [
-            "阿基达姆斯三世拔卡里亚后循山路回师，阿卡迪亚与阿尔戈斯联军抢占梅莱亚窄口堵截归路。阿基达姆斯三世策马激励将士洗刷国耻，督重步兵正面猛冲，两翼凯尔特轻兵攀坡投枪夹击；阿卡迪亚军一触即溃死伤惨重，斯巴达全军无一阵亡，史称无泪之战。"
-        ],
-        "source": "色诺芬·希腊史·第七卷；狄奥多罗斯·历史丛书·第十五卷；普鲁塔克·阿格西劳斯传"
-    },
-    {
         "id": "evt_0192",
         "baton": "9",
         "year": -365,
         "season": 0,
         "title": "萨摩斯围城攻坚战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "爱琴海东岸萨摩斯城",
             "lat": 37.53,
             "lng": 27.278
         },
-        "leadGeneralId": "gen_epaminondas",
+        "leadGeneralId": "xila_timotheus",
         "strategic": [
             "公元前三六五年春，小亚细亚爆发波斯西疆诸总督叛乱，雅典原遣名将提莫修斯率舰队声援弗里吉亚总督。提莫修斯抵近前线见总督公然叛波斯王，为免违背和约授人以柄；果断转围被波斯守将库普罗忒弥斯强占的战略大岛萨摩斯。"
         ],
         "tactical": [
             "萨摩斯城背山面海港防坚固，提莫修斯一面以三列桨战船封锁海峡断绝大陆补给；一面在未耗雅典国库军饷的条件下分遣轻舰袭取敌资以战养战。历经十个月水陆窒息合围与攻城器械猛击，波斯雇佣守军粮尽开城投降，雅典重握爱琴海东翼关键跳板。"
         ],
-        "source": "伊索克拉底·财产交换辞；德摩斯梯尼·论罗德岛人的自由；科尔内利乌斯·奈波斯·提莫修斯传"
+        "source": "伊索克拉底·财产交换辞；德摩斯梯尼·论罗德岛人的自由；科尔内利乌斯·奈波斯·提莫修斯传",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "xila_timotheus",
+            "battleId": "chron:evt_0192",
+            "battleName": "萨摩斯围城攻坚战",
+            "battleYear": -365,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "爱琴海东岸萨摩斯城",
+            "targetCityId": "city_miletus",
+            "chronicleCity": {
+                "cityId": "city_miletus",
+                "before": "aqimeinide",
+                "after": "xila"
+            },
+            "chronicleFrom": "city_yadian",
+            "targetLat": 37.53,
+            "targetLng": 27.278,
+            "myTroops": 15000,
+            "enemyFactionId": "aqimeinide",
+            "enemyFactionName": "阿契美尼德",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0194",
@@ -3368,6 +3200,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利库诺斯克法莱丘陵",
+            "chronicleFrom": "city_thebes",
             "targetLat": 39.417,
             "targetLng": 22.567,
             "myTroops": 15000,
@@ -3376,27 +3209,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0195",
-        "baton": "9",
-        "year": -363,
-        "season": 1,
-        "title": "波提狄亚与托罗尼攻城战",
-        "kind": "narrative",
-        "place": {
-            "name": "卡尔基斯半岛波提狄亚与托罗尼",
-            "lat": 40.29,
-            "lng": 23.35
-        },
-        "leadGeneralId": "gen_epaminondas",
-        "strategic": [
-            "公元前三六三年夏，底比斯痛失佩洛皮达斯并遣舰队出海挑战雅典；雅典名将提莫修斯则在攻克萨摩斯后北进爱琴海北岸；联结马其顿王佩尔迪卡斯三世打击卡尔基季基同盟，进围地峡咽喉波提狄亚与海港重镇托罗尼。"
-        ],
-        "tactical": [
-            "波提狄亚横跨地峡连接两海，托罗尼凭良港筑有坚固防波石墙。提莫修斯以三列桨舰队分锁东西海面断绝奥林索斯水路增援；陆上会同马其顿骑兵屏蔽外野，驱轻盾兵与攻城机械轮番猛扑城垣；两座坚城相继陷落纳入雅典屯田体系，奥林索斯被迫退守内陆。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十五卷；伊索克拉底·财产交换辞"
     },
     {
         "id": "evt_0196",
@@ -3427,6 +3239,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阿卡迪亚曼丁尼亚平原",
+            "chronicleFrom": "city_thebes",
             "targetLat": 37.618,
             "targetLng": 22.393,
             "myTroops": 15000,
@@ -3443,20 +3256,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -360,
         "season": 2,
         "title": "上马其顿利恩库斯会战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "上马其顿利恩库斯盆地",
             "lat": 40.785,
             "lng": 21.43
         },
-        "leadGeneralId": "gen_philip_ii",
+        "leadGeneralId": "yili_bardylis",
         "strategic": [
             "公元前三六零年秋，爱琴海诸城邦疲于海陆拉锯之际；北方巴尔干山地强邻伊利里亚达达尼亚国王巴尔迪利斯集结重兵南侵上马其顿，并策动培奥尼亚人袭扰。年轻的马其顿王佩尔迪卡斯三世耻于纳贡，倾举国步骑西出迎战。"
         ],
         "tactical": [
             "利恩库斯高原盆地四面环山，缺乏严格阵列训练的马其顿传统步兵迎撞久经沙场的达达尼亚重装方阵与投枪轻兵。巴尔迪利斯以严密方阵正面挤压并自两翼包抄冲击，马其顿防线彻底崩盘；佩尔迪卡斯三世与大批贵族战死，危亡之际王弟腓力二世临危掌军。"
         ],
-        "source": "狄奥多罗斯·历史丛书·第十六卷；查士丁·腓力史概要·第七卷"
+        "source": "狄奥多罗斯·历史丛书·第十六卷；查士丁·腓力史概要·第七卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "yili_bardylis",
+            "battleId": "chron:evt_0198",
+            "battleName": "上马其顿利恩库斯会战",
+            "battleYear": -360,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "上马其顿利恩库斯盆地",
+            "chronicleFrom": "city_peiliang",
+            "targetLat": 40.785,
+            "targetLng": 21.43,
+            "myTroops": 15000,
+            "enemyFactionId": "maqidun",
+            "enemyFactionName": "马其顿",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0199",
@@ -3487,6 +3318,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "皮埃里亚埃盖至梅托涅大道",
+            "chronicleFrom": "city_salonica",
             "targetLat": 40.76,
             "targetLng": 22.519,
             "myTroops": 15000,
@@ -3525,6 +3357,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "上马其顿埃里贡河谷平原",
+            "chronicleFrom": "city_salonica",
             "targetLat": 41.015,
             "targetLng": 21.34,
             "myTroops": 15000,
@@ -3540,41 +3373,38 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -355,
         "season": 2,
         "title": "霓虹山之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "帕纳苏斯山北麓霓虹山城郊",
             "lat": 38.482,
             "lng": 22.501
         },
-        "leadGeneralId": "gen_philip_ii",
+        "leadGeneralId": "phokis_feiluomoluosi",
         "strategic": [
             "公元前三五五年秋，雅典被迫承认盟邦独立退出同盟战争；中希腊却因底比斯操纵近邻同盟重罚福基斯引爆第三次神圣战争。福基斯统帅菲洛墨洛斯夺占德尔斐并动用神庙财宝广募雇佣兵连挫洛克里斯，底比斯名将帕梅内斯遂统盟军进讨。"
         ],
         "tactical": [
             "两军于帕纳苏斯山北麓悬崖林立的霓虹山荒原遭遇，兵力占优的维奥蒂亚重步兵结阵猛压福基斯雇佣军。混战中福基斯阵线断裂向陡峭多林的山巅溃退；菲洛墨洛斯身负重创被敌兵逼至绝壁边缘，宁死不肯受辱纵身跃崖身亡，副帅奥诺马库斯收拢残部退守德尔斐。"
         ],
-        "source": "狄奥多罗斯·历史丛书·第十六卷；保萨尼亚斯·希腊志·第十卷"
-    },
-    {
-        "id": "evt_0204",
-        "baton": "10",
-        "year": -354,
-        "season": 1,
-        "title": "梅托涅攻城战",
-        "kind": "narrative",
-        "place": {
-            "name": "塞尔迈湾西岸梅托涅城",
-            "lat": 40.76,
-            "lng": 22.519
-        },
-        "leadGeneralId": "gen_philip_ii",
-        "strategic": [
-            "公元前三五四年夏，中希腊诸邦深陷神圣战争血腥消耗；马其顿国王腓力二世看准时机扫除塞尔迈湾西岸仅存的雅典盟邦据点梅托涅；以防政敌借该海港引雅典海军登陆马其顿腹地，遂亲统攻城大军水陆合围梅托涅坚城。"
-        ],
-        "tactical": [
-            "梅托涅军民凭高墙深堑苦撑数月，腓力二世督造云梯迫近墙壕巡视工事时；城头弓手自女墙窥准一箭射中腓力二世右眼致其终身独目。腓力二世忍剧痛裹创严令昼夜猛攻，雅典援舰迟发未至，孤城力竭乞降；腓力二世仅许市民单衣出城并将梅托涅城垣彻底夷平。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十六卷；德摩斯梯尼·第一腓力辞"
+        "source": "狄奥多罗斯·历史丛书·第十六卷；保萨尼亚斯·希腊志·第十卷",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "phokis_feiluomoluosi",
+            "battleId": "chron:evt_0203",
+            "battleName": "霓虹山之战",
+            "battleYear": -355,
+            "battleType": "field",
+            "role": "defender",
+            "targetName": "帕纳苏斯山北麓霓虹山城郊",
+            "chronicleFrom": "city_deerfei",
+            "targetLat": 38.482,
+            "targetLng": 22.501,
+            "myTroops": 15000,
+            "enemyFactionId": "boootiya",
+            "enemyFactionName": "底比斯",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0206",
@@ -3605,6 +3435,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利帕加塞湾畔番红花原野",
+            "chronicleFrom": "city_salonica",
             "targetLat": 39.18,
             "targetLng": 22.76,
             "myTroops": 15000,
@@ -3614,27 +3445,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0209",
-        "baton": "10",
-        "year": -349,
-        "season": 1,
-        "title": "斯塔吉拉攻城战",
-        "kind": "narrative",
-        "place": {
-            "name": "卡尔基斯半岛东岸斯塔吉拉城",
-            "lat": 40.82,
-            "lng": 23.85
-        },
-        "leadGeneralId": "gen_philip_ii",
-        "strategic": [
-            "公元前三四九年夏，原与马其顿结盟的卡尔基季基同盟盟主奥林索斯深惧腓力二世坐大；私自亲近雅典并收留逃亡的腓力二世异母王弟。腓力二世索人遭拒遂正式宣战，率马其顿大军自安菲波利斯南下，首先围攻东岸山城斯塔吉拉。"
-        ],
-        "tactical": [
-            "斯塔吉拉背靠山林俯临海湾，奥林索斯骑将欧提克拉特斯等慑于马其顿野战威势不敢远出救援；德摩斯梯尼促动雅典派出的雇佣兵亦鞭长莫及。腓力二世集中扭力弩炮与破城槌轰塌外墙，督重步兵强登攻灭斯塔吉拉并将其平毁，半岛外围诸城望风震恐投降。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十六卷；德摩斯梯尼·第一奥林索斯辞"
     },
     {
         "id": "evt_0210",
@@ -3671,6 +3481,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalkidike",
                 "after": "maqidun"
             },
+            "chronicleFrom": "city_salonica",
             "targetLat": 40.29,
             "targetLng": 23.35,
             "myTroops": 15000,
@@ -3680,27 +3491,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0211",
-        "baton": "10",
-        "year": -346,
-        "season": 1,
-        "title": "哈洛斯攻城与温泉关受降之役",
-        "kind": "narrative",
-        "place": {
-            "name": "帕加塞湾哈洛斯城与温泉关险隘",
-            "lat": 38.482,
-            "lng": 22.501
-        },
-        "leadGeneralId": "gen_philip_ii",
-        "strategic": [
-            "公元前三四六年夏，腓力二世命大将帕曼纽围攻色萨利孤城哈洛斯作为烟幕；同时在佩拉与费莱拖延雅典使团缔结菲洛克拉底和约。待宣誓落定之刻，马其顿主力已拔哈洛斯并兼程南抵温泉关，彻底截断雅典增援福基斯之路。"
-        ],
-        "tactical": [
-            "温泉关北临海湾南倚绝壁，福基斯主帅法莱库斯虽据险关，却见国库枯竭、盟友抛弃且马其顿重兵压境，自知死战必亡。腓力二世兵不血刃诱降法莱库斯交出温泉关全套要塞率部离去；旋即长驱入主德尔斐拆毁福基斯城垣并接管近邻同盟席位，威震中北希腊。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十六卷；德摩斯梯尼·论使节渎职；埃斯金尼·论使节渎职"
     },
     {
         "id": "evt_0212",
@@ -3731,6 +3521,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊利里亚南部阿尔迪亚伊山地",
+            "chronicleFrom": "city_salonica",
             "targetLat": 41.28,
             "targetLng": 20.18,
             "myTroops": 15000,
@@ -3769,6 +3560,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色雷斯赫布鲁斯河谷至菲利波波利斯",
+            "chronicleFrom": "city_salonica",
             "targetLat": 42.14,
             "targetLng": 24.74,
             "myTroops": 15000,
@@ -3807,6 +3599,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "多瑙河下游南岸多布罗加草原",
+            "chronicleFrom": "city_salonica",
             "targetLat": 44.18,
             "targetLng": 28.63,
             "myTroops": 15000,
@@ -3846,6 +3639,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "维奥蒂亚喀罗尼亚平原",
+            "chronicleFrom": "city_salonica",
             "targetLat": 38.482,
             "targetLng": 22.501,
             "myTroops": 15000,
@@ -3885,6 +3679,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊利里亚东北部奥塔里亚泰山谷",
+            "chronicleFrom": "city_salonica",
             "targetLat": 42.15,
             "targetLng": 20.75,
             "myTroops": 15000,
@@ -3923,6 +3718,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "吕底亚西境马格尼西亚城郊",
+            "chronicleFrom": "city_teluoyi",
             "targetLat": 38.613,
             "targetLng": 27.426,
             "myTroops": 15000,
@@ -3968,6 +3764,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boootiya",
                 "after": "maqidun"
             },
+            "chronicleFrom": "city_peiliang",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -4024,6 +3821,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 26.24
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 40.32,
             "targetLng": 27.28,
             "myTroops": 15000,
@@ -4086,6 +3884,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 27.28
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 37.03,
             "targetLng": 27.43,
             "myTroops": 15000,
@@ -4142,6 +3941,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 34.9
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 36.838,
             "targetLng": 36.165,
             "myTroops": 15000,
@@ -4204,6 +4004,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 35.37
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 33.271,
             "targetLng": 35.196,
             "myTroops": 15000,
@@ -4249,6 +4050,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "maqidun"
             },
+            "chronicleFrom": "city_salonica",
             "targetLat": 31.502,
             "targetLng": 34.467,
             "myTroops": 15000,
@@ -4295,6 +4097,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 35.2
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 36.36,
             "targetLng": 43.15,
             "myTroops": 15000,
@@ -4346,6 +4149,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 48.25
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 30.608,
             "targetLng": 51.59,
             "myTroops": 15000,
@@ -4385,6 +4189,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "中亚药杀水渡口与北岸草原",
+            "chronicleFrom": "city_salonica",
             "targetLat": 40.248,
             "targetLng": 69.659,
             "myTroops": 15000,
@@ -4401,20 +4206,39 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -328,
         "season": 3,
         "title": "加拜之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "索格狄亚那西境加拜荒原",
             "lat": 39.767,
             "lng": 64.433
         },
-        "leadGeneralId": "gen_alexander_great",
+        "leadGeneralId": "maqidun_coenus",
         "strategic": [
             "公元前三二八年冬；曾伏歼马其顿偏师的索格狄亚那抗战领袖斯皮塔米尼斯面对亚历山大三世分路筑堡清野的铁壁合围，绿洲补给尽断。绝境之下斯皮塔米尼斯裹挟马萨革泰游牧铁骑突袭边镇加拜，迎头撞上名将科伊诺斯主力。"
         ],
         "tactical": [
             "加拜位于沙漠绿洲边缘荒原，斯皮塔米尼斯指挥马萨革泰重骑与弓骑猛冲马其顿战线。科伊诺斯严整长矛方阵稳如磐石，配属标枪轻兵与马其顿精骑待敌骑力疲之际发起犀利反击击溃联军；逃入大漠的斯皮塔米尼斯旋遭盟友割首献降，河中游击战终告平息。"
         ],
-        "source": "阿里安·亚历山大远征记·第四卷；库尔提乌斯·亚历山大史·第八卷"
+        "source": "阿里安·亚历山大远征记·第四卷；库尔提乌斯·亚历山大史·第八卷",
+        "winner": "defender",
+        "battle": {
+            "generalId": "maqidun_coenus",
+            "battleId": "chron:evt_0233",
+            "battleName": "加拜之战",
+            "battleYear": -328,
+            "battleType": "field",
+            "role": "defender",
+            "targetName": "索格狄亚那西境加拜荒原",
+            "chronicleFrom": "city_bukhara",
+            "targetLat": 39.767,
+            "targetLng": 64.433,
+            "myTroops": 15000,
+            "enemyFactionId": "sogdian",
+            "enemyFactionName": "粟特",
+            "enemyGeneralId": "sute_spitamenes",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0234",
@@ -4451,6 +4275,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "sogdian",
                 "after": "maqidun"
             },
+            "chronicleFrom": "city_nuotaka",
             "targetLat": 38.21,
             "targetLng": 67.02,
             "myTroops": 15000,
@@ -4497,6 +4322,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 72.82
                 }
             ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 32.647,
             "targetLng": 73.509,
             "myTroops": 15000,
@@ -4542,6 +4368,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "malli",
                 "after": "maqidun"
             },
+            "chronicleFrom": "city_salonica",
             "targetLat": 30.198,
             "targetLng": 71.468,
             "myTroops": 15000,
@@ -4580,6 +4407,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "扎格罗斯山脉科赛亚险谷",
+            "chronicleFrom": "city_salonica",
             "targetLat": 33.487,
             "targetLng": 48.356,
             "myTroops": 15000,
@@ -4588,27 +4416,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0238",
-        "baton": "12A",
-        "year": -323,
-        "season": 3,
-        "title": "拉米亚围城战",
-        "kind": "narrative",
-        "place": {
-            "name": "色萨利南境拉米亚坚城",
-            "lat": 38.9,
-            "lng": 22.433
-        },
-        "leadGeneralId": "maqidun_antipater",
-        "strategic": [
-            "公元前三二三年冬，亚历山大三世盛夏病逝巴比伦的惊讯传回希腊；雅典联合埃托利亚等邦立刻起义，公推宿将莱奥斯塞尼斯为统帅。马其顿留守老帅安提帕特兵少南下受挫，被迫退入色萨利南门拉米亚坚城苦守待援。"
-        ],
-        "tactical": [
-            "拉米亚依山控扼海湾大道，莱奥斯塞尼斯掘筑深壕围墙将安提帕特死锁孤城断绝粮草。安提帕特严防苦撑催促小亚细亚援军回救，并在一次突袭筑壕工地时；以飞石重创亲临前线督战的联军主帅莱奥斯塞尼斯致其数日后身亡，为马其顿转败为胜赢得关键转机。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十八卷；普鲁塔克·福基翁传"
     },
     {
         "id": "evt_0239",
@@ -4639,6 +4446,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利中南部克兰农平原",
+            "chronicleFrom": "city_salonica",
             "targetLat": 39.57,
             "targetLng": 21.93,
             "myTroops": 15000,
@@ -4648,27 +4456,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "enemyTroops": 15000,
             "introLines": []
         }
-    },
-    {
-        "id": "evt_0240",
-        "baton": "12B",
-        "year": -321,
-        "season": 0,
-        "title": "赫勒斯滂会战",
-        "kind": "narrative",
-        "place": {
-            "name": "小亚细亚西北赫勒斯滂近海原野",
-            "lat": 39.958,
-            "lng": 26.239
-        },
-        "leadGeneralId": "maqidun_eumenes",
-        "strategic": [
-            "公元前三二一年春，继业者矛盾总爆发，安提帕特、克拉特罗斯与埃及总督托勒密一世结盟讨伐王室摄政佩尔狄卡斯。佩尔狄卡斯亲率王军南征埃及，命卡帕多细亚总督欧迈尼斯扼守小亚细亚，迎击渡海而来的名帅克拉特罗斯。"
-        ],
-        "tactical": [
-            "因马其顿士兵极度崇拜克拉特罗斯，欧迈尼斯严锁敌帅真名；故意将卡帕多细亚本土精骑置左翼对阵克拉特罗斯，自领精骑居右死磕叛将涅奥普托勒摩斯。两翼铁骑先于方阵剧烈对撞，左翼东方骑兵冲垮敌锋致克拉特罗斯坠马身亡，欧迈尼斯更亲手刃毙涅奥普托勒摩斯。"
-        ],
-        "source": "狄奥多罗斯·历史丛书·第十八卷；普鲁塔克·欧迈尼斯传；科尔内利乌斯·奈波斯·欧迈尼斯传"
     },
     {
         "id": "evt_0242",
@@ -4705,6 +4492,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tuolemi",
                 "after": "tuolemi"
             },
+            "chronicleFrom": "city_adana",
             "targetLat": 31.04,
             "targetLng": 32.55,
             "myTroops": 15000,
@@ -4744,6 +4532,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡帕多细亚奥尔基尼亚",
+            "chronicleFrom": "city_kailaina",
             "targetLat": 38.45,
             "targetLng": 35.15,
             "myTroops": 15000,
@@ -4783,6 +4572,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊朗高原帕莱塔西奈",
+            "chronicleFrom": "city_kailaina",
             "targetLat": 32.65,
             "targetLng": 51.66,
             "myTroops": 15000,
@@ -4822,6 +4612,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "波西斯北境伽比埃奈盐原",
+            "chronicleFrom": "city_kailaina",
             "targetLat": 31.777,
             "targetLng": 51.802,
             "myTroops": 15000,
@@ -4861,6 +4652,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "巴勒斯坦南门户加沙城郊",
+            "chronicleFrom": "city_yalishanda",
             "targetLat": 31.502,
             "targetLng": 34.467,
             "myTroops": 15000,
@@ -4900,6 +4692,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "美索不达米亚巴比伦城郊",
+            "chronicleFrom": "city_babilun",
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -4939,6 +4732,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "塞浦路斯东岸萨拉米斯外海",
+            "chronicleFrom": "city_yalishanda",
             "targetLat": 35.12,
             "targetLng": 33.94,
             "myTroops": 15000,
@@ -4955,7 +4749,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -305,
         "season": 1,
         "title": "罗得岛围城战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "爱琴海东南门户罗得港城",
             "lat": 36.44,
@@ -4968,7 +4762,31 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "罗得城港湾曲折、双层石垣坚固。德米特里一世海攻防波堤受挫后转攻陆墙，督造包裹铁皮、满载弩炮投石机的巨型攻城塔赫勒波利斯推逼城下；守军于内侧抢筑新墙，乘夜抛射火矢铁弹击损攻城塔护甲使其停摆。围困经年难下，德米特里终在调停下议和撤军。"
         ],
-        "source": "西西里的狄奥多罗斯·历史丛书；普鲁塔克·德米特里传；维特鲁威·建筑十书"
+        "source": "西西里的狄奥多罗斯·历史丛书；普鲁塔克·德米特里传；维特鲁威·建筑十书",
+        "winner": "defender",
+        "battle": {
+            "generalId": "antigonid_demetrius",
+            "battleId": "chron:evt_0260",
+            "battleName": "罗得岛围城战",
+            "battleYear": -305,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "爱琴海东南门户罗得港城",
+            "targetCityId": "city_rhodes",
+            "chronicleCity": {
+                "cityId": "city_rhodes",
+                "before": "rhodes",
+                "after": "rhodes"
+            },
+            "chronicleFrom": "city_halikanasu",
+            "targetLat": 36.44,
+            "targetLng": 28.22,
+            "myTroops": 15000,
+            "enemyFactionId": "rhodes",
+            "enemyFactionName": "罗得",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0261",
@@ -4999,6 +4817,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "印度河上游犍陀罗东渡口",
+            "chronicleFrom": "city_lanshi",
             "targetLat": 33.767,
             "targetLng": 72.361,
             "myTroops": 15000,
@@ -5015,7 +4834,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -303,
         "season": 2,
         "title": "中山丹丘攻城战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "太行东麓中山丹丘与鸱之塞",
             "lat": 38.861,
@@ -5028,7 +4847,31 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "丹丘、华阳与鸱之塞沿太行东麓险峻陉道修筑，石垣关隘拱卫中山腹地灵寿。中山军凭山险与重车步卒死守，牛翦统轻便胡服骑射劲旅穿插迂回，以迅捷骑射截断各塞烽火驰援，赵袑部同步猛攻正面关墙，连克丹丘华阳及鸱之塞，剥除中山西部山防外藩。"
         ],
-        "source": "史记·赵世家；战国策·赵策；资治通鉴·周纪"
+        "source": "史记·赵世家；战国策·赵策；资治通鉴·周纪",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lingqiu_zhaowuling",
+            "battleId": "chron:evt_0262",
+            "battleName": "中山丹丘攻城战",
+            "battleYear": -303,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "太行东麓中山丹丘与鸱之塞",
+            "targetCityId": "city_daomaguan",
+            "chronicleCity": {
+                "cityId": "city_daomaguan",
+                "before": "zhongshan",
+                "after": "zhao"
+            },
+            "chronicleFrom": "city_handan",
+            "targetLat": 38.861,
+            "targetLng": 114.769,
+            "myTroops": 15000,
+            "enemyFactionId": "zhongshan",
+            "enemyFactionName": "中山",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0266",
@@ -5036,7 +4879,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -300,
         "season": 2,
         "title": "云中破林胡拓边战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "阴山南麓与河套东缘云中原野",
             "lat": 40.273,
@@ -5049,7 +4892,25 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "云中至九原水草丰茂、旷野无垠，向为林胡与楼烦轻骑牧猎腹地。昔日笨重中原战车入塞每陷被动，此番赵军骑士尽穿短衣皮靴，跨骏马引劲弓高速迂回包抄，正面击穿胡骑游射阵线；林胡楼烦溃散北遁，赵国收编善射胡骑，辟云中雁门代郡并筑阴山长城。"
         ],
-        "source": "史记·赵世家；史记·匈奴列传；战国策·赵策"
+        "source": "史记·赵世家；史记·匈奴列传；战国策·赵策",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lingqiu_zhaowuling",
+            "battleId": "chron:evt_0266",
+            "battleName": "云中破林胡拓边战",
+            "battleYear": -300,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "阴山南麓与河套东缘云中原野",
+            "chronicleFrom": "city_handan",
+            "targetLat": 40.273,
+            "targetLng": 111.14,
+            "myTroops": 15000,
+            "enemyFactionId": "linhu",
+            "enemyFactionName": "林胡",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0270",
@@ -5057,7 +4918,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -296,
         "season": 2,
         "title": "灵寿灭中山之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "太行山东麓中山王都灵寿",
             "lat": 38.13,
@@ -5070,28 +4931,31 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "灵寿北倚太行、南临滹沱，夯土内外城郭宽广坚固，曾为战车强邦中枢。中山末王尚督残存贵族甲士退守内城殊死抵抗，赵主父指挥胡服骑军严密遮断粮道，步卒架云梯冲车昼夜猛攻；久困粮尽的守军防线终溃，赵军破城俘迁中山王尚，使赵国南北领土连成一体。"
         ],
-        "source": "史记·赵世家；史记·六国年表；战国策·中山策"
-    },
-    {
-        "id": "evt_0272",
-        "baton": "15A",
-        "year": -294,
-        "season": 2,
-        "title": "新城攻韩之战",
-        "kind": "narrative",
-        "place": {
-            "name": "伊水西岸韩国重镇新城",
-            "lat": 34.62,
-            "lng": 112.45
-        },
-        "leadGeneralId": "xin_baiqi",
-        "strategic": [
-            "公元前二九四年秋，西方德米特里一世夺掌马其顿王位之际，东方秦国在拆散齐韩魏合纵后迅速重整东出攻势。复任秦相的穰侯魏冉举荐熟稔兵机、果决善断的郿县将领白起，秦昭襄王遂拜白起为左庶长统军东出崤函，直指屏障洛阳南翼的韩国重镇新城。"
-        ],
-        "tactical": [
-            "新城地处伊水西岸丘陵要冲，北望伊阙龙门、东控新郑门户，韩军依山筑有坚固城垒。初登帅坛的白起摒弃寻常围困钝法，驱秦军步骑昼夜疾进突抵城下，趁韩魏外援未及集结之机集中强弩压制城头，命锐士四面鼓噪强登拔城，为次年伊阙决战楔入钉子。"
-        ],
-        "source": "史记·秦本纪；史记·白起王翦列传；睡虎地秦简·编年纪"
+        "source": "史记·赵世家；史记·六国年表；战国策·中山策",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "lingqiu_zhaowuling",
+            "battleId": "chron:evt_0270",
+            "battleName": "灵寿灭中山之战",
+            "battleYear": -296,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "太行山东麓中山王都灵寿",
+            "targetCityId": "city_zhending",
+            "chronicleCity": {
+                "cityId": "city_zhending",
+                "before": "zhongshan",
+                "after": "zhao"
+            },
+            "chronicleFrom": "city_handan",
+            "targetLat": 38.13,
+            "targetLng": 114.59,
+            "myTroops": 15000,
+            "enemyFactionId": "zhongshan",
+            "enemyFactionName": "中山",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0273",
@@ -5122,6 +4986,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "洛阳南郊伊水龙门山口伊阙",
+            "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
             "myTroops": 15000,
@@ -5167,6 +5032,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "wei",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 35.15,
             "targetLng": 112.3,
             "myTroops": 15000,
@@ -5205,6 +5071,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东济水西岸平原",
+            "chronicleFrom": "city_beijing",
             "targetLat": 36.432,
             "targetLng": 115.955,
             "myTroops": 15000,
@@ -5250,6 +5117,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chuguo",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "鄢",
+                    "lat": 31.72,
+                    "lng": 112.26
+                }
+            ],
+            "chronicleFrom": "city_changan",
             "targetLat": 30.35,
             "targetLng": 112.18,
             "myTroops": 15000,
@@ -5288,6 +5163,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "新郑北郊韩国重镇华阳",
+            "chronicleFrom": "city_changan",
             "targetLat": 34.4,
             "targetLng": 113.74,
             "myTroops": 15000,
@@ -5326,6 +5202,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "太行山腹地险塞阏与",
+            "chronicleFrom": "city_handan",
             "targetLat": 36.487,
             "targetLng": 113.381,
             "myTroops": 15000,
@@ -5365,6 +5242,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行山南麓南阳与羊肠坂陉道",
+            "chronicleFrom": "city_changan",
             "targetLat": 35.27,
             "targetLng": 112.93,
             "myTroops": 15000,
@@ -5403,6 +5281,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "上党长平丹水河谷",
+            "chronicleFrom": "city_changan",
             "targetLat": 36.149,
             "targetLng": 113.008,
             "myTroops": 15000,
@@ -5448,6 +5327,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "zhao"
             },
+            "chronicleFrom": "city_handan",
             "targetLat": 36.61,
             "targetLng": 114.49,
             "myTroops": 15000,
@@ -5463,7 +5343,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -257,
         "season": 3,
         "title": "邯郸保卫战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "赵都邯郸城外",
             "lat": 36.61,
@@ -5476,7 +5356,26 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "魏无忌统率魏军精锐自背侧猛扑王龁围城大营，春申君楚师自东翼协同进逼，平原君赵胜亦率邯郸敢死之士开城突击。三路大军内外合击声震原野，秦军腹背受敌防线崩溃，王龁率主力狼狈西撤汾城，偏将郑安平被围投降，六国自此得以延续国祚。"
         ],
-        "source": "史记·魏公子列传；史记·白起王翦列传；史记·春申君列传"
+        "source": "史记·魏公子列传；史记·白起王翦列传；史记·春申君列传",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "shang_weiwuji",
+            "battleId": "chron:evt_0311",
+            "battleName": "邯郸保卫战",
+            "battleYear": -257,
+            "battleType": "field",
+            "role": "attacker",
+            "targetName": "赵都邯郸城外",
+            "chronicleFrom": "city_bianliang",
+            "targetLat": 36.61,
+            "targetLng": 114.49,
+            "myTroops": 15000,
+            "enemyFactionId": "qin",
+            "enemyFactionName": "秦国",
+            "enemyGeneralId": "bfe3_9",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0312",
@@ -5484,20 +5383,44 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -256,
         "season": 2,
         "title": "秦灭西周国之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "洛阳王城与伊阙",
             "lat": 34.62,
             "lng": 112.45
         },
-        "leadGeneralId": "qin_mengao",
+        "leadGeneralId": "qin_jiu",
         "strategic": [
             "公元前二五六年秋，秦昭襄王为挽回邯郸失利声威，命将军摎东出攻取韩国阳城与负黍。依附于西周国的周赧王与西周武公忧惧秦师逼近王畿，遂联络关东诸侯发兵出伊阙塞阻断秦军阳城通道，秦廷当即借机下令挥师讨伐洛阳西周王城。"
         ],
         "tactical": [
             "各路诸侯忌惮秦军兵威迟疑不前，周室孤军陈兵伊阙难以抵御秦国铁骑冲杀。将军摎率秦军主力一举击散周师防线，铁甲兵锋直抵王城城下形成合围；西周君被迫素衣入秦顿首献出全部城邑户籍，同年周赧王忧愤病逝，绵延数百年之东周王朝正式覆亡。"
         ],
-        "source": "史记·周本纪；史记·秦本纪"
+        "source": "史记·周本纪；史记·秦本纪",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "qin_jiu",
+            "battleId": "chron:evt_0312",
+            "battleName": "秦灭西周国之战",
+            "battleYear": -256,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "洛阳王城与伊阙",
+            "targetCityId": "city_luoyang",
+            "chronicleCity": {
+                "cityId": "city_luoyang",
+                "before": "zhou",
+                "after": "qin"
+            },
+            "chronicleFrom": "city_changan",
+            "targetLat": 34.62,
+            "targetLng": 112.45,
+            "myTroops": 15000,
+            "enemyFactionId": "zhou",
+            "enemyFactionName": "姬周",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0319",
@@ -5505,7 +5428,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -249,
         "season": 0,
         "title": "秦灭东周国之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "河南巩邑与洛阳",
             "lat": 34.81,
@@ -5518,7 +5441,31 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "tactical": [
             "关东各国震慑秦师锋芒无人敢发援兵，吕不韦率秦军铁骑疾驰包抄巩邑与洛阳诸邑，以绝对优势兵力摧毁外围关防。东周守军寡不敌众迅速瓦解，吕不韦攻破巩邑生俘东周君并将其迁置阳人聚，尽收河南七邑紧邻韩境设置三川郡，周室残余宗祀至此彻底断绝。"
         ],
-        "source": "史记·秦本纪；史记·吕不韦列传"
+        "source": "史记·秦本纪；史记·吕不韦列传",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "qin_mengao",
+            "battleId": "chron:evt_0319",
+            "battleName": "秦灭东周国之战",
+            "battleYear": -249,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "河南巩邑与洛阳",
+            "targetCityId": "city_hulaoguan",
+            "chronicleCity": {
+                "cityId": "city_hulaoguan",
+                "before": "zhou",
+                "after": "qin"
+            },
+            "chronicleFrom": "city_changan",
+            "targetLat": 34.81,
+            "targetLng": 113.17,
+            "myTroops": 15000,
+            "enemyFactionId": "zhou",
+            "enemyFactionName": "姬周",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0320",
@@ -5555,6 +5502,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 37.87,
             "targetLng": 112.55,
             "myTroops": 15000,
@@ -5593,6 +5541,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "黄河以南陕华河外至函谷关",
+            "chronicleFrom": "city_bianliang",
             "targetLat": 34.615,
             "targetLng": 110.915,
             "myTroops": 15000,
@@ -5632,6 +5581,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "代郡与雁门塞外草原",
+            "chronicleFrom": "city_wuzhousai",
             "targetLat": 39.998,
             "targetLng": 112.42,
             "myTroops": 15000,
@@ -5670,6 +5620,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "咸阳东翼临潼蕞城",
+            "chronicleFrom": "city_shouxian",
             "targetLat": 34.27,
             "targetLng": 108.93,
             "myTroops": 15000,
@@ -5714,6 +5665,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
             "myTroops": 15000,
@@ -5752,6 +5704,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漳水北岸平阳与武城",
+            "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
             "myTroops": 15000,
@@ -5790,6 +5743,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行东麓宜安与肥累",
+            "chronicleFrom": "city_wuzhousai",
             "targetLat": 38.13,
             "targetLng": 114.59,
             "myTroops": 15000,
@@ -5829,6 +5783,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "河北灵寿西南番吾",
+            "chronicleFrom": "city_wuzhousai",
             "targetLat": 38.13,
             "targetLng": 114.59,
             "myTroops": 15000,
@@ -5844,20 +5799,44 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -230,
         "season": 2,
         "title": "秦灭韩之战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "韩国都城新郑",
             "lat": 34.4,
             "lng": 113.74
         },
-        "leadGeneralId": "ruo_wangjian",
+        "leadGeneralId": "qin_teng",
         "strategic": [
             "公元前二三零年秋，赵国连遭地震与大饥荒侵袭无力南顾，秦王嬴政果断抓住良机率先向最孱弱的邻邦韩国发动灭国总攻。早先韩国已献南阳地，秦廷任命熟稔韩地虚实的南阳假守内史腾统率精锐大军，自三川与南阳两翼疾速出击，直扑韩国仅存的都城新郑。"
         ],
         "tactical": [
             "内史腾行军迅雷不及掩耳，强渡黄河与洛水防线昼夜兼程兵临新郑城下，使韩廷根本来不及征调外邑散兵或向魏楚求援。秦军铁甲步弩四面合围猛攻新郑城门，韩军防线在凌厉攻势下迅速崩溃；内史腾率师破城生俘韩王安，秦国尽收韩地设置颍川郡，六国首灭其一。"
         ],
-        "source": "史记·秦始皇本纪；史记·韩世家；睡虎地秦简·编年记"
+        "source": "史记·秦始皇本纪；史记·韩世家；睡虎地秦简·编年记",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "qin_teng",
+            "battleId": "chron:evt_0338",
+            "battleName": "秦灭韩之战",
+            "battleYear": -230,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "韩国都城新郑",
+            "targetCityId": "city_xinzheng",
+            "chronicleCity": {
+                "cityId": "city_xinzheng",
+                "before": "han",
+                "after": "qin"
+            },
+            "chronicleFrom": "city_nanyang",
+            "targetLat": 34.4,
+            "targetLng": 113.74,
+            "myTroops": 15000,
+            "enemyFactionId": "han",
+            "enemyFactionName": "韩国",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0340",
@@ -5894,6 +5873,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "井陉",
+                    "lat": 38.04,
+                    "lng": 114.14
+                }
+            ],
+            "chronicleFrom": "city_changan",
             "targetLat": 36.61,
             "targetLng": 114.49,
             "myTroops": 15000,
@@ -5938,6 +5925,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yan",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 39.9,
             "targetLng": 116.41,
             "myTroops": 15000,
@@ -5953,20 +5941,44 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "year": -225,
         "season": 0,
         "title": "秦灭魏大梁水攻战",
-        "kind": "narrative",
+        "kind": "battle",
         "place": {
             "name": "魏都大梁",
             "lat": 34.8,
             "lng": 114.31
         },
-        "leadGeneralId": "ruo_wangjian",
+        "leadGeneralId": "qin_wangben",
         "strategic": [
             "公元前二二五年春，秦国扫灭韩赵并重创燕国后，孤悬中原腹地的魏国四面受敌。秦王嬴政命少壮名将王贲统率大军东出关中，王贲先挥师南掠楚国北境连夺要邑以屏蔽侧背，旋即回师北上将魏国都城大梁围得水泄不通；魏王假依托深沟高垒与丰沛积粟死守待援。"
         ],
         "tactical": [
             "大梁地处平原低洼地带且城防坚厚，秦军强攻多日伤亡不小。王贲遂审视黄河与鸿沟水势，征发士卒在城外开凿长渠筑堤蓄水，引滚滚黄河浊浪直灌大梁城垣；大水浸泡数月致使夯土城墙纷纷崩塌倾颓，秦师乘舟筏突入缺口，魏王假走投无路出城请降，魏国灭亡。"
         ],
-        "source": "史记·秦始皇本纪；史记·魏世家"
+        "source": "史记·秦始皇本纪；史记·魏世家",
+        "winner": "attacker",
+        "battle": {
+            "generalId": "qin_wangben",
+            "battleId": "chron:evt_0343",
+            "battleName": "秦灭魏大梁水攻战",
+            "battleYear": -225,
+            "battleType": "siege",
+            "role": "attacker",
+            "targetName": "魏都大梁",
+            "targetCityId": "city_bianliang",
+            "chronicleCity": {
+                "cityId": "city_bianliang",
+                "before": "wei",
+                "after": "qin"
+            },
+            "chronicleFrom": "city_changan",
+            "targetLat": 34.8,
+            "targetLng": 114.31,
+            "myTroops": 15000,
+            "enemyFactionId": "wei",
+            "enemyFactionName": "魏国",
+            "enemyTroops": 15000,
+            "introLines": []
+        }
     },
     {
         "id": "evt_0344",
@@ -5997,6 +6009,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "淮北重镇城父",
+            "chronicleFrom": "city_changan",
             "targetLat": 33.88,
             "targetLng": 115.77,
             "myTroops": 15000,
@@ -6036,6 +6049,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "淮北平舆至蕲南原野",
+            "chronicleFrom": "city_changan",
             "targetLat": 33.65,
             "targetLng": 116.97,
             "myTroops": 15000,
@@ -6081,6 +6095,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chuguo",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 32.59,
             "targetLng": 116.8,
             "myTroops": 15000,
@@ -6103,7 +6118,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "lat": 41.27,
             "lng": 123.17
         },
-        "leadGeneralId": "gen_li_xin",
+        "leadGeneralId": "qin_wangben",
         "strategic": [
             "公元前二二二年秋，秦国扫平南方荆楚与越地后，决意彻底铲除偏安东北隅的燕国残廷及代北赵嘉势力。秦王嬴政大兴北伐之师，命通武侯王贲与李信统率精锐步骑东越渝关、穿过辽西走廊远征辽东，直逼燕王喜盘踞数载的最后据点襄平城。"
         ],
@@ -6113,7 +6128,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "source": "史记·秦始皇本纪；史记·白起王翦列传；史记·燕召公世家",
         "winner": "attacker",
         "battle": {
-            "generalId": "gen_li_xin",
+            "generalId": "qin_wangben",
             "battleId": "chron:evt_0348",
             "battleName": "秦灭燕辽东襄平之战",
             "battleYear": -222,
@@ -6126,6 +6141,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yan",
                 "after": "qin"
             },
+            "chronicleFrom": "city_beijing",
             "targetLat": 41.27,
             "targetLng": 123.17,
             "myTroops": 15000,
@@ -6147,7 +6163,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "lat": 36.88,
             "lng": 118.43
         },
-        "leadGeneralId": "baiyang_mengtian",
+        "leadGeneralId": "qin_wangben",
         "strategic": [
             "公元前二二一年夏，山东六国仅余东海之滨的齐国孤悬独存。齐相后胜长期收受秦国重金贿赂，坐视五国覆亡而不修战备，至秦师压境方才匆忙集结主力屯守西部边防；秦王嬴政洞悉齐军布防虚实，命王贲、李信与蒙恬自燕南故道挥师疾下，避实击虚直插齐国北门。"
         ],
@@ -6157,7 +6173,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "source": "史记·秦始皇本纪；史记·田敬仲完世家",
         "winner": "attacker",
         "battle": {
-            "generalId": "baiyang_mengtian",
+            "generalId": "qin_wangben",
             "battleId": "chron:evt_0349",
             "battleName": "秦灭齐临淄之战",
             "battleYear": -221,
@@ -6170,6 +6186,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "qi",
                 "after": "qin"
             },
+            "chronicleFrom": "city_changan",
             "targetLat": 36.88,
             "targetLng": 118.43,
             "myTroops": 15000,
@@ -6208,6 +6225,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "岭南越城岭与桂北山林",
+            "chronicleFrom": "city_changan",
             "targetLat": 25.27,
             "targetLng": 110.29,
             "myTroops": 15000,
@@ -6247,6 +6265,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河套河南地至阴山高阙",
+            "chronicleFrom": "city_fushi",
             "targetLat": 41.195,
             "targetLng": 107.166,
             "myTroops": 15000,
@@ -6292,6 +6311,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xiou",
                 "after": "qin"
             },
+            "chronicleFrom": "city_longchuan",
             "targetLat": 23.12,
             "targetLng": 113.26,
             "myTroops": 15000,
@@ -6336,6 +6356,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "qin",
                 "after": "zhangchu"
             },
+            "chronicleFrom": "city_huaiyang",
             "targetLat": 33.63,
             "targetLng": 114.7,
             "myTroops": 15000,
@@ -6374,6 +6395,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "咸阳东郊临潼戏水",
+            "chronicleFrom": "city_changan",
             "targetLat": 34.27,
             "targetLng": 108.93,
             "myTroops": 15000,
@@ -6412,6 +6434,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东定陶城下",
+            "chronicleFrom": "city_changan",
             "targetLat": 35.201,
             "targetLng": 115.472,
             "myTroops": 15000,
@@ -6451,6 +6474,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河北巨鹿城外与漳水",
+            "chronicleFrom": "city_pengcheng",
             "targetLat": 37.22,
             "targetLng": 115.04,
             "myTroops": 15000,
@@ -6490,6 +6514,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "秦岭北口陈仓与关中好畤",
+            "chronicleFrom": "city_hanzhong",
             "targetLat": 34.28,
             "targetLng": 106.95,
             "myTroops": 15000,
@@ -6529,6 +6554,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "西楚都城彭城与睢水",
+            "routeVia": [
+                {
+                    "name": "鲁",
+                    "lat": 35.6,
+                    "lng": 116.99
+                },
+                {
+                    "name": "胡陵",
+                    "lat": 34.9,
+                    "lng": 116.7
+                },
+                {
+                    "name": "萧",
+                    "lat": 34.19,
+                    "lng": 116.95
+                }
+            ],
+            "chronicleFrom": "city_ju",
             "targetLat": 34.27,
             "targetLng": 117.18,
             "myTroops": 15000,
@@ -6568,6 +6611,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行井陉口与绵蔓水",
+            "chronicleFrom": "city_eyu",
             "targetLat": 38.02,
             "targetLng": 114,
             "myTroops": 15000,
@@ -6607,6 +6651,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东高密潍水河岸",
+            "chronicleFrom": "city_linzi",
             "targetLat": 36.42,
             "targetLng": 119.41,
             "myTroops": 15000,
@@ -6645,6 +6690,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河南荥阳西成皋关与汜水",
+            "chronicleFrom": "city_huojia",
             "targetLat": 34.81,
             "targetLng": 113.17,
             "myTroops": 15000,
@@ -6683,6 +6729,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "安徽灵璧垓下至乌江",
+            "chronicleFrom": "city_linzi",
             "targetLat": 33.328,
             "targetLng": 117.614,
             "myTroops": 15000,
@@ -6728,6 +6775,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han_d",
                 "after": "xiongnu"
             },
+            "chronicleFrom": "city_toumancheng",
             "targetLat": 39.05,
             "targetLng": 112.24,
             "myTroops": 15000,
@@ -6766,6 +6814,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "山西大同东北平城白登山",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 40.08,
             "targetLng": 113.3,
             "myTroops": 15000,

@@ -17,8 +17,8 @@ const TROOPS = 15000;
 const SEASON: Record<string, 0 | 1 | 2 | 3> = { 春: 0, 夏: 1, 秋: 2, 冬: 3 };
 
 const events = new Map((JSON.parse(readFileSync(SRC, 'utf-8')).events as Record<string, string>[]).map((e) => [e['事件ID'], e]));
-const generals = new Set<string>();
-for (const e of Object.values(FACTION_GENERALS)) for (const g of (Array.isArray(e) ? e : [e]) as { generalId: string }[]) generals.add(g.generalId);
+const generals = new Map<string, string>();
+for (const e of Object.values(FACTION_GENERALS)) for (const g of (Array.isArray(e) ? e : [e]) as { generalId: string; cityId: string }[]) generals.set(g.generalId, g.cityId);
 const factionName = new Map(FACTIONS.map((f) => [f.id, f.name]));
 const cityIds = new Set(CITIES_V2.map((c) => c.id));
 
@@ -44,7 +44,10 @@ for (const s of CHRONICLE_SCRIPT) {
         tactical: [e['战术播报']].filter(Boolean),
         source: e['一手史料出处'],
     };
+    if (s.kind !== 'battle') errors.push(`${s.eventId} 主线每场都要开战（不收只播报的场）`);
     if (s.kind === 'battle') {
+        const from = s.from ?? generals.get(s.leadGeneralId);
+        if (!from || !cityIds.has(from)) errors.push(`${s.eventId} 出发据点 ${from} 不在库`);
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
         if (s.enemyGeneralId && !generals.has(s.enemyGeneralId)) errors.push(`${s.eventId} 对手武将 ${s.enemyGeneralId} 不在库`);
         if (!s.winner) errors.push(`${s.eventId} 缺史载胜方`);
@@ -65,6 +68,7 @@ for (const s of CHRONICLE_SCRIPT) {
             ...(isSiege && s.city ? { targetCityId: s.city.cityId } : {}),
             ...(s.city ? { chronicleCity: s.city } : {}),
             ...(s.route?.length ? { routeVia: s.route } : {}),
+            chronicleFrom: from,
             targetLat: lat,
             targetLng: lng,
             myTroops: TROOPS,

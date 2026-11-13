@@ -672,6 +672,24 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_perdiccas: { birth: -355, death: -320, kaoju: '异说' },  // 佩尔狄卡斯（尼罗河渡河失败后被部将所杀；按低年代学前320，与编年史同口径）
     maqidun_eumenes: { birth: -361, death: -316, kaoju: '推定' },  // 欧迈尼斯（卡迪亚人；伽比埃奈战后被银盾兵执送安提柯处死，卒年四十五，普鲁塔克《欧迈尼斯传》20）
     qin_mengao: { birth: -300, death: -240, kaoju: '推定' },  // 蒙骜（生年不详推定；始皇七年卒，《史记·秦始皇本纪》）
+    // ── 2026-11-13 编年史第一、二段补将 ──
+    lagoniya_leotychidas: { birth: -545, death: -469, kaoju: '推定' },  // 列奥提基达斯（前491–前476 在位，流亡卒于泰盖亚）
+    lagoniya_archidamus_ii: { birth: -510, death: -427, kaoju: '推定' },  // 阿基达穆斯二世（前469–前427 在位）
+    lagoniya_agis_ii: { birth: -470, death: -400, kaoju: '推定' },  // 阿基斯二世（前427–前400 在位）
+    lagoniya_callicratidas: { birth: -440, death: -406, kaoju: '推定' },  // 卡利克拉提达斯（阿吉努萨伊阵亡）
+    lagoniya_phoebidas: { birth: -420, death: -377, kaoju: '推定' },  // 福比达斯（前377 战死于泰斯皮埃，色诺芬《希腊史》V.4.45）
+    lagoniya_teleutias: { birth: -430, death: -381, kaoju: '推定' },  // 特琉提亚斯（奥林索斯城下战死）
+    xila_myronides: { birth: -510, death: -440, kaoju: '推定' },  // 米隆尼德斯（前479 普拉提亚使节，前457 奥诺菲塔）
+    xila_tolmides: { birth: -500, death: -447, kaoju: '推定' },  // 托尔米德斯（科罗尼亚战死）
+    xila_thrasybulus: { birth: -440, death: -388, kaoju: '推定' },  // 斯拉叙布卢斯（前388 死于阿斯彭杜斯）
+    xila_iphicrates: { birth: -418, death: -353, kaoju: '推定' },  // 伊菲克拉特斯
+    xila_timotheus: { birth: -415, death: -354, kaoju: '推定' },  // 提莫修斯
+    boootiya_pagondas: { birth: -480, death: -410, kaoju: '推定' },  // 帕贡达斯（前424 德利乌姆）
+    yili_bardylis: { birth: -448, death: -358, kaoju: '推定' },  // 巴尔迪利斯（琉善载年九十犹战）
+    maqidun_coenus: { birth: -370, death: -326, kaoju: '推定' },  // 科伊诺斯（希发西斯河畔劝还后病卒，阿里安 VI.2）
+    qin_jiu: { birth: -300, death: -240, kaoju: '推定' },  // 摎（生卒不详推定；前256 攻西周）
+    qin_teng: { birth: -290, death: -210, kaoju: '推定' },  // 腾（生卒不详推定；前230 灭韩）
+    qin_wangben: { birth: -260, death: -210, kaoju: '推定' },  // 王贲（生卒不详推定；前225 灌大梁，前222 定辽东，前221 灭齐）
     gen_artemisia: { birth: -520, death: -460, kaoju: '推定' },  // 阿尔特米西亚
     halikanasu_memnon: { birth: -380, death: -333 },  // 门农
     gen_artaphernes: { birth: -530, death: -485, kaoju: '推定' },  // 阿尔塔弗涅斯

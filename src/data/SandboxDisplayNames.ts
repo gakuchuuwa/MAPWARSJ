@@ -878,6 +878,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     kalbids: '卡比',
     'chalkidike': '卡基',   // 卡尔基季基同盟
     'naxos': '纳克',   // 纳克索斯
+    'paeonia': '佩奥',   // 佩奥尼亚
+    'messenia': '美塞',   // 美塞尼亚
+    'rhodes': '罗得',   // 罗得
+    'zhongshan': '中山',   // 中山
+    'linhu': '林胡',   // 林胡
     'phokis': '福基',   // 福基斯
     'wuguobu': '五部',   // 五国部（旗号不含「国」）
     'balti': '巴尔',   // 巴尔蒂

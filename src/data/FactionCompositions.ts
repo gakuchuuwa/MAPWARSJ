@@ -61,6 +61,26 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",
 },   // 纳克索斯｜主将 吕格达米斯
+"paeonia": {
+    legionName: "古典时代色雷斯军团",
+    legionType: "region",
+},   // 佩奥尼亚｜无名将
+"messenia": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 美塞尼亚｜无名将
+"rhodes": {
+    legionName: "古典时代赫拉斯军团",
+    legionType: "region",
+},   // 罗得｜无名将
+"zhongshan": {
+    legionName: "古典时代太行军团",
+    legionType: "region",
+},   // 中山｜无名将
+"linhu": {
+    legionName: "古典时代漠南游牧军团",
+    legionType: "region",
+},   // 林胡｜无名将
 "phokis": {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",

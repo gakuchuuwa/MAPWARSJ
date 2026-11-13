@@ -822,6 +822,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
   // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun'（婺州义军）已并入隋国，首府登记删除
   'chalkidike': 'city_aolinsuosi',   // 卡尔基季基同盟
   'naxos': 'city_chimarros',   // 纳克索斯
+  'paeonia': 'city_anfeibolisi',   // 佩奥尼亚（普拉西亚斯湖—斯特鲁马河一带，距安菲波利斯据点约 40 km）
+  'messenia': 'city_sparta',   // 美塞尼亚（伊托美山在斯巴达据点 50 km 内）
+  'rhodes': 'city_rhodes',   // 罗得
+  'zhongshan': 'city_zhongshan',   // 中山（中山武公居顾，即定州）
+  'linhu': 'city_yunzhongcheng',   // 林胡（云中一带）
   'phokis': 'city_deerfei',   // 福基斯
   'wuguobu': 'city_wuguo',   // 五国部
   'balti': 'city_puticheng',   // 巴尔蒂

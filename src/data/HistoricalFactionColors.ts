@@ -743,6 +743,11 @@ desheng: '#2E6B7A', // 德胜·刘通
     yuenan: '#8E3B5C', // 越南
     chalkidike: '#8A5CF6',   // 卡尔基季基同盟
     naxos: '#C2410C',   // 纳克索斯
+    paeonia: '#6B8E23',   // 佩奥尼亚
+    messenia: '#7A4E2D',   // 美塞尼亚
+    rhodes: '#D4A017',   // 罗得（太阳神赫利俄斯金）
+    zhongshan: '#4B6F44',   // 中山
+    linhu: '#8C7A5B',   // 林胡
     phokis: '#0F766E',   // 福基斯
     wuguobu: '#7C2D12',   // 五国部
     balti: '#4D7C0F',   // 巴尔蒂

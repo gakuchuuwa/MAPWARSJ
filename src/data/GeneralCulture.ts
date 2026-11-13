@@ -1370,6 +1370,24 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'paiyao_huangguasi': 'HUGUANG',   // 南越｜黄瓜四｜据点 阳山关
     'pajiama_oumainisi': 'GREECE',   // 帕加马｜欧迈尼斯一世｜据点 佩尔加蒙
     'maqidun_eumenes': 'TURKS',   // 马其顿｜欧迈尼斯｜据点 提亚纳
+    // ── 2026-11-13 编年史第一、二段补将 ──
+    'lagoniya_leotychidas': 'GREECE',   // 斯巴达｜列奥提基达斯｜据点 希马鲁塔
+    'lagoniya_archidamus_ii': 'SPARTANS',   // 斯巴达｜阿基达穆斯二世｜据点 斯巴达
+    'lagoniya_agis_ii': 'SPARTANS',   // 斯巴达｜阿基斯二世｜据点 斯巴达
+    'lagoniya_callicratidas': 'GREECE',   // 斯巴达｜卡利克拉提达斯｜据点 佩尔加蒙
+    'lagoniya_phoebidas': 'SPARTANS',   // 斯巴达｜福比达斯｜据点 斯巴达
+    'lagoniya_teleutias': 'SPARTANS',   // 斯巴达｜特琉提亚斯｜据点 斯巴达
+    'xila_myronides': 'ATHENIANS',   // 雅典｜米隆尼德斯｜据点 雅典
+    'xila_tolmides': 'ATHENIANS',   // 雅典｜托尔米德斯｜据点 雅典
+    'xila_thrasybulus': 'GREECE',   // 雅典｜斯拉叙布卢斯｜据点 底比斯
+    'xila_iphicrates': 'ATHENIANS',   // 雅典｜伊菲克拉特斯｜据点 雅典
+    'xila_timotheus': 'ATHENIANS',   // 雅典｜提莫修斯｜据点 雅典
+    'boootiya_pagondas': 'GREECE',   // 底比斯｜帕贡达斯｜据点 底比斯
+    'yili_bardylis': 'MACEDONIAN',   // 伊利里亚｜巴尔迪利斯｜据点 佩利昂
+    'maqidun_coenus': 'CENTRAL_ASIA',   // 马其顿｜科伊诺斯｜据点 布哈拉
+    'qin_jiu': 'CENTRAL',   // 秦国｜摎｜据点 长安
+    'qin_teng': 'CENTRAL',   // 秦国｜腾｜据点 宛城
+    'qin_wangben': 'CENTRAL',   // 秦国｜王贲｜据点 长安
     'pandiya_jiatawaerman': 'INDIA',   // 潘地亚｜贾塔瓦尔曼｜据点 马杜赖
     'panfeiliya_apollonios': 'GREECE',   // 阿契美尼德｜阿波罗尼奥斯｜据点 阿斯彭杜斯
     'pangzha_halixinge': 'PURU',   // 锡克帝国｜哈里辛格｜据点 阿托克

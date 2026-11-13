@@ -642,6 +642,16 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
         if (hero.isAttached()) return;
+        // 🔴 [2026-11-13 编年史] 到了这一场的出发据点：与随行主将会面（他不一定常驻此城）
+        const lead = isChronicleActive() && !this.quest ? this.chronicleLeadTarget() : null;
+        const leadFb = lead && lead.city.id === city.id ? this.hasPendingFirstBattle(lead.general.generalId) : null;
+        if (lead && leadFb) {
+            this.headingTargetGeneralId = null;
+            const fid = getFactionIdOfGeneral(lead.general.generalId) ?? city.factionId;
+            const portrait = resolveGeneralPortraitPath(lead.general.portrait, { factionId: fid, region: getCityRegion(city) });
+            this.showFirstBattleDialogue(city, lead.general, portrait, this.deps.cityManager.getFactionName(fid), leadFb, null);
+            return;
+        }
         // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距经典战：玩家自己走到了被攻的城（接任务点）
         //    → 先弹这位名将的经典战，不让该城的守将抢先。
         if (this.pendingFrontGeneralId) {
@@ -2254,7 +2264,7 @@ export class PlayerQuestSystem {
         //    metAtFront = 玩家已经自己走到了接任务点（被攻的城／战场）：军团就位在这里，不再把玩家瞬移过去。
         const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
             Math.hypot((a.lat - b.lat) * 111.32, (a.lng - b.lng) * 111.32 * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180));
-        if (fb.battleType === 'siege' && role === 'defender' && !chained) {
+        if (fb.battleType === 'siege' && role === 'defender' && !chained && !isChronicleBattleId(battleIdOf(fb))) {
             const defended = targetCity ?? city;
             host.setPosition(defended.latitude, defended.longitude);
         } else if (metAtFront) {
@@ -3046,7 +3056,8 @@ export class PlayerQuestSystem {
     private chronicleLeadTarget(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
         const ev = currentChronicleEvent();
         if (!ev || ev.kind !== 'battle' || this.chronicleNarrating) return null;
-        const city = this.generalHomeCity(ev.leadGeneralId);
+        const fromId = ev.battle?.chronicleFrom;
+        const city = (fromId ? this.deps.cityManager.getCity(fromId) : null) ?? this.generalHomeCity(ev.leadGeneralId);
         const rec = getGeneralRecordByGeneralId(ev.leadGeneralId);
         if (!city || !rec) return null;
         return { city, general: { generalId: ev.leadGeneralId, generalName: rec.generalName, portrait: rec.portrait ?? '' } };
@@ -3940,6 +3951,12 @@ export class PlayerQuestSystem {
         const g = queued?.general ?? this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
         this.headingTargetGeneralId = g?.generalId ?? null;
         this.rememberVisit(city, g?.generalId);
+        // 🔴 [2026-11-13 编年史] 一律去这一场的出发据点与随行主将会合
+        if (isChronicleActive() && queued) {
+            this.chaseCityId = null;
+            this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
+            return;
+        }
         // 🔴 [2026-09-09 主人定「找武将：认人不认城，如果武将出征，就直接去找出征的武将」]
         //    先看选中的这位武将本人（g）是不是已经率军在外：
         //    （修 2026-10-19 一据点多武将后 `!inCityGen` 因同城有其他副将而恒为 false 的 bug，

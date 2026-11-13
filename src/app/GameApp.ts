@@ -1073,10 +1073,14 @@ export class GameApp {
             startChronicle();
             this.applyChronicleCityOwnership(this.timeSystem.getYear());
         }
-        const chronicleLeadId = isCentenarianStart ? firstChronicleEvent()?.leadGeneralId : undefined;
-        const chronicleStart = chronicleLeadId
-            ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
-            : undefined;
+        const chronicleFirst = isCentenarianStart ? firstChronicleEvent() : undefined;
+        const chronicleLeadId = chronicleFirst?.leadGeneralId;
+        const chronicleFromId = chronicleFirst?.battle?.chronicleFrom;
+        const chronicleStart = chronicleFromId
+            ? allCities.find((c) => c.id === chronicleFromId)
+            : chronicleLeadId
+                ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
+                : undefined;
         const startCity = chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
