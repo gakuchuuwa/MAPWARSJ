@@ -11246,6 +11246,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": -13,
             "offsetY": -8
+        },
+        "/assets/SASANIAN/sashan_shah.png": {
+            "scale": 0.92,
+            "offsetX": 1,
+            "offsetY": -17
         }
     },
     "folderGuides": {

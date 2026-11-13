@@ -79,7 +79,7 @@ import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityI
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
-import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
+import { refreshEraFactionDisplays, getEraFactionDisplayName } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
 import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGeneralChecker, setGameModeProvider, setFirstBattleStatusProvider, isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
@@ -114,6 +114,8 @@ export { STARTING_CAPITALS } from '../data/StartingCapitals';
 
 /** 剧本模式开局：玩家出生点离归属武将所在城的距离（度，≈65 公里） */
 const SCRIPT_SPAWN_DIST_DEG = 0.6;
+/** 🔴 [2026-11-13 主人令「玩家在约 200 公里外出生」] 百岁模式编年史开局：离主将据点约 200 公里 */
+const CHRONICLE_SPAWN_DIST_DEG = 1.8;
 
 declare global {
     interface Window {
@@ -538,10 +540,15 @@ export class GameApp {
                 // 🔴 [2026-10-08 主人「小地图是不是可以添加上势力色」] 可见据点 + 当前所属势力的势力色（固定色优先，再读 FactionManager，与旗号染色同口径）
                 () => (this.cityManager?.getCities() ?? [])
                     .filter((c) => this.cityManager.isCityVisible(c))
-                    .map((c) => ({
-                        id: c.id, lat: c.latitude, lng: c.longitude, type: c.type, factionId: c.factionId,
-                        color: HISTORICAL_FACTION_COLORS[c.factionId] ?? this.factionManager?.getFactionColor(c.factionId) ?? '#999999',
-                    })),
+                    .map((c) => {
+                        // 🔴 [2026-11-13 主人令] 百岁模式：势力此刻无在场武将 → 小地图不涂势力色（与据点旗同口径）
+                        const idle = getEraFactionDisplayName(c.factionId) != null;
+                        return {
+                            id: c.id, lat: c.latitude, lng: c.longitude, type: c.type,
+                            factionId: idle ? undefined : c.factionId,
+                            color: idle ? '#999999' : (HISTORICAL_FACTION_COLORS[c.factionId] ?? this.factionManager?.getFactionColor(c.factionId) ?? '#999999'),
+                        };
+                    }),
                 // 🔴 [2026-10-29 主人令「势力色和行军路线色为反差色」]
                 // 提供玩家所属/随行势力的势力色（用于动态计算行军路线反差色，避免红势力与红路线重叠）
                 () => {
@@ -1068,7 +1075,7 @@ export class GameApp {
             // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]
             //    剧本模式出生在归属武将城外约 0.6°（≈65 公里）的路上，要先走一段才见到他；
             //    路比这短就生在这条路的另一头。乱斗模式照旧只要出城（到达判定距离之外）。
-            const minDist = (scriptStart || chronicleStart) ? SCRIPT_SPAWN_DIST_DEG : PLAYER_CITY_ARRIVE_DIST;
+            const minDist = chronicleStart ? CHRONICLE_SPAWN_DIST_DEG : (scriptStart ? SCRIPT_SPAWN_DIST_DEG : PLAYER_CITY_ARRIVE_DIST);
             let picked: [number, number] | null = null;
             for (let i = 1; i < edge.coordinates.length; i++) {
                 const c = edge.coordinates[i];

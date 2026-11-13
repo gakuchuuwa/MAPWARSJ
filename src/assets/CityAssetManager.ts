@@ -1995,11 +1995,10 @@ export class CityAssetManager {
         const cityName = getEraCityDisplayName(factionId, buildingStyle);
         const eraName = cityName ?? getEraFactionDisplayName(factionId);
 
-        // 🔴 [2026-10-24 试水] 乱斗/剧本下，登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
-        //   🔴 [2026-11-03 主人「所有模式的势力都一样」「照旧画势力纹章」] 百岁模式武将不在场（eraName != null）
-        //   也画势力纹章，不再改写时代名文字。
+        // 🔴 [2026-10-24 试水] 登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
         //   表见 src/data/FactionEmblems.ts（删条目即回退汉字；生成/查缓存/军团旗共用本 spec）。
-        const emblemKey = getFactionEmblemKey(factionId);
+        // 🔴 [2026-11-13 主人令] 百岁模式该势力无在场武将（eraName != null）不画势力纹章，走下方文化符号 / 时代字旗
+        const emblemKey = eraName == null ? getFactionEmblemKey(factionId) : null;
         if (emblemKey) {
             const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
             return {

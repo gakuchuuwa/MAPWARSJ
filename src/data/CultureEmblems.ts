@@ -14,8 +14,8 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     XIANBEI: 'khitans',          // 漠南（鲜卑/契丹）：DE khitans 金凤纹
     MONGOL: 'mongols',           // 漠北蒙古：DE mongols 索永布
     CENTRAL_ASIA: 'tatars',      // 中亚：DE tatars 塔木加
-    KOREA: 'koreans',            // 朝鲜：DE koreans 太极木盾芯
-    JAPAN: 'japanese',           // 日本：DE japanese 十六瓣金菊纹
+    KOREA: 'koreans',            // 🔴 [2026-11-13 主人令] 朝鲜：三色三太极（素白神旗，红蓝黄天地人）
+    JAPAN: 'japanese',           // 🔴 [2026-11-13 主人令] 日本：十六瓣金菊纹（胜色深绀蓝旗）
     // ── 南亚 / 东南亚 ─────────────────────────────────────────────
     INDIA: 'dravidians',         // 南印（达罗毗荼/朱罗）：DE dravidians 九宝珠盾饰
     MUGHAL: 'indians',           // 北印（莫卧儿）：DE indians 八角星章
@@ -74,7 +74,7 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     MAPUCHE: 'mapuche',          // 马普切：DE mapuche 金阶梯十字与八角白星
     TUPI: 'tupi',                // 图皮：DE tupi 图皮几何彩纹
     // ── 其余三级/区域文化（自绘同风格符号）─────────────────────────
-    TIBET: 'tibet',              // 青藏：藏王陵金石狮
+    TIBET: 'tibet',              // 🔴 [2026-11-13 主人令] 青藏：八辐金宝轮（金日轮，藏绛红旗）
     WESTERN: 'western',          // 西域：西域金双峰驼
     GREECE: 'greece',            // 希腊：金月桂花环与橄榄枝
 };
