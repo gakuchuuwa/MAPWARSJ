@@ -2715,6 +2715,22 @@ export class PlayerQuestSystem {
             }
         }
 
+        // 🔴 [2026-11-13 主人令「玩家不脱离军团、不脱离势力，无法进行下一个武将的事件」]
+        //    百岁模式：这位武将没有下一场经典战 → 战后辞别离营（军团照旧由 AI 打），去找下一位武将
+        if (!nextFb && this.deps.hero.autoPlan === 'centenarian') {
+            if (q.generalId) {
+                this.declinedGenerals.add(q.generalId);
+                this.visitedGenerals.add(q.generalId);
+            }
+            this.quest = null;
+            this.deps.hero.detach();
+            this.deps.kickLegionAi(host.id);
+            gameLog('expedition', `[玩家] 经典战大捷：${q.generalName} 已无下一场经典战 → 辞别离营，寻下一位武将`);
+            this.emitChange();
+            this.findNextGeneralNow();
+            return;
+        }
+
         const hPos = host.getPosition();
         const nearestCityId =
             roadRegistry.getNearestCityId(hPos.lat, hPos.lng) ??

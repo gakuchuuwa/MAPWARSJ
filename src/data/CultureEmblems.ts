@@ -10,10 +10,10 @@
 /** 60 个非单字旗文化键 → `public/culture-emblems/sprite/{file}.png` 文件名（不含 `.png`） */
 export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     // ── 东亚 / 内亚（其余 7 文化见 CULTURE_TEXT_FLAG）──────────────────
-    NORTHEAST: 'jurchens',       // 东北（肃慎/靺鞨/女真）：DE jurchens 金龙圆章
-    XIANBEI: 'khitans',          // 漠南（鲜卑/契丹）：DE khitans 金凤纹
-    MONGOL: 'mongols',           // 漠北蒙古：DE mongols 索永布
-    CENTRAL_ASIA: 'tatars',      // 中亚：DE tatars 塔木加
+    NORTHEAST: 'jurchens',       // 🔴 [2026-11-13 主人令] 东北（白山黑水）：白山海东青（黑水玄黑旗，万鹰之神）
+    XIANBEI: 'khitans',          // 🔴 [2026-11-13 主人令] 漠南（契丹/鲜卑）：大辽金冠展翅飞凤（大辽墨青旗）
+    MONGOL: 'mongols',           // 🔴 [2026-11-13 主人令] 漠北蒙古：黄金索永布（长生天苍蓝旗）
+    CENTRAL_ASIA: 'tatars',      // 🔴 [2026-11-13 主人令] 中亚：帖木儿品字三金环（撒马尔罕松石天青旗）
     KOREA: 'koreans',            // 🔴 [2026-11-13 主人令] 朝鲜：三色三太极（素白神旗，红蓝黄天地人）
     JAPAN: 'japanese',           // 🔴 [2026-11-13 主人令] 日本：十六瓣金菊纹（胜色深绀蓝旗）
     // ── 南亚 / 东南亚 ─────────────────────────────────────────────
@@ -29,7 +29,7 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     PERSIAN: 'achaemenids',      // 波斯（阿契美尼德）：DE achaemenids 翼狮
     SASANIAN: 'persians',        // 萨珊波斯：DE persians 西摩格神鸟
     ORIE: 'saracens',            // 阿拉伯（萨拉森）：DE saracens 八角星纹
-    TURKS: 'turks',              // 突厥/奥斯曼：DE turks 星月
+    TURKS: 'turks',              // 🔴 [2026-11-13 主人令] 安纳托利亚：科尼亚金双头神鹰（塞尔柱深钴青旗）
     ARMENIANS: 'armenians',      // 亚美尼亚：DE armenians 双十字瑞狮
     GEORGIANS: 'georgians',      // 格鲁吉亚：DE georgians 五十字
     BYZANTINE: 'byzantines',     // 拜占庭：DE byzantines 四 B 十字
@@ -52,8 +52,8 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     BURGUNDIANS: 'burgundians',  // 勃艮第：DE burgundians 勃艮第锯齿斜十字
     BULGARIANS: 'bulgarians',    // 保加利亚：DE bulgarians 三头黑狮
     MAGYAR: 'magyars',           // 马扎尔/匈牙利：DE magyars 阿尔帕德红白条盾
-    HUNS: 'huns',                // 匈人/草原：DE huns 红马首
-    CUMAN: 'cumans',             // 库曼：DE cumans 钦察银面具
+    HUNS: 'huns',                // 🔴 [2026-11-13 主人令] 匈人/蒂萨河草原：纯金阿提拉战雕图鲁尔（阿提拉深绯红旗）
+    CUMAN: 'cumans',             // 🔴 [2026-11-13 主人令] 库曼/钦察草原：天穹反曲神弓（麦秆金黄旗）
     GOTHS: 'goths',              // 哥特：DE goths 红白鹰饰
     SPANISH: 'spanish',          // 西班牙：DE spanish 卡斯蒂利亚莱昂四分盾
     PORTUGUESE: 'portuguese',    // 葡萄牙：DE portuguese 五蓝盾（Quinas）
@@ -75,7 +75,7 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     TUPI: 'tupi',                // 图皮：DE tupi 图皮几何彩纹
     // ── 其余三级/区域文化（自绘同风格符号）─────────────────────────
     TIBET: 'tibet',              // 🔴 [2026-11-13 主人令] 青藏：八辐金宝轮（金日轮，藏绛红旗）
-    WESTERN: 'western',          // 西域：西域金双峰驼
+    WESTERN: 'western',          // 🔴 [2026-11-13 主人令] 西域：丝路双峰金驼（绿洲翡翠碧绿旗）
     GREECE: 'greece',            // 希腊：金月桂花环与橄榄枝
 };
 
