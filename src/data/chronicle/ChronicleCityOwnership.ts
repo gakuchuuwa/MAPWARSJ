@@ -68,7 +68,7 @@ export const CHRONICLE_CITY_OWNERSHIP: Readonly<Record<string, readonly (readonl
     // 郢
     city_ying: [[-550, 'chuguo']],
     // 临淄：前 284 年乐毅入临淄（《史记·乐毅列传》）；前 279 年田单复齐（《史记·田单列传》）
-    city_linzi: [[-550, 'qi'], [-284, 'yan'], [-279, 'qi']],
+    city_linzi: [[-550, 'jiangqi'], [-386, 'qi'], [-284, 'yan'], [-279, 'qi']],
     // 寿春：楚考烈王徙都（《史记·楚世家》）
     city_shouxian: [[-241, 'chuguo']],
     // 蓟

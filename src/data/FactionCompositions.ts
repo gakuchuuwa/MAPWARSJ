@@ -137,6 +137,90 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",
 },   // 米蒂利尼｜无名将
+"jiangqi": {
+    legionName: "古典时代华夏军团",
+    legionType: "region",
+},   // 姜齐
+"luoma_gongheguo": {
+    legionName: "古典时代罗马军团",
+    legionType: "region",
+},   // 罗马共和国
+"hasmonean": {
+    legionName: "古典时代近东军团",
+    legionType: "region",
+},   // 哈斯蒙尼
+"arelat": {
+    legionName: "封建时代勃艮第军团",
+    legionType: "region",
+},   // 阿尔勒王国
+"hou_womaya": {
+    legionName: "封建时代哈里发军团",
+    legionType: "region",
+},   // 后倭马亚
+"ganzhou_huihu": {
+    legionName: "封建时代河西军团",
+    legionType: "region",
+},   // 甘州回鹘
+"gaochang_huihu": {
+    legionName: "城堡时代蒙兀儿军团",
+    legionType: "region",
+},   // 高昌回鹘
+"guge": {
+    legionName: "城堡时代萨迦军团",
+    legionType: "region",
+},   // 古格
+"xiliao": {
+    legionName: "城堡时代蒙兀儿军团",
+    legionType: "region",
+},   // 西辽
+"dongliao": {
+    legionName: "城堡时代漠南蒙古军团",
+    legionType: "region",
+},   // 东辽
+"daiguo": {
+    legionName: "古典时代漠南游牧军团",
+    legionType: "region",
+},   // 代国
+"baojialiya2": {
+    legionName: "城堡时代默西亚军团",
+    legionType: "region",
+},   // 保加利亚第二帝国
+"houli": {
+    legionName: "帝国时代安南军团",
+    legionType: "region",
+},   // 后黎
+"zhunge": {
+    legionName: "帝国时代蒙古军团",
+    legionType: "region",
+},   // 准噶尔
+"thonburi": {
+    legionName: "帝国时代洛韦克军团",
+    legionType: "region",
+},   // 吞武里王国
+"zao_zhuluo": {
+    legionName: "古典时代泰米尔军团",
+    legionType: "region",
+},   // 早期朱罗
+"kotte": {
+    legionName: "帝国时代科罗曼德尔军团",
+    legionType: "region",
+},   // 科特王国
+"gu_aiji": {
+    legionName: "古典时代近东军团",
+    legionType: "region",
+},   // 古埃及
+"houjin": {
+    legionName: "帝国时代八旗军团",
+    legionType: "region",
+},   // 后金
+"buyid": {
+    legionName: "封建时代德莱木军团",
+    legionType: "region",
+},   // 白益王朝
+"scaliger": {
+    legionName: "城堡时代意大利雇兵军团",
+    legionType: "region",
+},   // 斯卡拉家族
 "mantinea": {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",
@@ -593,7 +677,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "baojialiya": {
-        legionName: "城堡时代默西亚军团",
+        legionName: "封建时代保加利亚军团",
         legionType: "sub",
     },
     "moerdaweiya": {
@@ -984,7 +1068,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tuoba": {
-        legionName: "封建时代河朔军团",
+        legionName: "古典时代太行军团",
         legionType: "sub",
     },
     "xila": {
@@ -1210,7 +1294,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "bogendi_wangguo": {
-        legionName: "封建时代勃艮第军团",
+        legionName: "古典时代萨波迪亚军团",
         legionType: "region",
     },
     "aquidan": {
@@ -1501,7 +1585,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "zhuluo": {
-        legionName: "封建时代朱罗军团",
+        legionName: "城堡时代维查耶那加尔军团",
         legionType: "sub",
     },
     "pandiya": {

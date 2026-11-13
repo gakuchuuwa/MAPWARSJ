@@ -266,7 +266,7 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     mazhaer_toldi: 'hero_miklostoldi',
     womaya_musa: 'hero_musaibnnusayr',
     aztec_itzcoatl: 'hero_itzcoatl',
-    aztec_cuauhtemoc: 'hero_cuauhtemoc',
+    gen_cuauhtemoc: 'hero_cuauhtemoc',
     bogendi_jacqueline: 'hero_jacquelineofhainaut',
     jiaohuangguo_leoi: 'hero_popeleoi',
     gen_minamoto_yoritomo: 'hero_minamoto',   // 源赖朝（兵模改名「英雄 源赖朝 日本」）

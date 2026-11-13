@@ -1147,7 +1147,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'beihai_shamusheyun': 17,                            // 沙牟奢允 · beihai · 宗谷
     'eluoke_amuhaer': 18,                                // 阿穆哈尔 · eluoke · 诺托罗
     'feiyaka_cemutehe': 17,                              // 策穆特赫 · feiyaka · 普禄
-    'gen_koshamain': 15,                                 // 柯沙玛因 · ayinu_ezo · 莫约罗
     'jilimi_takuna': 13,                                 // 塔库纳 · jilimi · 囊哈儿
     'kakizaki_liqiqingguang': 16,                        // 蛎崎庆广 · kakizaki · 胜山馆
     'kuye_kuye_qichayi': 18,                             // 齐查伊 · kuye · 白主
@@ -1494,7 +1493,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'mazhaer_toldi': 14,
     'womaya_musa': 7,
     'aztec_itzcoatl': 14,
-    'aztec_cuauhtemoc': 15,
     'bogendi_jacqueline': 15,
     'jiaohuangguo_leoi': 5,
     'nanchou_kitabatake': 14,

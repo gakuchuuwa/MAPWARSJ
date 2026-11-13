@@ -762,6 +762,27 @@ desheng: '#2E6B7A', // 德胜·刘通
     epidaurus: '#6A8D73',   // 埃皮道鲁斯
     corcyra: '#2F4F7F',   // 科西拉
     mytilene: '#7B68AE',   // 米蒂利尼
+    jiangqi: '#7B31DE',   // 姜齐
+    luoma_gongheguo: '#DF0000',   // 罗马共和国
+    hasmonean: '#1246CD',   // 哈斯蒙尼
+    arelat: '#B87062',   // 阿尔勒王国
+    hou_womaya: '#FFFFA1',   // 后倭马亚
+    ganzhou_huihu: '#B2D684',   // 甘州回鹘
+    gaochang_huihu: '#83B206',   // 高昌回鹘
+    guge: '#E08852',   // 古格
+    xiliao: '#5A9389',   // 西辽
+    dongliao: '#4C8FD8',   // 东辽
+    daiguo: '#858772',   // 代国
+    baojialiya2: '#06B32F',   // 保加利亚第二帝国
+    houli: '#C1CA00',   // 后黎
+    zhunge: '#8A1363',   // 准噶尔
+    thonburi: '#FA4526',   // 吞武里王国
+    zao_zhuluo: '#9A3606',   // 早期朱罗
+    kotte: '#676A18',   // 科特王国
+    gu_aiji: '#F09179',   // 古埃及
+    houjin: '#636EA0',   // 后金
+    buyid: '#15A24E',   // 白益王朝
+    scaliger: '#D82C74',   // 斯卡拉家族
     mantinea: '#8B6F47',   // 曼丁尼亚
     phokis: '#0F766E',   // 福基斯
     wuguobu: '#7C2D12',   // 五国部
@@ -818,7 +839,6 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     aizu_ashina: '#9B983B', // 芦名家（经典战导入）
     aq_qoyunlu: '#3E9B3B', // 白羊王朝（经典战导入）
     bulidi: '#9B3B66', // 布里迪王朝（经典战导入）
-    jinong: '#3B539B', // 济农王朝（经典战导入）
     tahirid: '#3B709B', // 塔希尔王朝（经典战导入）
     heruli: '#4D9B3B', // 赫鲁利（经典战导入）
     huanchu: '#453B9B', // 桓楚（经典战导入）

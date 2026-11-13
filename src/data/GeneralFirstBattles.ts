@@ -938,7 +938,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.19,
         targetLng: 16.67,
         myTroops: 17100,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'luoma_gongheguo',
         enemyFactionName: '罗马共和国',
         enemyGeneralId: 'bfe3_4',
         enemyTroops: 20000,
@@ -985,7 +985,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 120.445862,
         myTroops: 15200,
         enemyFactionId: 'qi',
-        enemyFactionName: '齐国',
+        enemyFactionName: '田齐',
         enemyGeneralId: 'bfe_chuzi',   // 🔴 [2026-10-25 按史] 前284 济西之战齐军主将＝触子（田单时为临淄市掾）
         enemyTroops: 20000,
         introLines: [
@@ -1191,7 +1191,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.2966,
         targetLng: 16.1513,
         myTroops: 20000,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'luoma_gongheguo',
         enemyFactionName: '罗马共和国',
         enemyGeneralId: 'waluo',
         enemyTroops: 20000,
@@ -1460,8 +1460,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 8.3533,
         targetLng: 80.3956,
         myTroops: 20000,
-        enemyFactionId: 'zhuluo',
-        enemyFactionName: '朱罗侵略军',
+        enemyFactionId: 'zao_zhuluo',
+        enemyFactionName: '早期朱罗',
         enemyGeneralId: 'bfe3_25',
         enemyTroops: 20000,
         introLines: [
@@ -1513,7 +1513,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.30,
         targetLng: 35.89,
         myTroops: 20000,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'luoma_gongheguo',
         enemyFactionName: '罗马共和国',
         enemyGeneralId: 'bfe_triarius',
         enemyTroops: 18000,
@@ -1535,8 +1535,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 31.77,
         targetLng: 35.21,
         myTroops: 20000,
-        enemyFactionId: 'xibolai',
-        enemyFactionName: '哈斯蒙尼犹太',
+        enemyFactionId: 'hasmonean',
+        enemyFactionName: '哈斯蒙尼',
         enemyGeneralId: 'gen_aristobulus_ii',
         enemyTroops: 15000,
         introLines: [
@@ -1603,7 +1603,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 37.15,
         targetLng: 38.7825,
         myTroops: 15000,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'luoma_gongheguo',
         enemyFactionName: '罗马共和国',
         enemyGeneralId: 'bfe_crassus',   // 🔴 [2026-10-25 按史] 前53 卡莱之战罗马统帅＝克拉苏（恺撒在高卢）
         enemyTroops: 15000,
@@ -1719,8 +1719,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.88,
         targetLng: 118.43,
         myTroops: 14000,
-        enemyFactionId: 'qi',
-        enemyFactionName: '张步军',
+        enemyFactionId: 'qi_zhangbu',
+        enemyFactionName: '张齐',
         battleMonth: 10,
         enemyGeneralId: 'bfe3_58',
         enemyTroops: 20000,
@@ -4582,7 +4582,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 23.85,
         myTroops: 17100,
         enemyFactionId: 'baojialiya',
-        enemyFactionName: '保加利亚第一王国',
+        enemyFactionName: '保加利亚第一帝国',
         enemyGeneralId: 'duonaobaojia_samuel',   // 🔴 [2026-10-20 经典战规则] 1014 克雷迪昂保加利亚沙皇萨穆伊尔（原势力误填埃多尼亚）
         enemyTroops: 20000,
         introLines: [
@@ -4852,8 +4852,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.37,
         targetLng: 103.86,
         myTroops: 13300,
-        enemyFactionId: 'tubo',
-        enemyFactionName: '吐蕃唃厮啰',
+        enemyFactionId: 'gusiluo',
+        enemyFactionName: '唃厮啰',
         enemyGeneralId: 'tubo_muzheng',   // 🔴 [2026-10-20 经典战规则] 1073 熙河吐蕃首领木征
         enemyTroops: 20000,
         introLines: [
@@ -4878,8 +4878,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.86,
         targetLng: -4.02,
         myTroops: 20000,
-        enemyFactionId: 'jinong',
-        enemyFactionName: '济农王朝',
+        enemyFactionId: 'taifa_toledo',
+        enemyFactionName: '托莱多泰法',
         enemyGeneralId: 'womaya_yahya',   // 🔴 [2026-10-20 经典战规则] 1085 托莱多泰法王叶海亚
         enemyTroops: 13300,
         introLines: [
@@ -6020,8 +6020,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 42.7,
         targetLng: 23.32,
         myTroops: 16000,
-        enemyFactionId: 'baojialiya',
-        enemyFactionName: '第二保加利亚帝国',
+        enemyFactionId: 'baojialiya2',
+        enemyFactionName: '保加利亚第二帝国',
         enemyGeneralId: 'baojialiya_mikhail',   // 🔴 [2026-10-20 经典战规则] 1330 维尔布日德保加利亚沙皇希什曼
         enemyTroops: 20000,
         introLines: [
@@ -6892,8 +6892,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.1,
         targetLng: 107.98,
         myTroops: 20000,
-        enemyFactionId: 'menggu_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '右翼蒙古部族',
+        enemyFactionId: 'dada_ming',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
+        enemyFactionName: '鞑靼',
         enemyGeneralId: 'bfe_yibula',   // 🔴 [2026-10-25 按史] 1510 达兰特哩衮右翼首领＝太师亦不剌（俺答 1507 年生，此年 3 岁）
         enemyTroops: 17500,
         introLines: [
@@ -7276,8 +7276,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.8,
         targetLng: 124.53,
         myTroops: 16000,
-        enemyFactionId: 'manzhou_d',
-        enemyFactionName: '建州右卫女真',
+        enemyFactionId: 'houjin',
+        enemyFactionName: '后金',
         enemyGeneralId: 'bfe_wanggao',   // 🔴 [2026-10-25 按史] 1574 古勒寨对手＝建州右卫王杲（努尔哈赤时年 15，在李成梁帐下）
         enemyTroops: 20000,
         introLines: [
@@ -7413,8 +7413,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.01,
         targetLng: 135.77,
         myTroops: 20000,
-        enemyFactionId: 'ashikaga',
-        enemyFactionName: '明智氏',
+        enemyFactionId: 'oda',
+        enemyFactionName: '织田家',
         enemyGeneralId: 'gen_akechi_mitsuhide',
         enemyTroops: 10000,
         introLines: [
@@ -7621,7 +7621,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.80203,
         targetLng: 123.43689,
         myTroops: 10000,
-        enemyFactionId: 'manzhou_d',
+        enemyFactionId: 'houjin',
         enemyFactionName: '后金',
         enemyGeneralId: 'manzhou_nuerhachi',
         enemyTroops: 20000,
@@ -7643,8 +7643,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.76089,
         targetLng: 99.742126,
         myTroops: 17100,
-        enemyFactionId: 'menggu_d',
-        enemyFactionName: '喀尔喀绰克图喀拉汗',
+        enemyFactionId: 'kaerka',
+        enemyFactionName: '喀尔喀',
         enemyGeneralId: 'gen_chogtu_khan',
         enemyTroops: 20000,
         introLines: [
@@ -7665,7 +7665,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.618,
         targetLng: 120.72,
         myTroops: 20000,
-        enemyFactionId: 'manzhou_d',
+        enemyFactionId: 'houjin',
         enemyFactionName: '后金',
         enemyGeneralId: 'manzhou_nuerhachi',
         enemyTroops: 20000,
@@ -7968,8 +7968,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 29.65,
         targetLng: 91.1,
         myTroops: 16000,
-        enemyFactionId: 'oirat_ming',
-        enemyFactionName: '准噶尔西藏守军',
+        enemyFactionId: 'zhunge',
+        enemyFactionName: '准噶尔',
         enemyGeneralId: 'bfe_tsering_dondub',   // 🔴 [2026-10-25 按史] 1720 西藏准噶尔守军＝大策凌敦多布（噶勒丹策凌 1727 才继位）
         enemyTroops: 20000,
         introLines: [
@@ -8250,8 +8250,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.558,
         targetLng: 36.519,
         myTroops: 20000,
-        enemyFactionId: 'aiji',
-        enemyFactionName: '新王国埃及大军',
+        enemyFactionId: 'gu_aiji',
+        enemyFactionName: '古埃及',
         enemyGeneralId: 'aiji_lameisisi',   // 🔴 [2026-10-20 双身份] 拉美西斯二世就是据点武将「拉美西斯」（孟菲斯），不另用战场人物 bfe2_ramses_ii
         enemyTroops: 12500,
         introLines: [
@@ -8593,8 +8593,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.59,
         targetLng: -4.83,
         myTroops: 18000,
-        enemyFactionId: 'womaya',
-        enemyFactionName: '安达卢西亚',
+        enemyFactionId: 'hou_womaya',
+        enemyFactionName: '后倭马亚',
         enemyGeneralId: 'gen_abd_al_rahman_iii',
         enemyTroops: 20000,
         introLines: [
@@ -8713,8 +8713,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 44.12,
         targetLng: 27.26,
         myTroops: 20000,
-        enemyFactionId: 'baojialiya',
-        enemyFactionName: '第二保加利亚帝国',
+        enemyFactionId: 'baojialiya2',
+        enemyFactionName: '保加利亚第二帝国',
         enemyGeneralId: 'gen_ivaylo',
         enemyTroops: 11400,
         introLines: [
@@ -8734,7 +8734,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 27.915,
         myTroops: 20000,
         enemyFactionId: 'baojialiya',   // 🔴 [2026-10-28 按史] 917 阿海洛敌军是西美昂的保加利亚第一帝国；原写「色雷斯」地名（错）
-        enemyFactionName: '保加利亚',
+        enemyFactionName: '保加利亚第一帝国',
         enemyGeneralId: 'gen_simeon_great',
         enemyTroops: 16000,
         introLines: [
@@ -9394,8 +9394,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 48.85,
         targetLng: 2.35,
         myTroops: 20000,
-        enemyFactionId: 'luoma_diguo',
-        enemyFactionName: '罗马',
+        enemyFactionId: 'luoma_gongheguo',
+        enemyFactionName: '罗马共和国',
         enemyGeneralId: 'gen_julius_caesar',
         enemyTroops: 15200,
         introLines: [
@@ -9788,8 +9788,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 117.22,
         // 清军约 4 万，噶尔丹军约 2 万（驼城）；守方 ≤ 攻方×2 ✓
         myTroops: 20000,
-        enemyFactionId: 'oirat_ming',   // 已核
-        enemyFactionName: '卫拉特',
+        enemyFactionId: 'zhunge',   // 已核
+        enemyFactionName: '准噶尔',
         enemyGeneralId: 'oirat_ming_gaerdan',   // 已核：1690 噶尔丹（1645–1697，在世）
         enemyTroops: 10000,
         introLines: [
@@ -10311,7 +10311,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 38.04,
         targetLng: 12.59,
         myTroops: 10000,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'luoma_gongheguo',
         enemyFactionName: '罗马共和国',
         enemyGeneralId: 'luoma_catulus',
         enemyTroops: 10000,
@@ -10604,7 +10604,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 115.42,
         myTroops: 20000,
         enemyFactionId: 'qi',
-        enemyFactionName: '齐国',
+        enemyFactionName: '田齐',
         enemyGeneralId: 'qi_tianji',
         enemyTroops: 20000,
         introLines: [
@@ -11453,8 +11453,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 47.202,
         targetLng: 102.843,
         myTroops: 13300,
-        enemyFactionId: 'luosi',
-        enemyFactionName: '绰罗斯',
+        enemyFactionId: 'zhunge',
+        enemyFactionName: '准噶尔',
         enemyGeneralId: 'bfe_xiaoceling',
         enemyTroops: 20000,
         introLines: [

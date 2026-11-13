@@ -79,7 +79,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ayoubu_lulu': 'ORIE',   // 阿尤布｜鲁鲁｜据点 苏伊士
     'ayoubu_salaheding': 'ORIE',   // 阿尤布｜萨拉丁｜据点 大马士革
     'ayoubu_turanshah': 'ORIE',   // 阿尤布｜图兰沙｜据点 萨那
-    'aztec_cuauhtemoc': 'AMERICA',   // 阿兹特克｜瓜特穆斯｜据点 特诺奇提特兰
     'aztec_itzcoatl': 'AMERICA',   // 阿兹特克｜伊兹科阿图｜据点 特诺奇提特兰
     'ba_bamanzi': 'BASHU',   // 巴国｜巴蔓子｜据点 重庆
     'babuer_babuer': 'MUGHAL',   // 莫卧儿帝国｜巴布尔｜据点 喀布尔
@@ -759,7 +758,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_kara_mustafa': 'TURKS',   // 奥斯曼帝国｜卡拉穆斯塔法｜据点 布尔萨
     'gen_karasakal': 'CENTRAL_ASIA',   // 保加尔｜卡拉萨卡尔｜据点 喀山
     'gen_kestutis': 'LITHUANIANS',   // 立陶宛｜科斯图提斯｜据点 卡乌纳斯
-    'gen_koshamain': 'JAPAN',   // 阿伊努｜柯沙玛因｜据点 莫约罗
     'gen_kotyan': 'CUMAN',   // 库曼｜忽炭汗｜据点 奥列什基
     'gen_krum': 'BULGARIANS',   // 保加利亚｜克鲁姆｜据点 索非亚
     'gen_kuchlug': 'MONGOL',   // 阿尔泰｜屈出律｜据点 也儿的石

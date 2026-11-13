@@ -8,7 +8,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aizu_ashina': 'city_tsuruga',   // 芦名家（经典战导入，登记用）
     'aq_qoyunlu': 'city_dabulishi',   // 白羊王朝（经典战导入，登记用）
     'bulidi': 'city_damasikusi',   // 布里迪王朝（经典战导入，登记用）
-    'jinong': 'city_toledo',   // 济农王朝（经典战导入，登记用）
     'tahirid': 'city_nishabuer',   // 塔希尔王朝（经典战导入，登记用）
     'heruli': 'city_ravenna',   // 赫鲁利（经典战导入，登记用）
     'huanchu': 'city_nanjing',   // 桓楚（经典战导入，登记用）
@@ -57,7 +56,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'ayinu_ezo': 'city_moyoro',
 
   'boootiya': 'city_thebes',
-  'kelite': 'city_knossos',
+  'kelite': 'city_venice',
   'leangongguo': 'city_salamanca',
   'xixiliwangguo': 'city_palermo',
     'liangxixili': 'city_palermo',
@@ -73,7 +72,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'meikelunbao': 'city_rostock',
   'didi': 'city_bruges',
   'yidelisi': 'city_feisi',
-  'baojialiya': 'city_teernuowo',
+  'baojialiya': 'city_puleisilafu',
 'bosiniya': 'city_sarajevo',
 
   'mulabite': 'city_malajiashen',
@@ -171,7 +170,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gusiluo': 'city_ledu',   // 登记用，不改据点归属
     'old_saxons': 'city_magedebao',   // 登记用，不改据点归属
     'alamanni': 'city_meiyinci',   // 登记用，不改据点归属
-    'taifa_toledo': 'city_cordoba',   // 登记用，不改据点归属
+    'taifa_toledo': 'city_toledo',   // 登记用，不改据点归属
     'florence': 'city_florence',   // 登记用，不改据点归属
     'tuitonga': 'city_mua',   // 登记用，不改据点归属
     'rapanui': 'city_rapanui',   // 登记用，不改据点归属
@@ -840,6 +839,27 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'epidaurus': 'city_corinth',   // 埃皮道鲁斯（在科林斯据点 50km 内）
   'corcyra': 'city_kefu',   // 科西拉（据点科孚）
   'mytilene': 'city_mytilene',   // 米蒂利尼
+  'jiangqi': 'city_linzi',   // 姜齐
+  'luoma_gongheguo': 'city_luoma',   // 罗马共和国
+  'hasmonean': 'city_yelusaleng',   // 哈斯蒙尼
+  'arelat': 'city_geneva',   // 阿尔勒王国
+  'hou_womaya': 'city_cordoba',   // 后倭马亚
+  'ganzhou_huihu': 'city_zhangye',   // 甘州回鹘
+  'gaochang_huihu': 'city_gaochangcheng',   // 高昌回鹘
+  'guge': 'city_zhaburang2',   // 古格
+  'xiliao': 'city_suiye',   // 西辽
+  'dongliao': 'city_xianping',   // 东辽
+  'daiguo': 'city_shengle',   // 代国
+  'baojialiya2': 'city_teernuowo',   // 保加利亚第二帝国
+  'houli': 'city_shenglong',   // 后黎
+  'zhunge': 'city_yili',   // 准噶尔
+  'thonburi': 'city_tunwuli',   // 吞武里王国
+  'zao_zhuluo': 'city_tanjiawuer',   // 早期朱罗
+  'kotte': 'city_jiale',   // 科特王国
+  'gu_aiji': 'city_wasaite',   // 古埃及
+  'houjin': 'city_hetuala',   // 后金
+  'buyid': 'city_leiyi',   // 白益王朝
+  'scaliger': 'city_verona',   // 斯卡拉家族
   'mantinea': 'city_mantinea',   // 曼丁尼亚
   'phokis': 'city_deerfei',   // 福基斯
   'wuguobu': 'city_wuguo',   // 五国部

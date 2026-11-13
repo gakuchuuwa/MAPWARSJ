@@ -645,7 +645,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bailian_wangconger: { birth: 1777, death: 1798 },      // 王聪儿
     taiping_shidakai: { birth: 1831, death: 1863 },        // 石达开
     // ── 失载武将：按主人定的「事件逆推黄金年龄法」批量估算（2026-10-15）──
-    gen_koshamain: { birth: 1410, death: 1457, kaoju: '推定' },  // 柯沙玛因
     gen_hiawatha: { birth: 1400, death: 1455, kaoju: '推定' },  // 海华沙
     gen_minchancaman: { birth: 1430, death: 1480, kaoju: '推定' },  // 明查凯曼
     gen_tzitzipandaquare: { birth: 1430, death: 1479, kaoju: '推定' },  // 齐齐潘达夸雷
@@ -1913,7 +1912,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     mazhaer_toldi: { birth: 1320, death: 1390, kaoju: '推定' },
     womaya_musa: { birth: 640, death: 716, kaoju: '推定' },
     aztec_itzcoatl: { birth: 1380, death: 1440, kaoju: '推定' },
-    aztec_cuauhtemoc: { birth: 1495, death: 1525, kaoju: '推定' },
     bogendi_jacqueline: { birth: 1401, death: 1436, kaoju: '推定' },
     jiaohuangguo_leoi: { birth: 400, death: 461, kaoju: '推定' },
     nanchou_kitabatake: { birth: 1318, death: 1338, kaoju: '推定' },

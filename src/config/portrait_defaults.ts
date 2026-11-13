@@ -374,6 +374,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'nanzhao': _dianmianPortraitPool,
     'pagan': _dianmianPortraitPool,
     'siam': _dianmianPortraitPool,
+    'thonburi': _dianmianPortraitPool,   // 吞武里王国（随siam）
     'chenla': _dianmianPortraitPool,
     'ava': _dianmianPortraitPool,
     'dongxu': _dianmianPortraitPool,
@@ -392,6 +393,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'gaoqi_d': _zhongyuanPortraitPool,
     'ranwei_d': _zhongyuanPortraitPool,
     'tuoba': _caoyuanPortraitPool,
+    'daiguo': _caoyuanPortraitPool,   // 代国（随tuoba）
     'yan': _xianqinPortraitPool,
     'yang_aner': _zhongyuanPortraitPool,
     // 西域 22 势力
@@ -442,6 +444,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'supi': _tuboPortraitPool,
     'tsangpa': _tuboPortraitPool,
     'tubo': _tuboPortraitPool,
+    'guge': _tuboPortraitPool,   // 古格（随tubo）
     'tufa_d': _tuboPortraitPool,
     'xiadun': _tuboPortraitPool,
     'xiangxiong': _tuboPortraitPool,
@@ -454,13 +457,20 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hongirad': _caoyuanPortraitPool,
 
     'huihu': _caoyuanPortraitPool,
+
+    'gaochang_huihu': _caoyuanPortraitPool,   // 高昌回鹘（随huihu）
+
+    'ganzhou_huihu': _caoyuanPortraitPool,   // 甘州回鹘（随huihu）
     'kaerka': _caoyuanPortraitPool,
     'kereyid': _caoyuanPortraitPool,
     'liao_d': _caoyuanPortraitPool,
+    'dongliao': _caoyuanPortraitPool,   // 东辽（随liao_d）
+    'xiliao': _caoyuanPortraitPool,   // 西辽（随liao_d）
     'menggu_d': _caoyuanPortraitPool,
     'murong': _caoyuanPortraitPool,
     'naiman': _caoyuanPortraitPool,
     'oirat_ming': _caoyuanPortraitPool,
+    'zhunge': _caoyuanPortraitPool,   // 准噶尔（随oirat_ming）
     'ongut': _caoyuanPortraitPool,
     'rouran': _caoyuanPortraitPool,
     'shatuo': _caoyuanPortraitPool,
@@ -489,6 +499,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'haixi_nvzhen': _dongbeiPortraitPool,
     'keerqin': _dongbeiPortraitPool,
     'manzhou_d': _manqingPortraitPool,
+    'houjin': _manqingPortraitPool,   // 后金（随manzhou_d）
     'shuidada': _dongbeiPortraitPool,
     'suolun': _dongbeiPortraitPool,
 
@@ -551,6 +562,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'kong_d': _zhongyuanPortraitPool,
     'dixiang': _liuhanPortraitPool, // 新国·王莽；与汉/绿林共用 liuhan 随机池
     'qi': _xianqinPortraitPool,
+    'jiangqi': _xianqinPortraitPool,   // 姜齐（随qi）
     'qiang': _zhongyuanPortraitPool,
     // 'qin': _zhongyuanPortraitPool,  // qin 有专属池
     'shang': _xianqinPortraitPool,
@@ -594,6 +606,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'chen': _lingnanPortraitPool,
     'dacheng': _lingnanPortraitPool,
     'dayue': _lingnanPortraitPool,
+    'houli': _lingnanPortraitPool,   // 后黎（随dayue）
     'gouding': _lingnanPortraitPool,
 
     'liren': _lingnanPortraitPool,

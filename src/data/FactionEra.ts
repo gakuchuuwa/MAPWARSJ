@@ -43,7 +43,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'aizu_ashina': [{ from: -9999, era: 'castle' }], // 芦名家（经典战导入）
     'aq_qoyunlu': [{ from: -9999, era: 'imperial' }], // 白羊王朝（经典战导入）
     'bulidi': [{ from: -9999, era: 'castle' }], // 布里迪王朝（经典战导入）
-    'jinong': [{ from: -9999, era: 'castle' }], // 济农王朝（经典战导入）
     'tahirid': [{ from: -9999, era: 'castle' }], // 塔希尔王朝（经典战导入）
     'heruli': [{ from: -9999, era: 'feudal' }], // 赫鲁利（经典战导入）
     'huanchu': [{ from: -9999, era: 'antiquity' }], // 桓楚（经典战导入）
@@ -64,7 +63,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ming_d': [{ from: -9999, era: 'imperial' }], // 大明｜大明（1368–1644）＝帝国时代中国军团（京营/神机/三眼铳），明初明末同为明军
     'dangxiang': [{ from: -9999, era: 'castle' }], // 大夏｜大夏·西夏（982–1227）＝城堡时代大夏军团（铁鹞子冷锻重甲/山讹）
     'goryeo': [{ from: -9999, era: 'castle' }], // 高丽｜高丽（918–1392）＝城堡时代高丽军团（三别抄/别武班）
-    'liao_d': [{ from: -9999, era: 'castle' }], // 大辽｜存续 882–1269：城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'liao_d': [{ from: -9999, era: 'feudal' }], // 大辽｜存续 882–1269：城堡（2026-11-11 GG第五轮·长时代按年代分段）
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'houliao' 已删（并入 liao_d）
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'xiliao' 已删（并入 liao_d）
     'manzhou_d': [{ from: -9999, era: 'imperial' }], // 大清｜大清（1616–1912，含建州女真）＝帝国时代八旗军团
@@ -158,7 +157,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'bendou': [{ from: -9999, era: 'castle' }], // 特拉布宗
     'bendou_d': [{ from: -9999, era: 'antiquity' }], // 本都
     'bogendigongguo': [{ from: -9999, era: 'castle' }], // 勃艮第公国
-    'bogendi_wangguo': [{ from: -9999, era: 'feudal' }], // 勃艮第王国（411–534：古典 411–476 → 封建 476–534） 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }] → feudal｜存续 411–1032 大部分年份]
+    'bogendi_wangguo': [{ from: -9999, era: 'antiquity' }], // 勃艮第王国（411–534：古典 411–476 → 封建 476–534） 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }] → feudal｜存续 411–1032 大部分年份]
     'bohai': [{ from: -9999, era: 'feudal' }], // 渤海
     'boootiya': [{ from: -9999, era: 'antiquity' }], // 底比斯
     'boren': [{ from: -9999, era: 'castle' }], // 都掌蛮 🔴[2026-11-10 主人令「所有的势力都是按历史来」按存续年大部分落段：imperial → castle｜存续 960–1574（FactionLifeYears）]
@@ -284,7 +283,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'date_d': [{ from: -9999, era: 'imperial' }], // 仙台
     'daxi_ming': [{ from: -9999, era: 'imperial' }], // 大西
     'dayuan': [{ from: -9999, era: 'antiquity' }], // 大宛
-    'dayue': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 大越｜存续 1009–1789：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
+    'dayue': [{ from: -9999, era: 'castle' }], // 大越｜存续 1009–1789：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'dayuzi' 已删（并入 kazakh）
     'dedan': [{ from: -9999, era: 'antiquity' }], // 德丹王国
     'dengmaoqi': [{ from: -9999, era: 'castle' }], // 铲平
@@ -369,7 +368,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'huangwang': [{ from: -9999, era: 'feudal' }], // 黄王
     'huarazim': [{ from: -9999, era: 'castle' }], // 花剌子模
     'hui': [{ from: -9999, era: 'antiquity' }], // 濊族
-    'huihu': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 回鹘｜存续 605–1284：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'huihu': [{ from: -9999, era: 'feudal' }], // 回鹘｜存续 605–1284：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     // 🔴 [2026-11-05 按史修复] 甘州回鹘史实起年为 894（唐昭宗乾宁元年据甘州立国），但 FACTION_ERA 的时代段**首段一律从 -9999 起**（全库口径，无年武将/无首战年者靠首段落段），故此处记 -9999；历史起讫年仍由 FactionLifeYears 记 894–1036
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'ganzhou_huihu' 已删（并入 huihu）
     // 🔴 [2026-11-01 按史] 甘州回鹘｜894 年（唐昭宗乾宁元年）据甘州立国—1036 年为西夏所灭，全段封建
@@ -736,7 +735,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ayoubu': [{ from: -9999, era: 'castle' }], // 阿尤布｜按现存名将成名年推定：–∞起封建 → 1187起城堡
     'bafaliya': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 巴伐利亚｜存续 555–1806：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'baojiaer': [{ from: -9999, era: 'castle' }], // 保加尔｜按现存名将成名年推定：–∞起城堡 → 1720起帝国
-    'baojialiya': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 保加利亚｜存续 681–1396：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'baojialiya': [{ from: -9999, era: 'feudal' }], // 保加利亚｜存续 681–1396：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     'baojian_qishi': [{ from: -9999, era: 'castle' }], // 宝剑骑士团｜按现存名将成名年推定：–∞起城堡 → 1470起帝国
     'boluo': [{ from: -9999, era: 'feudal' }], // 波罗帝国｜按现存名将成名年推定：–∞起古典 → 618起封建
     'bulietani': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 布列塔尼｜存续 851–1532：封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
@@ -795,12 +794,12 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'sailiugu': [{ from: -9999, era: 'antiquity' }], // 塞琉古｜按现存名将成名年推定：–∞起古典 → 1050起城堡
     'salai': [{ from: -9999, era: 'castle' }], // 诺盖汗国｜存续 1360–1634：城堡（2026-11-11 GG第五轮·长时代按年代分段）
     'seleisi': [{ from: -9999, era: 'antiquity' }], // 色雷斯｜按现存名将成名年推定：–∞起古典 → 917起封建
-    'sengjialuo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 僧伽罗｜存续 -543–1815：古典→476起封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
+    'sengjialuo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }], // 僧伽罗｜存续 -543–1815：古典→476起封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'shule': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 疏勒｜存续 -200–800：古典→476起封建（2026-11-11 GG第五轮·长时代按年代分段）
     'sogdian': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 粟特｜存续 -550–722：古典→476起封建（2026-11-11 GG第五轮·长时代按年代分段）
     'suomunate': [{ from: -9999, era: 'castle' }], // 索兰基｜按现存名将成名年推定：–∞起封建 → 1163起城堡
     'talasike': [{ from: -9999, era: 'castle' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
-    'tubo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }], // 吐蕃｜存续 -127–1635：古典→476起封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'tubo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 吐蕃｜存续 -127–1635：古典→476起封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 'guge' 已删（并入 tubo）
     'wende': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜存续 843–1806：封建→1050起城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）
     'wulaertu': [{ from: -9999, era: 'feudal' }], // 亚美尼亚｜古典 → 884 巴格拉图尼王朝封建 → 1050 城堡（奇里乞亚）→ 1500 帝国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 884, era: 'feudal' }, { from: 1050, era: 'castle' }, { from: 1500, era: 'imperial' }] → feudal｜存续 884–1045 大部分年份]
@@ -812,7 +811,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yuchi': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 尉迟于阗｜存续 -232–1006：古典→476起封建（2026-11-11 GG第五轮·长时代按年代分段）
     'yue': [{ from: -9999, era: 'antiquity' }], // 越国｜按现存名将成名年推定：–∞起古典 → 560起封建
     'zhao': [{ from: -9999, era: 'antiquity' }], // 赵国｜按现存名将成名年推定：–∞起古典 → 621起封建
-    'zhuluo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }], // 朱罗｜存续 -300–1279：古典→476起封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
+    'zhuluo': [{ from: -9999, era: 'castle' }], // 朱罗｜存续 -300–1279：古典→476起封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     'pattani': [{ from: -9999, era: 'imperial' }], // 北大年｜16-17世纪北大年苏丹国（帝国）
     'chalkidike': [{ from: -9999, era: 'antiquity' }], // 卡尔基季基同盟
     'naxos': [{ from: -9999, era: 'antiquity' }], // 纳克索斯
@@ -835,6 +834,27 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'epidaurus': [{ from: -9999, era: 'antiquity' }], // 埃皮道鲁斯
     'corcyra': [{ from: -9999, era: 'antiquity' }], // 科西拉
     'mytilene': [{ from: -9999, era: 'antiquity' }], // 米蒂利尼
+    'jiangqi': [{ from: -9999, era: 'antiquity' }], // 姜齐
+    'luoma_gongheguo': [{ from: -9999, era: 'antiquity' }], // 罗马共和国
+    'hasmonean': [{ from: -9999, era: 'antiquity' }], // 哈斯蒙尼
+    'arelat': [{ from: -9999, era: 'feudal' }], // 阿尔勒王国
+    'hou_womaya': [{ from: -9999, era: 'feudal' }], // 后倭马亚
+    'ganzhou_huihu': [{ from: -9999, era: 'feudal' }], // 甘州回鹘
+    'gaochang_huihu': [{ from: -9999, era: 'castle' }], // 高昌回鹘
+    'guge': [{ from: -9999, era: 'castle' }], // 古格
+    'xiliao': [{ from: -9999, era: 'castle' }], // 西辽
+    'dongliao': [{ from: -9999, era: 'castle' }], // 东辽
+    'daiguo': [{ from: -9999, era: 'antiquity' }], // 代国
+    'baojialiya2': [{ from: -9999, era: 'castle' }], // 保加利亚第二帝国
+    'houli': [{ from: -9999, era: 'imperial' }], // 后黎
+    'zhunge': [{ from: -9999, era: 'imperial' }], // 准噶尔
+    'thonburi': [{ from: -9999, era: 'imperial' }], // 吞武里王国
+    'zao_zhuluo': [{ from: -9999, era: 'antiquity' }], // 早期朱罗
+    'kotte': [{ from: -9999, era: 'imperial' }], // 科特王国
+    'gu_aiji': [{ from: -9999, era: 'antiquity' }], // 古埃及
+    'houjin': [{ from: -9999, era: 'imperial' }], // 后金
+    'buyid': [{ from: -9999, era: 'feudal' }], // 白益王朝
+    'scaliger': [{ from: -9999, era: 'castle' }], // 斯卡拉家族
     'mantinea': [{ from: -9999, era: 'antiquity' }], // 曼丁尼亚
     'phokis': [{ from: -9999, era: 'antiquity' }], // 福基斯
     'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部｜存续 960–1125：封建（2026-11-11 GG第五轮·长时代按年代分段）

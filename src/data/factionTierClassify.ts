@@ -49,6 +49,7 @@ const TIER1_REGIME = new Set([
     'nanzhao', 'dali', 'goryeo', 'joseon', 'bohai', 'baiji', 'xinluo',
     'gaogouli', 'yamato', 'dayue', 'tubo', 'dangxiang', 'siam', 'chenla',
     'zhou', 'yan', 'qi', 'han', 'zhao', 'wu_yue', 'yue',
+    'jiangqi', 'xiliao', 'dongliao', 'daiguo', 'houli', 'houjin',
 ]);
 
 /** 大政权种子（含单字 1 级 + 二字 3 级）；单字者锁定见 tier:check */

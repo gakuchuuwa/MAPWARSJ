@@ -13,7 +13,6 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "aizu_ashina": 'JAPAN',   // 芦名家
     "aq_qoyunlu": 'SASANIAN',   // 白羊王朝
     "bulidi": 'ORIE',   // 布里迪王朝
-    "jinong": 'BERBER',   // 济农王朝
     "tahirid": 'SASANIAN',   // 塔希尔王朝
     "heruli": 'GOTHS',   // 赫鲁利
     "huanchu": 'JIANGNAN',   // 桓楚
@@ -44,6 +43,27 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "epidaurus": 'GREECE',   // 埃皮道鲁斯
     "corcyra": 'GREECE',   // 科西拉
     "mytilene": 'GREECE',   // 米蒂利尼
+    "jiangqi": 'CENTRAL',   // 姜齐
+    "luoma_gongheguo": 'ROMA',   // 罗马共和国
+    "hasmonean": 'ORIE',   // 哈斯蒙尼
+    "arelat": 'BURGUNDIANS',   // 阿尔勒王国
+    "hou_womaya": 'ORIE',   // 后倭马亚
+    "ganzhou_huihu": 'HEXI',   // 甘州回鹘
+    "gaochang_huihu": 'WESTERN',   // 高昌回鹘
+    "guge": 'TIBET',   // 古格
+    "xiliao": 'WESTERN',   // 西辽
+    "dongliao": 'XIANBEI',   // 东辽
+    "daiguo": 'XIANBEI',   // 代国
+    "baojialiya2": 'BULGARIANS',   // 保加利亚第二帝国
+    "houli": 'VIETNAMESE',   // 后黎
+    "zhunge": 'MONGOL',   // 准噶尔
+    "thonburi": 'KHMER',   // 吞武里王国
+    "zao_zhuluo": 'INDIA',   // 早期朱罗
+    "kotte": 'INDIA',   // 科特王国
+    "gu_aiji": 'ORIE',   // 古埃及
+    "houjin": 'NORTHEAST',   // 后金
+    "buyid": 'PERSIAN',   // 白益王朝
+    "scaliger": 'LATIN',   // 斯卡拉家族
     "mantinea": 'GREECE',   // 曼丁尼亚
     "arcadia": 'GREECE',   // 阿卡迪亚同盟
     "macedon_royal": 'MACEDONIAN',   // 马其顿王军
@@ -254,7 +274,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "helian": 'XIANBEI',   // 赫连夏国
     "xiongnu": 'MONGOL',   // 匈奴
     "xianbei": 'XIANBEI',   // 鲜卑
-    "tuoba": 'XIANBEI',   // 拓跋魏
+    "tuoba": 'WEI',   // 拓跋魏
     "yuwen": 'CENTRAL',   // 宇文周
     "chen": 'JIANGNAN',   // 陈国
     "sui": 'CENTRAL',   // 隋国
@@ -434,7 +454,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "yiwu": 'WESTERN',   // 伊吾
     "duerbote": 'MONGOL',   // 杜尔伯特
     "kaerka": 'MONGOL',   // 喀尔喀
-    "huihu": [[605, 'MONGOL'], [840, 'WESTERN']],   // 回鹘
+    "huihu": 'MONGOL',   // 回鹘
     "wuzhumuqin": 'XIANBEI',   // 乌珠穆沁
     "zhadalan": 'MONGOL',   // 扎答兰
     "zhuerqi": 'MONGOL',   // 主儿乞

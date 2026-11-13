@@ -30,7 +30,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aizu_ashina': '芦名', // 芦名家
     'aq_qoyunlu': '白羊', // 白羊王朝
     'bulidi': '布迪', // 布里迪王朝
-    'jinong': '济农', // 济农王朝
     'tahirid': '塔氏', // 塔希尔王朝
     'heruli': '赫鲁', // 赫鲁利
     'huanchu': '桓楚', // 桓楚
@@ -896,6 +895,27 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'epidaurus': '埃皮',   // 埃皮道鲁斯
     'corcyra': '科西',   // 科西拉
     'mytilene': '米蒂',   // 米蒂利尼
+    'jiangqi': '齐',   // 姜齐
+    'luoma_gongheguo': '罗马',   // 罗马共和国
+    'hasmonean': '哈斯',   // 哈斯蒙尼
+    'arelat': '勃王',   // 阿尔勒王国
+    'hou_womaya': '倭马',   // 后倭马亚
+    'ganzhou_huihu': '回鹘',   // 甘州回鹘
+    'gaochang_huihu': '回鹘',   // 高昌回鹘
+    'guge': '古格',   // 古格
+    'xiliao': '辽',   // 西辽
+    'dongliao': '辽',   // 东辽
+    'daiguo': '代',   // 代国
+    'baojialiya2': '保',   // 保加利亚第二帝国
+    'houli': '越',   // 后黎
+    'zhunge': '准噶',   // 准噶尔
+    'thonburi': '吞武',   // 吞武里王国
+    'zao_zhuluo': '朱罗',   // 早期朱罗
+    'kotte': '科特',   // 科特王国
+    'gu_aiji': '埃及',   // 古埃及
+    'houjin': '金',   // 后金
+    'buyid': '白益',   // 白益王朝
+    'scaliger': '斯卡',   // 斯卡拉家族
     'mantinea': '丁尼',   // 曼丁尼亚
     'phokis': '福基',   // 福基斯
     'wuguobu': '五部',   // 五国部（旗号不含「国」）

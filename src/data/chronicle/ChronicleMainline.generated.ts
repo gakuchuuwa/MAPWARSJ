@@ -6094,7 +6094,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetLng": 115.955,
             "myTroops": 15000,
             "enemyFactionId": "qi",
-            "enemyFactionName": "齐国",
+            "enemyFactionName": "田齐",
             "enemyGeneralId": "bfe_chuzi",
             "enemyTroops": 15000,
             "introLines": []
@@ -7209,7 +7209,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetLng": 118.43,
             "myTroops": 15000,
             "enemyFactionId": "qi",
-            "enemyFactionName": "齐国",
+            "enemyFactionName": "田齐",
             "enemyTroops": 15000,
             "introLines": []
         }

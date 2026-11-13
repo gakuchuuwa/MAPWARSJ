@@ -278,7 +278,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     aq_qoyunlu: 'AQ_QOYUNLU_TAMGA',   // 白羊王朝·土库曼巴扬杜尔部白羊图腾塔木加
     barakzai_afghan: 'AFGHAN_BARAKZAI_GATE',   // 巴拉克宰王朝·阿富汗清真寺拱门与双战旗
     zand_dynasty: 'ZAND_SUN_SWORD',   // 赞德王朝·波斯金日与舍施尔弯刀
-    jinong: 'TOLEDO_DHUNNUN_STAR',   // 济农王朝·安达卢斯托莱多八角星印徽
+    taifa_toledo: 'TOLEDO_DHUNNUN_STAR',   // 托莱多泰法（济农氏）·八角星印徽
     kilwa: 'KILWA_COIN_GEOMETRY',   // 基尔瓦苏丹国·斯瓦希里海皇金币八角几何徽
     mombasa: 'MOMBASA_DHOW_DAGGERS',   // 蒙巴萨苏丹国·东非达乌帆船与交错弯刀
     pattani: 'PATTANI_CANNON_CRESCENT',   // 北大年苏丹国·马来青铜大炮与星月
