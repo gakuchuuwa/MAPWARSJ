@@ -2,6 +2,8 @@ import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { isFactionIdle } from '../data/eraFactionDisplay';
 import { getCultureEmblemFile } from '../data/CultureEmblems';
+import { FACTIONS } from '../data/factions';
+import { getFactionCultureAt } from '../data/FactionCulture';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -61,9 +63,9 @@ export class CityAssetManager {
         'barakzai_afghan': '巴宰',   // 巴拉克宰（经典战导入）
         'zand_dynasty': '赞德',   // 赞德（经典战导入）
         'aizu_ashina': '芦名',   // 芦名家（经典战导入）
-        'aq_qoyunlu': '白羊',   // 白羊王朝（经典战导入）
-        'bulidi': '布迪',   // 布里迪王朝（经典战导入）
-        'tahirid': '塔氏',   // 塔希尔王朝（经典战导入）
+        'aq_qoyunlu': '白羊',   // 白羊土库曼（经典战导入）
+        'bulidi': '布迪',   // 布里迪埃米尔国（经典战导入）
+        'tahirid': '塔氏',   // 塔希尔埃米尔国（经典战导入）
         'heruli': '赫鲁',   // 赫鲁利（经典战导入）
         'huanchu': '桓楚',   // 桓楚（经典战导入）
         'gallic_empire': '高卢',   // 高卢帝国（经典战导入）
@@ -309,10 +311,11 @@ export class CityAssetManager {
         'epidaurus': '埃皮',
         'corcyra': '科西',
         'mytilene': '米蒂',
+        'jiangnan_yijun': '江南',   // 江南义军
         'jiangqi': '齐',   // 姜齐
         'luoma_gongheguo': '罗马',   // 罗马共和国
-        'hasmonean': '哈斯',   // 哈斯蒙尼
-        'arelat': '勃王',   // 阿尔勒王国
+        'hasmonean': '哈斯',   // 哈斯蒙尼王国
+        'arelat': '勃王',   // 上勃艮第王国
         'hou_womaya': '倭马',   // 后倭马亚
         'ganzhou_huihu': '回鹘',   // 甘州回鹘
         'gaochang_huihu': '回鹘',   // 高昌回鹘
@@ -326,10 +329,11 @@ export class CityAssetManager {
         'thonburi': '吞武',   // 吞武里王国
         'zao_zhuluo': '朱罗',   // 早期朱罗
         'kotte': '科特',   // 科特王国
-        'gu_aiji': '埃及',   // 古埃及
+        'gu_aiji': '埃及',   // 埃及新王国
+        'aiji_guwangguo': '埃及',   // 埃及古王国
         'houjin': '金',   // 后金
-        'buyid': '白益',   // 白益王朝
-        'scaliger': '斯卡',   // 斯卡拉家族
+        'buyid': '白益',   // 白益埃米尔国
+        'scaliger': '斯卡',   // 斯卡利杰里家族
         'mantinea': '丁尼',
         'phokis': '福基',
         'wuguobu': '五部',
@@ -794,7 +798,7 @@ export class CityAssetManager {
         'rashtrakuta': '拉什',
         'andean_rebellion': '安起',
         'abkhazia_kingdom': '阿布',
-        'mac_dynasty': '莫朝',
+        'mac_dynasty': '莫氏',
         'restored_hanthawaddy': '复汉',
                 // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 'jianzhou' 旗面登记删除（势力并入 manzhou_d，旗号「清」）
         'bashkir': '巴什',
@@ -2015,6 +2019,17 @@ export class CityAssetManager {
         keys.add(variantKey);
     }
 
+    private static factionNameMap: Map<string, string> | null = null;
+    private static getFactionFullName(factionId: string): string {
+        if (!this.factionNameMap) {
+            this.factionNameMap = new Map();
+            for (const f of FACTIONS) {
+                this.factionNameMap.set(f.id, f.name);
+            }
+        }
+        return this.factionNameMap.get(factionId) ?? (window as any).game?.factionManager?.getFactionName(factionId) ?? factionId;
+    }
+
     /** 旗号文字的渲染参数（文字内容 + 配色 + 缓存键），生成与查缓存共用一份，避免两处算歪 */
     private static resolveFlagTextSpec(
         factionId: string,
@@ -2069,6 +2084,25 @@ export class CityAssetManager {
         // 旗号仅显示前两字（AGENTS.md：旗面 1–2 汉字）；「X州/X国/X族/X氏…」能否缩成一字见 FlagOneChar.ts
         if (textToRender && textToRender !== 'RANDOM') {
             textToRender = toFlagText(textToRender, factionId, buildingStyle);
+        }
+
+        // 🔴 [2026-11-13 主人令] 乱斗模式 / 势力旗帜规则：
+        //   如果势力的名字是二字，就保留二字旗帜，例如匈奴、龟兹。
+        //   三个字以上的改符号（已定 1 字单字国号政权保留 1 字旗；其余 3 字以上无专属纹章者改贴该势力文化的符号旗帜）。
+        const fullName = this.getFactionFullName(factionId);
+        if (fullName.length >= 3 && textToRender && textToRender.length !== 1) {
+            const culture = getFactionCultureAt(factionId, undefined) ?? buildingStyle;
+            const cultureEmblem = getCultureEmblemFile(culture);
+            if (cultureEmblem) {
+                return {
+                    factionId,
+                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}`,
+                    text: '',
+                    fill: '',
+                    stroke: '',
+                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
+                };
+            }
         }
 
         // §10.2.1：浅旗黑字白边，深旗白字黑边

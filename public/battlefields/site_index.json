@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-13T08:46:17.314Z",
+ "generatedAt": "2026-11-13T13:48:58.119Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -17196,6 +17196,20 @@
    "reliefM": 288,
    "cliffs": 0,
    "top": "Grass 3 91.9% · Forest, Mediterranean 5% · Pine Forest 2.2% · Forest, Bush 0.5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_bidar",
+   "file": "site_city_bidar.json",
+   "bytes": 335992,
+   "koppen": "Aw",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 61,
+   "cliffs": 0,
+   "top": "Dry Grass 91.7% · Forest, Lush Bamboo 5.8% · Bamboo 2.2% · Forest, Bush 0.3%",
    "verify": "ok"
   }
  ],

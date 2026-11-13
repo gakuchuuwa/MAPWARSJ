@@ -559,7 +559,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     desheng: [
         { generalId: 'desheng_liutong', factionId: 'desheng', cityId: 'city_yunyang', generalName: '刘通', portrait: '/assets/JIANGNAN/desheng_liutong.png', eliteName: '荆襄流民', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 明成化荆襄流民起义首领，据郧阳、称汉王、建元德胜（《明朝军事史》郧阳地区农民起义）
     ],
-    // 🔴 [2026-11-05 按A执行] 原「婺州义军」势力已删（汪文进自称天子、史无国号），并入隋国；武将改挂 sui 组，据点仍是金华。
     zhangchu: [
         { generalId: 'zhangchu_chensheng', factionId: 'zhangchu', cityId: 'city_huaiyang', generalName: '陈胜', portrait: '/assets/CENTRAL/zhangchu_chensheng.png', eliteName: '大泽戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 陈王都陈（宛丘即陈国故都），张楚政权立于陈（《史记·陈涉世家》）；文化随据点＝CENTRAL
     ],
@@ -1444,10 +1443,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'melos_shouling', factionId: 'melos', cityId: 'city_melos', generalName: '米洛斯守将', portrait: '/assets/GREECE/melos_shouling.png', eliteName: '米洛斯重步兵', eliteTier: 4 },   // 泛指：史失其名
     ],
-    arelat: [   // 🔴 [2026-11-13] 阿尔勒王国
+    arelat: [   // 🔴 [2026-11-13] 上勃艮第王国
         { generalId: 'bogendi_rudolf_i', factionId: 'arelat', cityId: 'city_geneva', generalName: '鲁道夫一世', portrait: '/assets/BURGUNDIANS/bogendi_rudolf_i.png', eliteName: '汝拉骑队', eliteTier: 4 },
     ],
-    scaliger: [   // 🔴 [2026-11-13] 斯卡拉家族
+    scaliger: [   // 🔴 [2026-11-13] 斯卡利杰里家族
         { generalId: 'gen_cangrande', factionId: 'scaliger', cityId: 'city_verona', generalName: '坎格兰德', portrait: '/assets/LATIN/bohepingyuan_diaoduolike.png', eliteName: '圣马可卫', eliteTier: 4 },
     ],
     baojialiya2: [   // 🔴 [2026-11-13] 保加利亚第二帝国
@@ -1473,7 +1472,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     guge: [   // 🔴 [2026-11-13] 古格
         { generalId: 'guge_chizhaxichabade', factionId: 'guge', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '古格骑兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 guge 块
     ],
-    thonburi: [   // 🔴 [2026-11-13] 吞武里王国
+    thonburi: [   // 🔴 [2026-11-13] 吞武里王朝
         { generalId: 'siam_zhengxin', factionId: 'thonburi', cityId: 'city_tunwuli', generalName: '郑信', portrait: '/assets/KHMER/siam_zhengxin.png', eliteName: '暹罗战象', eliteTier: 3 },
     ],
     houjin: [   // 🔴 [2026-11-13] 后金
@@ -1524,20 +1523,26 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'malwan_ibn_marwan', factionId: 'hou_womaya', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德步兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
         { generalId: 'gen_abd_al_rahman_iii', factionId: 'hou_womaya', cityId: 'city_cordoba', generalName: '拉赫曼三世', portrait: '/assets/ORIE/gen_abd_al_rahman_iii.png', eliteName: '后倭马亚骑', eliteTier: 1 },
     ],
-    hasmonean: [   // 🔴 [2026-11-13] 哈斯蒙尼
+    hasmonean: [   // 🔴 [2026-11-13] 哈斯蒙尼王朝
         { generalId: 'xibolai_majiabi', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '犹大马加比', portrait: '/assets/ORIE/xibolai_youdamajiabi.png', eliteName: '犹太勇士', eliteTier: 2 },
         { generalId: 'gen_aristobulus_ii', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '阿里斯托布鲁斯二世', portrait: '/assets/ORIE/gen_aristobulus_ii.png' , eliteName: '哈斯蒙卫军', eliteTier: 4},
     ],
-    gu_aiji: [   // 🔴 [2026-11-13] 古埃及
-        { generalId: 'gen_harkhuf', factionId: 'gu_aiji', cityId: 'city_aswan', generalName: '哈尔库夫', portrait: '/assets/ORIE/gen_harkhuf.png', eliteName: '麦杰兵', eliteTier: 3 },
+    gu_aiji: [   // 🔴 [2026-11-13] 埃及新王国
         { generalId: 'aiji_lameisisi', factionId: 'gu_aiji', cityId: 'city_mengfeisi', generalName: '拉美西斯', portrait: '/assets/ORIE/aiji_lameisisi.png', eliteName: '埃及战车兵', eliteTier: 2 },
         { generalId: 'dibisi_tutemosi', cityId: 'city_wasaite', generalName: '图特摩斯三世', portrait: '/assets/ORIE/dibisi_tutemosi.png', factionId: 'gu_aiji', eliteName: '底比斯金战车', eliteTier: 2 },
+    ],
+    aiji_guwangguo: [   // 🔴 [2026-11-13] 埃及古王国
+        { generalId: 'gen_harkhuf', factionId: 'aiji_guwangguo', cityId: 'city_aswan', generalName: '哈尔库夫', portrait: '/assets/ORIE/gen_harkhuf.png', eliteName: '麦杰兵', eliteTier: 3 },
     ],
     zao_zhuluo: [   // 🔴 [2026-11-13] 早期朱罗
         { generalId: 'bfe3_25', factionId: 'zao_zhuluo', cityId: 'city_tanjiawuer', generalName: '埃拉拉', portrait: '/assets/INDIA/bfe3_25.png', eliteName: '朱罗步兵', eliteTier: 4 },
     ],
     kotte: [   // 🔴 [2026-11-13] 科特王国
         { generalId: 'sengjialuo_boluojialuoliu', factionId: 'kotte', cityId: 'city_jiale', generalName: '波罗迦罗摩六世', portrait: '/assets/INDIA/sengjialuo_boluojialuoliu.png', eliteName: '锡兰长弓手', eliteTier: 3 },
+    ],
+    jiangnan_yijun: [   // 🔴 [2026-11-13] 江南义军（主人定：一个事件两个势力，不再并入隋国）
+        { generalId: 'wuzhou_wangwenjin', factionId: 'jiangnan_yijun', cityId: 'city_wuzhou', generalName: '汪文进', portrait: '/assets/JIANGNAN/wuzhou_wangwenjin.png', eliteName: '婺州义勇军', eliteTier: 4 },   // 开皇十年（590）据婺州反隋、自称天子署置百官；以蔡道人为司空拒守乐安（《资治通鉴》卷一七七）
+        { generalId: 'bfe_gao_zhihui', factionId: 'jiangnan_yijun', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '越州义兵', eliteTier: 4 },   // 开皇十年（590）据越州反隋、自称天子署置百官；据浙江东岸营垒，590–591 为来护儿、杨素所破（《隋书·杨素传》）
     ],
     mytilene: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
@@ -7558,7 +7563,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'baha_gaiwamu', factionId: 'bahemani', cityId: 'city_taibade', generalName: '盖瓦姆', portrait: '/assets/PERSIAN/baha_gaiwamu.png', eliteName: '巴赫曼尼卫队', eliteTier: 4 },
+        { generalId: 'baha_gaiwamu', factionId: 'bahemani', cityId: 'city_bidar', generalName: '盖瓦姆', portrait: '/assets/PERSIAN/baha_gaiwamu.png', eliteName: '巴赫曼尼卫队', eliteTier: 4 },
 
 
 
@@ -12624,7 +12629,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yue: [
         { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团', eliteName: '越王君子营', eliteTier: 1 },
-        // 🔴 [2026-11-05 按A执行] 高智慧（原挂势力 dongyang 会稽义军）已改挂隋国，移至 sui 组
     ],
 
 
@@ -12665,8 +12669,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'pinghai_laihuer', factionId: 'sui', cityId: 'city_piaoyujin', generalName: '来护儿', portrait: '/assets/WEI/pinghai_laihuer.png', eliteName: '大隋平海水师', eliteTier: 2 },
-        { generalId: 'wuzhou_wangwenjin', factionId: 'sui', cityId: 'city_wuzhou', generalName: '汪文进', portrait: '/assets/JIANGNAN/wuzhou_wangwenjin.png', eliteName: '婺州义勇军', eliteTier: 4 },   // 🔴 [2026-11-05 按A执行] 开皇十年（590）江南之乱据婺州、自称天子署置百官，史无国号，故并入隋国（同势力史实内战）；以蔡道人为司空拒守乐安（《资治通鉴》卷一七七）
-        { generalId: 'bfe_gao_zhihui', factionId: 'sui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '隋郡锐卒', eliteTier: 4 },   // 🔴 [2026-11-05 按A执行] 开皇十年（590）据越州反隋、自称天子设百官，史无国号，故并入隋国（史实内战）；据浙江东岸营垒，590–591 为来护儿、杨素所破
 
 
 

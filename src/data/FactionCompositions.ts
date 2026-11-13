@@ -209,6 +209,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "古典时代近东军团",
     legionType: "region",
 },   // 古埃及
+"aiji_guwangguo": {
+    legionName: "古典时代近东军团",
+    legionType: "region",
+},   // 埃及古王国
 "houjin": {
     legionName: "帝国时代八旗军团",
     legionType: "region",
@@ -221,6 +225,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     legionName: "城堡时代意大利雇兵军团",
     legionType: "region",
 },   // 斯卡拉家族
+"jiangnan_yijun": {
+    legionName: "封建时代江淮军团",
+    legionType: "region",
+},   // 江南义军
 "mantinea": {
     legionName: "古典时代赫拉斯军团",
     legionType: "region",

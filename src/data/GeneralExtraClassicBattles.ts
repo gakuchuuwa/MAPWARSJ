@@ -2214,7 +2214,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "targetLng": 35.21,
             "myTroops": 15000,
             "enemyFactionId": "hasmonean",
-            "enemyFactionName": "哈斯蒙尼",
+            "enemyFactionName": "哈斯蒙尼王国",
             "enemyGeneralId": "gen_aristobulus_ii",
             "enemyTroops": 15000,
             "introLines": [

@@ -517,7 +517,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'andean_rebellion': '#7A4A3A', // 安第斯起义军
     'abkhazia_kingdom': '#3A6A3A', // 阿布哈兹王国
     // 🔴 [2026-11-09 主人令「这种势力统一就行，旗号用倭」] 'early_wokou'（前期倭寇）#3A3A3A 已删，并入 haikou 海贼倭寇（旗号倭）
-    'mac_dynasty': '#5A2E2E', // 莫朝
+    'mac_dynasty': '#5A2E2E', // 莫氏
     'restored_hanthawaddy': '#7B3A2E', // 复兴汉达瓦底
     // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 的势力色（#2E4A3A）已删（并入大清，色随 manzhou_d）
     'bashkir': '#3B6A5A', // 巴什基尔
@@ -527,7 +527,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     'caledonia': '#3A4A5A', // 喀里多尼亚
     'goths_migration': '#4A3A5A', // 哥特人
     'syracuse': '#2F5A8A', // 叙拉古
-    'hamdanid': '#6A2E4A', // 哈姆丹王朝
+    'hamdanid': '#6A2E4A', // 哈姆丹埃米尔国
     'wiman_joseon': '#3A5A6A', // 卫满朝鲜
     'gusiluo': '#6A5A2E', // 唃厮啰
     'old_saxons': '#5A5A3A', // 古撒克逊
@@ -762,10 +762,11 @@ desheng: '#2E6B7A', // 德胜·刘通
     epidaurus: '#6A8D73',   // 埃皮道鲁斯
     corcyra: '#2F4F7F',   // 科西拉
     mytilene: '#7B68AE',   // 米蒂利尼
+    jiangnan_yijun: '#26A56F',   // 江南义军
     jiangqi: '#7B31DE',   // 姜齐
     luoma_gongheguo: '#DF0000',   // 罗马共和国
-    hasmonean: '#1246CD',   // 哈斯蒙尼
-    arelat: '#B87062',   // 阿尔勒王国
+    hasmonean: '#1246CD',   // 哈斯蒙尼王国
+    arelat: '#B87062',   // 上勃艮第王国
     hou_womaya: '#FFFFA1',   // 后倭马亚
     ganzhou_huihu: '#B2D684',   // 甘州回鹘
     gaochang_huihu: '#83B206',   // 高昌回鹘
@@ -779,10 +780,11 @@ desheng: '#2E6B7A', // 德胜·刘通
     thonburi: '#FA4526',   // 吞武里王国
     zao_zhuluo: '#9A3606',   // 早期朱罗
     kotte: '#676A18',   // 科特王国
-    gu_aiji: '#F09179',   // 古埃及
+    gu_aiji: '#F09179',   // 埃及新王国
+    aiji_guwangguo: '#CC8579',   // 埃及古王国
     houjin: '#636EA0',   // 后金
-    buyid: '#15A24E',   // 白益王朝
-    scaliger: '#D82C74',   // 斯卡拉家族
+    buyid: '#15A24E',   // 白益埃米尔国
+    scaliger: '#D82C74',   // 斯卡利杰里家族
     mantinea: '#8B6F47',   // 曼丁尼亚
     phokis: '#0F766E',   // 福基斯
     wuguobu: '#7C2D12',   // 五国部
@@ -837,9 +839,9 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     barakzai_afghan: '#763B9B', // 巴拉克宰（经典战导入）
     zand_dynasty: '#3B9B92', // 赞德（经典战导入）
     aizu_ashina: '#9B983B', // 芦名家（经典战导入）
-    aq_qoyunlu: '#3E9B3B', // 白羊王朝（经典战导入）
-    bulidi: '#9B3B66', // 布里迪王朝（经典战导入）
-    tahirid: '#3B709B', // 塔希尔王朝（经典战导入）
+    aq_qoyunlu: '#3E9B3B', // 白羊土库曼（经典战导入）
+    bulidi: '#9B3B66', // 布里迪埃米尔国（经典战导入）
+    tahirid: '#3B709B', // 塔希尔埃米尔国（经典战导入）
     heruli: '#4D9B3B', // 赫鲁利（经典战导入）
     huanchu: '#453B9B', // 桓楚（经典战导入）
     gallic_empire: '#533B9B', // 高卢帝国（经典战导入）

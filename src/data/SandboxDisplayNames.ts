@@ -28,9 +28,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'barakzai_afghan': '巴宰', // 巴拉克宰
     'zand_dynasty': '赞德', // 赞德
     'aizu_ashina': '芦名', // 芦名家
-    'aq_qoyunlu': '白羊', // 白羊王朝
-    'bulidi': '布迪', // 布里迪王朝
-    'tahirid': '塔氏', // 塔希尔王朝
+    'aq_qoyunlu': '白羊', // 白羊土库曼
+    'bulidi': '布迪', // 布里迪埃米尔国
+    'tahirid': '塔氏', // 塔希尔埃米尔国
     'heruli': '赫鲁', // 赫鲁利
     'huanchu': '桓楚', // 桓楚
     'gallic_empire': '高卢', // 高卢帝国
@@ -179,7 +179,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'rashtrakuta': '拉什',
     'andean_rebellion': '安起',
     'abkhazia_kingdom': '阿布',
-    'mac_dynasty': '莫朝',
+    'mac_dynasty': '莫氏',
     'restored_hanthawaddy': '复汉',
         // 🔴 [2026-11-09 主人令「建州女真和大清势力合并」] 原 jianzhou 的旗号「建州」已删除（原违规：旗号含「州」；势力并入大清，旗号随大清「清」）
     'bashkir': '巴什',
@@ -895,10 +895,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'epidaurus': '埃皮',   // 埃皮道鲁斯
     'corcyra': '科西',   // 科西拉
     'mytilene': '米蒂',   // 米蒂利尼
+    'jiangnan_yijun': '江南',   // 江南义军
     'jiangqi': '齐',   // 姜齐
     'luoma_gongheguo': '罗马',   // 罗马共和国
-    'hasmonean': '哈斯',   // 哈斯蒙尼
-    'arelat': '勃王',   // 阿尔勒王国
+    'hasmonean': '哈斯',   // 哈斯蒙尼王国
+    'arelat': '勃王',   // 上勃艮第王国
     'hou_womaya': '倭马',   // 后倭马亚
     'ganzhou_huihu': '回鹘',   // 甘州回鹘
     'gaochang_huihu': '回鹘',   // 高昌回鹘
@@ -912,10 +913,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'thonburi': '吞武',   // 吞武里王国
     'zao_zhuluo': '朱罗',   // 早期朱罗
     'kotte': '科特',   // 科特王国
-    'gu_aiji': '埃及',   // 古埃及
+    'gu_aiji': '埃及',   // 埃及新王国
+    'aiji_guwangguo': '埃及',   // 埃及古王国
     'houjin': '金',   // 后金
-    'buyid': '白益',   // 白益王朝
-    'scaliger': '斯卡',   // 斯卡拉家族
+    'buyid': '白益',   // 白益埃米尔国
+    'scaliger': '斯卡',   // 斯卡利杰里家族
     'mantinea': '丁尼',   // 曼丁尼亚
     'phokis': '福基',   // 福基斯
     'wuguobu': '五部',   // 五国部（旗号不含「国」）

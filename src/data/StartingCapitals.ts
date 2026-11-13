@@ -6,9 +6,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'barakzai_afghan': 'city_gaofu',   // 巴拉克宰（经典战导入，登记用）
     'zand_dynasty': 'city_yisifahan',   // 赞德（经典战导入，登记用）
     'aizu_ashina': 'city_tsuruga',   // 芦名家（经典战导入，登记用）
-    'aq_qoyunlu': 'city_dabulishi',   // 白羊王朝（经典战导入，登记用）
-    'bulidi': 'city_damasikusi',   // 布里迪王朝（经典战导入，登记用）
-    'tahirid': 'city_nishabuer',   // 塔希尔王朝（经典战导入，登记用）
+    'aq_qoyunlu': 'city_dabulishi',   // 白羊土库曼（经典战导入，登记用）
+    'bulidi': 'city_damasikusi',   // 布里迪埃米尔国（经典战导入，登记用）
+    'tahirid': 'city_nishabuer',   // 塔希尔埃米尔国（经典战导入，登记用）
     'heruli': 'city_ravenna',   // 赫鲁利（经典战导入，登记用）
     'huanchu': 'city_nanjing',   // 桓楚（经典战导入，登记用）
     'gallic_empire': 'city_teerier',   // 高卢帝国（经典战导入，登记用）
@@ -839,10 +839,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'epidaurus': 'city_corinth',   // 埃皮道鲁斯（在科林斯据点 50km 内）
   'corcyra': 'city_kefu',   // 科西拉（据点科孚）
   'mytilene': 'city_mytilene',   // 米蒂利尼
+  'jiangnan_yijun': 'city_kuaiji',   // 江南义军
   'jiangqi': 'city_linzi',   // 姜齐
   'luoma_gongheguo': 'city_luoma',   // 罗马共和国
-  'hasmonean': 'city_yelusaleng',   // 哈斯蒙尼
-  'arelat': 'city_geneva',   // 阿尔勒王国
+  'hasmonean': 'city_yelusaleng',   // 哈斯蒙尼王国
+  'arelat': 'city_geneva',   // 上勃艮第王国
   'hou_womaya': 'city_cordoba',   // 后倭马亚
   'ganzhou_huihu': 'city_zhangye',   // 甘州回鹘
   'gaochang_huihu': 'city_gaochangcheng',   // 高昌回鹘
@@ -856,10 +857,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'thonburi': 'city_tunwuli',   // 吞武里王国
   'zao_zhuluo': 'city_tanjiawuer',   // 早期朱罗
   'kotte': 'city_jiale',   // 科特王国
-  'gu_aiji': 'city_wasaite',   // 古埃及
+  'gu_aiji': 'city_wasaite',   // 埃及新王国
+  'aiji_guwangguo': 'city_mengfeisi',   // 埃及古王国
   'houjin': 'city_hetuala',   // 后金
-  'buyid': 'city_leiyi',   // 白益王朝
-  'scaliger': 'city_verona',   // 斯卡拉家族
+  'buyid': 'city_leiyi',   // 白益埃米尔国
+  'scaliger': 'city_verona',   // 斯卡利杰里家族
   'mantinea': 'city_mantinea',   // 曼丁尼亚
   'phokis': 'city_deerfei',   // 福基斯
   'wuguobu': 'city_wuguo',   // 五国部
@@ -891,7 +893,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'kelite_amier': 'city_knossos',   // 克里特埃米尔国（约824–961，都干地亚）
   'kelimiya_han': 'city_oleshky',   // 克里米亚汗国（1441–1783）
   'guzigan': 'city_fariyab',   // 古兹甘·法里贡王朝（9–11世纪初）
-  'bahemani': 'city_taibade',   // 巴赫曼尼苏丹国（德干，1347–1527）
+  'bahemani': 'city_bidar',   // 巴赫曼尼苏丹国（德干，1347–1527）
   'halapengcai': 'city_thaton',   // 哈利奔猜王国（泰北孟族，约750–1292）
   'dongchahatai': 'city_ahexikesi',   // 东察合台汗国（蒙兀儿斯坦，1347–1680）
   'buhala': 'city_jizhake',   // 布哈拉埃米尔国（曼吉特，1785–1920）

@@ -1,0 +1,732 @@
+﻿势力ID,势力名称,旗号,起始年,终止年,首府据点ID,首府据点,首府据点文化（仅参考，按建筑定，常与民族不符）
+barakzai_afghan,巴拉克宰,巴宰,,,city_gaofu,喀布尔,MUGHAL 帝国莫卧儿
+zand_dynasty,赞德,赞德,,,city_yisifahan,伊斯法罕,PERSIAN 古典波斯
+aizu_ashina,芦名家,芦名,,,city_tsuruga,鹤之城,JAPAN 城堡镰仓
+aq_qoyunlu,白羊王朝,白羊,,,city_dabulishi,大不里士,SASANIAN 封建波斯
+bulidi,布里迪王朝,布迪,,,city_damasikusi,大马士革,ORIE 封建阿拉伯
+jinong,济农王朝,济农,,,city_toledo,托莱多,GOTHS 封建哥特
+tahirid,塔希尔王朝,塔氏,,,city_nishabuer,尼沙布尔,SASANIAN 封建波斯
+heruli,赫鲁利,赫鲁,,,city_ravenna,拉文纳,GOTHS 封建哥特
+huanchu,桓楚,桓楚,,,city_nanjing,金陵,JIANGNAN 封建隋唐
+gallic_empire,高卢帝国,高卢,,,city_teerier,特里尔,ROMA 
+jingzhou,荆州,荆州,,,city_xiangyang,襄阳,HUGUANG 
+libiya,利比亚,利比,-241,-237,city_deliboli,的黎波里,BERBER 封建柏柏尔
+jiaxite,加喜特,加喜,-1595,-1155,city_babilun,巴比伦,ORIE 封建阿拉伯
+hulumusi,忽鲁谟斯,忽鲁,1060,1622,city_hormuz,霍尔木兹,PERSIAN 古典波斯
+bolinixiya,波利尼西亚,波利,1788,1880,city_tahiti,大溪地,MALAY 城堡马来
+latin_empire,拉丁帝国,拉丁,1204,1261,city_junshitandingbao,君士坦丁堡,BYZANTINE 封建拜占庭
+anjou,安茹,安茹,1246,1442,city_naples,那不勒斯,LATIN 古典罗马
+pisa,比萨共和国,比萨,1000,1406,city_pisa,比萨,LATIN 古典罗马
+chalkidike,卡尔基季基同盟,卡基,-432,-348,city_aolinsuosi,奥林索斯,GREECE 
+paeonia,佩奥尼亚,佩奥,-600,-217,city_anfeibolisi,安菲波利斯,ATHENIANS 
+messenia,美塞尼亚,美塞,-464,-146,city_sparta,斯巴达,SPARTANS 
+rhodes,罗得,罗得,-408,-42,city_rhodes,罗得城,FRANKS 封建法兰克
+zhongshan,中山国,中山,-414,-296,city_zhongshan,中山,WEI 
+linhu,林胡,林胡,-475,-300,city_yunzhongcheng,君子津,XIANBEI 
+chalcis,卡尔基斯,卡基,-700,-338,city_thebes,底比斯,GREECE 
+plataea,普拉提亚,普拉,-700,-427,city_thebes,底比斯,GREECE 
+methone,梅托涅,梅托,-730,-354,city_salonica,佩拉,MACEDONIAN 古典马其顿
+lycia,吕基亚,吕基,-700,43,city_xanthos,克桑托斯,GREECE 
+dolopes,多洛佩斯,多洛,-800,-475,city_skyros,斯库罗斯,GREECE 
+thasos,萨索斯,萨索,-680,-202,city_thasos,萨索斯,GREECE 
+corinth,科林斯,科林,-750,-146,city_corinth,科林斯,GREECE 
+melos,米洛斯,米洛,-800,-416,city_melos,米洛斯,GREECE 
+argos,阿尔戈斯,阿戈,-750,-146,city_corinth,科林斯,GREECE 
+epidaurus,埃皮道鲁斯,埃皮,-750,-146,city_corinth,科林斯,GREECE 
+corcyra,科西拉,科西,-734,-229,city_kefu,科孚,LATIN 古典罗马
+mytilene,米蒂利尼,米蒂,-700,-167,city_mytilene,米蒂利尼,GREECE 
+mantinea,曼丁尼亚,丁尼,-700,-146,city_mantinea,曼丁尼亚,GREECE 
+arcadia,阿卡迪亚同盟,阿卡,-370,-235,city_sparta,斯巴达,SPARTANS 
+macedon_royal,马其顿王军,王军,-323,-316,city_tiyana,提亚纳,TURKS 封建突厥
+naxos,纳克索斯,纳克,-700,-470,city_chimarros,希马鲁塔,GREECE 
+phokis,福基斯,福基,-510,-346,city_deerfei,德尔斐,GREECE 
+wuguobu,五国部,五部,960,1125,city_wuguo,五国城,NORTHEAST 古典鲜卑
+balti,巴尔蒂,巴尔,1190,1840,city_puticheng,菩提营,TIBET 封建吐蕃
+zhenghe_yijun,头陀军,头陀,1283,1284,city_zhenghe,政和,HUGUANG 
+desheng,德胜,汉,1465,1466,city_yunyang,郧阳,HUGUANG 
+zhangchu,张楚,张楚,-209,-208,city_huaiyang,宛丘,CENTRAL 中原
+pattani,北大年,北大,1516,1900,city_pattani,北大年,MALAY 城堡马来
+kilwa,基尔瓦苏丹国,基尔,957,1513,city_kilwa,基尔瓦,ORIE 封建阿拉伯
+mombasa,蒙巴萨苏丹国,蒙巴,1502,1632,city_mombasa,蒙巴萨,ORIE 封建阿拉伯
+mogadishu,摩加迪沙苏丹国,摩加,900,1600,city_mogadishu,摩加迪沙,ORIE 封建阿拉伯
+malindi,马林迪苏丹国,林迪,900,1593,city_malindi,马林迪,ORIE 封建阿拉伯
+zuraid,祖拉伊德,祖拉,1083,1174,city_aden,亚丁,ORIE 封建阿拉伯
+ayinu_ezo,阿伊努,阿伊,1200,1900,city_moyoro,莫约罗,JAPAN 城堡镰仓
+boootiya,底比斯,底比,-550,-335,city_thebes,底比斯,GREECE 
+kelite,威尼斯共和国,威共,697,1797,city_knossos,干地亚要塞,LATIN 古典罗马
+leangongguo,莱昂,莱昂,910,1230,city_salamanca,萨拉曼卡,SPANISH 帝国西班牙
+xixiliwangguo,西西里,西西,1035,1282,city_palermo,巴勒莫,SICILIANS 城堡诺曼
+liangxixili,两西西里,两西,1816,1861,city_palermo,巴勒莫,SICILIANS 城堡诺曼
+yipilusi,伊庇鲁斯,伊庇,-330,-167,city_anbulajiya,安布拉基亚,GREECE 
+lagoniya,斯巴达,斯巴,-1100,-192,city_sparta,斯巴达,SPARTANS 
+maqidun,马其顿,马其,-808,-168,city_salonica,佩拉,MACEDONIAN 古典马其顿
+sesali,色萨利,色萨,-500,-352,city_pelina,佩利纳,GREECE 
+lagusa,达尔马提亚,拉古,1000,1808,city_ragusa,拉古萨,LATIN 古典罗马
+meikelunbao,文德,文德,1131,1348,city_rostock,罗斯托克,GERMANIC 古典日耳曼
+didi,佛兰德,佛兰,862,1795,city_bruges,布鲁日,BURGUNDIANS 城堡勃艮第
+yidelisi,摩洛哥,伊德,788,974,city_feisi,非斯,BERBER 封建柏柏尔
+baojialiya,保加利亚,保,681,1396,city_teernuowo,特尔诺沃,BULGARIANS 封建保加利亚
+bosiniya,波斯尼亚,波黑,1154,1463,city_sarajevo,萨拉热窝,SLAVIC 封建罗斯
+mulabite,穆拉比特,穆拉,1040,1147,city_malajiashen,马拉喀什,BERBER 封建柏柏尔
+awraba,奥雷巴,奥雷,600,688,city_khenchela,肯切拉,BERBER 封建柏柏尔
+malin,马林苏丹国,马林,1244,1465,city_feisi,非斯,BERBER 封建柏柏尔
+zhayan,扎扬,扎扬,1235,1556,city_teleimusen,特莱姆森,BERBER 封建柏柏尔
+hamade,哈马德苏丹国,哈马,1007,1152,city_bujiaya,布佳亚,BERBER 封建柏柏尔
+buni,迦太基,迦太,-814,-146,city_jiataji,迦太基,BERBER 封建柏柏尔
+aguelabu,阿格拉布,阿格,800,909,city_kailuwan,凯鲁万,BERBER 封建柏柏尔
+jileinaijia,昔兰尼,昔兰,-631,-96,city_banjiaxi,班加西,GREECE 
+maixiya,麦西亚,麦西,527,918,city_oxford,牛津,BRITONS 城堡英格兰
+nidelan,尼德兰,尼德,1568,1795,city_hague,海牙,GERMANIC 古典日耳曼
+pomeilaniya,波美拉尼亚,波美,1121,1637,city_shiqieqing,什切青,GERMANIC 古典日耳曼
+talanduo,塔兰托,塔兰,-706,-272,city_talanduo,塔兰托,SPARTANS 
+safuyi,萨伏伊,萨伏,1003,1860,city_shangbeili,尚贝里,LATIN 古典罗马
+jiatailuoniya,加泰罗尼亚,加泰,801,1714,city_barcelona,巴塞罗那,SPANISH 帝国西班牙
+nasier,纳斯尔,纳斯,1232,1492,city_granada,格拉纳达,ORIE 封建阿拉伯
+seleisi,色雷斯,色雷,-480,46,city_plovdiv,普罗夫迪夫,THRACIAN 古典色雷斯
+pufaerci,普法尔茨,普法,1085,1803,city_heidelberg,海德堡,GERMANIC 古典日耳曼
+hansa,汉萨,汉萨,1358,1862,city_hamburg,汉堡,SAXONS 
+batawei,巴塔维,巴塔,1,400,city_hague,海牙,GERMANIC 古典日耳曼
+weijing_york,约维克,约维,866,954,city_york,约克,BRITONS 城堡英格兰
+aquidan,阿奎丹,阿奎,602,1453,city_bordeaux,波尔多,FRANKS 封建法兰克
+puluowangsi,普罗旺斯,普罗,972,1481,city_avignon,阿维尼翁,FRANKS 封建法兰克
+lunbadi,伦巴第,伦巴,508,774,city_milan,米兰,LATIN 古典罗马
+gepids,革皮德,革皮,454,567,city_budapeisi,布达佩斯,MAGYAR 城堡马扎尔
+kalbids,卡尔比德,卡比,948,1053,city_palermo,巴勒莫,SICILIANS 城堡诺曼
+donggete,东哥特,东哥,454,553,city_ravenna,拉文纳,GOTHS 封建哥特
+xigete,西哥特,哥特,418,721,city_toledo,托莱多,GOTHS 封建哥特
+alagong,阿拉贡,阿拉,1035,1707,city_zaragoza,萨拉戈萨,SPANISH 帝国西班牙
+xila,雅典,雅典,-594,-322,city_yadian,雅典,ATHENIANS 
+fulandesi,阿图瓦,阿图,1237,1659,city_calais,加莱,FRANKS 封建法兰克
+bulabante,布拉班特,班特,1183,1430,city_bulusaier,布鲁塞尔,BURGUNDIANS 城堡勃艮第
+gaolu,法兰西,法,987,1870,city_bali,巴黎,FRANKS 封建法兰克
+kaernute,卡尔努特,卡尔,-100,-52,city_shatteer,沙特尔,FRANKS 封建法兰克
+yinggelan,英格兰,英,927,1707,city_winchester,温彻斯特,BRITONS 城堡英格兰
+piketai,皮克特,皮克,297,900,city_aidingbao,爱丁堡,CELTS 
+mangsite,芒斯特,芒斯,-100,1118,city_kasheer,卡舍尔,CELTS 
+tuomengde,托蒙德,托蒙,976,1543,city_limerick,利默里克,CELTS 
+bulietani,布列塔尼,布列,851,1532,city_rennes,雷恩,BRITONS 城堡英格兰
+saierweiya,塞尔维亚,拉什,1166,1459,city_skopje,斯科普里,MACEDONIAN 古典马其顿
+luoma_diguo,罗马帝国,罗马,-509,476,city_luoma,罗马,ROMA 
+xiongren,匈人,匈人,370,469,city_saigede,塞格德,HUNS 封建匈人
+awaer,阿瓦尔,瓦尔,567,822,city_saigede,塞格德,HUNS 封建匈人
+putaoya,葡萄牙,葡,1096,1900,city_lisiben,里斯本,PORTUGUESE 帝国葡萄牙
+habusibao,哈布斯堡,哈布,1273,1804,city_weiyeena,维也纳,GERMANIC 古典日耳曼
+boximiya,波西米亚,波西,1198,1900,city_bulage,布拉格,BOHEMIANS 城堡捷克
+yidali_wangguo,意大利王国,意大,1848,1900,city_luoma,罗马,ROMA 
+luxitaniya,卢西塔尼亚,卢西,-194,-139,city_lisiben,里斯本,PORTUGUESE 帝国葡萄牙
+tuoerkete,托尔特克,托尔,900,1150,city_tenochtitlan,特诺奇提特兰,AMERICA 城堡阿兹特克
+yadian_gongguo,雅典公国,雅公,1205,1458,city_yadian,雅典,ATHENIANS 
+mayapan,玛雅潘,玛潘,987,1441,city_uxmal,乌斯马尔,MAYANS 封建玛雅
+songhai,桑海,桑海,1430,1591,city_timbuktu,廷巴克图,AFRICA 城堡马里
+shahi,沙希,沙希,822,1026,city_baishawa,白沙瓦,PURU 古典普鲁
+xisa,西萨特拉普,西萨,35,415,city_patan,帕坦,GURJARAS 封建瞿折罗
+xilawangguo,希腊王国,希腊,1821,1900,city_thebes,底比斯,GREECE 
+ante,安特,安特,300,602,city_jifu,基辅,SLAVIC 封建罗斯
+suweihui,苏维汇,苏维,409,585,city_boertu,波尔图,PORTUGUESE 帝国葡萄牙
+yibiluliya,伊比利亚,伊比,-302,580,city_dibilisi,第比利斯,GEORGIANS 封建格鲁吉亚
+yicha,伊察,伊察,1441,1697,city_tikal,蒂卡尔,MAYANS 封建玛雅
+mengjiala,孟加拉,孟加,1338,1576,city_geergang,戈尔冈,BENGALIS 封建孟加拉
+yili,伊利里亚,伊里,-400,9,city_budapeisi,布达佩斯,MAGYAR 城堡马扎尔
+daqiya,达契亚,达契,-82,106,city_sofia,索非亚,BULGARIANS 封建保加利亚
+qiajia,恺加,恺加,1747,1900,city_kamanniya,卡曼尼亚,PERSIAN 古典波斯
+arevaci,阿雷瓦西,阿雷,-400,-133,city_numantia,努曼提亚,SPANISH 帝国西班牙
+epirus_despotate,伊庇鲁斯专制国,伊庇,1205,1479,city_anbulajiya,安布拉基亚,GREECE 
+teotihuacan,特奥蒂瓦坎,特奥,-100,550,city_tikal,蒂卡尔,MAYANS 封建玛雅
+salakanagara,萨拉卡那加拉,萨拉,130,362,city_wandan,万丹,MALAY 城堡马来
+helvetii,赫尔维蒂,赫尔,-200,-58,city_geneva,日内瓦,BURGUNDIANS 城堡勃艮第
+hussites,胡斯派,胡斯,1419,1434,city_bulage,布拉格,BOHEMIANS 城堡捷克
+cherusci,切鲁西,切鲁,-60,100,city_bulunruike,不伦瑞克,SAXONS 
+rashtrakuta,拉什特拉库塔,拉什,753,982,city_hengbi,亨比,INDIA 古典印度
+andean_rebellion,安第斯起义军,安起,1780,1783,city_diyawanake,蒂亚瓦纳科,INCA 
+abkhazia_kingdom,阿布哈兹王国,阿布,778,1008,city_kutayixi,库塔伊西,GEORGIANS 封建格鲁吉亚
+mac_dynasty,莫朝,莫朝,1527,1677,city_shenglong,昇龙,VIETNAMESE 城堡大越
+restored_hanthawaddy,复兴汉达瓦底,复汉,1740,1757,city_bago,勃固,BURMESE 城堡缅甸
+bashkir,巴什基尔,巴什,1550,1798,city_kashan,喀山,CENTRAL_ASIA 封建河中
+drevlians,德列夫利安人,德列,600,946,city_zhytomyr,日托米尔,SLAVIC 封建罗斯
+marcomanni,马科曼尼,马科,-100,400,city_bulage,布拉格,BOHEMIANS 城堡捷克
+serbia_revolution,塞尔维亚革命,塞革,1804,1817,city_nis,尼什,SLAVIC 封建罗斯
+caledonia,喀里多尼亚,喀里,1,300,city_scone,斯昆,CELTS 
+goths_migration,哥特人,哥特,50,418,city_weishibi,维斯比,VIKINGS 封建维京
+syracuse,叙拉古,叙拉,-734,-212,city_syracuse,锡拉库萨,SICILIANS 城堡诺曼
+hamdanid,哈姆丹王朝,哈姆,890,1004,city_alepo,阿勒颇,ORIE 封建阿拉伯
+wiman_joseon,卫满朝鲜,卫,-194,-108,city_pyongyang,平壤,KOREA 封建高句丽
+gusiluo,唃厮啰,唃厮,1008,1104,city_ledu,浇河,TIBET 封建吐蕃
+old_saxons,古撒克逊,古撒,150,804,city_magedebao,马格德堡,SAXONS 
+alamanni,阿勒曼尼,阿勒,213,496,city_meiyinci,美因茨,GERMANIC 古典日耳曼
+taifa_toledo,托莱多泰法,托泰,1035,1085,city_cordoba,科尔多瓦,ORIE 封建阿拉伯
+florence,佛罗伦萨共和国,佛罗,1115,1532,city_florence,佛罗伦萨,LATIN 古典罗马
+tuitonga,汤加帝国,汤加,950,1865,city_mua,穆阿,MALAY 城堡马来
+rapanui,拉帕努伊,拉帕,900,1888,city_rapanui,复活节岛,MALAY 城堡马来
+later_baekje,后百济,后百,892,936,city_jeonju,完山,KOREA 封建高句丽
+arverni,阿维尔尼,阿维,-200,-52,city_bali,巴黎,FRANKS 封建法兰克
+imro,内马其顿革命组织,内马,1893,1900,city_skopje,斯科普里,MACEDONIAN 古典马其顿
+bulgaria_third,保加利亚公国,保公,1869,1900,city_sofia,索非亚,BULGARIANS 封建保加利亚
+aksum,阿克苏姆王国,阿克,100,940,city_aksum,阿克苏姆,ETHIOPIANS 封建埃塞俄比亚
+milan_duchy,米兰公国,米兰,1395,1797,city_milan,米兰,LATIN 古典罗马
+lombard_league,伦巴第联盟,伦联,1167,1250,city_milan,米兰,LATIN 古典罗马
+cilicia_armenia,奇里乞亚亚美尼亚,奇里,1080,1375,city_waka,瓦卡,ARMENIANS 古典亚美尼亚
+armenia_arsacid,阿萨息斯亚美尼亚,亚萨,12,428,city_ailiwen,埃里温,ARMENIANS 古典亚美尼亚
+syunik_bek,休尼克,休尼,1722,1730,city_ailiwen,埃里温,ARMENIANS 古典亚美尼亚
+northumbria,诺森布里亚,诺森,547,954,city_york,约克,BRITONS 城堡英格兰
+wessex,威塞克斯,威塞,519,927,city_winchester,温彻斯特,BRITONS 城堡英格兰
+subroman_britain,后罗马不列颠,布立,410,600,city_winchester,温彻斯特,BRITONS 城堡英格兰
+xinmeiliyan,辛梅里安,辛梅,-900,-600,city_oleshky,奥列什基,CUMAN 城堡库曼
+aixini,爱西尼,爱西,-60,61,city_norwich,诺里奇,BRITONS 城堡英格兰
+taluma,塔鲁玛迦拉,塔鲁,358,669,city_batavia,巴达维亚,MALAY 城堡马来
+mazhaer,匈牙利,匈,830,1900,city_budapeisi,布达佩斯,MAGYAR 城堡马扎尔
+falanji,法兰克,弗兰,481,888,city_kelong,科隆,FRANKS 封建法兰克
+koln,科隆大主教区,科隆,953,1803,city_kelong,科隆,FRANKS 封建法兰克
+shiwaben,施瓦本,施瓦,909,1268,city_aogesibao,奥格斯堡,GERMANIC 古典日耳曼
+asikanani,勃兰登堡藩侯国,勃兰,1036,1806,city_bolandengbao,勃兰登堡,GERMANIC 古典日耳曼
+wende,萨克森,萨克,843,1806,city_magedebao,马格德堡,SAXONS 
+bafaliya,巴伐利亚,巴伐,555,1806,city_leigensibao,雷根斯堡,GERMANIC 古典日耳曼
+ruishi,瑞士,瑞士,1291,1798,city_basaier,巴塞尔,GERMANIC 古典日耳曼
+damolaweiya,摩拉维亚,摩拉,815,907,city_buernuo,布尔诺,BOHEMIANS 城堡捷克
+luosi,罗斯,罗斯,830,1294,city_jifu,基辅,SLAVIC 封建罗斯
+eluosi_diguo,俄罗斯帝国,俄,1283,1900,city_shengpidebao,圣彼得堡,SLAVIC 封建罗斯
+daniebo,斯摩棱斯克,斯摩,1054,1404,city_simolengsike,斯摩棱斯克,SLAVIC 封建罗斯
+qiernigeweifu_gongguo,切尔尼戈夫,切尔,988,1402,city_qiernigeweifu,切尔尼戈夫,SLAVIC 封建罗斯
+jialixiya,加利西亚,哈尔,1124,1349,city_jialiqi,加利奇,SLAVIC 封建罗斯
+pusikefu_gongheguo,普斯科夫,普斯,1137,1510,city_pusikefu,普斯科夫,SLAVIC 封建罗斯
+ouka,梁赞,梁赞,1097,1521,city_liangzan,梁赞,SLAVIC 封建罗斯
+xideweina,波洛茨克,波洛,862,1307,city_boluocike,波洛茨克,SLAVIC 封建罗斯
+jinzhang,金帐,金帐,1224,1502,city_salai,萨莱,CENTRAL_ASIA 封建河中
+baojiaer,保加尔,不里,900,1236,city_kashan,喀山,CENTRAL_ASIA 封建河中
+baizanting,拜占庭,拜占,395,1453,city_junshitandingbao,君士坦丁堡,BYZANTINE 封建拜占庭
+bosi_puluosi,博斯普鲁斯,博普,-438,370,city_pantika,潘提卡彭,GREECE 
+kelimiya,热那亚共和国,热亚,1096,1797,city_kafa,卡法,LATIN 古典罗马
+litaowan,立陶宛,立,980,1795,city_weierniwusi,维尔纽斯,LITHUANIANS 城堡立陶宛
+bolan,波兰,波兰,960,1795,city_huasha,华沙,POLES 城堡波兰
+baojian_qishi,宝剑骑士团,宝剑,1202,1561,city_liga,里加,GERMANIC 古典日耳曼
+teweier_gongguo,特维尔,特维,1247,1485,city_teweier,特维尔,SLAVIC 封建罗斯
+suzidaer,苏兹达尔,苏兹,1125,1392,city_xianuofugeerdede,下诺城,SLAVIC 封建罗斯
+gesake,哥萨克,哥萨,1492,1775,city_zhapoluore,塞契,SLAVIC 封建罗斯
+moerdaweiya,摩尔达维亚,摩尔,1346,1859,city_yaxi,雅西,SLAVIC 封建罗斯
+walajiyia,瓦拉几亚,瓦拉,1290,1859,city_teergewishite,特尔戈维,SLAVIC 封建罗斯
+tiaodun_qishi,条顿骑士团,条顿,1224,1525,city_kenisibao,柯尼斯堡,GERMANIC 古典日耳曼
+yelusalengwg,耶路撒冷王国,耶路,1099,1291,city_ake,阿卡,FRANKS 封建法兰克
+shengdian_qishi,圣殿骑士团,圣殿,1119,1312,city_kolossi,科洛西,FRANKS 封建法兰克
+maerta_qishi,圣约翰,马耳,1113,1798,city_malta,马耳他,LATIN 古典罗马
+danmai,丹麦,丹麦,714,1900,city_gebenhagen,哥本哈根,DANES 
+xinbuli,辛布里,辛布,-150,-101,city_jelling,耶灵,DANES 
+ruidian_si,瑞典,瑞典,970,1900,city_sidedegelmo,斯德哥尔摩,VIKINGS 封建维京
+kasidiliya,卡斯蒂利亚,卡斯,850,1479,city_madeli,马德里,SPANISH 帝国西班牙
+aboerleiya,阿尔博雷亚,阿尔,1000,1420,city_oristano,奥里斯塔诺,SICILIANS 城堡诺曼
+teluoyi,特洛伊,特洛,-1700,-1180,city_teluoyi,特洛伊,GREECE 
+peilieya_gongguo,佩列亚斯拉夫,佩列,1054,1239,city_peilieyasilafu,佩列斯拉夫,SLAVIC 封建罗斯
+heishui,靺鞨,黑水,500,926,city_lahasusu,拉哈苏苏,NORTHEAST 古典鲜卑
+fuguo,附国,附,500,650,city_mangkangzong,芒康宗,TIBET 封建吐蕃
+fushi,苻秦,秦,310,394,city_lueyang,略阳,BASHU 
+yada,嚈哒,厌抵,440,567,city_xiwanjin,悉万斤,CENTRAL_ASIA 封建河中
+guishuang,贵霜,贵霜,-128,375,city_lanshi,蓝氏城,CENTRAL_ASIA 封建河中
+bailian,白莲,白莲,1796,1804,city_junzhou,武当,HUGUANG 
+chimei,赤眉,赤眉,18,27,city_ju,莒城,CENTRAL 中原
+shang,殷商,商,-1600,-1046,city_anyang,安阳,CENTRAL 中原
+zhou,姬周,周,-1150,-256,city_qishan,岐山,CENTRAL 中原
+qi,齐国,齐,-1046,-221,city_linzi,临淄,CENTRAL 中原
+jin,晋国,晋,-1033,-376,city_quwo,曲沃,WEI 
+wu,吴国,吴,-1096,-473,city_gusu,姑苏,JIANGNAN 封建隋唐
+yue,越国,越,-600,-306,city_kuaiji,会稽,JIANGNAN 封建隋唐
+nanyue,南越,南越,-214,-111,city_longchuan,龙川,HUGUANG 
+qin,秦国,秦,-905,-206,city_tianshui,天水,CENTRAL 中原
+song,赵宋,宋,960,1279,city_bianliang,开封,CENTRAL 中原
+yan,燕国,燕,-1044,-222,city_gubeikou,古北口,WEI 
+zhao,赵国,赵,-403,-222,city_handan,邯郸,WEI 
+douxia,夏,夏,611,621,city_handan,邯郸,WEI 
+wei,魏国,魏,-453,-225,city_hedong,安邑,WEI 
+caowei,曹魏,魏,189,266,city_xuchang,许昌,CENTRAL 中原
+han,韩国,韩,-403,-230,city_xinzheng,新郑,CENTRAL 中原
+han_d,刘汉,汉,-209,220,city_hanzhong,南郑,CENTRAL 中原
+handong,汉东,汉东,611,623,city_handan,邯郸,WEI 
+shu,蜀汉,汉,184,263,city_chengdu,成都,BASHU 
+juqu_d,沮渠凉国,凉,397,460,city_biaoshi,表氏,HEXI 古典秦汉
+tufa_d,秃发凉国,凉,365,414,city_qingtang,青唐城,HEXI 古典秦汉
+qiuchi,仇池,仇池,296,443,city_qiuchi,上禄,BASHU 
+helian,赫连夏国,夏,359,431,city_tongwancheng,统万城,XIANBEI 
+xiongnu,匈奴,匈奴,-318,216,city_toumancheng,头曼城,XIANBEI 
+xianbei,鲜卑,鲜卑,-206,439,city_gaxian,嘎仙洞,NORTHEAST 古典鲜卑
+tuoba,拓跋魏,魏,-15,534,city_datong,大同,WEI 
+yuwen,宇文周,周,524,581,city_wuchuanzhen,武川镇,XIANBEI 
+chen,陈国,陈,549,589,city_qingyuan,清远,HUGUANG 
+sui,隋国,隋,559,618,city_suizhou,随州,HUGUANG 
+tang,李唐,唐,564,907,city_changan,长安,CENTRAL 中原
+da_qin,大秦,秦,783,784,city_changan,长安,CENTRAL 中原
+min,闽国,闽,885,945,city_fuzhou,冶城,HUGUANG 
+shatuo,沙陀,沙陀,808,923,city_guanglu,光禄城,XIANBEI 
+bohai,渤海,渤海,696,926,city_ningan,龙泉府,NORTHEAST 古典鲜卑
+dangxiang,大夏,夏,881,1227,city_xingqingfu2,兴庆府,HEXI 古典秦汉
+menggu_d,蒙古,蒙古,700,1635,city_karakorum,哈拉和林,MONGOL 
+manzhou_d,大清,清,1403,1900,city_shenyang,沈阳,NORTHEAST 古典鲜卑
+ming_d,大明,明,1356,1644,city_beijing,北京,WEI 
+jianwen,建文,明,1398,1402,city_licheng,历下,CENTRAL 中原
+shunde,顺德,明,1519,1519,city_hongzhou,豫章,JIANGNAN 封建隋唐
+liao_d,大辽,辽,882,1269,city_linhuang,临潢府,XIANBEI 
+kong_d,鲁国,鲁,-1043,-256,city_qufu,曲阜,CENTRAL 中原
+wusun,乌孙,乌孙,-200,437,city_chigucheng,赤谷城,WESTERN 古典塞种
+dayuan,大宛,大宛,-170,-101,city_guishancheng,贵山城,WESTERN 古典塞种
+gouding,句町,句町,-111,9,city_guangnan,广南,BASHU 
+wuhuan,乌桓,乌桓,-300,207,city_bailangshan,白狼山,XIANBEI 
+xianlingqiang,先零,先零,-200,120,city_yunwu,允吾,HEXI 古典秦汉
+yelang,夜郎,夜郎,-300,-27,city_puding,普定,BASHU 
+ailao,哀牢,哀牢,-100,77,city_baoshan,永昌,BASHU 
+fuyu,夫余,夫余,-200,494,city_fuyu,黄龙府,NORTHEAST 古典鲜卑
+shule,疏勒,疏勒,-200,800,city_shule,盘橐,WESTERN 古典塞种
+shache,莎车,莎车,-200,100,city_shache,渠莎,WESTERN 古典塞种
+qiuci,龟兹,龟兹,-200,790,city_yiluolucheng,伊逻卢,WESTERN 古典塞种
+yanqi,焉耆,焉耆,-200,648,city_yanqi,员渠城,WESTERN 古典塞种
+gaogouli,高句丽,高句,-37,668,city_pyongyang,平壤,KOREA 封建高句丽
+xinluo,新罗,新罗,-57,935,city_jincheng_silla,金城,KOREA 封建高句丽
+ashikaga,室町,室町,1333,1573,city_kyoto,京都,JAPAN 城堡镰仓
+yamato,大和,大和,250,1185,city_kyoto,京都,JAPAN 城堡镰仓
+rouran,柔然,柔然,330,555,city_saierwusu,赛尔乌苏,MONGOL 
+baiji,百济,百济,-18,660,city_sabi,泗沘,KOREA 封建高句丽
+tubo,吐蕃,吐蕃,-127,1635,city_luoxie,逻些,TIBET 封建吐蕃
+tujue,突厥,突厥,460,744,city_otuken,于都斤山,MONGOL 
+dayue,大越,越,1009,1789,city_shenglong,昇龙,VIETNAMESE 城堡大越
+ryukyu,琉球,琉球,1314,1879,city_shuri,首里,JAPAN 城堡镰仓
+so,对马,对马,1246,1871,city_tsushima,金石馆,JAPAN 城堡镰仓
+goto,五岛,五岛,1150,1871,city_goto,五岛,JAPAN 城堡镰仓
+omura,大村,大村,1150,1871,city_nagasaki,长崎,JAPAN 城堡镰仓
+kakizaki,松前,松前,1457,1871,city_katsuyama,胜山馆,JAPAN 城堡镰仓
+fujiwara,奥州,藤原,1087,1189,city_yanaginogosho,柳之御所,JAPAN 城堡镰仓
+genji,源氏,源,1180,1333,city_kamakura,镰仓,JAPAN 城堡镰仓
+genji_iyo,伊予源氏,伊予,1180,1189,city_songshan,松山,JAPAN 城堡镰仓
+gaya,伽倻,伽倻,42,562,city_gimhae,金海,KOREA 封建高句丽
+chosokabe,土佐,土佐,1518,1600,city_okafu,冈丰城,JAPAN 城堡镰仓
+xingliao,兴辽,兴辽,1029,1030,city_longwan,龙湾,KOREA 封建高句丽
+gongsun_d,辽东,辽东,189,238,city_liaoyang,襄平,WEI 
+luoyue,骆越,骆越,-300,43,city_huashan,花山,HUGUANG 
+ba,巴国,巴,-1100,-316,city_chongqing,重庆,BASHU 
+qifu_d,乞伏秦国,秦,385,431,city_fuhan,枹罕,CENTRAL 中原
+murong,慕容燕,燕,285,410,city_jicheng,棘城,XIANBEI 
+erzhu,尔朱契胡,尔朱,493,533,city_xiurongchuan,秀容川,WEI 
+baibo,黄巾,黄巾,184,205,city_baibogu,白波谷,WEI 
+ouyue,瓯越,台,-306,-138,city_taizhou_zj,临海,JIANGNAN 封建隋唐
+gaoqi_d,高齐,齐,531,577,city_jingzhou2,蓨城,WEI 
+wuzhou_d,武周,周,690,705,city_luoyang,洛阳,CENTRAL 中原
+xibo_d,锡伯,锡伯,1400,1900,city_yili,固尔札,MONGOL 
+ranwei_d,冉魏,魏,350,352,city_liyang,巨鹿,WEI 
+sunwu_d,孙吴,吴,172,280,city_wuchang,武昌,HUGUANG 
+linshihong,干越,干越,615,622,city_raozhou,鄱阳,JIANGNAN 封建隋唐
+xijue,十箭,十箭,583,679,city_zhizhicheng,郅支城,WESTERN 古典塞种
+xueyantuo,薛延陀,薛延,605,646,city_yanran_stone,燕然勒石,MONGOL 
+tujishi,突骑施,突骑,699,766,city_talas,怛罗斯,WESTERN 古典塞种
+nanzhao,南诏,南诏,649,902,city_mengshe,蒙舍城,BASHU 
+xiaobolu,勃律,勃律,700,747,city_puticheng,菩提营,TIBET 封建吐蕃
+dali,大理,大理,937,1253,city_dali_city,羊苴咩,BASHU 
+luodian,罗甸,罗甸,800,1665,city_dafang,大方城,BASHU 
+goryeo,高丽,高丽,901,1392,city_kaesong,开城,KOREA 封建高句丽
+nongzhigao,大南国,大南,1029,1053,city_yongzhou,晋兴,HUGUANG 
+fangla,圣公,圣公,1120,1121,city_qingxi,帮源洞,JIANGNAN 封建隋唐
+yang_aner,天顺,登,1214,1214,city_dengzhou,蓬莱,CENTRAL 中原
+huarazim,花剌子模,花剌,1077,1231,city_urgench,玉龙杰赤,CENTRAL_ASIA 封建河中
+pagan,蒲甘,缅,849,1297,city_pagan,蒲甘,BURMESE 城堡缅甸
+champa,占婆,占婆,192,1832,city_myson,美山,KHMER 城堡高棉
+dongxia,东夏,东夏,1215,1233,city_longtanshancheng,龙潭山,NORTHEAST 古典鲜卑
+chagatai,车师,车师,-200,450,city_bieshibali,务涂城,WESTERN 古典塞种
+kereyid,克烈,克烈,1000,1203,city_kereyid,汪吉河,MONGOL 
+naiman,乃蛮,乃蛮,1100,1218,city_fuhai,福海,MONGOL 
+tatar,塔塔尔,塔塔,900,1202,city_tatar,额布都格,MONGOL 
+ongut,汪古,汪古,1000,1204,city_jingzhou,净州塞,XIANBEI 
+xushouhui,天完,天完,1351,1360,city_qichun,蕲春,HUGUANG 
+zhangshicheng,大周,周,1353,1367,city_changzhou,延陵,JIANGNAN 封建隋唐
+dixiang,新国,新,-29,23,city_nanyang,宛城,CENTRAL 中原
+dengmaoqi,铲平,铲平,1448,1449,city_shaxian,沙戍堡,HUGUANG 
+dada_ming,鞑靼,鞑靼,1388,1635,city_hetao,河套,XIANBEI 
+oirat_ming,卫拉特,瓦剌,1368,1758,city_kobdo,科布多,MONGOL 
+haixi_nvzhen,海西,海西,1400,1619,city_huifa,辉发,NORTHEAST 古典鲜卑
+yeren_nvzhen,萨哈连,萨哈,1409,1616,city_yeren_base,瑷珲,NORTHEAST 古典鲜卑
+jilimi,吉里,吉里,1250,1900,city_nanghar,囊哈儿,NORTHEAST 古典鲜卑
+luchuan,麓川,麓川,1340,1449,city_mengmao,勐卯,BURMESE 城堡缅甸
+xihai_d,吐谷浑,吐谷,329,663,city_fusicheng,伏俟城,TIBET 封建吐蕃
+mari_ancient,马里王国,马里,-1830,-1761,city_anate,阿纳特,ORIE 封建阿拉伯
+guiyi,归义,归义,848,1036,city_yumenguan,玉门关,HEXI 古典秦汉
+joseon,朝鲜,朝鲜,1392,1897,city_hanseong,汉城,KOREA 封建高句丽
+siam,暹罗,暹罗,1351,1767,city_ayutthaya,阿瑜陀耶,KHMER 城堡高棉
+chenla,真腊,真腊,550,1431,city_angkor,吴哥,KHMER 城堡高棉
+dashun,大顺,大顺,1628,1645,city_ziwu,子午谷,CENTRAL 中原
+daxi_ming,大西,大西,1630,1646,city_mianyang,涪城,BASHU 
+chenghan,成汉,成,298,347,city_mianzhuguan,鹿头关,BASHU 
+longwu,隆武,明,1645,1646,city_jianning,建宁,HUGUANG 
+lujian,鲁监,明,1645,1653,city_wuzhou,金华,JIANGNAN 封建隋唐
+khoshut,和硕特,和硕,1587,1717,city_dangxiong,当雄,TIBET 封建吐蕃
+yarkand,叶尔羌,叶尔,1514,1705,city_yinai,英吉沙尔,WESTERN 古典塞种
+khoja,和卓,和卓,1630,1759,city_xiuxun,休循,WESTERN 古典塞种
+jinchuan_g,金川,金川,1666,1776,city_leweizhai,勒乌围,TIBET 封建吐蕃
+shuntian,顺天军,顺天,1786,1788,city_changhua_tw,彰化,JIANGNAN 封建隋唐
+gurkha,廓喀,廓喀,1559,1900,city_kathmandu,加德满都,TIBET 封建吐蕃
+xiadun,夏顿,夏顿,1606,1900,city_tingbu,廷布,TIBET 封建吐蕃
+kazakh,哈萨,哈萨,1465,1847,city_turkestan,亚西,CENTRAL_ASIA 封建河中
+kokand,霍罕,霍罕,1709,1876,city_kokand,浩罕,WESTERN 古典塞种
+badakhshan,达克,达克,1600,1873,city_fayzabad,法扎巴德,CENTRAL_ASIA 封建河中
+taiping,太平,太平,1843,1864,city_jintian,金田村,HUGUANG 
+dacheng,大成,大成,1855,1861,city_zhenghe,政和,HUGUANG 
+tuoming,清真,清真,1864,1871,city_dabancheng,达坂城,WESTERN 古典塞种
+dajin,大金,金,1000,1234,city_huining,会宁府,NORTHEAST 古典鲜卑
+yuan_d,大元,元,1260,1388,city_shangdu,上都,XIANBEI 
+yilou,挹娄,挹娄,-200,450,city_fenglin,凤林寨,NORTHEAST 古典鲜卑
+wuji,勿吉,勿吉,450,600,city_boduo,伯都,NORTHEAST 古典鲜卑
+shiwei,室韦,室韦,500,1000,city_julunbo,俱轮泊,MONGOL 
+kala,喀喇汗国,喀喇,840,1212,city_aoshen,奥什,WESTERN 古典塞种
+jiazini,伽色尼,伽色,962,1186,city_jiaseni,哥疾宁,PERSIAN 古典波斯
+fanyanna,梵衍那,梵衍,400,750,city_fanyanna,巴米扬,CENTRAL_ASIA 封建河中
+sogdian,粟特,粟特,-550,722,city_varaksha,瓦拉赫沙,CENTRAL_ASIA 封建河中
+geluolu,葛逻禄,葛逻,600,840,city_almaliq,弓月城,CENTRAL_ASIA 封建河中
+yuchi,尉迟于阗,于阗,-232,1006,city_yutian2,于阗,WESTERN 古典塞种
+an,乌兹别克,乌兹,1428,1599,city_bukhara,布哈拉,CENTRAL_ASIA 封建河中
+shi_clan,石氏,石氏,600,751,city_tashkent,柘折城,CENTRAL_ASIA 封建河中
+gaoche,高车,高车,487,541,city_junjishan,浚稽山,MONGOL 
+hongirad,弘吉剌,弘吉,950,1206,city_erguna,捕鱼儿海,MONGOL 
+ladakh,玛域,玛域,930,1842,city_leh,列城,TIBET 封建吐蕃
+tsangpa,藏巴汗,藏巴,1565,1642,city_sangzhuzi,桑珠孜,TIBET 封建吐蕃
+ganden,甘丹颇章,甘丹,1622,1900,city_heizong,黑河宗,TIBET 封建吐蕃
+supi,苏毗,苏毗,500,793,city_payangyi,帕羊驿,TIBET 封建吐蕃
+khon,萨迦昆,萨迦,1244,1354,city_sajia,萨迦,TIBET 封建吐蕃
+lang_clan,帕竹朗,帕竹,1268,1618,city_pibo,匹播,TIBET 封建吐蕃
+karmapa,噶玛,噶玛,1618,1642,city_chubusi,楚布寺,TIBET 封建吐蕃
+ava,阿瓦王国,阿瓦,1364,1555,city_ava,因瓦,BURMESE 城堡缅甸
+dongxu,东吁,东吁,1510,1752,city_dongxu_old,凯图玛蒂,BURMESE 城堡缅甸
+meitai,曼尼普尔,曼尼,1110,1900,city_kangla,康格拉,BENGALIS 封建孟加拉
+hantawadi,汉达瓦底,汉达,1287,1539,city_bago,勃固,BURMESE 城堡缅甸
+pyu,骠族,骠,-200,832,city_srikshetra,室利差罗,BURMESE 城堡缅甸
+mon,孟族,孟族,400,1057,city_thaton,直通,BURMESE 城堡缅甸
+ming_zheng,明郑,明,1646,1683,city_tainan,承天,JIANGNAN 封建隋唐
+xiou,西瓯,西瓯,-400,-214,city_bushan,布山,HUGUANG 
+paiwan,排湾,排湾,1600,1900,city_mudan,牡丹社,MALAY 城堡马来
+she_ethnic,畲族,畲,669,1900,city_chimushan,敕木山,JIANGNAN 封建隋唐
+wuling,五溪,五溪,25,589,city_wulingshan,壶头山,HUGUANG 
+weili,尉犁,尉犁,-200,400,city_weili,库尔勒,WESTERN 古典塞种
+pishan,皮山,皮山,-200,400,city_pishan,固玛,WESTERN 古典塞种
+tuerhute,土尔扈特,土尔,1630,1771,city_yingsuochuan,鹰娑川,MONGOL 
+bandun,板楯,板楯,-316,300,city_hanchang,汉昌,BASHU 
+seljuq,塞尔柱帝国,塞尔,980,1194,city_merv,木鹿,SASANIAN 封建波斯
+osman,奥斯曼帝国,奥斯,1230,1900,city_buersa,布尔萨,TURKS 封建突厥
+cen_d,岑氏,岑,1369,1876,city_cen,凌云,HUGUANG 
+shen,申国,申,-900,-688,city_jinzhou_shanxi,安康,CENTRAL 中原
+shaodang,烧当,烧当,-60,300,city_maqu,玛曲,TIBET 封建吐蕃
+panyao,盘瑶,贺,1200,1900,city_hezhou,临贺,HUGUANG 
+golog,果洛,果洛,1600,1900,city_niubiziliang,牛鼻子梁,TIBET 封建吐蕃
+tumed,土默特,土默,1500,1635,city_guihua,归化城,XIANBEI 
+saman,萨曼,萨曼,819,999,city_amucheng,阿母城,CENTRAL_ASIA 封建河中
+dai,傣族,傣族,1180,1900,city_mengle,勐泐城,BURMESE 城堡缅甸
+taiyuan,泰沅,泰沅,1150,1775,city_chingkham,清坎寨,KHMER 城堡高棉
+luohu,罗斛,罗斛,648,1388,city_khorat,呵叻城,KHMER 城堡高棉
+liren,俚族,俚,400,1900,city_yazhou,珠崖,HUGUANG 
+gling,玉树二十五族,玉树,1038,1900,city_jiegu,结古宗,TIBET 封建吐蕃
+suolun,达斡尔,达斡,1600,1731,city_bukui,卜奎,NORTHEAST 古典鲜卑
+gar_kham,德格土司,德格,1440,1900,city_derge,德格,TIBET 封建吐蕃
+kongsa,孔萨土司,孔萨,1700,1900,city_ganzi,甘孜,TIBET 封建吐蕃
+hor,霍尔三十九族,霍尔,1630,1900,city_suozong,索宗,TIBET 封建吐蕃
+bailang,白狼,白狼,50,640,city_adunzi,阿墩子,TIBET 封建吐蕃
+duolu,咄陆,咄陆,600,657,city_beiluocheng,孛罗营,CENTRAL_ASIA 封建河中
+tiemuer,帖木儿帝国,帖木,1360,1507,city_samaerhan,撒马尔罕,CENTRAL_ASIA 封建河中
+keerkezi,柯尔克孜,柯尔,820,1207,city_yierkeshentan,斯姆哈纳,WESTERN 古典塞种
+yizhi,一支,一支,-100,645,city_yuanzhishi,原之辻,JAPAN 城堡镰仓
+yiwu,伊吾,伊吾,1404,1514,city_hamiwei,哈密卫,WESTERN 古典塞种
+duerbote,杜尔伯特,杜尔,1430,1753,city_tuokexun,托克逊,WESTERN 古典塞种
+kaerka,喀尔喀,喀尔,1500,1757,city_duluohe,推河堡,MONGOL 
+huihu,回鹘,回鹘,605,1284,city_woluduocheng,青岭牙帐,MONGOL 
+wuzhumuqin,乌珠穆沁,乌珠,1540,1637,city_wuliyasitai,乌里雅斯太,XIANBEI 
+zhadalan,扎答兰,扎答,1150,1204,city_kuoyitian,阔亦田,MONGOL 
+zhuerqi,主儿乞,主儿,1160,1197,city_sangguer,温都尔汗,MONGOL 
+qiufu,剡中,剡中,859,860,city_shanxian,剡城,JIANGNAN 封建隋唐
+chendiaoyan,畲汉,陈吊,1277,1282,city_zhangzhou,龙溪,HUGUANG 
+yezongliu,处州,处,1444,1448,city_chuzhou_zj,丽水,JIANGNAN 封建隋唐
+qianhui,回民,回,1862,1877,city_xingqing,合水,CENTRAL 中原
+miaomin,苗民,苗,1795,1806,city_pinglong,平陇,HUGUANG 
+zhongxiang,鼎州,鼎,1130,1135,city_wuling,常德,HUGUANG 
+yang_bozhou,播州杨氏,播,876,1600,city_hailongtun,海龙屯,BASHU 
+she,奢安,奢安,1621,1629,city_yongning2,叙永,BASHU 
+tan_d,土家,土家,1370,1372,city_cili,慈利,HUGUANG 
+wumeng,越州蛮,越蛮,1360,1395,city_shimenguan,石门关,BASHU 
+boren,都掌蛮,都掌,960,1574,city_bodao,珙县,BASHU 
+sou,越嶲夷,越嶲,118,255,city_jianchang,邛都,BASHU 
+qiong,邛谷,邛谷,16,43,city_jianchang,邛都,BASHU 
+dongzu,侗族,侗,1378,1385,city_leigong,雷公山,BASHU 
+shengmiao,生苗,生苗,1735,1736,city_jiading,甲定,BASHU 
+buyi_d,布依,布依,1797,1797,city_luobo,罗博,BASHU 
+shuizu,水族,水,1855,1869,city_sandou,三都,BASHU 
+haikou,海贼倭寇,倭,1350,1559,city_yuanzhishi,原之辻,JAPAN 城堡镰仓
+liuzhen,六镇,六镇,523,528,city_hejian,乐成,WEI 
+panshu,叛军,,-9999,9999,,,
+you,幽州,幽,188,199,city_juyongguan,居庸关,WEI 
+yumi,扜弥,扜弥,-200,175,city_yumi,阿赫雅尔,WESTERN 古典塞种
+xiye,西夜,西夜,-200,100,city_xiye,叶城,WESTERN 古典塞种
+galangdiba,波密土司,波密,1600,1900,city_galangzong,噶朗宗,TIBET 封建吐蕃
+cuanshi,爨族,爨,190,748,city_weixian2,曲靖,BASHU 
+dianguo,滇国,滇,-330,-109,city_tuodongcheng,滇池,BASHU 
+danluo,耽罗,耽罗,476,1404,city_xingzhuting,星主厅,KOREA 封建高句丽
+hui,濊族,濊,-1100,313,city_heseluo,何瑟罗,KOREA 封建高句丽
+wure,兀惹,兀惹,900,1125,city_niman,尼满,NORTHEAST 古典鲜卑
+sunite,苏尼特,苏尼,1580,1637,city_saihantala,赛汉塔拉,XIANBEI 
+weiwuer,维吾尔,乌第,1400,1900,city_yuergun,玉尔滚,WESTERN 古典塞种
+wensu,温宿,温宿,-200,400,city_dawushenkate,大乌什,WESTERN 古典塞种
+keerqin,科尔沁,科尔,1500,1636,city_daerhan,达尔罕,XIANBEI 
+xiangxiong,象雄,象雄,-400,645,city_qionglong,穹窿银,TIBET 封建吐蕃
+zhaowu,昭武,昭武,500,750,city_huzhan,忽毡,CENTRAL_ASIA 封建河中
+ruoqiang,婼羌,婼羌,-200,400,city_ruoqiang,卡克里克,WESTERN 古典塞种
+qiemo,且末,且末,-200,400,city_qiemo,播仙,WESTERN 古典塞种
+weitou,尉头,尉头,-200,400,city_weitoucheng,阿合奇,WESTERN 古典塞种
+qiepantuo,护密,朅盘,500,750,city_humicheng,护密,WESTERN 古典塞种
+eluoke,鄂罗克,鄂罗,1700,1900,city_nuotuoluo,诺托罗,NORTHEAST 古典鲜卑
+ewenki,鄂温克,鄂温,1600,1900,city_nibuchu,尼布楚,NORTHEAST 古典鲜卑
+buriat,布里亚特,布里,1500,1900,city_chita,赤塔,MONGOL 
+iga_d,伊贺,伊贺,1470,1581,city_nabari,名张,JAPAN 城堡镰仓
+kaga_d,一向宗,加贺,1488,1583,city_jianghu,金泽,JAPAN 城堡镰仓
+date_d,伊达家,伊达,1500,1871,city_xiantai,青叶馆,JAPAN 城堡镰仓
+otomo_d,大友家,大友,1336,1600,city_funei,府内,JAPAN 城堡镰仓
+suwa_d,诹访家,诹访,1200,1542,city_gaodao,高岛,JAPAN 城堡镰仓
+yanda,阿尔洪,白匈,400,560,city_huoguocheng,德拉普萨卡,CENTRAL_ASIA 封建河中
+konbaung,贡榜,贡榜,1752,1885,city_shwebo,瑞波,BURMESE 城堡缅甸
+tianxiong,魏博,魏博,763,915,city_daming,大名,WEI 
+huaixi,淮西,淮西,786,817,city_xuanhu,悬瓠,CENTRAL 中原
+gengshi,更始,汉,23,25,city_changan,长安,CENTRAL 中原
+shierShijun,十二使君,使君,965,968,city_hoalu,华闾,VIETNAMESE 城堡大越
+xishan,西山,西山,1778,1802,city_fuchun,富春,VIETNAMESE 城堡大越
+malla,马拉王朝,玛拉,1484,1768,city_kathmandu,加德满都,TIBET 封建吐蕃
+mihran,米赫兰,米赫,590,591,city_feiluzhabade,菲鲁扎巴德,SASANIAN 封建波斯
+xiwasi,埃雷特纳,埃雷,1335,1398,city_sivas,锡瓦斯,TURKS 封建突厥
+mengguqieke,门古切克,门古,1071,1277,city_erzincan,埃尔津詹,TURKS 封建突厥
+sumuroyi,米沙鄢人,米沙,1649,1650,city_palapag,帕拉帕格,MALAY 城堡马来
+yun,允戎,允,-800,-525,city_lushi,陆浑关,CENTRAL 中原
+huangwang,大齐,齐,875,884,city_xianxia,仙霞关,JIANGNAN 封建隋唐
+yehe,叶赫,叶赫,1500,1619,city_bamiancheng,八面关,NORTHEAST 古典鲜卑
+wula,乌拉,乌拉,1550,1613,city_wushecheng,乌舍寨,NORTHEAST 古典鲜卑
+bayegu,拔野古,拔野,600,744,city_jiluoshan,稽落山,MONGOL 
+ketagalan,凯达格兰,凯达,1600,1900,city_mengjia,艋舺,JIANGNAN 封建隋唐
+suke,素可泰,素可,1238,1438,city_shuanghe,素可泰,KHMER 城堡高棉
+gaochang,麴氏高昌,高昌,501,640,city_chiting,赤亭关,WESTERN 古典塞种
+chuyue,处月,处月,550,700,city_dushancheng,独山营,CENTRAL_ASIA 封建河中
+baidi,白狄,白狄,-770,-296,city_jining,集宁,XIANBEI 
+huite,辉特,辉特,1400,1757,city_jinshan,额尔齐斯,MONGOL 
+zubu,阻卜,阻卜,900,1125,city_teerhunjuntai,特尔浑,MONGOL 
+xisi,萨法尔,萨法,854,1003,city_bosite,博斯特,PERSIAN 古典波斯
+dulan_d,杜兰尼,杜兰,1716,1823,city_kandaha,坎大哈,PERSIAN 古典波斯
+huluo,古尔,呼罗,1148,1215,city_helate,菲鲁兹库赫,PERSIAN 古典波斯
+xierhe,乌古斯叶护国,锡尔,750,1055,city_qihe,哲德,CENTRAL_ASIA 封建河中
+yangguan,西凉,凉,397,421,city_yangguan,阳关,HEXI 古典秦汉
+xiliangjun,西凉军,董,184,198,city_luoyang,洛阳,CENTRAL 中原
+kepantuo,渴盘陀,渴盘,100,750,city_gongzhubao,公主堡,WESTERN 古典塞种
+kumoxi,库莫奚,奚,400,1123,city_raoleshui,饶乐水,XIANBEI 
+shanshan,鄯善,鄯善,-176,445,city_loulan,扜泥城,WESTERN 古典塞种
+wuyue,吴越,吴越,878,978,city_hangzhou,杭州,JIANGNAN 封建隋唐
+minyue,闽越,闽越,-306,-110,city_chongan,崇安,HUGUANG 
+funan,扶南,扶南,50,627,city_piyetuo,毗耶陀,KHMER 城堡高棉
+lancang,澜沧,澜沧,1353,1900,city_langbolabang,琅勃拉邦,KHMER 城堡高棉
+ahaomu,阿豪姆,阿萨,1228,1826,city_geergang,戈尔冈,BENGALIS 封建孟加拉
+elunchunzu,鄂伦春,鄂伦,1600,1900,city_huma,呼玛,NORTHEAST 古典鲜卑
+tajikezu,塔吉克,塔吉,900,1900,city_huoluoge,霍罗格,WESTERN 古典塞种
+jingpozu,景颇,景颇,1500,1900,city_mizhina,密支那,BURMESE 城堡缅甸
+xingwei,兴威,兴威,1300,1888,city_mubang,木邦,BURMESE 城堡缅甸
+saerbadaer,萨尔巴达尔,萨尔,1337,1381,city_baihage,白哈格,PERSIAN 古典波斯
+yilihanguo_d,伊利汗国,伊利,1253,1335,city_dabulishi,大不里士,SASANIAN 封建波斯
+wulaertu,亚美尼亚,亚美,884,1045,city_ailiwen,埃里温,ARMENIANS 古典亚美尼亚
+wulaertu_guo,乌拉尔图,乌图,-860,-590,city_tushpa,图什帕,ARMENIANS 古典亚美尼亚
+gelujiya,格鲁吉亚,格,1008,1801,city_dibilisi,第比利斯,GEORGIANS 封建格鲁吉亚
+bendou,特拉布宗,特拉,1204,1461,city_telabuzong,特拉布宗,BYZANTINE 封建拜占庭
+saipulusi,塞浦路斯,塞浦,1192,1489,city_nikexiya,尼科西亚,FRANKS 封建法兰克
+bendou_d,本都,本都,-281,-63,city_amaxiya,阿马西亚,BYZANTINE 封建拜占庭
+heti,赫梯,赫梯,-1650,-1180,city_hatusha,哈图沙,TURKS 封建突厥
+fulijiya,弗里吉亚,弗里,-1200,-675,city_geerdiweng,戈尔迪乌姆,TURKS 封建突厥
+ldiya,吕底亚,吕底,-1200,-546,city_sifaerde,斯法尔德,GREECE 
+pajiama,帕加马,帕加,-301,-133,city_peierjiameng,佩尔加蒙,GREECE 
+luomu,罗姆,罗姆,1077,1308,city_yikeniwumu,伊科尼乌姆,TURKS 封建突厥
+yinduxila,印度希腊王国,印希,-200,10,city_dinggucheng,难揭,PURU 古典普鲁
+asakaini,阿萨凯尼,阿萨,-550,-326,city_aonuosiyan,奥诺斯岩,PURU 古典普鲁
+sailiugu,塞琉古帝国,塞琉,-321,-63,city_antiejiya,安提俄基亚,ORIE 封建阿拉伯
+womaya,倭马亚,倭马,661,1031,city_damasikusi,大马士革,ORIE 封建阿拉伯
+xibolai,以色列,以色,-1050,-37,city_yelusaleng,耶路撒冷,ORIE 封建阿拉伯
+aiji,埃及,埃及,-3100,-30,city_mengfeisi,孟菲斯,ORIE 封建阿拉伯
+tuolemi,托勒密,托勒,-323,-30,city_yalishanda,亚历山大,MACEDONIAN 古典马其顿
+jialedi,迦勒底,迦勒,-626,-539,city_babilun,巴比伦,ORIE 封建阿拉伯
+paermila,帕尔米拉,帕尔,260,273,city_tademoer,塔德莫尔,ORIE 封建阿拉伯
+abasi,阿拔斯王朝,阿拔,718,1258,city_bageda,巴格达,ORIE 封建阿拉伯
+xikesuosi,喜克索斯,喜克,-1650,-1550,city_awalisi,阿瓦里斯,ORIE 封建阿拉伯
+yashu,亚述,亚述,-2025,-609,city_niniwei,尼尼微,ORIE 封建阿拉伯
+midi,米底,米底,-728,-550,city_hamadan,哈马丹,PERSIAN 古典波斯
+aqimeinide,阿契美尼德,阿契,-675,-330,city_bosibolisi,波斯波利斯,PERSIAN 古典波斯
+sashan,萨珊,萨珊,200,651,city_feiluzhabade,菲鲁扎巴德,SASANIAN 封建波斯
+ailan,埃兰,埃兰,-3200,-539,city_susa,苏萨,PERSIAN 古典波斯
+safawei_d,萨法维,萨朝,1501,1736,city_yisifahan,伊斯法罕,PERSIAN 古典波斯
+sumeier,乌鲁克,乌鲁,-4000,-2112,city_wuluke,乌鲁克,ORIE 封建阿拉伯
+ayoubu,阿尤布,阿尤,1171,1260,city_alepo,阿勒颇,ORIE 封建阿拉伯
+mamuluke,马穆鲁克,马穆,1250,1517,city_damasikusi,大马士革,ORIE 封建阿拉伯
+aosiruowen,奥斯若恩,若恩,-132,214,city_aidesa,埃德萨,ORIE 封建阿拉伯
+kesa,可萨,可萨,650,969,city_daerban,打耳班,SASANIAN 封建波斯
+aiaoniya,爱奥尼亚,爱奥,-650,-493,city_yifusuo,以弗所,GREECE 
+jialatai,加拉太,加拉,-279,-25,city_ankala,安卡拉,TURKS 封建突厥
+ansxi,安息帝国,安息,-260,224,city_nisa,尼萨,SASANIAN 封建波斯
+nabatai,纳巴泰王国,纳巴,-168,106,city_peitra,佩特拉,ORIE 封建阿拉伯
+xike,锡克帝国,锡克,1799,1849,city_laheer,拉合尔,PURU 古典普鲁
+deli,德里苏丹国,德苏,1192,1526,city_deli,德里,MUGHAL 帝国莫卧儿
+sur,苏尔帝国,苏尔,1540,1556,city_deli,德里,MUGHAL 帝国莫卧儿
+mowoer,莫卧儿帝国,莫卧,1469,1857,city_agela,阿格拉,MUGHAL 帝国莫卧儿
+jieri,戒日帝国,戒日,606,647,city_qunvcheng,曲女城,MUGHAL 帝国莫卧儿
+kongque,孔雀帝国,孔雀,-322,-185,city_huashicheng,华氏城,MUGHAL 帝国莫卧儿
+mojietuo,摩揭陀王国,摩揭,-544,-322,city_wangshecheng,王舍城,MUGHAL 帝国莫卧儿
+boluo,波罗帝国,波罗,750,1161,city_gaodacheng,高达城,BENGALIS 封建孟加拉
+dedan,德丹王国,德丹,-700,-100,city_taima,泰马,ORIE 封建阿拉伯
+maidina,拉希顿,拉希,622,661,city_maidina,麦地那,ORIE 封建阿拉伯
+gulaishi,古莱什部落,古莱,450,630,city_maijia,麦加,ORIE 封建阿拉伯
+jiashi_d,迦尸国,迦尸,-800,-400,city_walanaxi,瓦拉纳西,MUGHAL 帝国莫卧儿
+xiemian,萨维尔,萨维,463,700,city_xiemianjieer,谢缅杰尔,CUMAN 城堡库曼
+salai,诺盖汗国,诺盖,1360,1634,city_salaichuke,萨莱楚克,CENTRAL_ASIA 封建河中
+aztec,阿兹特克,阿兹,1325,1521,city_tenochtitlan,特诺奇提特兰,AMERICA 城堡阿兹特克
+taino_d,泰诺,泰诺,1492,1533,city_yala,亚拉,TUPI 帝国图皮
+guanche,关切人,关切,-1000,1496,city_telde,特尔德,BERBER 封建柏柏尔
+chamorro,查莫罗,查莫,800,1695,city_hagatna,阿加尼亚,MALAY 城堡马来
+inca,印加,印加,1197,1533,city_cusco,库斯科,INCA 
+maya,玛雅,玛雅,100,900,city_tikal,蒂卡尔,MAYANS 封建玛雅
+mapuche,马普切,马普,1470,1883,city_tucapel,图卡佩尔,MAPUCHE 帝国马普切
+muisca,穆伊斯卡,穆伊,1450,1538,city_bacata,巴卡塔,MUISCA 城堡穆伊斯卡
+tupi,图皮,图皮,1500,1567,city_guanabara,瓜纳巴拉,TUPI 帝国图皮
+yiluokui,易洛魁联盟,易洛,1142,1900,city_onondaga,奥农多加,AMERICA 城堡阿兹特克
+qimu,奇穆,奇穆,850,1470,city_chanchan,昌昌,INCA 
+talasike,塔拉斯科,塔拉,1300,1530,city_tzintzuntzan,钦聪灿,AMERICA 城堡阿兹特克
+tailuona,泰罗纳,泰罗,900,1600,city_teyuna,特尤纳,MUISCA 城堡穆伊斯卡
+teweierqie,特维尔切,尔切,1520,1885,city_sanjulian,圣胡利安港,MAPUCHE 帝国马普切
+manzheboyi,满者伯夷,满者,1222,1527,city_teluowulan,特罗武兰,MALAY 城堡马来
+zhelouqi,乔汉,乔汉,551,1192,city_ajiemier,阿杰梅尔,GURJARAS 封建瞿折罗
+suosuo,索索,索索,1150,1235,city_kumubi,库姆比萨利赫,AFRICA 城堡马里
+ghana_diguo,加纳帝国,加纳,100,1200,city_kumubi,库姆比萨利赫,AFRICA 城堡马里
+antiaokegongguo,赞吉,赞吉,1122,1250,city_latajiya,拉塔基亚,ORIE 封建阿拉伯
+saimien,塞米恩,塞米,350,1627,city_saimien,塞米恩,ETHIOPIANS 封建埃塞俄比亚
+kaliya,卡里亚,卡里,-520,-334,city_halikanasu,哈利卡纳苏斯,GREECE 
+adiyabeina,阿迪亚贝纳,亚贝,-150,226,city_aerbeila,阿尔贝拉,ORIE 封建阿拉伯
+tamoyue,塔莫约,塔莫,1500,1567,city_kabufoliwu,卡布弗里乌,TUPI 帝国图皮
+bogendigongguo,勃艮第公国,勃公,1032,1477,city_mengteluo,蒙特罗,BURGUNDIANS 城堡勃艮第
+bogendi_wangguo,勃艮第王国,勃王,411,1032,city_geneva,日内瓦,BURGUNDIANS 城堡勃艮第
+amaniyake,阿马尼亚克,阿马,960,1607,city_oushi,欧什,FRANKS 封建法兰克
+weiershigongguo,威尔士公国,威尔,1216,1283,city_buyiersi,布伊尔斯,CELTS 
+taimier,马拉塔,马拉,1674,1818,city_jinqi,金奇,INDIA 古典印度
+xibanya,西班牙,西,1479,1900,city_lima,利马,SPANISH 帝国西班牙
+manding,马里,曼丁,1180,1670,city_timbuktu,廷巴克图,AFRICA 城堡马里
+ethiopia,埃塞俄比亚,埃塞,1270,1900,city_aksum,阿克苏姆,ETHIOPIANS 封建埃塞俄比亚
+zhagewei,扎格维,扎维,900,1270,city_lalibeila,拉利贝拉,ETHIOPIANS 封建埃塞俄比亚
+adal,阿达尔,阿达,1415,1577,city_zeila,塞拉,ORIE 封建阿拉伯
+malacca,满剌加,满剌,1290,1511,city_malacca,马六甲,MALAY 城堡马来
+sanfoqi,三佛齐,三佛,650,1377,city_sanfoqi,巨港,MALAY 城堡马来
+medang,马打蓝,马打,716,1016,city_kalasan,卡拉桑,MALAY 城堡马来
+ternate,特尔纳特,特尔,1257,1900,city_deernate,德尔纳特,MALAY 城堡马来
+sulu,苏禄苏丹国,苏禄,1349,1900,city_huoluo,霍洛,MALAY 城堡马来
+gurjara,瞿折罗,瞿折,730,1036,city_patan,帕坦,GURJARAS 封建瞿折罗
+suomunate,索兰基,索兰,940,1244,city_suomunate,索姆纳特,GURJARAS 封建瞿折罗
+zhuluo,朱罗,朱罗,-300,1279,city_tanjiawuer,坦贾武尔,INDIA 古典印度
+sengjialuo,僧伽罗,僧伽,-543,1815,city_anulade,阿努拉德,INDIA 古典印度
+pandiya,潘地亚,潘地,-300,1650,city_madula,马杜赖,INDIA 古典印度
+kushi,库施,库施,-1070,350,city_mailuoe,麦罗埃,ETHIOPIANS 封建埃塞俄比亚
+aolisha,东恒伽,东恒,1078,1434,city_puli,普里,INDIA 古典印度
+kanata,维查耶纳伽尔,维查,1336,1646,city_hengbi,亨比,INDIA 古典印度
+adile,比贾普尔,比贾,1490,1686,city_bijiabuer,比贾布尔,INDIA 古典印度
+yilisi,埃利斯,埃利,-850,-146,city_aolinpiya,奥林匹亚,GREECE 
+nuowei,挪威,挪威,860,1066,city_boergong,博尔贡,VIKINGS 封建维京
+keernuwaye,康沃尔,康沃,410,936,city_kanpeier,坎佩尔,BRITONS 城堡英格兰
+wuer,新苏美尔,乌尔,-2112,-2004,city_wuer,乌尔城,ORIE 封建阿拉伯
+jienei,杰内,杰内,765,1468,city_jienei,杰内城,AFRICA 城堡马里
+muwaxide,穆瓦希德,穆瓦,1121,1269,city_labate,拉巴特,BERBER 封建柏柏尔
+yilaka,伊拉卡,伊拉,1470,1541,city_suojiamosuo,索加莫索,MUISCA 城堡穆伊斯卡
+gualani,瓜拉尼,瓜拉,1537,1801,city_yiguasu,伊瓜苏,TUPI 帝国图皮
+bulu,波罗婆,波罗,-470,-317,city_meng,蒙格,PURU 古典普鲁
+mallabhum,末罗王国,末罗,694,1806,city_bishnupur,比什努普尔,BENGALIS 封建孟加拉
+vidin_tsardom,维丁国,维丁,1280,1396,city_baba_vida,巴巴维达,BULGARIANS 封建保加利亚
+samtskhe,萨姆茨赫,萨姆,1200,1625,city_akhaltsikhe,阿哈尔齐赫,GEORGIANS 封建格鲁吉亚
+tomara_gwalior,托摩罗,托摩,1394,1516,city_gwalior_fort,瓜廖尔堡,MUGHAL 帝国莫卧儿
+kanan,推罗,推罗,-2750,-332,city_tuile,推罗,ORIE 封建阿拉伯
+feilisidin,非利士,非利,-1175,-604,city_jiasa,加沙,ORIE 封建阿拉伯
+qutb_shahi,戈尔康达,库特,1518,1687,city_golconda,戈尔康达,INDIA 古典印度
+minangkabau,米南加保,米南,1183,1833,city_pagaruyung,帕加鲁荣,MALAY 城堡马来
+tutul_xiu,休族,休族,850,1542,city_uxmal,乌斯马尔,MAYANS 封建玛雅
+sijitai,斯基泰,斯基,-800,-300,city_asu,塔纳伊斯,GREECE 
+aswaka,阿斯瓦卡,斯瓦,-550,-327,city_masaga,马萨加,PURU 古典普鲁
+malli,马利,马利,-550,-325,city_malisi,马里斯,PURU 古典普鲁
+dasaleiti,达萨雷提,达萨,-500,-168,city_peiliang,佩利昂,MACEDONIAN 古典马其顿
+kapaduoxiya,卡帕多细亚,卡帕,-405,17,city_tiyana,提亚纳,TURKS 封建突厥
+aolitai,奥里泰,奥里,-550,-325,city_lanbaqiya,兰巴基亚,PURU 古典普鲁
+kuman_oleshky,库曼,库曼,900,1241,city_oleshky,奥列什基,CUMAN 城堡库曼
+dalriada,达尔里阿达,达里,498,843,city_dunadd,邓纳德,CELTS 
+dublin,都柏林王国,都林,853,1171,city_dublin,都柏林,CELTS 
+scotland,苏格兰,苏,843,1707,city_scone,斯昆,CELTS 
+chanka,昌卡,昌卡,1200,1438,city_andahuaylas,安达瓦伊拉斯,INCA 
+ouchi,大内,大内,1336,1557,city_yamaguchi,山口,JAPAN 城堡镰仓
+cueva,库埃瓦,库埃,1480,1550,city_comagre,科马格雷,MUISCA 城堡穆伊斯卡
+maynila,马尼拉土邦,马尼,1500,1571,city_manila,马尼拉,MALAY 城堡马来
+gujarat,古吉拉特苏丹国,古苏,1394,1592,city_ahmedabad,艾哈迈达巴德,GURJARAS 封建瞿折罗
+arakan,阿拉干,若开,1429,1785,city_miaowu,妙乌,BURMESE 城堡缅甸
+wandan,万丹,万丹,1527,1813,city_wandan,万丹,MALAY 城堡马来
+kosala,拘萨罗,拘萨,-1000,-500,city_sheweicheng,舍卫城,MUGHAL 帝国莫卧儿
+kalinga,羯陵伽,羯陵,-600,-261,city_danta,丹塔普拉,INDIA 古典印度
+anga,鸯伽,鸯伽,-1000,-500,city_zhanbo,瞻波,MUGHAL 帝国莫卧儿
+shunga,巽伽,巽伽,-185,-73,city_ayuta,阿逾陀,MUGHAL 帝国莫卧儿
+antigonid,安提柯,安提,-333,-168,city_kailaina,凯莱奈,MACEDONIAN 古典马其顿
+hou_han,后汉,汉,941,979,city_taiyuan,晋阳,WEI 
+yuan_shao,冀州,冀,189,207,city_anyang,安阳,CENTRAL 中原
+hou_jin,石晋,晋,932,947,city_daixian,灵仙,WEI 
+hou_zhao,石赵,赵,305,351,city_xingtai,邢台,WEI 
+da_yan,大燕,燕,755,763,city_fanyang,范阳,WEI 
+hou_liang,朱梁,梁,882,923,city_wudingzhou,乐安,CENTRAL 中原
+han_zhao,汉赵,汉,279,329,city_lishi,离石,WEI 
+dongjin,司马晋,晋,265,420,city_nanjing,金陵,JIANGNAN 封建隋唐
+nan_liang,萧梁,梁,498,557,city_nanjing,金陵,JIANGNAN 封建隋唐
+hou_qin,姚秦,秦,312,417,city_changan,长安,CENTRAL 中原
+yiqu,义渠,义渠,-771,-272,city_weirong,威戎,CENTRAL 中原
+hou_zhou,郭周,周,950,960,city_bianliang,开封,CENTRAL 中原
+lvbu,徐州,徐,192,198,city_xiapi,下邳,CENTRAL 中原
+chengjia,成家,成,23,36,city_baidicheng2,白帝城,BASHU 
+qianshu,王蜀,蜀,887,925,city_chengdu,成都,BASHU 
+chuguo,楚国,楚,-1030,-202,city_ying,江陵,HUGUANG 
+liusong,刘宋,宋,404,479,city_nanjing,金陵,JIANGNAN 封建隋唐
+nanqi,萧齐,齐,479,502,city_nanjing,金陵,JIANGNAN 封建隋唐
+yangwu,杨吴,吴,883,937,city_yangzhou,广陵,JIANGNAN 封建隋唐
+nantang,南唐,唐,931,975,city_nanjing,金陵,JIANGNAN 封建隋唐
+machu,马楚,楚,896,951,city_changsha,长沙,HUGUANG 
+nanhan,南汉,汉,894,971,city_panyu,番禺,HUGUANG 
+fangguozhen,浙东,浙东,1348,1367,city_wenzhou,永嘉,JIANGNAN 封建隋唐
+liang_shuofang,鸣凤,梁,617,621,city_ying,江陵,HUGUANG 
+liangshidu,永隆,梁,617,628,city_changze,长泽,XIANBEI 
+qianliang,前凉,凉,301,376,city_wuwei,姑臧,HEXI 古典秦汉
+liangzhou,凉州,凉,185,189,city_wuwei,姑臧,HEXI 古典秦汉
+dangchang_guo,宕昌,宕昌,424,566,city_diezhou,迭部,TIBET 封建吐蕃
+sanada,真田家,真田,1583,1600,city_ueda,上田城,JAPAN 城堡镰仓
+tokugawa,德川家,德川,1471,1868,city_edo,江户城,JAPAN 城堡镰仓
+amago,尼子,尼子,1486,1566,city_izumo,月山富田,JAPAN 城堡镰仓
+shimazu,岛津家,岛津,1187,1871,city_satsuma,鹿儿岛城,JAPAN 城堡镰仓
+mori,毛利家,毛利,1500,1600,city_yoshida,吉田郡山,JAPAN 城堡镰仓
+uesugi,上杉家,上杉,1368,1871,city_kasugayama,春日山,JAPAN 城堡镰仓
+takeda,武田家,武田,1521,1582,city_tsutsujigasaki,躑躅崎馆,JAPAN 城堡镰仓
+toyotomi,丰臣家,丰臣,1573,1615,city_osaka,大阪,JAPAN 城堡镰仓
+utsunomiya,宇都宫家,宇都,1185,1597,city_utsunomiya,宇都宫城,JAPAN 城堡镰仓
+nanchou,大觉寺统,南朝,1287,1392,city_asuka,千早城,JAPAN 城堡镰仓
+nanbu_shi,南部家,南部,1191,1871,city_genjo,根城,JAPAN 城堡镰仓
+shoni,少弐,少弐,1189,1551,city_taizaifu,太宰府,JAPAN 城堡镰仓
+heishi,平氏,平,1167,1185,city_chijianguan,赤间关,JAPAN 城堡镰仓
+imagawa,今川家,今川,1490,1569,city_junfucheng,骏府,JAPAN 城堡镰仓
+oda,织田家,织田,1518,1582,city_atsuta,宫宿,JAPAN 城堡镰仓
+hojo,北条家,北条,1491,1590,city_hakone,箱根关,JAPAN 城堡镰仓
+mahan,马韩,马韩,-300,369,city_yuezhi,大木岳,KOREA 封建高句丽
+daquyue,大瞿越,越,968,1054,city_hoalu,华闾,VIETNAMESE 城堡大越
+yuenan,越南,越,1558,1900,city_fuchun,富春,VIETNAMESE 城堡大越
+jiaohuangguo,教皇国,教皇,756,1870,city_luoma,罗马,ROMA 
+yalan,亚兰,亚兰,-1200,-732,city_damasikusi,大马士革,ORIE 封建阿拉伯
+yaqi,亚齐苏丹国,亚齐,1496,1900,city_yaqi,亚齐,MALAY 城堡马来
+zhamolin,卡利卡特,古里,1124,1766,city_guli,古里,INDIA 古典印度
+lugii,卢吉联盟,卢吉,-100,400,city_kelakefu,克拉科夫,POLES 城堡波兰
+wu_han,刘吴,吴,-195,-154,city_yangzhou,广陵,JIANGNAN 封建隋唐
+qi_zhangbu,张齐,齐,23,29,city_linzi,临淄,CENTRAL 中原
+wangdaer,汪达尔王国,汪达,439,534,city_jiataji,迦太基,BERBER 封建柏柏尔
+kesaiya,科塞亚,科塞,-360,-300,city_hamadan,哈马丹,PERSIAN 古典波斯
+muxikani,穆西卡尼,穆西,-350,-300,city_aluoer,阿罗尔,PURU 古典普鲁
+houmojietuo,后摩揭陀,后摩,590,640,city_putijiaye,菩提伽耶,MUGHAL 帝国莫卧儿
+sumo,苏摩国,苏摩,-600,-400,city_danmoledi,耽摩栗底,BENGALIS 封建孟加拉
+gushu,古蜀,蜀,-400,-316,city_chengdu,成都,BASHU 
+gaoda,高达王国,高达,590,626,city_gaodacheng,高达城,BENGALIS 封建孟加拉
+kelite_amier,克里特埃米尔国,克特,824,961,city_knossos,干地亚要塞,LATIN 古典罗马
+kelimiya_han,克里米亚汗国,克米,1441,1783,city_oleshky,奥列什基,CUMAN 城堡库曼
+guzigan,古兹甘,古兹,800,1010,city_fariyab,法里亚布,PERSIAN 古典波斯
+bahemani,巴赫曼尼苏丹国,巴赫,1347,1527,city_taibade,泰巴德,PERSIAN 古典波斯
+halapengcai,哈利奔猜王国,哈利,750,1292,city_thaton,直通,BURMESE 城堡缅甸
+dongchahatai,东察合台汗国,察合,1347,1680,city_ahexikesi,阿赫西克特,WESTERN 古典塞种
+buhala,布哈拉埃米尔国,布哈,1785,1900,city_jizhake,吉扎克,CENTRAL_ASIA 封建河中
+biluzhi,俾路支,俾路,1480,1533,city_kuida,奎达,PERSIAN 古典波斯
+bonape,波纳佩,波纳,1200,1628,city_nanmadol,南马都尔,MALAY 城堡马来
+xiaweiyi,夏威夷王国,夏威,1795,1893,city_honolulu,火奴鲁鲁,MALAY 城堡马来
+yidali_hre,比安德拉泰伯国,比安,1070,1335,city_milan,米兰,LATIN 古典罗马

@@ -11,9 +11,9 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "barakzai_afghan": 'PERSIAN',   // 巴拉克宰
     "zand_dynasty": 'PERSIAN',   // 赞德
     "aizu_ashina": 'JAPAN',   // 芦名家
-    "aq_qoyunlu": 'SASANIAN',   // 白羊王朝
-    "bulidi": 'ORIE',   // 布里迪王朝
-    "tahirid": 'SASANIAN',   // 塔希尔王朝
+    "aq_qoyunlu": 'SASANIAN',   // 白羊土库曼
+    "bulidi": 'ORIE',   // 布里迪埃米尔国
+    "tahirid": 'SASANIAN',   // 塔希尔埃米尔国
     "heruli": 'GOTHS',   // 赫鲁利
     "huanchu": 'JIANGNAN',   // 桓楚
     "gallic_empire": 'ROMA',   // 高卢帝国
@@ -43,10 +43,11 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "epidaurus": 'GREECE',   // 埃皮道鲁斯
     "corcyra": 'GREECE',   // 科西拉
     "mytilene": 'GREECE',   // 米蒂利尼
+    "jiangnan_yijun": 'JIANGNAN',   // 江南义军
     "jiangqi": 'CENTRAL',   // 姜齐
     "luoma_gongheguo": 'ROMA',   // 罗马共和国
-    "hasmonean": 'ORIE',   // 哈斯蒙尼
-    "arelat": 'BURGUNDIANS',   // 阿尔勒王国
+    "hasmonean": 'ORIE',   // 哈斯蒙尼王国
+    "arelat": 'BURGUNDIANS',   // 上勃艮第王国
     "hou_womaya": 'ORIE',   // 后倭马亚
     "ganzhou_huihu": 'HEXI',   // 甘州回鹘
     "gaochang_huihu": 'WESTERN',   // 高昌回鹘
@@ -60,10 +61,11 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "thonburi": 'KHMER',   // 吞武里王国
     "zao_zhuluo": 'INDIA',   // 早期朱罗
     "kotte": 'INDIA',   // 科特王国
-    "gu_aiji": 'ORIE',   // 古埃及
+    "gu_aiji": 'ORIE',   // 埃及新王国
+    "aiji_guwangguo": 'ORIE',   // 埃及古王国
     "houjin": 'NORTHEAST',   // 后金
-    "buyid": 'PERSIAN',   // 白益王朝
-    "scaliger": 'LATIN',   // 斯卡拉家族
+    "buyid": 'PERSIAN',   // 白益埃米尔国
+    "scaliger": 'LATIN',   // 斯卡利杰里家族
     "mantinea": 'GREECE',   // 曼丁尼亚
     "arcadia": 'GREECE',   // 阿卡迪亚同盟
     "macedon_royal": 'MACEDONIAN',   // 马其顿王军
@@ -168,7 +170,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "rashtrakuta": 'INDIA',   // 拉什特拉库塔
     "andean_rebellion": 'INCA',   // 安第斯起义军
     "abkhazia_kingdom": 'GEORGIANS',   // 阿布哈兹王国
-    "mac_dynasty": 'VIETNAMESE',   // 莫朝
+    "mac_dynasty": 'VIETNAMESE',   // 莫氏
     "restored_hanthawaddy": 'BURMESE',   // 复兴汉达瓦底
     "bashkir": 'CENTRAL_ASIA',   // 巴什基尔
     "drevlians": 'SLAVIC',   // 德列夫利安人
@@ -177,7 +179,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "caledonia": 'CELTS',   // 喀里多尼亚
     "goths_migration": 'GOTHS',   // 哥特人
     "syracuse": 'SICILIANS',   // 叙拉古
-    "hamdanid": 'ORIE',   // 哈姆丹王朝
+    "hamdanid": 'ORIE',   // 哈姆丹埃米尔国
     "wiman_joseon": 'KOREA',   // 卫满朝鲜
     "gusiluo": 'TIBET',   // 唃厮啰
     "old_saxons": 'SAXONS',   // 古撒克逊
@@ -511,7 +513,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "gengshi": 'CENTRAL',   // 更始
     "shierShijun": 'VIETNAMESE',   // 十二使君
     "xishan": 'VIETNAMESE',   // 西山
-    "malla": 'TIBET',   // 马拉王朝
+    "malla": 'TIBET',   // 马拉王国
     "mihran": 'SASANIAN',   // 米赫兰
     "xiwasi": 'TURKS',   // 埃雷特纳
     "mengguqieke": 'TURKS',   // 门古切克
@@ -568,7 +570,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "tuolemi": 'MACEDONIAN',   // 托勒密
     "jialedi": 'ORIE',   // 迦勒底
     "paermila": 'ORIE',   // 帕尔米拉
-    "abasi": 'ORIE',   // 阿拔斯王朝
+    "abasi": 'ORIE',   // 阿拔斯哈里发国
     "xikesuosi": 'ORIE',   // 喜克索斯
     "yashu": 'ORIE',   // 亚述
     "midi": 'PERSIAN',   // 米底

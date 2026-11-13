@@ -892,7 +892,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 85.13,
         myTroops: 15200,
         enemyFactionId: 'mojietuo',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '难陀王朝',
+        enemyFactionName: '摩揭陀王国',
         enemyGeneralId: 'bfe2_dhanananda',
         enemyTroops: 20000,
         introLines: [
@@ -1260,7 +1260,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 36.3094,
         myTroops: 20000,
         enemyFactionId: 'tuolemi',
-        enemyFactionName: '托勒密王朝',
+        enemyFactionName: '托勒密',
         enemyGeneralId: 'bfe3_19',
         enemyTroops: 18000,
         introLines: [
@@ -1327,7 +1327,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 112.420349,
         myTroops: 20000,
         enemyFactionId: 'han_d',
-        enemyFactionName: '汉朝',
+        enemyFactionName: '刘汉',
         enemyGeneralId: 'han_d_liubang',
         enemyTroops: 16000,
         introLines: [
@@ -1350,7 +1350,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 117.18,
         myTroops: 12000,
         enemyFactionId: 'han_d',
-        enemyFactionName: '汉朝联军',
+        enemyFactionName: '刘汉',
         enemyGeneralId: 'han_d_liubang',
         enemyTroops: 20000,
         introLines: [
@@ -1439,7 +1439,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 74.35,
         myTroops: 17500,
         enemyFactionId: 'shunga',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '巽伽王朝',
+        enemyFactionName: '巽伽',
         enemyGeneralId: 'bfe3_27',
         enemyTroops: 20000,
         introLines: [
@@ -1536,7 +1536,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 35.21,
         myTroops: 20000,
         enemyFactionId: 'hasmonean',
-        enemyFactionName: '哈斯蒙尼',
+        enemyFactionName: '哈斯蒙尼王国',
         enemyGeneralId: 'gen_aristobulus_ii',
         enemyTroops: 15000,
         introLines: [
@@ -1674,7 +1674,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 113.22,
         myTroops: 20000,
         enemyFactionId: 'dixiang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '新朝',
+        enemyFactionName: '新国',
         enemyGeneralId: 'bfe3_56',
         enemyTroops: 20000,
         introLines: [
@@ -2783,7 +2783,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 118.77,
         myTroops: 20000,
         enemyFactionId: 'nanqi',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '南齐朝廷军',
+        enemyFactionName: '萧齐',
         enemyGeneralId: 'nanqi_xiaobaojuan',   // 🔴 [2026-10-20 经典战规则] 建康守方是东昏侯萧宝卷
         enemyTroops: 20000,
         introLines: [
@@ -3052,8 +3052,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 29.987,
         targetLng: 120.582,
         myTroops: 14300,
-        enemyFactionId: 'sui',   // 🔴 [2026-11-05 按A执行] 高智慧原势力 dongyang（会稽义军）已并入隋国，此处改为隋国；史实内战（来护儿·隋 vs 高智慧·隋），按 AGENTS §四.4「史实内战双方可同属一个势力」
-        enemyFactionName: '隋国',
+        enemyFactionId: 'jiangnan_yijun',
+        enemyFactionName: '江南义军',
         enemyGeneralId: 'bfe_gao_zhihui',
         enemyTroops: 20000,
         introLines: [
@@ -3097,7 +3097,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 125.66,
         myTroops: 20000,
         enemyFactionId: 'sui',
-        enemyFactionName: '隋朝',
+        enemyFactionName: '隋国',
         enemyGeneralId: 'sui_yuwenshu',   // 🔴 [2026-10-20 经典战规则] 612 萨水隋军主帅宇文述（原势力误填乐浪）
         enemyTroops: 20000,
         introLines: [
@@ -3351,7 +3351,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 103.625793,
         myTroops: 20000,
         enemyFactionId: 'tang',
-        enemyFactionName: '唐朝',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'song2_houjunji',   // 🔴 [2026-10-25 按史] 638 松州，唐当弥道行军大总管侯君集（牛进达为阔水道先锋，夜袭破营）
         enemyTroops: 20000,
         introLines: [
@@ -3448,7 +3448,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 100.761,
         myTroops: 20000,
         enemyFactionId: 'tang',
-        enemyFactionName: '唐朝',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'loufan_xuerengui',
         enemyTroops: 20000,
         introLines: [
@@ -3560,7 +3560,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 69.659,
         myTroops: 20000,
         enemyFactionId: 'womaya',
-        enemyFactionName: '倭马亚王朝',
+        enemyFactionName: '倭马亚',
         enemyGeneralId: 'womaya_muslim',   // 🔴 [2026-10-20 经典战规则] 724 渴水日倭马亚主帅穆斯林（原势力误填图兰）
         enemyTroops: 17500,
         introLines: [
@@ -3582,7 +3582,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 1.517,
         myTroops: 15000,
         enemyFactionId: 'womaya',
-        enemyFactionName: '倭马亚王朝',
+        enemyFactionName: '倭马亚',
         enemyGeneralId: 'womaya_abdrahman',   // 🔴 [2026-10-20 经典战规则] 732 普瓦捷倭马亚主帅拉赫曼（原势力误填瓦卢瓦）
         enemyTroops: 20000,
         introLines: [
@@ -3673,7 +3673,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 110.68,
         myTroops: 16000,
         enemyFactionId: 'tang',   // 🔴 2026-10-20 修正：敌军是唐军，原填哥舒翰的潘州势力
-        enemyFactionName: '唐朝',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'gaoliang_geshuhan',
         // 🔴 [2026-10-20 兵力规则] 唐军号称二十万，按「守方≤攻方×2」取 8 万（我方 4 万）
         enemyTroops: 20000,
@@ -3766,7 +3766,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 100.500183,
         myTroops: 20000,
         enemyFactionId: 'tang',
-        enemyFactionName: '唐朝',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'tang_limi',   // 🔴 [2026-10-20 经典战规则] 754 征南诏唐军主帅李宓
         enemyTroops: 20000,
         introLines: [
@@ -3858,7 +3858,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 108.93,
         myTroops: 20000,
         enemyFactionId: 'tang',
-        enemyFactionName: '唐朝',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'lingwu_guoziyi',   // 🔴 [2026-10-20 经典战规则] 763 长安守方唐军统帅郭子仪（复用现有武将）
         enemyTroops: 12000,
         introLines: [
@@ -4088,7 +4088,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 62.19,
         myTroops: 16700,
         enemyFactionId: 'tahirid',   // 🔴 [2026-10-25 按史] 敌将势力对齐
-        enemyFactionName: '塔希尔王朝',
+        enemyFactionName: '塔希尔埃米尔国',
         enemyGeneralId: 'bfe_cb_tahirid_2',   // 🔴 [2026-10-20 经典战规则] 867 希拉特守方是塔希尔王朝塔希尔
         enemyTroops: 20000,
         introLines: [
@@ -4997,7 +4997,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 68.42,
         myTroops: 17500,
         enemyFactionId: 'jiazini',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '加兹尼王朝',
+        enemyFactionName: '伽色尼',
         enemyGeneralId: 'bfe_arslan_shah',   // 🔴 [2026-10-25 按史] 1117 沙赫拉巴德＝伽色尼苏丹阿尔斯兰沙（疏勒阿尔斯兰是另一人）
         enemyTroops: 20000,
         introLines: [
@@ -5042,7 +5042,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 118.77,
         myTroops: 10000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'jurchen_wanyanzongbi',
         enemyTroops: 20000,
         introLines: [
@@ -5064,7 +5064,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 106.95,
         myTroops: 15000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'jurchen_wanyanzongbi',
         enemyTroops: 15000,
         introLines: [
@@ -5086,7 +5086,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 115.81,
         myTroops: 20000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'jurchen_wanyanzongbi',
         enemyTroops: 20000,
         introLines: [
@@ -5132,7 +5132,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.03,
         myTroops: 20000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'jurchen_wanyanzongbi',
         enemyTroops: 20000,
         introLines: [
@@ -5176,7 +5176,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: -8.22,
         myTroops: 15000,
         enemyFactionId: 'mulabite',
-        enemyFactionName: '穆拉比特王朝',
+        enemyFactionName: '穆拉比特',
         enemyGeneralId: 'gen_ali_ibn_yusuf',
         enemyTroops: 15000,
         introLines: [
@@ -5381,7 +5381,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 35.21,
         myTroops: 10000,
         enemyFactionId: 'ayoubu',
-        enemyFactionName: '阿尤布王朝',
+        enemyFactionName: '阿尤布',
         enemyGeneralId: 'ayoubu_salaheding',
         enemyTroops: 10000,
         introLines: [
@@ -5404,7 +5404,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.7,
         myTroops: 12000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'dajin_wanyanchengyu',   // 🔴 [2026-10-20 经典战规则] 1211 野狐岭金军主帅完颜承裕
         enemyTroops: 20000,
         introLines: [
@@ -5528,7 +5528,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 113.74,
         myTroops: 16000,
         enemyFactionId: 'dajin',
-        enemyFactionName: '金朝',
+        enemyFactionName: '大金',
         enemyGeneralId: 'dajin_wanyanheda',   // 🔴 [2026-10-20 经典战规则] 1232 金军三峰山主帅完颜合达
         // 🔴 [2026-10-20 兵力规则] 金军号称十五万，按「守方≤攻方×2」取 8 万（拖雷 4 万）
         enemyTroops: 20000,
@@ -5996,7 +5996,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 134.6939,
         myTroops: 20000,
         enemyFactionId: 'nanchou',
-        enemyFactionName: '南朝朝廷军',
+        enemyFactionName: '大觉寺统',
         battleMonth: 7,
         enemyGeneralId: 'yamato_nanmuzhengcheng',
         enemyTroops: 10000,
@@ -6070,7 +6070,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 119.42,
         myTroops: 20000,
         enemyFactionId: 'yuan_d',
-        enemyFactionName: '元朝',
+        enemyFactionName: '大元',
         enemyGeneralId: 'yuan_d_tuotuo',   // 🔴 [2026-10-20 经典战规则] 1354 高邮元军主帅脱脱
         enemyTroops: 20000,
         introLines: [
@@ -6159,7 +6159,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 118.47,
         myTroops: 15000,
         enemyFactionId: 'yuan_d',
-        enemyFactionName: '元朝',
+        enemyFactionName: '大元',
         enemyGeneralId: 'yuan_d_manzihaiya',   // 🔴 [2026-10-20 经典战规则] 1355 采石矶元将蛮子海牙
         enemyTroops: 15000,
         introLines: [
@@ -7123,7 +7123,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 116.66,
         myTroops: 20000,
         enemyFactionId: 'ming_d',
-        enemyFactionName: '明朝',
+        enemyFactionName: '大明',
         enemyGeneralId: 'gen_qiu_luan',
         enemyTroops: 20000,
         introLines: [
@@ -7391,7 +7391,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 126.98,
         myTroops: 15000,
         enemyFactionId: 'toyotomi',
-        enemyFactionName: '日本丰臣侵朝军',
+        enemyFactionName: '丰臣家',
         enemyGeneralId: 'bfe_ukita_hideie',   // 🔴 [2026-10-25 按史] 1593 幸州朝鲜侵攻军总大将＝宇喜多秀家（秀吉在名护屋）
         enemyTroops: 15000,
         introLines: [
@@ -7530,7 +7530,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 128.08,
         myTroops: 10000,
         enemyFactionId: 'toyotomi',
-        enemyFactionName: '日本丰臣侵朝军',
+        enemyFactionName: '丰臣家',
         enemyGeneralId: 'bfe_cb_toyotomi_1',   // 🔴 [2026-10-25 按史] 1592 第一次晋州攻城总大将＝宇喜多秀家（秀吉在名护屋）
         enemyTroops: 10000,
         introLines: [
@@ -7574,7 +7574,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 124.046,
         myTroops: 18000,
         enemyFactionId: 'ming_d',
-        enemyFactionName: '明朝',
+        enemyFactionName: '大明',
         enemyGeneralId: 'gen_yang_hao',
         enemyTroops: 20000,
         introLines: [
@@ -7693,7 +7693,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 121.13,
         myTroops: 14000,
         enemyFactionId: 'ming_d',
-        enemyFactionName: '明朝',
+        enemyFactionName: '大明',
         enemyGeneralId: 'gen_hong_chengchou',
         enemyTroops: 20000,
         introLines: [
@@ -7764,7 +7764,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.03,
         myTroops: 20000,
         enemyFactionId: 'ming_d',
-        enemyFactionName: '明朝',
+        enemyFactionName: '大明',
         enemyGeneralId: 'gen_wang_qiaonian',
         enemyTroops: 12000,
         introLines: [
@@ -7811,7 +7811,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 112.6,
         myTroops: 16000,
         enemyFactionId: 'manzhou_d',
-        enemyFactionName: '清朝',
+        enemyFactionName: '大清',
         battleMonth: 11,
         enemyGeneralId: 'gen_nikan',
         enemyTroops: 20000,
@@ -7901,7 +7901,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 117.22,
         myTroops: 12000,
         enemyFactionId: 'manzhou_d',
-        enemyFactionName: '清朝',
+        enemyFactionName: '大清',
         enemyGeneralId: 'bfe_fuquan',   // 🔴 [2026-10-25 按史] 1690 乌兰布通清军＝抚远大将军福全（康熙病返博洛和屯）
         enemyTroops: 20000,
         introLines: [
@@ -7991,7 +7991,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 88.3,
         myTroops: 20000,
         enemyFactionId: 'manzhou_d',
-        enemyFactionName: '清朝',
+        enemyFactionName: '大清',
         enemyGeneralId: 'gen_furdan',
         enemyTroops: 16700,
         introLines: [
@@ -8079,7 +8079,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 97.23,
         myTroops: 17100,
         enemyFactionId: 'manzhou_d',
-        enemyFactionName: '清朝',
+        enemyFactionName: '大清',
         enemyGeneralId: 'bfe_cb_manzhou_d_1',
         enemyTroops: 20000,
         introLines: [
@@ -8152,7 +8152,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 116.22,
         myTroops: 15000,
         enemyFactionId: 'manzhou_d',
-        enemyFactionName: '清朝湘军水陆军',
+        enemyFactionName: '大清',
         enemyGeneralId: 'gen_zengguofan',
         enemyTroops: 20000,
         introLines: [
@@ -8226,7 +8226,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         rewardCityId: 'city_zhaoge',   // 牧野战后周军入朝歌，商亡（《史记·周本纪》）
         myTroops: 18000,
         enemyFactionId: 'shang',
-        enemyFactionName: '商朝大军',
+        enemyFactionName: '殷商',
         enemyGeneralId: 'yin_dixin',   // 🔴 子受＝帝辛，与朝歌据点武将是同一人（双身份），不再另立战场人物
         // 🔴 [2026-10-20 主人令「史记称商军七十万，这就是游戏不合理；按合理的设计兵力」]
         //    周军 4.5 万＝《史记》实数（戎车三百乘、虎贲三千、甲士四万五千）；商军不取七十万/十七万，
@@ -8251,7 +8251,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 36.519,
         myTroops: 20000,
         enemyFactionId: 'gu_aiji',
-        enemyFactionName: '古埃及',
+        enemyFactionName: '埃及新王国',
         enemyGeneralId: 'aiji_lameisisi',   // 🔴 [2026-10-20 双身份] 拉美西斯二世就是据点武将「拉美西斯」（孟菲斯），不另用战场人物 bfe2_ramses_ii
         enemyTroops: 12500,
         introLines: [
@@ -8467,7 +8467,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 34.87,
         myTroops: 12000,
         enemyFactionId: 'bulidi',
-        enemyFactionName: '布里迪王朝',
+        enemyFactionName: '布里迪埃米尔国',
         enemyGeneralId: 'gen_toghtekin',
         enemyTroops: 20000,
         introLines: [
@@ -10072,7 +10072,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 58.7958,
         myTroops: 12000,
         enemyFactionId: 'tahirid',   // 已核（库内塔希尔势力记作 abasi）
-        enemyFactionName: '塔希尔王朝',
+        enemyFactionName: '塔希尔埃米尔国',
         enemyGeneralId: 'bfe_cb_tahirid_3',   // 已核（塔希尔 820—873，873 为卒年、在位）
         enemyTroops: 15000,
         introLines: [
@@ -10815,7 +10815,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 32.8547,
         myTroops: 12000,
         enemyFactionId: 'abasi',
-        enemyFactionName: '阿拔斯王朝',
+        enemyFactionName: '阿拔斯哈里发国',
         battleMonth: 8,
         enemyGeneralId: 'samaila_muataisuimu',
         enemyTroops: 20000,
@@ -11081,7 +11081,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 34.8125,
         myTroops: 20000,
         enemyFactionId: 'ayoubu',
-        enemyFactionName: '阿尤布王朝',
+        enemyFactionName: '阿尤布',
         battleMonth: 9,
         enemyGeneralId: 'ayoubu_salaheding',
         enemyTroops: 20000,
