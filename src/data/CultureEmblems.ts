@@ -21,14 +21,14 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     MUGHAL: 'indians',           // 🔴 [2026-11-13 主人令] 北印/印度斯坦：恒河神狮旭日金轮（深翡翠祖母绿旗）
     BENGALIS: 'bengalis',       // 🔴 [2026-11-13 主人令] 孟加拉：波罗双鹿金法轮国玺（孟加拉深靛蓝旗）
     GURJARAS: 'gurjaras',       // 🔴 [2026-11-13 主人令] 古吉拉特/瞿折罗：莫德拉太阳神轮天马（索姆纳特圣白旗）
-    PURU: 'puru',                // 旁遮普（婆罗/孔雀）：DE puru 浮雕战象章
+    PURU: 'puru',                // 🔴 [2026-11-13 主人令] 旁遮普/普鲁：普鲁斯重甲战象（印度河帝王蓝旗）
     KHMER: 'khmer',              // 🔴 [2026-11-13 主人令] 高棉/湄公河：巴戎微笑圣面微右倾（高棉暗莲茜赤旗）
     MALAY: 'malay',              // 🔴 [2026-11-13 主人令] 马来/南洋群岛：满者伯夷纯金八芒太阳花（南洋深海青蓝旗）
     BURMESE: 'burmese',          // 🔴 [2026-11-13 主人令] 缅甸/伊洛瓦底：贡榜开屏纯金孔雀（贡榜圣白旗）
     // ── 西亚 / 中亚伊斯兰 ─────────────────────────────────────────
-    PERSIAN: 'achaemenids',      // 波斯（阿契美尼德）：DE achaemenids 翼狮
-    SASANIAN: 'persians',        // 萨珊波斯：DE persians 西摩格神鸟
-    ORIE: 'saracens',            // 阿拉伯（萨拉森）：DE saracens 八角星纹
+    PERSIAN: 'achaemenids',      // 🔴 [2026-11-13 主人令] 波斯/伊朗西部：纯金卡瓦神鹰金星战纛（萨珊泰尔紫红旗）
+    SASANIAN: 'persians',        // 🔴 [2026-11-13 主人令] 伊朗东部/呼罗珊（阿契美尼德）：纯金法拉瓦哈万王之翼（玄铁黑旗）
+    ORIE: 'saracens',            // 🔴 [2026-11-13 主人令] 近东/萨拉森：祖勒菲卡尔双刃神剑新月（萨拉森正统翠绿旗）
     TURKS: 'turks',              // 🔴 [2026-11-13 主人令] 安纳托利亚：科尼亚金双头神鹰（塞尔柱深钴青旗）
     ARMENIANS: 'armenians',      // 亚美尼亚：DE armenians 双十字瑞狮
     GEORGIANS: 'georgians',      // 格鲁吉亚：DE georgians 五十字
