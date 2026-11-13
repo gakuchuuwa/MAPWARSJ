@@ -753,12 +753,12 @@ desheng: '#2E6B7A', // 德胜·刘通
     methone: '#7F5539',   // 梅托涅
     macedon_royal: '#5B3F8C',   // 马其顿王军
     arcadia: '#3A7CA5',   // 阿卡迪亚同盟
-    lycia: '#A0522D',   // 吕基亚
+    lycia: '#9B4F2A',   // 吕基亚
     dolopes: '#4A4A4A',   // 多洛佩斯
-    thasos: '#B8860B',   // 萨索斯
+    thasos: '#B07D2B',   // 萨索斯
     corinth: '#8E2C48',   // 科林斯
     melos: '#5F9EA0',   // 米洛斯
-    argos: '#C9A227',   // 阿尔戈斯
+    argos: '#A8892B',   // 阿尔戈斯
     epidaurus: '#6A8D73',   // 埃皮道鲁斯
     corcyra: '#2F4F7F',   // 科西拉
     mytilene: '#7B68AE',   // 米蒂利尼
