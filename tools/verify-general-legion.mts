@@ -18,6 +18,7 @@ import { LEVEL_2_CIV_62_LEGIONS } from '../src/data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../src/data/level3CustomLegions';
 import { getFactionLegionComposition, getLegionNameOfGeneral } from '../src/types/CultureFormations';
 import { getGeneralEraSubtagLegion } from '../src/data/GeneralEraSubtags';
+import { CITIES_V2 } from '../src/data/cities_v2';
 
 const L2 = LEVEL_2_CIV_62_LEGIONS as any[];
 const byKey = new Map<string, string>(L2.map((l) => [`${l.buildingStyle}|${l.age}`, l.name]));
@@ -67,10 +68,11 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         ok++;
     }
 }
-// 🔴 [2026-11-10 主人令「如果二级军团没有武将套用，请报错」]
+// 🔴 [2026-11-13 主人定] 武将文化跟势力走后，二级军团有武将套用、或有同文化据点（无将守城＝当年时代×据点文化）即算合格
+const cityStyles = new Set((CITIES_V2 as any[]).map((c) => String(c.buildingStyle)));
 for (const l of L2) {
-    if (!usedL2.has(l.name)) {
-        problems.push(`【二级军团无武将套用】${l.name}（${l.buildingStyle}×${l.age}）`);
+    if (!usedL2.has(l.name) && !cityStyles.has(String(l.buildingStyle))) {
+        problems.push(`【二级军团既无武将套用、也无同文化据点】${l.name}（${l.buildingStyle}×${l.age}）`);
     }
 }
 console.log({ 武将总数: total, 对应上: ok, 动乱番号残留: uprisingOk, 三级保留: thirdKept, 二级军团总数: L2.length, 二级已套用: L2.filter((l) => usedL2.has(l.name)).length, 有问题: problems.length });

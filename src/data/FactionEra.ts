@@ -28,6 +28,8 @@ import { GENERAL_ERA, type GeneralEra } from './GeneralEra';
 import { FACTION_GENERALS } from './FactionGenerals';
 import { GENERAL_FIRST_BATTLES } from './GeneralFirstBattles';
 import { getGeneralDebutYear } from './GeneralLifeYears';
+import { getFactionCultureAt } from './FactionCulture';
+import { setGeneralFactionCultureProvider } from './GeneralCulture';
 
 export interface FactionEraSegment {
     /** 起始年（含）；-9999 表示该势力最早一段 */
@@ -891,6 +893,12 @@ const GENERAL_FACTION: Readonly<Map<string, string>> = (() => {
     for (const [gid, fid] of pending) if (!m.has(gid)) m.set(gid, fid);
     return m;
 })();
+
+// 🔴 [2026-11-13 主人定] 武将文化＝势力文化（分段势力按经典战年→登场年落段，与时代同口径）
+setGeneralFactionCultureProvider((gid) => {
+    const fid = GENERAL_FACTION.get(gid);
+    return fid ? getFactionCultureAt(fid, getGeneralEraYear(gid)) : undefined;
+});
 
 /** 武将的时代：势力时代（按成名年落段）→ 保留表 → GeneralEra 原值兜底 */
 export function getGeneralEra(generalId: string | null | undefined, factionIdHint?: string | null): GeneralEra | undefined {

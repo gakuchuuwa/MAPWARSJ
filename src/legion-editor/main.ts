@@ -4649,13 +4649,14 @@ function computeLegionNameViolations(): string[] {
             if (n) generalUsers.set(n, (generalUsers.get(n) ?? 0) + 1);
         }
     }
-    // 🔴 [2026-11-10 主人令「如果二级军团没有武将套用，请报错」] 所有二级军团都必须有武将实际套用：
+    // 🔴 [2026-11-13 主人定] 武将文化跟势力走后，二级军团有武将套用、或有同文化据点（无将守城＝当年时代×据点文化）即算合格
+    const cityStyles = new Set(CITIES_V2.map((c) => String(c.buildingStyle)));
     const unusedL2 = LEVEL_2_CIV_62_LEGIONS
-        .filter(l => !generalUsers.has(l.name))
+        .filter(l => !generalUsers.has(l.name) && !cityStyles.has(String(l.buildingStyle)))
         .map(l => `${l.name}（${l.buildingStyle}）`);
     if (unusedL2.length > 0) {
         violations.push(
-            `【二级军团】${unusedL2.length} 支没有武将套用：${unusedL2.join('、')}`,
+            `【二级军团】${unusedL2.length} 支既无武将套用、也无同文化据点：${unusedL2.join('、')}`,
         );
     }
     const unusedL3 = [...LEVEL_3_LEGION_NAMES].filter(n => !legionUsers.has(n) && !generalUsers.has(n));

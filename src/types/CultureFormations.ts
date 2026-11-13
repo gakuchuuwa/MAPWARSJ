@@ -1072,7 +1072,7 @@ export function getLegionNameOfGeneral(factionId: string, generalId?: string | n
     const subtagLegion = getGeneralEraSubtagLegion(generalId);
     if (subtagLegion) return subtagLegion;
 
-    // ③ 核心判定：军团 ＝ 势力时代 × 据点文化（自动推导）
+    // ③ 核心判定：🔴 [2026-11-13 主人定] 军团 ＝ 势力时代 × 势力文化（武将文化跟势力走，见 FactionCulture）
     const era = generalId ? getGeneralEra(generalId, factionId) : undefined;
     const style = generalId ? getGeneralCulture(generalId) : undefined;
     if (era && style) {

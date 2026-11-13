@@ -2168,7 +2168,14 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_cb_chuguo_3': 'JIANGNAN',   // 战场人物｜龙且
 };
 
-/** 武将的建筑文化；表里没有返回 undefined */
+/** 武将所属势力的文化（由 FactionEra 注入，避免与武将名单循环引用） */
+let factionCultureOfGeneral: ((generalId: string) => BuildingStyle | undefined) | null = null;
+export function setGeneralFactionCultureProvider(fn: (generalId: string) => BuildingStyle | undefined): void {
+    factionCultureOfGeneral = fn;
+}
+
+/** 武将的文化：🔴 [2026-11-13 主人定] 跟势力走（FactionCulture）；势力未定文化（叛军）才用本表 */
 export function getGeneralCulture(generalId: string | null | undefined): BuildingStyle | undefined {
-    return generalId ? GENERAL_CULTURE[generalId] : undefined;
+    if (!generalId) return undefined;
+    return factionCultureOfGeneral?.(generalId) ?? GENERAL_CULTURE[generalId];
 }
