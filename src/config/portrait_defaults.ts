@@ -26,7 +26,8 @@ import {
     resolveUnitCultureRegion,
     type CultureCombatRole,
 } from '../systems/CultureRegion';
-import { CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS } from '../systems/CultureHierarchy';
+import { CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, toCulture66 } from '../systems/CultureHierarchy';
+import { getFactionCultureAt } from '../data/FactionCulture';
 import { getCityRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
 import _allPortraitPaths from 'virtual:portrait-manifest';
 
@@ -754,8 +755,15 @@ function pickFactionThenCulturePath(
 /** 无专图武将的回落立绘：generalId → 首次定下的那张（见 resolveGeneralPortraitPath） */
 const _generalFallbackPortraits = new Map<string, string>();
 
-/** 武将无专图时的兜底池：按他据点（cityId → buildingStyle）的 66 文化夹取（2026-10-25 主人令） */
-function getGeneralCulturePool(cityId: string | null | undefined): string[] | undefined {
+/** 武将无专图时的兜底池：优先按所属势力文化（FactionCulture → 66 文化夹），否则回落据点建筑文化 */
+function getGeneralCulturePool(cityId: string | null | undefined, factionId?: string): string[] | undefined {
+    if (factionId) {
+        const fc = getFactionCultureAt(factionId, undefined);
+        if (fc) {
+            const fPool = CULTURE66_PORTRAIT_POOLS[toCulture66(fc)];
+            if (fPool?.length) return fPool;
+        }
+    }
     if (!cityId) return undefined;
     const pool = CULTURE66_PORTRAIT_POOLS[resolveCityCulture66({ id: cityId })];
     return pool?.length ? pool : undefined;
@@ -795,7 +803,7 @@ export function resolveGeneralPortraitPath(
     //    现按 generalId 定死：同一武将同一池永远取同一张（哈希定位），且首次结果记住，
     //    之后不论哪个入口、带什么 region/势力上下文来取，都还是这一张（图被删了才重取）。
     const generalId = options?.generalId;
-    const culturePool = getGeneralCulturePool(options?.cityId);
+    const culturePool = getGeneralCulturePool(options?.cityId, options?.factionId);
     if (!generalId) {
         const fromCulture = culturePool ? pickExisting(culturePool, options?.exclude) : undefined;
         if (fromCulture) return normalizePortraitWebPath(fromCulture);

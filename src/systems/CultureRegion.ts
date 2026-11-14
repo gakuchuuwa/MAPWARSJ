@@ -11,6 +11,7 @@ import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
 import { CITIES_V2 } from '../data/cities_v2';
+import { getFactionCultureAt } from '../data/FactionCulture';
 import { toCulture66 } from './CultureHierarchy';
 
 const CITY_V2_BY_ID = new Map<string, (typeof CITIES_V2)[number]>();
@@ -136,6 +137,8 @@ export function resolveUnitCulture66(unit: IBattleUnit): string {
 /** 解析势力所属的 66 文化键（62 二级 + 4 三级）；未加入势力（null/空）返回 null */
 export function resolveFactionCulture66(factionId: string | null | undefined): string | null {
     if (!factionId) return null;
+    const fc = getFactionCultureAt(factionId, undefined);
+    if (fc) return toCulture66(fc);
     const capital = CAPITAL_V2_BY_FACTION.get(factionId);
     if (capital?.buildingStyle) return toCulture66(capital.buildingStyle);
     if (capital?.region) return toCulture66(capital.region);

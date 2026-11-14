@@ -85,7 +85,7 @@ import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGener
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
-import { armChronicleOpening, getChronicleOpeningInitialPos } from '../data/chronicle/ChronicleOpening';
+import { armChronicleOpening, getChronicleOpeningInitialPos, getChronicleOpeningRegionCenters } from '../data/chronicle/ChronicleOpening';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -1376,6 +1376,13 @@ export class GameApp {
                 return c ? { lat: c.latitude, lng: c.longitude } : undefined;
             })
             : spawnPos;
+        if (isChronicleActive() && !isQuickBattleMode()) {
+            // 开场四镜每次瞬切到新区域：提前把各区域的地图数据拉进缓存，切镜后地图尽快显现
+            this.map.prewarmRegions(getChronicleOpeningRegionCenters((id) => {
+                const c = this.cityManager.getCity(id);
+                return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+            }));
+        }
         lMap.setView([initialCamPos.lat, initialCamPos.lng], lMap.getZoom(), { animate: false });
         gameLog('startup', `👤 [玩家] ${hero.name}随机登场于【${startCity.name}】(${startCity.id}) 城外 [${spawnPos.lat.toFixed(2)}, ${spawnPos.lng.toFixed(2)}]`);
     }

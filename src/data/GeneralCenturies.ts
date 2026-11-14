@@ -721,7 +721,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xinbuli_boiorix': -2,                   // 波伊奥里克斯 · xinbuli · 耶灵
     'awaer_bayan': 6,                        // 巴彦 · awaer · 塞格德
     'baizanting_belisarius': 6,              // 贝利撒留 · baizanting · 罗马城
-    'chenla_jayavarman_ii': 9,               // 阇耶跋摩二世 · chenla · 吴哥
     'chenla_bhavavarman': 6,                 // 拔婆跋摩一世 · chenla · 三菩
     'boximiya_wallenstein': 17,              // 华伦斯坦 · boximiya · 布拉格
     'yidali_wangguo_garibaldi': 19,          // 加里波第 · yidali_wangguo · 罗马城

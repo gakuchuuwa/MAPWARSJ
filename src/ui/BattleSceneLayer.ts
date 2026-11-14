@@ -53,9 +53,12 @@ export class BattleSceneLayer {
         //   （GameApp → audioManager.setGamePaused），回调里 isStrategyPausedByScene() 要能读到 true，
         //   否则 13 场景暂停会被当成用户真暂停，battle_loop 被停、13 战斗没有音效（2026-08-12 修）。
         if (this.pauseHook) {
-            this.strategyPausedByScene = true;
             if (!this.pauseHook.isGamePaused()) {
+                this.strategyPausedByScene = true;
                 this.pauseHook.setPaused(true);
+            } else {
+                // 进场前用户已手动暂停：那是真暂停，不接管，退场时也不替用户解暂停
+                this.strategyPausedByScene = false;
             }
         }
 

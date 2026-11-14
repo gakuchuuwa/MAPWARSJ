@@ -81,9 +81,19 @@ export class YouTubeOfficialBridge {
                 if (!r.ok) throw new Error(`接管账本 HTTP ${r.status}`);
                 const state = await r.json();
                 if (state.ledger) this.live.hydrateLedger(state.ledger as ViewerLedger);
+            }).catch((error) => {
+                // 账本没接管成功就不能记账：撤销已连标记，断开重连，让服务端重发未确认事件
+                console.error('[YouTube] 接管账本失败，将重连重试', error);
+                this.hasConnected = false;
+                events.close();
+                if (this.events === events) this.events = null;
+                this.live.platformStatus = 'YouTube 本地通道重连中';
+                clearTimeout(this.retry);
+                this.retry = window.setTimeout(() => this.connect(), 5000);
             });
         });
         events.addEventListener('live', (e) => {
+            if (!this.hasConnected) return;   // 账本尚未接管成功：丢弃，等重连后服务端重发
             const event = JSON.parse((e as MessageEvent).data) as YouTubeLiveEvent;
             this.ledgerChain = this.ledgerChain.then(() => this.accept(event)).catch((error) => {
                 console.error('[YouTube] 事件暂未记账，将等待重连重试', error);

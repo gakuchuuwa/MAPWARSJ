@@ -452,6 +452,7 @@ function driveChronicleOpening(app: GameApp, deltaTime: number, consumeSnap: boo
             return c ? { lat: c.latitude, lng: c.longitude } : undefined;
         },
         speak: (text, onDone) => speechAnnouncer.announceBriefing(text, onDone),
+        viewReady: () => app.map.isViewSettled(),
     });
 }
 

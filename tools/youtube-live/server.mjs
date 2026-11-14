@@ -571,6 +571,17 @@ export class YouTubeLiveService extends EventEmitter {
         if (handledIds.length > 5000) {
             for (const old of handledIds.slice(0, handledIds.length - 5000)) delete this.state.handled[old];
         }
+        // 已确认的打赏记录与按视频的游标只留近期，避免状态文件无限增长（未确认的打赏一律保留）
+        const payIds = Object.keys(this.state.payments);
+        if (payIds.length > 2000) {
+            const done = payIds.filter((k) => this.state.payments[k]?.acknowledgedAt);
+            for (const old of done.slice(0, Math.max(0, payIds.length - 2000))) delete this.state.payments[old];
+        }
+        const cursorKeys = Object.keys(this.state.cursors);
+        if (cursorKeys.length > 50) {
+            cursorKeys.sort((a, b) => (Number(this.state.cursors[a]) || 0) - (Number(this.state.cursors[b]) || 0));
+            for (const old of cursorKeys.slice(0, cursorKeys.length - 50)) delete this.state.cursors[old];
+        }
         this.save();
         this.emit('status', this.publicStatus());
     }
@@ -609,9 +620,16 @@ export function createHttpServer(service) {
     let activeClient = '';
     const requestClient = (req) => String(req.headers['x-mapwar-client'] || '');
     const canWrite = (req) => !!activeClient && requestClient(req) === activeClient;
+    // 本服务只给本机页面用：带 Origin 的写请求必须来自本机（localhost / 127.0.0.1 / ::1），挡住别的网页跨站改配置、改账本
+    const localOrigin = (req) => {
+        const origin = String(req.headers.origin || '');
+        if (!origin) return true;
+        try { return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(origin).hostname); } catch { return false; }
+    };
     return http.createServer(async (req, res) => {
         const url = new URL(req.url || '/', 'http://127.0.0.1');
         try {
+            if (req.method === 'POST' && !localOrigin(req)) return json(res, 403, { error: '拒绝非本机来源的请求' });
             if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true });
             if (req.method === 'GET' && url.pathname === '/state') return json(res, 200, service.snapshot());
             if (req.method === 'GET' && url.pathname === '/stats') return json(res, 200, await service.fetchStats());

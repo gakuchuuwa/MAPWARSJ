@@ -82,13 +82,9 @@ function findObjectEntries(filePath: string, variableName: string): SourceEntry[
     visit(source);
     if (!objectLiteral) throw new Error(`找不到 ${variableName}: ${filePath}`);
 
-    const entries: SourceEntry[] = [];
-    for (const property of (objectLiteral as ts.ObjectLiteralExpression).properties) {
-        if (!ts.isPropertyAssignment(property)) continue;
-        const key = propertyNameText(property.name);
-        if (!key || !ts.isObjectLiteralExpression(property.initializer)) continue;
+    const pushObjectFields = (key: string, obj: ts.ObjectLiteralExpression): void => {
         const fields: Record<string, string> = {};
-        for (const field of property.initializer.properties) {
+        for (const field of obj.properties) {
             if (!ts.isPropertyAssignment(field)) continue;
             const fieldName = propertyNameText(field.name);
             const value = stringValue(field.initializer);
@@ -96,9 +92,23 @@ function findObjectEntries(filePath: string, variableName: string): SourceEntry[
         }
         entries.push({
             key,
-            line: source.getLineAndCharacterOfPosition(property.getStart(source)).line + 1,
+            line: source.getLineAndCharacterOfPosition(obj.getStart(source)).line + 1,
             fields,
         });
+    };
+
+    const entries: SourceEntry[] = [];
+    for (const property of (objectLiteral as ts.ObjectLiteralExpression).properties) {
+        if (!ts.isPropertyAssignment(property)) continue;
+        const key = propertyNameText(property.name);
+        if (!key) continue;
+        if (ts.isObjectLiteralExpression(property.initializer)) {
+            pushObjectFields(key, property.initializer);
+        } else if (ts.isArrayLiteralExpression(property.initializer)) {
+            for (const el of property.initializer.elements) {
+                if (ts.isObjectLiteralExpression(el)) pushObjectFields(key, el);
+            }
+        }
     }
     return entries;
 }

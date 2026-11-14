@@ -1,7 +1,8 @@
 import L from 'leaflet';
 import { GameConfig } from '../config/GameConfig';
 
-import { TILE_CONFIG, tileToLatLng } from './TileMapConfig';
+import { TILE_CONFIG, tileToLatLng, latLngToTile } from './TileMapConfig';
+import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
 import { CoastalWaveLayer } from './CoastalWaveLayer';
@@ -457,6 +458,40 @@ export class GameMap {
         // [FIX] 确保 HillshadeLayer 在底图之上（防止被新加载的 TileLayer 覆盖）
         if (this.hillshadeLayer && this.map.hasLayer(this.hillshadeLayer)) {
             this.hillshadeLayer.bringToFront();
+        }
+    }
+
+    /** 当前视野内底图/山体/水面瓦片是否已全部加载上屏（开场巡礼切镜后据此决定何时开口） */
+    public isViewSettled(): boolean {
+        const layers: Array<L.Layer | null> = [this.currentTileLayer, this.hillshadeLayer, this.riverLayer];
+        for (const layer of layers) {
+            if (!layer || !this.map.hasLayer(layer)) continue;
+            const noTilesToLoad = (layer as any)._noTilesToLoad;
+            if (typeof noTilesToLoad === 'function' && !noTilesToLoad.call(layer)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * 预热若干区域的地图数据：底图 jpg 灌进浏览器缓存，高程/水域瓦片进采样器缓存，
+     * 镜头瞬切到这些区域时不必从零下载。按传入顺序依次发起，先到先用。
+     */
+    public prewarmRegions(centers: Array<{ lat: number; lng: number }>, imageRadius = 4, demRadius = 3): void {
+        const terrainPath = 'Google Terrain Maps without labels  roads and POI  512px';
+        const seen = new Set<string>();
+        for (const c of centers) {
+            const t = latLngToTile(c.lat, c.lng, 9);
+            for (let dy = -imageRadius; dy <= imageRadius; dy++) {
+                for (let dx = -imageRadius; dx <= imageRadius; dx++) {
+                    const url = `/9dixingtu/${terrainPath}/${t.x + dx}/${t.y + dy}.jpg`;
+                    if (seen.has(url)) continue;
+                    seen.add(url);
+                    const img = new Image();
+                    img.src = url;
+                }
+            }
+            LandSeaSystem.getSampler().prefetchLatLng(c.lat, c.lng, demRadius);
+            LandSeaSystem.getWaterSampler().prefetchBounds(c.lat + 2, c.lat - 2, c.lng - 3, c.lng + 3, 9, 0);
         }
     }
 

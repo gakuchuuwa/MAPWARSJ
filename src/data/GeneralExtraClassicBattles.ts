@@ -52,7 +52,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "midi",
             "enemyFactionName": "米底",
-            "enemyGeneralId": "bfe_cb_midi_1",
+            "enemyGeneralId": "midi_astyages",
             "enemyTroops": 15000,
             "introLines": [
                 {
@@ -78,7 +78,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "ldiya",
             "enemyFactionName": "吕底亚",
-            "enemyGeneralId": "bfe_cb_ldiya_1",
+            "enemyGeneralId": "ldiya_keluoyisi",
             "enemyTroops": 15000,
             "introLines": [
                 {
@@ -1079,7 +1079,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyGeneralId": "bfe_cb_lagoniya_1",
+            "enemyGeneralId": "lagoniya_agesilaus",
             "enemyTroops": 15000,
             "introLines": [
                 {
@@ -2626,7 +2626,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
-            "enemyGeneralId": "bfe_cb_qin_2",
+            "enemyGeneralId": "qin_mengao",
             "enemyTroops": 15000,
             "introLines": [
                 {
@@ -3012,7 +3012,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "antigonid",
             "enemyFactionName": "安提柯",
-            "enemyGeneralId": "bfe_cb_antigonid_1",
+            "enemyGeneralId": "antigonid_demetrius",
             "enemyTroops": 15000,
             "introLines": [
                 {

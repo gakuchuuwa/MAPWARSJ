@@ -120,6 +120,8 @@ export interface ChronicleMainlineEvent {
     battle?: import('../GeneralFirstBattles').GeneralFirstBattle;
     /** 史载胜方（按史，不按游戏胜负） */
     winner?: 'attacker' | 'defender' | 'draw';
+    /** 衔接播报：上一场战术播报之后、本场战略播报之前念（取自衔接播报 json，按「上一场→本场」成对匹配） */
+    bridge?: string[];
     strategic: string[];
     tactical: string[];
     source: string;

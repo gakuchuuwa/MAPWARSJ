@@ -34,7 +34,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'heruli': '赫鲁', // 赫鲁利
     'huanchu': '桓楚', // 桓楚
     'gallic_empire': '高卢', // 高卢帝国
-    'jingzhou': '荆州', // 荆州
+    'jingzhou': '荆', // 荆州
     'libiya': '利比', // 利比亚
     'jiaxite': '加喜', // 加喜特
     'hulumusi': '忽鲁',
@@ -233,7 +233,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   heishui: '靺鞨',
 'fushi': '秦',  // 🔴 [2026-11-03 主人令「势力用历史上的公认称呼，旗号用简称」] 国号秦，不用姓
-  fuguo: '附国',
+  fuguo: '附',
 
 'yada': '厌抵',
 'guishuang': '贵霜',

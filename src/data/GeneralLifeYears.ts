@@ -479,7 +479,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     xinbuli_boiorix: { birth: -160, death: -101, kaoju: '推定' },  // 波伊奥里克斯（辛布里王）
     awaer_bayan: { birth: 562, death: 602, kaoju: '推定' },  // 巴彦（阿瓦尔可汗）
     baizanting_belisarius: { birth: 505, death: 565, kaoju: '推定' },  // 贝利撒留
-    chenla_jayavarman_ii: { birth: 770, death: 850, kaoju: '推定' },  // 阇耶跋摩二世
     chenla_bhavavarman: { birth: 550, death: 600, kaoju: '推定' },  // 拔婆跋摩一世
     boximiya_wallenstein: { birth: 1583, death: 1634 },  // 华伦斯坦
     yidali_wangguo_garibaldi: { birth: 1807, death: 1882 },  // 加里波第
@@ -685,21 +684,21 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     argos_thrasyllus: { birth: -460, death: -400, kaoju: '推定' },  // 斯拉叙卢斯
     arcadia_lycomedes: { birth: -410, death: -366, kaoju: '推定' },  // 吕科墨德斯
     plataea_eupompides: { birth: -470, death: -420, kaoju: '推定' },  // 欧蓬皮德斯
-    paeonia_shouling: { birth: -620, death: -217, kaoju: '推定' },  // 佩奥尼亚统帅（泛指，取势力存续期）
-    messenia_shouling: { birth: -484, death: -146, kaoju: '推定' },  // 美塞尼亚首领（泛指，取势力存续期）
-    rhodes_shouling: { birth: -428, death: -42, kaoju: '推定' },  // 罗得执政官（泛指，取势力存续期）
-    linhu_shouling: { birth: -495, death: -300, kaoju: '推定' },  // 林胡王（泛指，取势力存续期）
-    chalcis_shouling: { birth: -720, death: -338, kaoju: '推定' },  // 卡尔基斯首领（泛指，取势力存续期）
-    methone_shouling: { birth: -750, death: -354, kaoju: '推定' },  // 梅托涅守将（泛指，取势力存续期）
-    epidaurus_shouling: { birth: -770, death: -146, kaoju: '推定' },  // 埃皮道鲁斯守将（泛指，取势力存续期）
-    lycia_shouling: { birth: -720, death: 43, kaoju: '推定' },  // 克桑托斯守将（泛指，取势力存续期）
-    dolopes_shouling: { birth: -820, death: -475, kaoju: '推定' },  // 多洛佩斯首领（泛指，取势力存续期）
-    thasos_shouling: { birth: -700, death: -202, kaoju: '推定' },  // 萨索斯守将（泛指，取势力存续期）
-    melos_shouling: { birth: -820, death: -416, kaoju: '推定' },  // 米洛斯守将（泛指，取势力存续期）
-    mytilene_shouling: { birth: -720, death: -167, kaoju: '推定' },  // 米蒂利尼守将（泛指，取势力存续期）
-    mantinea_shouling: { birth: -720, death: -146, kaoju: '推定' },  // 曼丁尼亚守将（泛指，取势力存续期）
-    kesaiya_shouling: { birth: -400, death: -300, kaoju: '推定' },  // 科赛亚首领（泛指，取势力存续期）
-    malli_shouling: { birth: -400, death: -300, kaoju: '推定' },  // 马利人首领（泛指，取势力存续期）
+    paeonia_shouling: { birth: -552, death: -507, kaoju: '推定' },  // 佩奥尼亚统帅（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    messenia_shouling: { birth: -504, death: -459, kaoju: '推定' },  // 美塞尼亚首领（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    rhodes_shouling: { birth: -345, death: -300, kaoju: '推定' },  // 罗得执政官（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    linhu_shouling: { birth: -340, death: -295, kaoju: '推定' },  // 林胡王（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    chalcis_shouling: { birth: -390, death: -345, kaoju: '推定' },  // 卡尔基斯首领（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    methone_shouling: { birth: -394, death: -349, kaoju: '推定' },  // 梅托涅守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    epidaurus_shouling: { birth: -459, death: -414, kaoju: '推定' },  // 埃皮道鲁斯守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    lycia_shouling: { birth: -584, death: -539, kaoju: '推定' },  // 克桑托斯守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    dolopes_shouling: { birth: -515, death: -470, kaoju: '推定' },  // 多洛佩斯首领（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    thasos_shouling: { birth: -503, death: -458, kaoju: '推定' },  // 萨索斯守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    melos_shouling: { birth: -456, death: -411, kaoju: '推定' },  // 米洛斯守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    mytilene_shouling: { birth: -468, death: -423, kaoju: '推定' },  // 米蒂利尼守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    mantinea_shouling: { birth: -425, death: -380, kaoju: '推定' },  // 曼丁尼亚守将（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    kesaiya_shouling: { birth: -364, death: -319, kaoju: '推定' },  // 科赛亚首领（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
+    malli_shouling: { birth: -365, death: -320, kaoju: '推定' },  // 马利人首领（泛指，按编年史战年推定：战年前40岁生、战后5年卒）
     lagoniya_leotychidas: { birth: -545, death: -469, kaoju: '推定' },  // 列奥提基达斯（前491–前476 在位，流亡卒于泰盖亚）
     lagoniya_archidamus_ii: { birth: -510, death: -427, kaoju: '推定' },  // 阿基达穆斯二世（前469–前427 在位）
     lagoniya_agis_ii: { birth: -470, death: -400, kaoju: '推定' },  // 阿基斯二世（前427–前400 在位）
@@ -2056,7 +2055,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     yinggelan_yuehanjifade: { birth: 1230, death: 1299, kaoju: '推定' },  // 约翰吉法德
     yaqi_yisikanda: { birth: 1583, death: 1636 },  // 伊斯坎达尔（亚齐苏丹国）
     sengjialuo_boluojialuoliu: { birth: 1391, death: 1467 },  // 波罗迦罗摩六世（僧伽罗/科提）
-    zhamolin_kunhali: { birth: 1500, death: 1580, kaoju: '推定' },  // 昆哈利（古里萨穆里海军）
     dayue_chenqingyu: { birth: 1240, death: 1339, kaoju: '推定' },  // 陈庆余（大越云屯水战主将）
     siam_zhengxin: { birth: 1734, death: 1782 },  // 郑信（吞武里大帝达信）
     maidina_kuerdi: { birth: 1470, death: 1517, kaoju: '推定' },  // 库尔迪（吉达守将侯赛因·库尔迪）

@@ -15,12 +15,13 @@
  */
 import { SANDBOX_DISPLAY_NAMES } from './SandboxDisplayNames';
 import { CITIES_V2 } from './cities_v2';
+import { getFactionCultureAt } from './FactionCulture';
 
 /** 可去掉的通称结尾 */
 const ONE_CHAR_SUFFIXES = new Set(['州', '国', '族', '氏', '家', '部', '人', '朝']);
 
 /** ② 单字代表不了势力的两字名（照旧写两字） */
-const NO_ONE_CHAR = new Set(['土家', '五部', '南部', '南朝', '萨朝', '中国', '附国', '濊族']);
+const NO_ONE_CHAR = new Set(['土家', '五部', '南部', '南朝', '萨朝', '中国', '濊族']);
 
 /**
  * 3 字以上势力名中允许保留单字旗号的中国/东亚历史国号、姓氏军号与专属单字简称。
@@ -44,9 +45,11 @@ const WESTERN_STYLES = new Set([
     'INCA', 'MAYANS', 'MUISCA', 'MAPUCHE', 'TUPI', 'AMERICA',
 ]);
 
-/** 势力 → 首座据点的建筑文化（没传据点文化时用） */
+/** 势力 → 势力文化（FactionCulture 优先，无则取首座据点的建筑文化） */
 let factionStyle: Map<string, string> | null = null;
 function styleOfFaction(factionId: string): string | undefined {
+    const fc = getFactionCultureAt(factionId, undefined);
+    if (fc) return fc;
     if (!factionStyle) {
         factionStyle = new Map();
         for (const city of CITIES_V2) {

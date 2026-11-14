@@ -272,7 +272,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xinbuli_boiorix': 'antiquity',
     'awaer_bayan': 'feudal',
     'baizanting_belisarius': 'feudal',
-    'chenla_jayavarman_ii': 'feudal',
     'chenla_bhavavarman': 'feudal',
     'boximiya_wallenstein': 'castle',
     'yidali_wangguo_garibaldi': 'imperial',

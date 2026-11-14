@@ -69,7 +69,7 @@ export class CityAssetManager {
         'heruli': '赫鲁',   // 赫鲁利（经典战导入）
         'huanchu': '桓楚',   // 桓楚（经典战导入）
         'gallic_empire': '高卢',   // 高卢帝国（经典战导入）
-        'jingzhou': '荆州',   // 荆州（经典战导入）
+        'jingzhou': '荆',   // 荆州（经典战导入）
         'libiya': '利比',   // 利比亚（经典战导入）
         'jiaxite': '加喜',   // 加喜特（经典战导入）
         'sesali': '色萨',
@@ -128,7 +128,7 @@ export class CityAssetManager {
         'shu': '汉',
 'fushi': '秦',
 'heishui': '靺鞨',
-        'fuguo': '附国',
+        'fuguo': '附',
 'yada': '厌抵',
 'xianbei': '鲜卑',
 'wuhuan': '乌桓',

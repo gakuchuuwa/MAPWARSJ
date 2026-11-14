@@ -33,6 +33,46 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
 //    「势力时代 × 据点文化」自动格，打仗不受影响；缺的只是这条登记指针——面板/编辑器军团名、征兵取军团名、
 //    军团被删后的重指向会落空）。下面每条 legionName＝该势力主将的自动格军团（与带将部队实战同源），
 //    legionType＝region（文化军团）；本类型不含兵种，slots 仍由军团定义给，改文化/时代后自动跟着变。
+"barakzai_afghan": {
+    legionName: "帝国时代赞德军团",
+    legionType: "region",
+},   // barakzai_afghan｜主将 阿克巴尔汗
+"zand_dynasty": {
+    legionName: "帝国时代赞德军团",
+    legionType: "region",
+},   // zand_dynasty｜主将 卢特夫阿里汗
+"aizu_ashina": {
+    legionName: "城堡时代幕府军团",
+    legionType: "region",
+},   // aizu_ashina｜主将 芦名义广
+"aq_qoyunlu": {
+    legionName: "帝国时代红头军团",
+    legionType: "region",
+},   // aq_qoyunlu｜主将 乌尊哈桑
+"bulidi": {
+    legionName: "城堡时代撒拉森军团",
+    legionType: "region",
+},   // bulidi｜主将 图格特金
+"tahirid": {
+    legionName: "城堡时代伊儿军团",
+    legionType: "region",
+},   // tahirid｜主将 穆罕默德·本·塔希尔
+"heruli": {
+    legionName: "封建时代阿斯图里亚斯军团",
+    legionType: "region",
+},   // heruli｜主将 奥多亚克
+"huanchu": {
+    legionName: "古典时代吴越军团",
+    legionType: "region",
+},   // huanchu｜主将 桓玄
+"gallic_empire": {
+    legionName: "古典时代罗马军团",
+    legionType: "region",
+},   // gallic_empire｜主将 泰特里库斯一世
+"jingzhou": {
+    legionName: "古典时代荆楚军团",
+    legionType: "region",
+},   // jingzhou｜主将 刘表
 "hulumusi": {
     legionName: "城堡时代法尔斯军团",
     legionType: "region",

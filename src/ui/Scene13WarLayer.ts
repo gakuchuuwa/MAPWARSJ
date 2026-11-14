@@ -863,6 +863,8 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-02 主人定] 战役战斗播报是否正在播放（播放期间与战斗音效互斥，绝不重叠） */
 
     private battleBriefingSpeaking = false;
+    /** 战术开场播报序号：停场/新开场递增，旧一场异步回调据此自废，不串入下一场 */
+    private tacticalIntroSeq = 0;
 
 
 
@@ -6411,11 +6413,13 @@ export class Scene13WarLayer {
 
                 const briefingText = init.battleBriefing;
 
+                const introSeq = ++this.tacticalIntroSeq;
+
                 this.battleBriefingSpeaking = true;
 
                 const triggerBattleBriefing = () => {
 
-                    if (!this.active || this.over) {
+                    if (!this.active || this.over || introSeq !== this.tacticalIntroSeq) {
 
                         this.battleBriefingSpeaking = false;
 
@@ -6429,7 +6433,7 @@ export class Scene13WarLayer {
                     const briefingParas = briefingText.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
                     let paraIdx = 0;
                     const speakNextPara = () => {
-                        if (!this.active || this.over || paraIdx >= briefingParas.length) {
+                        if (!this.active || this.over || introSeq !== this.tacticalIntroSeq || paraIdx >= briefingParas.length) {
                             this.battleBriefingSpeaking = false;
                             return;
                         }
@@ -6449,7 +6453,7 @@ export class Scene13WarLayer {
 
                     this.battleBriefingTimer = setInterval(() => {
 
-                        if (!this.active || this.over) {
+                        if (!this.active || this.over || introSeq !== this.tacticalIntroSeq) {
 
                             clearInterval(this.battleBriefingTimer);
 
@@ -6945,7 +6949,7 @@ export class Scene13WarLayer {
 
         // 小队模式：玩家本人也算一个兵（「一个人先追」时全靠他）
 
-        for (const m of this.men) if (m.hp > 0) alive[m.f] += (m.hero && this.skirmish) ? 1 : m.pop;
+        for (const m of this.men) if (m.hp > 0 && !m.siegeW) alive[m.f] += (m.hero && this.skirmish) ? 1 : m.pop;
 
         const att = Math.max(1, alive[0]);
 
@@ -7495,6 +7499,8 @@ export class Scene13WarLayer {
 
         this.lingering = false;
 
+        this.tacticalIntroSeq++;
+
         if (this.battleBriefingTimer) {
 
             clearInterval(this.battleBriefingTimer);
@@ -7661,7 +7667,20 @@ export class Scene13WarLayer {
 
             this.glCanvas.style.display = 'none';
 
+            this.destroyGroundLayerGL();
+
         }
+
+    }
+
+    /** 退场后释放 WebGL 地面层（纹理/缓冲）；下一场 requestGroundLayerGL 会重建 */
+    private destroyGroundLayerGL(): void {
+
+        if (!this.groundLayerGL) return;
+
+        try { this.groundLayerGL.destroy(); } catch { /* 上下文已丢失 */ }
+
+        this.groundLayerGL = null;
 
     }
 
@@ -7859,6 +7878,8 @@ export class Scene13WarLayer {
 
             if (gl) gl.style.display = 'none';
 
+            if (!this.active) this.destroyGroundLayerGL();
+
             this.timeOfDay.end();
 
             return;
@@ -7910,6 +7931,8 @@ export class Scene13WarLayer {
                 this.resetCanvasFadeStyle(gl);
 
             }
+
+            if (!this.active) this.destroyGroundLayerGL();
 
             this.timeOfDay.end();
 
@@ -19151,7 +19174,7 @@ export class Scene13WarLayer {
 
         //    不再要求攻城守方必须中心建筑被拆才败，也不让中心建筑倒塌动画推迟无兵判负。
 
-        const noTroopDecision = alive[0] <= 0 || alive[1] <= 0;
+        const noTroopDecision = !(centerRule && centerKilled) && (alive[0] <= 0 || alive[1] <= 0);
 
         if (noTroopDecision || (!waitCollapse && (centerDown || timeUp))) {
 
@@ -19177,9 +19200,10 @@ export class Scene13WarLayer {
 
             // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）
 
-            const isDraw = timeUp && !noTroopDecision && !centerDown;
+            // 🔴 双方同时无兵（且中心建筑未倒）= 平局；中心建筑已倒塌 = 攻方胜（不被「攻方打光」改判）
+            const isDraw = !centerDown && ((alive[0] <= 0 && alive[1] <= 0) || (timeUp && !noTroopDecision));
 
-            const attackerLost = alive[0] <= 0 || (alive[1] > 0 && centerRule && !centerDown);
+            const attackerLost = !centerDown && (alive[0] <= 0 || (alive[1] > 0 && centerRule));
 
             const resultWinner: 'attacker' | 'defender' | 'draw' = isDraw
 

@@ -26,6 +26,7 @@
  */
 import { GENERAL_ERA, type GeneralEra } from './GeneralEra';
 import { FACTION_GENERALS } from './FactionGenerals';
+import { BATTLEFIELD_CHARACTERS } from './BattlefieldCharacters';
 import { GENERAL_FIRST_BATTLES } from './GeneralFirstBattles';
 import { getGeneralDebutYear } from './GeneralLifeYears';
 import { getFactionCultureAt } from './FactionCulture';
@@ -913,6 +914,9 @@ const GENERAL_FACTION: Readonly<Map<string, string>> = (() => {
         }
     }
     for (const [gid, fid] of pending) if (!m.has(gid)) m.set(gid, fid);
+    for (const b of Object.values(BATTLEFIELD_CHARACTERS)) {
+        if (b?.generalId && b.factionId && !m.has(b.generalId)) m.set(b.generalId, b.factionId);
+    }
     return m;
 })();
 

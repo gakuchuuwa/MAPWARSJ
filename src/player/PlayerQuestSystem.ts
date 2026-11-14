@@ -15,6 +15,7 @@ import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCit
 import { isGeneralOnStage, isOpeningQueueGeneral, getGameMode, getCurrentStageYear, setClassicBattleForcedOnStage, clearClassicBattleForcedOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName, getFactionEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getFactionCultureAt } from '../data/FactionCulture';
 import { FACTIONS } from '../data/factions';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
@@ -4962,6 +4963,9 @@ export class PlayerQuestSystem {
     public onLiveJoinResolved: ((res: { ok: boolean; factionId: string | null; generalId: string | null; reason?: string }) => void) | null = null;
 
     private resolveJoinCulture(generalId: string | null, fallbackCity: City | null): string | null {
+        const fid = generalId ? (getGeneralRecordByGeneralId(generalId)?.factionId ?? getFactionIdOfGeneral(generalId)) : null;
+        const fc = fid ? getFactionCultureAt(fid, getCurrentStageYear()) : undefined;
+        if (fc) return STYLE62_SET.has(fc) ? fc : (STYLE62_ALIAS.get(fc) ?? fc);
         const homeId = generalId ? this.generalCityId(generalId) : null;
         const homeCity = homeId ? (this.deps.cityManager.getCity(homeId) ?? fallbackCity) : fallbackCity;
         return homeCity ? style62OfCity(homeCity) : null;
