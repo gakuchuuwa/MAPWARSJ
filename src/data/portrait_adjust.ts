@@ -11278,8 +11278,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/ORIE/wuer_boshasha.png": {
-            "scale": 1.1,
-            "offsetX": 0,
+            "scale": 1.16,
+            "offsetX": -7,
             "offsetY": -2
         },
         "/assets/CENTRAL_ASIA/sijitai_tomyris.png": {
@@ -11333,7 +11333,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/ORIE/bfe2_nabonidus.png": {
-            "scale": 1.02,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 0
         }

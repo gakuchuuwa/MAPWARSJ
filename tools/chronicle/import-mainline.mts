@@ -13,25 +13,19 @@ import { CITIES_V2 } from '../../src/data/cities_v2';
 
 const SRC = 'docs/战争编年史（纯史实重写）/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json';
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
-/** 衔接播报（上一场 → 下一场），按事件 ID 成对匹配 */
-const BRIDGE_SRC = 'docs/战争编年史（纯史实重写）/战争编年史_衔接播报_2026-11-14.json';
 const OPENING_OUT = 'src/data/chronicle/ChronicleOpening.ts';
-const bridges = new Map<string, string>();
-let prologue = '';
-let epilogue = '';
-try {
-    const bridgeData = JSON.parse(readFileSync(BRIDGE_SRC, 'utf-8'));
-    if (typeof bridgeData['开卷导语'] === 'string' && bridgeData['开卷导语'].trim()) prologue = bridgeData['开卷导语'].trim();
-    if (typeof bridgeData['收官播报'] === 'string' && bridgeData['收官播报'].trim()) epilogue = bridgeData['收官播报'].trim();
-    for (const b of (bridgeData.bridges as Record<string, string>[])) {
-        bridges.set(`${b['上一事件ID']}>${b['下一事件ID']}`, b['衔接播报']);
-    }
-} catch { /* 无衔接播报文件则不挂 */ }
 /** 经典战口径：攻守兵力 1–2 万，兵力比 ≤1:2 */
 const TROOPS = 15000;
 const SEASON: Record<string, 0 | 1 | 2 | 3> = { 春: 0, 夏: 1, 秋: 2, 冬: 3 };
 
-const events = new Map((JSON.parse(readFileSync(SRC, 'utf-8')).events as Record<string, string>[]).map((e) => [e['事件ID'], e]));
+const rawMaster = JSON.parse(readFileSync(SRC, 'utf-8')) as {
+    开卷导语?: string;
+    收官播报?: string;
+    events: Record<string, string>[];
+};
+const prologue = typeof rawMaster['开卷导语'] === 'string' ? rawMaster['开卷导语'].trim() : '';
+const epilogue = typeof rawMaster['收官播报'] === 'string' ? rawMaster['收官播报'].trim() : '';
+const events = new Map(rawMaster.events.map((e) => [e['事件ID'], e]));
 const generals = new Map<string, string>();
 const errors: string[] = [];
 {
@@ -79,14 +73,10 @@ for (const s of CHRONICLE_SCRIPT) {
         kind: s.kind,
         place: { name: e['战场地点'], lat, lng },
         leadGeneralId: s.leadGeneralId,
-        strategic: [e['战略播报']].filter(Boolean),
+        strategic: (e['战略播报'] ?? '').split(/\r?\n/).map((p) => p.trim()).filter(Boolean),
         tactical: [e['战术播报']].filter(Boolean),
         source: e['一手史料出处'],
     };
-    const prevId = out.length ? out[out.length - 1].id : '';
-    const bridge = prevId ? bridges.get(`${prevId}>${s.eventId}`) : undefined;
-    if (bridge) ev.bridge = [bridge];
-    else if (prevId && bridges.size) console.warn(`  无衔接播报：${prevId} → ${s.eventId}`);
     if (s.kind !== 'battle') errors.push(`${s.eventId} 主线每场都要开战（不收只播报的场）`);
     if (s.kind === 'battle') {
         // 按史：战斗类型照 json 原文（攻城战／守城战／标有据点的关隘战按攻城管线走），攻城战必须写明被攻的城
@@ -145,4 +135,4 @@ const header = `/* 自动生成，勿手改：tools/chronicle/import-mainline.mt
 const tmpOut = `${OUT}.tmp`;
 writeFileSync(tmpOut, header + JSON.stringify(out, null, 4) + ';\n', 'utf-8');
 renameSync(tmpOut, OUT);
-console.log(`已生成 ${OUT}：${out.length} 场（战斗 ${out.filter((x) => x.kind === 'battle').length}、叙事 ${out.filter((x) => x.kind === 'narrative').length}、挂衔接播报 ${out.filter((x) => x.bridge).length}）`);
+console.log(`已生成 ${OUT}：${out.length} 场（单段战略 ${out.filter((x) => x.strategic.length === 1).length}、双段战略 ${out.filter((x) => x.strategic.length === 2).length}）`);
