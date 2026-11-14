@@ -24,6 +24,7 @@ import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CameraFollowUI, type HistoricalStreakRecord } from '../ui/CameraFollowUI';
 import type { PlayerSaveState } from '../player/PlayerHero';
 import { listCompletedFirstBattles, restoreCompletedFirstBattles } from '../data/GeneralFirstBattles';
+import { getChronicleSaveState, restoreChronicleSaveState, type ChronicleSaveState } from '../data/chronicle/ChronicleDirector';
 
 const SAVE_PREFIX = 'mapwar-save-';
 const SAVE_VERSION = 1;
@@ -94,6 +95,8 @@ export interface GameSave {
     player?: PlayerSaveState;
     /** 🔴 [2026-11-11] 已打过经典战的名将 ID（百岁模式开局这批：没打不退场、打过等军团战败退场，读档要带回） */
     completedFirstBattles?: string[];
+    /** 🔴 [2026-11-13] 编年史推演进度与战事归属改写 */
+    chronicle?: ChronicleSaveState;
 }
 
 export interface SaveMeta {
@@ -159,6 +162,7 @@ export class GameSaveManager {
             maxWinStreak: CameraFollowUI.historicalMaxStreak,
             player: app.playerHero?.toSaveState(),
             completedFirstBattles: listCompletedFirstBattles(),
+            chronicle: getChronicleSaveState(),
         };
     }
 
@@ -174,8 +178,9 @@ export class GameSaveManager {
         // 1. 纪年
         app.timeSystem.setYear(save.year);
         if (save.season !== undefined) app.timeSystem.setSeason(save.season);
-        // 已打过经典战名单先灌一次（重建军团时按它判谁在场）；下面 clearForRestore 清掉后再灌一次
+        // 已打过经典战名单与编年史状态先灌一次（重建军团时按它判谁在场）；下面 clearForRestore 清掉后再灌一次
         restoreCompletedFirstBattles(save.completedFirstBattles);
+        restoreChronicleSaveState(save.chronicle);
 
         // 1.5 恢复全局历史最高连胜纪录（比军团重建更早，避免 updateTopStats 覆盖）
         CameraFollowUI.historicalMaxStreak = save.maxWinStreak ?? null;
@@ -260,6 +265,7 @@ export class GameSaveManager {
         }
         // 🔴 [2026-11-11] clearForRestore 会清空「已打过经典战」名单 → 这里按存档灌回（旧档没有该字段 → 空名单）
         restoreCompletedFirstBattles(save.completedFirstBattles);
+        restoreChronicleSaveState(save.chronicle);
 
         gameLog('world', `💾 [读档] ${save.date}：纪年 ${save.year} · 据点 ${cityHit}/${save.cities.length} · 军团 ${armyHit}`);
     }

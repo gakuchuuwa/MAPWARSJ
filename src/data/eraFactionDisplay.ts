@@ -22,6 +22,7 @@
  *   · 只在**百岁模式**启用（`refreshEraFactionDisplays(null)` 即关闭：剧本模式用史实归属、乱斗不变）。
  */
 import { CITIES_V2 } from './cities_v2';
+import { FACTIONS } from './factions';
 import { FACTION_GENERALS, type FactionGeneral } from './FactionGenerals';
 import { getGameMode, isGeneralOnStage } from './generalOnStage';
 import {
@@ -214,6 +215,9 @@ function hasOnStageGeneral(factionId: string): boolean {
 /** 当前生效的时代名覆盖：factionId → 名字（含可选旗号文字；空 = 关闭） */
 let overrides = new Map<string, EraNameDef>();
 
+/** 百岁模式当前无在场武将的势力集合（全量 `FACTIONS` + `'panshu'`，与 `overrides` 解耦以防无首城势力漏判） */
+let idleFactions = new Set<string>();
+
 /** 百岁模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非百岁模式），供据点级时代名用 */
 let activeEra: DefenseEraAge | null = null;
 
@@ -222,7 +226,7 @@ let activeEra: DefenseEraAge | null = null;
  * 只用于「无在场武将不挂势力色、旗面用文化符号」的判断；势力名一律显示本名，不再用时代泛称顶替。
  */
 export function isFactionIdle(factionId: string | null | undefined): boolean {
-    return !!factionId && getGameMode() === 'centenarian' && overrides.has(factionId);
+    return !!factionId && getGameMode() === 'centenarian' && idleFactions.has(factionId);
 }
 
 /** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名；只在百岁模式生效） */
@@ -275,6 +279,7 @@ export function getEraCityDisplayFlagText(
  */
 export function refreshEraFactionDisplays(year: number | null): string[] {
     const next = new Map<string, EraNameDef>();
+    const nextIdle = new Set<string>();
     const era = (year != null && Number.isFinite(year) && getGameMode() === 'centenarian') ? getEraByYear(year) : null;
     /** 时代是否变了：据点级时代名可能变而势力级名字不变（有些分支相邻时代同名），
      *  换时代时一律把有覆盖的势力报为 changed，让据点旗号也重刷一遍（2026-10-24 据点级口径）。 */
@@ -283,20 +288,36 @@ export function refreshEraFactionDisplays(year: number | null): string[] {
     if (era) {
         for (const [factionId, info] of FACTION_CITY) {
             if (hasOnStageGeneral(factionId)) continue;
+            nextIdle.add(factionId);
             const entry = eraNameOfStyleAndEra(info.buildingStyle, era);
             if (entry) next.set(factionId, entry);
         }
+        for (const faction of FACTIONS) {
+            if (!nextIdle.has(faction.id) && !hasOnStageGeneral(faction.id)) {
+                nextIdle.add(faction.id);
+            }
+        }
+        if (!nextIdle.has('panshu') && !hasOnStageGeneral('panshu')) {
+            nextIdle.add('panshu');
+        }
     }
-    const changed: string[] = [];
+    const changed = new Set<string>();
     for (const [factionId, entry] of next) {
         const prev = overrides.get(factionId);
         if (eraChanged || !prev || prev.name !== entry.name || (prev.flagText ?? null) !== (entry.flagText ?? null)) {
-            changed.push(factionId);
+            changed.add(factionId);
         }
     }
     for (const factionId of overrides.keys()) {
-        if (!next.has(factionId)) changed.push(factionId);
+        if (!next.has(factionId)) changed.add(factionId);
+    }
+    for (const factionId of nextIdle) {
+        if (!idleFactions.has(factionId)) changed.add(factionId);
+    }
+    for (const factionId of idleFactions) {
+        if (!nextIdle.has(factionId)) changed.add(factionId);
     }
     overrides = next;
-    return changed;
+    idleFactions = nextIdle;
+    return Array.from(changed);
 }

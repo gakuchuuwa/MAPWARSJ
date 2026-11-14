@@ -21,12 +21,14 @@ dist/
 # AI tools
 .claude/
 .agents/
+.hermes/
 .cursorrules
 .codex/
 .cache/
 
 # Misc
 *.bak
+*.bak_*
 *_backup.*
 
 # 立绘调校滚动备份（本地保险，数据文件本身已随小时提交入库，备份不必进 git）
@@ -43,6 +45,7 @@ Thumbs.db
 # 自动备份整轮失败（2026-11-12 14:29 就是这么挂的）。万一恰好稳定，还会把 4GB 塞进历史
 # ——同 2026-08-01 误入库瓦片推爆 GitHub 那一类事故。注意 `*.tmp` 挡不住它（名字不以 .tmp 结尾）。
 .tmp.driveupload/
+.tmp.drivedownload/
 .tmp.drivetmp/
 *.swp
 

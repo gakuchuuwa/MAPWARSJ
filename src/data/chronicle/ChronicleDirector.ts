@@ -57,6 +57,48 @@ export function firstChronicleEvent(): ChronicleMainlineEvent | null {
     return CHRONICLE_MAINLINE[0] ?? null;
 }
 
+export interface ChronicleSaveState {
+    active: boolean;
+    index: number;
+    cityOwners: [string, { factionId: string; year: number }][];
+}
+
+export function getChronicleSaveState(): ChronicleSaveState {
+    return {
+        active,
+        index,
+        cityOwners: [...cityOwners.entries()],
+    };
+}
+
+export function restoreChronicleSaveState(state: ChronicleSaveState | null | undefined): void {
+    cityOwners.clear();
+    if (!state) {
+        active = false;
+        index = 0;
+        return;
+    }
+    active = !!state.active && CHRONICLE_MAINLINE.length > 0;
+    const maxIdx = CHRONICLE_MAINLINE.length;
+    index = Math.max(0, Math.min(maxIdx, Math.floor(state.index || 0)));
+    if (Array.isArray(state.cityOwners)) {
+        for (const [cityId, entry] of state.cityOwners) {
+            if (typeof cityId === 'string' && entry && typeof entry.factionId === 'string') {
+                cityOwners.set(cityId, {
+                    factionId: entry.factionId,
+                    year: Number.isFinite(entry.year) ? entry.year : Number.NEGATIVE_INFINITY,
+                });
+            }
+        }
+    }
+}
+
+export function stopChronicle(): void {
+    active = false;
+    index = 0;
+    cityOwners.clear();
+}
+
 /** 推进到下一场；返回新的当前场（演完为 null） */
 export function advanceChronicle(): ChronicleMainlineEvent | null {
     if (!isChronicleActive()) return null;

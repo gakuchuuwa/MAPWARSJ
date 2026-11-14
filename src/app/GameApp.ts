@@ -13,7 +13,7 @@ import { LandSeaBoundaryLayer } from '../map/LandSeaBoundaryLayer';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
 import { TerrainOverrideManager } from '../editors/TerrainOverrideManager';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
-import { TimeSystem } from './TimeSystem';
+import { Season, TimeSystem } from './TimeSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 
 import { CombatSystem } from '../combat/CombatSystem';
@@ -55,7 +55,7 @@ import { ZoomController } from './ZoomController'; // 自动缩放控制
 import { GarrisonCityZoom } from './GarrisonCityZoom'; // 停驻放大据点
 import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
-import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
+import { initUnattendedStream, isQuickBattleMode } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { GameSaveManager } from './GameSaveManager'; // 世界存档（跨天续摊）
 // [2026-09-05 玩家] 乱入者：单骑 / 据点任务 / 面板 / 战术模式操控
 import { PlayerHero } from '../player/PlayerHero';
@@ -85,6 +85,7 @@ import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGener
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
+import { armChronicleOpening, getChronicleOpeningInitialPos } from '../data/chronicle/ChronicleOpening';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -980,7 +981,9 @@ export class GameApp {
         // 名字/在场状态变了的势力 → 同步刷新旗面是否挂势力色＋清旗号文字缓存，再**一次扫完**所有据点旗
         const changedSet = new Set(changed);
         for (const factionId of changed) CityAssetManager.syncFactionIdleState(factionId);
-        this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
+        const territory = this.cityManager.getTerritorySystem();
+        territory.patchFactionFlagTexts(changedSet);
+        territory.refreshFactionTerritoryColors(changedSet);
     }
 
     /** 🔴 [2026-10-23] 直播观众互动：观众发字替一方放计（F9 测试面板；控制台 `game.live.onChat('某某', '攻', true)`） */
@@ -1054,6 +1057,7 @@ export class GameApp {
         // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
         if (isCentenarianStart) {
             startChronicle();
+            if (!isQuickBattleMode()) armChronicleOpening();
             this.applyChronicleCityOwnership(this.timeSystem.getYear());
         }
         const chronicleFirst = isCentenarianStart ? firstChronicleEvent() : undefined;
@@ -1181,6 +1185,10 @@ export class GameApp {
             syncBuildingStyles();
             this.syncEraFactionDisplays();
             this.syncScriptOwners();
+            if (hero.autoPlan === 'centenarian') {
+                if (!isChronicleActive()) startChronicle();
+                this.applyChronicleCityOwnership(this.timeSystem.getYear());
+            }
             this.syncCityFoundedTypes();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
@@ -1209,6 +1217,7 @@ export class GameApp {
             // 自动模式去接"当年剧本任务"用（主人 2026-09-11 定：-334 年必须去找亚历山大）
             getYear: () => this.timeSystem.getYear(),
             jumpToYear: (year) => { this.jumpToYear(year); },
+            setSeason: (season) => { this.timeSystem.setSeason(season as Season); },
             // 🔴 [2026-09-14] 战场玩法：点击战场 → 选边 → 开打（规则全在 HistoricalEventManager 里）
             battlefields: {
                 checkReady: (bfId, pos, ignoreArmyId) => this.historicalEventManager.checkBattlefieldReady(bfId, pos, ignoreArmyId),
@@ -1361,7 +1370,13 @@ export class GameApp {
         }
         // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
         const lMap = this.map.getLeafletMap();
-        lMap.setView([spawnPos.lat, spawnPos.lng], lMap.getZoom(), { animate: false });
+        const initialCamPos = isChronicleActive() && !isQuickBattleMode()
+            ? getChronicleOpeningInitialPos((id) => {
+                const c = this.cityManager.getCity(id);
+                return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+            })
+            : spawnPos;
+        lMap.setView([initialCamPos.lat, initialCamPos.lng], lMap.getZoom(), { animate: false });
         gameLog('startup', `👤 [玩家] ${hero.name}随机登场于【${startCity.name}】(${startCity.id}) 城外 [${spawnPos.lat.toFixed(2)}, ${spawnPos.lng.toFixed(2)}]`);
     }
 

@@ -239,6 +239,8 @@ export class SpeechAnnouncer {
   private activeEdgeAudio: HTMLAudioElement | null = null;
   /** 播报序号：每次 speak 自增；异步云健 resolve 后凭此判断是否已被新播报取代（防两句声音重叠） */
   private speechSeq = 0;
+  /** 当前正在进行的语音 settle 回调：静音开关关闭时立刻释放阻塞的播报链 */
+  private activeSettleCallback: (() => void) | null = null;
 
   constructor() {
     this.hookVoices();
@@ -483,12 +485,19 @@ export class SpeechAnnouncer {
     if (!on) {
       // 立即静音：停掉正在播的 Web Speech 与云健直连 Audio，清空技能队列（GAKU 2026-08-04 全局总开关）
       this.clearSkillQueue();
-      this.pendingSTier.length = 0;
+      const pending = this.pendingSTier.splice(0);
+      this.sTierBusyUntilMs = 0;
       this.currentSpeech = null;
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
       }
       this.stopActiveEdgeAudio();
+      const curSettle = this.activeSettleCallback;
+      this.activeSettleCallback = null;
+      curSettle?.();
+      for (const item of pending) {
+        try { item.opts?.onDone?.(); } catch { /* ignore */ }
+      }
     }
   }
   public isEnabled(): boolean { return this.enabled; }
@@ -1280,6 +1289,7 @@ export class SpeechAnnouncer {
         const settle = () => {
           if (settled) return;
           settled = true;
+          if (this.activeSettleCallback === settle) this.activeSettleCallback = null;
           fireStart();
           window.clearTimeout(safety);
           window.clearTimeout(bannerFallbackTimer);
@@ -1307,6 +1317,7 @@ export class SpeechAnnouncer {
           //    字幕该停多久由它自己的 hold 管（见 showBanner），管不着语音的节奏。
           finish();
         };
+        this.activeSettleCallback = settle;
         safety = window.setTimeout(settle, duckSafetyMs);
 
         const speakWithCandidate = (idx: number): void => {

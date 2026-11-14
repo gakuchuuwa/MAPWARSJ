@@ -130,3 +130,17 @@ tessdata
 
 # CodeGraph 本地代码关系图（2026-10-23）
 .codegraph/
+
+# 本地 YouTube 服务密钥/状态、环境文件、临时/备份目录与多余目录（绝不打进部署包）
+.local
+.local/
+.env
+.env.*
+*.bak_*
+.bak_*
+src/data/portrait_adjust_backups
+.tmp.drivedownload
+work
+artifacts
+乱斗游戏
+

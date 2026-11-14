@@ -1,5 +1,4 @@
 import type { GameApp } from '../app/GameApp';
-import { getEraCityDisplayName } from '../data/eraFactionDisplay';
 
 interface WebMcpToolDefinition {
     name: string;
@@ -96,12 +95,10 @@ function createTools(app: GameApp): WebMcpToolDefinition[] {
 
                 const matches = app.cityManager.getCities()
                     .map((city) => {
-                        // 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
-                        //   百岁模式里该据点的势力名按**本据点建筑文化**取时代名（与地图旗号同一口径）；
-                        //   势力级旧名（按势力首城风格）另列 `factionNameRaw`，便于核对。
+                        // 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」]
+                        //   百岁模式亦统一返回势力本名，不用时代泛称顶替。
                         const factionNameRaw = app.cityManager.getFactionName(city.factionId);
-                        const eraCityName = getEraCityDisplayName(city.factionId, city.buildingStyle);
-                        const factionName = eraCityName ?? factionNameRaw;
+                        const factionName = factionNameRaw;
                         return { city, factionName, factionNameRaw };
                     })
                     .filter(({ city, factionName, factionNameRaw }) =>

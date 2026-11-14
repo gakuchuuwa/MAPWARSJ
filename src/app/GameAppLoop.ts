@@ -9,6 +9,8 @@ import { GameConfig } from '../config/GameConfig';
 import { resolveFactionCulture66 } from '../systems/CultureRegion';
 import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import type { GameApp } from './GameApp';
+import { stepChronicleOpening } from '../data/chronicle/ChronicleOpening';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 
 
 /** 跟随镜头：小于此距离视为已对准，不再 setView（避免静止时微抖） */
@@ -427,6 +429,32 @@ function syncFollowedLegionAudioFor(app: GameApp): void {
  * 单帧主循环（日历 / 事件 / 战斗 / AI / 招募 / 战斗 UI / 跟随镜头）。
  * 从 GameApp 抽出以便第二期继续拆分启动与编辑器绑定。
  */
+/** 驱动编年史开场四镜巡礼（使用真实帧秒 deltaTime，不受游戏倍速影响） */
+function driveChronicleOpening(app: GameApp, deltaTime: number, consumeSnap: boolean) {
+    const hero = app.playerHero;
+    const cityManager = app.cityManager;
+    if (!hero || !cityManager) return null;
+    const heroBusy =
+        !hero.autoMode ||
+        hero.playMode !== 'auto' ||
+        hero.isTraveling() ||
+        hero.isAttached() ||
+        (app.cameraFollowUI?.isFollowingPlayer() ?? false);
+    return stepChronicleOpening({
+        deltaSec: deltaTime,
+        paused: app.timeSystem.isGamePaused(),
+        consumeSnap,
+        heroPos: hero.getPosition(),
+        heroBusy,
+        speechEnabled: speechAnnouncer.isEnabled(),
+        getCityCoord: (id) => {
+            const c = cityManager.getCity(id);
+            return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+        },
+        speak: (text, onDone) => speechAnnouncer.announceBriefing(text, onDone),
+    });
+}
+
 /**
  * 仅推进游戏逻辑，不排队下一帧 rAF。
  * 供后台心跳调用：rAF 被节流/停止时（切 tab、最小化、窗口被遮挡）持续推进推演。
@@ -467,6 +495,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
         // [2026-09-03 查行军卡] 这条后台心跳路径此前**一个探针都没有**。
         //   窗口被遮挡/最小化/切到 OBS 时 rAF 被节流，推演全走这里 —— 也就是说
         //   直播常态很可能就在这条路上，测不到等于白测。与 tickGameAppFrame 同名同源。
+        driveChronicleOpening(app, deltaTime, false);
         const dev = import.meta.env.DEV;
         if (app.historicalEventManager) {
             if (dev) {
@@ -541,6 +570,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
     try {
         const isPaused = app.timeSystem.isGamePaused();
+        const openingCam = driveChronicleOpening(app, deltaTime, true);
 
         if (!isPaused && app.cityManager) {
             const gameDelta = deltaTime * app.timeSystem.getSpeed();   // 🔴 [2026-10-02 主人令] 玩家面板 10× 加速：战略层整体乘倍速（战术层 13 走真实秒，不受影响）
@@ -801,6 +831,15 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     }
                 }
             } else {
+                if (openingCam && !sceneActive && app.zoomController?.enabled !== false) {
+                    const lMap = app.map.getLeafletMap();
+                    if (openingCam.snap) {
+                        resetFollowPanState();
+                        lMap.setView([openingCam.pos.lat, openingCam.pos.lng], lMap.getZoom(), { animate: false });
+                    } else {
+                        followPanStep(lMap, L.latLng(openingCam.pos.lat, openingCam.pos.lng), deltaTime);
+                    }
+                }
                 syncFollowedLegionAudioFor(app);
             }
             app.cameraFollowUI.update();

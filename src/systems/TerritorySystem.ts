@@ -50,6 +50,7 @@ import {
 } from './territory/TerritoryRenderPatch';
 import { resolveCityFlagClass } from './territory/TerritoryFlagClass';
 import { isBlankRebelFaction } from '../data/RebelFaction';
+import { isFactionIdle } from '../data/eraFactionDisplay';
 import {
     getCityImageContainerClass,
     scheduleCityMarkerTerrainSample,
@@ -2582,7 +2583,7 @@ export class TerritorySystem {
             // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」] 叛军（panshu）无主状态：不上领土色/边线
             if (factionId === 'panjun' || isBlankRebelFaction(factionId)) return;
 
-            const color = this.factionManager.getFactionColor(factionId);
+            const color = this.getDisplayFactionColor(factionId);
 
             if (renderPolygons) {
                 const sortedKeys = hexes.map((h) => h.key).sort((a, b) => a - b);
@@ -2868,7 +2869,7 @@ export class TerritorySystem {
                 // 🔴 [2026-10-24] 叛军（panshu）无势力色：不画领土色块、不画边界线
                 if (factionId === 'panjun' || isBlankRebelFaction(factionId)) continue;
 
-                const color = this.factionManager.getFactionColor(factionId);
+                const color = this.getDisplayFactionColor(factionId);
 
                 if (renderPolygons) {
                     const sortedKeys = hexes.map((h) => h.key).sort((a, b) => a - b);
@@ -4078,18 +4079,39 @@ export class TerritorySystem {
         });
 
         if (factionBorderSegments.length > 0) {
-            const factionColor = this.factionManager.getFactionColor(factionId);
+            const factionColor = this.getDisplayFactionColor(factionId);
             // 势力色彩细线（替换原有的 CSS blur 发光多边形）
-            L.polyline(factionBorderSegments, {
+            const borderLine = L.polyline(factionBorderSegments, {
                 color: factionColor, weight: 3, opacity: 0.5,
                 lineCap: 'round', lineJoin: 'round', interactive: false, pane: paneName
-            }).addTo(targetTerritoryGroup);
+            });
+            (borderLine as L.Polyline & { factionId?: string }).factionId = factionId;
+            borderLine.addTo(targetTerritoryGroup);
             // 黑色边框线（保持清晰边界）
             L.polyline(factionBorderSegments, {
                 color: '#000', weight: 1.5, opacity: 1.0,
                 lineCap: 'round', lineJoin: 'round', interactive: false, pane: paneName
             }).addTo(targetTerritoryGroup);
         }
+    }
+
+    private getDisplayFactionColor(factionId: string): string {
+        return isFactionIdle(factionId) ? '#999999' : this.factionManager.getFactionColor(factionId);
+    }
+
+    /** 百岁模式在场武将状态变化时，同步刷新相关势力的领土多边形填充与彩色边界线颜色 */
+    public refreshFactionTerritoryColors(factionIds: ReadonlySet<string>): void {
+        if (factionIds.size === 0) return;
+        this.territoryLayerGroup.eachLayer((layer: any) => {
+            const fid = (layer as { factionId?: string }).factionId;
+            if (!fid || !factionIds.has(fid)) return;
+            const color = this.getDisplayFactionColor(fid);
+            if (layer instanceof L.Polygon) {
+                layer.setStyle({ fillColor: color });
+            } else if (layer instanceof L.Polyline) {
+                layer.setStyle({ color });
+            }
+        });
     }
 
     private ensureFactionPane(paneName: string): void {

@@ -46,15 +46,15 @@ for (const s of CHRONICLE_SCRIPT) {
     };
     if (s.kind !== 'battle') errors.push(`${s.eventId} 主线每场都要开战（不收只播报的场）`);
     if (s.kind === 'battle') {
+        // 按史：战斗类型照 json 原文（攻城战／守城战／标有据点的关隘战按攻城管线走），攻城战必须写明被攻的城
+        const isSiege = e['战斗类型'] === '攻城战' || e['战斗类型'] === '守城战' || (e['战斗类型'] === '关隘战' && Boolean(s.city));
         // 主人定：跟守方武将守城 → 直接从被守的据点出发（就地守城，不行军）
-        const defendsCity = e['战斗类型'] === '攻城战' && s.role === 'defender' && s.city;
+        const defendsCity = isSiege && s.role === 'defender' && s.city;
         const from = defendsCity ? s.city!.cityId : (s.from ?? generals.get(s.leadGeneralId));
         if (!from || !cityIds.has(from)) errors.push(`${s.eventId} 出发据点 ${from} 不在库`);
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
         if (s.enemyGeneralId && !generals.has(s.enemyGeneralId)) errors.push(`${s.eventId} 对手武将 ${s.enemyGeneralId} 不在库`);
         if (!s.winner) errors.push(`${s.eventId} 缺史载胜方`);
-        // 按史：战斗类型照 json 原文，攻城战必须写明被攻的城
-        const isSiege = e['战斗类型'] === '攻城战';
         if (isSiege && !s.city) errors.push(`${s.eventId} 攻城战缺被攻据点`);
         for (const c of [s.city?.cityId]) if (c && !cityIds.has(c)) errors.push(`${s.eventId} 据点 ${c} 不在库`);
         for (const f of [s.city?.before, s.city?.after]) if (f && !factionName.has(f)) errors.push(`${s.eventId} 归属势力 ${f} 不在库`);

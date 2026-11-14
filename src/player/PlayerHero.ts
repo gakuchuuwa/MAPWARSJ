@@ -1401,8 +1401,7 @@ export class PlayerHero {
 
     /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number, opponent?: any): void {
-        // 编年史之战按史推进：随行军团打输也算胜利
-        if (result === 'defeat' && this.getHostLegion()?.chronicleKeep) result = 'victory';
+        const isChronicle = !!this.getHostLegion()?.chronicleKeep;
         // 这一仗主角有没有亲身上战术战场（进 13 时由 buildScene13Setup 记下），结算后作废
         const fought = this.battleArmed;
         this.battleArmed = false;
@@ -1410,6 +1409,15 @@ export class PlayerHero {
         this.pendingLifeBattle = null;
         if (result === 'defeat') {
             this.battleMerit = 0;
+            // 🔴 [2026-11-13 编年史] 战败如实记战败、不奖功劳不夺战利；跟谁离谁由下一场随行主将决定，不在此处削职或退队
+            if (isChronicle) {
+                const battleScene = (globalThis as any).window?.game?.battleScene;
+                if (battleScene?.isActive?.() === true) {
+                    battleScene.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
+                }
+                this.emitChange();
+                return;
+            }
             // 战败立即回战略地图，从退场完成开始等待 9 秒，再走脱军清场流程。
             this.holdAfterDefeat();
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
