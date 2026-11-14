@@ -3,7 +3,7 @@
  * 跑法：npx tsx --import ./tools/sim-preload.mjs tools/chronicle/import-mainline.mts
  * 校验失败（事件 / 武将 / 势力不存在）直接退出，不写文件。
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { CHRONICLE_SCRIPT } from '../../src/data/chronicle/ChronicleDirectorScript';
 import type { ChronicleMainlineEvent } from '../../src/data/chronicle/ChronicleTypes';
 import { FACTION_GENERALS } from '../../src/data/FactionGenerals';
@@ -102,5 +102,7 @@ if (errors.length) {
 const header = `/* 自动生成，勿手改：tools/chronicle/import-mainline.mts ← 编年史 json ＋ ChronicleDirectorScript.ts */\n`
     + `import type { ChronicleMainlineEvent } from './ChronicleTypes';\n\n`
     + `export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = `;
-writeFileSync(OUT, header + JSON.stringify(out, null, 4) + ';\n', 'utf-8');
+const tmpOut = `${OUT}.tmp`;
+writeFileSync(tmpOut, header + JSON.stringify(out, null, 4) + ';\n', 'utf-8');
+renameSync(tmpOut, OUT);
 console.log(`已生成 ${OUT}：${out.length} 场（战斗 ${out.filter((x) => x.kind === 'battle').length}、叙事 ${out.filter((x) => x.kind === 'narrative').length}、挂衔接播报 ${out.filter((x) => x.bridge).length}）`);
