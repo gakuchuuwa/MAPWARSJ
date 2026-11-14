@@ -11278,9 +11278,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/ORIE/wuer_boshasha.png": {
-            "scale": 1.06,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -2
         },
         "/assets/CENTRAL_ASIA/sijitai_tomyris.png": {
             "scale": 1.25,
