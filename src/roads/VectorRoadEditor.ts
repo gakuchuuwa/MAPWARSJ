@@ -739,8 +739,13 @@ export class VectorRoadEditor implements IEditor {
         row2Label.style.cssText = 'color: #aaa; font-size: 14px; padding-right: 6px; white-space:nowrap; font-weight:bold; flex-shrink:0;';
 
         row2.appendChild(row2Label);
+        // 🔴 [2026-11-14 主人「能算出来的道路太少了，能多加点吗」] 视野补路：一次把视野里缺的边算出来
+        const fillRoadsBtn = this.createButton('➕ 视野补路', '#26a69a', () => { void this.batchFillVisibleRoads(); });
+        fillRoadsBtn.title = '把当前视野内「最近却还没直路」的据点对自动算路（NE 路网 · ≤250km · 禁水路 · 绕行≤2×）· 只进内存，点 💾 保存 才写盘 · 再点一次补下一圈';
+
         row2.appendChild(fullAuditBtn);
         row2.appendChild(singleRoadBtn);
+        row2.appendChild(fillRoadsBtn);
         row2.appendChild(distanceLabel);
 
         // [2026-05-30] 问题路导航 — 配合 1️⃣ 全面审查 用
@@ -5759,6 +5764,168 @@ export class VectorRoadEditor implements IEditor {
             ${pathRejHtml}
             ${overlapHtml}
             ${allOkHtml}
+        `);
+    }
+
+    // =====================================================================
+    // [2026-11-14 主人「道路编辑器中，能算出来的道路太少了，能多加点吗」]
+    // 视野补路：当前视野（外扩 60%）里「最近却还没直路」的据点对，一次算一批
+    // =====================================================================
+
+    /**
+     * 🔴 [2026-11-14 主人「能算出来的道路太少了，能多加点吗」]
+     *
+     * 原来只能一对一对点：点起点、点终点，一次一条，视野里缺的边全靠手点，太慢。
+     * 这里把**当前视野内**「最近、但还没有直路」的据点对一次算出来，规矩和手画一模一样：
+     *   - 只走 NE 路网 Dijkstra（第一原则，绝不用直线拼）
+     *   - ≤ connectDistanceKm（250km）· 禁水路 · 绕行 ≤ MAX_DETOUR_RATIO（跨水的放宽到 4.5×）
+     *   - **只进内存**，点 💾 保存 才写盘（路归主人）
+     * 每座城每点一次补 K=2 条最近的空档；再点一次就补下一圈，或者用 1️⃣ 全面审查 收尾。
+     */
+    private async batchFillVisibleRoads(): Promise<void> {
+        if (!this.geoGraphBuilt || this.geoNodes.length === 0) {
+            this.setStatus('⏳ 路网图还在建，稍等再点「➕ 视野补路」');
+            return;
+        }
+        const K = VectorRoadEditor.NEAREST_K_PER_CITY;              // 每座城补几条空档
+        const LIMIT = VectorRoadEditor.BATCH_AUTO_CONNECT_LIMIT;    // 单次上限
+        const maxDistKm = this.connectDistanceKm;
+
+        // 视野外扩 60%：视野里常常只看得见两三座城，不外扩就没有可连的邻居
+        const bounds = this.map.getBounds().pad(0.6);
+        const inView = CITIES.filter((c) => bounds.contains(L.latLng(c.lat, c.lng)));
+        if (inView.length < 2) {
+            this.setStatus(`⚠ 视野里只有 ${inView.length} 座据点，先缩到要补路的区域`);
+            this.showInlineReport(`<div style="color:#ff9800;font-weight:bold;">⚠ 当前视野只有 ${inView.length} 座据点，补不了路 —— 先把地图缩到要补路的区域。</div>`);
+            return;
+        }
+
+        // === 已有路对（据点 + 战场都算） ===
+        const pairKey = (a: string, b: string) => [a, b].sort().join('|');
+        const existingPairs = new Set<string>();
+        for (const f of VECTOR_ROAD_DATA.features) {
+            const s = f?.properties?.startConnection;
+            const e = f?.properties?.endConnection;
+            if (s && e) existingPairs.add(pairKey(s, e));
+        }
+
+        // === 每座视野内的城：取 K 个「最近、但还没有直路」的邻居 ===
+        const seen = new Set<string>();
+        const pairs: Array<{ a: any; b: any; dist: number; key: string }> = [];
+        for (const city of inView) {
+            const cands: Array<{ city: any; d: number }> = [];
+            for (const other of CITIES) {   // 邻居可以是视野外的：补的是缺边，不是缺城
+                if (other.id === city.id) continue;
+                const d = this.haversine(city.lat, city.lng, other.lat, other.lng);
+                if (d > maxDistKm) continue;
+                if (existingPairs.has(pairKey(city.id, other.id))) continue;
+                cands.push({ city: other, d });
+            }
+            cands.sort((x, y) => x.d - y.d);
+            for (const { city: other, d } of cands.slice(0, K)) {
+                const key = pairKey(city.id, other.id);
+                if (seen.has(key)) continue;
+                seen.add(key);
+                pairs.push({ a: city, b: other, dist: d, key });
+            }
+        }
+        // 近的边先建：视野里先织密网，远边留给下一次
+        pairs.sort((x, y) => x.dist - y.dist);
+
+        console.group(`➕ [FillVisible] 视野据点 ${inView.length} · 缺边候选 ${pairs.length} · K=${K} · ≤${maxDistKm}km · 禁水路`);
+
+        // === 逐对算路（同一套：NE Dijkstra → 清理 → 简化 → 吸附） ===
+        const newRoads: Array<{ a: any; b: any; coordinates: [number, number][]; dist: number; pathKm: number }> = [];
+        const rejects: string[] = [];
+        let rejectedNoPath = 0;
+        let rejectedDetour = 0;
+        let processed = 0;
+
+        for (const { a, b, dist, key } of pairs) {
+            if (newRoads.length >= LIMIT) break;
+            if (existingPairs.has(key)) continue;
+            processed++;
+            if (processed % 8 === 0) await new Promise((r) => setTimeout(r, 0));   // 别把界面卡死
+
+            const sc = this.findAccessGeoNodes(a.lat, a.lng, 5);
+            const ec = this.findAccessGeoNodes(b.lat, b.lng, 5);
+            const bestPath = this.dijkstraGeo(sc.map((n) => n.id), ec.map((n) => n.id), { forbidWater: true });
+            if (!bestPath || !bestPath.coordinates || bestPath.coordinates.length < 2) {
+                rejectedNoPath++;
+                if (rejects.length < 6) rejects.push(`${a.name}↔${b.name}（${dist.toFixed(0)}km 无 NE 陆路）`);
+                continue;
+            }
+            const pathKm = bestPath.totalDistance ?? Infinity;
+            const crossesWater = this.waterKmAlong(a.lng, a.lat, b.lng, b.lat) > 2.0 || this.crossesSeaLane(a.lng, a.lat, b.lng, b.lat);
+            const maxDetour = crossesWater ? 4.5 : VectorRoadEditor.MAX_DETOUR_RATIO;
+            if (pathKm / Math.max(dist, 1) > maxDetour) {
+                rejectedDetour++;
+                if (rejects.length < 6) rejects.push(`${a.name}↔${b.name}（${(pathKm / Math.max(dist, 1)).toFixed(1)}× 绕行）`);
+                continue;
+            }
+
+            const rawCoords: [number, number][] = [[a.lng, a.lat], ...bestPath.coordinates, [b.lng, b.lat]];
+            let simplified = this.simplifyCoords(removeBacktracks(rawCoords, 80), 0.002);
+            simplified = this.simplifyCityVicinity(simplified, a, b, 15);
+            const snapped = this.snapToExistingRoads(simplified, null) as [number, number][];
+            if (snapped.length > 0) {
+                snapped[0] = [a.lng, a.lat];
+                snapped[snapped.length - 1] = [b.lng, b.lat];
+            }
+            newRoads.push({ a, b, coordinates: snapped, dist, pathKm });
+            existingPairs.add(key);
+            console.log(`  ✅ ${a.name} ↔ ${b.name}  直径${dist.toFixed(0)}km / 路径${pathKm.toFixed(0)}km`);
+        }
+        console.groupEnd();
+
+        const rejectHtml = rejects.length
+            ? `<div style="margin-top:8px;color:#aaa;font-size:12px;">未算出（可手点补）:<br>${rejects.map((s) => `&nbsp;&nbsp;· ${s}`).join('<br>')}</div>`
+            : '';
+
+        if (newRoads.length === 0) {
+            this.setStatus(`⚠ 0 条新路（缺边候选 ${pairs.length} · 无 NE ${rejectedNoPath} · 绕行超限 ${rejectedDetour}）`);
+            this.showInlineReport(`
+                <div style="color:#ff9800;font-weight:bold;margin-bottom:6px;">➕ 视野补路 · 视野内据点 ${inView.length} 座</div>
+                <div>缺边候选: <b>${pairs.length}</b></div>
+                <div style="color:#ff5722;">❌ 无 NE 陆路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
+                <div style="margin-top:8px;color:#ff9800;">→ 0 条新路（这一圈已经补满，换个区域再点）</div>
+                ${rejectHtml}
+            `);
+            return;
+        }
+
+        // === 建路（内存）===
+        const newFeatures: VectorRoadFeature[] = [];
+        for (const nr of newRoads) {
+            const roadId = `road_${nr.a.id}_${nr.b.id}_${Date.now()}`;
+            newFeatures.push({
+                type: 'Feature',
+                properties: {
+                    name: `${nr.a.name}-${nr.b.name}`, type: 'road', id: roadId,
+                    startConnection: nr.a.id, endConnection: nr.b.id
+                },
+                geometry: { type: 'LineString', coordinates: nr.coordinates }
+            });
+        }
+        roadRegistry.addVectorRoadsBatch(newFeatures);
+        this.renderAllRoads();
+        this.updateRoadSelect();
+
+        const hitLimit = newRoads.length >= LIMIT;
+        this.setStatus(`➕ 视野补路: 新建 ${newRoads.length} 条${hitLimit ? `（达上限 ${LIMIT}，可再点）` : ''} · 未写盘，点 💾 保存`);
+        this.showInlineReport(`
+            <div style="color:#26a69a;font-weight:bold;margin-bottom:8px;font-size:14px;">
+                ➕ 视野补路 · 视野内据点 <b>${inView.length}</b> 座 · ≤${maxDistKm}km · <span style="color:#03a9f4">禁水路</span> · 绕行≤2× · 每城 ${K} 条空档
+            </div>
+            <div>缺边候选: <b>${pairs.length}</b> · 新建: <b style="color:#4caf50">${newRoads.length}</b>${hitLimit ? ` <span style="color:#ff9800;">(达上限 ${LIMIT})</span>` : ''}</div>
+            <div style="color:#ff5722;">❌ 无 NE 陆路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
+            <div style="margin-top:8px;color:#ddd;font-size:13px;line-height:1.9;">
+                ${newRoads.map((r) => `<span style="background:rgba(38,166,154,0.18);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">${r.a.name}↔${r.b.name} <span style="color:#888;font-size:11px;">${r.dist.toFixed(0)}km</span></span>`).join('')}
+            </div>
+            ${rejectHtml}
+            <div style="margin-top:10px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.12);color:#ffd700;font-size:12px;">
+                💾 只进内存，还没写文件：满意了点 💾 保存；不满意点 🗑️ 删除 逐条退，或再点一次 ➕ 视野补路 补下一圈。
+            </div>
         `);
     }
 

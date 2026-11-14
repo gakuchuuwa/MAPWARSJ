@@ -2394,6 +2394,8 @@ export const HUGUANG_CITY_IDS: ReadonlySet<string> = new Set([
     // 福建（10）
     'city_fuzhou', 'city_zhenghe', 'city_zhangzhou', 'city_tingzhou', 'city_shaxian',
     'city_yanping', 'city_jianning', 'city_qingjingsi', 'city_chongan', 'city_hengyu',
+
+    'city_dingkou',
 ]);
 
 export const CITIES_V2: CityDataV2[] = [
@@ -4199,6 +4201,21 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_nikoba', name: '尼科巴', factionId: 'danmai', lat: 8.03, lng: 93.53, type: 'stockade', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '🔴 [2026-11-07 按史补依据] 尼科巴群岛；🔴 [2026-11-05 主人批准新建] 尼科巴（Nicobar，楠考里港，即翠蓝屿）：孟加拉湾淡水与椰果补给岛，1756 年丹麦殖民；人口待考 → 城寨；主人令 2026-11-05：无武将、离亚齐 339km >200km，作航线中转站' },
     // 🔴 [2026-11-05 主人批准新建] 航行港口第七批（串本）
     { id: 'city_kushimoto', name: '串本', factionId: 'toyotomi', lat: 33.47, lng: 135.78, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-07 按史补依据] 纪伊串本；🔴 [2026-11-05 主人批准新建] 串本（大岛港）：纪伊半岛最南端港口，绕行潮岬的候风停泊处，熊野水军活动海域；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」；离千早城 97km（≥50km）；主人令 2026-11-05 选堀内氏善为守将' },
+
+    { id: 'city_rhandeia', name: '兰德亚', factionId: 'armenia_arsacid', lat: 38.69, lng: 39.93, type: 'pass', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '塔西佗《编年史》XV.10–15：62年罗马将领派图斯于阿尔萨尼亚斯河畔筑兰德亚营垒受围，系河谷军事关隘要塞，未成万人城，定险要。' },
+    { id: 'city_tigranocerta', name: '提格拉诺塞塔', factionId: 'armenia_arsacid', lat: 38.14, lng: 41.0, type: 'medium_city', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '普鲁塔克《卢库鲁斯传》26、阿庇安《米特拉达梯战争史》84：前77年提格拉尼二世迁三十万众营建亚美尼亚南都，高墙巨郭人口逾十万，定中城。' },
+    { id: 'city_sunzhong', name: '损中', factionId: 'shule', lat: 39.58, lng: 75.39, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '《后汉书·班超传》：疏勒西境损中城，为葱岭东麓军屯夯土小城，未成万人邑，定城寨。' },
+    { id: 'city_lugidunum', name: '卢吉杜努姆', factionId: 'lugii', lat: 51.21, lng: 16.16, type: 'stockade', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '托勒密《地理志》II.11：日耳曼尼亚东部卢吉人聚落（今波兰莱格尼察一带），早期木栅土垒部族营寨，定城寨。' },
+    { id: 'city_marisia', name: '马里西亚', factionId: 'gepids', lat: 46.18, lng: 21.31, type: 'stockade', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '约达尼斯《哥特史》22：马里西亚河（今穆列什河）流域哥特与革皮德部族聚落木寨，定城寨。' },
+    { id: 'city_clavenna', name: '克拉文纳', factionId: 'luoma_diguo', lat: 46.32, lng: 9.4, type: 'pass', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '《安东尼行纪》：阿尔卑斯山南麓要隘（今意大利基亚文纳），扼斯普吕根与马洛亚两山口通道，未成万人城，定险要。' },
+    { id: 'city_wolgast', name: '沃尔加斯特', factionId: 'meikelunbao', lat: 54.05, lng: 13.77, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '萨克索《丹麦人史》XIV：佩内河口西斯拉夫部族木栅土垒神庙堡寨，未成万人石城，定城寨。' },
+    { id: 'city_kamba', name: '坎普堡', factionId: 'awaer', lat: 48.4, lng: 15.7, type: 'pass', troops: 10000, region: 'HUNS', buildingStyle: 'HUNS', note: '《法兰克王国编年史》791年条：坎普河汇入多瑙河处阿瓦尔西境环形木土障塞，纯军事关防，定险要。' },
+    { id: 'city_canburg', name: '卡努尔格', factionId: 'boximiya', lat: 50.37, lng: 13.79, type: 'stockade', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'BOHEMIANS', note: '《莫瓦萨克编年史》805年条：波希米亚奥赫热河畔斯拉夫部族木土丘堡，定城寨。' },
+    { id: 'city_dingkou', name: '鼎口寨', factionId: 'zhongxiang', lat: 29.15, lng: 112.65, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'HUGUANG', note: '《建炎以来系年要录》绍兴五年：洞庭湖口杨幺水军所筑木栅水寨群，定城寨。' },
+    { id: 'city_saerdulu', name: '撒儿都鲁', factionId: 'yuan_d', lat: 43.85, lng: 120.55, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '《元史·世祖纪》至元二十四年：潢水（西拉木伦河）流域辽东宗王驻冬大营，无石墙未成万人城，定城寨。' },
+    { id: 'city_guikushan', name: '鬼哭山', factionId: 'luchuan', lat: 24.85, lng: 96.82, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '《明史·王骥传》正统十三年：金沙江西岸孟养山巅险要木栅大寨，纯军事险隘，定险要。' },
+    { id: 'city_orenburg', name: '奥伦堡', factionId: 'eluosi_diguo', lat: 51.77, lng: 55.1, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: 'Wikipedia「Orenburg」：1743年俄国于乌拉尔河畔筑石砖棱堡边防重镇，驻军商民逾万，定小城。' },
+    { id: 'city_vellica', name: '韦利卡', factionId: 'cantabri', lat: 42.79, lng: -4.27, type: 'stockade', troops: 10000, region: 'SPANISH', buildingStyle: 'CELTS', note: '弗罗鲁斯《罗马史纲》II.33：坎塔布里亚山南麓部族主寨（今西班牙奥列罗斯德皮苏埃加），山地木石营寨，定城寨。' },
 ].map((city): CityDataV2 => { const base = city as CityDataV2; return HUGUANG_CITY_IDS.has(base.id) ? { ...base, buildingStyle: 'HUGUANG' as const } : base; });
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

@@ -1372,6 +1372,20 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_sanjulian: 1520, // 1520麦哲伦越冬圣胡利安港
     city_uxmal: 850, // 约850乌斯马尔玛雅城建盛期
     city_onon: 1142, // 约1142易洛魁联盟立会于奥农多加（传统纪年）
+    city_rhandeia: 62,
+    city_tigranocerta: -77,
+    city_sunzhong: -100,
+    city_lugidunum: 100,
+    city_marisia: 290,
+    city_clavenna: -15,
+    city_wolgast: 750,
+    city_kamba: 700,
+    city_canburg: 750,
+    city_dingkou: 1130,
+    city_saerdulu: 1260,
+    city_guikushan: 1440,
+    city_orenburg: 1743,
+    city_vellica: -200,
 };
 
 /**
