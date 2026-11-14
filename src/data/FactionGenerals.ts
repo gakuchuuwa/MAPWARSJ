@@ -285,7 +285,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'emesene_xierkuhe', factionId: 'antiaokegongguo', cityId: 'city_emesa', generalName: '希尔库赫', portrait: '/assets/ORIE/emesene_xierkuhe.png', eliteName: '阿萨德重装骑', eliteTier: 2 },
     
-        { generalId: 'antiaokegongguo_gen_616', factionId: 'antiaokegongguo', cityId: 'city_niniwei', generalName: '赛义夫丁·加齐二世', portrait: '', eliteName: '赞吉征战锐卒', eliteTier: 4 },
+        { generalId: 'antiaokegongguo_gen_616', factionId: 'antiaokegongguo', cityId: 'city_niniwei', generalName: '赛义夫丁·加齐二世', portrait: '/assets/ORIE/antiaokegongguo_gen_616.png', eliteName: '赞吉征战锐卒', eliteTier: 4 },
     ],
 
     saimien: { generalId: 'gen_yodit', cityId: 'city_saimien', generalName: '尤迪特', portrait: '/assets/ETHIOPIANS/gen_yodit.png', eliteName: '塞米恩卫兵', eliteTier: 4 },
@@ -354,7 +354,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'montereau_pressy', generalName: '普雷西', factionId: 'bogendigongguo', cityId: 'city_mengteluo', portrait: '/assets/BURGUNDIANS/bogendigongguo_rangdepuleixi.png', eliteName: '勃艮第卫队', eliteTier: 4 },
         { generalId: 'bogendi_jacqueline', factionId: 'bogendigongguo', cityId: 'city_bruges', generalName: '埃诺的杰奎琳', portrait: '/assets/BURGUNDIANS/bogendi_jacqueline.png', eliteName: '埃诺卫队', eliteTier: 4 },
     
-        { generalId: 'bogendigongguo_gen_683', factionId: 'bogendigongguo', cityId: 'city_dijon', generalName: '雅克·德·萨伏依', portrait: '', eliteName: '勃艮征战锐卒', eliteTier: 4 },
+        { generalId: 'bogendigongguo_gen_683', factionId: 'bogendigongguo', cityId: 'city_dijon', generalName: '雅克·德·萨伏依', portrait: '/assets/BURGUNDIANS/bogendigongguo_gen_683.png', eliteName: '勃艮征战锐卒', eliteTier: 4 },
     ],
 
     amaniyake: [
@@ -405,9 +405,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'kejila_shulunbao', factionId: 'kelite', cityId: 'city_kefu', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png', eliteName: '科孚守备方阵', eliteTier: 2 },
 
     
-        { generalId: 'kelite_gen_513', factionId: 'kelite', cityId: 'city_venice', generalName: '安杰洛·帕尔提奇帕齐奥', portrait: '', eliteName: '威尼中军精骑', eliteTier: 3 },
-        { generalId: 'kelite_gen_677', factionId: 'kelite', cityId: 'city_thebes', generalName: '保罗·埃里佐', portrait: '', eliteName: '威尼征战锐卒', eliteTier: 4 },
-        { generalId: 'kelite_gen_678', factionId: 'kelite', cityId: 'city_antiwali', generalName: '安东尼奥·达·莱泽', portrait: '', eliteName: '威尼中军精骑', eliteTier: 3 },
+        { generalId: 'kelite_gen_513', factionId: 'kelite', cityId: 'city_venice', generalName: '安杰洛·帕尔提奇帕齐奥', portrait: '/assets/LATIN/kelite_gen_513.png', eliteName: '威尼中军精骑', eliteTier: 3 },
+        { generalId: 'kelite_gen_677', factionId: 'kelite', cityId: 'city_thebes', generalName: '保罗·埃里佐', portrait: '/assets/LATIN/kelite_gen_677.png', eliteName: '威尼征战锐卒', eliteTier: 4 },
+        { generalId: 'kelite_gen_678', factionId: 'kelite', cityId: 'city_antiwali', generalName: '安东尼奥·达·莱泽', portrait: '/assets/LATIN/kelite_gen_678.png', eliteName: '威尼中军精骑', eliteTier: 3 },
     ],
 
     leangongguo: [
@@ -457,7 +457,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'bfe_cb_aq_qoyunlu_1', factionId: 'aq_qoyunlu', cityId: 'city_dabulishi', generalName: '乌尊哈桑', portrait: '/assets/SASANIAN/bfe_cb_aq_qoyunlu_1.png', eliteName: '巴彦杜尔部骑兵', eliteTier: 3 },   // 1467 破杀黑羊王朝贾汉沙，1469 擒帖木儿朝卜撒因，迁都大不里士
     
-        { generalId: 'aq_qoyunlu_gen_687', factionId: 'aq_qoyunlu', cityId: 'city_dabulishi', generalName: '阿尔万德', portrait: '', eliteName: '白羊征战锐卒', eliteTier: 4 },
+        { generalId: 'aq_qoyunlu_gen_687', factionId: 'aq_qoyunlu', cityId: 'city_dabulishi', generalName: '阿尔万德', portrait: '/assets/SASANIAN/aq_qoyunlu_gen_687.png', eliteName: '白羊征战锐卒', eliteTier: 4 },
     ],
     kelite_amier: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
@@ -472,7 +472,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
         { generalId: 'bfe_cb_huanchu_1', factionId: 'huanchu', cityId: 'city_ying', generalName: '桓玄', portrait: '/assets/JIANGNAN/bfe_cb_huanchu_1.png', eliteName: '荆州西府兵', eliteTier: 3 },   // 据江陵督荆州，402 东下破司马元显入建康，403 篡晋称楚（《晋书·桓玄传》）
     
-        { generalId: 'huanchu_gen_368', factionId: 'huanchu', cityId: 'city_nanjing', generalName: '桓谦', portrait: '', eliteName: '桓楚征战锐卒', eliteTier: 4 },
+        { generalId: 'huanchu_gen_368', factionId: 'huanchu', cityId: 'city_nanjing', generalName: '桓谦', portrait: '/assets/JIANGNAN/huanchu_gen_368.png', eliteName: '桓楚征战锐卒', eliteTier: 4 },
     ],
     gallic_empire: [
         // 🔴 [2026-11-13 主人令「一个事件两个势力，一个势力一个武将，没有名字的就用泛指」] 0 据点势力补将
@@ -568,30 +568,30 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'qiliqiya_pangpei', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '庞培', portrait: '/assets/ROMA/qiliqiya_pangpei.png', eliteName: '东方老兵军团', eliteTier: 1 },
         { generalId: 'bfe_crassus', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '克拉苏', portrait: '/assets/ROMA/bfe_crassus.png', eliteName: '高卢骑兵', eliteTier: 3 },
     
-        { generalId: 'luoma_gongheguo_gen_1', factionId: 'luoma_gongheguo', cityId: 'city_yifusuo', generalName: '曼利乌斯·武尔索', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_2', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '埃米利乌斯·保卢斯', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_3', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '西庇阿·埃米利安努斯', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_6', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '文蒂迪乌斯', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_51', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '阿基利乌斯·格拉布里奥', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_52', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '马库斯·加图', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_53', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '卢基乌斯·西庇阿', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_54', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '普布利乌斯·西庇阿', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_59', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '富尔维乌斯·弗拉库斯', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_60', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '提比略·格拉古', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_63', factionId: 'luoma_gongheguo', cityId: 'city_pelina', generalName: '普布利乌斯·李锡尼·克拉苏', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_64', factionId: 'luoma_gongheguo', cityId: 'city_pelina', generalName: '西庇阿·纳西卡', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_65', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '富尔维乌斯·诺比利奥尔', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_67', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '克劳狄·马塞卢斯', portrait: '', eliteName: '罗马中军精骑', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_68', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '卢基乌斯·卢库卢斯', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_101', factionId: 'luoma_gongheguo', cityId: 'city_cordoba', generalName: '阿西尼乌斯·波利奥', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_102', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '奥卢斯·希尔提乌斯', portrait: '', eliteName: '罗马征战锐卒', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_108', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '德基迪乌斯·萨克萨', portrait: '', eliteName: '罗马镇军丙营', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_110', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '盖乌斯·索西乌斯', portrait: '', eliteName: '罗马镇军丙营', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_111', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '大希律王', portrait: '', eliteName: '罗马镇军丙营', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_115', factionId: 'luoma_gongheguo', cityId: 'city_banjiaxi', generalName: '科尔内利乌斯·加卢斯', portrait: '', eliteName: '罗马镇军丙营', eliteTier: 4 },
-        { generalId: 'luoma_gongheguo_gen_116', factionId: 'luoma_gongheguo', cityId: 'city_salonica', generalName: '马库斯·李锡尼·克拉苏', portrait: '', eliteName: '罗马中军丁营', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_gen_118', factionId: 'luoma_gongheguo', cityId: 'city_nabone', generalName: '梅萨拉·科尔维努斯', portrait: '', eliteName: '罗马中军丁营', eliteTier: 3 },
-        { generalId: 'luoma_gongheguo_shouling', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '罗马共和国主将', portrait: '', eliteName: '罗马卫戍锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_1', factionId: 'luoma_gongheguo', cityId: 'city_yifusuo', generalName: '曼利乌斯·武尔索', portrait: '/assets/ROMA/luoma_gongheguo_gen_1.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_2', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '埃米利乌斯·保卢斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_2.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_3', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '西庇阿·埃米利安努斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_3.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_6', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '文蒂迪乌斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_6.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_51', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '阿基利乌斯·格拉布里奥', portrait: '/assets/ROMA/luoma_gongheguo_gen_51.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_52', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '马库斯·加图', portrait: '/assets/ROMA/luoma_gongheguo_gen_52.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_53', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '卢基乌斯·西庇阿', portrait: '/assets/ROMA/luoma_gongheguo_gen_53.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_54', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '普布利乌斯·西庇阿', portrait: '/assets/ROMA/luoma_gongheguo_gen_54.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_59', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '富尔维乌斯·弗拉库斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_59.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_60', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '提比略·格拉古', portrait: '/assets/ROMA/luoma_gongheguo_gen_60.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_63', factionId: 'luoma_gongheguo', cityId: 'city_pelina', generalName: '普布利乌斯·李锡尼·克拉苏', portrait: '/assets/ROMA/luoma_gongheguo_gen_63.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_64', factionId: 'luoma_gongheguo', cityId: 'city_pelina', generalName: '西庇阿·纳西卡', portrait: '/assets/ROMA/luoma_gongheguo_gen_64.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_65', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '富尔维乌斯·诺比利奥尔', portrait: '/assets/ROMA/luoma_gongheguo_gen_65.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_67', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '克劳狄·马塞卢斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_67.png', eliteName: '罗马中军精骑', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_68', factionId: 'luoma_gongheguo', cityId: 'city_zaragoza', generalName: '卢基乌斯·卢库卢斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_68.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_101', factionId: 'luoma_gongheguo', cityId: 'city_cordoba', generalName: '阿西尼乌斯·波利奥', portrait: '/assets/ROMA/luoma_gongheguo_gen_101.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_102', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '奥卢斯·希尔提乌斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_102.png', eliteName: '罗马征战锐卒', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_108', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '德基迪乌斯·萨克萨', portrait: '/assets/ROMA/luoma_gongheguo_gen_108.png', eliteName: '罗马镇军丙营', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_110', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '盖乌斯·索西乌斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_110.png', eliteName: '罗马镇军丙营', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_111', factionId: 'luoma_gongheguo', cityId: 'city_antiejiya', generalName: '大希律王', portrait: '/assets/ROMA/luoma_gongheguo_gen_111.png', eliteName: '罗马镇军丙营', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_115', factionId: 'luoma_gongheguo', cityId: 'city_banjiaxi', generalName: '科尔内利乌斯·加卢斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_115.png', eliteName: '罗马镇军丙营', eliteTier: 4 },
+        { generalId: 'luoma_gongheguo_gen_116', factionId: 'luoma_gongheguo', cityId: 'city_salonica', generalName: '马库斯·李锡尼·克拉苏', portrait: '/assets/ROMA/luoma_gongheguo_gen_116.png', eliteName: '罗马中军丁营', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_gen_118', factionId: 'luoma_gongheguo', cityId: 'city_nabone', generalName: '梅萨拉·科尔维努斯', portrait: '/assets/ROMA/luoma_gongheguo_gen_118.png', eliteName: '罗马中军丁营', eliteTier: 3 },
+        { generalId: 'luoma_gongheguo_shouling', factionId: 'luoma_gongheguo', cityId: 'city_luoma', generalName: '罗马共和国主将', portrait: '/assets/ROMA/luoma_gongheguo_shouling.png', eliteName: '罗马卫戍锐卒', eliteTier: 4 },
     ],
     guge: [   // 🔴 [2026-11-13] 古格
         { generalId: 'guge_chizhaxichabade', factionId: 'guge', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '古格骑兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 guge 块
@@ -618,7 +618,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'ganzhou_huihu_yeluohu', factionId: 'ganzhou_huihu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 ganzhou_huihu 块
         { generalId: 'yuezhi_xihou', factionId: 'ganzhou_huihu', cityId: 'city_shandan', generalName: '黄头', portrait: '/assets/XIANBEI/yuezhi_xihou.png', eliteName: '甘州骑手', eliteTier: 4 },   // 🔴 [2026-11-03 主人点头] 月氏已并入贵霜；黄头＝黄头回鹘部首领（10 世纪河西），改挂甘州回鹘，据点删丹·XIANBEI ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 ganzhou_huihu 块
     
-        { generalId: 'ganzhou_huihu_gen_574', factionId: 'ganzhou_huihu', cityId: 'city_zhangye', generalName: '夜落隔通顺', portrait: '', eliteName: '甘州征战锐卒', eliteTier: 4 },
+        { generalId: 'ganzhou_huihu_gen_574', factionId: 'ganzhou_huihu', cityId: 'city_zhangye', generalName: '夜落隔通顺', portrait: '/assets/KHITAN/ganzhou_huihu_gen_574.png', eliteName: '甘州征战锐卒', eliteTier: 4 },
     ],
     gaochang_huihu: [   // 🔴 [2026-11-13] 高昌回鹘
         { generalId: 'yiduhu_baershu', factionId: 'gaochang_huihu', cityId: 'city_gaochangcheng', generalName: '巴尔术', portrait: '/assets/WESTERN/yiduhu_baershu.png', eliteName: '亦都护畏兀骑', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 yiduhu 块
@@ -645,19 +645,19 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_tsering_dondub', factionId: 'zhunge', cityId: 'city_yili', generalName: '策凌敦多布', portrait: '/assets/CENTRAL_ASIA/bfe_tsering_dondub.png', eliteName: '准噶尔铁骑', eliteTier: 2 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 dzungar 块
         { generalId: 'bfe_xiaoceling', factionId: 'zhunge', cityId: 'city_yili', generalName: '策零敦多布', portrait: '/assets/CENTRAL_ASIA/bfe_xiaoceling.png', eliteName: '准噶尔铁骑', eliteTier: 2 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 dzungar 块
     
-        { generalId: 'zhunge_gen_727', factionId: 'zhunge', cityId: 'city_yili', generalName: '达瓦齐', portrait: '', eliteName: '准噶征战锐卒', eliteTier: 4 },
+        { generalId: 'zhunge_gen_727', factionId: 'zhunge', cityId: 'city_yili', generalName: '达瓦齐', portrait: '/assets/MONGOL/zhunge_gen_727.png', eliteName: '准噶征战锐卒', eliteTier: 4 },
     ],
     hou_womaya: [   // 🔴 [2026-11-13] 后倭马亚
         { generalId: 'malwan_ibn_marwan', factionId: 'hou_womaya', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德步兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
         { generalId: 'gen_abd_al_rahman_iii', factionId: 'hou_womaya', cityId: 'city_cordoba', generalName: '拉赫曼三世', portrait: '/assets/ORIE/gen_abd_al_rahman_iii.png', eliteName: '后倭马亚骑', eliteTier: 1 },
     
-        { generalId: 'hou_womaya_gen_509', factionId: 'hou_womaya', cityId: 'city_barcelona', generalName: '萨敦·鲁艾尼', portrait: '', eliteName: '后倭征战锐卒', eliteTier: 4 },
+        { generalId: 'hou_womaya_gen_509', factionId: 'hou_womaya', cityId: 'city_barcelona', generalName: '萨敦·鲁艾尼', portrait: '/assets/ORIE/hou_womaya_gen_509.png', eliteName: '后倭征战锐卒', eliteTier: 4 },
     ],
     hasmonean: [   // 🔴 [2026-11-13] 哈斯蒙尼王朝
         { generalId: 'xibolai_majiabi', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '犹大马加比', portrait: '/assets/ORIE/xibolai_youdamajiabi.png', eliteName: '犹太勇士', eliteTier: 2 },
         { generalId: 'gen_aristobulus_ii', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '阿里斯托布鲁斯二世', portrait: '/assets/ORIE/gen_aristobulus_ii.png' , eliteName: '哈斯蒙卫军', eliteTier: 4},
     
-        { generalId: 'hasmonean_gen_112', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '安提柯二世·马塔提亚', portrait: '', eliteName: '哈斯征战锐卒', eliteTier: 4 },
+        { generalId: 'hasmonean_gen_112', factionId: 'hasmonean', cityId: 'city_yelusaleng', generalName: '安提柯二世·马塔提亚', portrait: '/assets/ORIE/hasmonean_gen_112.png', eliteName: '哈斯征战锐卒', eliteTier: 4 },
     ],
     gu_aiji: [   // 🔴 [2026-11-13] 埃及新王国
         { generalId: 'aiji_lameisisi', factionId: 'gu_aiji', cityId: 'city_mengfeisi', generalName: '拉美西斯', portrait: '/assets/ORIE/aiji_lameisisi.png', eliteName: '埃及战车兵', eliteTier: 2 },
@@ -765,7 +765,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'maqidun_nearchos', factionId: 'maqidun', cityId: 'city_salonica', generalName: '尼阿库斯', portrait: '/assets/MACEDONIAN/maqidun_nearchos.png', eliteName: '马其顿矛兵', eliteTier: 4 },
         { generalId: 'gen_cleitus', cityId: 'city_salonica', generalName: '克雷图斯', portrait: '/assets/MACEDONIAN/gen_cleitus.png', eliteName: '佩拉伙友骑', eliteTier: 3 },   // 🔴 2026-11-05 马其顿骑兵中队长（阿利安《亚历山大远征记》），原误挂 adiyabeina 键
     
-        { generalId: 'maqidun_gen_61', factionId: 'maqidun', cityId: 'city_salonica', generalName: '珀尔修斯', portrait: '', eliteName: '马其征战锐卒', eliteTier: 4 },
+        { generalId: 'maqidun_gen_61', factionId: 'maqidun', cityId: 'city_salonica', generalName: '珀尔修斯', portrait: '/assets/MACEDONIAN/maqidun_gen_61.png', eliteName: '马其征战锐卒', eliteTier: 4 },
     ],
 
     lagusa: { generalId: 'gen_dragan', cityId: 'city_ragusa', generalName: '德拉甘', portrait: '/assets/SLAVIC/lagusa_delagan.png', eliteName: '山地守卫', eliteTier: 4 },
@@ -802,12 +802,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_simeon_great', cityId: 'city_puleisilafu', generalName: '西美昂', portrait: '/assets/BULGARIANS/gen_simeon_great.png', eliteName: '保加卫队', eliteTier: 2 },
 
     
-        { generalId: 'baojialiya_gen_515', factionId: 'baojialiya', cityId: 'city_puleisilafu', generalName: '奥莫尔塔格', portrait: '', eliteName: '保加中军精骑', eliteTier: 3 },
+        { generalId: 'baojialiya_gen_515', factionId: 'baojialiya', cityId: 'city_puleisilafu', generalName: '奥莫尔塔格', portrait: '/assets/BULGARIANS/baojialiya_gen_515.png', eliteName: '保加中军精骑', eliteTier: 3 },
     ],
 
     bosiniya: [
         { generalId: 'gen_tvrtko', cityId: 'city_sarajevo', generalName: '特夫尔特科', portrait: '/assets/SLAVIC/bosiniya_tefuerteke.png', eliteName: '巴恩亲卫', eliteTier: 4 },
-        { generalId: 'bosiniya_gen_675', factionId: 'bosiniya', cityId: 'city_sarajevo', generalName: '斯特凡·托马舍维奇', portrait: '', eliteName: '波斯征战锐卒', eliteTier: 4 },
+        { generalId: 'bosiniya_gen_675', factionId: 'bosiniya', cityId: 'city_sarajevo', generalName: '斯特凡·托马舍维奇', portrait: '/assets/SLAVIC/bosiniya_gen_675.png', eliteName: '波斯征战锐卒', eliteTier: 4 },
     ],
 
     mulabite: [
@@ -845,7 +845,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_hamilcar', factionId: 'buni', cityId: 'city_jiataji', generalName: '哈米尔卡', portrait: '/assets/BERBER/gen_hamilcar.png', eliteName: '巴卡努米底骑', eliteTier: 2 },
 
     
-        { generalId: 'buni_gen_70', factionId: 'buni', cityId: 'city_jiataji', generalName: '哈斯德鲁巴', portrait: '', eliteName: '迦太征战锐卒', eliteTier: 4 },
+        { generalId: 'buni_gen_70', factionId: 'buni', cityId: 'city_jiataji', generalName: '哈斯德鲁巴', portrait: '/assets/BERBER/buni_gen_70.png', eliteName: '迦太征战锐卒', eliteTier: 4 },
     ],
 
     aguelabu: [
@@ -913,8 +913,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'gen_seuthes_iii', factionId: 'seleisi', cityId: 'city_seuthopolis', generalName: '塞乌特斯三世', portrait: '/assets/THRACIAN/gen_seuthes_iii.png', eliteName: '奥德里轻盾兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 odrysian_late 块
     
-        { generalId: 'seleisi_gen_62', factionId: 'seleisi', cityId: 'city_luxiweng', generalName: '科提斯四世', portrait: '', eliteName: '色雷征战锐卒', eliteTier: 4 },
-        { generalId: 'seleisi_shouling', factionId: 'seleisi', cityId: 'city_plovdiv', generalName: '色雷斯主将', portrait: '', eliteName: '色雷卫戍锐卒', eliteTier: 4 },
+        { generalId: 'seleisi_gen_62', factionId: 'seleisi', cityId: 'city_luxiweng', generalName: '科提斯四世', portrait: '/assets/THRACIAN/seleisi_gen_62.png', eliteName: '色雷征战锐卒', eliteTier: 4 },
+        { generalId: 'seleisi_shouling', factionId: 'seleisi', cityId: 'city_plovdiv', generalName: '色雷斯主将', portrait: '/assets/THRACIAN/seleisi_shouling.png', eliteName: '色雷卫戍锐卒', eliteTier: 4 },
     ],
 
     pufaerci: { generalId: 'gen_ludwig_iv', cityId: 'city_heidelberg', generalName: '路德维希', portrait: '/assets/GERMANIC/pufaerci_ludeweixi.png', eliteName: '莱茵守卫', eliteTier: 4 },
@@ -1103,18 +1103,18 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_champlain', factionId: 'gaolu', cityId: 'city_quebec', generalName: '尚普兰', portrait: '/assets/FRANKS/gen_champlain.png', eliteName: '圣劳伦火枪卫', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 france_modern 块
         { generalId: 'gaolu_labuerdonei', factionId: 'gaolu', cityId: 'city_mauritius', generalName: '拉布尔多内', portrait: '/assets/FRANKS/gaolu_labuerdonei.png', eliteName: '毛里求斯舰队', eliteTier: 3 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 france_modern 块
     
-        { generalId: 'gaolu_gen_40', factionId: 'gaolu', cityId: 'city_bali', generalName: '蒂雷纳', portrait: '', eliteName: '法兰中军精骑', eliteTier: 3 },
-        { generalId: 'gaolu_gen_628', factionId: 'gaolu', cityId: 'city_damietta', generalName: '路易九世', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_642', factionId: 'gaolu', cityId: 'city_bruges', generalName: '雨果·基耶雷', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_646', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '路易·德·普瓦捷', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_647', factionId: 'gaolu', cityId: 'city_bali', generalName: '腓力六世', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_648', factionId: 'gaolu', cityId: 'city_calais', generalName: '让·德·维也纳', portrait: '', eliteName: '法兰中军精骑', eliteTier: 3 },
-        { generalId: 'gaolu_gen_649', factionId: 'gaolu', cityId: 'city_bali', generalName: '让·德·利勒', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_651', factionId: 'gaolu', cityId: 'city_rennes', generalName: '贝特朗·杜·盖克兰', portrait: '', eliteName: '法兰中军精骑', eliteTier: 3 },
-        { generalId: 'gaolu_gen_653', factionId: 'gaolu', cityId: 'city_bali', generalName: '加斯东·费比斯', portrait: '', eliteName: '法兰中军精骑', eliteTier: 3 },
-        { generalId: 'gaolu_gen_668', factionId: 'gaolu', cityId: 'city_caen', generalName: '纪尧姆·德·蒙特纳', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_669', factionId: 'gaolu', cityId: 'city_rouen', generalName: '居伊·勒·布泰耶', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
-        { generalId: 'gaolu_gen_691', factionId: 'gaolu', cityId: 'city_turin', generalName: '纪尧姆·德·古菲耶', portrait: '', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_40', factionId: 'gaolu', cityId: 'city_bali', generalName: '蒂雷纳', portrait: '/assets/FRANKS/gaolu_gen_40.png', eliteName: '法兰中军精骑', eliteTier: 3 },
+        { generalId: 'gaolu_gen_628', factionId: 'gaolu', cityId: 'city_damietta', generalName: '路易九世', portrait: '/assets/FRANKS/gaolu_gen_628.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_642', factionId: 'gaolu', cityId: 'city_bruges', generalName: '雨果·基耶雷', portrait: '/assets/FRANKS/gaolu_gen_642.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_646', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '路易·德·普瓦捷', portrait: '/assets/FRANKS/gaolu_gen_646.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_647', factionId: 'gaolu', cityId: 'city_bali', generalName: '腓力六世', portrait: '/assets/FRANKS/gaolu_gen_647.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_648', factionId: 'gaolu', cityId: 'city_calais', generalName: '让·德·维也纳', portrait: '/assets/FRANKS/gaolu_gen_648.png', eliteName: '法兰中军精骑', eliteTier: 3 },
+        { generalId: 'gaolu_gen_649', factionId: 'gaolu', cityId: 'city_bali', generalName: '让·德·利勒', portrait: '/assets/FRANKS/gaolu_gen_649.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_651', factionId: 'gaolu', cityId: 'city_rennes', generalName: '贝特朗·杜·盖克兰', portrait: '/assets/FRANKS/gaolu_gen_651.png', eliteName: '法兰中军精骑', eliteTier: 3 },
+        { generalId: 'gaolu_gen_653', factionId: 'gaolu', cityId: 'city_bali', generalName: '加斯东·费比斯', portrait: '/assets/FRANKS/gaolu_gen_653.png', eliteName: '法兰中军精骑', eliteTier: 3 },
+        { generalId: 'gaolu_gen_668', factionId: 'gaolu', cityId: 'city_caen', generalName: '纪尧姆·德·蒙特纳', portrait: '/assets/FRANKS/gaolu_gen_668.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_669', factionId: 'gaolu', cityId: 'city_rouen', generalName: '居伊·勒·布泰耶', portrait: '/assets/FRANKS/gaolu_gen_669.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
+        { generalId: 'gaolu_gen_691', factionId: 'gaolu', cityId: 'city_turin', generalName: '纪尧姆·德·古菲耶', portrait: '/assets/FRANKS/gaolu_gen_691.png', eliteName: '法兰镇军丙营', eliteTier: 4 },
     ],
 
     kaernute: { generalId: 'gen_kaernute_kotuatousi', cityId: 'city_shatteer', generalName: '科图阿图斯', portrait: '/assets/FRANKS/gen_kaernute_kotuatousi.png', eliteName: '橡木铁卫', eliteTier: 4 },
@@ -1163,12 +1163,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yinggelan_chanuoke', factionId: 'yinggelan', cityId: 'city_kolkata', generalName: '查诺克', portrait: '/assets/BENGALIS/yinggelan_chanuoke.png', eliteName: '西帕依銃营', eliteTier: 3 },   // 乔布·查诺克 1690 建加尔各答（孟加拉管区） ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 england_modern 块
         { generalId: 'yinggelan_yuehansimisi', factionId: 'yinggelan', cityId: 'city_jamestown', generalName: '约翰史密斯', portrait: '/assets/BRITONS/yinggelan_yuehansimisi.png', eliteName: '边区戍兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 england_modern 块
     
-        { generalId: 'yinggelan_gen_588', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '拉尔夫', portrait: '', eliteName: '英格征战锐卒', eliteTier: 4 },
-        { generalId: 'yinggelan_gen_590', factionId: 'yinggelan', cityId: 'city_york', generalName: '瓦尔塞奥夫', portrait: '', eliteName: '英格征战锐卒', eliteTier: 4 },
-        { generalId: 'yinggelan_gen_641', factionId: 'yinggelan', cityId: 'city_lundun', generalName: '爱德华三世', portrait: '', eliteName: '英格中军精骑', eliteTier: 3 },
-        { generalId: 'yinggelan_gen_644', factionId: 'yinggelan', cityId: 'city_kanpeier', generalName: '威廉·德·博亨', portrait: '', eliteName: '英格中军精骑', eliteTier: 3 },
-        { generalId: 'yinggelan_gen_645', factionId: 'yinggelan', cityId: 'city_bordeaux', generalName: '亨利·德·格罗斯蒙特', portrait: '', eliteName: '英格中军精骑', eliteTier: 3 },
-        { generalId: 'yinggelan_gen_650', factionId: 'yinggelan', cityId: 'city_bordeaux', generalName: '让·德·格拉伊', portrait: '', eliteName: '英格中军精骑', eliteTier: 3 },
+        { generalId: 'yinggelan_gen_588', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '拉尔夫', portrait: '/assets/BRITONS/yinggelan_gen_588.png', eliteName: '英格征战锐卒', eliteTier: 4 },
+        { generalId: 'yinggelan_gen_590', factionId: 'yinggelan', cityId: 'city_york', generalName: '瓦尔塞奥夫', portrait: '/assets/BRITONS/yinggelan_gen_590.png', eliteName: '英格征战锐卒', eliteTier: 4 },
+        { generalId: 'yinggelan_gen_641', factionId: 'yinggelan', cityId: 'city_lundun', generalName: '爱德华三世', portrait: '/assets/BRITONS/yinggelan_gen_641.png', eliteName: '英格中军精骑', eliteTier: 3 },
+        { generalId: 'yinggelan_gen_644', factionId: 'yinggelan', cityId: 'city_kanpeier', generalName: '威廉·德·博亨', portrait: '/assets/BRITONS/yinggelan_gen_644.png', eliteName: '英格中军精骑', eliteTier: 3 },
+        { generalId: 'yinggelan_gen_645', factionId: 'yinggelan', cityId: 'city_bordeaux', generalName: '亨利·德·格罗斯蒙特', portrait: '/assets/BRITONS/yinggelan_gen_645.png', eliteName: '英格中军精骑', eliteTier: 3 },
+        { generalId: 'yinggelan_gen_650', factionId: 'yinggelan', cityId: 'city_bordeaux', generalName: '让·德·格拉伊', portrait: '/assets/BRITONS/yinggelan_gen_650.png', eliteName: '英格中军精骑', eliteTier: 3 },
     ],
 
     piketai: [
@@ -1186,7 +1186,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_gilles_de_rais', factionId: 'bulietani', cityId: 'city_nantes', generalName: '吉尔德雷斯', portrait: '/assets/FRANKS/gen_gilles_de_rais.png', eliteName: '白貂骁卫', eliteTier: 4 },
 
     
-        { generalId: 'bulietani_gen_643', factionId: 'bulietani', cityId: 'city_rennes', generalName: '查理·德·布卢瓦', portrait: '', eliteName: '布列征战锐卒', eliteTier: 4 },
+        { generalId: 'bulietani_gen_643', factionId: 'bulietani', cityId: 'city_rennes', generalName: '查理·德·布卢瓦', portrait: '/assets/CELTS/bulietani_gen_643.png', eliteName: '布列征战锐卒', eliteTier: 4 },
     ],
 
     saierweiya: [
@@ -1254,34 +1254,34 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'meisuobudamiya_shoujiang', factionId: 'aqimeinide', cityId: 'city_nixibisi', generalName: '萨宾', portrait: '/assets/ORIE/meisuobudamiya_shoujiang.png', eliteName: '尼西比斯矛兵', eliteTier: 4 },
 
     
-        { generalId: 'luoma_diguo_gen_8', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '屋大维', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_9', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '阿格里帕', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_10', factionId: 'luoma_diguo', cityId: 'city_gradeci', generalName: '提比略', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_11', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '日耳曼尼库斯', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_12', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '科尔布罗', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_13', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '图拉真', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_119', factionId: 'luoma_diguo', cityId: 'city_verona', generalName: '西利乌斯·涅尔瓦', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_121', factionId: 'luoma_diguo', cityId: 'city_teerier', generalName: '马库斯·洛利乌斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_122', factionId: 'luoma_diguo', cityId: 'city_meiyinci', generalName: '尼禄·克劳狄·德鲁苏斯', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_123', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '马库斯·维尼基乌斯', portrait: '', eliteName: '罗马中军丙营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_124', factionId: 'luoma_diguo', cityId: 'city_belgrade', generalName: '凯基纳·塞维鲁', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_125', factionId: 'luoma_diguo', cityId: 'city_gradeci', generalName: '梅萨拉·梅萨利努斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_126', factionId: 'luoma_diguo', cityId: 'city_belgrade', generalName: '普劳提乌斯·西尔瓦努斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_127', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '昆克蒂利乌斯·瓦鲁斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_168', factionId: 'luoma_diguo', cityId: 'city_mazaka', generalName: '凯森尼乌斯·派图斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_187', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '卢修斯·奎图斯', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_294', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '泰姆西修斯', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_298', factionId: 'luoma_diguo', cityId: 'city_yadian', generalName: '德克西普斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_299', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '克莱奥达姆斯', portrait: '', eliteName: '罗马镇军丁营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_300', factionId: 'luoma_diguo', cityId: 'city_milan', generalName: '克劳狄二世', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_304', factionId: 'luoma_diguo', cityId: 'city_lyon', generalName: '普罗布斯', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_gen_349', factionId: 'luoma_diguo', cityId: 'city_nixibisi', generalName: '卢基利亚努斯', portrait: '', eliteName: '罗马镇军戊营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_350', factionId: 'luoma_diguo', cityId: 'city_nixibisi', generalName: '乌尔西基努斯', portrait: '', eliteName: '罗马镇军戊营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_351', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '里科梅雷斯', portrait: '', eliteName: '罗马镇军戊营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_352', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '瓦伦斯', portrait: '', eliteName: '罗马镇军戊营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_gen_353', factionId: 'luoma_diguo', cityId: 'city_salonica', generalName: '狄奥多西一世', portrait: '', eliteName: '罗马中军戊营', eliteTier: 3 },
-        { generalId: 'luoma_diguo_shouling', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '辛加拉军团统领', portrait: '', eliteName: '罗马卫戍锐卒营', eliteTier: 4 },
-        { generalId: 'luoma_diguo_shouling_2', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '罗马帝国主将', portrait: '', eliteName: '罗马卫戍锐卒队', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_8', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '屋大维', portrait: '/assets/ROMA/luoma_diguo_gen_8.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_9', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '阿格里帕', portrait: '/assets/ROMA/luoma_diguo_gen_9.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_10', factionId: 'luoma_diguo', cityId: 'city_gradeci', generalName: '提比略', portrait: '/assets/ROMA/luoma_diguo_gen_10.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_11', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '日耳曼尼库斯', portrait: '/assets/ROMA/luoma_diguo_gen_11.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_12', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '科尔布罗', portrait: '/assets/ROMA/luoma_diguo_gen_12.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_13', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '图拉真', portrait: '/assets/ROMA/luoma_diguo_gen_13.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_119', factionId: 'luoma_diguo', cityId: 'city_verona', generalName: '西利乌斯·涅尔瓦', portrait: '/assets/ROMA/luoma_diguo_gen_119.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_121', factionId: 'luoma_diguo', cityId: 'city_teerier', generalName: '马库斯·洛利乌斯', portrait: '/assets/ROMA/luoma_diguo_gen_121.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_122', factionId: 'luoma_diguo', cityId: 'city_meiyinci', generalName: '尼禄·克劳狄·德鲁苏斯', portrait: '/assets/ROMA/luoma_diguo_gen_122.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_123', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '马库斯·维尼基乌斯', portrait: '/assets/ROMA/luoma_diguo_gen_123.png', eliteName: '罗马中军丙营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_124', factionId: 'luoma_diguo', cityId: 'city_belgrade', generalName: '凯基纳·塞维鲁', portrait: '/assets/ROMA/luoma_diguo_gen_124.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_125', factionId: 'luoma_diguo', cityId: 'city_gradeci', generalName: '梅萨拉·梅萨利努斯', portrait: '/assets/ROMA/luoma_diguo_gen_125.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_126', factionId: 'luoma_diguo', cityId: 'city_belgrade', generalName: '普劳提乌斯·西尔瓦努斯', portrait: '/assets/ROMA/luoma_diguo_gen_126.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_127', factionId: 'luoma_diguo', cityId: 'city_kelong', generalName: '昆克蒂利乌斯·瓦鲁斯', portrait: '/assets/ROMA/luoma_diguo_gen_127.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_168', factionId: 'luoma_diguo', cityId: 'city_mazaka', generalName: '凯森尼乌斯·派图斯', portrait: '/assets/ROMA/luoma_diguo_gen_168.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_187', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '卢修斯·奎图斯', portrait: '/assets/ROMA/luoma_diguo_gen_187.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_294', factionId: 'luoma_diguo', cityId: 'city_antiejiya', generalName: '泰姆西修斯', portrait: '/assets/ROMA/luoma_diguo_gen_294.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_298', factionId: 'luoma_diguo', cityId: 'city_yadian', generalName: '德克西普斯', portrait: '/assets/ROMA/luoma_diguo_gen_298.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_299', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '克莱奥达姆斯', portrait: '/assets/ROMA/luoma_diguo_gen_299.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_300', factionId: 'luoma_diguo', cityId: 'city_milan', generalName: '克劳狄二世', portrait: '/assets/ROMA/luoma_diguo_gen_300.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_304', factionId: 'luoma_diguo', cityId: 'city_lyon', generalName: '普罗布斯', portrait: '/assets/ROMA/luoma_diguo_gen_304.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_gen_349', factionId: 'luoma_diguo', cityId: 'city_nixibisi', generalName: '卢基利亚努斯', portrait: '/assets/ROMA/luoma_diguo_gen_349.png', eliteName: '罗马镇军戊营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_350', factionId: 'luoma_diguo', cityId: 'city_nixibisi', generalName: '乌尔西基努斯', portrait: '/assets/ROMA/luoma_diguo_gen_350.png', eliteName: '罗马镇军戊营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_351', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '里科梅雷斯', portrait: '/assets/ROMA/luoma_diguo_gen_351.png', eliteName: '罗马镇军戊营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_352', factionId: 'luoma_diguo', cityId: 'city_junshitandingbao', generalName: '瓦伦斯', portrait: '/assets/ROMA/luoma_diguo_gen_352.png', eliteName: '罗马镇军戊营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_gen_353', factionId: 'luoma_diguo', cityId: 'city_salonica', generalName: '狄奥多西一世', portrait: '/assets/ROMA/luoma_diguo_gen_353.png', eliteName: '罗马中军戊营', eliteTier: 3 },
+        { generalId: 'luoma_diguo_shouling', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '辛加拉军团统领', portrait: '/assets/ROMA/luoma_diguo_shouling.png', eliteName: '罗马卫戍锐卒营', eliteTier: 4 },
+        { generalId: 'luoma_diguo_shouling_2', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '罗马帝国主将', portrait: '/assets/ROMA/luoma_diguo_shouling_2.png', eliteName: '罗马卫戍锐卒队', eliteTier: 4 },
         { generalId: 'bfe_cb_luoma_diguo_8', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '戈尔迪安三世', portrait: '/assets/ROMA/bfe_cb_luoma_diguo_8.png', eliteName: '罗马镇军丁营', eliteTier: 4 },
     ],
 
@@ -1289,7 +1289,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xiongren_atila', cityId: 'city_saigede', generalName: '阿提拉', portrait: '/assets/HUNS/xiongren_atila.png', eliteName: '匈人铁骑', eliteTier: 1 },
         { generalId: 'xiongren_bleda', factionId: 'xiongren', cityId: 'city_saigede', generalName: '布莱达', portrait: '/assets/HUNS/xiongren_bleda.png', eliteName: '匈人骑射', eliteTier: 3 },
     
-        { generalId: 'xiongren_gen_395', factionId: 'xiongren', cityId: 'city_saigede', generalName: '埃拉克', portrait: '', eliteName: '匈人征战锐卒', eliteTier: 4 },
+        { generalId: 'xiongren_gen_395', factionId: 'xiongren', cityId: 'city_saigede', generalName: '埃拉克', portrait: '/assets/HUNS/xiongren_gen_395.png', eliteName: '匈人征战锐卒', eliteTier: 4 },
     ],
 
     putaoya: [
@@ -1334,14 +1334,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_maximilian', cityId: 'city_weiyeena', generalName: '马克西米', portrait: '/assets/GERMANIC/habusibao_makeximi.png', eliteName: '双鹰骁卫', eliteTier: 4 },
         { generalId: 'bfe_frederick_iii', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '腓特烈三世', portrait: '/assets/GERMANIC/bfe_frederick_iii.png', eliteName: '帝国骑士', eliteTier: 4 },
     
-        { generalId: 'habusibao_gen_41', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '蒙特库科利', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_gen_690', factionId: 'habusibao', cityId: 'city_milan', generalName: '查理·德·朗努瓦', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_gen_692', factionId: 'habusibao', cityId: 'city_naples', generalName: '费尔南多·达瓦洛斯', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_gen_694', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '尼古拉斯·冯·萨尔姆', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_gen_697', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '威廉·冯·罗根多夫', portrait: '', eliteName: '哈布征战锐卒', eliteTier: 4 },
-        { generalId: 'habusibao_gen_718', factionId: 'habusibao', cityId: 'city_budapeisi', generalName: '查理五世', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_gen_721', factionId: 'habusibao', cityId: 'city_budapeisi', generalName: '路易·威廉', portrait: '', eliteName: '哈布中军精骑', eliteTier: 3 },
-        { generalId: 'habusibao_shouling', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '尼古拉斯萨尔姆', portrait: '', eliteName: '哈布卫戍锐卒', eliteTier: 4 },
+        { generalId: 'habusibao_gen_41', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '蒙特库科利', portrait: '/assets/GERMANIC/habusibao_gen_41.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_gen_690', factionId: 'habusibao', cityId: 'city_milan', generalName: '查理·德·朗努瓦', portrait: '/assets/GERMANIC/habusibao_gen_690.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_gen_692', factionId: 'habusibao', cityId: 'city_naples', generalName: '费尔南多·达瓦洛斯', portrait: '/assets/GERMANIC/habusibao_gen_692.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_gen_694', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '尼古拉斯·冯·萨尔姆', portrait: '/assets/GERMANIC/habusibao_gen_694.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_gen_697', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '威廉·冯·罗根多夫', portrait: '/assets/GERMANIC/habusibao_gen_697.png', eliteName: '哈布征战锐卒', eliteTier: 4 },
+        { generalId: 'habusibao_gen_718', factionId: 'habusibao', cityId: 'city_budapeisi', generalName: '查理五世', portrait: '/assets/GERMANIC/habusibao_gen_718.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_gen_721', factionId: 'habusibao', cityId: 'city_budapeisi', generalName: '路易·威廉', portrait: '/assets/GERMANIC/habusibao_gen_721.png', eliteName: '哈布中军精骑', eliteTier: 3 },
+        { generalId: 'habusibao_shouling', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '尼古拉斯萨尔姆', portrait: '/assets/GERMANIC/habusibao_shouling.png', eliteName: '哈布卫戍锐卒', eliteTier: 4 },
     ],
 
     boximiya: [
@@ -1351,7 +1351,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚重骑', eliteTier: 2 },
 
     
-        { generalId: 'boximiya_gen_670', factionId: 'boximiya', cityId: 'city_bulage', generalName: '迪维什·博雷克', portrait: '', eliteName: '波西中军精骑', eliteTier: 3 },
+        { generalId: 'boximiya_gen_670', factionId: 'boximiya', cityId: 'city_bulage', generalName: '迪维什·博雷克', portrait: '/assets/BOHEMIANS/boximiya_gen_670.png', eliteName: '波西中军精骑', eliteTier: 3 },
     ],
 
     mazhaer: [
@@ -1405,13 +1405,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_charlemagne', factionId: 'falanji', cityId: 'city_yachen', generalName: '查理曼', portrait: '/assets/FRANKS/gen_charlemagne.png', eliteName: '加洛林铁骑', eliteTier: 1 },
 
     
-        { generalId: 'falanji_gen_507', factionId: 'falanji', cityId: 'city_verona', generalName: '沃伊诺米尔', portrait: '', eliteName: '法兰中军丙营', eliteTier: 3 },
-        { generalId: 'falanji_gen_508', factionId: 'falanji', cityId: 'city_toulouse', generalName: '路易一世', portrait: '', eliteName: '法兰征战锐卒', eliteTier: 4 },
-        { generalId: 'falanji_gen_510', factionId: 'falanji', cityId: 'city_yachen', generalName: '小查理', portrait: '', eliteName: '法兰中军丙营', eliteTier: 3 },
-        { generalId: 'falanji_gen_512', factionId: 'falanji', cityId: 'city_ravenna', generalName: '丕平', portrait: '', eliteName: '法兰征战锐卒', eliteTier: 4 },
-        { generalId: 'falanji_gen_535', factionId: 'falanji', cityId: 'city_bali', generalName: '卡洛曼二世', portrait: '', eliteName: '法兰征战锐卒', eliteTier: 4 },
-        { generalId: 'falanji_shouling', factionId: 'falanji', cityId: 'city_kelong', generalName: '埃里克二', portrait: '', eliteName: '法兰卫戍锐卒', eliteTier: 4 },
-        { generalId: 'falanji_shouling_2', factionId: 'falanji', cityId: 'city_kelong', generalName: '路易三世二', portrait: '', eliteName: '法兰卫戍锐卒营', eliteTier: 4 },
+        { generalId: 'falanji_gen_507', factionId: 'falanji', cityId: 'city_verona', generalName: '沃伊诺米尔', portrait: '/assets/FRANKS/falanji_gen_507.png', eliteName: '法兰中军丙营', eliteTier: 3 },
+        { generalId: 'falanji_gen_508', factionId: 'falanji', cityId: 'city_toulouse', generalName: '路易一世', portrait: '/assets/FRANKS/falanji_gen_508.png', eliteName: '法兰征战锐卒', eliteTier: 4 },
+        { generalId: 'falanji_gen_510', factionId: 'falanji', cityId: 'city_yachen', generalName: '小查理', portrait: '/assets/FRANKS/falanji_gen_510.png', eliteName: '法兰中军丙营', eliteTier: 3 },
+        { generalId: 'falanji_gen_512', factionId: 'falanji', cityId: 'city_ravenna', generalName: '丕平', portrait: '/assets/FRANKS/falanji_gen_512.png', eliteName: '法兰征战锐卒', eliteTier: 4 },
+        { generalId: 'falanji_gen_535', factionId: 'falanji', cityId: 'city_bali', generalName: '卡洛曼二世', portrait: '/assets/FRANKS/falanji_gen_535.png', eliteName: '法兰征战锐卒', eliteTier: 4 },
+        { generalId: 'falanji_shouling', factionId: 'falanji', cityId: 'city_kelong', generalName: '埃里克二', portrait: '/assets/FRANKS/falanji_shouling.png', eliteName: '法兰卫戍锐卒', eliteTier: 4 },
+        { generalId: 'falanji_shouling_2', factionId: 'falanji', cityId: 'city_kelong', generalName: '路易三世二', portrait: '/assets/FRANKS/falanji_shouling_2.png', eliteName: '法兰卫戍锐卒营', eliteTier: 4 },
     ],
 
     shiwaben: [
@@ -1423,7 +1423,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_albrecht_bear', cityId: 'city_bolandengbao', generalName: '阿尔布雷', portrait: '/assets/GERMANIC/asikanani_aerbulei.png', eliteName: '红鹰骁卫', eliteTier: 4 },
         { generalId: 'gen_frederick_i_nuremberg', factionId: 'asikanani', cityId: 'city_niulunbao', generalName: '腓特烈一世', portrait: '/assets/GERMANIC/huohengsuolun_feitelieyishi.png', eliteName: '红鹰骁卫', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 huohengsuolun 块
     
-        { generalId: 'asikanani_gen_715', factionId: 'asikanani', cityId: 'city_magedebao', generalName: '腓特烈·威廉', portrait: '', eliteName: '勃兰中军精骑', eliteTier: 3 },
+        { generalId: 'asikanani_gen_715', factionId: 'asikanani', cityId: 'city_magedebao', generalName: '腓特烈·威廉', portrait: '/assets/GERMANIC/asikanani_gen_715.png', eliteName: '勃兰中军精骑', eliteTier: 3 },
     ],
 
     xinbuli: [
@@ -1434,7 +1434,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人令「按区域代表补四时代」] 巴彦（阿瓦尔可汗，562–602，攻西尔米乌姆、626 围君士坦丁堡）｜势力 阿瓦尔｜据点 塞格德（潘诺尼亚，匈人文化城）｜普将（有胜有败，存疑）｜精锐「阿瓦尔骑队」T4｜立绘留空
         { generalId: 'awaer_bayan', factionId: 'awaer', cityId: 'city_saigede', generalName: '巴彦', portrait: '/assets/HUNS/awaer_bayan.png', eliteName: '阿瓦尔骑队', eliteTier: 4 },
     
-        { generalId: 'awaer_shouling', factionId: 'awaer', cityId: 'city_saigede', generalName: '阿瓦尔图敦', portrait: '', eliteName: '阿瓦卫戍锐卒', eliteTier: 4 },
+        { generalId: 'awaer_shouling', factionId: 'awaer', cityId: 'city_saigede', generalName: '阿瓦尔图敦', portrait: '/assets/HUNS/awaer_shouling.png', eliteName: '阿瓦卫戍锐卒', eliteTier: 4 },
     ],
     yidali_wangguo: [
         // 🔴 [2026-10-25 补A] 加里波第（1807–1882，意大利统一名将；1860 千人远征、1862/1867 攻罗马）｜势力 意大利王国｜据点 罗马城（ROMA 文化）｜名将｜精锐「红衫军」T1｜立绘留空｜经典战待补
@@ -1510,7 +1510,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 布雷比斯塔（前 82–44 达契亚王，统一达契亚部落）｜势力 达契亚｜据点 索非亚（BULGARIANS 文化，巴尔干）｜普将｜精锐「达契亚弯刀」T4｜立绘留空
         { generalId: 'daqiya_burebista', factionId: 'daqiya', cityId: 'city_sofia', generalName: '布雷比斯塔', portrait: '/assets/BULGARIANS/daqiya_burebista.png', eliteName: '达契亚镰刀手', eliteTier: 4 },
     
-        { generalId: 'daqiya_gen_185', factionId: 'daqiya', cityId: 'city_huneiduolala', generalName: '德凯巴鲁斯', portrait: '', eliteName: '达契中军精骑', eliteTier: 3 },
+        { generalId: 'daqiya_gen_185', factionId: 'daqiya', cityId: 'city_huneiduolala', generalName: '德凯巴鲁斯', portrait: '/assets/THRACIAN/daqiya_gen_185.png', eliteName: '达契中军精骑', eliteTier: 3 },
     ],
     qiajia: [
         // 🔴 [2026-10-25 补B] 阿迦穆罕默德（1742–1797，恺加王朝建立者；1795 克尔察尼西大破格鲁吉亚）｜势力 恺加｜据点 卡曼尼亚（PERSIAN 文化）｜名将｜精锐「恺加骑兵」T1｜立绘留空｜经典战待补
@@ -1520,8 +1520,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 雷图格诺斯（？–前133，凯尔特伊比利亚阿雷瓦西人统帅；努曼提亚守城抗罗马二十年，前133 城破殉城）｜势力 阿雷瓦西｜据点 努曼提亚（SPANISH 文化，梅塞塔高原）｜普将｜精锐「努曼提亚兵」T4｜立绘留空
         { generalId: 'bfe_rhetogenes', factionId: 'arevaci', cityId: 'city_numantia', generalName: '雷图格诺斯', portrait: '/assets/SPANISH/bfe_rhetogenes.png', eliteName: '努曼提亚剑士', eliteTier: 4 },
     
-        { generalId: 'arevaci_gen_66', factionId: 'arevaci', cityId: 'city_numantia', generalName: '卡鲁斯', portrait: '', eliteName: '阿雷征战锐卒', eliteTier: 4 },
-        { generalId: 'arevaci_shouling', factionId: 'arevaci', cityId: 'city_numantia', generalName: '阿雷瓦西主将', portrait: '', eliteName: '阿雷卫戍锐卒', eliteTier: 4 },
+        { generalId: 'arevaci_gen_66', factionId: 'arevaci', cityId: 'city_numantia', generalName: '卡鲁斯', portrait: '/assets/SPANISH/arevaci_gen_66.png', eliteName: '阿雷征战锐卒', eliteTier: 4 },
+        { generalId: 'arevaci_shouling', factionId: 'arevaci', cityId: 'city_numantia', generalName: '阿雷瓦西主将', portrait: '/assets/SPANISH/arevaci_shouling.png', eliteName: '阿雷卫戍锐卒', eliteTier: 4 },
     ],
     epirus_despotate: [
         // 🔴 [2026-11-09 主人令「67 个文化×4 个时代，除非此时代没有政权和武将，不然就要补上」]
@@ -1543,7 +1543,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 克拉库斯（Krakus，卡德武贝克《波兰编年史》Chronica Polonorum 载维斯瓦河上游建克拉科夫瓦维尔堡、抗击外敌的传说君王）｜势力 卢吉联盟｜据点 克拉科夫（POLES）｜普将（传说人物）｜精锐「维斯瓦矛兵」T4
         { generalId: 'bfe_krakus', factionId: 'lugii', cityId: 'city_kelakefu', generalName: '克拉库斯', portrait: '/assets/POLES/bfe_krakus.png', eliteName: '维斯瓦矛兵', eliteTier: 4 },
     
-        { generalId: 'lugii_gen_305', factionId: 'lugii', cityId: 'city_lugidunum', generalName: '森诺', portrait: '', eliteName: '卢吉征战锐卒', eliteTier: 4 },
+        { generalId: 'lugii_gen_305', factionId: 'lugii', cityId: 'city_lugidunum', generalName: '森诺', portrait: '/assets/POLES/lugii_gen_305.png', eliteName: '卢吉征战锐卒', eliteTier: 4 },
     ],
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 wagadu 块已并入 ghana_diguo
     salakanagara: [
@@ -1562,14 +1562,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 杨·杰士卡（约 1360–1424，胡斯派统帅；1420 维特科夫山、1422 库特纳霍拉以车阵屡破十字军，终生未尝一败）｜势力 胡斯派（新增）｜据点 布拉格（BOHEMIANS）｜名将｜精锐「胡斯车阵兵」T1｜立绘留空
         { generalId: 'gen_jan_zizka', factionId: 'hussites', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
     
-        { generalId: 'hussites_gen_38', factionId: 'hussites', cityId: 'city_bulage', generalName: '大普罗科普', portrait: '', eliteName: '胡斯中军精骑', eliteTier: 3 },
+        { generalId: 'hussites_gen_38', factionId: 'hussites', cityId: 'city_bulage', generalName: '大普罗科普', portrait: '/assets/BOHEMIANS/hussites_gen_38.png', eliteName: '胡斯中军精骑', eliteTier: 3 },
     ],
     cherusci: [
         // 🔴 [2026-11-09 主人令「每个军团都要有势力和武将」「对不上的可以新建势力」]
         // 阿米尼乌斯（前 18–21，切鲁西部首领；9 年条顿堡森林全歼瓦鲁斯三个罗马军团）｜势力 切鲁西（新增）｜据点 不伦瑞克（SAXONS，切鲁西故地）｜名将｜精锐「切鲁西战士」T2｜立绘留空
         { generalId: 'bfe_arminius', factionId: 'cherusci', cityId: 'city_bulunruike', generalName: '阿米尼乌斯', portrait: '/assets/SAXONS/bfe_arminius.png', eliteName: '切鲁西战士', eliteTier: 2 },
     
-        { generalId: 'cherusci_shouling', factionId: 'cherusci', cityId: 'city_bulunruike', generalName: '日耳曼沿海首领', portrait: '', eliteName: '切鲁卫戍锐卒', eliteTier: 4 },
+        { generalId: 'cherusci_shouling', factionId: 'cherusci', cityId: 'city_bulunruike', generalName: '日耳曼沿海首领', portrait: '/assets/GERMANIC/cherusci_shouling.png', eliteName: '切鲁卫戍锐卒', eliteTier: 4 },
     ],
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 sweden_medieval 块已并入 ruidian_si
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 rus_khaganate 块已并入 luosi
@@ -1598,8 +1598,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「可以继续用海贼倭寇。这种势力统一就行，旗号用倭」] 前期倭寇不再单立势力：阿只拔都并回海贼倭寇（同「倭寇」一股），势力名沿用「海贼倭寇」、旗号「倭」；势力时代按史分段（1350–1499 城堡／1500 起帝国），此人 1380 荒山之战→城堡时代
         { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '高丽倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },
     
-        { generalId: 'haikou_gen_698', factionId: 'haikou', cityId: 'city_zhoushan', generalName: '许栋', portrait: '', eliteName: '海贼征战锐卒', eliteTier: 4 },
-        { generalId: 'haikou_shouling', factionId: 'haikou', cityId: 'city_yuanzhishi', generalName: '倭寇大头目', portrait: '', eliteName: '海贼卫戍锐卒', eliteTier: 4 },
+        { generalId: 'haikou_gen_698', factionId: 'haikou', cityId: 'city_zhoushan', generalName: '许栋', portrait: '/assets/JAPAN/haikou_gen_698.png', eliteName: '海贼征战锐卒', eliteTier: 4 },
+        { generalId: 'haikou_shouling', factionId: 'haikou', cityId: 'city_yuanzhishi', generalName: '倭寇大头目', portrait: '/assets/JAPAN/haikou_shouling.png', eliteName: '海贼卫戍锐卒', eliteTier: 4 },
     ],
     mac_dynasty: [
         // 🔴 [2026-11-11 GG第五轮·补空势力史实武将] 莫登庸（1483–1541，越南莫朝开国太祖，1527 年于昇龙受禅立朝）
@@ -1638,9 +1638,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_alaric', factionId: 'goths_migration', cityId: 'city_ravenna', generalName: '亚拉里克', portrait: '/assets/GOTHS/gen_alaric.png', eliteName: '西哥特铁骑', eliteTier: 1 },
         { generalId: 'gen_ataulf', factionId: 'goths_migration', cityId: 'city_nabone', generalName: '阿陶尔夫', portrait: '/assets/GOTHS/gen_ataulf.png', eliteName: '哥特战士', eliteTier: 4 },
     
-        { generalId: 'goths_migration_gen_21', factionId: 'goths_migration', cityId: 'city_aidiernei', generalName: '弗里蒂根', portrait: '', eliteName: '哥特中军精骑', eliteTier: 3 },
-        { generalId: 'goths_migration_gen_297', factionId: 'goths_migration', cityId: 'city_asu', generalName: '诺洛巴图斯', portrait: '', eliteName: '哥特征战锐卒', eliteTier: 4 },
-        { generalId: 'goths_migration_shouling', factionId: 'goths_migration', cityId: 'city_weishibi', generalName: '哥特南侵盟主', portrait: '', eliteName: '哥特卫戍锐卒', eliteTier: 4 },
+        { generalId: 'goths_migration_gen_21', factionId: 'goths_migration', cityId: 'city_aidiernei', generalName: '弗里蒂根', portrait: '/assets/GOTHS/goths_migration_gen_21.png', eliteName: '哥特中军精骑', eliteTier: 3 },
+        { generalId: 'goths_migration_gen_297', factionId: 'goths_migration', cityId: 'city_asu', generalName: '诺洛巴图斯', portrait: '/assets/GOTHS/goths_migration_gen_297.png', eliteName: '哥特征战锐卒', eliteTier: 4 },
+        { generalId: 'goths_migration_shouling', factionId: 'goths_migration', cityId: 'city_weishibi', generalName: '哥特南侵盟主', portrait: '/assets/GOTHS/goths_migration_shouling.png', eliteName: '哥特卫戍锐卒', eliteTier: 4 },
     ],
     syracuse: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
@@ -1660,8 +1660,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'tubo_muzheng', cityId: 'city_ledu', factionId: 'gusiluo', generalName: '木征', portrait: '/assets/TIBET/tubo_muzheng.png', eliteName: '唃厮啰蕃部骑', eliteTier: 4 },
     
-        { generalId: 'gusiluo_gen_595', factionId: 'gusiluo', cityId: 'city_qingtang', generalName: '抹耳水巴', portrait: '', eliteName: '唃厮征战锐卒', eliteTier: 4 },
-        { generalId: 'gusiluo_gen_599', factionId: 'gusiluo', cityId: 'city_ledou', generalName: '丹波秃令结', portrait: '', eliteName: '唃厮征战锐卒', eliteTier: 4 },
+        { generalId: 'gusiluo_gen_595', factionId: 'gusiluo', cityId: 'city_qingtang', generalName: '抹耳水巴', portrait: '/assets/TIBET/gusiluo_gen_595.png', eliteName: '唃厮征战锐卒', eliteTier: 4 },
+        { generalId: 'gusiluo_gen_599', factionId: 'gusiluo', cityId: 'city_ledou', generalName: '丹波秃令结', portrait: '/assets/TIBET/gusiluo_gen_599.png', eliteName: '唃厮征战锐卒', eliteTier: 4 },
     ],
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 yarlung 块已并入 tubo
     old_saxons: [
@@ -1669,14 +1669,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'wende_hengist', factionId: 'old_saxons', cityId: 'city_magedebao', generalName: '亨吉斯特', portrait: '/assets/SAXONS/wende_hengist.png', eliteName: '撒克逊战团', eliteTier: 4 },
         { generalId: 'wende_siegfried', factionId: 'old_saxons', cityId: 'city_aogesibao', generalName: '齐格菲', portrait: '/assets/GERMANIC/wende_siegfried.png', eliteName: '古撒克逊盾卫', eliteTier: 4 },
     
-        { generalId: 'old_saxons_gen_505', factionId: 'old_saxons', cityId: 'city_bremen', generalName: '维杜金德', portrait: '', eliteName: '古撒中军精骑', eliteTier: 3 },
-        { generalId: 'old_saxons_shouling', factionId: 'old_saxons', cityId: 'city_magedebao', generalName: '赫尔曼二', portrait: '', eliteName: '古撒卫戍锐卒', eliteTier: 4 },
+        { generalId: 'old_saxons_gen_505', factionId: 'old_saxons', cityId: 'city_bremen', generalName: '维杜金德', portrait: '/assets/SAXONS/old_saxons_gen_505.png', eliteName: '古撒中军精骑', eliteTier: 3 },
+        { generalId: 'old_saxons_shouling', factionId: 'old_saxons', cityId: 'city_magedebao', generalName: '赫尔曼二', portrait: '/assets/SAXONS/old_saxons_shouling.png', eliteName: '古撒卫戍锐卒', eliteTier: 4 },
     ],
     alamanni: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'bfe3_86', cityId: 'city_meiyinci', generalName: '克诺多马尔', portrait: '/assets/GERMANIC/bfe3_86.png', factionId: 'alamanni', eliteName: '阿勒曼尼枪兵', eliteTier: 4 },
     
-        { generalId: 'alamanni_shouling', factionId: 'alamanni', cityId: 'city_meiyinci', generalName: '阿勒曼尼南侵战帅', portrait: '', eliteName: '阿勒卫戍锐卒', eliteTier: 4 },
+        { generalId: 'alamanni_shouling', factionId: 'alamanni', cityId: 'city_meiyinci', generalName: '阿勒曼尼南侵战帅', portrait: '/assets/GERMANIC/alamanni_shouling.png', eliteName: '阿勒卫戍锐卒', eliteTier: 4 },
     ],
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 magyar_tribes 块已并入 mazhaer
     taifa_toledo: [
@@ -1732,8 +1732,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_albert_lombard', factionId: 'yidali_hre', cityId: 'city_milan', generalName: '比安德拉泰', portrait: '/assets/LATIN/bfe_albert_lombard.png', eliteName: '伦巴第伯国骑', eliteTier: 4 },
         { generalId: 'gen_pietro_tiepolo', factionId: 'lombard_league', cityId: 'city_milan', generalName: '提埃波洛', portrait: '/assets/LATIN/gen_pietro_tiepolo.png', eliteName: '米兰同盟车卫', eliteTier: 4 },
     
-        { generalId: 'lombard_league_gen_617', factionId: 'lombard_league', cityId: 'city_milan', generalName: '圭多·达·兰德里亚诺', portrait: '', eliteName: '伦巴中军精骑', eliteTier: 3 },
-        { generalId: 'lombard_league_shouling', factionId: 'lombard_league', cityId: 'city_milan', generalName: '托尔托纳执政官', portrait: '', eliteName: '伦巴卫戍锐卒', eliteTier: 4 },
+        { generalId: 'lombard_league_gen_617', factionId: 'lombard_league', cityId: 'city_milan', generalName: '圭多·达·兰德里亚诺', portrait: '/assets/LATIN/lombard_league_gen_617.png', eliteName: '伦巴中军精骑', eliteTier: 3 },
+        { generalId: 'lombard_league_shouling', factionId: 'lombard_league', cityId: 'city_milan', generalName: '托尔托纳执政官', portrait: '/assets/LATIN/lombard_league_shouling.png', eliteName: '伦巴卫戍锐卒', eliteTier: 4 },
     ],
     cilicia_armenia: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
@@ -1745,9 +1745,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'wulaertu_ajishenti', factionId: 'armenia_arsacid', cityId: 'city_ailiwen', generalName: '瓦尔丹', portrait: '/assets/ARMENIANS/wulaertu_ajishenti.png', eliteName: '埃里温轻骑兵', eliteTier: 4 },
     
-        { generalId: 'armenia_arsacid_gen_166', factionId: 'armenia_arsacid', cityId: 'city_ailiwen', generalName: '提里达特斯一世', portrait: '', eliteName: '阿萨征战锐卒', eliteTier: 4 },
-        { generalId: 'armenia_arsacid_gen_186', factionId: 'armenia_arsacid', cityId: 'city_erzurum', generalName: '帕尔塔马西里斯', portrait: '', eliteName: '阿萨征战锐卒', eliteTier: 4 },
-        { generalId: 'armenia_arsacid_shouling', factionId: 'armenia_arsacid', cityId: 'city_ailiwen', generalName: '提格拉诺塞塔守将', portrait: '', eliteName: '阿萨卫戍锐卒', eliteTier: 4 },
+        { generalId: 'armenia_arsacid_gen_166', factionId: 'armenia_arsacid', cityId: 'city_ailiwen', generalName: '提里达特斯一世', portrait: '/assets/ARMENIANS/armenia_arsacid_gen_166.png', eliteName: '阿萨征战锐卒', eliteTier: 4 },
+        { generalId: 'armenia_arsacid_gen_186', factionId: 'armenia_arsacid', cityId: 'city_erzurum', generalName: '帕尔塔马西里斯', portrait: '/assets/ARMENIANS/armenia_arsacid_gen_186.png', eliteName: '阿萨征战锐卒', eliteTier: 4 },
+        { generalId: 'armenia_arsacid_shouling', factionId: 'armenia_arsacid', cityId: 'city_ailiwen', generalName: '提格拉诺塞塔守将', portrait: '/assets/ARMENIANS/armenia_arsacid_shouling.png', eliteName: '阿萨卫戍锐卒', eliteTier: 4 },
     ],
     syunik_bek: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
@@ -1757,7 +1757,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'yinggelan_aethelfrith', factionId: 'northumbria', cityId: 'city_york', generalName: '艾特尔弗里思', portrait: '/assets/SAXONS/yinggelan_aethelfrith.png', eliteName: '诺森卫队', eliteTier: 4 },   // 按史：诺森布里亚王（593–617），并伯尼西亚与德伊勒，居约克（德伊勒核心，《盎格鲁-撒克逊编年史》）；文化随据点＝BRITONS（英格兰）
     
-        { generalId: 'northumbria_gen_533', factionId: 'northumbria', cityId: 'city_york', generalName: '奥斯伯特', portrait: '', eliteName: '诺森征战锐卒', eliteTier: 4 },
+        { generalId: 'northumbria_gen_533', factionId: 'northumbria', cityId: 'city_york', generalName: '奥斯伯特', portrait: '/assets/BRITONS/northumbria_gen_533.png', eliteName: '诺森征战锐卒', eliteTier: 4 },
     ],
     subroman_britain: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
@@ -1796,7 +1796,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'wende_johnfriedrich', factionId: 'wende', cityId: 'city_magedebao', generalName: '约翰腓特烈', portrait: '/assets/SAXONS/wende_johnfriedrich.png', eliteName: '萨克森卫队', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 saxony_electorate 块
     
-        { generalId: 'wende_gen_27', factionId: 'wende', cityId: 'city_magedebao', generalName: '亨利一世', portrait: '', eliteName: '萨克中军精骑', eliteTier: 3 },
+        { generalId: 'wende_gen_27', factionId: 'wende', cityId: 'city_magedebao', generalName: '亨利一世', portrait: '/assets/SAXONS/wende_gen_27.png', eliteName: '萨克中军精骑', eliteTier: 3 },
     ],
 
     bafaliya: [
@@ -1810,15 +1810,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 经典战回补安置按史实复核：卡洛曼＝东法兰克巴伐利亚王，驻雷根斯堡；科隆不是他的驻地 → 放雷根斯堡（bafaliya，风格 GERMANIC）；仍挂本政权 falanji
         { generalId: 'falanji_kalman', cityId: 'city_leigensibao', factionId: 'falanji', generalName: '卡洛曼', portrait: '/assets/GERMANIC/falanji_kalman.png', eliteName: '法兰克双斧卫', eliteTier: 4 },
     
-        { generalId: 'bafaliya_gen_719', factionId: 'bafaliya', cityId: 'city_budapeisi', generalName: '马克西米利安二世·埃马努埃尔', portrait: '', eliteName: '巴伐中军精骑', eliteTier: 3 },
+        { generalId: 'bafaliya_gen_719', factionId: 'bafaliya', cityId: 'city_budapeisi', generalName: '马克西米利安二世·埃马努埃尔', portrait: '/assets/GERMANIC/bafaliya_gen_719.png', eliteName: '巴伐中军精骑', eliteTier: 3 },
     ],
 
     // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 huohengsuolun 块已并入 asikanani
 
     ruishi: [
         { generalId: 'gen_winkelried', cityId: 'city_basaier', generalName: '温克尔里德', portrait: '/assets/GERMANIC/ruishi_ciwenli.png', eliteName: '森帕赫长戟卫', eliteTier: 2 },
-        { generalId: 'ruishi_gen_682', factionId: 'ruishi', cityId: 'city_basaier', generalName: '尼古拉斯·冯·沙尔纳赫塔尔', portrait: '', eliteName: '瑞士中军精骑', eliteTier: 3 },
-        { generalId: 'ruishi_gen_684', factionId: 'ruishi', cityId: 'city_basaier', generalName: '汉斯·瓦尔德曼', portrait: '', eliteName: '瑞士中军精骑', eliteTier: 3 },
+        { generalId: 'ruishi_gen_682', factionId: 'ruishi', cityId: 'city_basaier', generalName: '尼古拉斯·冯·沙尔纳赫塔尔', portrait: '/assets/GERMANIC/ruishi_gen_682.png', eliteName: '瑞士中军精骑', eliteTier: 3 },
+        { generalId: 'ruishi_gen_684', factionId: 'ruishi', cityId: 'city_basaier', generalName: '汉斯·瓦尔德曼', portrait: '/assets/GERMANIC/ruishi_gen_684.png', eliteName: '瑞士中军精骑', eliteTier: 3 },
     ],
 
     // 斯瓦托普卢克＝大摩拉维亚国王（摩拉维亚势力只是同国另一据点）→ 挂大摩拉维亚
@@ -1878,9 +1878,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_vasili_iii', factionId: 'eluosi_diguo', cityId: 'city_mosike', generalName: '瓦西里三世', portrait: '/assets/SLAVIC/gen_vasili_iii.png', eliteName: '莫斯科卫队', eliteTier: 1 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 mosike_gongguo 块
         { generalId: 'gen_vladimir_andreyevich', factionId: 'eluosi_diguo', cityId: 'city_xieerpuhuofu', generalName: '勇者弗拉基', portrait: '/assets/SLAVIC/xieerpuhuofu_gongguo_yongzhefulaji.png', eliteName: '顿河伏击骑', eliteTier: 2 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 mosike_gongguo 块
     
-        { generalId: 'eluosi_diguo_gen_659', factionId: 'eluosi_diguo', cityId: 'city_mosike', generalName: '奥斯泰伊', portrait: '', eliteName: '俄罗征战锐卒', eliteTier: 4 },
-        { generalId: 'eluosi_diguo_gen_725', factionId: 'eluosi_diguo', cityId: 'city_yakesa', generalName: '阿列克谢·托尔布津', portrait: '', eliteName: '俄罗征战锐卒', eliteTier: 4 },
-        { generalId: 'eluosi_diguo_gen_730', factionId: 'eluosi_diguo', cityId: 'city_orenburg', generalName: '尼古拉·特劳本贝格', portrait: '', eliteName: '俄罗征战锐卒', eliteTier: 4 },
+        { generalId: 'eluosi_diguo_gen_659', factionId: 'eluosi_diguo', cityId: 'city_mosike', generalName: '奥斯泰伊', portrait: '/assets/SLAVIC/eluosi_diguo_gen_659.png', eliteName: '俄罗征战锐卒', eliteTier: 4 },
+        { generalId: 'eluosi_diguo_gen_725', factionId: 'eluosi_diguo', cityId: 'city_yakesa', generalName: '阿列克谢·托尔布津', portrait: '/assets/SLAVIC/eluosi_diguo_gen_725.png', eliteName: '俄罗征战锐卒', eliteTier: 4 },
+        { generalId: 'eluosi_diguo_gen_730', factionId: 'eluosi_diguo', cityId: 'city_orenburg', generalName: '尼古拉·特劳本贝格', portrait: '/assets/SLAVIC/eluosi_diguo_gen_730.png', eliteName: '俄罗征战锐卒', eliteTier: 4 },
     ],
 
     daniebo: [
@@ -1923,7 +1923,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'jinzhang_tokhtamysh', factionId: 'jinzhang', cityId: 'city_salai', generalName: '脱脱迷失汗', portrait: '/assets/CENTRAL_ASIA/jinzhang_tokhtamysh.png', eliteName: '白帐斡儿朵', eliteTier: 3 },
         { generalId: 'jinzhang_urus', factionId: 'jinzhang', cityId: 'city_salai', generalName: '兀鲁思汗', portrait: '/assets/CENTRAL_ASIA/jinzhang_urus.png', eliteName: '萨莱骑兵', eliteTier: 4 },
     
-        { generalId: 'jinzhang_gen_658', factionId: 'jinzhang', cityId: 'city_salai', generalName: '别吉奇', portrait: '', eliteName: '金帐征战锐卒', eliteTier: 4 },
+        { generalId: 'jinzhang_gen_658', factionId: 'jinzhang', cityId: 'city_salai', generalName: '别吉奇', portrait: '/assets/CENTRAL_ASIA/jinzhang_gen_658.png', eliteName: '金帐征战锐卒', eliteTier: 4 },
     ],
 
     baojiaer: [
@@ -1993,13 +1993,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_andronikos_komnenos', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '科穆宁', portrait: '/assets/BYZANTINE/bfe_andronikos_komnenos.png', eliteName: '塔格马塔', eliteTier: 3 },   // 🔴 [2026-10-25 按史] 经典战敌将；拜占庭将领、后为皇帝（1183-1185）；1152 围马米斯特拉败退；据点君士坦丁堡（BYZANTINE）；用势力精锐铁甲圣骑 ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 byzantium_late 块
         { generalId: 'baizanting_alexios_v', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '阿莱克修斯五世', portrait: '/assets/BYZANTINE/baizanting_alexios_v.png', eliteName: '塔格马塔', eliteTier: 3 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 byzantium_late 块
     
-        { generalId: 'baizanting_gen_36', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '曼努埃尔一世', portrait: '', eliteName: '拜占中军精骑', eliteTier: 3 },
-        { generalId: 'baizanting_gen_392', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '阿斯帕尔', portrait: '', eliteName: '拜占征战锐卒', eliteTier: 4 },
-        { generalId: 'baizanting_gen_514', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '利奥五世', portrait: '', eliteName: '拜占中军精骑', eliteTier: 3 },
-        { generalId: 'baizanting_gen_591', factionId: 'baizanting', cityId: 'city_ani', generalName: '格雷戈里·帕库里亚诺斯', portrait: '', eliteName: '拜占中军精骑', eliteTier: 3 },
-        { generalId: 'baizanting_gen_593', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '曼努埃尔·科穆宁', portrait: '', eliteName: '拜占征战锐卒', eliteTier: 4 },
-        { generalId: 'baizanting_gen_594', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '罗曼努斯四世', portrait: '', eliteName: '拜占征战锐卒', eliteTier: 4 },
-        { generalId: 'baizanting_shouling', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '雷焦守将', portrait: '', eliteName: '拜占卫戍锐卒', eliteTier: 4 },
+        { generalId: 'baizanting_gen_36', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '曼努埃尔一世', portrait: '/assets/BYZANTINE/baizanting_gen_36.png', eliteName: '拜占中军精骑', eliteTier: 3 },
+        { generalId: 'baizanting_gen_392', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '阿斯帕尔', portrait: '/assets/BYZANTINE/baizanting_gen_392.png', eliteName: '拜占征战锐卒', eliteTier: 4 },
+        { generalId: 'baizanting_gen_514', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '利奥五世', portrait: '/assets/BYZANTINE/baizanting_gen_514.png', eliteName: '拜占中军精骑', eliteTier: 3 },
+        { generalId: 'baizanting_gen_591', factionId: 'baizanting', cityId: 'city_ani', generalName: '格雷戈里·帕库里亚诺斯', portrait: '/assets/BYZANTINE/baizanting_gen_591.png', eliteName: '拜占中军精骑', eliteTier: 3 },
+        { generalId: 'baizanting_gen_593', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '曼努埃尔·科穆宁', portrait: '/assets/BYZANTINE/baizanting_gen_593.png', eliteName: '拜占征战锐卒', eliteTier: 4 },
+        { generalId: 'baizanting_gen_594', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '罗曼努斯四世', portrait: '/assets/BYZANTINE/baizanting_gen_594.png', eliteName: '拜占征战锐卒', eliteTier: 4 },
+        { generalId: 'baizanting_shouling', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '雷焦守将', portrait: '/assets/BYZANTINE/baizanting_shouling.png', eliteName: '拜占卫戍锐卒', eliteTier: 4 },
     ],
 
     bosi_puluosi: [
@@ -2061,11 +2061,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'gen_boleslaw_brave', factionId: 'bolan', cityId: 'city_poznan', generalName: '勇者波列', portrait: '/assets/POLES/gen_boleslaw_brave.png', eliteName: '皮亚斯特铁骑', eliteTier: 2 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 poland_duchy 块
     
-        { generalId: 'bolan_gen_135', factionId: 'bolan', cityId: 'city_liweifu', generalName: '尼古拉·波托茨基', portrait: '', eliteName: '波兰征战锐卒', eliteTier: 4 },
-        { generalId: 'bolan_gen_136', factionId: 'bolan', cityId: 'city_liweifu', generalName: '马尔钦·卡利诺夫斯基', portrait: '', eliteName: '波兰征战锐卒', eliteTier: 4 },
-        { generalId: 'bolan_gen_138', factionId: 'bolan', cityId: 'city_huasha', generalName: '扬二世·卡齐米日', portrait: '', eliteName: '波兰中军精骑', eliteTier: 3 },
-        { generalId: 'bolan_gen_696', factionId: 'bolan', cityId: 'city_liweifu', generalName: '扬·塔尔诺夫斯基', portrait: '', eliteName: '波兰中军精骑', eliteTier: 3 },
-        { generalId: 'bolan_gen_724', factionId: 'bolan', cityId: 'city_liweifu', generalName: '费利克斯·卡齐米日·波托茨基', portrait: '', eliteName: '波兰中军精骑', eliteTier: 3 },
+        { generalId: 'bolan_gen_135', factionId: 'bolan', cityId: 'city_liweifu', generalName: '尼古拉·波托茨基', portrait: '/assets/POLES/bolan_gen_135.png', eliteName: '波兰征战锐卒', eliteTier: 4 },
+        { generalId: 'bolan_gen_136', factionId: 'bolan', cityId: 'city_liweifu', generalName: '马尔钦·卡利诺夫斯基', portrait: '/assets/POLES/bolan_gen_136.png', eliteName: '波兰征战锐卒', eliteTier: 4 },
+        { generalId: 'bolan_gen_138', factionId: 'bolan', cityId: 'city_huasha', generalName: '扬二世·卡齐米日', portrait: '/assets/POLES/bolan_gen_138.png', eliteName: '波兰中军精骑', eliteTier: 3 },
+        { generalId: 'bolan_gen_696', factionId: 'bolan', cityId: 'city_liweifu', generalName: '扬·塔尔诺夫斯基', portrait: '/assets/POLES/bolan_gen_696.png', eliteName: '波兰中军精骑', eliteTier: 3 },
+        { generalId: 'bolan_gen_724', factionId: 'bolan', cityId: 'city_liweifu', generalName: '费利克斯·卡齐米日·波托茨基', portrait: '/assets/POLES/bolan_gen_724.png', eliteName: '波兰中军精骑', eliteTier: 3 },
     ],
 
     // ── 2026-08-04 新增：普热梅斯二世（波兹南公爵/大波兰公/波兰国王）──
@@ -2097,7 +2097,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_mikhail_tatarinov', factionId: 'gesake', cityId: 'city_weishen', generalName: '塔塔里诺夫', portrait: '/assets/SLAVIC/dunhe_tatalinuofu.png', eliteName: '扎波罗热营卫', eliteTier: 4 },
 
     
-        { generalId: 'gesake_gen_139', factionId: 'gesake', cityId: 'city_cherkasy', generalName: '伊万·博贡', portrait: '', eliteName: '哥萨中军精骑', eliteTier: 3 },
+        { generalId: 'gesake_gen_139', factionId: 'gesake', cityId: 'city_cherkasy', generalName: '伊万·博贡', portrait: '/assets/CUMAN/gesake_gen_139.png', eliteName: '哥萨中军精骑', eliteTier: 3 },
     ],
 
     moerdaweiya: [
@@ -2105,7 +2105,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     { generalId: 'moerdaweiya_lepushenneiyanu', factionId: 'moerdaweiya', cityId: 'city_yaxi', generalName: '勒普什内亚努', portrait: '/assets/SLAVIC/moerdaweiya_lepushenneiyanu.png', eliteName: '摩尔多瓦步兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 1565 迁都雅西，驻此理政
     { generalId: 'moerdaweiya_lupu', factionId: 'moerdaweiya', cityId: 'city_yaxi', generalName: '卢普', portrait: '/assets/SLAVIC/moerdaweiya_lupu.png', eliteName: '雅西守备', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 1634—1653 摩尔达维亚大公，以雅西为都
     
-        { generalId: 'moerdaweiya_gen_695', factionId: 'moerdaweiya', cityId: 'city_suceava', generalName: '彼得鲁·拉雷什', portrait: '', eliteName: '摩尔征战锐卒', eliteTier: 4 },
+        { generalId: 'moerdaweiya_gen_695', factionId: 'moerdaweiya', cityId: 'city_suceava', generalName: '彼得鲁·拉雷什', portrait: '/assets/SLAVIC/moerdaweiya_gen_695.png', eliteName: '摩尔征战锐卒', eliteTier: 4 },
     ],
     walajiyia: [
 
@@ -2336,35 +2336,35 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'hepan_gaoxianzhi', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '高仙芝', portrait: '/assets/WESTERN/hepan_gaoxianzhi.png', eliteName: '安西都护铁骑', eliteTier: 1 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 hepan 块
         { generalId: 'anxi_guoxin', factionId: 'tang', cityId: 'city_bohuancheng', generalName: '郭昕', portrait: '/assets/WESTERN/anxi_guoxin.png', eliteName: '安西锐骑', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 anxi 块
     
-        { generalId: 'tang_gen_441', factionId: 'tang', cityId: 'city_taiyuan', generalName: '李渊', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_445', factionId: 'tang', cityId: 'city_changan', generalName: '李建成', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_447', factionId: 'tang', cityId: 'city_changan', generalName: '柴绍', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_449', factionId: 'tang', cityId: 'city_shengle', generalName: '高侃', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_452', factionId: 'tang', cityId: 'city_sabi', generalName: '刘仁轨', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_457', factionId: 'tang', cityId: 'city_kaesong', generalName: '李谨行', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_461', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '韦待价', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_467', factionId: 'tang', cityId: 'city_lingzhou', generalName: '沙吒忠义', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_468', factionId: 'tang', cityId: 'city_lintao', generalName: '王晙', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_470', factionId: 'tang', cityId: 'city_ledou', generalName: '郭知运', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_471', factionId: 'tang', cityId: 'city_zhangye', generalName: '王君㚟', portrait: '', eliteName: '李唐中军精骑', eliteTier: 3 },
-        { generalId: 'tang_gen_477', factionId: 'tang', cityId: 'city_bieshibali', generalName: '郭虔瓘', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_478', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '张孝嵩', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_481', factionId: 'tang', cityId: 'city_ledou', generalName: '李祎', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_483', factionId: 'tang', cityId: 'city_beijing', generalName: '郭英杰', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_485', factionId: 'tang', cityId: 'city_ledou', generalName: '皇甫惟明', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_487', factionId: 'tang', cityId: 'city_fanyang', generalName: '张孝忠', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_492', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '封常清', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_495', factionId: 'tang', cityId: 'city_anyang', generalName: '薛雄', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_496', factionId: 'tang', cityId: 'city_shangdang', generalName: '马燧', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_501', factionId: 'tang', cityId: 'city_dunhuang', generalName: '阎朝', portrait: '', eliteName: '李唐中军丙营', eliteTier: 3 },
-        { generalId: 'tang_gen_516', factionId: 'tang', cityId: 'city_xuchang', generalName: '李光颜', portrait: '', eliteName: '李唐中军丁营', eliteTier: 3 },
-        { generalId: 'tang_gen_517', factionId: 'tang', cityId: 'city_daming', generalName: '田弘正', portrait: '', eliteName: '李唐中军丁营', eliteTier: 3 },
-        { generalId: 'tang_gen_520', factionId: 'tang', cityId: 'city_luze', generalName: '牛元翼', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_521', factionId: 'tang', cityId: 'city_liaocheng', generalName: '李祐', portrait: '', eliteName: '李唐中军丁营', eliteTier: 3 },
-        { generalId: 'tang_gen_522', factionId: 'tang', cityId: 'city_datong', generalName: '石雄', portrait: '', eliteName: '李唐中军丁营', eliteTier: 3 },
-        { generalId: 'tang_gen_527', factionId: 'tang', cityId: 'city_binzhou2', generalName: '康季荣', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_528', factionId: 'tang', cityId: 'city_longxi', generalName: '尚延心', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
-        { generalId: 'tang_gen_537', factionId: 'tang', cityId: 'city_changan', generalName: '张濬', portrait: '', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_441', factionId: 'tang', cityId: 'city_taiyuan', generalName: '李渊', portrait: '/assets/CENTRAL/tang_gen_441.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_445', factionId: 'tang', cityId: 'city_changan', generalName: '李建成', portrait: '/assets/CENTRAL/tang_gen_445.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_447', factionId: 'tang', cityId: 'city_changan', generalName: '柴绍', portrait: '/assets/CENTRAL/tang_gen_447.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_449', factionId: 'tang', cityId: 'city_shengle', generalName: '高侃', portrait: '/assets/CENTRAL/tang_gen_449.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_452', factionId: 'tang', cityId: 'city_sabi', generalName: '刘仁轨', portrait: '/assets/CENTRAL/tang_gen_452.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_457', factionId: 'tang', cityId: 'city_kaesong', generalName: '李谨行', portrait: '/assets/CENTRAL/tang_gen_457.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_461', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '韦待价', portrait: '/assets/CENTRAL/tang_gen_461.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_467', factionId: 'tang', cityId: 'city_lingzhou', generalName: '沙吒忠义', portrait: '/assets/CENTRAL/tang_gen_467.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_468', factionId: 'tang', cityId: 'city_lintao', generalName: '王晙', portrait: '/assets/CENTRAL/tang_gen_468.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_470', factionId: 'tang', cityId: 'city_ledou', generalName: '郭知运', portrait: '/assets/CENTRAL/tang_gen_470.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_471', factionId: 'tang', cityId: 'city_zhangye', generalName: '王君㚟', portrait: '/assets/CENTRAL/tang_gen_471.png', eliteName: '李唐中军精骑', eliteTier: 3 },
+        { generalId: 'tang_gen_477', factionId: 'tang', cityId: 'city_bieshibali', generalName: '郭虔瓘', portrait: '/assets/CENTRAL/tang_gen_477.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_478', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '张孝嵩', portrait: '/assets/CENTRAL/tang_gen_478.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_481', factionId: 'tang', cityId: 'city_ledou', generalName: '李祎', portrait: '/assets/CENTRAL/tang_gen_481.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_483', factionId: 'tang', cityId: 'city_beijing', generalName: '郭英杰', portrait: '/assets/CENTRAL/tang_gen_483.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_485', factionId: 'tang', cityId: 'city_ledou', generalName: '皇甫惟明', portrait: '/assets/CENTRAL/tang_gen_485.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_487', factionId: 'tang', cityId: 'city_fanyang', generalName: '张孝忠', portrait: '/assets/CENTRAL/tang_gen_487.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_492', factionId: 'tang', cityId: 'city_yiluolucheng', generalName: '封常清', portrait: '/assets/CENTRAL/tang_gen_492.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_495', factionId: 'tang', cityId: 'city_anyang', generalName: '薛雄', portrait: '/assets/CENTRAL/tang_gen_495.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_496', factionId: 'tang', cityId: 'city_shangdang', generalName: '马燧', portrait: '/assets/CENTRAL/tang_gen_496.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_501', factionId: 'tang', cityId: 'city_dunhuang', generalName: '阎朝', portrait: '/assets/CENTRAL/tang_gen_501.png', eliteName: '李唐中军丙营', eliteTier: 3 },
+        { generalId: 'tang_gen_516', factionId: 'tang', cityId: 'city_xuchang', generalName: '李光颜', portrait: '/assets/CENTRAL/tang_gen_516.png', eliteName: '李唐中军丁营', eliteTier: 3 },
+        { generalId: 'tang_gen_517', factionId: 'tang', cityId: 'city_daming', generalName: '田弘正', portrait: '/assets/CENTRAL/tang_gen_517.png', eliteName: '李唐中军丁营', eliteTier: 3 },
+        { generalId: 'tang_gen_520', factionId: 'tang', cityId: 'city_luze', generalName: '牛元翼', portrait: '/assets/CENTRAL/tang_gen_520.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_521', factionId: 'tang', cityId: 'city_liaocheng', generalName: '李祐', portrait: '/assets/CENTRAL/tang_gen_521.png', eliteName: '李唐中军丁营', eliteTier: 3 },
+        { generalId: 'tang_gen_522', factionId: 'tang', cityId: 'city_datong', generalName: '石雄', portrait: '/assets/CENTRAL/tang_gen_522.png', eliteName: '李唐中军丁营', eliteTier: 3 },
+        { generalId: 'tang_gen_527', factionId: 'tang', cityId: 'city_binzhou2', generalName: '康季荣', portrait: '/assets/CENTRAL/tang_gen_527.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_528', factionId: 'tang', cityId: 'city_longxi', generalName: '尚延心', portrait: '/assets/CENTRAL/tang_gen_528.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
+        { generalId: 'tang_gen_537', factionId: 'tang', cityId: 'city_changan', generalName: '张濬', portrait: '/assets/CENTRAL/tang_gen_537.png', eliteName: '李唐征战锐卒', eliteTier: 4 },
     ],
 
     wuzhou_d: [
@@ -2376,9 +2376,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_shi_chaoyi', factionId: 'da_yan', cityId: 'city_luoyang', generalName: '史朝义', portrait: '/assets/CENTRAL/gen_shi_chaoyi.png' , eliteName: '同罗骑', eliteTier: 4},
         { generalId: 'bfe_likaigu', factionId: 'wuzhou_d', cityId: 'city_luoyang', generalName: '李楷固', portrait: '/assets/CENTRAL/bfe_likaigu.png', eliteName: '玉钤卫兵', eliteTier: 4 },
     
-        { generalId: 'wuzhou_d_gen_25', factionId: 'wuzhou_d', cityId: 'city_luoyang', generalName: '王孝杰', portrait: '', eliteName: '武周中军精骑', eliteTier: 3 },
-        { generalId: 'wuzhou_d_gen_26', factionId: 'wuzhou_d', cityId: 'city_wuwei', generalName: '唐休璟', portrait: '', eliteName: '武周中军精骑', eliteTier: 3 },
-        { generalId: 'wuzhou_d_gen_463', factionId: 'wuzhou_d', cityId: 'city_lingzhou', generalName: '李多祚', portrait: '', eliteName: '武周中军精骑', eliteTier: 3 },
+        { generalId: 'wuzhou_d_gen_25', factionId: 'wuzhou_d', cityId: 'city_luoyang', generalName: '王孝杰', portrait: '/assets/CENTRAL/wuzhou_d_gen_25.png', eliteName: '武周中军精骑', eliteTier: 3 },
+        { generalId: 'wuzhou_d_gen_26', factionId: 'wuzhou_d', cityId: 'city_wuwei', generalName: '唐休璟', portrait: '/assets/CENTRAL/wuzhou_d_gen_26.png', eliteName: '武周中军精骑', eliteTier: 3 },
+        { generalId: 'wuzhou_d_gen_463', factionId: 'wuzhou_d', cityId: 'city_lingzhou', generalName: '李多祚', portrait: '/assets/CENTRAL/wuzhou_d_gen_463.png', eliteName: '武周中军精骑', eliteTier: 3 },
     ],
 
     ming_d: [
@@ -2503,10 +2503,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'ming_d_wuweizhong', factionId: 'ming_d', cityId: 'city_hengyu', generalName: '吴惟忠', portrait: '/assets/JIANGNAN/ming_d_wuweizhong.png', eliteName: '横屿水师', eliteTier: 4 },   // 戚家军部将，1562 横屿之战涉海破倭（参战驻守横屿）
         { generalId: 'ming_d_tanlun', factionId: 'ming_d', cityId: 'city_gubeikou', generalName: '谭纶', portrait: '/assets/WEI/ming_d_tanlun.png', eliteName: '九边夜不收', eliteTier: 3 },   // 明蓟辽总督，与戚继光同修古北口—山海关边墙（镇守古北口）
     
-        { generalId: 'ming_d_gen_39', factionId: 'ming_d', cityId: 'city_liaoyang', generalName: '李如松', portrait: '', eliteName: '大明中军精骑', eliteTier: 3 },
-        { generalId: 'ming_d_gen_663', factionId: 'ming_d', cityId: 'city_zhennanguan', generalName: '张辅', portrait: '', eliteName: '大明中军精骑', eliteTier: 3 },
-        { generalId: 'ming_d_gen_665', factionId: 'ming_d', cityId: 'city_beijing', generalName: '丘福', portrait: '', eliteName: '大明征战锐卒', eliteTier: 4 },
-        { generalId: 'ming_d_gen_708', factionId: 'ming_d', cityId: 'city_beijing', generalName: '朱由检', portrait: '', eliteName: '大明征战锐卒', eliteTier: 4 },
+        { generalId: 'ming_d_gen_39', factionId: 'ming_d', cityId: 'city_liaoyang', generalName: '李如松', portrait: '/assets/WEI/ming_d_gen_39.png', eliteName: '大明中军精骑', eliteTier: 3 },
+        { generalId: 'ming_d_gen_663', factionId: 'ming_d', cityId: 'city_zhennanguan', generalName: '张辅', portrait: '/assets/WEI/ming_d_gen_663.png', eliteName: '大明中军精骑', eliteTier: 3 },
+        { generalId: 'ming_d_gen_665', factionId: 'ming_d', cityId: 'city_beijing', generalName: '丘福', portrait: '/assets/WEI/ming_d_gen_665.png', eliteName: '大明征战锐卒', eliteTier: 4 },
+        { generalId: 'ming_d_gen_708', factionId: 'ming_d', cityId: 'city_beijing', generalName: '朱由检', portrait: '/assets/WEI/ming_d_gen_708.png', eliteName: '大明征战锐卒', eliteTier: 4 },
     ],
 
     shu: [
@@ -2559,19 +2559,19 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'shu_hezhi', factionId: 'shu', cityId: 'city_leshan', generalName: '何祗', portrait: '/assets/BASHU/shu_hezhi.png', eliteName: '犍为武阳戍卒', eliteTier: 4 },   // 蜀汉犍为太守，治南中、越嶲有声（镇守犍为，治所在今乐山）
         { generalId: 'shu_wulan', factionId: 'shu', cityId: 'city_huixian', generalName: '吴兰', portrait: '/assets/BASHU/shu_wulan.png', eliteName: '武都氐羌骑兵', eliteTier: 4 },   // 蜀汉将，218 下辨之战与曹洪、曹休对垒于武都（镇守武都）
     
-        { generalId: 'shu_gen_245', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '庞统', portrait: '', eliteName: '蜀汉中军精骑', eliteTier: 3 },
-        { generalId: 'shu_gen_246', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '黄忠', portrait: '', eliteName: '蜀汉中军精骑', eliteTier: 3 },
-        { generalId: 'shu_gen_252', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '法正', portrait: '', eliteName: '蜀汉中军精骑', eliteTier: 3 },
-        { generalId: 'shu_gen_255', factionId: 'shu', cityId: 'city_shangyong', generalName: '刘封', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_259', factionId: 'shu', cityId: 'city_baidicheng2', generalName: '冯习', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_260', factionId: 'shu', cityId: 'city_baidicheng2', generalName: '张南', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_266', factionId: 'shu', cityId: 'city_chengdu', generalName: '李恢', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_271', factionId: 'shu', cityId: 'city_hanzhong', generalName: '陈式', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_273', factionId: 'shu', cityId: 'city_hanzhong', generalName: '魏延', portrait: '', eliteName: '蜀汉中军精骑', eliteTier: 3 },
-        { generalId: 'shu_gen_274', factionId: 'shu', cityId: 'city_chengdu', generalName: '吴壹', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_286', factionId: 'shu', cityId: 'city_chengdu', generalName: '费祎', portrait: '', eliteName: '蜀汉中军精骑', eliteTier: 3 },
-        { generalId: 'shu_gen_291', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '句安', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
-        { generalId: 'shu_gen_292', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '李歆', portrait: '', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_245', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '庞统', portrait: '/assets/BASHU/shu_gen_245.png', eliteName: '蜀汉中军精骑', eliteTier: 3 },
+        { generalId: 'shu_gen_246', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '黄忠', portrait: '/assets/BASHU/shu_gen_246.png', eliteName: '蜀汉中军精骑', eliteTier: 3 },
+        { generalId: 'shu_gen_252', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '法正', portrait: '/assets/BASHU/shu_gen_252.png', eliteName: '蜀汉中军精骑', eliteTier: 3 },
+        { generalId: 'shu_gen_255', factionId: 'shu', cityId: 'city_shangyong', generalName: '刘封', portrait: '/assets/BASHU/shu_gen_255.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_259', factionId: 'shu', cityId: 'city_baidicheng2', generalName: '冯习', portrait: '/assets/BASHU/shu_gen_259.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_260', factionId: 'shu', cityId: 'city_baidicheng2', generalName: '张南', portrait: '/assets/BASHU/shu_gen_260.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_266', factionId: 'shu', cityId: 'city_chengdu', generalName: '李恢', portrait: '/assets/BASHU/shu_gen_266.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_271', factionId: 'shu', cityId: 'city_hanzhong', generalName: '陈式', portrait: '/assets/BASHU/shu_gen_271.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_273', factionId: 'shu', cityId: 'city_hanzhong', generalName: '魏延', portrait: '/assets/BASHU/shu_gen_273.png', eliteName: '蜀汉中军精骑', eliteTier: 3 },
+        { generalId: 'shu_gen_274', factionId: 'shu', cityId: 'city_chengdu', generalName: '吴壹', portrait: '/assets/BASHU/shu_gen_274.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_286', factionId: 'shu', cityId: 'city_chengdu', generalName: '费祎', portrait: '/assets/BASHU/shu_gen_286.png', eliteName: '蜀汉中军精骑', eliteTier: 3 },
+        { generalId: 'shu_gen_291', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '句安', portrait: '/assets/BASHU/shu_gen_291.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
+        { generalId: 'shu_gen_292', factionId: 'shu', cityId: 'city_jianmenguan', generalName: '李歆', portrait: '/assets/BASHU/shu_gen_292.png', eliteName: '蜀汉征战锐卒', eliteTier: 4 },
     ],
 
     // cheng 阳安：岳钟琪已迁赤斤@赤金堡
@@ -2580,8 +2580,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     qiuci: [
         { generalId: 'qiuci_baiba', cityId: 'city_yiluolucheng', generalName: '白霸', portrait: '/assets/WESTERN/qiuci_baiba.png', eliteName: '龟兹精兵', eliteTier: 3 },
-        { generalId: 'qiuci_gen_191', factionId: 'qiuci', cityId: 'city_yiluolucheng', generalName: '白英', portrait: '', eliteName: '龟兹征战锐卒', eliteTier: 4 },
-        { generalId: 'qiuci_shouling', factionId: 'qiuci', cityId: 'city_yiluolucheng', generalName: '姑墨石城守将', portrait: '', eliteName: '龟兹卫戍锐卒', eliteTier: 4 },
+        { generalId: 'qiuci_gen_191', factionId: 'qiuci', cityId: 'city_yiluolucheng', generalName: '白英', portrait: '/assets/WESTERN/qiuci_gen_191.png', eliteName: '龟兹征战锐卒', eliteTier: 4 },
+        { generalId: 'qiuci_shouling', factionId: 'qiuci', cityId: 'city_yiluolucheng', generalName: '姑墨石城守将', portrait: '/assets/WESTERN/qiuci_shouling.png', eliteName: '龟兹卫戍锐卒', eliteTier: 4 },
     ],
 
     // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
@@ -2611,19 +2611,19 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'faqiang_niechizanpu', factionId: 'tubo', cityId: 'city_jiamachikang', generalName: '聂赤', portrait: '/assets/TIBET/faqiang_niechizanpu.png', eliteName: '吐蕃骑兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 yarlung 块
         { generalId: 'khyungpo_qiongbobangse', factionId: 'tubo', cityId: 'city_qiongbu', generalName: '琼波邦色', portrait: '/assets/TIBET/khyungpo_qiongbobangse.png', eliteName: '琼波骑兵', eliteTier: 4 },   // 🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 khyungpo 块
     
-        { generalId: 'tubo_gen_464', factionId: 'tubo', cityId: 'city_fusicheng', generalName: '勃论赞刃', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_466', factionId: 'tubo', cityId: 'city_qingtang', generalName: '麹莽布支', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_469', factionId: 'tubo', cityId: 'city_qingtang', generalName: '坌达延', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_480', factionId: 'tubo', cityId: 'city_qingtang', generalName: '悉末朗', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_486', factionId: 'tubo', cityId: 'city_qingtang', generalName: '铁刃悉诺罗', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_493', factionId: 'tubo', cityId: 'city_luoxie', generalName: '尚结息', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_494', factionId: 'tubo', cityId: 'city_qingtang', generalName: '尚悉结', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_499', factionId: 'tubo', cityId: 'city_qingtang', generalName: '尚结赞', portrait: '', eliteName: '吐蕃中军精骑', eliteTier: 3 },
-        { generalId: 'tubo_gen_500', factionId: 'tubo', cityId: 'city_wuwei', generalName: '尚绮心儿', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_503', factionId: 'tubo', cityId: 'city_dayan', generalName: '乞藏遮遮', portrait: '', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
-        { generalId: 'tubo_gen_525', factionId: 'tubo', cityId: 'city_ledou', generalName: '尚婢婢', portrait: '', eliteName: '吐蕃中军精骑', eliteTier: 3 },
-        { generalId: 'tubo_shouling', factionId: 'tubo', cityId: 'city_luoxie', generalName: '九曲守帅', portrait: '', eliteName: '吐蕃卫戍锐卒', eliteTier: 4 },
-        { generalId: 'tubo_shouling_2', factionId: 'tubo', cityId: 'city_luoxie', generalName: '吐蕃陇右守将', portrait: '', eliteName: '吐蕃卫戍锐卒营', eliteTier: 4 },
+        { generalId: 'tubo_gen_464', factionId: 'tubo', cityId: 'city_fusicheng', generalName: '勃论赞刃', portrait: '/assets/TIBET/tubo_gen_464.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_466', factionId: 'tubo', cityId: 'city_qingtang', generalName: '麹莽布支', portrait: '/assets/TIBET/tubo_gen_466.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_469', factionId: 'tubo', cityId: 'city_qingtang', generalName: '坌达延', portrait: '/assets/TIBET/tubo_gen_469.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_480', factionId: 'tubo', cityId: 'city_qingtang', generalName: '悉末朗', portrait: '/assets/TIBET/tubo_gen_480.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_486', factionId: 'tubo', cityId: 'city_qingtang', generalName: '铁刃悉诺罗', portrait: '/assets/TIBET/tubo_gen_486.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_493', factionId: 'tubo', cityId: 'city_luoxie', generalName: '尚结息', portrait: '/assets/TIBET/tubo_gen_493.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_494', factionId: 'tubo', cityId: 'city_qingtang', generalName: '尚悉结', portrait: '/assets/TIBET/tubo_gen_494.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_499', factionId: 'tubo', cityId: 'city_qingtang', generalName: '尚结赞', portrait: '/assets/TIBET/tubo_gen_499.png', eliteName: '吐蕃中军精骑', eliteTier: 3 },
+        { generalId: 'tubo_gen_500', factionId: 'tubo', cityId: 'city_wuwei', generalName: '尚绮心儿', portrait: '/assets/TIBET/tubo_gen_500.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_503', factionId: 'tubo', cityId: 'city_dayan', generalName: '乞藏遮遮', portrait: '/assets/TIBET/tubo_gen_503.png', eliteName: '吐蕃征战锐卒', eliteTier: 4 },
+        { generalId: 'tubo_gen_525', factionId: 'tubo', cityId: 'city_ledou', generalName: '尚婢婢', portrait: '/assets/TIBET/tubo_gen_525.png', eliteName: '吐蕃中军精骑', eliteTier: 3 },
+        { generalId: 'tubo_shouling', factionId: 'tubo', cityId: 'city_luoxie', generalName: '九曲守帅', portrait: '/assets/TIBET/tubo_shouling.png', eliteName: '吐蕃卫戍锐卒', eliteTier: 4 },
+        { generalId: 'tubo_shouling_2', factionId: 'tubo', cityId: 'city_luoxie', generalName: '吐蕃陇右守将', portrait: '/assets/TIBET/tubo_shouling_2.png', eliteName: '吐蕃卫戍锐卒营', eliteTier: 4 },
     ],
 
     menggu_d: [
@@ -2656,7 +2656,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'bulat_beiduanchaer', factionId: 'menggu_d', cityId: 'city_burhan', generalName: '孛端察儿', portrait: '/assets/MONGOL/bulat_beiduanchaer.png', eliteName: '乞颜部游牧骑', eliteTier: 4  },   // 按史：孛端察儿为成吉思汗十世祖（约 10 世纪），怯薛 1204 年才建 ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 mongol_ancient 块
     
-        { generalId: 'menggu_d_gen_620', factionId: 'menggu_d', cityId: 'city_xinghe', generalName: '石抹明安', portrait: '', eliteName: '蒙古中军精骑', eliteTier: 3 },
+        { generalId: 'menggu_d_gen_620', factionId: 'menggu_d', cityId: 'city_xinghe', generalName: '石抹明安', portrait: '/assets/MONGOL/menggu_d_gen_620.png', eliteName: '蒙古中军精骑', eliteTier: 3 },
         { generalId: 'menggu_d_gen_623', factionId: 'menggu_d', cityId: 'city_zhedi', generalName: '赤老温', portrait: '', eliteName: '蒙古征战锐卒', eliteTier: 4 },
         { generalId: 'menggu_d_gen_625', factionId: 'menggu_d', cityId: 'city_zhaoge', generalName: '塔察儿', portrait: '', eliteName: '蒙古中军精骑', eliteTier: 3 },
     ],
