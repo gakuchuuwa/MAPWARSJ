@@ -1,4 +1,4 @@
-据点ID,据点名称,类型,建筑文化,纬度,经度,默认势力ID,默认势力
+﻿据点ID,据点名称,类型,建筑文化,纬度,经度,默认势力ID,默认势力
 city_pattani,北大年,小城,MALAY,6.867,101.25,pattani,北大年
 city_aswan,阿斯旺,小城,ORIE,24.088,32.899,aiji,埃及
 city_copan,科潘,小城,MAYANS,14.84,-89.141,maya,玛雅
@@ -101,7 +101,6 @@ city_lundun,伦敦,大城,BRITONS,51.5,-0.12,yinggelan,英格兰
 city_winchester,温彻斯特,城寨,BRITONS,51.06,-1.31,yinggelan,英格兰
 city_bali,巴黎,大城,FRANKS,48.85,2.35,gaolu,法兰西
 city_shatteer,沙特尔,小城,FRANKS,48.448,1.488,kaernute,卡尔努特
-city_soissons,苏瓦松,小城,FRANKS,49.38,3.32,falanji,法兰克
 city_luoma,罗马,大城,ROMA,41.9,12.49,luoma_diguo,罗马帝国
 city_yadian,雅典,中城,ATHENIANS,37.98,23.72,xila,雅典
 city_jiadisi,加的斯,小城,SPANISH,36.52,-6.28,buni,迦太基
@@ -656,7 +655,6 @@ city_longtanshancheng,龙潭山,险要,NORTHEAST,43.834536,126.589966,dongxia,�
 city_bamiancheng,八面关,险要,NORTHEAST,43.189189,124.354248,yehe,叶赫
 city_tuhe,徒河,小城,WEI,41.12,121.14,ming_d,大明
 city_feiru,肥如,小城,WEI,39.89,118.89,caowei,曹魏
-city_macheng,马城,城寨,WEI,40.70,114.35,caowei,曹魏
 city_wuzhong,无终,小城,WEI,39.95,117.4,ming_d,大明
 city_wugucheng,乌骨城,险要,KOREA,40.7685,123.9395,gaogouli,高句丽
 city_shangzhou,三白,城寨,KOREA,36.41,128.16,joseon,朝鲜
