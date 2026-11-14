@@ -389,6 +389,10 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     // 🔴 2026-10-20 经典战补敌将（生卒史料不全者按「推定」）
     sashan_beilusi: { birth: 440, death: 484, kaoju: '推定' },        // 卑路斯一世（484 赫拉特之战战死）
     luoma_xiageliwusi: { birth: 430, death: 487, kaoju: '推定' },     // 西阿格里乌斯（486 苏瓦松战败，487 被杀）
+    aijidiusi: { birth: 410, death: 464, kaoju: '推定' },             // 埃吉迪乌斯（高卢军事统帅；生年不详，卒 464/5，英文维基 Aegidius）
+    mayuelian: { birth: 420, death: 461, kaoju: '推定' },             // 马约里安（457–461 在位，被里西梅尔处死）
+    xigete_diaoduolike_ii: { birth: 426, death: 466, kaoju: '推定' }, // 狄奥多里克二世（西哥特王 453–466，被尤里克所杀）
+    xigete_fuleidelike: { birth: 428, death: 463, kaoju: '推定' },    // 弗雷德里克（西哥特王子，463 奥尔良阵亡）
     tuoba_yuanying: { birth: 460, death: 510, kaoju: '推定' },        // 元英（北魏中山王）
     rouran_anagui: { birth: 480, death: 552, kaoju: '推定' },         // 阿那瓌（柔然末代可汗）
     zhengzhou_chenqingzhi: { birth: 484, death: 539 },     // 陈庆之

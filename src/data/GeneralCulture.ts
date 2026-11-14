@@ -1346,7 +1346,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luohu_ganmuding': 'KHMER',   // 罗斛｜敢木丁｜据点 呵叻城
     'luoma_catulus': 'ROMA',   // 罗马共和国｜卡图卢斯｜据点 罗马
     'luoma_diguo_leo_ix': 'ROMA',   // 教皇国｜利奥九世｜据点 罗马
-    'luoma_xiageliwusi': 'ROMA',   // 罗马帝国｜西阿格里乌斯｜据点 巴黎
+    'luoma_xiageliwusi': 'ROMA',   // 罗马帝国｜西阿格里乌斯｜据点 苏瓦松
+    'aijidiusi': 'ROMA',   // 罗马帝国｜埃吉迪乌斯｜据点 苏瓦松
+    'mayuelian': 'ROMA',   // 罗马帝国｜马约里安｜据点 拉文纳
+    'xigete_diaoduolike_ii': 'GOTHS',   // 西哥特｜狄奥多里克二世｜据点 图卢兹
+    'xigete_fuleidelike': 'GOTHS',   // 西哥特｜弗雷德里克｜据点 图卢兹
     'luomu_jilijie': 'TURKS',   // 罗姆｜基利杰｜据点 伊科尼乌姆
     'luoping_zhangshijie': 'JIANGNAN',   // 赵宋｜张世杰｜据点 厓山
     'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里｜据点 诺夫哥罗德

@@ -1,4 +1,4 @@
-﻿武将ID,姓名,等级,所属势力ID,所属势力,驻扎据点ID,驻扎据点,生年,卒年
+武将ID,姓名,等级,所属势力ID,所属势力,驻扎据点ID,驻扎据点,生年,卒年
 sumuroyi_sumuroy,苏穆罗伊,普将,sumuroyi,米沙鄢人,city_palapag,帕拉帕格,1620,1650
 xiwasi_burhandin,布尔汉丁,普将,xiwasi,埃雷特纳,city_sivas,锡瓦斯,1345,1398
 mengguqieke_bahramshah,巴赫拉姆沙,普将,mengguqieke,门古切克,city_erzincan,埃尔津詹,1150,1225
@@ -322,7 +322,11 @@ baolusi,保卢斯,普将,luoma_diguo,罗马帝国,city_luoma,罗马,-254,-216
 waluo,瓦罗,普将,luoma_diguo,罗马帝国,city_luoma,罗马,-256,-195
 aitiliusi,埃提乌斯,名将,luoma_diguo,罗马帝国,city_lyon,里昂,391,454
 luoma_diguo_leo_ix,利奥九世,普将,jiaohuangguo,教皇国,city_luoma,罗马,1002,1054
-luoma_xiageliwusi,西阿格里乌斯,普将,luoma_diguo,罗马帝国,city_bali,巴黎,430,487
+luoma_xiageliwusi,西阿格里乌斯,普将,luoma_diguo,罗马帝国,city_soissons,苏瓦松,430,487
+aijidiusi,埃吉迪乌斯,名将,luoma_diguo,罗马帝国,city_soissons,苏瓦松,410,464
+mayuelian,马约里安,名将,luoma_diguo,罗马帝国,city_ravenna,拉文纳,420,461
+xigete_diaoduolike_ii,狄奥多里克二世,普将,xigete,西哥特,city_toulouse,图卢兹,426,466
+xigete_fuleidelike,弗雷德里克,普将,xigete,西哥特,city_toulouse,图卢兹,428,463
 bfe3_77,瓦勒良,普将,luoma_diguo,罗马帝国,city_luoma,罗马,200,260
 bfe3_79,奥勒良,名将,luoma_diguo,罗马帝国,city_luoma,罗马,214,275
 bfe3_81,马克森提乌斯,普将,luoma_diguo,罗马帝国,city_luoma,罗马,278,312

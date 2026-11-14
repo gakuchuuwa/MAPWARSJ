@@ -678,6 +678,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     // 🔴 2026-10-20 经典战补敌将（时代按生年过 476 分界：440/430/460 古典，480 封建）
     'sashan_beilusi': 'antiquity',
     'luoma_xiageliwusi': 'antiquity',
+    'aijidiusi': 'antiquity',   // 埃吉迪乌斯（458 阿尔勒、463 奥尔良）
+    'mayuelian': 'antiquity',   // 马约里安（457–461 在位）
+    'xigete_diaoduolike_ii': 'feudal',   // 狄奥多里克二世（453–466 在位；时代跟势力 西哥特＝封建）
+    'xigete_fuleidelike': 'feudal',   // 弗雷德里克（463 阵亡；时代跟势力 西哥特＝封建）
     'tuoba_yuanying': 'feudal',
     'rouran_anagui': 'antiquity',
     'gen_constantine_great': 'antiquity',

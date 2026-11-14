@@ -2345,6 +2345,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'xigete_roderic', cityId: 'city_toledo', generalName: '罗德里克', portrait: '/assets/GOTHS/xigete_roderic.png' , eliteName: '西哥特亲兵', eliteTier: 4 },   // 🔴 卡斯蒂骑士是 1085 年阿方索六世的，不是 711 年西哥特的兵
 
+        // 🔴 [2026-11-14 按史补] 狄奥多里克二世（西哥特王 453–466，都图卢兹；458 阿尔勒战败向马约里安乞和；462 取纳博讷、尼姆；466 为其弟尤里克所杀）｜势力 西哥特｜据点 图卢兹（王都）｜普将（无四闸全过之胜，存疑列普将）｜精锐「西哥特亲兵」T4｜立绘留空
+        { generalId: 'xigete_diaoduolike_ii', factionId: 'xigete', cityId: 'city_toulouse', generalName: '狄奥多里克二世', portrait: '/assets/GOTHS/xigete_diaoduolike_ii.png', eliteName: '西哥特亲兵', eliteTier: 4 },
+
+        // 🔴 [2026-11-14 按史补] 弗雷德里克（Fredericus，西哥特王子、狄奥多里克二世之弟；463 率主力北渡卢瓦尔攻奥尔良，兵败阵亡）｜势力 西哥特｜据点 图卢兹（出征集合地）｜普将｜精锐「西哥特亲兵」T4｜立绘留空
+        { generalId: 'xigete_fuleidelike', factionId: 'xigete', cityId: 'city_toulouse', generalName: '弗雷德里克', portrait: '/assets/GOTHS/xigete_fuleidelike.png', eliteName: '西哥特亲兵', eliteTier: 4 },
+
 
 
 
@@ -3048,7 +3054,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'luoma_xiageliwusi', cityId: 'city_bali', generalName: '西阿格里乌斯', portrait: '/assets/FRANKS/luoma_xiageliwusi.png' , eliteName: '苏瓦松卫戍兵', eliteTier: 4 },   // 🔴 486 高卢罗马残部的晚期边军（原配「罗马军团」是帝国早期军团）
+        { generalId: 'luoma_xiageliwusi', cityId: 'city_soissons', generalName: '西阿格里乌斯', portrait: '/assets/FRANKS/luoma_xiageliwusi.png' , eliteName: '苏瓦松卫戍兵', eliteTier: 4 },   // 🔴 [2026-11-14 主人令] 挂所守之城：原挂巴黎（当时库中无苏瓦松），苏瓦松据点已建 → 改挂 city_soissons（486 苏瓦松之战即在此城就地开战）；486 高卢罗马残部的晚期边军（原配「罗马军团」是帝国早期军团）
+
+        // 🔴 [2026-11-14 按史补] 埃吉迪乌斯（Aegidius，高卢罗马世家；456/7–461 任西罗马「高卢军事统帅」magister militum per Gallias，461 不奉塞维鲁、以罗马名义守卢瓦尔河以北；458 阿尔勒解围、463 奥尔良败西哥特弗雷德里克；卒 464/5）｜势力 罗马帝国｜据点 苏瓦松（其所守之城：格雷戈里《法兰克人史》载其父子先后据苏瓦松）｜名将（四闸全过：亲统、实胜、战区级、敌帅有名）｜精锐「卢瓦尔边军」T2（463 卢瓦尔之战战术大捷，敌王子阵亡）｜立绘留空
+        { generalId: 'aijidiusi', factionId: 'luoma_diguo', cityId: 'city_soissons', generalName: '埃吉迪乌斯', portrait: '/assets/ROMA/aijidiusi.png', eliteName: '卢瓦尔边军', eliteTier: 2 },
+
+        // 🔴 [2026-11-14 按史补] 马约里安（Majorian，西罗马皇帝 457–461，被里西梅尔处死；458 亲征高卢解阿尔勒之围、逼西哥特狄奥多里克二世乞和；460 远征汪达尔失利）｜势力 罗马帝国｜据点 拉文纳（西部宫廷）｜名将｜精锐「帕拉蒂尼营」T3（同号马克森提乌斯 1 人，未越 T3 上限）｜立绘留空
+        { generalId: 'mayuelian', factionId: 'luoma_diguo', cityId: 'city_ravenna', generalName: '马约里安', portrait: '/assets/ROMA/mayuelian.png', eliteName: '帕拉蒂尼营', eliteTier: 3 },
 
 
 

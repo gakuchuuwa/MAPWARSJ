@@ -1170,6 +1170,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_calais: 900, // 约9世纪加莱
     city_oushi: -100, // 约前1世纪阿马尼亚克欧什
     city_shatteer: 1000, // 约1000年沙特尔主教城
+    city_soissons: -20, // 苏瓦松，约前20年奥古斯都时代建罗马城 Augusta Suessionum（苏埃西奥奈斯人都会 Noviodunum，前57年为凯撒所取）
     city_chambord: 1519, // 1519弗朗索瓦一世立项建香波堡
     city_bremen: 585, // 585年法兰克建不莱梅
     city_yachen: 600, // 约7世纪法兰克王宫亚琛
