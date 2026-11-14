@@ -200,8 +200,12 @@ export class SpeechAnnouncer {
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
-  /** 🔴 [2026-11-14 主人定「一个声音」] 观众互动播报也走同一副嗓子（2026-10-30 的晓晓女声设定已废） */
-  private static readonly VIEWER_LIVE_VOICE: EdgeVoice = SpeechAnnouncer.NARRATOR_VOICE;
+  /**
+   * 🔴 [2026-11-14 主人定·例外条款] 直播间观众互动（感谢、回执）固定用晓晓女声，**不受「一个声音」偏好影响**：
+   *    旁白全程只有云健，观众那一声故意换一副嗓子，让人听出「这是观众的事，不是史书」。
+   *    （承 2026-10-30 主人令「要换一个声音，不要再用云健了」，该令只适用于这一层。）
+   */
+  private static readonly VIEWER_LIVE_VOICE: EdgeVoice = "zh-CN-XiaoxiaoNeural";
 
   /** 技能释放播报串行队列（入队顺序=亮相顺序：劣先/均势随机；不互相打断）；onStart 在 TTS 开口时触发 */
   private skillSpeakQueue: {
@@ -933,7 +937,8 @@ export class SpeechAnnouncer {
 
   /**
    * 🔴 [2026-10-23 直播观众放计] 「感谢某某，蓝方放猛攻」——排进技能播报队列，跟大字 Cut-in 同一道闸，不与武将技抢话。
-   * 🔴 [2026-11-14 主人定「改为一个声音」] 观众互动也改用云健，与旁白同一副嗓子；2026-10-30 的晓晓女声设定作废。
+   * 🔴 [2026-10-30 主人令「要换一个声音，不要再用云健了」] 直播间观众互动统一用晓晓女声（zh-CN-XiaoxiaoNeural），与战争旁白男声云健区分开。
+   * 🔴 [2026-11-14 补] 此为「一个声音」的**唯一例外**：旁白层只有云健，观众互动层仍是晓晓，两层互不影响。
    */
   public announceViewerSkill(viewerName: string, sideName: string, skillName: string, opts?: { onlyIfIdle?: boolean; syncNow?: boolean }): void {
     if (!this.enabled) return;
@@ -949,7 +954,7 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，用云健播报（2026-11-14 起统一一个声音）。
+   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，用晓晓女声播报（2026-11-14 确认为「一个声音」的例外层）。
    */
   public announceViewerThanks(text: string): void {
     if (!this.enabled) return;
@@ -1064,9 +1069,9 @@ export class SpeechAnnouncer {
   /** 两句技能亮相的最短间隔（毫秒）= CombatUI 里 skill-cut-in 动画时长，保证双方大字不同刻、不叠 */
   private static readonly SKILL_CUTIN_GAP_MS = 3000;
 
-  /** 当前男声偏好对应的 Neural 音色名（云健/云希直连用） */
+  /** 播报音色（2026-11-14 起全程只有云健一个） */
   private currentEdgeVoice(): EdgeVoice {
-    return this.preferredVoice === "Yunxi" ? "zh-CN-YunxiNeural" : "zh-CN-YunjianNeural";
+    return SpeechAnnouncer.NARRATOR_VOICE;
   }
 
   private stopActiveEdgeAudio(): void {
@@ -1103,7 +1108,7 @@ export class SpeechAnnouncer {
           URL.revokeObjectURL(url);
           if (this.activeEdgeAudio === audio) this.activeEdgeAudio = null;
         };
-        const voiceLabel = "云健 Neural";
+        const voiceLabel = opts?.voice === "zh-CN-XiaoxiaoNeural" ? "晓晓 Neural（观众互动层）" : "云健 Neural（旁白层）";
         audio.onplay = () => { console.log(`[Speech] 使用: ${voiceLabel} (直连微软)`); cb.onPlay(); };
         audio.onended = () => { cleanup(); cb.onEnd(); };
         audio.onerror = () => { cleanup(); if (!cb.isSettled()) cb.fallback(); };

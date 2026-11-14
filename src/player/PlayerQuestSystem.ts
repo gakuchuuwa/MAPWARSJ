@@ -52,7 +52,7 @@ import {
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
 import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicleActive, isChronicleBattleId, setChronicleCityOwner, startChronicle, stopChronicle } from '../data/chronicle/ChronicleDirector';
-import { cancelChronicleOpening, isChronicleOpeningBlocking } from '../data/chronicle/ChronicleOpening';
+import { cancelChronicleOpening, consumeChronicleOpeningPrologue, isChronicleOpeningBlocking } from '../data/chronicle/ChronicleOpening';
 import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
@@ -444,6 +444,7 @@ export class PlayerQuestSystem {
             if (planChanged) {
                 this.declinedGenerals.clear();
                 if (plan !== 'centenarian' && isChronicleActive()) {
+                    cancelChronicleOpening();
                     stopChronicle();
                     this.chronicleNarrativeSeq++;
                     this.chronicleNarrating = false;
@@ -3345,7 +3346,8 @@ export class PlayerQuestSystem {
         if (this.chronicleNarrating) return;
         this.chronicleNarrating = true;
         const seq = ++this.chronicleNarrativeSeq;
-        const lines = [...ev.strategic, ...ev.tactical].map((s) => s.trim()).filter(Boolean);
+        const openingLine = consumeChronicleOpeningPrologue();
+        const lines = [...(openingLine ? [openingLine] : []), ...ev.strategic, ...ev.tactical].map((s) => s.trim()).filter(Boolean);
         const speak = this.deps.announceBriefing;
         gameLog('expedition', `[编年史] 叙事【${ev.title}】${lines.length} 段`);
         const next = (i: number): void => {
@@ -4341,7 +4343,9 @@ export class PlayerQuestSystem {
         const myFactionName = myFactionId ? this.deps.cityManager.getFactionName(myFactionId) : '';
         const generalName = getGeneralRecordByGeneralId(generalId)?.generalName ?? '';
         const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
-        const paragraphs = getFirstBattleStrategicParagraphs(fb, { myFactionName, generalName, enemyFactionName });
+        const baseParagraphs = getFirstBattleStrategicParagraphs(fb, { myFactionName, generalName, enemyFactionName });
+        const openingLine = isChronicleBattleId(key) ? consumeChronicleOpeningPrologue(key) : null;
+        const paragraphs = openingLine ? [openingLine, ...baseParagraphs] : baseParagraphs;
         this.classicBriefing.start(key, paragraphs);
         gameLog('expedition', `[玩家] 经典战战略播报开念：${generalName}【${fb.battleName}】共 ${paragraphs.length} 段`);
     }

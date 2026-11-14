@@ -458,26 +458,6 @@ export class CityManager {
         CityAssetManager.notifyMapInteraction();
     }
 
-    /** 提前为目标经纬度范围内的据点挂载 DOM 与旗号图标，避免跨区切镜后据点晚显现 */
-    public prewarmCitiesInBounds(south: number, north: number, west: number, east: number): void {
-        const inBounds = this.cities.filter(
-            (city) =>
-                this.isCityRenderable(city) &&
-                city.latitude >= south &&
-                city.latitude <= north &&
-                city.longitude >= west &&
-                city.longitude <= east,
-        );
-        if (inBounds.length === 0) return;
-        void this.territorySystem.appendCityMarkers(inBounds, (city) => this.isCityGhost(city));
-    }
-
-    /** 当前视口内的全部可渲染据点是否已挂载完成 */
-    public areViewportCitiesMounted(): boolean {
-        if (this.viewportSyncTrailingTimer !== null) return false;
-        return this.getCitiesInMapViewport().every((c) => this.territorySystem.hasCityMarker(c.id));
-    }
-
     /** 仅重绘领土（据点层已存在时使用） */
     public async renderTerritoryOnly(): Promise<void> {
         const t0 = performance.now();

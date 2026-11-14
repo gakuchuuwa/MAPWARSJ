@@ -2,7 +2,6 @@ import L from 'leaflet';
 import { GameConfig } from '../config/GameConfig';
 
 import { TILE_CONFIG, tileToLatLng } from './TileMapConfig';
-import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
 import { CoastalWaveLayer } from './CoastalWaveLayer';
@@ -459,74 +458,6 @@ export class GameMap {
         if (this.hillshadeLayer && this.map.hasLayer(this.hillshadeLayer)) {
             this.hillshadeLayer.bringToFront();
         }
-    }
-
-    /** 当前视野内山体、水面、植被是否已全部渲染上屏（开场巡礼切镜后据此决定何时开口） */
-    public isViewSettled(): boolean {
-        if (this.hillshadeLayer && this.map.hasLayer(this.hillshadeLayer) && !this.hillshadeLayer.isViewportSettled()) {
-            return false;
-        }
-        if (this.riverLayer && this.map.hasLayer(this.riverLayer) && !this.riverLayer.isViewportSettled()) {
-            return false;
-        }
-        if (this.vegetationLayer && !this.vegetationLayer.isViewportReady()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 在上一镜播放期间后台预渲染下一镜起止走廊（ZOOM 9）的山体四季位图、水面瓦片与植被采样掩膜，
-     * 使跨区瞬切命中内存缓存、直接出整图，避免切过去再现算。
-     */
-    public prewarmCorridor(
-        from: { lat: number; lng: number },
-        to: { lat: number; lng: number },
-    ): { south: number; north: number; west: number; east: number } {
-        const z = 9;
-        const size = this.map.getSize();
-        const halfW = Math.max(960, size.x / 2) + 192;
-        const halfH = Math.max(540, size.y / 2) + 192;
-        const pFrom = this.map.project([from.lat, from.lng], z);
-        const pTo = this.map.project([to.lat, to.lng], z);
-        const pxMin = Math.min(pFrom.x, pTo.x) - halfW;
-        const pxMax = Math.max(pFrom.x, pTo.x) + halfW;
-        const pyMin = Math.min(pFrom.y, pTo.y) - halfH;
-        const pyMax = Math.max(pFrom.y, pTo.y) + halfH;
-        const xMin = Math.floor(pxMin / 256);
-        const xMax = Math.floor(pxMax / 256);
-        const yMin = Math.floor(pyMin / 256);
-        const yMax = Math.floor(pyMax / 256);
-        const nw = this.map.unproject([pxMin, pyMin], z);
-        const se = this.map.unproject([pxMax, pyMax], z);
-        const north = nw.lat;
-        const south = se.lat;
-        const west = nw.lng;
-        const east = se.lng;
-
-        if (this.hillshadeLayer && this.map.hasLayer(this.hillshadeLayer)) {
-            this.hillshadeLayer.prewarmTileRect(z, xMin, xMax, yMin, yMax);
-        }
-        if (this.riverLayer && this.map.hasLayer(this.riverLayer)) {
-            this.riverLayer.prewarmTileRect(z, xMin, xMax, yMin, yMax);
-        }
-        LandSeaSystem.getSampler().prefetchBounds(north, south, west, east, z, 0);
-        LandSeaSystem.getWaterSampler().prefetchBounds(north, south, west, east, z, 0);
-        return { south, north, west, east };
-    }
-
-    /** 后台走廊预热任务是否已全部落入内存缓存 */
-    public isCorridorPrewarmSettled(): boolean {
-        if (this.hillshadeLayer && this.map.hasLayer(this.hillshadeLayer) && !this.hillshadeLayer.isPrewarmSettled()) {
-            return false;
-        }
-        if (this.riverLayer && this.map.hasLayer(this.riverLayer) && !this.riverLayer.isPrewarmSettled()) {
-            return false;
-        }
-        if (LandSeaSystem.getSampler().hasPendingTiles() || LandSeaSystem.getWaterSampler().hasPendingTiles()) {
-            return false;
-        }
-        return true;
     }
 
     private isExperimentalReliefEnabled = (() => {

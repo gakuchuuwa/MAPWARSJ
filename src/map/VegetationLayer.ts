@@ -811,25 +811,6 @@ export class VegetationLayer {
         else this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    /** 当前视口树木是否已完成采样与贴图解码（用于跨区切镜就绪判断） */
-    public isViewportReady(): boolean {
-        if (!this.visible) return true;
-        if (this.renderTimer !== null || this.lastRenderIncomplete || this.treeReadyPaintPending) return false;
-        const checked = new Set<string>();
-        for (const c of this.trees) {
-            const asset = c.asset;
-            if (checked.has(asset)) continue;
-            checked.add(asset);
-            if (isTreeAssetReady(asset)) continue;
-            const meta = TREE_METAS[asset];
-            const framesFailed = TREE_FRAMES_FAILED.has(asset);
-            const imgFailed = TREE_IMG_FAILED.has(asset);
-            const permFailed = meta ? (framesFailed && (!meta.frames.includes(0) || imgFailed)) : imgFailed;
-            if (!permFailed) return false;
-        }
-        return true;
-    }
-
     private resize(): void {
         const size = this.map.getSize();
         this.canvas.width = size.x + CANVAS_PAD_PX * 2;

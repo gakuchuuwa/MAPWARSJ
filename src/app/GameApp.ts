@@ -68,7 +68,6 @@ import type { LegionManager } from '../legion/LegionManager';
 import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
-import { SpeechVoiceToggle } from '../ui/SpeechVoiceToggle';
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame, tickGameLogicOnly } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
@@ -85,7 +84,7 @@ import { setScriptYearProvider, setCentenarianYearProvider, setActiveLegionGener
 import { getGeneralFirstBattle, isFirstBattleDoneForBattle } from '../data/GeneralFirstBattles';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { chronicleOwnershipAt, firstChronicleEvent, isChronicleActive, startChronicle } from '../data/chronicle/ChronicleDirector';
-import { armChronicleOpening, getChronicleOpeningInitialPos } from '../data/chronicle/ChronicleOpening';
+import { armChronicleOpening, releaseChronicleOpeningBootHold } from '../data/chronicle/ChronicleOpening';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -560,6 +559,8 @@ export class GameApp {
             this.timeSystem.onPauseChange((paused) => {
                 if (paused) {
                     gameLog('startup', '⏸️ [GameApp] Pause detected.');
+                } else if (releaseChronicleOpeningBootHold()) {
+                    window.setTimeout(() => this.playerQuests?.tick(), 0);
                 }
                 // 🔴 [2026-08-12 13 音效修复] 13 场景接管暂停（大战略暂停、战斗继续）≠ 用户真暂停：
                 //   enter() 已先置 strategyPausedByScene 再 setPaused，这里能识别——场景暂停时
@@ -1057,7 +1058,7 @@ export class GameApp {
         // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
         if (isCentenarianStart) {
             startChronicle();
-            if (!isQuickBattleMode()) armChronicleOpening();
+            if (!isQuickBattleMode()) armChronicleOpening(this.timeSystem.isGamePaused());
             this.applyChronicleCityOwnership(this.timeSystem.getYear());
         }
         const chronicleFirst = isCentenarianStart ? firstChronicleEvent() : undefined;
@@ -1370,13 +1371,7 @@ export class GameApp {
         }
         // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
         const lMap = this.map.getLeafletMap();
-        const initialCamPos = isChronicleActive() && !isQuickBattleMode()
-            ? getChronicleOpeningInitialPos((id) => {
-                const c = this.cityManager.getCity(id);
-                return c ? { lat: c.latitude, lng: c.longitude } : undefined;
-            })
-            : spawnPos;
-        lMap.setView([initialCamPos.lat, initialCamPos.lng], lMap.getZoom(), { animate: false });
+        lMap.setView([spawnPos.lat, spawnPos.lng], lMap.getZoom(), { animate: false });
         gameLog('startup', `👤 [玩家] ${hero.name}随机登场于【${startCity.name}】(${startCity.id}) 城外 [${spawnPos.lat.toFixed(2)}, ${spawnPos.lng.toFixed(2)}]`);
     }
 

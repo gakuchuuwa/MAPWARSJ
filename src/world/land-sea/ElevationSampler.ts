@@ -141,10 +141,6 @@ export class ElevationSampler {
         return this.cache.has(tileCacheKey(zoom, x, y));
     }
 
-    hasPendingTiles(): boolean {
-        return this.pending.size > 0;
-    }
-
     /** 该点所在瓦片是否仍在等待拉取（已缓存或处于失败冷却期内均返回 false） */
     isPendingSync(lat: number, lng: number, zoom = DEM_ZOOM): boolean {
         const { tileX, tileY } = latLngToTilePixel(lat, lng, zoom);

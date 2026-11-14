@@ -24,7 +24,7 @@ const SEC_MS_GEC_VERSION = '1-150.0.7871.129';
 const DISABLE_MS = 300000;
 const OUTPUT_FORMAT = 'audio-24khz-48kbitrate-mono-mp3';
 
-// 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 加晓晓：探马故事旁白专用（战争播报仍是云健/云希）
+// 🔴 [2026-11-14 主人定「改为一个声音，只用一套默认模式」] 全程只用云健一人；2026-10-22 的「探马故事旁白用晓晓」已废
 export type EdgeVoice = 'zh-CN-YunjianNeural' | 'zh-CN-YunxiNeural' | 'zh-CN-XiaoxiaoNeural';
 
 export interface EdgeTtsOptions {

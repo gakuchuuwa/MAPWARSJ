@@ -59,7 +59,7 @@ const WORKER_POOL_SIZE = 3;
  * 让 9↔10 来回切换第二次起直接命中，既省网络也省 Worker 计算。
  * 单块 256×256 RGBA ≈ 256KB，满载约 60MB。
  */
-const TILE_CACHE_MAX = 360;
+const TILE_CACHE_MAX = 260;
 
 /**
  * 玩家在战略地图移动时，跨过 256px 瓦片边界会同时触发 6~12 块缓存命中或 Worker 批量回传。
@@ -126,8 +126,6 @@ export class HillshadeLayer extends L.GridLayer {
     private rrIndex: number = 0; // Worker 轮询下标
     private msgIdCounter: number = 0;
     private pendingTiles: Map<number, PendingTileTask> = new Map();
-    private prewarmTasks: Map<number, { cacheKey: string; modeVersion: number }> = new Map();
-    private prewarmInFlight: Set<string> = new Set();
     private commitQueue: TileCommitJob[] = [];
     private commitScheduled = false;
     private commitRafId: number | null = null;
@@ -230,20 +228,6 @@ export class HillshadeLayer extends L.GridLayer {
         if (e.data.renderMs !== undefined) {
             this.workerRenderMs += e.data.renderMs;
             this.workerRenderSamples++;
-        }
-        const prewarm = this.prewarmTasks.get(id);
-        if (prewarm) {
-            this.prewarmTasks.delete(id);
-            this.prewarmInFlight.delete(prewarm.cacheKey);
-            if (prewarm.modeVersion === this.modeVersion && bitmap && !e.data.isCoarseFallback) {
-                this.cachePut(prewarm.cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
-            } else {
-                bitmap?.close();
-                summerBitmap?.close();
-                autumnBitmap?.close();
-                winterBitmap?.close();
-            }
-            return;
         }
         const task = this.pendingTiles.get(id);
         this.pendingTiles.delete(id);
@@ -576,8 +560,6 @@ export class HillshadeLayer extends L.GridLayer {
     /** 参数变了 → 旧位图全部作废 */
     private clearTileCache(): void {
         this.clearCommitQueue();
-        this.prewarmTasks.clear();
-        this.prewarmInFlight.clear();
         const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
         if (tilesObj) {
             for (const k in tilesObj) {
@@ -779,86 +761,6 @@ export class HillshadeLayer extends L.GridLayer {
                 }
             }
         }
-    }
-
-    /** 后台预计算指定瓦片矩形的山体浮雕四季位图并写入缓存，供跨区切镜零等待上屏 */
-    public prewarmTileRect(z: number, xMin: number, xMax: number, yMin: number, yMax: number): void {
-        this.ensureWorkers();
-        const n = 1 << z;
-        const size = this.getTileSize();
-        const cyMin = Math.max(0, yMin);
-        const cyMax = Math.min(n - 1, yMax);
-        for (let y = cyMin; y <= cyMax; y++) {
-            for (let x = xMin; x <= xMax; x++) {
-                const wx = ((x % n) + n) % n;
-                const bounds = tileBoundsFromCoords(z, wx, y);
-                const isExpTile = this.isReliefTile(z);
-                const isValleyTile = this.isValleyTile(z, bounds);
-                const cacheKey = this.tileCacheKey(z, wx, y, isExpTile, isValleyTile);
-                if (this.cacheGet(cacheKey) || this.prewarmInFlight.has(cacheKey)) continue;
-
-                const reqId = this.msgIdCounter++;
-                const relevantRegions = this.useDesertColoring
-                    ? REGIONS_FOR_WORKER.filter(r => {
-                        const latMin = r.center[0] - r.radii[0];
-                        const latMax = r.center[0] + r.radii[0];
-                        const lngMin = r.center[1] - r.radii[1];
-                        const lngMax = r.center[1] + r.radii[1];
-                        return !(latMax < bounds.south || latMin > bounds.north ||
-                                 lngMax < bounds.west || lngMin > bounds.east);
-                    })
-                    : [];
-
-                const request: HillshadeRequest = {
-                    id: reqId,
-                    url: `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${wx}/${y}.png`,
-                    waterMaskUrl: ESRI_SHADED_RELIEF_URL
-                        .replace('{z}', String(z))
-                        .replace('{y}', String(y))
-                        .replace('{x}', String(wx)),
-                    width: size.x,
-                    height: size.y,
-                    params: {
-                        azimuth: (this.options as HillshadeOptions).azimuth ?? 315,
-                        altitude: (this.options as HillshadeOptions).altitude ?? 40,
-                        zFactor: this.zFactor,
-                        opacity: this.shadowOpacity,
-                        useElevationColor: this.useElevationColor,
-                    },
-                    tileBounds: bounds,
-                    regions: relevantRegions,
-                    coords: { z, x: wx, y },
-                    experimentalRelief: isExpTile,
-                    valleyReliefExp: isValleyTile,
-                    terraceExp: isExpTile && this.terraceExp,
-                    civ6LightExp: this.civ6LightExp,
-                    modeVersion: this.modeVersion,
-                };
-
-                this.prewarmInFlight.add(cacheKey);
-                this.prewarmTasks.set(reqId, { cacheKey, modeVersion: this.modeVersion });
-                const workerIdx = ((Math.floor(wx / 2) + Math.floor(y / 2)) % this.workers.length + this.workers.length) % this.workers.length;
-                this.workers[workerIdx].postMessage(request);
-            }
-        }
-    }
-
-    public isPrewarmSettled(): boolean {
-        return this.prewarmInFlight.size === 0;
-    }
-
-    public isViewportSettled(): boolean {
-        if (this.commitQueue.length > 0) return false;
-        const tilesObj = (this as any)._tiles as Record<string, { current?: boolean; loaded?: unknown }> | undefined;
-        if (!tilesObj) return false;
-        let currentCount = 0;
-        for (const k in tilesObj) {
-            const t = tilesObj[k];
-            if (!t?.current) continue;
-            currentCount++;
-            if (!t.loaded) return false;
-        }
-        return currentCount > 0;
     }
 
     public setParams(params: { zFactor?: number; shadowOpacity?: number; altitude?: number; useElevationColor?: boolean; useDesertColoring?: boolean }) {
