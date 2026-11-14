@@ -1436,7 +1436,6 @@ export const BATTLEFIELD_FOUNDED_YEAR: Record<string, number> = {
     bf_wecam1_4: 1298,
     bf_wecam2_1: 1382,
     bf_wecam2_5: 1476,
-    bf_wecam2_6: 1477,
     bf_wecam3_1: 1053,
     bf_xcam1_4: 451,
     bf_xcam2_2: 1081,
@@ -1445,7 +1444,6 @@ export const BATTLEFIELD_FOUNDED_YEAR: Record<string, number> = {
     bf_xcam3_5: 1521,
     bf_dcam0_1: 1201,
     bf_shiting: 228,
-    bf_suwasong: 486,
     bf_kanni: -216,
     bf_bingshang: 1242,
     bf_chibi: 208,
@@ -1460,4 +1458,5 @@ export const BATTLEFIELD_FOUNDED_YEAR: Record<string, number> = {
     bf_mohaqi: 1526,
     bf_huangshui: 1648,
     bf_tahuda: 683,
+    bf_dongtinghu: 1135,
 };

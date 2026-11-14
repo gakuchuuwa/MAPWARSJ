@@ -2799,8 +2799,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 486,
         battleType: 'field',
         role: 'attacker',
-        targetName: '苏瓦松',   // 🔴 [2026-10-20 经典战规则] 城库无苏瓦松，锚定同地区最近的兰斯（约 60 公里）；坐标用苏瓦松史实地点
-        targetCityId: 'city_lansi',
+        targetName: '苏瓦松',   // 🔴 [2026-11-14 主人定] 已建苏瓦松据点，战场 bf_suwasong 删除，本战改由苏瓦松据点承载；坐标用苏瓦松史实地点
+        targetCityId: 'city_soissons',
         targetLat: 49.38,
         targetLng: 3.32,
         myTroops: 20000,
