@@ -20,7 +20,18 @@ import { CITIES_V2 } from './cities_v2';
 const ONE_CHAR_SUFFIXES = new Set(['州', '国', '族', '氏', '家', '部', '人', '朝']);
 
 /** ② 单字代表不了势力的两字名（照旧写两字） */
-const NO_ONE_CHAR = new Set(['土家', '五部', '南部', '南朝', '萨朝', '中国']);
+const NO_ONE_CHAR = new Set(['土家', '五部', '南部', '南朝', '萨朝', '中国', '附国', '濊族']);
+
+/**
+ * 3 字以上势力名中允许保留单字旗号的中国/东亚历史国号、姓氏军号与专属单字简称。
+ * 供 FactionTier（旗形模板判定）与 CityAssetManager（3字以上转符号判定）共用同一真源。
+ */
+export const HISTORICAL_SINGLE_CHAR_FLAGS: ReadonlySet<string> = new Set([
+    '夏', '商', '周', '秦', '汉', '魏', '蜀', '吴', '晋', '隋', '唐', '宋',
+    '齐', '梁', '陈', '辽', '金', '元', '明', '清', '燕', '赵', '韩', '楚', '凉', '越',
+    '鲁', '巴', '滇', '成', '代',
+    '倭', '卫', '董', '奚', '播',
+]);
 
 /** ① 西方据点文化：欧洲、西亚、北非、撒哈拉以南非洲、美洲 */
 const WESTERN_STYLES = new Set([

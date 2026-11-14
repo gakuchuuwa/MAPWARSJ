@@ -1,7 +1,7 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { isFactionIdle } from '../data/eraFactionDisplay';
-import { getCultureEmblemFile } from '../data/CultureEmblems';
+import { CULTURE_TEXT_FLAG, getCultureEmblemFile } from '../data/CultureEmblems';
 import { FACTIONS } from '../data/factions';
 import { getFactionCultureAt } from '../data/FactionCulture';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
@@ -14,7 +14,7 @@ import {
 } from './RebelFlagConstants';
 import { getAllFactionFlagTemplatePaths, getFactionFlagTemplatePath } from '../data/FactionTier';
 import { getFactionEmblemKey } from '../data/FactionEmblems';
-import { toFlagText } from '../data/FlagOneChar';
+import { HISTORICAL_SINGLE_CHAR_FLAGS, toFlagText } from '../data/FlagOneChar';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { appendBootPlaceholderFlagRulesByFaction, setFactionFlagStyleRule, setRebelFlagStyleRule } from './FlagStyleInjector';
 import { notifyFactionFlagReady as dispatchFactionFlagReady } from './factionFlagNotify';
@@ -127,8 +127,8 @@ export class CityAssetManager {
 
         'shu': '汉',
 'fushi': '秦',
-'heishui': '黑水',
-        'fuguo': '附',
+'heishui': '靺鞨',
+        'fuguo': '附国',
 'yada': '厌抵',
 'xianbei': '鲜卑',
 'wuhuan': '乌桓',
@@ -212,7 +212,7 @@ export class CityAssetManager {
 'murong': '燕',   // 2026-11-09 同步正表（慕容燕国号燕）
         'erzhu': '尔朱',
 
-        'ouyue': '台',
+        'ouyue': '瓯越',
 
         'gaoqi_d': '齐',
         'wuzhou_d': '周',
@@ -237,7 +237,7 @@ export class CityAssetManager {
         'nongzhigao': '大南',
 'fangla': '圣公',
 
-'yang_aner': '登',
+'yang_aner': '天顺',
         'dixiang': '新',
 
 'huarazim': '花剌',
@@ -404,7 +404,7 @@ export class CityAssetManager {
 
         'shaodang': '烧当',
 
-        'panyao': '贺',
+        'panyao': '盘瑶',
 
 'golog': '果洛',
         'tumed': '土默',
@@ -464,7 +464,7 @@ export class CityAssetManager {
     'panshu': 'RANDOM',   // 🔴 [2026-10-24] 叛军：旗面无字（随机 S10QZ 叛军旗面）
         // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（旗面照常染色；起义势力不特殊处理）
         'qiufu': '剡中',
-        'chendiaoyan': '陈吊',
+        'chendiaoyan': '畲汉',
         'yezongliu': '处',
         'qianhui': '回',   // 🔴 [2026-10-28 势力改名「回军→回民」，旗号同步单字「回」]
         'miaomin': '苗',
@@ -492,7 +492,7 @@ export class CityAssetManager {
 'date_d': '伊达',
         'otomo_d': '大友',
         'suwa_d': '诹访',
-        'hui': '濊',
+        'hui': '濊族',
         'wure': '兀惹',
         'sunite': '苏尼',
 'bailian': '白莲',
@@ -507,7 +507,7 @@ export class CityAssetManager {
         'ruoqiang': '婼羌',
         'qiemo': '且末',
         'weitou': '尉头',
-        'qiepantuo': '朅盘',
+        'qiepantuo': '护密',
         'eluoke': '鄂罗',
 'ewenki': '鄂温',
 'nanyue': '南越',
@@ -527,7 +527,7 @@ export class CityAssetManager {
 'xiwasi': '埃雷',
 'mengguqieke': '门古',
 'sumuroyi': '米沙',
-        'yun': '允',
+        'yun': '允戎',
         'huangwang': '齐',
 'yehe': '叶赫',
 'wula': '乌拉',
@@ -1430,6 +1430,66 @@ export class CityAssetManager {
         return this.ensureChromaNeutralTemplateForPath(this.templateFlagPath);
     }
 
+    /** 百岁模式无在场武将（idle）专用无势力色中立灰旗底图（S10QZ/7-1.png，与小地图 #999999 同口径且无宽旗露边） */
+    private static idleNeutralFlagUrl: string | null = null;
+    private static idleNeutralFlagPromise: Promise<string> | null = null;
+
+    private static async ensureIdleNeutralFlag(): Promise<string> {
+        if (this.idleNeutralFlagUrl) return this.idleNeutralFlagUrl;
+        if (!this.idleNeutralFlagPromise) {
+            this.idleNeutralFlagPromise = this.chromaKeyImage(this.templateFlagPath, '#999999')
+                .then((url) => {
+                    this.idleNeutralFlagUrl = url;
+                    return url;
+                })
+                .catch(async () => {
+                    const fallback = await this.ensureChromaNeutralTemplate();
+                    this.idleNeutralFlagUrl = fallback;
+                    return fallback;
+                })
+                .finally(() => {
+                    this.idleNeutralFlagPromise = null;
+                });
+        }
+        return this.idleNeutralFlagPromise;
+    }
+
+    /** 根据当前是否 idle 写入 `.flag-faction-${factionId}` CSS（不改动 processedFlagCache 内的势力本色缓存） */
+    private static applyFactionFlagCssRule(factionId: string): void {
+        if (isFactionIdle(factionId)) {
+            const idleUrl =
+                this.idleNeutralFlagUrl ??
+                this.chromaNeutralTemplateByPath.get(this.templateFlagPath) ??
+                this.templateFlagPath;
+            setFactionFlagStyleRule(factionId, idleUrl);
+            return;
+        }
+        const url = this.processedFlagCache.get(factionId);
+        if (url) setFactionFlagStyleRule(factionId, url);
+    }
+
+    /** 百岁模式武将登场/退场或切模式时：同步刷新旗面是否挂势力色＋清文字缓存 */
+    public static syncFactionIdleState(factionId: string): void {
+        this.invalidateFlagTextCache(factionId);
+        if (!factionId || factionId === 'panjun' || this.isBlankRebelFlagFaction(factionId)) return;
+        if (isFactionIdle(factionId)) {
+            if (this.idleNeutralFlagUrl) {
+                setFactionFlagStyleRule(factionId, this.idleNeutralFlagUrl);
+            } else {
+                void this.ensureIdleNeutralFlag().then((url) => {
+                    if (isFactionIdle(factionId)) setFactionFlagStyleRule(factionId, url);
+                });
+            }
+            return;
+        }
+        if (this.processedFlagCache.has(factionId) && !this.placeholderFactionIds.has(factionId)) {
+            setFactionFlagStyleRule(factionId, this.processedFlagCache.get(factionId)!);
+        } else {
+            this.applyFactionFlagCssRule(factionId);
+            this.requestFactionFlagTint(factionId);
+        }
+    }
+
     /**
      * 启动占位：按六级选用 9/16/26/57/33/53 抠绿占位，后台再染势力色。
      */
@@ -1437,10 +1497,11 @@ export class CityAssetManager {
         const unique = [...new Set(factionIds)];
         const _PANJUN = 'pan' + 'jun';
 
-        // [PERF 2026-07-17] 6 张模板并行处理：像素工作仅 ~3ms/张，启动期主线程被山体瓦片等挤占时
-        // 逐张 await 的每个 hop 要等数百 ms～数秒，改并行让等待重叠（6 张不构成并行 chromaKey 风暴）。
+        // [PERF 2026-07-17] 模板并行处理：像素工作仅 ~3ms/张，启动期主线程被山体瓦片等挤占时
+        // 逐张 await 的每个 hop 要等数百 ms～数秒，改并行让等待重叠（不构成并行 chromaKey 风暴）。
         await Promise.all([
             this.ensureFlagPole(),
+            this.ensureIdleNeutralFlag(),
             ...getAllFactionFlagTemplatePaths().map((p) => this.ensureChromaNeutralTemplateForPath(p)),
         ]);
 
@@ -1455,7 +1516,10 @@ export class CityAssetManager {
                 (await this.ensureChromaNeutralTemplateForPath(templatePath));
             this.processedFlagCache.set(factionId, tpl);
             this.placeholderFactionIds.add(factionId);
-            placeholderByFaction.set(factionId, tpl);
+            placeholderByFaction.set(
+                factionId,
+                isFactionIdle(factionId) && this.idleNeutralFlagUrl ? this.idleNeutralFlagUrl : tpl,
+            );
         }
         appendBootPlaceholderFlagRulesByFaction(placeholderByFaction);
     }
@@ -1666,7 +1730,7 @@ export class CityAssetManager {
 
     private static async processStandardFaction(factionId: string): Promise<void> {
         if (this.processedFlagCache.has(factionId) && !this.placeholderFactionIds.has(factionId)) {
-            setFactionFlagStyleRule(factionId, this.processedFlagCache.get(factionId)!);
+            this.applyFactionFlagCssRule(factionId);
             this.notifyFactionFlagReady(factionId);
             return;
         }
@@ -1682,7 +1746,7 @@ export class CityAssetManager {
                 this.flagLumCache.set(factionId, lum);
             }
             this.invalidateFlagTextCache(factionId);
-            setFactionFlagStyleRule(factionId, dataUrl);
+            this.applyFactionFlagCssRule(factionId);
             this.notifyFactionFlagReady(factionId);
         } catch (e) {
             console.error(`Failed to process flag for faction: ${factionId}`, e);
@@ -1690,7 +1754,7 @@ export class CityAssetManager {
             const fallback =
                 this.chromaNeutralTemplateByPath.get(templatePath) ?? this.templateFlagPath;
             this.processedFlagCache.set(factionId, fallback);
-            setFactionFlagStyleRule(factionId, fallback);
+            this.applyFactionFlagCssRule(factionId);
             this.notifyFactionFlagReady(factionId);
         }
     }
@@ -1773,7 +1837,7 @@ export class CityAssetManager {
 
         // 如果已经处理完染色（且不是占位），直接应用并返回
         if (this.processedFlagCache.has(factionId) && !this.placeholderFactionIds.has(factionId)) {
-            setFactionFlagStyleRule(factionId, this.processedFlagCache.get(factionId)!);
+            this.applyFactionFlagCssRule(factionId);
             this.getProcessedFlagText(factionId);
             this.notifyFactionFlagReady(factionId);
             return;
@@ -1785,7 +1849,7 @@ export class CityAssetManager {
             const tpl = await this.ensureChromaNeutralTemplate();
             this.processedFlagCache.set(factionId, tpl);
             this.placeholderFactionIds.add(factionId);
-            setFactionFlagStyleRule(factionId, tpl);
+            this.applyFactionFlagCssRule(factionId);
             this.getProcessedFlagText(factionId);
         }
 
@@ -1828,6 +1892,13 @@ export class CityAssetManager {
         if (this.isBlankRebelFlagFaction(factionId)) {
             if (this.processedRebelFlags.length > 0) return this.processedRebelFlags[0];
             return this.chromaNeutralTemplateByPath.get(this.templateFlagPath) || this.templateFlagPath;
+        }
+        if (isFactionIdle(factionId)) {
+            return (
+                this.idleNeutralFlagUrl ||
+                this.chromaNeutralTemplateByPath.get(this.templateFlagPath) ||
+                this.templateFlagPath
+            );
         }
         const cached = this.processedFlagCache.get(factionId);
         if (cached) return cached;
@@ -2019,12 +2090,6 @@ export class CityAssetManager {
         keys.add(variantKey);
     }
 
-    private static readonly CHINESE_DYNASTY_CHARS = new Set([
-        '夏', '商', '周', '秦', '汉', '魏', '蜀', '吴', '晋', '隋', '唐', '宋',
-        '齐', '梁', '陈', '辽', '金', '元', '明', '清', '燕', '赵', '韩', '楚', '凉', '越',
-        '鲁', '巴', '滇', '成', '代'
-    ]);
-
     private static factionNameMap: Map<string, string> | null = null;
     private static getFactionFullName(factionId: string): string {
         if (!this.factionNameMap) {
@@ -2046,11 +2111,34 @@ export class CityAssetManager {
             return { factionId, variantKey: `blank_${factionId}`, text: '', fill: '', stroke: '' };
         }
         // 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 旗面文字一律用势力本名的旗号，不再用时代泛称；
-        //   百岁模式该势力无在场武将（idle）：不画势力纹章，有文化符号的据点贴文化符号。
+        //   百岁模式该势力无在场武将（idle）：旗面不挂势力色，60 文化贴文化符号旗，7 汉字圈文化写文化单字（华/魏/吴/蜀/荆/越/凉）。
         const idle = isFactionIdle(factionId);
+        if (idle) {
+            const idleStyle = buildingStyle ?? getFactionCultureAt(factionId, undefined);
+            const cultureEmblem = getCultureEmblemFile(idleStyle);
+            if (cultureEmblem) {
+                return {
+                    factionId,
+                    variantKey: `culture_emblem_idle_${factionId}_${cultureEmblem}`,
+                    text: '',
+                    fill: '',
+                    stroke: '',
+                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
+                };
+            }
+            const cultureChar = idleStyle ? CULTURE_TEXT_FLAG[idleStyle] : undefined;
+            if (cultureChar) {
+                return {
+                    factionId,
+                    variantKey: `culture_text_idle_${factionId}_${idleStyle}`,
+                    text: cultureChar,
+                    fill: '#f8f8f4',
+                    stroke: 'rgba(0,0,0,0.95)',
+                };
+            }
+        }
 
-        // 🔴 [2026-10-24 试水] 登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
-        //   表见 src/data/FactionEmblems.ts（删条目即回退汉字；生成/查缓存/军团旗共用本 spec）。
+        // 🔴 [2026-10-24] 登记了纹章图案的在场势力不画汉字，直接贴烘焙好的 4×6 透明底纹章雪碧图
         const emblemKey = idle ? null : getFactionEmblemKey(factionId);
         if (emblemKey) {
             const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
@@ -2063,22 +2151,7 @@ export class CityAssetManager {
                 emblemPath: `/emblem-flags/${emblemKey}_${useWhiteEmblem ? 'w' : 'b'}.png`,
             };
         }
-        // 🔴 [2026-11-10 主人令] 百岁模式：该势力此刻**一个在场武将都没有**，
-        //   且本据点建筑文化配有文化符号（非华/魏/吴/蜀/荆/越/凉 7 个单字旗文化）→ 旗面贴布料融合文化符号雪碧图。
-        //   顺序：势力专属纹章 > 文化符号 > 势力本名旗号。
-        if (idle && buildingStyle) {
-            const cultureEmblem = getCultureEmblemFile(buildingStyle);
-            if (cultureEmblem) {
-                return {
-                    factionId,
-                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}`,
-                    text: '',
-                    fill: '',
-                    stroke: '',
-                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
-                };
-            }
-        }
+
         let textToRender = SANDBOX_DISPLAY_NAMES[factionId];
 
         if (!textToRender) {
@@ -2092,32 +2165,36 @@ export class CityAssetManager {
             textToRender = toFlagText(textToRender, factionId, buildingStyle);
         }
 
-        // 🔴 [2026-11-13 主人令] 乱斗模式 / 势力旗帜规则：
-        //   如果势力的名字是二字，就保留二字旗帜，例如匈奴、龟兹。
-        //   三个字以上的改符号（已定 1 字单字国号政权如汉/唐/宋/魏等保留 1 字旗；保加利亚等 3 字以上非单字国号政权一律改贴符号旗）。
+        // 🔴 [2026-11-13 主人令] 势力旗帜规则：
+        //   势力名字二字保留二字旗帜；三个字以上的改符号（已定单字国号/专属单字保留 1 字旗；
+        //   其余 3 字以上在场势力贴透明底文化符号 `/culture-emblems/faction/{key}_{w|b}.png`，保留各势力独立旗色）。
         const fullName = this.getFactionFullName(factionId);
-        const isChineseDynasty = textToRender && textToRender.length === 1 && this.CHINESE_DYNASTY_CHARS.has(textToRender);
-        if (fullName.length >= 3 && !isChineseDynasty) {
+        const isHistoricalOneChar =
+            !!textToRender &&
+            Array.from(textToRender).length === 1 &&
+            HISTORICAL_SINGLE_CHAR_FLAGS.has(textToRender);
+        if (!idle && Array.from(fullName).length >= 3 && !isHistoricalOneChar) {
             const culture = getFactionCultureAt(factionId, undefined) ?? buildingStyle;
             const cultureEmblem = getCultureEmblemFile(culture);
             if (cultureEmblem) {
+                const useWhiteSym = this.resolveFlagTextIsDark(factionId);
                 return {
                     factionId,
-                    variantKey: `culture_emblem_${factionId}_${cultureEmblem}`,
+                    variantKey: `culture_emblem_active_${factionId}_${cultureEmblem}_${useWhiteSym ? 'w' : 'b'}`,
                     text: '',
                     fill: '',
                     stroke: '',
-                    emblemPath: `/culture-emblems/sprite/${cultureEmblem}.png`,
+                    emblemPath: `/culture-emblems/faction/${cultureEmblem}_${useWhiteSym ? 'w' : 'b'}.png`,
                 };
             }
         }
 
-        // §10.2.1：浅旗黑字白边，深旗白字黑边
-        const useWhiteText = this.resolveFlagTextIsDark(factionId);
+        // §10.2.1：浅旗黑字白边，深旗白字黑边（百岁 idle 兜底中立灰旗固定白字黑边）
+        const useWhiteText = idle ? true : this.resolveFlagTextIsDark(factionId);
         const styleSuffix = buildingStyle ? `@${buildingStyle}` : '';
         return {
             factionId,
-            variantKey: `dynamic_text_${factionId}${styleSuffix}_${useWhiteText ? 'w' : 'b'}`,
+            variantKey: `dynamic_text_${factionId}${styleSuffix}_${idle ? 'idle' : (useWhiteText ? 'w' : 'b')}`,
             text: textToRender,
             fill: useWhiteText ? '#f8f8f4' : '#111111',
             stroke: useWhiteText ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)',

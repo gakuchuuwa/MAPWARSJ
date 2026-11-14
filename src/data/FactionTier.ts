@@ -8,6 +8,10 @@
  */
 import { SANDBOX_DISPLAY_NAMES } from './SandboxDisplayNames';
 import { getFactionEmblemKey } from './FactionEmblems';
+import { FACTIONS } from './factions';
+import { getFactionCultureAt } from './FactionCulture';
+import { getCultureEmblemFile } from './CultureEmblems';
+import { HISTORICAL_SINGLE_CHAR_FLAGS, toFlagText } from './FlagOneChar';
 import {
     FACTION_FLAG_TEMPLATE_BY_TIER,
     classifyFactionTier,
@@ -26,6 +30,30 @@ export { FACTION_FLAG_TEMPLATE_BY_TIER };
  */
 export const SINGLE_CHAR_FLAG_TEMPLATE_ID = 7;
 
+let factionFullNameMap: Map<string, string> | null = null;
+function getFactionName(factionId: string): string {
+    if (!factionFullNameMap) {
+        factionFullNameMap = new Map();
+        for (const f of FACTIONS) {
+            factionFullNameMap.set(f.id, f.name);
+        }
+    }
+    return factionFullNameMap.get(factionId) ?? factionId;
+}
+
+/** 该势力在场/乱斗时是否走符号旗（专属纹章 或 三字以上非单字国号的文化符号） */
+export function usesSymbolFlag(factionId: string): boolean {
+    if (!factionId || factionId === 'panjun' || factionId === 'panshu') return false;
+    if (getFactionEmblemKey(factionId)) return true;
+    const fullName = getFactionName(factionId);
+    if (Array.from(fullName).length < 3) return false;
+    const rawFlag = SANDBOX_DISPLAY_NAMES[factionId] ?? fullName;
+    const rendered = rawFlag !== 'RANDOM' ? toFlagText(rawFlag, factionId) : rawFlag;
+    if (flagCharLen(rendered) === 1 && HISTORICAL_SINGLE_CHAR_FLAGS.has(rendered)) return false;
+    const culture = getFactionCultureAt(factionId, undefined);
+    return !!getCultureEmblemFile(culture);
+}
+
 export function getFactionTier(factionId: string): FactionTier {
     if (!factionId || factionId === 'panjun') return 5;
     const flag = SANDBOX_DISPLAY_NAMES[factionId] ?? factionId;
@@ -33,10 +61,12 @@ export function getFactionTier(factionId: string): FactionTier {
 }
 
 export function getFactionFlagTemplateId(factionId: string): number {
-    if (factionId && factionId !== 'panjun') {
-        if (factionId !== 'panshu' && getFactionEmblemKey(factionId)) return SINGLE_CHAR_FLAG_TEMPLATE_ID;
-        const flag = SANDBOX_DISPLAY_NAMES[factionId] ?? factionId;
-        if (flagCharLen(flag) === 1) return SINGLE_CHAR_FLAG_TEMPLATE_ID;
+    if (factionId && factionId !== 'panjun' && factionId !== 'panshu') {
+        if (usesSymbolFlag(factionId)) return SINGLE_CHAR_FLAG_TEMPLATE_ID;
+        const fullName = getFactionName(factionId);
+        const rawFlag = SANDBOX_DISPLAY_NAMES[factionId] ?? fullName;
+        const rendered = rawFlag !== 'RANDOM' ? toFlagText(rawFlag, factionId) : rawFlag;
+        if (flagCharLen(rendered) === 1) return SINGLE_CHAR_FLAG_TEMPLATE_ID;
     }
     return FACTION_FLAG_TEMPLATE_BY_TIER[getFactionTier(factionId)];
 }
@@ -46,9 +76,10 @@ export function getFactionFlagTemplatePath(factionId: string): string {
     return `/SUCAI/S10QZ/${id}-1.png`;
 }
 
-/** 六级旗面底图路径（启动占位预载，最多 6 张） */
+/** 六级旗面底图路径 + 单字/符号旗底图路径（启动占位预载） */
 export function getAllFactionFlagTemplatePaths(): readonly string[] {
     const ids = new Set(Object.values(FACTION_FLAG_TEMPLATE_BY_TIER));
+    ids.add(SINGLE_CHAR_FLAG_TEMPLATE_ID);
     return [...ids].map((id) => `/SUCAI/S10QZ/${id}-1.png`);
 }
 

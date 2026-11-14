@@ -977,9 +977,9 @@ export class GameApp {
         const year = mode === 'centenarian' ? (this.timeSystem?.getYear() ?? null) : null;
         const changed = refreshEraFactionDisplays(year);
         if (changed.length === 0) return;
-        // 名字变了的势力 → 清旗号文字缓存，再**一次扫完**所有据点旗（跨时代一次上千家，不许逐家扫全图）
+        // 名字/在场状态变了的势力 → 同步刷新旗面是否挂势力色＋清旗号文字缓存，再**一次扫完**所有据点旗
         const changedSet = new Set(changed);
-        for (const factionId of changed) CityAssetManager.invalidateFlagTextCache(factionId);
+        for (const factionId of changed) CityAssetManager.syncFactionIdleState(factionId);
         this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
     }
 

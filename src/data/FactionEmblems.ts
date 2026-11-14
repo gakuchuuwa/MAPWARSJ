@@ -473,6 +473,22 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     kelimiya_han: 'CRIMEAN_KHANATE_GIRAY_TAREK_TAMGA',   // 克里米亚汗国·格来王朝天秤塔拉克塔木加
     guzigan: 'GUZGAN_FARIGHUNID_CROWN_LION',   // 古兹甘·法里贡王朝王冠金立狮与剑
     bahemani: 'BAHMANI_DECCAN_CRESCENT_GLOBE',   // 巴赫曼尼苏丹国·德干双新月与苏丹天球仪
+    // ── 2026-11-14 分段政权与三字以上政权史实纹章对齐（防错落异文化兜底）─────
+    gu_aiji: 'EGYPT_SEDGE_AND_BEE',   // 埃及新王国·法老上下埃及莎草与蜂
+    aiji_guwangguo: 'EGYPT_SEDGE_AND_BEE',   // 埃及古王国·法老上下埃及莎草与蜂
+    hasmonean: 'ISRAEL_HASMONEAN_MENORAH',   // 哈斯蒙尼王国·七枝圣殿灯台（安提柯二世钱币）
+    luoma_gongheguo: 'EAGLE',   // 罗马共和国·罗马军团鹰徽
+    zao_zhuluo: 'TIGER',   // 早期朱罗·朱罗王室猛虎徽
+    hou_womaya: 'UMAYYAD_WHITE_STANDARD',   // 后倭马亚·科尔多瓦倭马亚白旌
+    arelat: 'BURGUNDY_ST_ANDREW_CROSS',   // 上勃艮第王国·勃艮第圣安德鲁交叉十字
+    thonburi: 'SIAM_ELEPHANT',   // 吞武里王国·暹罗白象
+    suke: 'SIAM_ELEPHANT',   // 素可泰·暹罗白象
+    kotte: 'SINHALA_LION',   // 科特王国·僧伽罗持剑立狮
+    restored_hanthawaddy: 'HANTHAWADDY_HAMSA',   // 复兴汉达瓦底·孟族金色神鸟 Hamsa
+    halapengcai: 'HANTHAWADDY_HAMSA',   // 哈利奔猜王国·孟族金色神鸟 Hamsa
+    serbia_revolution: 'SERBIA_EAGLE',   // 塞尔维亚革命·塞尔维亚双头鹰
+    xiaweiyi: 'POLYNESIA_TIKI_MASK',   // 夏威夷王国·波利尼西亚蒂基神面
+    kaga_d: 'WHEEL',   // 一向宗·净土真宗法轮（防误套日本皇室十六瓣菊纹）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

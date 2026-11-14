@@ -4617,7 +4617,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 11,
             "offsetY": 1
         },
-        "/assets/JAPAN/gen_koshamain.png": {
+        "/assets/JAPAN/__闲置__JAPAN_38.png": {
             "scale": 1.26,
             "offsetX": 0,
             "offsetY": 52
@@ -8197,7 +8197,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 26
         },
-        "/assets/SASANIAN/aliya_muhammad_tahir.png": {
+        "/assets/SASANIAN/__闲置__SASANIAN_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -3
@@ -11326,6 +11326,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 4,
             "offsetY": 15
+        },
+        "/assets/LATIN/bfe_abdulaziz_crete.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

@@ -231,9 +231,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   xiongren: '匈人',
     'awaer': '瓦尔',   // 阿瓦尔
 
-  heishui: '黑水',
+  heishui: '靺鞨',
 'fushi': '秦',  // 🔴 [2026-11-03 主人令「势力用历史上的公认称呼，旗号用简称」] 国号秦，不用姓
-  fuguo: '附',
+  fuguo: '附国',
 
 'yada': '厌抵',
 'guishuang': '贵霜',
@@ -321,7 +321,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
 
     // 2026-05-25 汉朝核对追加势力
-    'ouyue': '台',
+    'ouyue': '瓯越',
 
     // 2026-05-25 三国核对追加势力
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
@@ -353,7 +353,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'fangla': '圣公',  // 🔴 [2026-11-03] 方腊自号圣公，不用姓
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
-'yang_aner': '登',
+'yang_aner': '天顺',
     'dixiang': '新',
 
     // ── 2026-05-25 元朝蒙古势力 ──
@@ -491,7 +491,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shaodang': '烧当',
 
     // ── 2026-05-27 新增：靖江、盘瑶、马楚、排瑶、士、蒋 ──
-    'panyao': '贺',
+    'panyao': '盘瑶',
 
 
     // ── 2026-05-28 新增：黎(崖) ──
@@ -565,7 +565,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 🔴 [2026-10-25 主人令「删除起义势力」] `panjun`（势力名「起义」）占位势力的旗号登记已删除。
     // 🔴 [2026-10-24 主人令「义军的旗号是势力简称」] 恢复被并入占位势力的各家政权（旗号取自归并前原值/势力简称）
     'qiufu': '剡中',
-    'chendiaoyan': '陈吊',
+    'chendiaoyan': '畲汉',
     'yezongliu': '处',
     'qianhui': '回',   // 🔴 [2026-10-28] 势力改名「回军→回民」，旗号用简称单字「回」（库里无重）
     'miaomin': '苗',
@@ -596,7 +596,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'date_d': '伊达',
     'otomo_d': '大友',
     'suwa_d': '诹访',
-    'hui': '濊',
+    'hui': '濊族',
     'wure': '兀惹',
     'sunite': '苏尼',
     'weiwuer': '乌第',
@@ -613,7 +613,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'weitou': '尉头',
 
     // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
-    'qiepantuo': '朅盘',
+    'qiepantuo': '护密',
     // ── 2026-06-11 新增：库页岛民族 ──
     'eluoke': '鄂罗',
     // ── 2026-06-11 新增：阿伊努（北海道）──
@@ -638,7 +638,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'xiwasi': '埃雷',
 'mengguqieke': '门古',
 'sumuroyi': '米沙',
-    'yun': '允',
+    'yun': '允戎',
     'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
 'yehe': '叶赫',
     
