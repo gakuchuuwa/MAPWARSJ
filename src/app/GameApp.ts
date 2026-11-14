@@ -851,7 +851,7 @@ export class GameApp {
             this.setupPlayer(legionManager);
 
             StreamModeToggle.init();
-            SpeechVoiceToggle.init();
+            // 🔴 [2026-11-14 主人定「改为一个声音，只用一套默认模式」] 声线切换按钮已停用：全程只有云健一个音色，无可切换
 
             // 自动缩放（2026-09-01 主人重定，权威说明在 ZoomController 文件头）：
             //   跟随新军团（首次 / 战败换人）→ 8；战略地图上一开打就按形态切 —— 海战（舰队 vs

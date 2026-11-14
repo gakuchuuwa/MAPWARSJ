@@ -474,6 +474,10 @@ export class SeaRouteEditor implements IEditor {
             const cityId = city.id || city.name;
             const cityData = CITIES.find(c => c.id === cityId);
             if (!cityData) return;
+            if (!cityData.isPort) {
+                this.setStatus(`⚠️ ${cityData.name} 不是历史港口（未标 isPort），不可连接海路`);
+                return;
+            }
 
             if (!this.startCityId) {
                 this.startCityId = cityId;
@@ -1162,7 +1166,27 @@ export class SeaRouteEditor implements IEditor {
         return out;
     }
 
-    /** 港口 = 连了至少 1 条海路的城；海路条数按城型分级检查（大城 6–9、中城 3–6、小城与险要 2–6、城寨 2–4） */
+    /** 海路连到了非港口据点（未标 isPort: true） */
+    private findNonPortRoutes(): Array<{ routeId: string; name: string; nonPortNames: string[] }> {
+        const portIds = new Set(CITIES.filter(c => c.isPort).map(c => c.id));
+        const out: Array<{ routeId: string; name: string; nonPortNames: string[] }> = [];
+        for (const f of SEA_ROUTE_DATA.features) {
+            const p = f?.properties;
+            if (!p?.startConnection || !p?.endConnection) continue;
+            const nonPortNames: string[] = [];
+            if (!portIds.has(p.startConnection)) nonPortNames.push(this.cityName(p.startConnection));
+            if (!portIds.has(p.endConnection)) nonPortNames.push(this.cityName(p.endConnection));
+            if (nonPortNames.length === 0) continue;
+            out.push({
+                routeId: p.id,
+                name: p.name || '未命名海路',
+                nonPortNames,
+            });
+        }
+        return out;
+    }
+
+    /** 港口 = cities_v2.ts 显式标 isPort: true 的据点；海路条数按城型分级检查（大城 6–9、中城 3–6、小城与险要 2–6、城寨 2–4） */
     private findPortsWithBadRouteCount(): Array<{ cityId: string; name: string; typeLabel: string; min: number; max: number; count: number }> {
         const counts = new Map<string, number>();
         for (const f of SEA_ROUTE_DATA.features) {
@@ -1170,13 +1194,13 @@ export class SeaRouteEditor implements IEditor {
                 if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
             }
         }
-        const cityTypeById = new Map(CITIES.map(c => [c.id, c.type]));
         const out: Array<{ cityId: string; name: string; typeLabel: string; min: number; max: number; count: number }> = [];
-        for (const [cityId, count] of counts) {
-            const cType = cityTypeById.get(cityId) ?? 'small_city';
-            const lim = PORT_SEA_ROUTE_LIMITS[cType] ?? DEFAULT_PORT_SEA_ROUTE_LIMIT;
+        for (const c of CITIES) {
+            if (!c.isPort) continue;
+            const count = counts.get(c.id) ?? 0;
+            const lim = PORT_SEA_ROUTE_LIMITS[c.type] ?? DEFAULT_PORT_SEA_ROUTE_LIMIT;
             if (count >= lim.min && count <= lim.max) continue;
-            out.push({ cityId, name: this.cityName(cityId), typeLabel: lim.label, min: lim.min, max: lim.max, count });
+            out.push({ cityId: c.id, name: c.name, typeLabel: lim.label, min: lim.min, max: lim.max, count });
         }
         const diff = (p: { count: number; min: number; max: number }) =>
             p.count < p.min ? p.min - p.count : p.count - p.max;
@@ -1204,7 +1228,9 @@ export class SeaRouteEditor implements IEditor {
     private showAuditModal(): void {
         document.querySelectorAll('#sea-audit-modal').forEach(el => el.remove());
         const dups = this.findLandSeaDuplicates();
+        const nonPortRoutes = this.findNonPortRoutes();
         const badPorts = this.findPortsWithBadRouteCount();
+        const portTotal = CITIES.filter(c => c.isPort).length;
 
         const overlay = document.createElement('div');
         overlay.id = 'sea-audit-modal';
@@ -1213,7 +1239,7 @@ export class SeaRouteEditor implements IEditor {
             display: flex; align-items: center; justify-content: center;
             font-family: 'Microsoft YaHei', sans-serif;
         `;
-        const ok = dups.length === 0 && badPorts.length === 0;
+        const ok = dups.length === 0 && nonPortRoutes.length === 0 && badPorts.length === 0;
         const rowStyle = (color: string) => `padding:8px 12px;border-left:3px solid ${color};margin:4px 0;background:rgba(255,255,255,0.03);border-radius:4px;display:flex;align-items:center;gap:8px;`;
         const btnStyle = (bg: string) => `background:${bg};color:#fff;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:12px;`;
         const dupRows = dups.map(d => `
@@ -1221,6 +1247,12 @@ export class SeaRouteEditor implements IEditor {
                 <span style="flex:1;"><b>${d.aName}</b> ↔ <b>${d.bName}</b> 已有陆路，海路 <b style="color:#ff80a0">${d.name}</b> 重复 <span style="color:#666;font-size:11px;">[${d.routeId}]</span></span>
                 <button class="sea-audit-route" data-id="${d.routeId}" style="${btnStyle('#00bcd4')}">👁 看</button>
                 <button class="sea-audit-del" data-id="${d.routeId}" style="${btnStyle('#f44336')}">🗑 删海路</button>
+            </div>`).join('');
+        const nonPortRows = nonPortRoutes.map(r => `
+            <div style="${rowStyle('#f44336')}">
+                <span style="flex:1;">海路 <b style="color:#ff8a80">${r.name}</b> 连到了非港口据点：<b>${r.nonPortNames.join('、')}</b> <span style="color:#666;font-size:11px;">[${r.routeId}]</span></span>
+                <button class="sea-audit-route" data-id="${r.routeId}" style="${btnStyle('#00bcd4')}">👁 看</button>
+                <button class="sea-audit-del" data-id="${r.routeId}" style="${btnStyle('#f44336')}">🗑 删海路</button>
             </div>`).join('');
         const portRows = badPorts.map(p => `
             <div style="${rowStyle('#ff9800')}">
@@ -1240,15 +1272,16 @@ export class SeaRouteEditor implements IEditor {
                 <div style="padding:16px 22px;border-bottom:1px solid rgba(41,182,246,0.3);display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <div style="font-size:19px;font-weight:bold;color:${ok ? '#4caf50' : '#ff9800'};">${ok ? '✅' : '⚠'} 海路审查</div>
-                        <div style="font-size:13px;color:#9ab;margin-top:4px;">海路 ${SEA_ROUTE_DATA.features.length} 条 · 陆海重复 ${dups.length} · 港口分级条数不符 ${badPorts.length}（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>
+                        <div style="font-size:13px;color:#9ab;margin-top:4px;">海路 ${SEA_ROUTE_DATA.features.length} 条 · 登记港口 ${portTotal} 座 · 非港口连线 ${nonPortRoutes.length} · 陆海重复 ${dups.length} · 港口分级条数不符 ${badPorts.length}（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>
                     </div>
                     <button class="sea-audit-close" style="background:rgba(255,255,255,0.1);color:#d0e4f7;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">✕ 关闭</button>
                 </div>
                 <div style="flex:1;overflow-y:auto;padding:14px 22px;font-size:13px;line-height:1.6;">
-                    ${ok ? `<div style="text-align:center;padding:40px;color:#4caf50;font-size:16px;">✓ 无陆海重复 ✓ 所有港口海路数符合分级标准（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>` : ''}
+                    ${ok ? `<div style="text-align:center;padding:40px;color:#4caf50;font-size:16px;">✓ 无非港口连线 ✓ 无陆海重复 ✓ 全部 ${portTotal} 座港口海路数符合分级标准（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>` : ''}
+                    ${section('⛔ 非港口连线：海路端点未标 isPort: true', '#f44336', nonPortRoutes.length, nonPortRows)}
                     ${section('🔁 陆海重复：两城已有陆路，海路多余', '#e91e63', dups.length, dupRows)}
                     ${section('⚓ 港口海路数不符分级标准（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）', '#ff9800', badPorts.length, portRows)}
-                    ${dups.length ? '<div style="color:#9ab;font-size:12px;margin-top:8px;">删完记得点 💾 保存。删海路会让港口海路数变少，删后列表会自动重算。</div>' : ''}
+                    ${(dups.length || nonPortRoutes.length) ? '<div style="color:#9ab;font-size:12px;margin-top:8px;">删完记得点 💾 保存。删海路会让港口海路数变少，删后列表会自动重算。</div>' : ''}
                 </div>
             </div>`;
         document.body.appendChild(overlay);

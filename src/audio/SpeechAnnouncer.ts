@@ -195,13 +195,13 @@ export class SpeechAnnouncer {
   /** 语音清单诊断本会话是否已打印过（清单只在加载完变一次，逐句重打纯刷屏） */
   private static voiceDiagLogged = false;
   private enabled = true;
-  // 当前偏好的声音
-  private preferredVoice: "Yunxi" | "Yunjian" = "Yunjian";
+  // 🔴 [2026-11-14 主人定「改为一个声音，只用一套默认模式」] 全程单一音色云健，取消云希备选
+  private static readonly NARRATOR_VOICE: EdgeVoice = "zh-CN-YunjianNeural";
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
-  /** 直播间观众互动播报专用女声（晓晓，与战争旁白男声云健严格区分） */
-  private static readonly VIEWER_LIVE_VOICE: EdgeVoice = "zh-CN-XiaoxiaoNeural";
+  /** 🔴 [2026-11-14 主人定「一个声音」] 观众互动播报也走同一副嗓子（2026-10-30 的晓晓女声设定已废） */
+  private static readonly VIEWER_LIVE_VOICE: EdgeVoice = SpeechAnnouncer.NARRATOR_VOICE;
 
   /** 技能释放播报串行队列（入队顺序=亮相顺序：劣先/均势随机；不互相打断）；onStart 在 TTS 开口时触发 */
   private skillSpeakQueue: {
@@ -377,10 +377,8 @@ export class SpeechAnnouncer {
       "Danny", "WanLung", "雲龍",
     ];
     // 用户偏好优先，再备选其它男声（勿用「史官风」列表盖住云健）
-    const preferredFirst =
-      this.preferredVoice === "Yunxi"
-        ? ["云希", "Yunxi", "云健", "Yunjian"]
-        : ["云健", "Yunjian", "云希", "Yunxi"];
+    // 🔴 [2026-11-14 单一音色] Web Speech 兜底排序仍以云健为第一，云希只作兜底候选
+    const preferredFirst = ["云健", "Yunjian", "云希", "Yunxi"];
     const maleKeywords = [
       ...preferredFirst,
       "云扬", "Yunyang",
@@ -517,19 +515,13 @@ export class SpeechAnnouncer {
     return this.isSkillVoiceIdle() && !this.isSTierBusy() && this.activeEdgeAudio === null;
   }
 
-  /** 切换男声偏好，并试播一句 */
+  /** 🔴 [2026-11-14 主人定「一个声音」] 只剩云健一个音色，切换接口保留为空转，不再换声、不再试播 */
   public toggleVoicePreference(): void {
-    if (this.preferredVoice === "Yunxi") {
-      this.preferredVoice = "Yunjian";
-      this.speak("已切换至浑厚沉稳男声");
-    } else {
-      this.preferredVoice = "Yunxi";
-      this.speak("已切换至年轻朝气男声");
-    }
+    // 单一音色，无备选可切
   }
 
   public getPreferredVoice(): string {
-    return this.preferredVoice === "Yunjian" ? "云健" : "云希";
+    return "云健";
   }
 
   /**
@@ -572,10 +564,8 @@ export class SpeechAnnouncer {
       bannerMultiline: true,
       bannerSingleScreen: true,   // 一路一句＝一路一屏：不切片、不轮播
       bannerMinMs: minBannerMs,
-      // 同一云健男声，两段变奏：战略段沉稳厚重（rate 0.90 / -2Hz / 停顿 450ms），战术段冷峻紧迫（rate 0.97 / -4Hz / 停顿 280ms）
-      rate: isTactical ? 0.97 : 0.90,
-      pitchHz: isTactical ? -4 : -2,
-      breakMs: isTactical ? 280 : 450,
+      // 🔴 [2026-11-14 主人定「只用一套默认模式」] 战略/战术不再做两套变奏（原 0.90/-2Hz/450ms 与 0.97/-4Hz/280ms 已废），
+      //    统一交给云健音色自带的默认语速与音高，不压速、不压调、不加气口。
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
       onDone: doneWithRelease,
@@ -679,7 +669,7 @@ export class SpeechAnnouncer {
     }
     console.log("[Speech] 攻占:", text);
     if (isCenter) {
-      this.speak(text, { sTier: true, rate: 0.92 });
+      this.speak(text, { sTier: true });
     } else {
       this.speak(text);
     }
@@ -708,7 +698,7 @@ export class SpeechAnnouncer {
       : `${att}军，兵临城下，开城归附`;
     console.log("[Speech] 不战而下:", text);
     if (opts.regionLabel) {
-      this.speak(text, { sTier: true, rate: 0.92 });
+      this.speak(text, { sTier: true });
     } else {
       this.speak(text);
     }
@@ -943,7 +933,7 @@ export class SpeechAnnouncer {
 
   /**
    * 🔴 [2026-10-23 直播观众放计] 「感谢某某，蓝方放猛攻」——排进技能播报队列，跟大字 Cut-in 同一道闸，不与武将技抢话。
-   * 🔴 [2026-10-30 主人令「要换一个声音，不要再用云健了」] 直播间观众互动统一用晓晓女声（zh-CN-XiaoxiaoNeural），与战争旁白男声云健区分开。
+   * 🔴 [2026-11-14 主人定「改为一个声音」] 观众互动也改用云健，与旁白同一副嗓子；2026-10-30 的晓晓女声设定作废。
    */
   public announceViewerSkill(viewerName: string, sideName: string, skillName: string, opts?: { onlyIfIdle?: boolean; syncNow?: boolean }): void {
     if (!this.enabled) return;
@@ -959,7 +949,7 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，用晓晓女声播报。
+   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，用云健播报（2026-11-14 起统一一个声音）。
    */
   public announceViewerThanks(text: string): void {
     if (!this.enabled) return;
@@ -1113,7 +1103,7 @@ export class SpeechAnnouncer {
           URL.revokeObjectURL(url);
           if (this.activeEdgeAudio === audio) this.activeEdgeAudio = null;
         };
-        const voiceLabel = opts?.voice === "zh-CN-XiaoxiaoNeural" ? "晓晓 Neural" : "云健/云希 Neural";
+        const voiceLabel = "云健 Neural";
         audio.onplay = () => { console.log(`[Speech] 使用: ${voiceLabel} (直连微软)`); cb.onPlay(); };
         audio.onended = () => { cleanup(); cb.onEnd(); };
         audio.onerror = () => { cleanup(); if (!cb.isSettled()) cb.fallback(); };
