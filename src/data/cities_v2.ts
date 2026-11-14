@@ -1325,7 +1325,7 @@ buildingStyle: 'JAPAN', troops: 10000,
         troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 商末朝歌、汉朝歌县（今淇县），中原；朝歌；殷国小城；推算：城居 2 万（朝歌＝殷末别都、汉河内郡属县，同期 1.5–2.5 万）→ 小城',
     },
-    { id: 'city_liuxian', name: '六安', factionId: 'han_d', lat: 31.74, lng: 116.5, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '🔴 [2026-11-07 按史补依据] 汉六安国（今六安），淮河南岸；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
+    { id: 'city_liuxian', name: '六安', factionId: 'huainan', lat: 31.74, lng: 116.5, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '🔴 [2026-11-07 按史补依据] 汉六安国（今六安），淮河南岸；推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
 
 
     

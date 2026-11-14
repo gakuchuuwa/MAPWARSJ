@@ -909,7 +909,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     hou_liang_lv: { start: 386, end: 403, source: '《晋书·吕光载记》：386年吕光据姑臧建后凉，403年降后秦' },
     hou_shu: { start: 934, end: 965, source: '《新五代史·后蜀世家》：934年孟知祥于成都建蜀，965年孟昶降宋' },
     hou_tang: { start: 923, end: 937, source: '《旧五代史·唐书》：923年李存勖灭梁建后唐，937年李从珂自焚亡于后晋' },
-    huainan: { start: -203, end: -195, source: '《史记·黥布列传》：前203英布封淮南王都六，前196起兵反汉，前195败亡' },
+    huainan: { start: -206, end: -195, source: '《史记·黥布列传》：前206项羽封英布为九江王都六，前203归汉改封淮南王仍都六，前196起兵反汉，前195败亡' },
     jacquerie: { start: 1358, end: 1358, source: '弗鲁瓦萨尔《编年史》：1358年法兰西北部博韦大区扎克雷农民起义军' },
     jieyan: { start: 895, end: 913, source: '《新五代史·刘守光传》：刘仁恭、刘守光父子据幽州割据，911称大燕皇帝，913年李存勖灭之' },
     jinzhun_jun: { start: 318, end: 319, source: '《晋书·刘聪载记》：318年靳准于平阳弑刘粲自号汉天王，靳明继之，319年亡' },
