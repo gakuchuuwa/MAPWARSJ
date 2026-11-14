@@ -26,6 +26,7 @@ import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { markSpawnTierConsumed, setReservedGeneralIdsProvider } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
+import { clampCityTroops } from '../config/CityConfig';
 import { findPathFromPoint, prefetchEntrySea, battlefieldRoadNode, findPathToBattlefield, cutPathBeforeEnd, BATTLE_STAND_KM } from '../events/scriptMarchPath';
 import { gameLog } from '../utils/GameLogger';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
@@ -61,6 +62,8 @@ import { marchTimeRecorder } from '../debug/MarchTimeRecorder';
 
 /** 编年史随行军团「途经据点」判定半径（度，约 9 km；与环游经过据点同口径） */
 const ROUTE_CLAIM_RADIUS_DEG = 0.08;
+/** 🔴 [2026-11-14 主人定] 编年史换人后旧军团班师：一直在画面里时最多走这么久（毫秒）也解散 */
+const CHRONICLE_DEPART_TIMEOUT_MS = 15000;
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -305,6 +308,8 @@ export interface PlayerQuestDeps {
      */
     announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
     kickLegionAi: (armyId: string) => void;
+    /** 🔴 [2026-11-14] 某点是否在当前战略地图画面内（编年史旧军团班师「走出屏幕解散」用） */
+    isOnScreen?: (pos: { lat: number; lng: number }) => boolean;
     getArmyTargetInfo?: (armyId: string) => { strategicCityId: string | null; strategicArmyId: string | null };
     ensureUnpaused: () => void;
     isScene13Active?: () => boolean;
@@ -3214,6 +3219,55 @@ export class PlayerQuestSystem {
     } | null = null;
     /** 编年史会面对话已在此据点弹出（等接任务／告辞）：寻将逻辑不再重复下「前往」，否则对话每拍重建、倒计时永远归零 */
     private chronicleMeetCityId: string | null = null;
+    /** 🔴 [2026-11-14 主人定] 编年史换人后正在班师的旧军团（军团 id → 开拔时刻 ms） */
+    private chronicleDeparting = new Map<string, number>();
+
+    /**
+     * 🔴 [2026-11-14 主人定「走出屏幕解散」] 换人后旧军团班师：
+     *   编年史期间 AI 行为树不跑（AIController 剧本期闸），原先设 isRetreatingHome 交给 AI 回城没人执行，军团钉在原地。
+     *   改为这里直接下行军令朝出发据点走，途中免战（不被 ZOC 拉去攻城、不野战、不扣兵、行为树不接管）；
+     *   走出画面即解散（兵力并回出发据点，同势力才并），一直在画面里则走满 CHRONICLE_DEPART_TIMEOUT_MS 或到达也解散。
+     */
+    private departChronicleHost(host: Army): void {
+        host.clearPostBattleRest();
+        host.isRetreatingHome = true;
+        host.scriptMarchExempt = true;
+        (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+        const homeId = host.homeCityId ?? host.getSourceCityId?.() ?? null;
+        const pos = host.getPosition();
+        const fromId = roadRegistry.getNearestCityId(pos.lat, pos.lng)
+            ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 5.0)
+            ?? undefined;
+        if (homeId && homeId !== fromId) this.deps.legionManager.moveLegionToCity(host, homeId, fromId);
+        host.setTargetCity(null);   // 只走路：到了不触发攻城
+        this.chronicleDeparting.set(host.id, performance.now());
+        gameLog('expedition', `[编年史] ${host.name} 班师，朝出发据点开拔（走出画面即解散）`);
+    }
+
+    private tickChronicleDeparting(): void {
+        if (!this.chronicleDeparting.size) return;
+        const now = performance.now();
+        for (const [id, t0] of this.chronicleDeparting) {
+            const a = this.deps.legionManager.getLegionById(id);
+            if (!a || a.isDestroyed) {
+                this.chronicleDeparting.delete(id);
+                continue;
+            }
+            const onScreen = this.deps.isOnScreen?.(a.getPosition()) ?? false;
+            if (onScreen && !a.isIdle() && now - t0 < CHRONICLE_DEPART_TIMEOUT_MS) continue;
+            this.chronicleDeparting.delete(id);
+            const homeId = a.homeCityId ?? a.getSourceCityId?.() ?? null;
+            const home = homeId ? this.deps.cityManager.getCity(homeId) : undefined;
+            if (home && home.factionId === a.getFactionId()) {
+                this.deps.cityManager.updateCity(home.id, {
+                    troops: clampCityTroops(home.type, (home.troops || 0) + a.getTroops()),
+                }, { skipCaptureLog: true });
+            }
+            a.isRetreatingHome = false;
+            a.disband();
+            gameLog('expedition', `[编年史] ${a.name} 班师解散${home ? `（出发据点【${home.name}】）` : ''}`);
+        }
+    }
 
     /** 当前这一场的随行主将与他所在据点（叙事场或找不到人返回 null） */
     private chronicleLeadTarget(): { city: City; general: { generalId: string; generalName: string; portrait: string } } | null {
@@ -3331,12 +3385,9 @@ export class PlayerQuestSystem {
             this.startClassicChain(last.q, null, ev.battle, city, last.lastPos);
             return;
         }
-        // 换人：辞别离营，旧军团回出发据点解散，去找下一位随行主将
+        // 换人：辞别离营，旧军团班师（走出画面即解散），去找下一位随行主将
         if (this.deps.hero.isAttached()) this.deps.hero.detach();
-        if (host && !host.isDestroyed) {
-            host.isRetreatingHome = true;
-            this.deps.kickLegionAi(host.id);
-        }
+        if (host && !host.isDestroyed) this.departChronicleHost(host);
         gameLog('expedition', `[编年史] 下一场【${ev.title}】随行主将 ${ev.leadGeneralId} → 前往会合`);
         this.findNextGeneralNow();
     }
@@ -3991,6 +4042,7 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
+        this.tickChronicleDeparting();
         this.tickClassicBriefing();
         this.tickPendingClassicChain();
         if (this.deps.isScene13Active?.()) {
@@ -4634,7 +4686,8 @@ export class PlayerQuestSystem {
         //    下一场再也接不上。战场军团是为这一仗而生的，不该进「找武将出征」的候选
         //    （与 HistoricalEventManager.isGeneralAvailable 同一处口径，两处都排除）。
         return this.deps.legionManager.getArmies().find(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId && !a.isScriptArmy,
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId && !a.isScriptArmy
+                && !this.chronicleDeparting.has(a.id),   // 正在班师、即将解散的旧军团不算「带兵在外」
         ) ?? null;
     }
 

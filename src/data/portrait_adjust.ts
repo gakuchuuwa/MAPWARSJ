@@ -11331,6 +11331,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/ORIE/bfe2_nabonidus.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

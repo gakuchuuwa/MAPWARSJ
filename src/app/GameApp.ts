@@ -113,7 +113,9 @@ export { STARTING_CAPITALS } from '../data/StartingCapitals';
 
 /** 剧本模式开局：玩家出生点离归属武将所在城的距离（度，≈65 公里） */
 const SCRIPT_SPAWN_DIST_DEG = 0.6;
-/** 🔴 [2026-11-13 主人令「玩家在约 200 公里外出生」] 百岁模式编年史开局：离主将据点约 200 公里（路网找不到远城时的兜底） */
+/** 编年史开局「离主将据点约 200 公里」的兜底距离（路网找不到远城时用）
+ *  ⚠️ [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 百岁开局已固定出生在君士坦丁堡
+ *  （`PLAYER_START_CITY_ID`），下面这两条「按赶路时长挑城」的口径不再是开局路径。 */
 const CHRONICLE_SPAWN_DIST_DEG = 1.8;
 /** 🔴 [2026-11-13 主人令「人物起始位置和第一个人物地点放远一点」「30 秒左右移动到武将处」] 开局沿陆路约走这么多秒才到第一位主将 */
 const CHRONICLE_SPAWN_TRAVEL_SEC = 30;
@@ -1056,6 +1058,8 @@ export class GameApp {
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
         // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
         // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
+        // 🔴 [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」→「改到阿纳达一带，有点远了」]
+        //    出生据点改为固定阿达纳（见 PLAYER_START_CITY_ID）；chronicleStart（首场出场据点）只留「行军目标／日志」，不再决定出生在哪。
         if (isCentenarianStart) {
             startChronicle();
             if (!isQuickBattleMode()) armChronicleOpening(this.timeSystem.isGamePaused());
@@ -1069,12 +1073,16 @@ export class GameApp {
             : chronicleLeadId
                 ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
                 : undefined;
-        const startCity = chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
+        /** 百岁开局固定出生据点（缺城就退回原逻辑，不至于开不了局） */
+        const fixedStartCity = isCentenarianStart ? allCities.find((c) => c.id === PLAYER_START_CITY_ID) : undefined;
+        const startCity = fixedStartCity ?? chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         // 编年史开局：沿陆路找一座「走到第一位主将约 CHRONICLE_SPAWN_TRAVEL_SEC 秒」的城，出生在它城外
         //    玩家单骑速度＝统一行军速度 × 骑兵平原倍率 × 单骑倍率（度／秒）；路程按道路坐标的经纬度长度累计
-        const farSpawn = chronicleStart && roadRegistry.isInitialized() ? (() => {
+        // 🔴 [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 百岁开局已固定君士坦丁堡，
+        //    「30 秒路程外那座城」的选法不再用于开局（本段保留给仍按赶路时长选城的非百岁场景）。
+        const farSpawn = (!fixedStartCity && chronicleStart && roadRegistry.isInitialized()) ? (() => {
             const targetDeg = CHRONICLE_SPAWN_TRAVEL_SEC * PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * MOVEMENT_MATRIX.CAVALRY.plain * PLAYER_HERO_SPEED_MULT;
             const adj = roadRegistry.getAdjacencyList();
             const cityById = new Map(allCities.map((c) => [c.id, c]));
@@ -1110,7 +1118,16 @@ export class GameApp {
         const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
         const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
 
-        if (farSpawn) {
+        if (fixedStartCity) {
+            // 🔴 [2026-11-14 主人令「把人物起始位置设计到阿纳达一带」] 出生在阿达纳城东官道节点上
+            //    （偏移即 `PLAYER_START_OFFSET`＝伊苏斯道入城前最后一个路网节点，城东约 27 公里，奇里乞亚平原）。
+            //    出生点与开局镜头同源：后文 `setView` 用的就是这个 `spawnPos`。
+            spawnPos = {
+                lat: startCity.latitude + PLAYER_START_OFFSET.lat,
+                lng: startCity.longitude + PLAYER_START_OFFSET.lng,
+            };
+            gameLog('expedition', `[编年史] 开局出生于【${startCity.name}】城东官道，东出叙利亚奔赴首战`);
+        } else if (farSpawn) {
             spawnPos = { lat: farSpawn.latitude + PLAYER_CITY_ARRIVE_DIST + 0.02, lng: farSpawn.longitude };
         } else if (candidateEdges.length > 0) {
             const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
@@ -1209,6 +1226,7 @@ export class GameApp {
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
             announceBriefing: (text, onDone, onStart, minBannerMs) => speechAnnouncer.announceBriefing(text, onDone, onStart, minBannerMs),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
+            isOnScreen: (pos) => this.map.getLeafletMap().getBounds().contains([pos.lat, pos.lng]),
             getArmyTargetInfo: (armyId) => this.aiController?.getArmyTargetInfo(armyId) ?? { strategicCityId: null, strategicArmyId: null },
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);

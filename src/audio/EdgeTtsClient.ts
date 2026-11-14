@@ -97,9 +97,11 @@ class EdgeTtsClient {
         const rate = opts.rate;
         const pitchHz = opts.pitchHz;
         const breakMs = opts.breakMs;
-        // 7s 对播报太长：连不上时第一段开口前就得干等 7 秒。
-        // 云健正常时合成一般 1~2s，3.5s 足够，失败也能早点回落 Web Speech。
-        const timeoutMs = opts.timeoutMs ?? 3500;
+        // 握手连不上时 3.5s 快速回落 Web Speech；一旦握手成功或音频分片持续到达，按分片续期看门狗，
+        // 避免 120~150 字长段（整段合成需 4~6s）在传输中途被 3.5s 总时长硬掐断并误触 5 分钟全局熔断。
+        const connectTimeoutMs = opts.timeoutMs ?? 3500;
+        const stallTimeoutMs = opts.timeoutMs ?? 6000;
+        const maxTotalMs = Math.max(30000, connectTimeoutMs * 4);
         const key = `${voice}|${ratePercent(rate)}|${pitchHzStr(pitchHz)}|${breakMs ?? 0}|${text}`;
 
         const cached = this.cache.get(key);
@@ -119,11 +121,13 @@ class EdgeTtsClient {
             ws.binaryType = 'arraybuffer';
             const chunks: ArrayBuffer[] = [];
             let done = false;
+            let watchdog = 0;
 
             const finish = (err: Error | null, blob?: Blob) => {
                 if (done) return;
                 done = true;
-                window.clearTimeout(timer);
+                window.clearTimeout(watchdog);
+                window.clearTimeout(totalTimer);
                 try { ws.close(); } catch { /* ignore */ }
                 if (err) {
                     reject(err);
@@ -135,15 +139,28 @@ class EdgeTtsClient {
                 }
             };
 
-            const timer = window.setTimeout(() => {
-                // 🔴 [2026-09-16 主人报障「播报段间就是有停留」]
-                //    onerror / onclose 都会熔断，**只有超时这条漏了**。
-                //    云健连不上时每段开口前都白等满 timeoutMs，而且永远不熔断 —— 段段都卡。
-                this.disabledUntilMs = Date.now() + DISABLE_MS;
-                finish(new Error('edge-tts timeout'));
-            }, timeoutMs);
+            const armWatchdog = (ms: number, reason: string) => {
+                window.clearTimeout(watchdog);
+                watchdog = window.setTimeout(() => {
+                    // 🔴 [2026-09-16 / 2026-11-14] 仅当一帧音频都没收到（连不上/协议失效）时触发 5 分钟全局熔断；
+                    //    若已收到分片却中途卡住，只让当前句回落，不封杀后续段落的云健原声。
+                    if (chunks.length === 0) {
+                        this.disabledUntilMs = Date.now() + DISABLE_MS;
+                    }
+                    finish(new Error(reason));
+                }, ms);
+            };
+
+            armWatchdog(connectTimeoutMs, 'edge-tts connect timeout');
+            const totalTimer = window.setTimeout(() => {
+                if (chunks.length === 0) {
+                    this.disabledUntilMs = Date.now() + DISABLE_MS;
+                }
+                finish(new Error('edge-tts max total timeout'));
+            }, maxTotalMs);
 
             ws.onopen = () => {
+                armWatchdog(stallTimeoutMs, 'edge-tts first-chunk timeout');
                 const now = new Date().toISOString();
                 ws.send(
                     `X-Timestamp:${now}\r\nContent-Type:application/json; charset=utf-8\r\n` +
@@ -181,17 +198,24 @@ class EdgeTtsClient {
                 if (buf.byteLength < 2) return;
                 const headerLen = view.getUint16(0, false);
                 const audioStart = 2 + headerLen;
-                if (buf.byteLength > audioStart) chunks.push(buf.slice(audioStart));
+                if (buf.byteLength > audioStart) {
+                    chunks.push(buf.slice(audioStart));
+                    armWatchdog(stallTimeoutMs, 'edge-tts stream stall');
+                }
             };
 
             ws.onerror = () => {
-                // 端点连不上（很可能协议/版本变动）→ 短期禁用，避免每句都卡满超时
-                this.disabledUntilMs = Date.now() + DISABLE_MS;
+                // 未收到音频即报错（多半网络不通或协议/版本变动）→ 短期禁用，避免每句都卡满超时
+                if (chunks.length === 0) {
+                    this.disabledUntilMs = Date.now() + DISABLE_MS;
+                }
                 finish(new Error('edge-tts ws error'));
             };
             ws.onclose = (ev: CloseEvent) => {
                 if (!done) {
-                    if (ev.code !== 1000) this.disabledUntilMs = Date.now() + DISABLE_MS;
+                    if (ev.code !== 1000 && chunks.length === 0) {
+                        this.disabledUntilMs = Date.now() + DISABLE_MS;
+                    }
                     finish(new Error(`edge-tts closed ${ev.code}`));
                 }
             };

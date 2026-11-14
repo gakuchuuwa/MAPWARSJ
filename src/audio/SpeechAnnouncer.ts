@@ -18,7 +18,7 @@ import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
 import { isGeneralOnStage } from "../data/generalOnStage";
 
 interface SpeakOptions {
-  /** S 级大事：略慢语速、同步字幕条、播报期间丢弃常规播报（不被打断） */
+  /** S 级大事：占住播报通道，期间常规播报直接丢弃（不打断、不排队小事） */
   sTier?: boolean;
   /** 同步显示的字幕条文案（不传则不显示字幕） */
   banner?: string;
@@ -197,6 +197,15 @@ export class SpeechAnnouncer {
   private enabled = true;
   // 🔴 [2026-11-14 主人定「改为一个声音，只用一套默认模式」] 全程单一音色云健，取消云希备选
   private static readonly NARRATOR_VOICE: EdgeVoice = "zh-CN-YunjianNeural";
+  /**
+   * 🔴 [2026-11-14 主人定「开局播报／衔接播报／战略播报／战术播报 一律同声同速同调，全是默认」]
+   *    这四类播报全走 `announceBriefing`，参数只在这里写一次，任何一类都不许再单独改：
+   *    音色＝云健、语速＝1.0（SSML +0%）、音高＝0（SSML +0Hz）、句间气口＝0ms。
+   *    「略慢语速」「战略 -2Hz／战术 -4Hz」「战略 450ms／战术 280ms」等旧变奏自 2026-11-14 起全部作废。
+   */
+  private static readonly NARRATION_RATE = 1;
+  private static readonly NARRATION_PITCH_HZ = 0;
+  private static readonly NARRATION_BREAK_MS = 0;
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
@@ -537,8 +546,11 @@ export class SpeechAnnouncer {
   /**
    * 🔴 [2026-09-16 主人定] 战役背景解说 —— 玩家赶赴历史战场途中逐段念的旁白。
    *    主人第八次重申的定位：这是**历史教材、历史直播**，用最真实的地理与历史做生动的直播。
-   *    所以走 sTier（略慢语速、期间不被常规播报打断），字幕用 multiline 长段排版。
+   *    所以走 sTier（占住播报通道、期间不被常规播报打断），字幕用 multiline 长段排版。
    *    `onDone` 在**念完**时回调 —— 调用方据此推下一段，别用定时器瞎猜时长。
+   * 🔴 [2026-11-14 主人定「四类播报统一」] 开局播报（单骑入世开篇词）、衔接播报、战略播报、
+   *    战术播报**全从这一个函数开口**，语音参数一律取 NARRATION_* 常量（云健／默认语速／默认音高／无气口），
+   *    `mode` 仅为旧调用点保留，不再产生任何音色或语速分支。
    */
   public announceBriefing(
     text: string,
@@ -547,9 +559,9 @@ export class SpeechAnnouncer {
     minBannerMs?: number,
     mode: "strategic" | "tactical" = "strategic",
   ): void {
+    void mode;   // 四类播报同声同速同调，不再按战略／战术分支
     const line = text.trim();
     if (!line) { onDone?.(); return; }
-    const isTactical = mode === "tactical";
     // 战事两段播报压低背景音乐；念完后多等 1.5 秒再恢复，段与段之间连成一次压低，不忽高忽低
     if (this.briefingBgmReleaseTimer) { window.clearTimeout(this.briefingBgmReleaseTimer); this.briefingBgmReleaseTimer = 0; }
     audioManager.setBriefingBgmDuck(true);
@@ -568,8 +580,13 @@ export class SpeechAnnouncer {
       bannerMultiline: true,
       bannerSingleScreen: true,   // 一路一句＝一路一屏：不切片、不轮播
       bannerMinMs: minBannerMs,
-      // 🔴 [2026-11-14 主人定「只用一套默认模式」] 战略/战术不再做两套变奏（原 0.90/-2Hz/450ms 与 0.97/-4Hz/280ms 已废），
-      //    统一交给云健音色自带的默认语速与音高，不压速、不压调、不加气口。
+      // 🔴 [2026-11-14 主人定「一个声音、一套默认模式，四类播报统一」]
+      //    音色**不在这里传**：全库只有 NARRATOR_VOICE／EdgeTtsClient 默认那一处定义，传了就是重复。
+      //    语速／音高／气口取上面那组 NARRATION_* 常量，四类播报共用一份；
+      //    战略 0.90/-2Hz/450ms、战术 0.97/-4Hz/280ms 两套变奏已废。
+      rate: SpeechAnnouncer.NARRATION_RATE,
+      pitchHz: SpeechAnnouncer.NARRATION_PITCH_HZ,
+      breakMs: SpeechAnnouncer.NARRATION_BREAK_MS,
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
       onDone: doneWithRelease,
