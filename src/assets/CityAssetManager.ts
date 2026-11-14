@@ -1039,6 +1039,7 @@ export class CityAssetManager {
         'nan_xiongnu': '南匈',
         'yudan_xiongnu': '于单',
         'shifa_rouran': '示发',
+        'maoyi': '茂宜',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

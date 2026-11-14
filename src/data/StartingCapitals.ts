@@ -1036,6 +1036,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'nan_xiongnu': 'city_eyangling',
   'yudan_xiongnu': 'city_karakorum',
   'shifa_rouran': 'city_karakorum',
+  'maoyi': 'city_honolulu',
 };
 
 // @ts-ignore

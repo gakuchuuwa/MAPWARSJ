@@ -14,9 +14,15 @@ const SRC = 'docs/战争编年史（纯史实重写）/战争事件编年史_全
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
 /** 衔接播报（上一场 → 下一场），按事件 ID 成对匹配 */
 const BRIDGE_SRC = 'docs/战争编年史（纯史实重写）/战争编年史_衔接播报_2026-11-14.json';
+const OPENING_OUT = 'src/data/chronicle/ChronicleOpening.ts';
 const bridges = new Map<string, string>();
+let prologue = '';
+let epilogue = '';
 try {
-    for (const b of (JSON.parse(readFileSync(BRIDGE_SRC, 'utf-8')).bridges as Record<string, string>[])) {
+    const bridgeData = JSON.parse(readFileSync(BRIDGE_SRC, 'utf-8'));
+    if (typeof bridgeData['开卷导语'] === 'string' && bridgeData['开卷导语'].trim()) prologue = bridgeData['开卷导语'].trim();
+    if (typeof bridgeData['收官播报'] === 'string' && bridgeData['收官播报'].trim()) epilogue = bridgeData['收官播报'].trim();
+    for (const b of (bridgeData.bridges as Record<string, string>[])) {
         bridges.set(`${b['上一事件ID']}>${b['下一事件ID']}`, b['衔接播报']);
     }
 } catch { /* 无衔接播报文件则不挂 */ }
@@ -95,9 +101,18 @@ for (const s of CHRONICLE_SCRIPT) {
     }
     out.push(ev);
 }
+if (out.length && epilogue) out[out.length - 1].tactical.push(epilogue);
 if (errors.length) {
     console.error('导入失败：\n' + errors.map((x) => '  ' + x).join('\n'));
     process.exit(1);
+}
+if (prologue) {
+    const openingSrc = readFileSync(OPENING_OUT, 'utf-8');
+    const nextOpening = openingSrc.replace(
+        /(export const CHRONICLE_OPENING_PROLOGUE =\s*)'[^']*';/,
+        `$1${JSON.stringify(prologue).replace(/^"|"$/g, "'")};`,
+    );
+    if (nextOpening !== openingSrc) writeFileSync(OPENING_OUT, nextOpening, 'utf-8');
 }
 const header = `/* 自动生成，勿手改：tools/chronicle/import-mainline.mts ← 编年史 json ＋ ChronicleDirectorScript.ts */\n`
     + `import type { ChronicleMainlineEvent } from './ChronicleTypes';\n\n`

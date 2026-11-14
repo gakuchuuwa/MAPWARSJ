@@ -5,7 +5,7 @@
  * 事件名、年份、坐标、两段播报一律取自编年史 json（唯一真源），由
  * `tools/chronicle/import-mainline.mts` 合成为 `ChronicleMainline.generated.ts`，本表不重复。
  *
- * 当前范围：第一段第 1 棒 → 第二段第 18 棒（前 550—前 200）。
+ * 当前范围：全卷 16 段、184 棒、1,022 场（前 550—1864，67 / 67 文化全覆盖）。
  * 依据：第 1—3 棒 `docs/02-design/systems/编年史开篇-第一段第1至3棒-细节清单-2026-11-13.md`；
  * 第 4 棒起按 GG《主线大纲_审定版_2026-11-13》棒次，逐场按史定案（出处写在每行注释）。
  * 主线每场都开战：玩家去该场出发据点找随行主将（路上念战略播报）→ 随军行军（有史载途经地按站走）→ 战场进战术模式（念战术播报）。
@@ -261,7 +261,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
 
     // ── 第 11 棒 · 亚历山大 ──
     // 出发：狄奥多罗斯 XVI.91、XVII.7：帕曼纽先遣军渡海驻小亚
-    B('evt_0222', '11B', 'gen_parmenion', 'defender', 'aqimeinide', 'attacker', { enemyGeneralId: 'halikanasu_memnon', from: 'city_teluoyi' }),   // 波吕埃努斯 V.44.4（年份早于底比斯，提前）
+    B('evt_0222', '10', 'gen_parmenion', 'defender', 'aqimeinide', 'attacker', { enemyGeneralId: 'halikanasu_memnon', from: 'city_teluoyi' }),   // 波吕埃努斯 V.44.4（年份早于底比斯，提前）
     // 出发：阿里安 I.5–7：亚历山大自伊利里亚佩利昂回师南下
     B('evt_0223', '11A', 'gen_alexander_great', 'attacker', 'boootiya', 'attacker', { enemyGeneralId: 'dibisi_phoinix', city: at('city_thebes', 'boootiya', 'maqidun'), from: 'city_peiliang' }),   // 阿里安 I.7–8
     // 阿里安 I.11–12：经安菲波利斯、塞斯托斯渡赫勒斯滂，谒伊利昂，东进格拉尼库斯
@@ -907,6 +907,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1446', '60B', 'baizanting_nikephoros_i', 'defender', 'baojialiya', 'attacker', { enemyGeneralId: 'gen_krum', city: at('city_sofia', 'baizanting', 'baojialiya') }),
     B('evt_1449', '60B', 'baizanting_nikephoros_i', 'defender', 'baojialiya', 'attacker', { enemyGeneralId: 'gen_krum', from: 'city_junshitandingbao', route: [p('普利斯卡', 43.39, 27.13)] }),
     B('evt_1452', '60B', 'baizanting_gen_514', 'attacker', 'baojialiya', 'attacker', { enemyGeneralId: 'baojialiya_gen_515', from: 'city_junshitandingbao' }),
+    // ── 第 60C 棒 ──
+    B('evt_1454', '60C', 'gurjara_nagabhata_ii', 'attacker', 'boluo', 'attacker', { enemyGeneralId: 'varendra_devapala', from: 'city_patan', city: at('city_qunvcheng', 'boluo', 'gurjara') }),
     // ── 第 61A 棒 ──
     B('evt_1453', '61A', 'tang_gen_516', 'attacker', 'huaixi', 'attacker', { enemyGeneralId: 'bfe_wu_yuanji', from: 'city_xuchang', city: at('city_yancheng2', 'huaixi', 'tang') }),
     B('evt_1455', '61A', 'yuan_cj_d_lishuo', 'attacker', 'huaixi', 'attacker', { enemyGeneralId: 'bfe_wu_yuanji', from: 'city_xiangyang', city: at('city_xuanhu', 'huaixi', 'tang'), route: [p('唐州', 32.69, 112.83), p('文城栅', 33.22, 113.78), p('张柴村', 33.08, 114.22)] }),
@@ -982,6 +984,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1605', '66', 'song_gen_558', 'attacker', 'hou_shu', 'attacker', { enemyGeneralId: 'hou_shu_gen_559', from: 'city_ying', city: at('city_baidicheng2', 'hou_shu', 'song'), route: [p('归州', 30.83, 110.97)] }),
     B('evt_1606', '66', 'song_gen_560', 'attacker', 'hou_shu', 'attacker', { enemyGeneralId: 'hou_shu_gen_561', from: 'city_changan', city: at('city_jianmenguan', 'hou_shu', 'song'), route: [p('凤州', 33.91, 106.52), p('兴州利州', 32.43, 105.82), p('来苏剑门关', 32.2, 105.56), p('魏城成都', 30.57, 104.07)] }),
     B('evt_1608', '66', 'song_gen_562', 'attacker', 'xingguo_jun', 'attacker', { enemyGeneralId: 'xingguo_jun_gen_563', from: 'city_chengdu', city: at('city_chengdu', 'song', 'song'), route: [p('新繁', 30.88, 104.01), p('灌口', 30.99, 103.62)] }),
+    // ── 第 66B 棒 ──
+    B('evt_1614', '66B', 'duonaobaojia_tzimiskes', 'attacker', 'luosi', 'attacker', { enemyGeneralId: 'xiadunhe_sviatoslav', from: 'city_junshitandingbao', city: at('city_delusitaer', 'luosi', 'baizanting'), route: [p('普雷斯拉夫', 43.16, 26.81)] }),
     // ── 第 67 棒 ──
     B('evt_1613', '67', 'song_gen_564', 'attacker', 'nanhan', 'attacker', { enemyGeneralId: 'nanhan_gen_565', from: 'city_lingqu', city: at('city_panyu', 'nanhan', 'song'), route: [p('贺州', 24.41, 111.55), p('韶州', 24.81, 113.6), p('英州清远', 23.7, 113.03)] }),
     B('evt_1617', '67', 'song_gen_562', 'attacker', 'nantang', 'attacker', { enemyGeneralId: 'nantang_gen_566', from: 'city_ying', route: [p('池州', 30.66, 117.49)] }),
@@ -1003,6 +1007,9 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1654', '68', 'liao_d_gen_31', 'attacker', 'goryeo', 'attacker', { enemyGeneralId: 'goryeo_gen_573', from: 'city_liaoyang', route: [p('义州鸭绿江', 40.12, 124.39), p('兴化镇', 40.12, 124.6)] }),
     B('evt_1662', '68', 'liao_d_xiaopaiya', 'attacker', 'goryeo', 'defender', { enemyGeneralId: 'goryeo_jianghanzan', from: 'city_liaoyang', route: [p('鸭绿江', 40.12, 124.39)] }),
     B('evt_1663', '68', 'liao_d_xiaopaiya', 'attacker', 'goryeo', 'defender', { enemyGeneralId: 'goryeo_jianghanzan', from: 'city_pyongyang', route: [p('开京新恩驿', 38.15, 126.4), p('平壤西京', 39.02, 125.76)] }),
+    // ── 第 68B 棒 ──
+    B('evt_1669', '68B', 'zhuluo_lajindela', 'attacker', 'sanfoqi', 'attacker', { enemyGeneralId: 'gen_sangrama_vijayottungavarman', from: 'city_tanjiawuer' }),
+    // ── 第 68 棒（续） ──
     B('evt_1672', '68', 'ganzhou_huihu_gen_574', 'defender', 'dangxiang', 'attacker', { enemyGeneralId: 'dangxiang_liyuanhao', city: at('city_zhangye', 'ganzhou_huihu', 'dangxiang') }),
     // ── 第 69 棒 ──
     B('evt_1683', '69', 'dangxiang_liyuanhao', 'attacker', 'song', 'defender', { enemyGeneralId: 'zhai_han_diqing', from: 'city_xingqingfu2', city: at('city_baoanjun', 'song', 'song') }),
@@ -1088,6 +1095,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1843', '79', 'ayoubu_salaheding', 'attacker', 'saipulusi', 'attacker', { enemyGeneralId: 'saipulusi_juyi', from: 'city_damasikusi', route: [p('萨富里亚泉', 32.75, 35.28)] }),
     B('evt_1844', '79', 'ayoubu_salaheding', 'attacker', 'antioch_principality', 'attacker', { enemyGeneralId: 'antioch_principality_shouling', from: 'city_damasikusi', city: at('city_latajiya', 'antioch_principality', 'ayoubu'), route: [p('霍姆斯', 34.73, 36.71), p('塔尔图斯', 34.89, 35.89), p('杰卜莱', 35.36, 35.93)] }),
     B('evt_1847', '79', 'ayoubu_salaheding', 'attacker', 'yinggelan', 'defender', { enemyGeneralId: 'yinggelan_lionheart', from: 'city_yelusaleng', route: [p('阿卡', 32.92, 35.07), p('海法凯撒利亚', 32.5, 34.89)] }),
+    // ── 第 79B 棒 ──
+    B('evt_1848', '79B', 'bfe_muhammad_ghur', 'attacker', 'zhelouqi', 'attacker', { enemyGeneralId: 'zhelouqi_puliteweilajie', from: 'city_jiaseni', route: [p('白沙瓦', 34.01, 71.58), p('拉合尔', 31.58, 74.33)] }),
     // ── 第 80 棒 ──
     B('evt_1846', '80', 'menggu_d_chengjisihan', 'defender', 'zhadalan', 'attacker', { enemyGeneralId: 'zhadalan_zhamuhe', from: 'city_qudiaoalan', route: [p('不儿罕山桑沽儿河', 48.1, 108.9), p('答兰版朱思', 48.62, 110.45), p('哲列捏狭口', 48.75, 110.65)] }),
     B('evt_1852', '80', 'menggu_d_chengjisihan', 'attacker', 'tatar', 'attacker', { enemyGeneralId: 'tatar_mieguzhen', from: 'city_qudiaoalan', route: [p('怯绿连河', 48.06, 113.52)] }),
@@ -1113,6 +1122,10 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1890', '82', 'zaoyang_d_menggong', 'attacker', 'dajin', 'attacker', { enemyGeneralId: 'dajin_wanyan_zhongde', from: 'city_xiangyang', city: at('city_xuanhu', 'dajin', 'menggu_d'), route: [p('唐州', 32.69, 112.83)] }),
     B('evt_1891', '82', 'menggu_d_gen_625', 'attacker', 'song', 'attacker', { enemyGeneralId: 'song_gen_626', from: 'city_zhaoge', city: at('city_luoyang', 'menggu_d', 'menggu_d'), route: [p('泗州汴梁', 34.8, 114.31)] }),
     B('evt_1896', '82', 'zaoyang_d_menggong', 'attacker', 'menggu_d', 'attacker', { enemyGeneralId: 'bfe_youxian', from: 'city_wuchang', city: at('city_xiangyang', 'menggu_d', 'song'), route: [p('光化樊城', 32.04, 112.14)] }),
+    // ── 第 82B 棒 ──
+    B('evt_1892', '82B', 'gen_sundjata', 'attacker', 'suosuo', 'attacker', { enemyGeneralId: 'gen_sumanguru', from: 'city_niani' }),
+    // ── 第 82C 棒 ──
+    B('evt_2534', '82C', 'mayapan_hunac_ceel', 'attacker', 'yicha', 'attacker', { enemyGeneralId: 'yicha_gen_737', from: 'city_uxmal', city: at('city_uxmal', 'yicha', 'mayapan') }),
     // ── 第 83 棒 ──
     B('evt_1902', '83', 'mamuluke_baibaisi', 'attacker', 'yelusalengwg', 'attacker', { enemyGeneralId: 'yelusalengwg_gen_627', from: 'city_mengfeisi', route: [p('阿卡', 32.92, 35.07), p('阿什凯隆', 31.67, 34.55)] }),
     B('evt_1908', '83', 'mamuluke_baibaisi', 'defender', 'gaolu', 'defender', { enemyGeneralId: 'gaolu_gen_628', city: at('city_mansoura', 'mamuluke', 'mamuluke') }),
@@ -1133,6 +1146,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_1937', '84', 'yuan_d_gen_637', 'attacker', 'song', 'attacker', { enemyGeneralId: 'luoping_zhangshijie', from: 'city_yangzhou', route: [p('瓜洲', 32.25, 119.39)] }),
     B('evt_1941', '84', 'yuan_d_gen_638', 'attacker', 'song', 'attacker', { enemyGeneralId: 'luoping_zhangshijie', from: 'city_panyu', city: at('city_xinhui', 'song', 'yuan_d'), route: [p('潮州漳州', 23.66, 116.62), p('广州虎头门', 22.8, 113.62)] }),
     B('evt_1949', '84', 'yuan_d_hubilie', 'attacker', 'dongdao_zongwang', 'attacker', { enemyGeneralId: 'dongdao_zongwang_gen_639', from: 'city_shangdu' }),
+    // ── 第 84B 棒 ──
+    B('evt_1956', '84B', 'manzheboyi_radenwijaya', 'attacker', 'yuan_d', 'attacker', { enemyGeneralId: 'yuan_d_gen_738', from: 'city_kalasan' }),
     // ── 第 85 棒 ──
     B('evt_1964', '85', 'yuan_d_gen_37', 'defender', 'ogedei', 'defender', { enemyGeneralId: 'ogedei_gen_640', from: 'city_karakorum', route: [p('叶密立阿力麻里', 44.22, 80.52), p('阿尔泰山', 47.64, 88.29)] }),
     B('evt_1991', '85', 'chahar_yantiemuer', 'defender', 'shangdu_jun', 'defender', { enemyGeneralId: 'shangdu_wangchan', from: 'city_beijing', city: at('city_juyongguan', 'yuan_d', 'yuan_d'), route: [p('上都', 42.28, 115.76)] }),
@@ -1186,6 +1201,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_2091', '92', 'gen_jan_zizka', 'defender', 'bafaliya', 'defender', { enemyGeneralId: 'bfe_sigismund', city: at('city_bulage', 'hussites', 'hussites') }),
     B('evt_2092', '92', 'gen_jan_zizka', 'defender', 'bafaliya', 'defender', { enemyGeneralId: 'bfe_sigismund', from: 'city_bulage' }),
     B('evt_2105', '92', 'hussites_gen_38', 'defender', 'boximiya', 'attacker', { enemyGeneralId: 'boximiya_gen_670', from: 'city_tabor' }),
+    // ── 第 92B 棒 ──
+    B('evt_2109', '92B', 'gen_pachacuti', 'defender', 'chanka', 'defender', { enemyGeneralId: 'bfe_chanca_chief', city: at('city_cusco', 'inca', 'inca') }),
     // ── 第 93A 棒 ──
     B('evt_2112', '93A', 'gen_wang_ji', 'attacker', 'luchuan', 'attacker', { enemyGeneralId: 'luchuan_sirenfa', from: 'city_tuodongcheng', city: at('city_mengmao', 'luchuan', 'ming_d'), route: [p('金齿腾冲', 25.02, 98.49), p('上江寨', 24.8, 98.8)] }),
     B('evt_2121', '93A', 'gen_wang_ji', 'attacker', 'luchuan', 'attacker', { enemyGeneralId: 'luchuan_gen_671', from: 'city_tengyuecheng', city: at('city_guikushan', 'luchuan', 'luchuan'), route: [p('金沙江渡口', 25.1, 97.15)] }),
@@ -1227,10 +1244,19 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // ── 第 97 棒 ──
     B('evt_2190', '97', 'osman_selim', 'attacker', 'mamuluke', 'attacker', { enemyGeneralId: 'mamuluke_gen_688', from: 'city_junshitandingbao', city: at('city_alepo', 'mamuluke', 'osman'), route: [p('科尼亚', 37.87, 32.49), p('马拉什', 37.58, 36.93)] }),
     B('evt_2191', '97', 'osman_selim', 'attacker', 'mamuluke', 'attacker', { enemyGeneralId: 'mamuluke_gen_689', from: 'city_damasikusi', city: at('city_mengfeisi', 'mamuluke', 'osman'), route: [p('加沙西奈沙漠', 31.1, 33.8)] }),
+    // ── 第 97B 棒 ──
+    B('evt_2185', '97B', 'puxiangyindu_albukeerke', 'attacker', 'malacca', 'attacker', { enemyGeneralId: 'malacca_gen_739', from: 'city_guoa', city: at('city_malacca', 'malacca', 'putaoya') }),
     // ── 第 98 棒 ──
     B('evt_2189', '98', 'gen_francis_i', 'attacker', 'milan_duchy', 'attacker', { enemyGeneralId: 'gen_maximilian_sforza', from: 'city_lyon', city: at('city_milan', 'milan_duchy', 'gaolu'), route: [p('阿尔卑斯阿让蒂耶尔山口', 44.42, 6.9), p('都灵帕维亚', 45.19, 9.16)] }),
     B('evt_2198', '98', 'gaolu_gen_691', 'defender', 'habusibao', 'attacker', { enemyGeneralId: 'habusibao_gen_690', from: 'city_turin', route: [p('米兰诺瓦拉', 45.45, 8.62)] }),
     B('evt_2199', '98', 'gen_francis_i', 'defender', 'habusibao', 'attacker', { enemyGeneralId: 'habusibao_gen_692', city: at('city_milan', 'habusibao', 'habusibao') }),
+    // ── 第 98B 棒 ──
+    B('evt_2194', '98B', 'gen_cortes', 'defender', 'aztec', 'defender', { enemyGeneralId: 'aztec_gen_740', from: 'city_tenochtitlan' }),
+    B('evt_2195', '98B', 'gen_cortes', 'attacker', 'aztec', 'attacker', { enemyGeneralId: 'gen_cuauhtemoc', from: 'city_veracruz', city: at('city_tenochtitlan', 'aztec', 'xibanya') }),
+    // ── 第 98C 棒 ──
+    B('evt_2207', '98C', 'xibanya_pisaluo', 'attacker', 'inca', 'attacker', { enemyGeneralId: 'gen_atahualpa', from: 'city_guayaquil' }),
+    // ── 第 98D 棒 ──
+    B('evt_2535', '98D', 'yilaka_tundama', 'defender', 'xibanya', 'attacker', { enemyGeneralId: 'xibanya_gen_741', from: 'city_suojiamosuo' }),
     // ── 第 99 棒 ──
     B('evt_2196', '99', 'gen_suleiman', 'attacker', 'maerta_qishi', 'attacker', { enemyGeneralId: 'maerta_qishi_gen_693', from: 'city_junshitandingbao', city: at('city_rhodes', 'maerta_qishi', 'osman'), route: [p('马尔马里斯', 36.85, 28.27)] }),
     B('evt_2201', '99', 'gen_suleiman', 'attacker', 'mazhaer', 'attacker', { enemyGeneralId: 'gen_lajos_ii', from: 'city_junshitandingbao', route: [p('贝尔格莱德', 44.78, 20.45), p('奥西耶克德拉瓦河桥', 45.56, 18.7)] }),
@@ -1239,6 +1265,13 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_2210', '99', 'gen_barbarossa', 'defender', 'kelimiya', 'attacker', { enemyGeneralId: 'gen_andrea_doria', city: at('city_jiataji', 'osman', 'xibanya') }),
     B('evt_2213', '99', 'gen_barbarossa', 'attacker', 'kelimiya', 'attacker', { enemyGeneralId: 'gen_andrea_doria', from: 'city_junshitandingbao', route: [p('科孚岛', 39.62, 19.92)] }),
     B('evt_2216', '99', 'gen_suleiman', 'attacker', 'habusibao', 'attacker', { enemyGeneralId: 'habusibao_gen_697', from: 'city_aidiernei', city: at('city_budapeisi', 'mazhaer', 'osman'), route: [p('贝尔格莱德', 44.78, 20.45)] }),
+    // ── 第 99B 棒 ──
+    B('evt_2200', '99B', 'babuer_babuer', 'attacker', 'deli', 'attacker', { enemyGeneralId: 'gen_ibrahim_lodi', from: 'city_gaofu', route: [p('白沙瓦', 34.01, 71.58), p('拉合尔', 31.58, 74.33)] }),
+    B('evt_2232', '99B', 'xindu_bahelamuhan', 'attacker', 'sur', 'attacker', { enemyGeneralId: 'gen_hemu', from: 'city_laheer' }),
+    // ── 第 99C 棒 ──
+    B('evt_2228', '99C', 'gen_lautaro', 'attacker', 'xibanya', 'attacker', { enemyGeneralId: 'gen_valdivia', from: 'city_tucapel' }),
+    // ── 第 99D 棒 ──
+    B('evt_2536', '99D', 'gen_arariboia', 'attacker', 'tamoyue', 'attacker', { enemyGeneralId: 'tamoyue_gen_742', from: 'city_saovicente', city: at('city_guanabara', 'tamoyue', 'putaoya') }),
     // ── 第 100 棒 ──
     B('evt_2223', '100', 'fang_guozhen_fangguozhen', 'attacker', 'haikou', 'attacker', { enemyGeneralId: 'haikou_gen_698', from: 'city_qingyuan_zj', city: at('city_zhoushan', 'haikou', 'ming_d'), route: [p('宁波定海', 29.95, 121.72)] }),
     B('evt_2230', '100', 'qian_d_yudayou', 'attacker', 'haikou', 'attacker', { enemyGeneralId: 'bfe_xu_hai', from: 'city_jiaxing', route: [p('柘林', 30.84, 121.46)] }),
@@ -1285,18 +1318,17 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_2532', '106', 'gesake_khmelnytsky', 'attacker', 'bolan', 'attacker', { enemyGeneralId: 'bolan_gen_138', from: 'city_jifu', route: [p('卢布林索卡利', 50.48, 24.28)] }),
     B('evt_2533', '106', 'gesake_khmelnytsky', 'defender', 'bolan', 'attacker', { enemyGeneralId: 'bolan_gen_138', from: 'city_zhapoluore', route: [p('索卡利', 50.48, 24.28)] }),
     // ── 第 107 棒 ──
-    B('evt_2340', '107', 'gaolu_gen_40', 'attacker', 'xibanya', 'attacker', { enemyGeneralId: 'xibanya_gen_711', from: 'city_bali', city: at('city_lier', 'gaolu', 'gaolu'), route: [p('佩罗讷', 49.93, 2.94)] }),
-    B('evt_2344', '107', 'gaolu_gen_40', 'attacker', 'xibanya', 'attacker', { enemyGeneralId: 'xibanya_gen_712', from: 'city_calais', city: at('city_calais', 'xibanya', 'yinggelan'), route: [p('伊普尔马尔迪克', 51.0, 2.24)] }),
     B('evt_2350', '107', 'habusibao_gen_41', 'defender', 'osman', 'defender', { enemyGeneralId: 'osman_gen_713', from: 'city_weiyeena', route: [p('卡尼扎', 46.45, 16.99)] }),
     // ── 第 108 棒 ──
     B('evt_2359', '108', 'bolan_suobiesiji', 'attacker', 'osman', 'attacker', { enemyGeneralId: 'osman_gen_714', from: 'city_liweifu', city: at('city_khotyn', 'osman', 'bolan') }),
-    B('evt_2361', '108', 'asikanani_gen_715', 'attacker', 'ruidian_si', 'attacker', { enemyGeneralId: 'ruidian_si_gen_716', from: 'city_magedebao', route: [p('拉特诺', 52.6, 12.33)] }),
     B('evt_2369', '108', 'bolan_suobiesiji', 'attacker', 'osman', 'attacker', { enemyGeneralId: 'gen_kara_mustafa', from: 'city_kelakefu', city: at('city_weiyeena', 'habusibao', 'habusibao'), route: [p('图尔恩渡多瑙河', 48.33, 16.05)] }),
     B('evt_2373', '108', 'habusibao_gen_718', 'defender', 'osman', 'defender', { enemyGeneralId: 'osman_gen_717', from: 'city_budapeisi', route: [p('奥西耶克', 45.56, 18.7)] }),
     B('evt_2374', '108', 'bafaliya_gen_719', 'attacker', 'osman', 'attacker', { enemyGeneralId: 'osman_gen_720', from: 'city_budapeisi', city: at('city_belgrade', 'osman', 'habusibao'), route: [p('彼得罗瓦拉丁', 45.25, 19.86)] }),
     B('evt_2377', '108', 'habusibao_gen_721', 'attacker', 'osman', 'attacker', { enemyGeneralId: 'osman_gen_722', from: 'city_budapeisi', route: [p('彼得罗瓦拉丁', 45.25, 19.86)] }),
     B('evt_2383', '108', 'habusibao_eugene', 'attacker', 'osman', 'attacker', { enemyGeneralId: 'bfe_mustafa_ii', from: 'city_budapeisi', route: [p('彼得罗瓦拉丁', 45.25, 19.86)] }),
     B('evt_2384', '108', 'bolan_gen_724', 'defender', 'kelimiya_han', 'defender', { enemyGeneralId: 'kelimiya_han_gen_723', from: 'city_liweifu' }),
+    // ── 第 108B 棒 ──
+    B('evt_2357', '108B', 'ahaomu_laqite', 'defender', 'mowoer', 'defender', { enemyGeneralId: 'mowoer_ramsingh', from: 'city_geergang' }),
     // ── 第 109 棒 ──
     B('evt_2372', '109', 'manzhou_d_sabusu', 'attacker', 'eluosi_diguo', 'attacker', { enemyGeneralId: 'eluosi_diguo_gen_725', from: 'city_bukui', city: at('city_yakesa', 'eluosi_diguo', 'eluosi_diguo'), route: [p('瑷珲', 50.25, 127.48)] }),
     B('evt_2376', '109', 'bfe_fuquan', 'attacker', 'zhunge', 'attacker', { enemyGeneralId: 'oirat_ming_gaerdan', from: 'city_beijing', route: [p('古北口', 40.69, 117.16)] }),
@@ -1311,6 +1343,8 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // ── 第 112 棒 ──
     B('evt_2431', '112', 'huite_amuersana', 'attacker', 'zhunge', 'attacker', { enemyGeneralId: 'zhunge_gen_727', from: 'city_kobdo', route: [p('巴里坤乌鲁木齐', 43.82, 87.62), p('博罗塔拉伊犁', 43.92, 81.32)] }),
     B('evt_2437', '112', 'agui', 'attacker', 'khoja', 'attacker', { enemyGeneralId: 'khoja_gen_728', from: 'city_kungang', city: at('city_shache', 'khoja', 'manzhou_d'), route: [p('阿克苏', 41.17, 80.26)] }),
+    // ── 第 112B 棒 ──
+    B('evt_2440', '112B', 'dulan_d_aihamaide', 'attacker', 'taimier', 'attacker', { enemyGeneralId: 'gen_sadashivrao', from: 'city_kandaha', route: [p('喀布尔', 34.55, 69.2), p('拉合尔', 31.58, 74.33)] }),
     // ── 第 113 棒 ──
     B('evt_2433', '113', 'konbaung_yongjiya', 'attacker', 'restored_hanthawaddy', 'attacker', { enemyGeneralId: 'gen_binnya_dala', from: 'city_shwebo', city: at('city_bago', 'restored_hanthawaddy', 'konbaung'), route: [p('大光仰光', 16.8, 96.15), p('丁因', 16.77, 96.25)] }),
     B('evt_2443', '113', 'siam_zhengxin', 'attacker', 'konbaung', 'attacker', { enemyGeneralId: 'konbaung_gen_729', from: 'city_chanthaburi', city: at('city_ayutthaya', 'konbaung', 'thonburi'), route: [p('吞武里', 13.68, 100.53)] }),
@@ -1325,6 +1359,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     // ── 第 115A 棒 ──
     B('evt_2464', '115A', 'gelujiya_erekle_ii', 'defender', 'qiajia', 'attacker', { enemyGeneralId: 'bfe_agha_mohammad', city: at('city_dibilisi', 'gelujiya', 'gelujiya') }),
     // ── 第 115B 棒 ──
+    B('evt_2463', '115B', 'bolinixiya_kameihameiha', 'attacker', 'maoyi', 'attacker', { enemyGeneralId: 'maoyi_gen_743', from: 'city_honolulu', city: at('city_honolulu', 'maoyi', 'xiaweiyi') }),
     B('evt_2471', '115B', 'nguyen_guangnan_ruanfuying', 'attacker', 'xishan', 'attacker', { enemyGeneralId: 'yuenan_ruanguangzuan', from: 'city_giadinh', city: at('city_fuchun', 'xishan', 'yuenan'), route: [p('归仁施耐海口', 13.77, 109.24)] }),
     // ── 第 116 棒 ──
     B('evt_2487', '116', 'xike_lanjite', 'attacker', 'dulan_d', 'attacker', { enemyGeneralId: 'dulan_muzaffarkhan', from: 'city_laheer', city: at('city_malisi', 'dulan_d', 'xike') }),

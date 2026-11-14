@@ -1084,6 +1084,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   nan_xiongnu: '南匈',
   yudan_xiongnu: '于单',
   shifa_rouran: '示发',
+  maoyi: '茂宜',
 };
 
 // @ts-ignore

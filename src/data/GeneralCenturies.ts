@@ -2507,6 +2507,13 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ziqing_gen_518': 9,
     'zirids_gen_585': 11,
     'zubu_shouling': 10,
+    'yicha_gen_737': 13,
+    'yuan_d_gen_738': 13,
+    'malacca_gen_739': 16,
+    'aztec_gen_740': 16,
+    'xibanya_gen_741': 16,
+    'tamoyue_gen_742': 16,
+    'maoyi_gen_743': 18,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

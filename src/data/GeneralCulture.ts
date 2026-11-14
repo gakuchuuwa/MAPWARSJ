@@ -2950,6 +2950,13 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zubu_shouling': 'MONGOL',   // 阻卜｜阻卜鞑靼首领｜据点 特尔浑
     'zuo_d_wufu': 'WEI',   // 大明｜吴复｜据点 清溪关
     'zuraid_yasir': 'ORIE',   // 祖拉伊德｜亚西尔｜据点 亚丁
+    'yicha_gen_737': 'MAYANS',   // 伊察｜奇琴伊察城主｜据点 乌斯马尔
+    'yuan_d_gen_738': 'XIANBEI',   // 大元｜史弼｜据点 刺桐
+    'malacca_gen_739': 'MALAY',   // 满剌加｜马哈茂德沙｜据点 马六甲
+    'aztec_gen_740': 'AMERICA',   // 阿兹特克｜马特拉钦卡｜据点 特诺奇蒂特兰
+    'xibanya_gen_741': 'SPANISH',   // 西班牙｜马尔多纳多｜据点 卡塔赫纳
+    'tamoyue_gen_742': 'TUPI',   // 塔莫约｜艾姆比雷｜据点 卡布弗里乌
+    'maoyi_gen_743': 'MALAY',   // 茂宜王国｜卡拉尼库普莱｜据点 火奴鲁鲁
 };
 
 /** 武将所属势力的文化（由 FactionEra 注入，避免与武将名单循环引用） */

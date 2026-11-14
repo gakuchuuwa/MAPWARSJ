@@ -179,7 +179,7 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     ante: { start: 300, end: 602, source: '约达尼斯《哥特史》XLVIII.247（4世纪博兹王抗东哥特）、普罗科匹厄斯《战史》VII.14；Wikipedia「Antes people」：4–6世纪第聂伯—德涅斯特森林草原斯拉夫部落联盟（切尔尼亚霍夫—彭科夫卡文化圈），602年为阿瓦尔所破。', note: '博兹王约375–376年战死；考古与哥特史源追溯联盟成形于4世纪初（取300），古典段（300–476＝176年）长于封建段（476–602＝126年）。' },
     suweihui: { start: 409, end: 585, source: 'Wikipedia「苏维汇王国」：409年入据加莱西亚，585年为西哥特国王利乌维吉尔德吞并。', note: '马罗博杜斯为前1世纪马科曼尼王，与加莱西亚苏维汇王国不同支。' },
     yibiluliya: { start: -302, end: 580, source: 'Wikipedia「伊比利亚王国」：前302年法尔纳瓦兹一世立国，580年萨珊废其王系。' },
-    yicha: { start: 1441, end: 1697, source: 'Wikipedia「Itza people / Nojpetén」；Jones (1998)《The Conquest of the Last Maya Kingdom》：1441年玛雅潘同盟崩溃后伊察王系迁佩滕伊察湖建诺赫佩滕（塔亚萨尔）独立王国，1697年为西班牙乌苏亚攻灭。', note: '卡内克（Kan Ek\'）为16–17世纪诺赫佩滕末代玛雅王系；帝国段（1500–1697＝197年）长于城堡段（1441–1500＝59年）。' },
+    yicha: { start: 987, end: 1697, source: '《奇拉姆·巴拉姆书·丘马耶尔篇》；Wikipedia「Itza people / Chichen Itza / Nojpetén」；Jones (1998)《The Conquest of the Last Maya Kingdom》：后古典早期（传统纪年987）伊察人控扼奇琴伊察，13世纪中叶败迁佩滕伊察湖建诺赫佩滕独立王国，1697年为西班牙乌苏亚攻灭。', note: '存续 987–1697（710年≥500年按年代分段；987–1050仅63年并入城堡段）：城堡（奇琴伊察城主）→1500起帝国（卡内克）。' },
     mengjiala: { start: 1338, end: 1576, source: 'Wikipedia「Bengal Sultanate」：1338年法赫鲁丁·穆巴拉克沙脱离德里独立（1342伊利亚斯沙统一孟加拉），1576年亡于莫卧儿｜确证；开国/起事将领年逾20岁（沙姆斯丁 生1300 登1320，起事时38岁），按规则维持信史起兵/立国年1338，建议百岁出场年取 max(登场年,势力起始年)', note: '2026-11-11 GG第五轮核定：原 1342–1576' },
     yili: { start: -400, end: 9, source: 'Wikipedia「Illyria」「Bellum Batonianum」：约前400年巴尔迪利斯建伊利里亚王国，前168年王室败亡后诸部抗罗至公元9年巴托大起义平定｜确证（下限取公元9年伊利里亚大起义终结）', note: '2026-11-11 GG第五轮核定：原 -400–-168' },
     daqiya: { start: -82, end: 106, source: 'Wikipedia「达契亚」：前82年布雷比斯塔统一达契亚诸部，106年图拉真灭达契亚设行省。' },
@@ -991,4 +991,5 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     zhongjia: { start: 190, end: 199, source: '《三国志·袁术传》：190年袁术据南阳、后迁寿春，197年称帝号仲家，199年败亡' },
     ziqing: { start: 765, end: 819, source: '《旧唐书·李正己传》：765年李正己据淄青平卢镇割据，819年李师道平' },
     zirids: { start: 972, end: 1148, source: '伊本·艾西尔《全史》：北非伊夫里基亚柏柏尔齐里政权（含派驻西西里军队）' },
+    maoyi: { start: 1400, end: 1795, source: 'Kamakau《Ruling Chiefs of Hawaii》；Wikipedia「Kingdom of Maui / Kalanikūpule」：约14世纪末皮伊拉尼王系奠定茂宜阿里伊努伊王国（卡赫基利二世兼并瓦胡岛），1795年努阿努悬崖之战卡拉尼库普莱败亡于夏威夷王国卡美哈梅哈一世。', note: '2026-11-14 编年史第16段补登；起年按皮伊拉尼王系成形估算取1400。' },
 };

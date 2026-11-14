@@ -1542,7 +1542,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gen_topa_inca: { birth: 1440, death: 1493, kaoju: '推定' },  // 图帕克
     gen_jasawchan: { birth: 682, death: 734, kaoju: '推定' },  // 亚斯纳昌
     gen_pakal: { birth: 603, death: 683 },  // 帕卡尔大帝（帕伦克，615–683 在位）
-    gen_lautaro: { birth: 1534, death: 1557 },  // 劳塔罗
+    gen_lautaro: { birth: 1534, death: 1557, debut: 1553 },  // 劳塔罗（1553年底图卡佩尔之战年十九统军破杀瓦尔迪维亚）
     gen_saguamanchica: { birth: 1450, death: 1490, kaoju: '推定' },  // 萨瓜曼奇卡
     gen_arariboia: { birth: 1520, death: 1589, kaoju: '推定' },  // 阿拉里博亚
     gen_sundjata: { birth: 1190, death: 1255, kaoju: '异说' },  // 松迪亚塔
@@ -2938,6 +2938,13 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     ziqing_gen_518: { birth: 774, death: 819, kaoju: '推定' },
     zirids_gen_585: { birth: 1033, death: 1078, kaoju: '推定' },
     zubu_shouling: { birth: 889, death: 934, kaoju: '推定' },
+    yicha_gen_737: { birth: 1200, death: 1250, kaoju: '推定' },
+    yuan_d_gen_738: { birth: 1233, death: 1318 },
+    malacca_gen_739: { birth: 1470, death: 1528, kaoju: '推定' },
+    aztec_gen_740: { birth: 1485, death: 1520, kaoju: '推定' },
+    xibanya_gen_741: { birth: 1510, death: 1552, kaoju: '推定' },
+    tamoyue_gen_742: { birth: 1520, death: 1567, kaoju: '推定' },
+    maoyi_gen_743: { birth: 1760, death: 1795, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */

@@ -895,6 +895,7 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "nan_xiongnu": 'MONGOL',
     "yudan_xiongnu": 'MONGOL',
     "shifa_rouran": 'MONGOL',
+    "maoyi": 'MALAY',
 };
 
 /** 势力在某年的文化；年份未知取第一段 */

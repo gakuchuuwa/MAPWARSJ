@@ -946,6 +946,7 @@ desheng: '#2E6B7A', // 德胜·刘通
     nan_xiongnu: '#8F46DB',
     yudan_xiongnu: '#DB79AE',
     shifa_rouran: '#B21B9D',
+    maoyi: '#2E8B7A',
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

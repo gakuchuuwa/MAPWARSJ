@@ -191,7 +191,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ante': [{ from: -9999, era: 'antiquity' }], // 安特（300–602，4 世纪博兹王抗击东哥特，古典段 176 年 > 封建段 126 年）＝古典时代安特军团
     'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }] → feudal｜存续 409–585 大部分年份]
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
-    'yicha': [{ from: -9999, era: 'imperial' }], // 伊察（1441–1697 佩滕伊察湖诺赫佩滕独立王国，卡内克抗西至 1697，帝国段 197 年 > 城堡段 59 年）＝帝国时代玛雅军团
+    'yicha': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 伊察｜存续 987–1697（710年≥500年按年代分段；987–1050仅63年并入城堡段）：城堡（1242奇琴伊察）→1500起帝国（卡内克抗西至1697）
     'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
     'yili': [{ from: -9999, era: 'antiquity' }], // 伊利里亚（巴托起义，前 6 年）
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
@@ -1008,6 +1008,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'nan_xiongnu': [{ from: -9999, era: 'antiquity' }],
     'yudan_xiongnu': [{ from: -9999, era: 'antiquity' }],
     'shifa_rouran': [{ from: -9999, era: 'feudal' }],
+    'maoyi': [{ from: -9999, era: 'imperial' }],
 };
 
 

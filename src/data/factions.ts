@@ -2070,6 +2070,7 @@ export const FACTIONS: Faction[] = [
   { id: 'nan_xiongnu', name: '南匈奴' },
   { id: 'yudan_xiongnu', name: '单于太子部' },
   { id: 'shifa_rouran', name: '漠北示发部' },
+  { id: 'maoyi', name: '茂宜王国' },
 ];
 
 // @ts-ignore

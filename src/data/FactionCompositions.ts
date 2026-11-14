@@ -3254,6 +3254,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "nan_xiongnu": { legionName: "古典时代匈奴军团", legionType: "region" },
     "yudan_xiongnu": { legionName: "古典时代匈奴军团", legionType: "region" },
     "shifa_rouran": { legionName: "封建时代突厥军团", legionType: "region" },
+    "maoyi": { legionName: "帝国时代马六甲军团", legionType: "region" },
 };
 
 // [2026-10-26 主人令新增湖广] 势力编制指针按主将的势力时代 × 五省新据点文化对齐；未迁主将的势力不动。

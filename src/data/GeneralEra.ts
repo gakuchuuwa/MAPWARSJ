@@ -2859,6 +2859,13 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ziqing_gen_518': 'feudal',
     'zirids_gen_585': 'castle',
     'zubu_shouling': 'feudal',
+    'yicha_gen_737': 'castle',
+    'yuan_d_gen_738': 'castle',
+    'malacca_gen_739': 'castle',
+    'aztec_gen_740': 'castle',
+    'xibanya_gen_741': 'imperial',
+    'tamoyue_gen_742': 'imperial',
+    'maoyi_gen_743': 'imperial',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
