@@ -456,6 +456,7 @@ export class PlayerQuestSystem {
                     this.chronicleLast = null;
                     this.chronicleMeetCityId = null;
                     this.awaitingPlayerLegionId = null;
+                    marchTimeRecorder.reset();
                 } else if (plan === 'centenarian' && !isChronicleActive()) {
                     startChronicle();
                     const ev = currentChronicleEvent();
@@ -491,6 +492,7 @@ export class PlayerQuestSystem {
         this.chronicleNarrativeSeq++;
         this.chronicleNarrating = false;
         this.awaitingPlayerLegionId = null;
+        marchTimeRecorder.reset();
         const q = this.quest;
         if (q?.kind === 'general_event' || (q?.kind === 'first_battle' && !this.deps.hero.isAttached())) {
             this.cleanupFirstBattleState(q);
@@ -2498,13 +2500,22 @@ export class PlayerQuestSystem {
         if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, true);
 
         if (!opts?.detached) this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
+        else this.awaitingPlayerLegionId = host.id;
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
         // 🔴 [2026-11-12 主人定] 每场经典战分两段播报：第 1 段战略播报在寻将/赶路/城下对峙期间念完，再进战术模式念第 2 段战术播报。
         //    先于 marchHostToFirstBattle 启动第 1 段，保证就地开打（isOnTheSpot）或短途抵达时 onHostReachFirstBattle 能感知并驻足听完。
         this.beginClassicStrategicBriefing(g.generalId, fb);
         if (isChronicleBattleId(battleIdOf(fb))) {
-            marchTimeRecorder.begin(battleIdOf(fb), fb.battleName, host.name, chained ? '上一战场' : city.name, host.getPosition(), chained);
+            marchTimeRecorder.begin(
+                battleIdOf(fb),
+                fb.battleName,
+                host.name,
+                chained ? '上一战场' : city.name,
+                host.getPosition(),
+                chained,
+                opts?.detached ? this.deps.hero.getPosition() : undefined,
+            );
         }
         this.marchHostToFirstBattle(host, targetPos);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
@@ -2598,9 +2609,13 @@ export class PlayerQuestSystem {
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || host.isDestroyed) return;
         const fbState = q.firstBattle;
-        if (fbState.battleId) marchTimeRecorder.arrive(fbState.battleId, host.getPosition());
         if (fbState.engaged) return;
-        if (this.awaitingPlayerLegionId === host.id) return;   // 玩家还没追到军中：到了战场原地等会合
+        if (this.awaitingPlayerLegionId === host.id) {
+            // 玩家还没追到军中：到了战场原地等会合（军团行军段先封存，总移动秒数继续等玩家到场）
+            if (fbState.battleId) marchTimeRecorder.onLegionWaitAtBattlefield(fbState.battleId, host.getPosition());
+            return;
+        }
+        if (fbState.battleId) marchTimeRecorder.arrive(fbState.battleId, host.getPosition());
 
         if (fbState.battleType === 'field' && fbState.enemySpawnPending) {
             this.spawnFirstBattleFieldEnemy(q, host);
@@ -2982,7 +2997,7 @@ export class PlayerQuestSystem {
 
         if (isChronicleBattleId(fbState.battleId)) {
             this.claimRouteCities(q, host);
-            marchTimeRecorder.sample(fbState.battleId!, host.getPosition());
+            marchTimeRecorder.sample(fbState.battleId!, host.getPosition(), this.deps.hero.getPosition());
         }
 
         const targetPos = { lat: fbState.targetLat, lng: fbState.targetLng };
@@ -4175,6 +4190,7 @@ export class PlayerQuestSystem {
                     }
                 }
             }
+            if (isChronicleActive()) marchTimeRecorder.sampleSeek(this.deps.hero.getPosition());
             // 🔴 [2026-10-23 探马主线] 玩家独自赶主线的路：同一套挂点旁白，跟着玩家本人走
             if (this.soloJourney) this.updateSegmentBriefing();
             return;
@@ -4253,6 +4269,10 @@ export class PlayerQuestSystem {
             if (this.chronicleMeetCityId === city.id) return;
             this.chaseCityId = null;
             if (this.launchChronicleLegion(city, queued.general)) return;
+            const pendFb = this.hasPendingFirstBattle(queued.general.generalId);
+            if (pendFb && isChronicleBattleId(battleIdOf(pendFb))) {
+                marchTimeRecorder.beginSeek(battleIdOf(pendFb), pendFb.battleName, city.name, this.deps.hero.getPosition());
+            }
             this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
             return;
         }
@@ -4514,9 +4534,11 @@ export class PlayerQuestSystem {
         // 编年史先行开拔的军团：追上即入伍，随军走完剩下的路
         const aq = this.quest;
         if (aq && army.id === this.awaitingPlayerLegionId && !hero.isAttached()) {
+            const joinPlayerPos = hero.getPosition();
             this.awaitingPlayerLegionId = null;
             this.chaseCityId = null;
             this.recordJoinAndAttach(aq.factionId, army, aq.generalId, this.deps.cityManager.getCity(aq.cityId) ?? null);
+            marchTimeRecorder.onPlayerJoin(aq.firstBattle?.battleId, army.getPosition(), joinPlayerPos);
             this.deps.notify(`🐎 于军中会合${aq.generalName}，随军奔赴【${aq.targetCityName}】`);
             gameLog('expedition', `[编年史] 玩家追上 ${army.name}，入伍随军`);
             this.emitChange();
@@ -5531,6 +5553,7 @@ export class PlayerQuestSystem {
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
         this.classicBriefing.reset();        // 经典战战略播报同理
+        marchTimeRecorder.reset();
         cancelChronicleOpening();
         this.chronicleNarrativeSeq++;
         this.chronicleNarrating = false;

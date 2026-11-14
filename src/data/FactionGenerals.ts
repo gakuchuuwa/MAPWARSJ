@@ -1476,9 +1476,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_gouras', factionId: 'xilawangguo', cityId: 'city_yadian', generalName: '古拉斯', portrait: '/assets/ATHENIANS/bfe_gouras.png', eliteName: '阿提卡义军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 乔治斯·卡拉伊斯卡基斯（1782–1827，希腊独立战争陆军元帅；1826–27 以埃莱夫西纳、比雷埃夫斯为大本营，战死于法利罗）｜势力 希腊王国｜据点 雅典（ATHENIANS 文化，阿提卡）｜普将｜精锐「希腊轻骑」T4｜立绘留空
         { generalId: 'bfe_karaiskakis', factionId: 'xilawangguo', cityId: 'city_yadian', generalName: '卡拉伊斯卡基斯', portrait: '/assets/ATHENIANS/bfe_karaiskakis.png', eliteName: '希腊轻骑', eliteTier: 4 },
-        // 🔴 [2026-10-25 补A] 科洛科特罗尼斯（1770–1843，希腊独立战争名将；1821 瓦尔特齐、1822 收复科林斯）｜势力 希腊王国｜据点 底比斯（GREECE 文化，爱琴海区域同文化最近据点）｜名将｜精锐「希腊盗贼团伙」T1｜立绘留空｜经典战待补
+        // 🔴 [2026-10-25 补A] 科洛科特罗尼斯（1770–1843，希腊独立战争名将；1821 瓦尔特齐、1822 收复科林斯）｜势力 希腊王国｜据点 底比斯｜名将｜精锐「克莱夫特」T2
         { generalId: 'xilawangguo_kolokotronis', factionId: 'xilawangguo', cityId: 'city_thebes', generalName: '科洛科特罗尼斯', portrait: '/assets/GREECE/xilawangguo_kolokotronis.png', eliteName: '克莱夫特', eliteTier: 2 },
-        { generalId: 'xilawangguo_petros', factionId: 'xilawangguo', cityId: 'city_sparta', generalName: '马夫罗米哈利斯', portrait: '/assets/SPARTANS/xilawangguo_petros.png', eliteName: '马尼奥特刀手', eliteTier: 3 }   // [2026-10-31 键名订正：xilawangguo_mani → xilawangguo]
+    ],
+    mani_beylik: [
+        // 🔴 [2026-11-15 按史归正] 彼得罗斯·马夫罗米哈利斯（1765–1848，1815 年起任拉科尼亚曼尼贝伊国首领，1821 年 3 月率马尼奥特人起兵克卡拉马塔）｜势力 曼尼贝伊国｜据点 斯巴达（SPARTANS 文化）
+        { generalId: 'xilawangguo_petros', factionId: 'mani_beylik', cityId: 'city_sparta', generalName: '马夫罗米哈利斯', portrait: '/assets/SPARTANS/xilawangguo_petros.png', eliteName: '马尼奥特刀手', eliteTier: 3 },
+    ],
+    filiki_eteria: [
+        // 🔴 [2026-11-15 按史归正] 亚历山大·伊普西兰蒂斯（1792–1828，泛希腊友爱社总督导；1821 年 2 月于摩尔达维亚雅西率神圣军团誓师反土，同年兵败被囚至逝，未入希腊王国）｜势力 友爱社｜据点 雅西
+        { generalId: 'bfe_ypsilantis', factionId: 'filiki_eteria', cityId: 'city_yaxi', generalName: '伊普西兰蒂斯', portrait: '/assets/BYZANTINE/bfe_ypsilantis.png', eliteName: '神圣军团', eliteTier: 4 },
     ],
     ante: [
         // 🔴 [2026-10-25 补B] 博兹（约 350–376，安特首领，376 战哥特王维尼塔里乌斯，有实名）｜势力 安特｜据点 基辅（SLAVIC 文化，第聂伯）｜普将｜精锐「安特战斧」T4｜立绘留空
@@ -2777,8 +2784,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'qiong_rengui', factionId: 'qiong', cityId: 'city_jianchang', generalName: '任贵', portrait: '/assets/BASHU/qiong_rengui.png', eliteName: '邛谷弩士', eliteTier: 3 },
 
         { generalId: 'zhuoshi_gaopian', factionId: 'tang', cityId: 'city_tianshui', generalName: '高骈', portrait: '/assets/BASHU/zhuoshi_gaopian.png', eliteName: '静海军破蛮师', eliteTier: 2  },   // 按史：高骈镇西川，发步骑五千追南诏至大渡河（《资治通鉴·卷二五二》）
-
-        { generalId: 'liu_yingbu', factionId: 'han_d', cityId: 'city_liuxian', generalName: '英布', portrait: '/assets/JIANGNAN/liu_yingbu.png', eliteName: '九江当阳死士', eliteTier: 2 },
 
         { generalId: 'li_s_mayuan', factionId: 'han_d', cityId: 'city_hepu', generalName: '马援', portrait: '/assets/JIANGNAN/li_s_mayuan.png', eliteName: '伏波锐军', eliteTier: 1 },
 
@@ -5089,8 +5094,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-09 主人令「先确立这些军团该存在吗，然后给存在的军团补武将，没有的话就新建武将」]
         //    艾哈迈德·贾扎尔帕夏（约 1720–1804，奥斯曼西顿—阿卡总督；1772 年受命守贝鲁特，1799 阿卡守城击退拿破仑）｜势力 奥斯曼｜据点 贝鲁特（ORIE）｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
         { generalId: 'bfe_jezzar', factionId: 'osman', cityId: 'city_beirut', generalName: '贾扎尔', portrait: '/assets/ORIE/bfe_jezzar.png', eliteName: '奥斯曼精兵', eliteTier: 4 },
-        // 🔴 [2026-10-25 补B] 伊普西兰蒂斯（1792–1828，君士坦丁堡法纳尔希腊贵族、拜占庭政治遗产继承者；1821 率神圣军团打响反奥斯曼第一枪）｜势力 希腊王国｜据点 君士坦丁堡（BYZANTINE 文化，法纳尔区）｜普将｜精锐「神圣军团」T4｜立绘留空
-        { generalId: 'bfe_ypsilantis', factionId: 'xilawangguo', cityId: 'city_yaxi', generalName: '伊普西兰蒂斯', portrait: '/assets/BYZANTINE/bfe_ypsilantis.png', eliteName: '神圣军团', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 穆斯塔法二世（1664–1703，奥斯曼苏丹；1697 曾塔惨败）｜势力 奥斯曼｜据点 埃迪尔内（TURKS 文化）｜普将（实败）｜精锐「近卫军」T4｜立绘留空
         { generalId: 'bfe_mustafa_ii', factionId: 'osman', cityId: 'city_aidiernei', generalName: '穆斯塔法二世', portrait: '/assets/TURKS/bfe_mustafa_ii.png', eliteName: '御前近卫', eliteTier: 4 },
         { generalId: 'bfe_sinan_pasha', factionId: 'osman', cityId: 'city_aidiernei', generalName: '锡南帕夏', portrait: '/assets/TURKS/bfe_sinan_pasha.png', eliteName: '土耳其征服者', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；奥斯曼大维齐尔，1605 苏菲安败后身死；据点埃迪尔内（TURKS）；用势力精锐苏丹亲兵
@@ -6728,6 +6731,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     hou_tang: [
         { generalId: 'hou_tang_gen_545', factionId: 'hou_tang', cityId: 'city_zhending', generalName: '王晏球', portrait: '/assets/XIANBEI/hou_tang_gen_545.png', eliteName: '后唐中军精骑', eliteTier: 3 },
         { generalId: 'hou_tang_gen_548', factionId: 'hou_tang', cityId: 'city_luoyang', generalName: '张敬达', portrait: '/assets/XIANBEI/hou_tang_gen_548.png', eliteName: '后唐征战锐卒', eliteTier: 4 },
+    ],
+    huainan: [
+        { generalId: 'liu_yingbu', factionId: 'huainan', cityId: 'city_liuxian', generalName: '英布', portrait: '/assets/JIANGNAN/liu_yingbu.png', eliteName: '九江当阳死士', eliteTier: 2 },
     ],
     jacquerie: [
         { generalId: 'jacquerie_gen_652', factionId: 'jacquerie', cityId: 'city_beauvais', generalName: '纪尧姆·卡尔', portrait: '/assets/FRANKS/jacquerie_gen_652.png', eliteName: '扎克征战锐卒', eliteTier: 4 },

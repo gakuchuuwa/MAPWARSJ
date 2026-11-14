@@ -161,6 +161,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shahi': '沙希',
     'xisa': '西萨',
     'xilawangguo': '希腊',
+    'mani_beylik': '曼贝',   // 曼尼贝伊国（避让曼尼普尔「曼尼」与马尼拉「马尼」）
+    'filiki_eteria': '友爱', // 友爱社
     'ante': '安特',
     'suweihui': '苏维',
     'yibiluliya': '伊比',

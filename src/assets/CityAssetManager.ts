@@ -780,6 +780,8 @@ export class CityAssetManager {
         'shahi': '沙希',
         'xisa': '西萨',
         'xilawangguo': '希腊',
+        'mani_beylik': '曼贝',
+        'filiki_eteria': '友爱',
         'ante': '安特',
         'suweihui': '苏维',
         'yibiluliya': '伊比',

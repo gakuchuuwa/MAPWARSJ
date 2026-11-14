@@ -187,7 +187,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'songhai': [{ from: -9999, era: 'imperial' }], // 桑海帝国（1464 起）
     'shahi': [{ from: -9999, era: 'feudal' }], // 印度教沙希（850–1026）
     'xisa': [{ from: -9999, era: 'antiquity' }], // 西萨特拉普（1–2 世纪）
-    'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1832 起）
+    'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1821 起）
+    'mani_beylik': [{ from: -9999, era: 'imperial' }], // 曼尼贝伊国（1770–1821，马夫罗米哈利斯）
+    'filiki_eteria': [{ from: -9999, era: 'imperial' }], // 友爱社（1814–1821，伊普西兰蒂斯）
     'ante': [{ from: -9999, era: 'antiquity' }], // 安特（300–602，4 世纪博兹王抗击东哥特，古典段 176 年 > 封建段 126 年）＝古典时代安特军团
     'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }] → feudal｜存续 409–585 大部分年份]
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
@@ -338,7 +340,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'guanche': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1050, era: 'castle' }], // 关切人｜存续 -1000–1496：古典→476起封建→1050起城堡（2026-11-11 GG第五轮·长时代按年代分段）
     'guishuang': [{ from: -9999, era: 'antiquity' }], // 贵霜
     'guiyi': [{ from: -9999, era: 'feudal' }], // 归义
-    'gujarat': [{ from: -9999, era: 'castle' }], // 古吉拉特苏丹国 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'imperial' }] → castle｜存续 1394–1573 大部分年份]
+    'gujarat': [{ from: -9999, era: 'imperial' }], // 古吉拉特苏丹国（1394–1592；全库唯一武将穆扎法尔三世 1548–1593 活跃于 1572–1592 抗莫卧儿火器战争＝帝国时代古吉拉特军团）
     'gulaishi': [{ from: -9999, era: 'feudal' }], // 古莱什部落
     'gurkha': [{ from: -9999, era: 'imperial' }], // 廓喀
     'habusibao': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 哈布斯堡｜存续 1273–1804：城堡→1500起帝国（2026-11-11 GG第五轮·长时代按年代分段）

@@ -2264,7 +2264,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'shu_gen_274': 3,
     'shu_gen_286': 3,
     'shu_gen_291': 3,
-    'shu_gen_292': 3,
     'shule_gen_173': 1,
     'shuman_guo_shouling': 8,
     'shuoning_gen_148': 1,

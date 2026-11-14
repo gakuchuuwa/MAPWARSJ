@@ -2694,7 +2694,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     shu_gen_274: { birth: 192, death: 237, kaoju: '推定' },
     shu_gen_286: { birth: 208, death: 253, kaoju: '推定' },
     shu_gen_291: { birth: 219, death: 264, kaoju: '推定' },
-    shu_gen_292: { birth: 219, death: 264, kaoju: '推定' },
     shule_gen_173: { birth: 50, death: 95, kaoju: '推定' },
     shuman_guo_shouling: { birth: 675, death: 720, kaoju: '推定' },
     shuoning_gen_148: { birth: -12, death: 33, kaoju: '推定' },

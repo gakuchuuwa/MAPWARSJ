@@ -2616,7 +2616,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'shu_gen_274': 'antiquity',
     'shu_gen_286': 'antiquity',
     'shu_gen_291': 'antiquity',
-    'shu_gen_292': 'antiquity',
     'shule_gen_173': 'antiquity',
     'shuman_guo_shouling': 'feudal',
     'shuoning_gen_148': 'antiquity',

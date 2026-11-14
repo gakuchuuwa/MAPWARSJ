@@ -151,7 +151,9 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "songhai": 'AFRICA',   // 桑海
     "shahi": 'PURU',   // 沙希
     "xisa": 'GURJARAS',   // 西萨特拉普
-    "xilawangguo": 'GREECE',   // 希腊王国
+    "xilawangguo": 'ATHENIANS',   // 希腊王国（首都雅典）
+    "mani_beylik": 'SPARTANS',   // 曼尼贝伊国（拉科尼亚曼尼自治贝伊国）
+    "filiki_eteria": 'GREECE',   // 友爱社（泛希腊革命总机关）
     "ante": 'SLAVIC',   // 安特
     "suweihui": 'PORTUGUESE',   // 苏维汇（王国在加利西亚，409–585；对应封建时代苏维汇铁骑军团）
     "yibiluliya": 'GEORGIANS',   // 伊比利亚

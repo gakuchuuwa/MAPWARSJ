@@ -1597,6 +1597,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "xilawangguo": {
+        legionName: "帝国时代希腊轻骑军团",
+        legionType: "region",
+    },
+    "mani_beylik": {
+        legionName: "帝国时代曼尼军团",
+        legionType: "region",
+    },
+    "filiki_eteria": {
         legionName: "帝国时代希腊国民军团",
         legionType: "region",
     },

@@ -136,7 +136,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'songhai': 'city_timbuktu',
     'shahi': 'city_baishawa',
     'xisa': 'city_patan',
-    'xilawangguo': 'city_thebes',
+    'xilawangguo': 'city_yadian',   // 希腊王国定都雅典（1834 起）
+    'mani_beylik': 'city_sparta',   // 曼尼贝伊国（登记用，不改据点归属）
+    'filiki_eteria': 'city_yaxi',   // 友爱社 1821 雅西誓师（登记用，不改据点归属）
     'ante': 'city_jifu',
     'suweihui': 'city_boertu',
     'yibiluliya': 'city_dibilisi',

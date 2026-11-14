@@ -494,6 +494,8 @@ desheng: '#2E6B7A', // 德胜·刘通
     'shahi': '#5C3E7A', // 印度教沙希
     'xisa': '#6B2E4A', // 西萨特拉普
     'xilawangguo': '#2E4A6B', // 希腊王国
+    'mani_beylik': '#2B547E', // 曼尼贝伊国（拉科尼亚深海蓝）
+    'filiki_eteria': '#355C7D', // 友爱社（神圣军团灰蓝）
     'ante': '#4A5C2E', // 安特
     'suweihui': '#5C4A2E', // 苏维汇
     'yibiluliya': '#2E4A5C', // 伊比利亚
