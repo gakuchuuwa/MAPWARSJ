@@ -853,6 +853,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_gubeikou: 900, // 五代辽金时期已成古北口关塞
     city_wendeng: 568, // 北齐天统年间置文登县
     city_feiru: -300, // 战国燕置肥如县（卢龙）
+    city_macheng: -200, // 西汉置马城县（代郡东部都尉治，今怀安东洋河村西南）；置县年无确载，按汉初代郡置县取约前200
     city_jingzhou: -202, // 汉置蓨县（景县）
     city_liyang: -222, // 前222秦置巨鹿郡（平乡一带）
     city_qingchi: 581, // 隋置清池县（沧州）

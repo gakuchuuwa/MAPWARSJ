@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-14T02:43:44.862Z",
+ "generatedAt": "2026-11-14T03:20:22.821Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -17938,6 +17938,20 @@
    "reliefM": 372,
    "cliffs": 0,
    "top": "Dry Grass 92% · Forest, Autumn 5% · Bamboo 1.6% · Forest, Bush 1.1%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_macheng",
+   "file": "site_city_macheng.json",
+   "bytes": 321888,
+   "koppen": "BSk",
+   "theme": "PALAEARCTIC_ASIA_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 67,
+   "cliffs": 0,
+   "top": "Dry Grass 91.9% · Forest, Autumn 5% · Bamboo 2.2% · Forest, Bush 0.7%",
    "verify": "ok"
   }
  ],

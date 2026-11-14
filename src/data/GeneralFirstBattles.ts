@@ -2027,25 +2027,25 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #100 田豫 (171 ~ 252) — 公元233年马城破轲比能之战（本城就地开战）
+    // #100 田豫 (171 ~ 252) — 公元224年马城南北门夹击突围战（马城据点 2026-11-14 已建 city_macheng，40.70/114.35）
     guzhu_tianyu: {
         generalId: 'guzhu_tianyu',
-        battleName: '马城之战',
-        battleYear: 228,
-        battleType: 'siege',
+        battleName: '马城突围夹击战',
+        battleYear: 224,
+        battleType: 'field',
         role: 'defender',
         targetName: '马城',
-        targetCityId: 'city_feiru',
-        targetLat: 40.67,
-        targetLng: 114.42,
+        targetCityId: 'city_macheng',
+        targetLat: 40.70,
+        targetLng: 114.35,
         myTroops: 12500,
         enemyFactionId: 'xianbei',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '鲜卑',
         enemyGeneralId: 'bfe3_74',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '鲜卑轲比能聚众入塞寇乱边民，合围我军于马城！老夫已置车结为重阵突围，壮士随某出奇设伏，平定胡虏！' },
-            { speaker: 'player', text: '愿随田护乌桓校尉于肥如塞下就地迎敌，大破轲比能鲜卑铁骑！' },
+            { speaker: 'general', text: '轲比能追骑合围马城十重，塞外孤垒外无援兵！老夫令司马建旌旗、鸣鼓吹自南门出以诱敌，亲率精锐潜启北门夹击，壮士随某破围！' },
+            { speaker: 'player', text: '愿随田护乌桓校尉据马城故垒南北夹击，追讨鲜卑残虏二十里！' },
         ],
     },
 
