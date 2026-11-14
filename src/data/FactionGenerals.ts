@@ -6130,7 +6130,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'hao_d_weirui', factionId: 'nan_liang', cityId: 'city_bengbu', generalName: '韦睿', portrait: '/assets/JIANGNAN/hao_d_weirui.png', eliteName: '南梁禁卫', eliteTier: 1 },
+        { generalId: 'hao_d_weirui', factionId: 'nan_liang', cityId: 'city_bengbu', generalName: '韦睿', portrait: '/assets/JIANGNAN/hao_d_weirui.png', eliteName: '江淮水陆锐师', eliteTier: 2 },
 
 
 
@@ -6200,7 +6200,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'gen_kangxi', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '康熙', portrait: '/assets/NORTHEAST/gen_kangxi.png', eliteName: '八旗骁骑', eliteTier: 3 },
-        { generalId: 'ying_caojingzong', factionId: 'nan_liang', cityId: 'city_bengbu', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png', eliteName: '南梁禁卫', eliteTier: 1 },
+        { generalId: 'ying_caojingzong', factionId: 'nan_liang', cityId: 'city_bengbu', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png', eliteName: '江淮水陆锐师', eliteTier: 2 },
         { generalId: 'yuan_d_tuotuo', factionId: 'yuan_d', cityId: 'city_merkit', generalName: '脱脱', portrait: '/assets/MONGOL/yuan_d_tuotuo.png', eliteName: '上都虎贲骑手', eliteTier: 4 },
         { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png', eliteName: '会宁乌林答骑', eliteTier: 4  },   // 🔴 [2026-10-25 按史] 通远军节度使（巩州，今陇西）、陕西兵马都统副使，野狐岭主帅（《金史·宗室传·承裕》）；巩州无据点 → 取最近同文化据点天水（秦州，同属陇右）；精锐与其本部通远军对应
         { generalId: 'dajin_wanyanheda', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜合达', portrait: '/assets/NORTHEAST/dajin_wanyanheda.png', eliteName: '金廷亲卫铁骑', eliteTier: 2  },   // 按史：完颜合达在卫州以亲卫军三千破蒙古（《金史·完颜合达传》）
@@ -10980,7 +10980,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     dongxu: [
-        { generalId: 'hantawadi_mangyinglong', factionId: 'dongxu', cityId: 'city_bago', generalName: '莽应龙', portrait: '/assets/BURMESE/hantawadi_mangyinglong.png', eliteName: '白象王禁卫', eliteTier: 1 },
+        { generalId: 'hantawadi_mangyinglong', factionId: 'dongxu', cityId: 'city_bago', generalName: '莽应龙', portrait: '/assets/BURMESE/hantawadi_mangyinglong.png', eliteName: '东吁披甲象军', eliteTier: 1 },
         { generalId: 'dongxu_mangruiti', cityId: 'city_dongxu_old', generalName: '莽瑞体', portrait: '/assets/BURMESE/dongxu_mangruiti.png', eliteName: '东吁御象卫', eliteTier: 2 },
         // 🔴 [2026-10-20 经典战规则] 莽应里＝东吁王（1593 廓沙拉败于纳黎萱）→ 凯图玛蒂（BURMESE）；帝国时代缅甸军团；立绘留空
         { generalId: 'gen_nanda_bayin', cityId: 'city_bago', generalName: '莽应里', portrait: '/assets/BURMESE/gen_nanda_bayin.png', eliteName: '东吁御象卫', eliteTier: 2 },
@@ -15989,7 +15989,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     jieri: [
         // 🔴 [2026-11-09 主人令「对不上的可以新建势力」「势力对照年代，要用年份长的，知名度高的」] 从原势力挪入（武将本人年代落在原势力存续期之外）
         { generalId: 'kongque_aluonashun', factionId: 'jieri', cityId: 'city_qunvcheng', generalName: '阿罗那顺', portrait: '/assets/MUGHAL/kongque_aluonashun.png', eliteName: '中天竺象兵', eliteTier: 3 },   // 🔴 648 年中天竺的象兵（原配「孔雀战象」是前 3 世纪孔雀王朝的）
-        { generalId: 'jieri_jieriwang', cityId: 'city_qunvcheng', generalName: '哈尔沙', portrait: '/assets/MUGHAL/jieri_jieriwang.png', eliteName: '戒日御象卫', eliteTier: 1 },
+        { generalId: 'jieri_jieriwang', cityId: 'city_qunvcheng', generalName: '哈尔沙', portrait: '/assets/MUGHAL/jieri_jieriwang.png', eliteName: '曲女城铁象军', eliteTier: 2 },
     ],
 
 
@@ -16007,7 +16007,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'kongque_zhantuoluo', cityId: 'city_huashicheng', generalName: '旃陀罗笈多', portrait: '/assets/MUGHAL/kongque_zhantuoluo.png', eliteName: '孔雀御象卫', eliteTier: 1 },
+        { generalId: 'kongque_zhantuoluo', cityId: 'city_huashicheng', generalName: '旃陀罗笈多', portrait: '/assets/MUGHAL/kongque_zhantuoluo.png', eliteName: '摩揭陀铁象军', eliteTier: 1 },
 
 
 
@@ -16156,7 +16156,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhuluo_lajialajia', cityId: 'city_tanjiawuer', generalName: '拉贾拉贾一世', portrait: '/assets/INDIA/zhuluo_lajialajiayishi.png', eliteName: '朱罗巨象卫', eliteTier: 1 },
+        { generalId: 'zhuluo_lajialajia', cityId: 'city_tanjiawuer', generalName: '拉贾拉贾一世', portrait: '/assets/INDIA/zhuluo_lajialajiayishi.png', eliteName: '朱罗三手象军', eliteTier: 1 },
 
 
 
@@ -16172,7 +16172,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhuluo_lajindela', cityId: 'city_tanjiawuer', generalName: '拉金德拉一世', portrait: '/assets/INDIA/zhuluo_lajindela.png', eliteName: '朱罗巨象卫', eliteTier: 1 },
+        { generalId: 'zhuluo_lajindela', cityId: 'city_tanjiawuer', generalName: '拉金德拉一世', portrait: '/assets/INDIA/zhuluo_lajindela.png', eliteName: '朱罗三手象军', eliteTier: 1 },
 
 
 
