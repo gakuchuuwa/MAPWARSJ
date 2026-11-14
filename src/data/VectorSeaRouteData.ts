@@ -15457,5 +15457,389 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "舟山-临海",
+                type: "sea",
+                id: "sea_city_zhoushan_city_taizhou_zj_1794628436431",
+                startConnection: "city_zhoushan",
+                endConnection: "city_taizhou_zj"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [122.11, 30.02],
+                    [122.87521, 30.18194],
+                    [122.65252, 29.62363],
+                    [122.5573, 29.38397],
+                    [122.23938, 28.5797],
+                    [121.42, 28.66],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "舟山-钓鱼岛",
+                type: "sea",
+                id: "sea_city_zhoushan_city_diaoyudao_1794628451046",
+                startConnection: "city_zhoushan",
+                endConnection: "city_diaoyudao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [122.11, 30.02],
+                    [122.87521, 30.18194],
+                    [123.52395, 28.59375],
+                    [123.9221, 27.60807],
+                    [124.60555, 25.9109],
+                    [123.83333, 25.41667],
+                    [123.5, 25.75],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "布林迪西-科孚",
+                type: "sea",
+                id: "sea_city_brundisium_city_kefu_1794628487136",
+                startConnection: "city_brundisium",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [17.94, 40.63],
+                    [18.84319, 40.45927],
+                    [18.9, 40.1],
+                    [19.21967, 39.7878],
+                    [19.78558, 39.23512],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "布林迪西-拉古萨",
+                type: "sea",
+                id: "sea_city_brundisium_city_ragusa_1794628499344",
+                startConnection: "city_brundisium",
+                endConnection: "city_ragusa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [17.94, 40.63],
+                    [18.75, 41],
+                    [18.91667, 41.5],
+                    [18.66667, 41.58333],
+                    [18.16667, 42.08333],
+                    [18.09, 42.65],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "布林迪西-安提瓦里",
+                type: "sea",
+                id: "sea_city_brundisium_city_antiwali_1794628504784",
+                startConnection: "city_brundisium",
+                endConnection: "city_antiwali"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [17.94, 40.63],
+                    [18.75, 41],
+                    [18.91667, 41.5],
+                    [19.1, 42.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "布林迪西-威尼斯",
+                type: "sea",
+                id: "sea_city_brundisium_city_venice_1794628519698",
+                startConnection: "city_brundisium",
+                endConnection: "city_venice"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [17.94, 40.63],
+                    [17.55304, 41.19441],
+                    [17.33802, 41.38099],
+                    [17.3, 41.4],
+                    [17.11627, 41.52414],
+                    [16.76672, 41.76032],
+                    [16.43598, 41.9838],
+                    [15.30127, 42.75049],
+                    [15.41667, 42.66667],
+                    [15.25, 42.83333],
+                    [15.25, 43.16667],
+                    [15, 43.41667],
+                    [14.33333, 43.75],
+                    [13.66667, 44.41667],
+                    [13.5, 44.41667],
+                    [13, 45.08333],
+                    [12.31, 45.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "塔拉科-帕尔马",
+                type: "sea",
+                id: "sea_city_tarraco_city_palma_1794629037797",
+                startConnection: "city_tarraco",
+                endConnection: "city_palma"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [1.25, 41.12],
+                    [1.6842, 40.75613],
+                    [2.34517, 40.43887],
+                    [2.4306, 40.39785],
+                    [2.65, 39.57],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "塔拉科-阿尔及尔",
+                type: "sea",
+                id: "sea_city_tarraco_city_aerjier_1794629052702",
+                startConnection: "city_tarraco",
+                endConnection: "city_aerjier"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [1.25, 41.12],
+                    [1.6842, 40.75613],
+                    [2.34517, 40.43887],
+                    [2.4306, 40.39785],
+                    [2.42367, 40.30768],
+                    [2.4, 40],
+                    [2.26811, 39.42542],
+                    [2.21871, 39.21764],
+                    [2.26288, 39.12264],
+                    [2.42692, 38.74589],
+                    [2.97567, 37.48556],
+                    [3.05, 36.75],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "平海卫-横屿",
+                type: "sea",
+                id: "sea_city_pinghaiwei_city_hengyu_1794629183660",
+                startConnection: "city_pinghaiwei",
+                endConnection: "city_hengyu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.34, 25.23],
+                    [119.40491, 25.32789],
+                    [119.8205, 25.23697],
+                    [120, 25.7],
+                    [120.23257, 26.07852],
+                    [119.99542, 26.43492],
+                    [119.82788, 26.50376],
+                    [119.83337, 26.60572],
+                    [119.70154, 26.78853],
+                    [119.7, 26.77],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "平海卫-艋舺",
+                type: "sea",
+                id: "sea_city_pinghaiwei_city_mengjia_1794629187915",
+                startConnection: "city_pinghaiwei",
+                endConnection: "city_mengjia"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.34, 25.23],
+                    [119.40491, 25.32789],
+                    [119.8205, 25.23697],
+                    [120.66667, 25.58333],
+                    [121, 25.75],
+                    [121.5, 25.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "平海卫-澎湖",
+                type: "sea",
+                id: "sea_city_pinghaiwei_city_penghu_1794629194625",
+                startConnection: "city_pinghaiwei",
+                endConnection: "city_penghu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.34, 25.23],
+                    [119.52371, 24.70771],
+                    [120, 23.91254],
+                    [119.5, 23.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "平海卫-龙溪",
+                type: "sea",
+                id: "sea_city_pinghaiwei_city_zhangzhou_1794629200115",
+                startConnection: "city_pinghaiwei",
+                endConnection: "city_zhangzhou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.34, 25.23],
+                    [119.09513, 24.64596],
+                    [118.5466, 24.4709],
+                    [118.50193, 24.36979],
+                    [118.13736, 24.39213],
+                    [117.65, 24.51],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "利利拜乌姆-迦太基",
+                type: "sea",
+                id: "sea_city_lilybaeum_city_jiataji_1794629245763",
+                startConnection: "city_lilybaeum",
+                endConnection: "city_jiataji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.43, 37.8],
+                    [11.83333, 37.41667],
+                    [11.5, 37.41667],
+                    [11.40294, 37.63931],
+                    [11.15172, 37.43849],
+                    [11, 37.5],
+                    [10.37303, 37.48209],
+                    [10.32, 36.85],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "利利拜乌姆-卡利亚里",
+                type: "sea",
+                id: "sea_city_lilybaeum_city_cagliari_1794629252688",
+                startConnection: "city_lilybaeum",
+                endConnection: "city_cagliari"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.43, 37.8],
+                    [11.76629, 37.92976],
+                    [11.66118, 38.16437],
+                    [11.46364, 38.60529],
+                    [11.02503, 38.67656],
+                    [10.23353, 38.80518],
+                    [9.65, 38.9],
+                    [9.12, 39.22],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迪拉基乌姆-科孚",
+                type: "sea",
+                id: "sea_city_dyrrachium_city_kefu_1794629455871",
+                startConnection: "city_dyrrachium",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.46, 41.32],
+                    [19.3944, 41.2626],
+                    [19.10458, 40.58109],
+                    [19.07603, 40.51394],
+                    [19.05881, 40.47344],
+                    [19.01129, 40.3617],
+                    [18.9, 40.1],
+                    [19.21967, 39.7878],
+                    [19.78558, 39.23512],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迪拉基乌姆-布林迪西",
+                type: "sea",
+                id: "sea_city_dyrrachium_city_brundisium_1794629460774",
+                startConnection: "city_dyrrachium",
+                endConnection: "city_brundisium"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.46, 41.32],
+                    [18.75, 41],
+                    [17.94, 40.63],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迪拉基乌姆-塔兰托",
+                type: "sea",
+                id: "sea_city_dyrrachium_city_talanduo_1794629465857",
+                startConnection: "city_dyrrachium",
+                endConnection: "city_talanduo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.46, 41.32],
+                    [19.3944, 41.2626],
+                    [19.10458, 40.58109],
+                    [19.07603, 40.51394],
+                    [19.05881, 40.47344],
+                    [19.01129, 40.3617],
+                    [18.9, 40.1],
+                    [18.52063, 39.76278],
+                    [18.1859, 39.7508],
+                    [17.1, 40.4],
+                    [17.24, 40.47],
+                ]
+            }
+        },
     ]
 };
