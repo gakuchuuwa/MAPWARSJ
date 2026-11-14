@@ -96,7 +96,9 @@ const DYNASTY = argFlag('dynasty');
  * 拿它调出来的参数落不到游戏里。现在推演跑的就是游戏代码，唯一开关是下面的 --nohunt（做 A/B 用）。
  */
 const NOHUNT = argFlag('nohunt');
-if (NOHUNT) GameConfig.AI.LEADER_HUNT.ENABLED = false;
+if (NOHUNT && (GameConfig.AI as Record<string, any>).LEADER_HUNT) {
+    (GameConfig.AI as Record<string, any>).LEADER_HUNT.ENABLED = false;
+}
 
 const MODE = [
     TIERS5 ? 'tiers5' : null,
@@ -380,9 +382,10 @@ function runGame(seed: number): GameResult {
         const selected: SimCity[] = [];
         const selectedIds = new Set<string>();
         // 文化区保底
+        const baselineLegions = (GameConfig.LEGION as Record<string, any>).REGION_BASELINE_LEGIONS ?? 0;
         for (const region of REGION_ORDER) {
             if (remaining <= 0) break;
-            if ((regionCounts.get(region) ?? 0) >= GameConfig.LEGION.REGION_BASELINE_LEGIONS) continue;
+            if ((regionCounts.get(region) ?? 0) >= baselineLegions) continue;
             const cand = candidates.find((c) => c.region === region && !selectedIds.has(c.id));
             if (!cand) continue;
             selected.push(cand); selectedIds.add(cand.id);

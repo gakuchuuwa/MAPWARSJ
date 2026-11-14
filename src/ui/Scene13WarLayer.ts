@@ -19198,12 +19198,12 @@ export class Scene13WarLayer {
 
             }
 
-            // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）
+            // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）；野战无城池超时按残兵多少判胜负
 
             // 🔴 双方同时无兵（且中心建筑未倒）= 平局；中心建筑已倒塌 = 攻方胜（不被「攻方打光」改判）
-            const isDraw = !centerDown && ((alive[0] <= 0 && alive[1] <= 0) || (timeUp && !noTroopDecision));
+            const isDraw = !centerDown && ((alive[0] <= 0 && alive[1] <= 0 && centerRule) || (timeUp && !noTroopDecision && centerRule));
 
-            const attackerLost = !centerDown && (alive[0] <= 0 || (alive[1] > 0 && centerRule));
+            const attackerLost = !centerDown && (alive[0] <= 0 || (alive[1] > 0 && centerRule) || (timeUp && !centerRule && alive[0] <= alive[1]));
 
             const resultWinner: 'attacker' | 'defender' | 'draw' = isDraw
 

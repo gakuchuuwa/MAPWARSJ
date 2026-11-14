@@ -15,13 +15,19 @@ export interface OpeningShot {
     text: string;
 }
 
-/** 单镜平移距离上限（经纬度欧氏度），避免超出 ZOOM 9 本地瓦片缓存（keepBuffer: 4） */
+/** 单镜平移距离上限（经纬度欧氏度），避免超出 ZOOM 9 视口预热走廊 */
 const MAX_PAN_DEG = 2.2;
+/** 切镜落位后给瓦片合成/植被重绘/据点挂载留出的最小稳定窗（毫秒） */
+const SETTLE_AFTER_CUT_MS = 260;
+/** 当前视口就绪等待上限（毫秒，网络异常兜底防死锁） */
+const MAX_READY_MS = 12000;
+/** 上一镜念完后若下一镜后台预热尚未落定，停留在上一镜清晰终点等待的上限（毫秒） */
+const MAX_PREWARM_WAIT_MS = 8000;
 
 /**
  * 🔴 [2026-11-14] 编年史公元前 550 年开场天下巡礼四镜（全自动直播开篇）
- * 全程保持战略底图 ZOOM 9：跨区瞬切 + 区内平滑像素平移 + 云健旁白与现有字幕条，
- * 第 4 镜终点精确落定于玩家单骑出生点，随后无缝交棒给 PlayerQuestSystem 触发居鲁士出征与首战播报。
+ * 全程保持战略底图 ZOOM 9：上一镜播放期间后台预渲染下一镜山体/水面/植被/据点缓存，
+ * 切镜后整幅地图全部显现才开口念白并平滑微移，第 4 镜落定玩家单骑后交棒居鲁士起兵。
  */
 export const OPENING_SHOTS: readonly OpeningShot[] = [
     {
@@ -65,19 +71,18 @@ let currentTo: OpeningLatLng = { lat: 38.48, lng: 28.03 };
 let panElapsedMs = 0;
 let panDurationMs = 9500;
 let shotCutPending = false;
-let lastHeroPos: OpeningLatLng | null = null;
-let lastCityCoord: ((id: string) => OpeningLatLng | undefined) | null = null;
-/** 切镜后待开口的旁白：等新区域地图瓦片到齐才念，避免念完了地图还没出来 */
 let pendingSpeak: (() => void) | null = null;
 let readyWaitMs = 0;
-/** 切镜后至少等这么久（给瓦片请求留出发起时间）与最多等这么久（网络故障兜底） */
-const MIN_READY_MS = 1500;
-const MAX_READY_MS = 12000;
+let waitingNextIdx: number | null = null;
+let prewarmWaitMs = 0;
+let pendingNextSpeakFn: ((text: string, onDone: () => void) => void) | null = null;
+let lastHeroPos: OpeningLatLng | null = null;
+let lastCityCoord: ((id: string) => OpeningLatLng | undefined) | null = null;
+let lastPrewarmCorridor: ((from: OpeningLatLng, to: OpeningLatLng) => void) | null = null;
+let lastPrewarmReady: (() => boolean) | null = null;
 
-function beginShot(idx: number, speakFn: (text: string, onDone: () => void) => void): void {
+function resolveShotEndpoints(idx: number): { from: OpeningLatLng; to: OpeningLatLng } {
     const shot = OPENING_SHOTS[idx];
-    const myGen = ++runGen;
-
     const rawFrom = lastCityCoord?.(shot.fromCityId) ?? shot.fallbackFrom;
     const rawTo = shot.toCityId
         ? (lastCityCoord?.(shot.toCityId) ?? shot.fallbackTo ?? rawFrom)
@@ -86,28 +91,52 @@ function beginShot(idx: number, speakFn: (text: string, onDone: () => void) => v
     const dLat = rawFrom.lat - rawTo.lat;
     const dLng = rawFrom.lng - rawTo.lng;
     const dist = Math.hypot(dLat, dLng);
-    if (dist > MAX_PAN_DEG) {
-        const scale = MAX_PAN_DEG / dist;
-        currentFrom = { lat: rawTo.lat + dLat * scale, lng: rawTo.lng + dLng * scale };
-    } else {
-        currentFrom = { ...rawFrom };
-    }
-    currentTo = { ...rawTo };
+    const from = dist > MAX_PAN_DEG
+        ? { lat: rawTo.lat + dLat * (MAX_PAN_DEG / dist), lng: rawTo.lng + dLng * (MAX_PAN_DEG / dist) }
+        : { ...rawFrom };
+    return { from, to: { ...rawTo } };
+}
+
+function beginShot(idx: number, speakFn: (text: string, onDone: () => void) => void): void {
+    const shot = OPENING_SHOTS[idx];
+    const myGen = ++runGen;
+    const { from, to } = resolveShotEndpoints(idx);
+
+    currentFrom = from;
+    currentTo = to;
     panElapsedMs = 0;
     panDurationMs = shot.panMs;
     shotCutPending = true;
     readyWaitMs = 0;
+    waitingNextIdx = null;
+    pendingNextSpeakFn = null;
 
     pendingSpeak = () => {
+        // 本镜画面已完全显现：趁本镜念白期间，在后台静默预渲染本镜尾段与下一镜整条走廊
+        lastPrewarmCorridor?.(currentTo, currentTo);
+        if (idx + 1 < OPENING_SHOTS.length) {
+            const next = resolveShotEndpoints(idx + 1);
+            lastPrewarmCorridor?.(next.from, next.to);
+        }
+
         speakFn(shot.text, () => {
             if (runGen !== myGen || !playing) return;
             if (idx + 1 < OPENING_SHOTS.length) {
-                beginShot(idx + 1, speakFn);
+                if (!lastPrewarmReady || lastPrewarmReady()) {
+                    beginShot(idx + 1, speakFn);
+                } else {
+                    // 下一镜后台预热尚未落定：先停在本镜已渲染完的终点，预热完再切，绝不切去空海蓝底
+                    waitingNextIdx = idx + 1;
+                    prewarmWaitMs = 0;
+                    pendingNextSpeakFn = speakFn;
+                }
             } else {
                 playing = false;
                 armed = false;
                 shotCutPending = false;
                 pendingSpeak = null;
+                waitingNextIdx = null;
+                pendingNextSpeakFn = null;
                 runGen++;
                 gameLog('expedition', '[编年史] 开场天下巡礼结束，转入居鲁士起兵');
             }
@@ -121,7 +150,11 @@ export function armChronicleOpening(): void {
     playing = false;
     shotCutPending = false;
     pendingSpeak = null;
+    waitingNextIdx = null;
+    pendingNextSpeakFn = null;
     panElapsedMs = 0;
+    readyWaitMs = 0;
+    prewarmWaitMs = 0;
     runGen++;
 }
 
@@ -132,6 +165,8 @@ export function cancelChronicleOpening(): void {
     playing = false;
     shotCutPending = false;
     pendingSpeak = null;
+    waitingNextIdx = null;
+    pendingNextSpeakFn = null;
     runGen++;
 }
 
@@ -148,17 +183,6 @@ export function getChronicleOpeningInitialPos(
     return getCityCoord?.(first.fromCityId) ?? { ...first.fallbackFrom };
 }
 
-/** 四镜各区域的中心点（起终点中点），供开局预热地图数据；按镜序返回 */
-export function getChronicleOpeningRegionCenters(
-    getCityCoord?: (id: string) => OpeningLatLng | undefined,
-): OpeningLatLng[] {
-    return OPENING_SHOTS.map((shot) => {
-        const from = getCityCoord?.(shot.fromCityId) ?? shot.fallbackFrom;
-        const to = shot.toCityId ? (getCityCoord?.(shot.toCityId) ?? shot.fallbackTo ?? from) : from;
-        return { lat: (from.lat + to.lat) / 2, lng: (from.lng + to.lng) / 2 };
-    });
-}
-
 export interface StepChronicleOpeningOpts {
     deltaSec: number;
     paused: boolean;
@@ -168,8 +192,12 @@ export interface StepChronicleOpeningOpts {
     speechEnabled: boolean;
     getCityCoord: (id: string) => OpeningLatLng | undefined;
     speak: (text: string, onDone: () => void) => void;
-    /** 当前视野的地图瓦片是否已全部显现 */
+    /** 当前视野的山体、水面、植被、据点是否已全部显现 */
     viewReady: () => boolean;
+    /** 后台预渲染指定起止走廊的地图缓存 */
+    prewarmCorridor?: (from: OpeningLatLng, to: OpeningLatLng) => void;
+    /** 后台预渲染是否已完成 */
+    prewarmReady?: () => boolean;
 }
 
 /**
@@ -183,6 +211,8 @@ export function stepChronicleOpening(
 
     if (opts.heroPos) lastHeroPos = opts.heroPos;
     lastCityCoord = opts.getCityCoord;
+    lastPrewarmCorridor = opts.prewarmCorridor ?? null;
+    lastPrewarmReady = opts.prewarmReady ?? null;
 
     if (!isChronicleActive() || opts.heroBusy) {
         cancelChronicleOpening();
@@ -205,23 +235,49 @@ export function stepChronicleOpening(
         return opts.heroPos ? { pos: opts.heroPos, snap: true } : null;
     }
 
-    // 切镜后先让新区域地图显现，显现（或超时）才开口；开口前镜头不平移
+    // 上一镜已念完，正在清晰画面上静候下一镜后台预热落定，避免切过去黑屏/蓝屏现算
+    if (waitingNextIdx !== null) {
+        if (!opts.paused && opts.deltaSec > 0) prewarmWaitMs += opts.deltaSec * 1000;
+        const prewarmDone = (!lastPrewarmReady || lastPrewarmReady()) || prewarmWaitMs >= MAX_PREWARM_WAIT_MS;
+        if (!prewarmDone) {
+            return { pos: { ...currentTo }, snap: false };
+        }
+        const nextIdx = waitingNextIdx;
+        const fn = pendingNextSpeakFn ?? opts.speak;
+        waitingNextIdx = null;
+        pendingNextSpeakFn = null;
+        beginShot(nextIdx, fn);
+    }
+
+    // 切镜后等新区域全幅地图（山体+水面+植被+据点）显现才开口，开口前不提前走平移进度
     if (pendingSpeak) {
-        if (!opts.paused && opts.deltaSec > 0) readyWaitMs += opts.deltaSec * 1000;
         if (shotCutPending) {
             if (opts.consumeSnap) {
                 shotCutPending = false;
+                readyWaitMs = 0;
                 return { pos: { ...currentFrom }, snap: true };
             }
+            if (!opts.paused && opts.deltaSec > 0) readyWaitMs += opts.deltaSec * 1000;
             if (readyWaitMs < MAX_READY_MS) return { pos: { ...currentFrom }, snap: false };
+        } else if (!opts.paused && opts.deltaSec > 0) {
+            readyWaitMs += opts.deltaSec * 1000;
         }
-        const ready = (opts.viewReady() && readyWaitMs >= MIN_READY_MS) || readyWaitMs >= MAX_READY_MS;
+
+        const ready = (opts.viewReady() && readyWaitMs >= SETTLE_AFTER_CUT_MS) || readyWaitMs >= MAX_READY_MS;
         if (!ready) return { pos: { ...currentFrom }, snap: false };
+
         const speakNow = pendingSpeak;
         pendingSpeak = null;
         shotCutPending = false;
         speakNow();
         if (!playing) return opts.heroPos ? { pos: opts.heroPos, snap: true } : null;
+        if (waitingNextIdx !== null) return { pos: { ...currentTo }, snap: false };
+        if (pendingSpeak && shotCutPending && opts.consumeSnap) {
+            shotCutPending = false;
+            readyWaitMs = 0;
+            return { pos: { ...currentFrom }, snap: true };
+        }
+        return { pos: { ...currentFrom }, snap: false };
     }
 
     if (shotCutPending) {

@@ -3651,7 +3651,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 10000,
         enemyFactionId: 'xiaobolu',
         enemyFactionName: '小勃律国',
-        enemyGeneralId: 'bfe_cb_xiaobolu_1',   // 🔴 [2026-10-20 经典战规则] 747 小勃律王苏失利（原势力误填石氏）
+        enemyGeneralId: 'nandou_sushili',   // 🔴 [2026-10-20 经典战规则] 747 小勃律王苏失利（原势力误填石氏）
         enemyTroops: 10000,
         introLines: [
             { speaker: 'general', text: '吐蕃结纳小勃律断绝西域朝贡，某率汉军翻越葱岭冰川险峰！壮士，持陌刀随我飞夺藤桥，直捣阿诺越拔坚城！' },

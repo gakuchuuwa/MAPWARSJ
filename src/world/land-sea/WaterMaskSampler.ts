@@ -108,6 +108,10 @@ export class WaterMaskSampler {
         return this.cache.has(tileCacheKey(zoom, x, y));
     }
 
+    hasPendingTiles(): boolean {
+        return this.pending.size > 0;
+    }
+
     /**
      * 该点所在瓦片是否**还没到**（true = 还在等；false = 已缓存含已知坏瓦片，或处于失败冷却期）。
      * isWaterSync 返回 null 有两种情况：瓦片未到（会变）与坏瓦片/拉取失败（冷却期内不会变）——

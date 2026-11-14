@@ -78,7 +78,10 @@ function randomEnemyTs(): string {
 
 // 名将显示名
 const generalNameById = new Map<string, string>();
-for (const [, g] of Object.entries(FACTION_GENERALS)) generalNameById.set(g.generalId, g.generalName);
+for (const [, raw] of Object.entries(FACTION_GENERALS)) {
+    const list = Array.isArray(raw) ? raw : [raw];
+    for (const g of list) generalNameById.set(g.generalId, g.generalName);
+}
 
 // 战术技中文名（v1 catalog，含未桥接项）
 const tsNameById = new Map<string, string>();

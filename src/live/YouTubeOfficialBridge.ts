@@ -162,6 +162,13 @@ export class YouTubeOfficialBridge {
         const r = await fetch(url, {
             method: 'POST', headers: this.headers(), body: JSON.stringify(value),
         });
+        if (r.status === 409) {
+            this.hasConnected = false;
+            this.events?.close();
+            this.events = null;
+            clearTimeout(this.retry);
+            this.retry = window.setTimeout(() => this.connect(), 2000);
+        }
         if (!r.ok) throw new Error(`${url} HTTP ${r.status}`);
     }
 

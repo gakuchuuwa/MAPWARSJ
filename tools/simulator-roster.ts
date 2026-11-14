@@ -32,9 +32,12 @@ for (const c of CITIES_V2) cityById.set(c.id, { name: c.name, region: c.region ?
 /** generalId → factionId / 显示名 反查（现行一势力一武将，源 FACTION_GENERALS） */
 const generalFaction = new Map<string, string>();
 const generalNameById = new Map<string, string>();
-for (const [fid, g] of Object.entries(FACTION_GENERALS)) {
-    generalFaction.set(g.generalId, fid);
-    generalNameById.set(g.generalId, g.generalName);
+for (const [fid, raw] of Object.entries(FACTION_GENERALS)) {
+    const list = Array.isArray(raw) ? raw : [raw];
+    for (const g of list) {
+        generalFaction.set(g.generalId, fid);
+        generalNameById.set(g.generalId, g.generalName);
+    }
 }
 
 function fname(fid: string | undefined): string {
@@ -90,17 +93,20 @@ generals.forEach((g, i) => {
 // 🔴 [2026-11-07 主人令] 远征番号系统已删：T0 番号改为从各武将条目的 eliteName/eliteTier 取（不再读区域番号文件）。
 type ERow = { legion: string; faction: string; capital: string; region: string; fid: string };
 const elites: ERow[] = [];
-for (const [fid, g] of Object.entries(FACTION_GENERALS)) {
-    if (g.eliteTier !== 0) continue;
-    const capId = STARTING_CAPITALS[fid];
-    const cap = capId ? cityById.get(capId) : undefined;
-    elites.push({
-        legion: g.eliteName ?? '—',
-        faction: fname(fid),
-        capital: cap?.name ?? (capId ?? '—'),
-        region: cap?.region ?? '—',
-        fid,
-    });
+for (const [fid, raw] of Object.entries(FACTION_GENERALS)) {
+    const list = Array.isArray(raw) ? raw : [raw];
+    for (const g of list) {
+        if (g.eliteTier !== 0) continue;
+        const capId = g.cityId || STARTING_CAPITALS[fid];
+        const cap = capId ? cityById.get(capId) : undefined;
+        elites.push({
+            legion: g.eliteName ?? '—',
+            faction: fname(fid),
+            capital: cap?.name ?? (capId ?? '—'),
+            region: cap?.region ?? '—',
+            fid,
+        });
+    }
 }
 elites.sort((a, b) => a.region.localeCompare(b.region) || a.faction.localeCompare(b.faction, 'zh'));
 

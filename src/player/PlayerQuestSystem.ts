@@ -411,17 +411,20 @@ export class PlayerQuestSystem {
         deps.hero.onChange(() => {
             const auto = deps.hero.autoMode, plan = deps.hero.autoPlan, mode = deps.hero.playMode;
             const turnedOffAuto = lastAuto && !auto;
-            const toMelee = lastPlan === 'script' && plan !== 'script';
+            const toMelee = lastPlan !== 'melee' && plan === 'melee';
             const planChanged = lastPlan !== plan;
             const modeChanged = lastPlayMode !== mode;
             lastAuto = auto; lastPlan = plan; lastPlayMode = mode;
             if (modeChanged) {
                 // 切换到休息/环球/航行：关闭可能正弹着的武将接任务对话框（防 3 秒倒计时自动把人拽回入伍）
-                if (mode !== 'auto') this.deps.closeDialogue();
-                // 切换到环球/航行：若当前已随军入伍，先自动离队并清除离队 9 秒停顿，立即启程环游
+                if (mode !== 'auto') {
+                    this.releaseDialoguePinnedArmy();
+                    this.deps.closeDialogue();
+                }
+                // 切换到环球/航行：若当前已随军入伍或有在途追赶任务，先自动离队并清除离队 9 秒停顿，立即启程环游
                 if (mode === 'globe') {
                     this.abortScriptJourney();
-                    if (deps.hero.isAttached()) this.leaveHost();
+                    if (deps.hero.isAttached() || this.quest || this.awaitingPlayerLegionId) this.leaveHost();
                     deps.hero.clearHold();
                     this.deps.ensureUnpaused();
                     deps.hero.kickTourNow();
@@ -432,6 +435,9 @@ export class PlayerQuestSystem {
                     this.deps.ensureUnpaused();
                     window.setTimeout(() => this.tick(), 0);
                 }
+            }
+            if (toMelee && (deps.hero.isAttached() || this.quest || this.awaitingPlayerLegionId)) {
+                this.leaveHost();
             }
             if (turnedOffAuto || toMelee) this.abortScriptJourney();
             // 🔴 切玩法 = 「告辞过谁」这一轮作废（新玩法下重新按规矩找下一位）；编年史同步启停
@@ -457,13 +463,38 @@ export class PlayerQuestSystem {
         });
     }
 
+    /** 野外偶遇弹对话期间被临时驻留的 AI 军团 ID（未点出征而直接关窗/切模式/读档时必须松锁） */
+    private dialoguePinnedArmyId: string | null = null;
+
+    private releaseDialoguePinnedArmy(): void {
+        const id = this.dialoguePinnedArmyId;
+        this.dialoguePinnedArmyId = null;
+        if (!id || id === this.quest?.legionId) return;
+        const army = this.deps.legionManager.getLegionById(id);
+        if (army && !army.isDestroyed && !army.isScriptArmy) {
+            delete (army as { __scriptPinned?: boolean }).__scriptPinned;
+            army.scriptMarchExempt = false;
+            this.deps.kickLegionAi(army.id);
+        }
+    }
+
     /** 放下剧本行程：停播报、作废武将战役任务与会面标记、停下单骑正在走的路、镜头交还给你 */
     private abortScriptJourney(): void {
+        this.releaseDialoguePinnedArmy();
         this.clearJourneyBriefing();
         this.chronicleNarrativeSeq++;
         this.chronicleNarrating = false;
+        this.awaitingPlayerLegionId = null;
         const q = this.quest;
-        if (q?.kind === 'general_event') {
+        if (q?.kind === 'general_event' || (q?.kind === 'first_battle' && !this.deps.hero.isAttached())) {
+            this.cleanupFirstBattleState(q);
+            const host = this.deps.legionManager.getLegionById(q.legionId);
+            if (host && !host.isDestroyed) {
+                delete (host as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+                delete (host as { __scriptPinned?: boolean }).__scriptPinned;
+                host.scriptMarchExempt = false;
+                this.deps.kickLegionAi(host.id);
+            }
             this.quest = null;
         }
         this.armyMarchPoint = null;
@@ -859,6 +890,7 @@ export class PlayerQuestSystem {
      * @param generalId 刚告辞的那位武将（空 = 只关对话）
      */
     private leaveAndFindNextGeneral(city: City | null, generalId: string | null): void {
+        this.releaseDialoguePinnedArmy();
         this.deps.closeDialogue();
         this.chronicleMeetCityId = null;
         if (this.preferredLiveGeneralId) {
@@ -884,6 +916,23 @@ export class PlayerQuestSystem {
             }
             const name = getGeneralRecordByGeneralId(generalId)?.generalName ?? generalId;
             gameLog('expedition', `[玩家] 告辞：${name} → 换下一位武将`);
+            // 编年史模式下「告辞」：当前事件按史实归属结算并推进至下一场，避免原地重弹同一位守将死循环
+            if (isChronicleActive()) {
+                const ev = currentChronicleEvent();
+                if (ev && ev.kind === 'battle' && ev.leadGeneralId === generalId) {
+                    if (ev.battle) {
+                        if (ev.battle.chronicleCity) {
+                            setChronicleCityOwner(ev.battle.chronicleCity.cityId, ev.battle.chronicleCity.after);
+                            this.deps.cityManager.updateCity(ev.battle.chronicleCity.cityId, { factionId: ev.battle.chronicleCity.after }, { skipCaptureLog: true });
+                        }
+                        markFirstBattleCompleted(ev.leadGeneralId);
+                        markClassicBattleCompleted(ev.battle);
+                    }
+                    advanceChronicle();
+                    this.chronicleProceed();
+                    return;
+                }
+            }
         }
         this.findNextGeneralNow();
     }
@@ -1427,6 +1476,8 @@ export class PlayerQuestSystem {
          *  此时"自某城起兵奔赴"那两条播报/日志是错的（人根本没回城），由调用方自己打。 */
         continuation = false,
     ): void {
+        if (army && this.dialoguePinnedArmyId === army.id) this.dialoguePinnedArmyId = null;
+        else this.releaseDialoguePinnedArmy();
         this.deps.closeDialogue();
         // 接下这一位 = 「告辞过谁」这一轮作废（告辞只是这一次不接，不是永远不见）
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废（告辞只是这一次不接，不是永远不见）
@@ -2209,7 +2260,10 @@ export class PlayerQuestSystem {
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
         opts?: { metAtFront?: boolean; chained?: boolean; detached?: boolean; spawnPos?: { lat: number; lng: number } },
-    ): void {        this.deps.closeDialogue();
+    ): void {
+        if (existingArmy && this.dialoguePinnedArmyId === existingArmy.id) this.dialoguePinnedArmyId = null;
+        else this.releaseDialoguePinnedArmy();
+        this.deps.closeDialogue();
         this.chronicleMeetCityId = null;
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         this.pendingFrontGeneralId = null;
@@ -4438,10 +4492,12 @@ export class PlayerQuestSystem {
         if (ge) {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
+                this.releaseDialoguePinnedArmy();
                 this.deps.legionManager.disconnectArmyFromCombat?.(army.id);
                 (army as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
                 army.scriptMarchExempt = true;
                 army.stopMovement(false);
+                if (!army.isScriptArmy) this.dialoguePinnedArmyId = army.id;
                 // 🔴 [2026-10-03 主人定] 与城中会面**同一句**（每位英雄只此一句，见 `enlistmentPanelText`）。
                 const narrativeText = enlistmentPanelText(gid);
                 this.deps.showDialogue({
@@ -4459,10 +4515,12 @@ export class PlayerQuestSystem {
         }
         const fb = this.hasPendingFirstBattle(gid);
         if (fb) {
+            this.releaseDialoguePinnedArmy();
             this.deps.legionManager.disconnectArmyFromCombat?.(army.id);
             (army as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
             army.scriptMarchExempt = true;
             army.stopMovement(false);
+            if (!army.isScriptArmy) this.dialoguePinnedArmyId = army.id;
             this.showFirstBattleDialogue(
                 city,
                 { generalId: gid, generalName, portrait: rec?.portrait ?? '' },
@@ -4941,17 +4999,26 @@ export class PlayerQuestSystem {
     /** 玩家主动离队：任务作废（军团照旧由 AI 打完） */
     public leaveHost(): void {
         const hero = this.deps.hero;
-        if (!hero.isAttached()) return;
+        if (!hero.isAttached() && !this.quest && !this.awaitingPlayerLegionId) return;
         const q = this.quest;
+        this.awaitingPlayerLegionId = null;
         this.cleanupFirstBattleState(q);
         if (q) {
             const host = this.deps.legionManager.getLegionById(q.legionId);
             if (host && !host.isDestroyed) {
                 delete (host as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+                delete (host as { __scriptPinned?: boolean }).__scriptPinned;
+                host.scriptMarchExempt = false;
+                this.deps.kickLegionAi(host.id);
             }
         }
         this.quest = null;
-        hero.detach();
+        if (hero.isAttached()) {
+            hero.detach();
+        } else {
+            hero.cancelChase();
+            hero.cancelTravel();
+        }
         this.deps.notify(q ? `离队，放弃任务【${q.targetCityName}】` : '离队');
         this.emitChange();
     }
@@ -5239,8 +5306,8 @@ export class PlayerQuestSystem {
     /** 执行观众竞价选中的投靠目标（立即改道前往该同文化势力/武将；若在战略地图已随军未开战，出更高价可改投） */
     public applyLiveJoinChoice(target: number | string): { ok: true; candidate: LiveJoinCandidate } | { ok: false; reason: string } {
         const hero = this.deps.hero;
-        if (hero.autoPlan === 'script') {
-            return { ok: false, reason: '剧本模式按史实推进，乱斗或百岁模式可竞拍选将' };
+        if (hero.autoPlan !== 'melee') {
+            return { ok: false, reason: '历史推演中不受理控将口令，乱斗模式可竞拍选将' };
         }
         const rankId = hero.getPeakRank().id;
         if (rankId === 'civilian') {
@@ -5290,8 +5357,8 @@ export class PlayerQuestSystem {
             this.cachedLiveCandidatesKey = '';
             return { ok: false, reason: '该目标刚刚兵力不足或已离场，请改选其他目标' };
         }
-        // 若此前已在某势力随军（例如已有人投了大明）且当前未在交战，高价竞拍改投时先脱离原军团再奔赴新目标
-        if (hero.isAttached()) {
+        // 若此前已在某势力随军（或有在途追赶任务）且当前未在交战，高价竞拍改投时先脱离原军团再奔赴新目标
+        if (hero.isAttached() || this.quest || this.awaitingPlayerLegionId) {
             this.leaveHost();
         }
         const finalCandidate: LiveJoinCandidate = {
@@ -5310,6 +5377,7 @@ export class PlayerQuestSystem {
     /** 改道前往投奔指定武将：有在外军团就追军团，有经典战前线就去前线，否则去武将所在据点。成功返回 true。 */
     private routeToJoinGeneral(city: City, generalId: string, generalName: string): boolean {
         const hero = this.deps.hero;
+        this.releaseDialoguePinnedArmy();
         this.deps.closeDialogue();
         this.preferredLiveGeneralId = generalId;
         this.chaseCityId = null;
@@ -5375,7 +5443,7 @@ export class PlayerQuestSystem {
                 - PlayerQuestSystem.distKm(me, { lat: b.city.latitude, lng: b.city.longitude }));
         }
         const pick = ready[0];
-        if (hero.isAttached()) this.leaveHost();
+        if (hero.isAttached() || this.quest || this.awaitingPlayerLegionId) this.leaveHost();
         // 观众竞价选的目标还没入伍就被主人改投：当场退回那位观众的积分（不然入伍成功会被算成他竞价成功）
         if (this.preferredLiveGeneralId) {
             const overriddenId = this.preferredLiveGeneralId;
@@ -5394,6 +5462,7 @@ export class PlayerQuestSystem {
     }
 
     public clearForRestore(): void {
+        this.releaseDialoguePinnedArmy();
         this.preferredLiveGeneralId = null;
         this.cachedLiveCandidatesKey = '';
         this.cachedLiveCandidates = [];

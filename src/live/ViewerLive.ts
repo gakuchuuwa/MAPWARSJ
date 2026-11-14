@@ -629,15 +629,7 @@ export class ViewerLive {
             return this.note(`${name} 现有 ${acc.n} 积分（押注、放计与战略竞拍通用）`);
         }
 
-        // 🔴 [2026-11-13 主人令] 历史推演只受理战术放计（可定输赢，不改势力走势）；其余控将口令只在乱斗受理
-        const skillCmd = !!SIX_BY_WORD[word]
-            || !!SIX_BY_WORD[word.match(/^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/)?.[1] ?? '']
-            || /^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word);
-        if (!skillCmd && !this.duel && this.app.playerHero && this.app.playerHero.autoPlan !== 'melee') {
-            return `${name}：历史推演中不受理控将口令`;
-        }
-
-        // 0.5 押注（开局 9 秒窗口：押1/押乱、押2/押维、押平；统一用积分）
+        // 0.5 押注（开局 9 秒窗口：押1/押乱、押2/押维、押平；统一用积分，战术局通用，不控将）
         const betCmd = parseBetCommand(word);
         if (betCmd) {
             return this.handleBetCommand(id, name, betCmd.side, betCmd.amount, eventId, pubMs);
@@ -645,6 +637,14 @@ export class ViewerLive {
         if (/^(?:押|下注|买)\s*\S*$/.test(word)) {
             this.notifyViewerVoice(id, `${name}，押注写法「押1 5」「押2 5」「押平 2」`);
             return this.note(`${name}：押注写法「押1 5」（乱入者）/「押2 5」（维序者）/「押平 2」（单场上限 ${BET_MAX_PER_BATTLE} 分）`);
+        }
+
+        // 🔴 [2026-11-13 主人令] 历史推演只受理战术放计（可定输赢，不改势力走势）；其余控将口令只在乱斗受理
+        const skillCmd = !!SIX_BY_WORD[word]
+            || !!SIX_BY_WORD[word.match(/^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/)?.[1] ?? '']
+            || /^(?:投|选)?\s*(?:1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word);
+        if (!skillCmd && !this.duel && (!this.app.playerHero || this.app.playerHero.autoPlan !== 'melee')) {
+            return `${name}：历史推演中不受理控将口令`;
         }
 
         // 1. 玩家改名竞拍（平民起全阶段可用，整局持续抬价）
@@ -3004,6 +3004,8 @@ export class ViewerLive {
                 seen: prev?.seen ?? 0,
                 lastEarn: 0,
                 day: prev?.day ?? '',
+                earned: prev?.earned,
+                earnDay: prev?.earnDay,
             });
         }
         if (ledger.day === this.today()) {
@@ -3058,7 +3060,7 @@ export class ViewerLive {
             }
         }
         const topRename = this.renameHistory[this.renameHistory.length - 1];
-        if (topRename) {
+        if (topRename && this.app.playerHero?.autoPlan === 'melee') {
             const mod = moderateLiveName(topRename.appliedName);
             if (mod.ok) this.app.playerHero?.rename(mod.name);
         }

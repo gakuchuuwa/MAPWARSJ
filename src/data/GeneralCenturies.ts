@@ -1676,6 +1676,21 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'osman_piyale_pasha': 16, // 皮亚莱帕夏 · 奥斯曼帝国 · 君士坦丁堡
     'mazhaer_ulazlo_i': 15, // 乌拉斯洛一世 · 匈牙利 · 塞格德
     'mazhaer_balint_torok': 16, // 特勒克 · 匈牙利 · 塞格德
+    'lycia_shouling': -6,
+    'paeonia_shouling': -6,
+    'dolopes_shouling': -5,
+    'messenia_shouling': -5,
+    'thasos_shouling': -5,
+    'mytilene_shouling': -5,
+    'epidaurus_shouling': -5,
+    'melos_shouling': -5,
+    'mantinea_shouling': -4,
+    'methone_shouling': -4,
+    'chalcis_shouling': -4,
+    'malli_shouling': -4,
+    'kesaiya_shouling': -4,
+    'rhodes_shouling': -4,
+    'linhu_shouling': -3,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

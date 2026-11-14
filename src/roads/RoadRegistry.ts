@@ -1371,7 +1371,7 @@ export class RoadRegistry {
         // 格网只服务常用小半径；大半径 / 近极点（经向外扩太宽）退回全扫，结果口径不变
         const cosLat = Math.cos(lat * Math.PI / 180);
         const lngPad = cosLat > 1e-6 ? maxDistDeg / cosLat : Infinity;
-        if (maxDistDeg <= 10 && lngPad <= 60 && !(import.meta.env.DEV && (globalThis as { __nearestCityFullScan?: boolean }).__nearestCityFullScan)) {
+        if (maxDistDeg <= 10 && lngPad <= 60 && !(import.meta.env?.DEV && (globalThis as { __nearestCityFullScan?: boolean }).__nearestCityFullScan)) {
             const cells = this.getCityGrid();
             let best: { id: string; order: number } | undefined;
             let minDist = Infinity;

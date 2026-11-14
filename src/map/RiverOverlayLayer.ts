@@ -23,7 +23,7 @@ interface WaterTileCacheEntry {
     ripples: Float32Array | null;
 }
 
-const WATER_TILE_CACHE_MAX = 240;
+const WATER_TILE_CACHE_MAX = 360;
 
 export class RiverOverlayLayer extends L.GridLayer {
     private esriUrl: string;
@@ -31,6 +31,8 @@ export class RiverOverlayLayer extends L.GridLayer {
     private worker: Worker;
     private msgIdCounter: number = 0;
     private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean, cacheKey: string }> = new Map();
+    private prewarmTasks: Map<number, string> = new Map();
+    private prewarmInFlight: Set<string> = new Set();
     /** LRU 缓存已算好的水面瓦片像素与浪花点，平移/缩放回看瞬时上屏 */
     private tileCache: Map<string, WaterTileCacheEntry> = new Map();
     /** 瓦片 putImageData 逐帧预算队列：跟拍跨越瓦片边界时 6~12 块瓦片同时到达，分摊到每帧 ≤2.5ms 避免单帧卡顿 */
@@ -88,15 +90,34 @@ export class RiverOverlayLayer extends L.GridLayer {
     private cachePut(key: string, entry: WaterTileCacheEntry): void {
         this.tileCache.delete(key);
         this.tileCache.set(key, entry);
-        while (this.tileCache.size > WATER_TILE_CACHE_MAX) {
-            const oldest = this.tileCache.keys().next().value as string | undefined;
-            if (oldest === undefined) break;
-            this.tileCache.delete(oldest);
+        if (this.tileCache.size <= WATER_TILE_CACHE_MAX) return;
+        const activeKeys = new Set<string>();
+        const tilesObj = (this as any)._tiles as Record<string, { coords?: L.Coords; el?: HTMLElement }> | undefined;
+        if (tilesObj) {
+            for (const k in tilesObj) {
+                const c = tilesObj[k]?.coords;
+                if (tilesObj[k]?.el?.isConnected && c) activeKeys.add(`${c.z}/${c.x}/${c.y}`);
+            }
+        }
+        for (const candKey of this.tileCache.keys()) {
+            if (this.tileCache.size <= WATER_TILE_CACHE_MAX) break;
+            if (activeKeys.has(candKey)) continue;
+            this.tileCache.delete(candKey);
         }
     }
 
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
         const { id, data, waves, ripples, cacheKey: respCacheKey } = e.data;
+        const prewarmKey = this.prewarmTasks.get(id);
+        if (prewarmKey !== undefined) {
+            this.prewarmTasks.delete(id);
+            this.prewarmInFlight.delete(prewarmKey);
+            const activeWaves = waves && waves.length > 0 ? waves : null;
+            const activeRipples = ripples && ripples.length > 0 ? ripples : null;
+            const imgData = new ImageData(data as any, 256, 256);
+            this.cachePut(prewarmKey, { imgData, waves: activeWaves, ripples: activeRipples });
+            return;
+        }
         const task = this.pendingTiles.get(id);
 
         if (!task) {
@@ -350,6 +371,63 @@ export class RiverOverlayLayer extends L.GridLayer {
         esriImg.src = esriTileUrl;
 
         return tile;
+    }
+
+    public prewarmTileRect(z: number, xMin: number, xMax: number, yMin: number, yMax: number): void {
+        const n = 1 << z;
+        const size = this.getTileSize();
+        const cyMin = Math.max(0, yMin);
+        const cyMax = Math.min(n - 1, yMax);
+        for (let y = cyMin; y <= cyMax; y++) {
+            for (let x = xMin; x <= xMax; x++) {
+                const wx = ((x % n) + n) % n;
+                const cacheKey = `${z}/${wx}/${y}`;
+                const hit = this.tileCache.get(cacheKey);
+                if (hit) {
+                    this.tileCache.delete(cacheKey);
+                    this.tileCache.set(cacheKey, hit);
+                    continue;
+                }
+                if (this.prewarmInFlight.has(cacheKey)) continue;
+                this.prewarmInFlight.add(cacheKey);
+
+                const url = this.buildTileUrl(z, wx, y);
+                this.loadImage(url)
+                    .then(async (esriImg) => {
+                        let source: CanvasImageSource = esriImg;
+                        const mayBeDefect = z === 10 && wx >= 912 && wx <= 927 && y >= 368 && y <= 383;
+                        if (mayBeDefect && this.isDefectGrayTile(esriImg, size.x, size.y)) {
+                            const substitute = await this.buildParentSubstitute({ x: wx, y, z } as L.Coords, size.x, size.y).catch(() => null);
+                            if (substitute) source = substitute;
+                        }
+                        const bitmap = await createImageBitmap(source as ImageBitmapSource);
+                        const reqId = this.msgIdCounter++;
+                        this.prewarmTasks.set(reqId, cacheKey);
+                        this.worker.postMessage(
+                            { id: reqId, width: size.x, height: size.y, x: wx, y, z, bitmap },
+                            [bitmap],
+                        );
+                    })
+                    .catch(() => {
+                        this.prewarmInFlight.delete(cacheKey);
+                    });
+            }
+        }
+    }
+
+    public isPrewarmSettled(): boolean {
+        return this.prewarmInFlight.size === 0;
+    }
+
+    public isViewportSettled(): boolean {
+        if (this.commitQueue.length > 0) return false;
+        const tilesObj = (this as any)._tiles as Record<string, { current?: boolean; loaded?: unknown }> | undefined;
+        if (!tilesObj) return true;
+        for (const k in tilesObj) {
+            const t = tilesObj[k];
+            if (t?.current && !t.loaded) return false;
+        }
+        return true;
     }
 
     public addTo(map: L.Map): this {

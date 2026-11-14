@@ -132,7 +132,8 @@ function buildFullRouteCityIds(): string[] {
 
 function buildDefenderUnit(city: CityDataV2, mode: DefenderMode): UnitSpec {
     const anchorFactionId = getCityAnchorFactionId(city.id) ?? city.factionId;
-    const general = anchorFactionId ? FACTION_GENERALS[anchorFactionId] : null;
+    const rawGeneral = anchorFactionId ? FACTION_GENERALS[anchorFactionId] : null;
+    const general = Array.isArray(rawGeneral) ? rawGeneral[0] : rawGeneral;
     const profileId = general?.generalId && GENERAL_PROFILES[general.generalId]
         ? general.generalId
         : null;

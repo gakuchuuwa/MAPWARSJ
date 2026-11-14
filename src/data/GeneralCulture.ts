@@ -26,6 +26,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aiji_lameisisi': 'ORIE',   // 埃及新王国｜拉美西斯｜据点 孟菲斯
     'aiji_neiketaneibu': 'ORIE',   // 埃及｜内克塔内布｜据点 佩鲁西姆
     'aiji_psamtik_iii': 'ORIE',   // 埃及｜普萨美提克三世｜据点 孟菲斯
+    'aijidiusi': 'ROMA',   // 罗马帝国｜埃吉迪乌斯｜据点 苏瓦松
     'ailan_julushi': 'PERSIAN',   // 阿契美尼德｜居鲁士二世｜据点 波斯波利斯
     'ailan_shuteluke': 'PERSIAN',   // 埃兰｜纳克昆特｜据点 苏萨
     'ailao_leilao': 'BASHU',   // 哀牢｜类牢｜据点 永昌
@@ -236,7 +237,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_cb_wu_1': 'JIANGNAN',   // 战场人物｜阖闾
     'bfe_cb_xianbei_1': 'XIANBEI',   // 战场人物｜宇文逸豆归
     'bfe_cb_xianbei_2': 'XIANBEI',   // 战场人物｜段龛
-    'bfe_cb_xiaobolu_1': 'TIBET',   // 战场人物｜苏失利之
     'bfe_cb_xibanya_1': 'SPANISH',   // 战场人物｜布拉卡蒙特
     'bfe_cb_xila_1': 'ATHENIANS',   // 战场人物｜安提奥库斯
     'bfe_cb_xiongnu_1': 'MONGOL',   // 战场人物｜军臣单于
@@ -1347,10 +1347,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luoma_catulus': 'ROMA',   // 罗马共和国｜卡图卢斯｜据点 罗马
     'luoma_diguo_leo_ix': 'ROMA',   // 教皇国｜利奥九世｜据点 罗马
     'luoma_xiageliwusi': 'ROMA',   // 罗马帝国｜西阿格里乌斯｜据点 苏瓦松
-    'aijidiusi': 'ROMA',   // 罗马帝国｜埃吉迪乌斯｜据点 苏瓦松
-    'mayuelian': 'ROMA',   // 罗马帝国｜马约里安｜据点 拉文纳
-    'xigete_diaoduolike_ii': 'GOTHS',   // 西哥特｜狄奥多里克二世｜据点 图卢兹
-    'xigete_fuleidelike': 'GOTHS',   // 西哥特｜弗雷德里克｜据点 图卢兹
     'luomu_jilijie': 'TURKS',   // 罗姆｜基利杰｜据点 伊科尼乌姆
     'luoping_zhangshijie': 'JIANGNAN',   // 赵宋｜张世杰｜据点 厓山
     'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里｜据点 诺夫哥罗德
@@ -1397,6 +1393,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'maqidun_hephaistion': 'MACEDONIAN',   // 马其顿｜赫菲斯提昂｜据点 佩拉
     'maqidun_nearchos': 'MACEDONIAN',   // 马其顿｜尼阿库斯｜据点 佩拉
     'mayapan_hunac_ceel': 'MAYANS',   // 玛雅潘｜胡纳克｜据点 乌斯马尔
+    'mayuelian': 'ROMA',   // 罗马帝国｜马约里安｜据点 拉文纳
     'mazhaer_balint_torok': 'MAGYAR',   // 匈牙利｜特勒克｜据点 塞格德
     'mazhaer_bela_iv': 'MAGYAR',   // 匈牙利｜贝拉四世｜据点 布达佩斯
     'mazhaer_charles_i': 'MAGYAR',   // 匈牙利｜查理一世｜据点 布达佩斯
@@ -1927,6 +1924,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiemian_xiemianwang': 'CUMAN',   // 萨维尔｜齐贝尔｜据点 谢缅杰尔
     'xierhe_saerjue': 'CENTRAL_ASIA',   // 塞尔柱帝国｜塞尔柱｜据点 哲德
     'xierwan_farukusha': 'SASANIAN',   // 萨法维｜法鲁克沙｜据点 巴库
+    'xigete_diaoduolike_ii': 'GOTHS',   // 西哥特｜狄奥多里克二世｜据点 图卢兹
+    'xigete_fuleidelike': 'GOTHS',   // 西哥特｜弗雷德里克｜据点 图卢兹
     'xigete_roderic': 'GOTHS',   // 西哥特｜罗德里克｜据点 托莱多
     'xihai_d_fulianchou': 'TIBET',   // 吐谷浑｜伏连筹｜据点 伏俟城
     'xihai_d_fuyun': 'TIBET',   // 吐谷浑｜伏允｜据点 伏俟城
@@ -1983,9 +1982,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiqin_wanyanchenheshang': 'NORTHEAST',   // 大金｜完颜陈和尚｜据点 会宁府
     'xisa_chastana': 'GURJARAS',   // 西萨特拉普｜查斯塔纳｜据点 帕坦
     'xishudongyin_lijiasipi': 'SPANISH',   // 西班牙｜莱加斯皮｜据点 宿务
-    'xisi_amr': 'PERSIAN',   // 萨法尔｜阿姆尔｜据点 博斯特
-    'xisi_safaer': 'PERSIAN',   // 萨法尔｜萨法尔｜据点 博斯特
-    'xisi_yakubusafaer': 'PERSIAN',   // 萨法尔｜雅库布｜据点 博斯特
+    'xisi_amr': 'PERSIAN',   // 萨法尔埃米尔国｜阿姆尔｜据点 博斯特
+    'xisi_safaer': 'PERSIAN',   // 萨法尔埃米尔国｜萨法尔｜据点 博斯特
+    'xisi_yakubusafaer': 'PERSIAN',   // 萨法尔埃米尔国｜雅库布｜据点 博斯特
     'xiutu_jinridi': 'CENTRAL',   // 刘汉｜金日磾｜据点 长安
     'xiwasi_burhandin': 'TURKS',   // 埃雷特纳｜布尔汉丁｜据点 锡瓦斯
     'xiye_zihe': 'WESTERN',   // 西夜｜子合｜据点 叶城
@@ -1999,7 +1998,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yada_ahexiong': 'CENTRAL_ASIA',   // 嚈哒｜阿赫雄｜据点 悉万斤
     'yadian_gongguo_otto': 'ATHENIANS',   // 雅典公国｜拉罗什｜据点 雅典
     'yamato_nanmuzhengcheng': 'JAPAN',   // 大觉寺统｜楠木正成｜据点 千早城
-    'yamato_sakanouenotamuramaro': 'JAPAN',   // 大和｜坂上田村麻吕｜据点 京都
+    'yamato_sakanouenotamuramaro': 'JAPAN',   // 大和｜田村麻吕｜据点 京都
     'yamaxun_faernake': 'GREECE',   // 本都｜法尔纳克｜据点 忒弥斯基拉
     'yan_leyi': 'WEI',   // 燕国｜乐毅｜据点 临淄
     'yanchuan_d_yuefei': 'CENTRAL',   // 赵宋｜岳飞｜据点 武昌

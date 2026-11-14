@@ -2028,6 +2028,21 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'osman_piyale_pasha': 'imperial', // 皮亚莱帕夏 · 奥斯曼帝国 · 君士坦丁堡
     'mazhaer_ulazlo_i': 'castle', // 乌拉斯洛一世 · 匈牙利 · 塞格德
     'mazhaer_balint_torok': 'imperial', // 特勒克 · 匈牙利 · 塞格德
+    'lycia_shouling': 'antiquity',
+    'paeonia_shouling': 'antiquity',
+    'dolopes_shouling': 'antiquity',
+    'messenia_shouling': 'antiquity',
+    'thasos_shouling': 'antiquity',
+    'mytilene_shouling': 'antiquity',
+    'epidaurus_shouling': 'antiquity',
+    'melos_shouling': 'antiquity',
+    'mantinea_shouling': 'antiquity',
+    'methone_shouling': 'antiquity',
+    'chalcis_shouling': 'antiquity',
+    'malli_shouling': 'antiquity',
+    'kesaiya_shouling': 'antiquity',
+    'rhodes_shouling': 'antiquity',
+    'linhu_shouling': 'antiquity',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

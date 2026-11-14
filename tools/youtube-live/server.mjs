@@ -253,7 +253,7 @@ export class YouTubeLiveService extends EventEmitter {
         if (idMatch && innertubeKey) {
             const initData = JSON.parse(idMatch[1]);
             const lcr = initData?.contents?.liveChatRenderer;
-            if (lcr) {
+            if (lcr && !lcr.isReplay) {
                 const subItems = lcr?.header?.liveChatHeaderRenderer?.viewSelector?.sortFilterSubMenuRenderer?.subMenuItems || [];
                 // 优先选第 2 项「实时聊天」（显示所有消息，不过滤短口令如“攻”“技1”）
                 const continuation = subItems[1]?.continuation?.reloadContinuationData?.continuation
@@ -459,6 +459,16 @@ export class YouTubeLiveService extends EventEmitter {
 
     pushEvent(event) {
         this.state.pending.push(event);
+        if (this.state.pending.length > 2000) {
+            // 无前端消费时限制普通弹幕积压；带 payment 的超级留言/贴纸一律保留
+            let excess = this.state.pending.length - 2000;
+            this.state.pending = this.state.pending.filter((e) => {
+                if (excess <= 0 || e.payment) return true;
+                excess--;
+                this.state.handled[e.id] = new Date().toISOString();
+                return false;
+            });
+        }
         if (event.payment) {
             this.state.payments[event.id] = { event, receivedAt: new Date().toISOString(), acknowledgedAt: '' };
             console.log(`[YouTube] 收到 ${event.payment.kind} ${event.payment.display}，等待游戏记账`);
@@ -558,6 +568,9 @@ export class YouTubeLiveService extends EventEmitter {
     }
 
     acknowledge(id, ledger) {
+        if (ledger !== undefined && !this.saveLedger(ledger, false)) {
+            return false;
+        }
         if (this.state.pending.some((event) => event.id === id)) {
             this.state.pending = this.state.pending.filter((event) => event.id !== id);
             this.state.handled[id] = new Date().toISOString();
@@ -566,7 +579,6 @@ export class YouTubeLiveService extends EventEmitter {
                 console.log(`[YouTube] ${id} 已完成游戏记账`);
             }
         }
-        this.saveLedger(ledger, false);
         const handledIds = Object.keys(this.state.handled);
         if (handledIds.length > 5000) {
             for (const old of handledIds.slice(0, handledIds.length - 5000)) delete this.state.handled[old];
@@ -584,6 +596,7 @@ export class YouTubeLiveService extends EventEmitter {
         }
         this.save();
         this.emit('status', this.publicStatus());
+        return true;
     }
     saveLedger(ledger, persist = true) {
         if (!ledger || typeof ledger !== 'object' || Array.isArray(ledger)) return false;
@@ -640,12 +653,16 @@ export function createHttpServer(service) {
             if (req.method === 'POST' && url.pathname === '/ack') {
                 if (!canWrite(req)) return json(res, 409, { error: '这个页面不是当前记账页面' });
                 const data = await body(req);
-                service.acknowledge(String(data.id || ''), data.ledger);
+                if (!service.acknowledge(String(data.id || ''), data.ledger)) {
+                    return json(res, 409, { error: '账本版本已落后，请重新同步' });
+                }
                 return json(res, 200, { ok: true });
             }
             if (req.method === 'POST' && url.pathname === '/ledger') {
                 if (!canWrite(req)) return json(res, 409, { error: '这个页面不是当前记账页面' });
-                service.saveLedger(await body(req));
+                if (!service.saveLedger(await body(req))) {
+                    return json(res, 409, { error: '账本版本已落后，请重新同步' });
+                }
                 return json(res, 200, { ok: true });
             }
             if (req.method === 'GET' && url.pathname === '/events') {

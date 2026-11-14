@@ -1,6 +1,5 @@
 import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
 import { TACTICAL_SKILL_BY_ID } from '../src/data/TacticalSkillCatalog';
-import { ALL_GENERALS } from '../src/data/FactionGenerals';
 import fs from 'fs';
 
 const EXCLUSIVE_SKILL_IDS = [
