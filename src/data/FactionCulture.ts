@@ -154,6 +154,13 @@ export const FACTION_CULTURE: Record<string, BuildingStyle | readonly (readonly 
     "xilawangguo": 'ATHENIANS',   // 希腊王国（首都雅典）
     "mani_beylik": 'SPARTANS',   // 曼尼贝伊国（拉科尼亚曼尼自治贝伊国）
     "filiki_eteria": 'GREECE',   // 友爱社（泛希腊革命总机关）
+    "saadi_sultanate": 'BERBER',   // 萨阿德苏丹国（摩洛哥马拉喀什）
+    "belgian_states": 'BURGUNDIANS',   // 比利时合众国（布拉班特—佛兰德）
+    "morea_despotate": 'SPARTANS',   // 摩里亚专制国（米斯特拉斯/斯巴达）
+    "thessalonica_kingdom": 'MACEDONIAN',   // 塞萨洛尼基王国（马其顿塞萨洛尼基）
+    "hengshan_fu": 'WEI',   // 恒山公府（河北真定）
+    "khokhar": 'PURU',   // 科卡尔部（旁遮普五河）
+    "suiones": 'VIKINGS',   // 斯维阿部（瑞典乌普萨拉）
     "ante": 'SLAVIC',   // 安特
     "suweihui": 'PORTUGUESE',   // 苏维汇（王国在加利西亚，409–585；对应封建时代苏维汇铁骑军团）
     "yibiluliya": 'GEORGIANS',   // 伊比利亚

@@ -2506,6 +2506,15 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xibanya_gen_741': 16,
     'tamoyue_gen_742': 16,
     'maoyi_gen_743': 18,
+    'jiaohuangguo_colonna': 16,
+    'maya_chak_tok_ichaak': 4,
+    'saadi_ahmad_mansur': 16,
+    'belgian_vandermersch': 18,
+    'morea_kantakouzenos': 14,
+    'thessalonica_boniface_i': 13,
+    'hengshan_wuxian': 13,
+    'khokhar_jasrat': 15,
+    'suiones_king': 1,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

@@ -1070,7 +1070,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_charlemagne',
         slots: [
-            { type: 'longswordsman', count: 4 },
+            { type: 'flemish_pikeman', count: 4 },
             { type: 'knight', count: 2 },
             { type: 'crossbowman', count: 3 },
         ],
@@ -1087,7 +1087,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_HULK',
         commanderUnit: 'hero_dukedalencon',
         slots: [
-            { type: 'flemish_pikeman', count: 4 },
+            { type: 'flemish_pikeman_f', count: 4 },
             { type: 'elite_coustillier', count: 2 },
             { type: 'heavy_crossbowman', count: 3 },
         ],
@@ -3033,12 +3033,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代德里苏丹国军团', civ: '印度斯坦', age: 'castle', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
-        formationMode: 'balance_yoke',
+        formationMode: 'crane_wing',
         shipId: 'FIRE_SHIP',
         commanderUnit: 'hero_babur',
         slots: [
+            { type: 'elite_armored_elephant', count: 2 },
             { type: 'elite_ghulam', count: 4 },
-            { type: 'camel_heavy', count: 2 },
             { type: 'recurve_bowman', count: 3 },
         ],
     },

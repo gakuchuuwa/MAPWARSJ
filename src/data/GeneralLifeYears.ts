@@ -2936,6 +2936,15 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xibanya_gen_741: { birth: 1510, death: 1552, kaoju: '推定' },
     tamoyue_gen_742: { birth: 1520, death: 1567, kaoju: '推定' },
     maoyi_gen_743: { birth: 1760, death: 1795, kaoju: '推定' },
+    jiaohuangguo_colonna: { birth: 1535, death: 1584 },
+    maya_chak_tok_ichaak: { birth: 330, death: 378, kaoju: '推定' },
+    saadi_ahmad_mansur: { birth: 1549, death: 1603 },
+    belgian_vandermersch: { birth: 1734, death: 1792 },
+    morea_kantakouzenos: { birth: 1326, death: 1380, kaoju: '推定' },
+    thessalonica_boniface_i: { birth: 1150, death: 1207, kaoju: '推定' },
+    hengshan_wuxian: { birth: 1180, death: 1234, kaoju: '推定' },
+    khokhar_jasrat: { birth: 1385, death: 1442, kaoju: '推定' },
+    suiones_king: { birth: 60, death: 115, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */

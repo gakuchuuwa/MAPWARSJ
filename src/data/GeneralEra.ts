@@ -2858,6 +2858,15 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xibanya_gen_741': 'imperial',
     'tamoyue_gen_742': 'imperial',
     'maoyi_gen_743': 'imperial',
+    'jiaohuangguo_colonna': 'imperial',
+    'maya_chak_tok_ichaak': 'antiquity',
+    'saadi_ahmad_mansur': 'imperial',
+    'belgian_vandermersch': 'imperial',
+    'morea_kantakouzenos': 'castle',
+    'thessalonica_boniface_i': 'castle',
+    'hengshan_wuxian': 'castle',
+    'khokhar_jasrat': 'castle',
+    'suiones_king': 'antiquity',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

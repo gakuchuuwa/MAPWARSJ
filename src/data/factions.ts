@@ -207,6 +207,14 @@ export const FACTIONS: Faction[] = [
     // 🔴 [2026-11-15 按史拆分] 曼尼贝伊国（1770–1821 拉科尼亚自治政权，马夫罗米哈利斯）与友爱社（1814–1821 伊普西兰蒂斯）
     { id: 'mani_beylik', name: '曼尼贝伊国' },
     { id: 'filiki_eteria', name: '友爱社' },
+    // 🔴 [2026-11-15 按史补齐二级军团独立政权] 萨阿德苏丹国、比利时合众国、摩里亚专制国、塞萨洛尼基王国、恒山公府、科卡尔部、斯维阿部
+    { id: 'saadi_sultanate', name: '萨阿德苏丹国' },
+    { id: 'belgian_states', name: '比利时合众国' },
+    { id: 'morea_despotate', name: '摩里亚专制国' },
+    { id: 'thessalonica_kingdom', name: '塞萨洛尼基王国' },
+    { id: 'hengshan_fu', name: '恒山公府' },
+    { id: 'khokhar', name: '科卡尔部' },
+    { id: 'suiones', name: '斯维阿部' },
     // 🔴 [2026-10-25 补B] 安特（博兹 4c）
     { id: 'ante', name: '安特' },
     // 🔴 [2026-10-25 补B] 苏维汇（雷基亚尔 5c）

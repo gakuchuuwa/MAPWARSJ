@@ -1608,6 +1608,34 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代希腊国民军团",
         legionType: "region",
     },
+    "saadi_sultanate": {
+        legionName: "帝国时代巴巴里军团",
+        legionType: "region",
+    },
+    "belgian_states": {
+        legionName: "帝国时代弗兰德斯军团",
+        legionType: "region",
+    },
+    "morea_despotate": {
+        legionName: "城堡时代摩里亚军团",
+        legionType: "region",
+    },
+    "thessalonica_kingdom": {
+        legionName: "城堡时代瓦尔达尔军团",
+        legionType: "region",
+    },
+    "hengshan_fu": {
+        legionName: "城堡时代燕云军团",
+        legionType: "region",
+    },
+    "khokhar": {
+        legionName: "城堡时代五河军团",
+        legionType: "region",
+    },
+    "suiones": {
+        legionName: "古典时代北欧日耳曼军团",
+        legionType: "region",
+    },
     "yadian_gongguo": {
         legionName: "城堡时代雅典公国军团",
         legionType: "region",

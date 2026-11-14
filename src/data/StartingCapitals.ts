@@ -139,6 +139,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xilawangguo': 'city_yadian',   // 希腊王国定都雅典（1834 起）
     'mani_beylik': 'city_sparta',   // 曼尼贝伊国（登记用，不改据点归属）
     'filiki_eteria': 'city_yaxi',   // 友爱社 1821 雅西誓师（登记用，不改据点归属）
+    'saadi_sultanate': 'city_malajiashen',   // 萨阿德苏丹国定都马拉喀什（登记用，不改据点归属）
+    'belgian_states': 'city_bulusaier',   // 比利时合众国定都布鲁塞尔（登记用，不改据点归属）
+    'morea_despotate': 'city_sparta',   // 摩里亚专制国都米斯特拉斯/斯巴达（登记用，不改据点归属）
+    'thessalonica_kingdom': 'city_salonica',   // 塞萨洛尼基王国（登记用，不改据点归属）
+    'hengshan_fu': 'city_zhending',   // 恒山公府开府真定（登记用，不改据点归属）
+    'khokhar': 'city_atuoke',   // 科卡尔部北旁遮普核心据点（登记用，不改据点归属）
+    'suiones': 'city_wupusala',   // 斯维阿部中心乌普萨拉（登记用，不改据点归属）
     'ante': 'city_jifu',
     'suweihui': 'city_boertu',
     'yibiluliya': 'city_dibilisi',

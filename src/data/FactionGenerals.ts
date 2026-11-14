@@ -5698,6 +5698,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 西亚赫卡克（Siya(j) K'ak'，378–402 活跃，玛雅古典期早期最高军事统帅 Kaloomte'；蒂卡尔第 31 号石碑载 378-01-16 攻克蒂卡尔、击杀美洲虎爪一世，并征服瓦夏克吞等）｜势力 玛雅｜据点 蒂卡尔（MAYANS 文化，佩滕）｜普将（存疑）｜精锐「蒂卡尔军」T4｜立绘留空
         { generalId: 'gen_jasawchan', cityId: 'city_tikal', generalName: '亚斯纳昌', portrait: '/assets/MAYANS/gen_jasawchan.png', eliteName: '玛雅战士', eliteTier: 4 },
         { generalId: 'gen_pakal', cityId: 'city_palenque', generalName: '帕卡尔', portrait: '/assets/MAYANS/gen_pakal.png', eliteName: '帕伦克矛兵', eliteTier: 4 },
+        // 🔴 [2026-11-15 按史补齐古典时代佩滕军团] 查克·托克·伊查克（Chak Tok Ich'aak I，蒂卡尔王朝第14任君主，约360–378在位，见蒂卡尔第39、31号石碑，378年1月率军抗击西亚赫卡克战死于蒂卡尔）
+        { generalId: 'maya_chak_tok_ichaak', factionId: 'maya', cityId: 'city_tikal', generalName: '查克·托克·伊查克', portrait: '', eliteName: '蒂卡尔黑曜卫士', eliteTier: 4 },
     ],
 
     mapuche: [
@@ -6532,6 +6534,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     jiaohuangguo: [
         // 🔴 [2026-11-11 GG第五轮·补二级军团史实武将] 吉尔·德·阿尔沃诺斯（1310–1367，枢机主教兼教皇国军务总督；1353–1367 统军削平罗马及教皇国割据并颁《埃吉迪奥宪章》）
         { generalId: 'jiaohuangguo_albornoz', factionId: 'jiaohuangguo', cityId: 'city_luoma', generalName: '阿尔沃诺斯', portrait: '/assets/ROMA/jiaohuangguo_albornoz.png', eliteName: '教廷卫戍兵', eliteTier: 3 },
+        // 🔴 [2026-11-15 按史补齐帝国时代意大利军团] 马尔坎托尼奥·科隆纳（Marcantonio II Colonna，1535–1584，教皇国舰队总司令，1571年自罗马/奇维塔韦基亚出航统率教皇旗舰参战勒班陀海战大捷）
+        { generalId: 'jiaohuangguo_colonna', factionId: 'jiaohuangguo', cityId: 'city_luoma', generalName: '马尔坎托尼奥·科隆纳', portrait: '', eliteName: '教皇旗舰卫队', eliteTier: 3 },
     ],     yinduxila: [
         { generalId: 'shiyuzu_aolaqiuzhang', factionId: 'yinduxila', cityId: 'city_aola', generalName: '阿波罗多洛斯', portrait: '/assets/PURU/shiyuzu_aolaqiuzhang.png', eliteName: '食鱼族标枪兵', eliteTier: 4 },   // 奥拉（格德罗西亚边缘防区希腊裔长官） ｜🔴 [2026-11-11 主人令「同族同祖就合并」GG第五轮] 原 shiyuzu 块
     ],
@@ -7021,6 +7025,34 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     maoyi: [
         { generalId: 'maoyi_gen_743', factionId: 'maoyi', cityId: 'city_honolulu', generalName: '卡拉尼库普莱', portrait: '/assets/MALAY/maoyi_gen_743.png', eliteName: '茂宜长矛卫士', eliteTier: 4 },
+    ],
+    saadi_sultanate: [
+        // 🔴 [2026-11-15 按史补齐帝国时代巴巴里军团] 艾哈迈德·曼苏尔（Ahmad al-Mansur，1549–1603，萨阿德苏丹国苏丹，1578年三王之战大败葡军即位、定都马拉喀什，1591年遣火枪军南征灭桑海）
+        { generalId: 'saadi_ahmad_mansur', factionId: 'saadi_sultanate', cityId: 'city_malajiashen', generalName: '艾哈迈德·曼苏尔', portrait: '', eliteName: '萨阿德火枪卫队', eliteTier: 2 },
+    ],
+    belgian_states: [
+        // 🔴 [2026-11-15 按史补齐帝国时代弗兰德斯军团] 扬·范德梅尔施（Jan André van der Mersch，1734–1792，布拉班特革命军总司令，1789年蒂伦豪特大捷克复布鲁塞尔促成比利时合众国独立）
+        { generalId: 'belgian_vandermersch', factionId: 'belgian_states', cityId: 'city_bulusaier', generalName: '扬·范德梅尔施', portrait: '', eliteName: '布拉班特爱国军', eliteTier: 3 },
+    ],
+    morea_despotate: [
+        // 🔴 [2026-11-15 按史补齐城堡时代摩里亚军团] 曼努埃尔·坎塔库泽努斯（Manuel Kantakouzenos，约1326–1380，首任摩里亚专制君主，1349–1380坐镇米斯特拉斯/斯巴达平定地方叛乱并屡挫突厥劫掠舰队）
+        { generalId: 'morea_kantakouzenos', factionId: 'morea_despotate', cityId: 'city_sparta', generalName: '曼努埃尔·坎塔库泽努斯', portrait: '', eliteName: '摩里亚重甲骑兵', eliteTier: 3 },
+    ],
+    thessalonica_kingdom: [
+        // 🔴 [2026-11-15 按史补齐城堡时代瓦尔达尔军团] 博尼法乔一世（Boniface I of Montferrat，约1150–1207，第四次十字军统帅、塞萨洛尼基王国开国国王，1204年建都塞萨洛尼基经略马其顿与色雷斯）
+        { generalId: 'thessalonica_boniface_i', factionId: 'thessalonica_kingdom', cityId: 'city_salonica', generalName: '博尼法乔一世', portrait: '', eliteName: '蒙费拉托十字骑', eliteTier: 3 },
+    ],
+    hengshan_fu: [
+        // 🔴 [2026-11-15 按史补齐城堡时代燕云军团] 武仙（约1180–1234，《金史·卷一一八·武仙传》：1220年封恒山公、开府真定统河北九府州，金末河北九公之首）
+        { generalId: 'hengshan_wuxian', factionId: 'hengshan_fu', cityId: 'city_zhending', generalName: '武仙', portrait: '', eliteName: '恒山公府锐卒', eliteTier: 3 },
+    ],
+    khokhar: [
+        // 🔴 [2026-11-15 按史补齐城堡时代五河军团] 贾斯拉特（Jasrat Khokhar，约1385–1442，北旁遮普科卡尔部首领，1420年坦纳之战大破克什米尔苏丹阿里沙并多次围攻拉合尔、西尔欣德抗击德里赛义德政权）
+        { generalId: 'khokhar_jasrat', factionId: 'khokhar', cityId: 'city_atuoke', generalName: '贾斯拉特', portrait: '', eliteName: '科卡尔山地铁骑', eliteTier: 3 },
+    ],
+    suiones: [
+        // 🔴 [2026-11-15 按史补齐古典时代北欧日耳曼军团] 斯维阿王（史源转述、史失其名：据塔西佗《日耳曼尼亚志》第44章载公元1世纪统辖斯维阿部舰队与常备军械之君主，按规则取史载泛指）
+        { generalId: 'suiones_king', factionId: 'suiones', cityId: 'city_wupusala', generalName: '斯维阿王', portrait: '', eliteName: '乌普萨拉盾卫', eliteTier: 4 },
     ],
 };
 

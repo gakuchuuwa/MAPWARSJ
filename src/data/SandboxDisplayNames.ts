@@ -163,6 +163,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xilawangguo': '希腊',
     'mani_beylik': '曼贝',   // 曼尼贝伊国（避让曼尼普尔「曼尼」与马尼拉「马尼」）
     'filiki_eteria': '友爱', // 友爱社
+    'saadi_sultanate': '萨阿', // 萨阿德苏丹国
+    'belgian_states': '比利', // 比利时合众国
+    'morea_despotate': '摩里', // 摩里亚专制国
+    'thessalonica_kingdom': '塞萨', // 塞萨洛尼基王国
+    'hengshan_fu': '恒山', // 恒山公府（金末河北九公之首武仙）
+    'khokhar': '科卡', // 科卡尔部
+    'suiones': '斯维', // 斯维阿部
     'ante': '安特',
     'suweihui': '苏维',
     'yibiluliya': '伊比',

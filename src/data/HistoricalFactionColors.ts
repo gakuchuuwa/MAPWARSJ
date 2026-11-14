@@ -496,6 +496,13 @@ desheng: '#2E6B7A', // 德胜·刘通
     'xilawangguo': '#2E4A6B', // 希腊王国
     'mani_beylik': '#2B547E', // 曼尼贝伊国（拉科尼亚深海蓝）
     'filiki_eteria': '#355C7D', // 友爱社（神圣军团灰蓝）
+    'saadi_sultanate': '#C87D28', // 萨阿德苏丹国（马拉喀什金赭）
+    'belgian_states': '#D49B27', // 比利时合众国（布拉班特雄狮金）
+    'morea_despotate': '#6E4B8B', // 摩里亚专制国（米斯特拉斯紫）
+    'thessalonica_kingdom': '#8C6239', // 塞萨洛尼基王国（蒙费拉托铜褐）
+    'hengshan_fu': '#4F6D5A', // 恒山公府（太行苍青）
+    'khokhar': '#9E5B40', // 科卡尔部（旁遮普盐岭赤褐）
+    'suiones': '#3B6E8C', // 斯维阿部（波罗的海铁蓝）
     'ante': '#4A5C2E', // 安特
     'suweihui': '#5C4A2E', // 苏维汇
     'yibiluliya': '#2E4A5C', // 伊比利亚

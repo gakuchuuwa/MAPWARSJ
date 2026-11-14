@@ -190,6 +190,13 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1821 起）
     'mani_beylik': [{ from: -9999, era: 'imperial' }], // 曼尼贝伊国（1770–1821，马夫罗米哈利斯）
     'filiki_eteria': [{ from: -9999, era: 'imperial' }], // 友爱社（1814–1821，伊普西兰蒂斯）
+    'saadi_sultanate': [{ from: -9999, era: 'imperial' }], // 萨阿德苏丹国（1549–1659，艾哈迈德·曼苏尔）
+    'belgian_states': [{ from: -9999, era: 'imperial' }], // 比利时合众国（1789–1790，扬·范德梅尔施）
+    'morea_despotate': [{ from: -9999, era: 'castle' }], // 摩里亚专制国（1349–1383，曼努埃尔·坎塔库泽努斯）
+    'thessalonica_kingdom': [{ from: -9999, era: 'castle' }], // 塞萨洛尼基王国（1204–1224，博尼法乔一世）
+    'hengshan_fu': [{ from: -9999, era: 'castle' }], // 恒山公府（1220–1234，武仙）
+    'khokhar': [{ from: -9999, era: 'castle' }], // 科卡尔部（1394–1442，贾斯拉特）
+    'suiones': [{ from: -9999, era: 'antiquity' }], // 斯维阿部（50–476，斯维阿王）
     'ante': [{ from: -9999, era: 'antiquity' }], // 安特（300–602，4 世纪博兹王抗击东哥特，古典段 176 年 > 封建段 126 年）＝古典时代安特军团
     'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建 🔴[2026-11-09 主人令「按大部分年份改」原 [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }] → feudal｜存续 409–585 大部分年份]
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）

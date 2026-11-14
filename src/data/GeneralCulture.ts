@@ -170,6 +170,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'beihai_shamusheyun': 'JAPAN',   // 阿伊努｜沙牟奢允｜据点 宗谷
     'beileinisi_tuolemiershi': 'MACEDONIAN',   // 托勒密｜托勒密二世｜据点 贝雷尼斯
     'beiyan_gen_384': 'XIANBEI',   // 北燕｜冯弘｜据点 朝阳
+    'belgian_vandermersch': 'BURGUNDIANS',   // 比利时合众国｜扬·范德梅尔施｜据点 布鲁塞尔
     'bendou_alikesai': 'BYZANTINE',   // 特拉布宗｜阿历克塞｜据点 特拉布宗
     'bendou_d_mitelidati': 'GREECE',   // 本都｜密特里达梯｜据点 阿马西亚
     'bfe_abdulaziz_crete': 'ORIE',   // 克里特埃米尔国｜阿齐兹｜据点 干地亚要塞
@@ -1405,6 +1406,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'helin_hanting_gen_635': 'MONGOL',   // 和林汗庭｜阿里不哥｜据点 哈拉和林
     'heng_hetengjiao': 'HUGUANG',   // 隆武｜何腾蛟｜据点 临烝
     'heng1_yangye': 'CENTRAL',   // 赵宋｜杨业｜据点 雁门关
+    'hengshan_wuxian': 'WEI',   // 恒山公府｜武仙｜据点 真定
     'hepan_gaoxianzhi': 'CENTRAL',   // 李唐｜高仙芝｜据点 伊逻卢
     'hesitiya_yiasong': 'GREECE',   // 色萨利｜伊阿宋｜据点 佩利纳
     'heti_alialate': 'TURKS',   // 卡帕多细亚｜阿里阿拉特｜据点 提亚纳
@@ -1487,6 +1489,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jianzhou_nvzhen_limanzhu': 'NORTHEAST',   // 后金｜李满住｜据点 浑江
     'jiaodong_tiandan': 'CENTRAL',   // 田齐｜田单｜据点 即墨
     'jiaohuangguo_albornoz': 'ROMA',   // 教皇国｜阿尔沃诺斯｜据点 罗马
+    'jiaohuangguo_colonna': 'ROMA',   // 教皇国｜马尔坎托尼奥·科隆纳｜据点 罗马
     'jiaohuangguo_leoi': 'ROMA',   // 罗马帝国｜教皇利奥一世｜据点 罗马
     'jiashi_jiashiwang_d': 'MUGHAL',   // 迦尸国｜梵摩达｜据点 瓦拉纳西
     'jiashi_wangxuance': 'CENTRAL',   // 李唐｜王玄策｜据点 长安
@@ -1587,6 +1590,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ketagalan_huangqingyun': 'MALAY',   // 凯达格兰｜黄青云｜据点 艋舺
     'khoja_apakehezhuo': 'WESTERN',   // 和卓｜阿帕克和卓｜据点 盘橐
     'khoja_gen_728': 'WESTERN',   // 和卓｜霍集占｜据点 渠莎
+    'khokhar_jasrat': 'PURU',   // 科卡尔部｜贾斯拉特｜据点 阿托克
     'khon_basiba': 'TIBET',   // 萨迦昆｜八思巴｜据点 萨迦
     'khon_wangzun': 'TIBET',   // 萨迦昆｜本钦旺尊｜据点 萨迦
     'khoshut_gushihan': 'MONGOL',   // 和硕特｜图鲁拜琥｜据点 伏俟城
@@ -1831,6 +1835,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'maqidun_gen_61': 'MACEDONIAN',   // 马其顿｜珀尔修斯｜据点 佩拉
     'maqidun_hephaistion': 'MACEDONIAN',   // 马其顿｜赫菲斯提昂｜据点 佩拉
     'maqidun_nearchos': 'MACEDONIAN',   // 马其顿｜尼阿库斯｜据点 佩拉
+    'maya_chak_tok_ichaak': 'MAYANS',   // 玛雅｜查克·托克·伊查克｜据点 蒂卡尔
     'mayapan_hunac_ceel': 'MAYANS',   // 玛雅潘｜胡纳克｜据点 乌斯马尔
     'mayuelian': 'ROMA',   // 罗马帝国｜马约里安｜据点 拉文纳
     'mazhaer_balint_torok': 'MAGYAR',   // 匈牙利｜特勒克｜据点 塞格德
@@ -1893,6 +1898,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'monong_anong': 'HUGUANG',   // 大南国｜阿侬｜据点 广源
     'monpa_meire': 'TIBET',   // 甘丹颇章｜洛珠嘉措｜据点 错那
     'montereau_pressy': 'BURGUNDIANS',   // 勃艮第公国｜普雷西｜据点 蒙特罗
+    'morea_kantakouzenos': 'SPARTANS',   // 摩里亚专制国｜曼努埃尔·坎塔库泽努斯｜据点 斯巴达
     'mowoer_akeba': 'MUGHAL',   // 莫卧儿帝国｜阿克巴｜据点 阿格拉
     'mowoer_mukelabuhan': 'MUGHAL',   // 莫卧儿帝国｜穆卡拉布汗｜据点 苏拉特
     'mowoer_ramsingh': 'MUGHAL',   // 莫卧儿帝国｜拉姆辛格｜据点 阿格拉
@@ -2121,6 +2127,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ruoqiang_quhulai': 'WESTERN',   // 婼羌｜去胡来｜据点 卡克里克
     'ruzhou_sunjian': 'JIANGNAN',   // 孙吴｜孙坚｜据点 长沙
     'ryukyu_shangbazhi': 'JAPAN',   // 琉球｜尚巴志｜据点 首里
+    'saadi_ahmad_mansur': 'BERBER',   // 萨阿德苏丹国｜艾哈迈德·曼苏尔｜据点 马拉喀什
     'sabeol_jinshimin': 'KOREA',   // 朝鲜｜金时敏｜据点 晋州
     'saerbadaer_lazhake': 'SASANIAN',   // 萨尔巴达尔｜拉扎克｜据点 白哈格
     'safawei_d_abasi': 'SASANIAN',   // 萨法维｜阿拔斯｜据点 伊斯法罕
@@ -2294,6 +2301,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'sui_gen_440': 'CENTRAL',   // 隋国｜刘长恭｜据点 洛阳
     'sui_yangjian': 'CENTRAL',   // 隋国｜杨坚｜据点 随州
     'sui_yuwenshu': 'CENTRAL',   // 隋国｜宇文述｜据点 长安
+    'suiones_king': 'VIKINGS',   // 斯维阿部｜斯维阿王｜据点 乌普萨拉
     'suke_langanheng': 'KHMER',   // 素可泰｜兰甘亨｜据点 素可泰
     'sulu_paduka': 'MALAY',   // 苏禄苏丹国｜巴杜卡｜据点 霍洛
     'sumeier_nabopalasa': 'ORIE',   // 迦勒底｜那波帕拉萨｜据点 巴比伦
@@ -2397,6 +2405,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'teluoyi_maniya': 'PERSIAN',   // 阿契美尼德｜马尼亚｜据点 特洛伊
     'ternate_babula': 'MALAY',   // 特尔纳特｜巴布拉｜据点 德尔纳特
     'thasos_shouling': 'GREECE',   // 萨索斯｜萨索斯守将｜据点 萨索斯
+    'thessalonica_boniface_i': 'MACEDONIAN',   // 塞萨洛尼基王国｜博尼法乔一世｜据点 佩拉
     'tian_sizhou_tianyougong': 'CENTRAL',   // 赵宋｜田祐恭｜据点 㵲溪
     'tianjing_wangliang': 'CENTRAL',   // 刘汉｜王梁｜据点 天井关
     'tianxiong_gen_497': 'WEI',   // 魏博｜田悦｜据点 大名
