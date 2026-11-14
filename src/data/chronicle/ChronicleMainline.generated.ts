@@ -5788,7 +5788,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
-            "enemyGeneralId": "maqidun_eumenes",
+            "enemyGeneralId": "bfe_cb_maqidun_1",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5880,7 +5880,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
-            "enemyGeneralId": "maqidun_eumenes",
+            "enemyGeneralId": "bfe_cb_maqidun_1",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5923,7 +5923,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
-            "enemyGeneralId": "maqidun_eumenes",
+            "enemyGeneralId": "bfe_cb_maqidun_1",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -5966,7 +5966,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
-            "enemyGeneralId": "maqidun_eumenes",
+            "enemyGeneralId": "bfe_cb_maqidun_1",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -8600,7 +8600,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "huainan",
             "enemyFactionName": "淮南国",
-            "enemyGeneralId": "huainan_shouling",
+            "enemyGeneralId": "liu_yingbu",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -8774,7 +8774,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "luoma_gongheguo",
             "enemyFactionName": "罗马共和国",
-            "enemyGeneralId": "luoma_gongheguo_gen_53",
+            "enemyGeneralId": "bfe_cb_luoma_diguo_5",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -11240,7 +11240,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
-            "enemyGeneralId": "pompeians_shouling",
+            "enemyGeneralId": "pompeians_gen_90",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -11306,7 +11306,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
-            "enemyGeneralId": "pompeians_shouling",
+            "enemyGeneralId": "pompeians_gen_90",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -11376,7 +11376,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
-            "enemyGeneralId": "pompeians_shouling",
+            "enemyGeneralId": "pompeians_gen_90",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -32616,7 +32616,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "abasi",
             "enemyFactionName": "阿拔斯哈里发国",
-            "enemyGeneralId": "abasi_shouling",
+            "enemyGeneralId": "abasi_gen_491",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -40099,7 +40099,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "brionne",
             "enemyFactionName": "布里奥讷伯国",
-            "enemyGeneralId": "brionne_shouling",
+            "enemyGeneralId": "brionne_gen_586",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -49733,7 +49733,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "myTroops": 15000,
             "enemyFactionId": "habusibao",
             "enemyFactionName": "哈布斯堡",
-            "enemyGeneralId": "habusibao_shouling",
+            "enemyGeneralId": "habusibao_gen_694",
             "enemyTroops": 15000,
             "introLines": []
         }
@@ -50969,8 +50969,8 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetLat": 41.785,
             "targetLng": 124.682,
             "myTroops": 15000,
-            "enemyFactionId": "haixi_nvzhen",
-            "enemyFactionName": "海西",
+            "enemyFactionId": "nikan_wailan",
+            "enemyFactionName": "图伦尼堪部",
             "enemyGeneralId": "haixi_nvzhen_gen_703",
             "enemyTroops": 15000,
             "introLines": []

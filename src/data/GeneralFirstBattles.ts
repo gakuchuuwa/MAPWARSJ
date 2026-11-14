@@ -4312,7 +4312,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'bohai',
         enemyFactionName: '渤海国',
-        enemyGeneralId: 'bfe_cb_bohai_1',   // 🔴 [2026-10-20 经典战规则] 926 渤海末王大諲撰
+        enemyGeneralId: 'bohai_dayinzhuan',   // 🔴 [2026-10-20 经典战规则] 926 渤海末王大諲撰
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '天皇帝得神龙之瑞，契丹铁骑踏破长白黑水！忽汗城三面受围旦夕可破，八部勇士，拉满角弓随阿保机踏平渤海！' },
@@ -4953,7 +4953,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 12500,
         enemyFactionId: 'lunbadi',
         enemyFactionName: '伦巴第十字军',
-        enemyGeneralId: 'bfe_cb_lunbadi_1',
+        enemyGeneralId: 'gen_raymond_iv',
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '西欧十字军贪残成性，妄图穿过安纳托利亚荒原！我突厥弓骑已断其水泉，勇士，张弓引箭随苏丹伏击，全歼狂徒！' },
@@ -6629,7 +6629,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyFactionId: 'yinggelan',
         enemyFactionName: '英格兰王国',
         battleMonth: 5,
-        enemyGeneralId: 'bfe_cb_yinggelan_1',
+        enemyGeneralId: 'gen_suffolk',
         enemyTroops: 18000,
         introLines: [
             { speaker: 'general', text: '天使的声音指引法兰西！圣剑已拔出，主必使奥尔良重获自由！英格兰人的棱堡已在眼前，勇士们，随少女贞德爬梯破城！' },

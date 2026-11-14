@@ -1583,7 +1583,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'eluosi_diguo_pashenkefu': 17,   // 帕什科夫
     'eluosi_diguo_bieketuofu': 17,   // 别克托夫
     'gesake_bulawen': 18,   // 布拉温
-    'litaowan_weishennieweiciji': 16,   // 维什涅韦茨基
     'litaowan_dashenkeweiqi': 16,   // 达什克维奇
     'moerdaweiya_lepushenneiyanu': 16,   // 勒普什内亚努
     'moerdaweiya_lupu': 17,   // 卢普
@@ -1693,7 +1692,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'linhu_shouling': -3,
     'abasi_gen_491': 8,
     'abasi_gen_583': 11,
-    'abasi_shouling': 8,
     'achaea_shouling': -3,
     'aitolia_shouling': -3,
     'alamanni_shouling': 3,
@@ -1776,7 +1774,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bosiniya_gen_675': 15,
     'boximiya_gen_670': 15,
     'brionne_gen_586': 11,
-    'brionne_shouling': 11,
     'bukhara_sogd_gen_475': 8,
     'buliedian_gen_731': 19,
     'bulietani_gen_643': 14,
@@ -1946,7 +1943,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'habusibao_gen_697': 16,
     'habusibao_gen_718': 17,
     'habusibao_gen_721': 17,
-    'habusibao_shouling': 16,
     'hafsids_shouling': 15,
     'haikou_gen_698': 16,
     'haikou_shouling': 16,
@@ -2036,7 +2032,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'hou_tang_gen_548': 10,
     'hou_womaya_gen_509': 8,
     'hou_zhao_gen_341': 4,
-    'huainan_shouling': -2,
     'huanchu_gen_368': 5,
     'huihu_gen_451': 7,
     'huihu_gen_488': 8,
@@ -2134,8 +2129,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'luoma_gongheguo_gen_3': -2,
     'luoma_gongheguo_gen_51': -2,
     'luoma_gongheguo_gen_52': -2,
-    'luoma_gongheguo_gen_53': -2,
-    'luoma_gongheguo_gen_54': -2,
+    'bfe_cb_luoma_diguo_5': -2,
+    'bfe_cb_maqidun_1': -4,
     'luoma_gongheguo_gen_59': -2,
     'luoma_gongheguo_gen_6': -1,
     'luoma_gongheguo_gen_60': -2,
@@ -2191,7 +2186,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'nanyue_gen_76': -2,
     'nanyue_gen_77': -2,
     'nanzhao_gen_502': 8,
-    'nikan_wailan_shouling': 16,
     'nizari_gen_631': 13,
     'northumbria_gen_533': 9,
     'numidia_gen_69': -2,
@@ -2225,7 +2219,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'pompeians_gen_96': -1,
     'pompeians_gen_98': -1,
     'pompeians_gen_99': -1,
-    'pompeians_shouling': -1,
     'qi_li_shouling': 10,
     'qianliang_gen_357': 4,
     'qiaoshu_gen_372': 5,

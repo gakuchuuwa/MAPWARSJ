@@ -672,7 +672,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_lysander: { birth: -445, death: -395, kaoju: '推定' },  // 吕山德
     gen_parmenion: { birth: -400, death: -330, kaoju: '推定' },  // 帕曼纽
     gen_perdiccas: { birth: -355, death: -320, kaoju: '异说' },  // 佩尔狄卡斯（尼罗河渡河失败后被部将所杀；按低年代学前320，与编年史同口径）
-    maqidun_eumenes: { birth: -361, death: -316, kaoju: '推定' },  // 欧迈尼斯（卡迪亚人；伽比埃奈战后被银盾兵执送安提柯处死，卒年四十五，普鲁塔克《欧迈尼斯传》20）
+    bfe_cb_maqidun_1: { birth: -361, death: -316, kaoju: '推定' },  // 欧墨涅斯（卡迪亚人；伽比埃奈战后被银盾兵执送安提柯处死，卒年四十五，普鲁塔克《欧迈尼斯传》20）
     qin_mengao: { birth: -300, death: -240, kaoju: '推定' },  // 蒙骜（生年不详推定；始皇七年卒，《史记·秦始皇本纪》）
     // ── 2026-11-13 编年史第一、二段补将 ──
     // ── 2026-11-13 0 据点势力补将（泛指武将生卒取势力存续期，供在场判定）──
@@ -2006,7 +2006,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     eluosi_diguo_pashenkefu: { birth: 1610, death: 1670, kaoju: '推定' },  // 帕什科夫
     eluosi_diguo_bieketuofu: { birth: 1600, death: 1661, kaoju: '推定' },  // 别克托夫
     gesake_bulawen: { birth: 1660, death: 1708, kaoju: '推定' },  // 布拉温
-    litaowan_weishennieweiciji: { birth: 1516, death: 1563, kaoju: '推定' },  // 维什涅韦茨基
     litaowan_dashenkeweiqi: { birth: 1490, death: 1536, kaoju: '推定' },  // 达什克维奇
     moerdaweiya_lepushenneiyanu: { birth: 1500, death: 1568, kaoju: '推定' },  // 勒普什内亚努
     moerdaweiya_lupu: { birth: 1595, death: 1661, kaoju: '推定' },  // 卢普
@@ -2124,7 +2123,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     mazhaer_balint_torok: { birth: 1502, death: 1551 }, // 特勒克 · 匈牙利 · 塞格德
     abasi_gen_491: { birth: 708, death: 753, kaoju: '推定' },
     abasi_gen_583: { birth: 1006, death: 1059 },
-    abasi_shouling: { birth: 716, death: 761, kaoju: '推定' },
     achaea_shouling: { birth: -248, death: -203, kaoju: '推定' },
     aitolia_shouling: { birth: -315, death: -270, kaoju: '推定' },
     alamanni_shouling: { birth: 233, death: 278, kaoju: '推定' },
@@ -2207,7 +2205,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bosiniya_gen_675: { birth: 1438, death: 1463 },
     boximiya_gen_670: { birth: 1369, death: 1438 },
     brionne_gen_586: { birth: 1025, death: 1069 },
-    brionne_shouling: { birth: 1012, death: 1057, kaoju: '推定' },
     bukhara_sogd_gen_475: { birth: 664, death: 709, kaoju: '推定' },
     buliedian_gen_731: { birth: 1779, death: 1869 },
     bulietani_gen_643: { birth: 1319, death: 1364 },
@@ -2377,7 +2374,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     habusibao_gen_697: { birth: 1481, death: 1541 },
     habusibao_gen_718: { birth: 1643, death: 1690 },
     habusibao_gen_721: { birth: 1655, death: 1707 },
-    habusibao_shouling: { birth: 1494, death: 1539, kaoju: '推定' },
     hafsids_shouling: { birth: 1366, death: 1411, kaoju: '推定' },
     haikou_gen_698: { birth: 1518, death: 1563, kaoju: '推定' },
     haikou_shouling: { birth: 1526, death: 1571, kaoju: '推定' },
@@ -2467,7 +2463,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     hou_tang_gen_548: { birth: 891, death: 936, kaoju: '推定' },
     hou_womaya_gen_509: { birth: 770, death: 815, kaoju: '推定' },
     hou_zhao_gen_341: { birth: 288, death: 333, kaoju: '推定' },
-    huainan_shouling: { birth: -231, death: -186, kaoju: '推定' },
     huanchu_gen_368: { birth: 365, death: 410, kaoju: '推定' },
     huihu_gen_451: { birth: 632, death: 677, kaoju: '推定' },
     huihu_gen_488: { birth: 709, death: 754, kaoju: '推定' },
@@ -2565,8 +2560,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     luoma_gongheguo_gen_3: { birth: -185, death: -129 },
     luoma_gongheguo_gen_51: { birth: -221, death: -176, kaoju: '推定' },
     luoma_gongheguo_gen_52: { birth: -234, death: -149 },
-    luoma_gongheguo_gen_53: { birth: -220, death: -175, kaoju: '推定' },
-    luoma_gongheguo_gen_54: { birth: -235, death: -183 },
+    bfe_cb_luoma_diguo_5: { birth: -220, death: -175, kaoju: '推定' },
     luoma_gongheguo_gen_59: { birth: -217, death: -172, kaoju: '推定' },
     luoma_gongheguo_gen_6: { birth: -68, death: -23, kaoju: '推定' },
     luoma_gongheguo_gen_60: { birth: -209, death: -154, kaoju: '推定' },
@@ -2622,7 +2616,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     nanyue_gen_76: { birth: -156, death: -111, kaoju: '推定' },
     nanyue_gen_77: { birth: -156, death: -111, kaoju: '推定' },
     nanzhao_gen_502: { birth: 754, death: 808 },
-    nikan_wailan_shouling: { birth: 1548, death: 1593, kaoju: '推定' },
     nizari_gen_631: { birth: 1230, death: 1257 },
     northumbria_gen_533: { birth: 822, death: 867, kaoju: '推定' },
     numidia_gen_69: { birth: -238, death: -148 },
@@ -2656,7 +2649,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     pompeians_gen_96: { birth: -95, death: -46 },
     pompeians_gen_98: { birth: -75, death: -45 },
     pompeians_gen_99: { birth: -100, death: -45 },
-    pompeians_shouling: { birth: -84, death: -39, kaoju: '推定' },
     qi_li_shouling: { birth: 870, death: 915, kaoju: '推定' },
     qianliang_gen_357: { birth: 346, death: 406 },
     qiaoshu_gen_372: { birth: 368, death: 413, kaoju: '推定' },

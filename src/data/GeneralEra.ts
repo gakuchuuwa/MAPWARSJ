@@ -1915,7 +1915,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'eluosi_diguo_pashenkefu': 'imperial', // 帕什科夫（补将）
     'eluosi_diguo_bieketuofu': 'imperial', // 别克托夫（补将）
     'gesake_bulawen': 'imperial', // 布拉温（补将）
-    'litaowan_weishennieweiciji': 'castle', // 维什涅韦茨基（补将）
     'litaowan_dashenkeweiqi': 'castle', // 达什克维奇（补将）
     'moerdaweiya_lepushenneiyanu': 'castle', // 勒普什内亚努（补将）
     'moerdaweiya_lupu': 'castle', // 卢普（补将）
@@ -2045,7 +2044,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'linhu_shouling': 'antiquity',
     'abasi_gen_491': 'feudal',
     'abasi_gen_583': 'castle',
-    'abasi_shouling': 'feudal',
     'achaea_shouling': 'antiquity',
     'aitolia_shouling': 'antiquity',
     'alamanni_shouling': 'antiquity',
@@ -2128,7 +2126,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bosiniya_gen_675': 'castle',
     'boximiya_gen_670': 'castle',
     'brionne_gen_586': 'castle',
-    'brionne_shouling': 'castle',
     'bukhara_sogd_gen_475': 'feudal',
     'buliedian_gen_731': 'imperial',
     'bulietani_gen_643': 'castle',
@@ -2298,7 +2295,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'habusibao_gen_697': 'imperial',
     'habusibao_gen_718': 'imperial',
     'habusibao_gen_721': 'imperial',
-    'habusibao_shouling': 'imperial',
     'hafsids_shouling': 'castle',
     'haikou_gen_698': 'castle',
     'haikou_shouling': 'castle',
@@ -2388,7 +2384,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'hou_tang_gen_548': 'feudal',
     'hou_womaya_gen_509': 'feudal',
     'hou_zhao_gen_341': 'antiquity',
-    'huainan_shouling': 'antiquity',
     'huanchu_gen_368': 'antiquity',
     'huihu_gen_451': 'feudal',
     'huihu_gen_488': 'feudal',
@@ -2486,8 +2481,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'luoma_gongheguo_gen_3': 'antiquity',
     'luoma_gongheguo_gen_51': 'antiquity',
     'luoma_gongheguo_gen_52': 'antiquity',
-    'luoma_gongheguo_gen_53': 'antiquity',
-    'luoma_gongheguo_gen_54': 'antiquity',
+    'bfe_cb_luoma_diguo_5': 'antiquity',
+    'bfe_cb_maqidun_1': 'antiquity',
     'luoma_gongheguo_gen_59': 'antiquity',
     'luoma_gongheguo_gen_6': 'antiquity',
     'luoma_gongheguo_gen_60': 'antiquity',
@@ -2543,7 +2538,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'nanyue_gen_76': 'antiquity',
     'nanyue_gen_77': 'antiquity',
     'nanzhao_gen_502': 'feudal',
-    'nikan_wailan_shouling': 'imperial',
     'nizari_gen_631': 'castle',
     'northumbria_gen_533': 'feudal',
     'numidia_gen_69': 'antiquity',
@@ -2577,7 +2571,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'pompeians_gen_96': 'antiquity',
     'pompeians_gen_98': 'antiquity',
     'pompeians_gen_99': 'antiquity',
-    'pompeians_shouling': 'antiquity',
     'qi_li_shouling': 'feudal',
     'qianliang_gen_357': 'antiquity',
     'qiaoshu_gen_372': 'antiquity',

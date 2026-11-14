@@ -913,7 +913,7 @@ export const GENERAL_EXTRA_CLASSIC_BATTLES: Readonly<Record<string, readonly Gen
             "myTroops": 15000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
-            "enemyGeneralId": "bfe_cb_luoma_diguo_10",
+            "enemyGeneralId": "bfe_stilicho",
             "enemyTroops": 15000,
             "introLines": [
                 {
