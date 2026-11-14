@@ -49,9 +49,15 @@ interface SeaRouteCandidate {
  *    否则面板上显示的航程会是个带系数的假数。
  */
 const OPEN_SEA_PENALTY = 1.5;
-/** 每个港口（连了海路的城）应有的海路条数 */
-const PORT_SEA_ROUTE_MIN = 2;
-const PORT_SEA_ROUTE_MAX = 8;
+/** 港口海路条数分级区间（大城 6–9、中城 3–6、小城与险要 2–6、城寨 2–4） */
+const PORT_SEA_ROUTE_LIMITS: Record<string, { min: number; max: number; label: string }> = {
+    big_city: { min: 6, max: 9, label: '大城' },
+    medium_city: { min: 3, max: 6, label: '中城' },
+    small_city: { min: 2, max: 6, label: '小城' },
+    pass: { min: 2, max: 6, label: '险要' },
+    stockade: { min: 2, max: 4, label: '城寨' },
+};
+const DEFAULT_PORT_SEA_ROUTE_LIMIT = { min: 2, max: 6, label: '据点' };
 
 /**
  * 🔴 [2026-10-13 主人问「为什么道路编辑器中有的海路会横穿陆地」，授权全权修复]
@@ -1156,20 +1162,25 @@ export class SeaRouteEditor implements IEditor {
         return out;
     }
 
-    /** 港口 = 连了至少 1 条海路的城；海路条数不在 2–8 的报出来 */
-    private findPortsWithBadRouteCount(): Array<{ cityId: string; name: string; count: number }> {
+    /** 港口 = 连了至少 1 条海路的城；海路条数按城型分级检查（大城 6–9、中城 3–6、小城与险要 2–6、城寨 2–4） */
+    private findPortsWithBadRouteCount(): Array<{ cityId: string; name: string; typeLabel: string; min: number; max: number; count: number }> {
         const counts = new Map<string, number>();
         for (const f of SEA_ROUTE_DATA.features) {
             for (const id of [f?.properties?.startConnection, f?.properties?.endConnection]) {
                 if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
             }
         }
-        const out: Array<{ cityId: string; name: string; count: number }> = [];
+        const cityTypeById = new Map(CITIES.map(c => [c.id, c.type]));
+        const out: Array<{ cityId: string; name: string; typeLabel: string; min: number; max: number; count: number }> = [];
         for (const [cityId, count] of counts) {
-            if (count >= PORT_SEA_ROUTE_MIN && count <= PORT_SEA_ROUTE_MAX) continue;
-            out.push({ cityId, name: this.cityName(cityId), count });
+            const cType = cityTypeById.get(cityId) ?? 'small_city';
+            const lim = PORT_SEA_ROUTE_LIMITS[cType] ?? DEFAULT_PORT_SEA_ROUTE_LIMIT;
+            if (count >= lim.min && count <= lim.max) continue;
+            out.push({ cityId, name: this.cityName(cityId), typeLabel: lim.label, min: lim.min, max: lim.max, count });
         }
-        return out.sort((a, b) => b.count - a.count);
+        const diff = (p: { count: number; min: number; max: number }) =>
+            p.count < p.min ? p.min - p.count : p.count - p.max;
+        return out.sort((a, b) => diff(b) - diff(a) || b.count - a.count);
     }
 
     private cityName(id: string): string {
@@ -1213,7 +1224,7 @@ export class SeaRouteEditor implements IEditor {
             </div>`).join('');
         const portRows = badPorts.map(p => `
             <div style="${rowStyle('#ff9800')}">
-                <span style="flex:1;"><b>${p.name}</b> · 海路 <b style="color:#ffb74d">${p.count}</b> 条 ${p.count < PORT_SEA_ROUTE_MIN ? '太少' : '太多'} <span style="color:#666;font-size:11px;">[${p.cityId}]</span></span>
+                <span style="flex:1;"><b>${p.name}</b>（${p.typeLabel}，需 ${p.min}–${p.max} 条） · 海路 <b style="color:#ffb74d">${p.count}</b> 条 ${p.count < p.min ? '太少' : '太多'} <span style="color:#666;font-size:11px;">[${p.cityId}]</span></span>
                 <button class="sea-audit-city" data-id="${p.cityId}" style="${btnStyle('#00bcd4')}">👁 看</button>
             </div>`).join('');
         const section = (title: string, color: string, count: number, rows: string) => count === 0 ? '' : `
@@ -1229,14 +1240,14 @@ export class SeaRouteEditor implements IEditor {
                 <div style="padding:16px 22px;border-bottom:1px solid rgba(41,182,246,0.3);display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <div style="font-size:19px;font-weight:bold;color:${ok ? '#4caf50' : '#ff9800'};">${ok ? '✅' : '⚠'} 海路审查</div>
-                        <div style="font-size:13px;color:#9ab;margin-top:4px;">海路 ${SEA_ROUTE_DATA.features.length} 条 · 陆海重复 ${dups.length} · 港口海路数不在 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条 ${badPorts.length}</div>
+                        <div style="font-size:13px;color:#9ab;margin-top:4px;">海路 ${SEA_ROUTE_DATA.features.length} 条 · 陆海重复 ${dups.length} · 港口分级条数不符 ${badPorts.length}（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>
                     </div>
                     <button class="sea-audit-close" style="background:rgba(255,255,255,0.1);color:#d0e4f7;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">✕ 关闭</button>
                 </div>
                 <div style="flex:1;overflow-y:auto;padding:14px 22px;font-size:13px;line-height:1.6;">
-                    ${ok ? `<div style="text-align:center;padding:40px;color:#4caf50;font-size:16px;">✓ 无陆海重复 ✓ 所有港口海路 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条</div>` : ''}
+                    ${ok ? `<div style="text-align:center;padding:40px;color:#4caf50;font-size:16px;">✓ 无陆海重复 ✓ 所有港口海路数符合分级标准（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）</div>` : ''}
                     ${section('🔁 陆海重复：两城已有陆路，海路多余', '#e91e63', dups.length, dupRows)}
-                    ${section(`⚓ 港口海路数不在 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条`, '#ff9800', badPorts.length, portRows)}
+                    ${section('⚓ 港口海路数不符分级标准（大城6–9 / 中城3–6 / 小城·险要2–6 / 城寨2–4）', '#ff9800', badPorts.length, portRows)}
                     ${dups.length ? '<div style="color:#9ab;font-size:12px;margin-top:8px;">删完记得点 💾 保存。删海路会让港口海路数变少，删后列表会自动重算。</div>' : ''}
                 </div>
             </div>`;
