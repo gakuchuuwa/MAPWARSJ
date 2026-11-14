@@ -4646,14 +4646,15 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     //   eliteName/eliteTier，这里按武将所属势力收一条（仅供「缺精锐」校验用，region 字段保形置空）。
     const elites: Record<string, { name: string; tier: number; region: string }> = {};
     {
-        const fgKwIdx = fgText.indexOf('FACTION_GENERALS');
-        const openIdx = fgKwIdx === -1 ? -1 : fgText.indexOf('= {', fgKwIdx);
+        const fgClean = stripLineComments(fgText);
+        const fgKwIdx = fgClean.indexOf('FACTION_GENERALS');
+        const openIdx = fgKwIdx === -1 ? -1 : fgClean.indexOf('= {', fgKwIdx);
         let rangeEnd = -1;
         if (openIdx !== -1) {
             let depth = 0;
-            for (let i = openIdx + 2; i < fgText.length; i++) {
-                if (fgText[i] === '{') depth++;
-                else if (fgText[i] === '}') { depth--; if (depth === 0) { rangeEnd = i; break; } }
+            for (let i = openIdx + 2; i < fgClean.length; i++) {
+                if (fgClean[i] === '{') depth++;
+                else if (fgClean[i] === '}') { depth--; if (depth === 0) { rangeEnd = i; break; } }
             }
         }
         const collectFactionBlock = (blockKey: string, blockText: string): void => {
@@ -4680,10 +4681,38 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
             const keyRe = /^ {4}(\w+):/gm;
             keyRe.lastIndex = openIdx + 2;
             let km: RegExpExecArray | null;
-            while ((km = keyRe.exec(fgText)) !== null) {
+            while ((km = keyRe.exec(fgClean)) !== null) {
                 if (rangeEnd !== -1 && km.index > rangeEnd) break;
-                const entryEnd = findObjectEntryEnd(fgText, km.index);
-                collectFactionBlock(km[1], fgText.slice(km.index, entryEnd));
+                const entryEnd = findObjectEntryEnd(fgClean, km.index);
+                collectFactionBlock(km[1], fgClean.slice(km.index, entryEnd));
+            }
+        }
+    }
+
+    // battlefieldCharacters: 战场人物总表（2026-11-14 并入实体数据与防重校验，堵住跨表重名/重复人物漏检）
+    const battlefieldCharacters: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> = [];
+    {
+        const bfPath = path.resolve(__dirname, 'src/data/BattlefieldCharacters.ts');
+        if (fs.existsSync(bfPath)) {
+            const bfClean = stripLineComments(fs.readFileSync(bfPath, 'utf-8'));
+            const bfKwIdx = bfClean.indexOf('BATTLEFIELD_CHARACTERS');
+            const bfOpenIdx = bfKwIdx === -1 ? -1 : bfClean.indexOf('= {', bfKwIdx);
+            if (bfOpenIdx !== -1) {
+                let depth = 0;
+                let bfEnd = bfClean.length;
+                for (let i = bfOpenIdx + 2; i < bfClean.length; i++) {
+                    if (bfClean[i] === '{') depth++;
+                    else if (bfClean[i] === '}') { depth--; if (depth === 0) { bfEnd = i; break; } }
+                }
+                const bfBlock = bfClean.slice(bfOpenIdx + 2, bfEnd);
+                for (const bm of bfBlock.matchAll(/\{([^{}]*)\}/g)) {
+                    const body = bm[1];
+                    if (!body.includes('generalId:')) continue;
+                    const g = pickGeneral(body);
+                    if (!g) continue;
+                    const fid = body.match(/factionId:\s*'([^']+)'/)?.[1] ?? '';
+                    battlefieldCharacters.push({ generalId: g.generalId, generalName: g.generalName, portrait: g.portrait, factionId: fid });
+                }
             }
         }
     }
@@ -4820,8 +4849,13 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         eras[m[1]] = m[2];
     }
 
-    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, eras, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: [] };
+    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, battlefieldCharacters, profiles, elites, eras, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: [] };
     // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原 regions 取自区域番号映射表，现为空）
+}
+
+/** 人物名防重归一化：去空白、中点、连字符、引号与括注外壳（抓「耶律留哥」vs「耶律·留哥」这类异写重录） */
+function serverNormalizePersonName(name: string): string {
+    return (name ?? '').replace(/[\s·・\-—–_'’"“”()（）\[\]【】]/g, '');
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -4871,6 +4905,35 @@ function serverSaveGeneral(data: {
     // 立绘只允许 PNG（服务端强制，防客户端校验被绕过）；非 PNG 直接拒绝，不写任何盘
     if (data.portrait && !data.portrait.toLowerCase().endsWith('.png')) {
         throw new Error(`立绘路径必须是 .png，不支持 .jpg 等格式：${data.portrait}`);
+    }
+
+    // 🔴 [2026-11-14 防重闸门] 写盘前拦截全库（FactionGenerals 全部条目 ＋ BattlefieldCharacters 战场人物）重复 ID / 重名 / 异写同名 / 泛指撞实名
+    {
+        const snapshot = serverReadAllEntityData();
+        const editingOldId = (data.oldGeneralId || '').trim();
+        const incomingName = (data.generalName || '').trim();
+        const incomingNorm = serverNormalizePersonName(incomingName);
+        const incomingStripped = incomingNorm.replace(/(首领|主将|守将|统帅|头目)$/, '');
+        const incomingHasRoleSuffix = incomingStripped !== incomingNorm && incomingStripped.length >= 2;
+        const allExisting = [
+            ...snapshot.allGenerals.map((g) => ({ ...g, sourceLabel: '武将' })),
+            ...snapshot.battlefieldCharacters.map((g) => ({ ...g, sourceLabel: '战场人物' })),
+        ];
+        for (const ex of allExisting) {
+            if (editingOldId && ex.generalId === editingOldId) continue;
+            if (ex.generalId === data.generalId) {
+                throw new Error(`generalId "${data.generalId}" 已存在（${ex.sourceLabel} "${ex.generalName}" @ ${ex.factionId}），禁止重复录入`);
+            }
+            const exNorm = serverNormalizePersonName(ex.generalName);
+            if (incomingNorm && exNorm && incomingNorm === exNorm) {
+                throw new Error(`人物名 "${incomingName}" 与已有${ex.sourceLabel} "${ex.generalName}"(${ex.generalId} @ ${ex.factionId}) 重复，禁止提交`);
+            }
+            const exStripped = exNorm.replace(/(首领|主将|守将|统帅|头目)$/, '');
+            const exHasRoleSuffix = exStripped !== exNorm && exStripped.length >= 2;
+            if ((incomingHasRoleSuffix && incomingStripped === exNorm) || (exHasRoleSuffix && exStripped === incomingNorm)) {
+                throw new Error(`人物 "${incomingName}" 与已有${ex.sourceLabel} "${ex.generalName}"(${ex.generalId} @ ${ex.factionId}) 属实名/泛指重复，禁止提交`);
+            }
+        }
     }
 
     const fgPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
@@ -5920,35 +5983,140 @@ function serverValidateEntities(): {
         }
     }
 
-    // 16. 武将名重复（仅完全同名；子串包含如「帖木儿」⊂「扩廓帖木儿」不算重复）
-    const generalEntries = Object.entries(data.generals) as [string, { generalId: string; generalName: string }][];
-    for (let i = 0; i < generalEntries.length; i++) {
-        for (let j = i + 1; j < generalEntries.length; j++) {
-            const [idA, gA] = generalEntries[i], [idB, gB] = generalEntries[j];
-            if (skipFactions.has(idA) || skipFactions.has(idB)) continue;
-            if (gA.generalName.length < 2 || gB.generalName.length < 2) continue;
-            if (gA.generalName === gB.generalName) {
+    // 16 & 17. 🔴 [2026-11-14 修复重复人物漏检] 全库人物防重校验：
+    //   旧实现只遍历 data.generals（每势力仅取第 1 位武将）且漏掉 BattlefieldCharacters.ts 战场人物，
+    //   导致同势力多将、跨势力非首位将、以及「据点武将 ↔ 战场人物」之间的重复人物完全漏报。
+    //   现统一扫描 data.allGenerals（FactionGenerals 全部条目）＋ data.battlefieldCharacters（战场人物总表）：
+    //   (a) 同一 generalId 出现多次（同表重复或跨表重复）
+    //   (b) 人物姓名完全相同，或去标点/空白/中点归一化后相同（如「耶律留哥」vs「耶律·留哥」）
+    //   (c) 泛指条目（「XX首领/主将/守将/统帅/头目」）去掉后缀后与实名人物撞名（如「尼堪外兰首领」vs「尼堪外兰」）
+    //   (d) 同一专图立绘路径被多个 generalId 共用
+    //   (e) 人物各分表源码内同一键重复写多次（后者静默覆盖前者）
+    {
+        const allPeople = [
+            ...data.allGenerals.map((g) => ({
+                generalId: g.generalId,
+                generalName: g.generalName,
+                portrait: g.portrait,
+                factionId: g.factionId,
+                sourceLabel: '武将',
+            })),
+            ...(data.battlefieldCharacters ?? []).map((g) => ({
+                generalId: g.generalId,
+                generalName: g.generalName,
+                portrait: g.portrait,
+                factionId: g.factionId,
+                sourceLabel: '战场人物',
+            })),
+        ].filter((p) => !skipFactions.has(p.factionId));
+
+        // 17a. generalId 全局唯一
+        const byGid = new Map<string, typeof allPeople>();
+        for (const p of allPeople) {
+            if (!p.generalId) continue;
+            if (!byGid.has(p.generalId)) byGid.set(p.generalId, []);
+            byGid.get(p.generalId)!.push(p);
+        }
+        for (const [gid, list] of byGid) {
+            if (list.length > 1) {
                 issues.push({
                     level: 'error',
-                    msg: `武将 "${gA.generalName}" 重复: 势力 ${idA}(${gA.generalId}) 与 ${idB}(${gB.generalId})`,
-                    factionId: idA,
+                    msg: `人物 ID "${gid}" 重复出现 ${list.length} 次: ${list.map((x) => `${x.sourceLabel}"${x.generalName}"(${x.factionId})`).join(' 与 ')}`,
+                    factionId: list[0].factionId,
                 });
             }
         }
-    }
 
-    // 17. 武将 generalId 被多势力共用
-    const generalIdOwners = new Map<string, string[]>();
-    for (const [fId, g] of Object.entries(data.generals)) {
-        if (skipFactions.has(fId)) continue;
-        if (!generalIdOwners.has(g.generalId)) generalIdOwners.set(g.generalId, []);
-        generalIdOwners.get(g.generalId)!.push(fId);
-    }
-    generalIdOwners.forEach((fIds, genId) => {
-        if (fIds.length > 1) {
-            issues.push({ level: 'error', msg: `武将 ID "${genId}" 被多势力共用: ${fIds.join(', ')}`, factionId: fIds[0] });
+        // 16a & 16b. 精确同名 + 归一化同名
+        const byNormName = new Map<string, typeof allPeople>();
+        for (const p of allPeople) {
+            const norm = serverNormalizePersonName(p.generalName);
+            if (!norm) continue;
+            if (!byNormName.has(norm)) byNormName.set(norm, []);
+            byNormName.get(norm)!.push(p);
         }
-    });
+        for (const [, list] of byNormName) {
+            const distinctIds = new Set(list.map((x) => x.generalId));
+            if (distinctIds.size > 1) {
+                const exactSame = new Set(list.map((x) => x.generalName)).size === 1;
+                issues.push({
+                    level: 'error',
+                    msg: exactSame
+                        ? `人物 "${list[0].generalName}" 重名重复: ${list.map((x) => `${x.sourceLabel} ${x.factionId}(${x.generalId})`).join(' 与 ')}`
+                        : `人物异写重复: ${list.map((x) => `${x.sourceLabel}"${x.generalName}"(${x.generalId}@${x.factionId})`).join(' 与 ')}`,
+                    factionId: list[0].factionId,
+                });
+            }
+        }
+
+        // 16c. 泛指后缀（「XX首领/主将/守将/统帅/头目」）撞实名人物
+        for (const p of allPeople) {
+            const norm = serverNormalizePersonName(p.generalName);
+            const stripped = norm.replace(/(首领|主将|守将|统帅|头目)$/, '');
+            if (stripped === norm || stripped.length < 2) continue;
+            const clashes = (byNormName.get(stripped) ?? []).filter((x) => x.generalId !== p.generalId);
+            for (const c of clashes) {
+                issues.push({
+                    level: 'error',
+                    msg: `泛指与实名重复: ${p.sourceLabel}"${p.generalName}"(${p.generalId}@${p.factionId}) 与 ${c.sourceLabel}"${c.generalName}"(${c.generalId}@${c.factionId})`,
+                    factionId: p.factionId,
+                });
+            }
+        }
+
+        // 17b. 同一专图立绘路径被多个 generalId 共用
+        const byPortrait = new Map<string, typeof allPeople>();
+        for (const p of allPeople) {
+            const pp = serverNormalizePortraitPath(p.portrait ?? '').trim().toLowerCase();
+            if (!pp) continue;
+            if (!byPortrait.has(pp)) byPortrait.set(pp, []);
+            byPortrait.get(pp)!.push(p);
+        }
+        for (const [, list] of byPortrait) {
+            const distinctIds = new Set(list.map((x) => x.generalId));
+            if (distinctIds.size > 1) {
+                issues.push({
+                    level: 'error',
+                    msg: `立绘 "${list[0].portrait}" 被多位人物共用: ${list.map((x) => `${x.sourceLabel}"${x.generalName}"(${x.generalId}@${x.factionId})`).join(' 与 ')}`,
+                    factionId: list[0].factionId,
+                });
+            }
+        }
+
+        // 17c. 人物辅助分表内同一键重复声明（防后者静默覆盖前者）
+        const auxKeyTables: Array<{ label: string; relPath: string; keyRe: RegExp }> = [
+            { label: 'GeneralLifeYears.ts', relPath: 'src/data/GeneralLifeYears.ts', keyRe: /^\s*'?([A-Za-z0-9_]+)'?\s*:\s*[\[{]/ },
+            { label: 'GeneralCenturies.ts', relPath: 'src/data/GeneralCenturies.ts', keyRe: /^\s*'?([A-Za-z0-9_]+)'?\s*:\s*-?\d+/ },
+            { label: 'GeneralEra.ts', relPath: 'src/data/GeneralEra.ts', keyRe: /^\s*'?([A-Za-z0-9_]+)'?\s*:\s*'(?:antiquity|feudal|castle|imperial)'/ },
+            { label: 'GeneralCulture.ts', relPath: 'src/data/GeneralCulture.ts', keyRe: /^\s*'?([A-Za-z0-9_]+)'?\s*:\s*'[A-Z0-9_]+'/ },
+            { label: 'general-skills/profiles.ts', relPath: 'src/data/general-skills/profiles.ts', keyRe: /^\s*([A-Za-z0-9_]+)\s*:\s*\{\s*generalId:/ },
+            { label: 'BattlefieldCharacters.ts', relPath: 'src/data/BattlefieldCharacters.ts', keyRe: /^\s*([A-Za-z0-9_]+)\s*:\s*\{\s*generalId:/ },
+        ];
+        for (const tbl of auxKeyTables) {
+            const abs = path.resolve(__dirname, tbl.relPath);
+            if (!fs.existsSync(abs)) continue;
+            const lines = fs.readFileSync(abs, 'utf-8').split(/\r?\n/);
+            const seenLines = new Map<string, number[]>();
+            for (let i = 0; i < lines.length; i++) {
+                const raw = lines[i];
+                const cAt = findLineCommentStart(raw);
+                const cleanLn = cAt >= 0 ? raw.slice(0, cAt) : raw;
+                const m = cleanLn.match(tbl.keyRe);
+                if (!m) continue;
+                const k = m[1];
+                if (!seenLines.has(k)) seenLines.set(k, []);
+                seenLines.get(k)!.push(i + 1);
+            }
+            for (const [k, lns] of seenLines) {
+                if (lns.length > 1) {
+                    issues.push({
+                        level: 'error',
+                        msg: `${tbl.label} 存在重复键 "${k}"（第 ${lns.join(', ')} 行，后者会静默覆盖前者）`,
+                    });
+                }
+            }
+        }
+    }
 
     return {
         issues,

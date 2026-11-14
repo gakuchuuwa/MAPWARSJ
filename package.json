@@ -100,6 +100,7 @@
     "tactical:assign-audit": "tsx tools/tactical-assign-audit.ts",
     "tactical:triclass": "tsx tools/tactical-triclass-audit.ts",
     "general:ecology-audit": "tsx tools/general-profile-ecology-audit.ts",
+    "general:identity-audit": "npx tsx scratch/audit_general_identity.mts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "era:audit": "npx tsx --import ./tools/sim-preload.mjs scripts/audit_general_centuries.mts",
     "era:todo": "npx tsx --import ./tools/sim-preload.mjs scripts/audit_general_centuries.mts --todo",

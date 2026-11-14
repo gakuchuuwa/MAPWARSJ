@@ -124,6 +124,8 @@ interface EntityData {
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
     /** 全部武将（一人一条；generals 只给每势力首位。2026-10-25 加：搜索/显示要覆盖全部武将） */
     allGenerals?: Array<{ generalId: string; generalName: string; portrait: string; factionId: string; cityId?: string }>;
+    /** 全部战场人物（2026-11-14 加：防重检查与名称审计覆盖 BattlefieldCharacters.ts） */
+    battlefieldCharacters?: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }>;
     profiles: Record<string, {
         tier: string; tacticalSkillId: string; strategicSkillId?: string;
         advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string;
@@ -956,12 +958,44 @@ function renderBar(pct: number): string {
 
 // ── ID generation helpers ──
 
+/** 人物名防重归一化：去空白、中点、连字符、引号与括注外壳 */
+function normalizePersonNameForDup(s: string): string {
+    return (s ?? '').replace(/[\s·・\-—–_'’"“”()（）\[\]【】]/g, '');
+}
+
+/** 汇总全库全部人物（FactionGenerals 全部条目 ＋ BattlefieldCharacters 战场人物；优先取服务端最新盘面） */
+function collectAllKnownPeople(): Array<{ generalId: string; generalName: string; factionId: string; sourceLabel: string }> {
+    const out: Array<{ generalId: string; generalName: string; factionId: string; sourceLabel: string }> = [];
+    if (entityData?.allGenerals?.length) {
+        for (const g of entityData.allGenerals) {
+            out.push({ generalId: g.generalId, generalName: g.generalName, factionId: g.factionId, sourceLabel: '武将' });
+        }
+    } else {
+        for (const [fid, raw] of Object.entries(FACTION_GENERALS as Record<string, any>)) {
+            for (const g of (Array.isArray(raw) ? raw : [raw])) {
+                if (!g?.generalId) continue;
+                out.push({ generalId: g.generalId, generalName: g.generalName ?? '', factionId: g.factionId ?? fid, sourceLabel: '武将' });
+            }
+        }
+    }
+    if (entityData?.battlefieldCharacters?.length) {
+        for (const c of entityData.battlefieldCharacters) {
+            out.push({ generalId: c.generalId, generalName: c.generalName, factionId: c.factionId, sourceLabel: '战场人物' });
+        }
+    } else {
+        for (const c of Object.values(BATTLEFIELD_CHARACTERS)) {
+            out.push({ generalId: c.generalId, generalName: c.generalName, factionId: c.factionId, sourceLabel: '战场人物' });
+        }
+    }
+    return out;
+}
+
 function getAllExistingIds(): { factionIds: Set<string>; cityIds: Set<string>; generalIds: Set<string> } {
     if (!entityData) return { factionIds: new Set(), cityIds: new Set(), generalIds: new Set() };
     return {
         factionIds: new Set(entityData.factions.map(f => f.id)),
         cityIds: new Set(entityData.cities.map(c => c.id)),
-        generalIds: new Set(Object.values(entityData.generals).map(g => g.generalId)),
+        generalIds: new Set(collectAllKnownPeople().map(g => g.generalId)),
     };
 }
 
@@ -986,7 +1020,7 @@ function computeIds(factionName: string, cityName: string, generalName: string):
 
 function checkNameDuplicates(cityName: string, factionName: string, generalName: string, eliteName: string): string[] {
     const warnings: string[] = [];
-    const check = (newName: string, label: string, field: keyof FactionRow, existLabel: string, exactOnly = false) => {
+    const check = (newName: string, label: string, field: keyof FactionRow, existLabel: string) => {
         if (!newName || newName.length < 2) return;
         for (const row of rows) {
             const exist = row[field] as string | undefined;
@@ -998,22 +1032,49 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
     };
     check(cityName, '据点', 'cityName', '据点');
     check(factionName, '势力', 'name', '势力');
-    check(generalName, '武将', 'generalName', '武将', true);
+    if (generalName) {
+        const normNew = normalizePersonNameForDup(generalName);
+        if (normNew) {
+            for (const p of collectAllKnownPeople()) {
+                const normEx = normalizePersonNameForDup(p.generalName);
+                if (normEx && normNew === normEx) {
+                    warnings.push(`武将"${generalName}" 与已有${p.sourceLabel}"${p.generalName}"(${p.generalId}@${p.factionId}) 重复`);
+                }
+            }
+        }
+    }
     check(eliteName, '精锐', 'eliteName', '精锐');
     // 🔴 [2026-10-24 主人令]「势力名不能和据点名重复」已删除 → 不再做「势力名 ↔ 据点名」跨类型同名提示；
     //    城邦政权与据点同名合法（雅典、斯巴达、迦太基…）。
     return warnings;
 }
 
-/** 🔴 [2026-09-11 主人定] 势力、武将重名报错（阻止提交）。返回错误信息，null=通过。 */
-function checkFactionGeneralNameConflict(factionName: string, generalName: string, excludeFactionId?: string): string | null {
+/** 🔴 [2026-09-11 主人定 / 2026-11-14 扩至全库武将＋战场人物] 势力、武将重名报错（阻止提交）。返回错误信息，null=通过。 */
+function checkFactionGeneralNameConflict(factionName: string, generalName: string, excludeFactionId?: string, excludeGeneralId?: string): string | null {
     for (const row of rows) {
-        if (excludeFactionId && row.id === excludeFactionId) continue; // 编辑自身时排除自己
+        if (excludeFactionId && row.id === excludeFactionId) continue; // 编辑自身势力时排除自己
         if (factionName && factionName.length >= 2 && row.name === factionName) {
             return `势力名重名："${factionName}" 与已有势力"${row.name}"(${row.id}) 完全同名`;
         }
-        if (generalName && generalName.length >= 2 && row.generalName === generalName) {
-            return `武将名重名："${generalName}" 与已有武将"${row.generalName}"(${row.name}) 完全同名`;
+    }
+    if (generalName) {
+        const normNew = normalizePersonNameForDup(generalName);
+        const strippedNew = normNew.replace(/(首领|主将|守将|统帅|头目)$/, '');
+        const hasNewSuffix = strippedNew !== normNew && strippedNew.length >= 2;
+        if (normNew) {
+            for (const p of collectAllKnownPeople()) {
+                if (excludeGeneralId && p.generalId === excludeGeneralId) continue;
+                const normEx = normalizePersonNameForDup(p.generalName);
+                if (!normEx) continue;
+                if (normNew === normEx) {
+                    return `武将名重复："${generalName}" 与已有${p.sourceLabel}"${p.generalName}"(${p.generalId} @ ${p.factionId}) 重复`;
+                }
+                const strippedEx = normEx.replace(/(首领|主将|守将|统帅|头目)$/, '');
+                const hasExSuffix = strippedEx !== normEx && strippedEx.length >= 2;
+                if ((hasNewSuffix && strippedNew === normEx) || (hasExSuffix && strippedEx === normNew)) {
+                    return `武将重复："${generalName}" 与已有${p.sourceLabel}"${p.generalName}"(${p.generalId} @ ${p.factionId}) 属实名/泛指重复`;
+                }
+            }
         }
     }
     return null;
@@ -1975,7 +2036,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         const gn = get('generalName');
         const oldGn = get('oldGeneralName');
         if (gn && gn !== oldGn) {
-            generalId = `${factionId}_${toPinyinId(gn)}`;
+            generalId = makeUniqueId(`${factionId}_${toPinyinId(gn)}`, getAllExistingIds().generalIds);
         } else if (gn && oldGeneralId) {
             generalId = oldGeneralId; // 名字没变：无视隐藏字段可能被中途改写过的值，锁回原 ID
         }
@@ -1997,8 +2058,8 @@ async function handleFormSubmit(e: Event): Promise<void> {
         showToast(`武将「${generalName}」缺少品阶，请选择后再保存`, true);
         return;
     }
-    // 🔴 [2026-09-11 主人定] 势力、武将重名要报错（阻止提交）；编辑自身时排除自己
-    const nameConflict = checkFactionGeneralNameConflict(factionName, generalName, isNew ? undefined : factionId);
+    // 🔴 [2026-09-11 主人定 / 2026-11-14 全库防重] 势力、武将重名要报错（阻止提交）；编辑自身时分别排除自身势力与自身武将 ID
+    const nameConflict = checkFactionGeneralNameConflict(factionName, generalName, isNew ? undefined : factionId, isNew ? undefined : (oldGeneralId || generalId));
     if (nameConflict) {
         showToast(`❌ ${nameConflict}，禁止提交`, true);
         return;
@@ -2319,14 +2380,40 @@ function runNameAudit(): void {
     const over9 = (s: string) => s.length > 9;  // 武将/势力/据点 ≤9 字
     const facNameOf = (fid: string) => ed.factions.find(f => f.id === fid)?.name ?? fid;
 
-    // 武将名
-    const genByName = new Map<string, string>();
-    for (const [fid, g] of Object.entries(ed.generals)) {
-        const n = g.generalName;
+    // 武将名（2026-11-14 扩至全库武将＋战场人物；非汉字圈带中点译名按 AGENTS.md 写全不截断）
+    const allPeople = collectAllKnownPeople();
+    const seenGids = new Map<string, string>();
+    const genByNormName = new Map<string, { name: string; gid: string; fid: string; label: string }>();
+    for (const p of allPeople) {
+        const n = p.generalName;
+        const fid = p.factionId;
+        const desc = `${p.sourceLabel}"${n}"(${p.generalId}) @ ${fid}（${facNameOf(fid)}）`;
+        if (seenGids.has(p.generalId)) {
+            problems.push({ level: 'error', msg: `人物 ID 重复: "${p.generalId}" @ ${desc} 与 ${seenGids.get(p.generalId)}` });
+        } else {
+            seenGids.set(p.generalId, desc);
+        }
         if (!n) continue;
-        if (over9(n)) problems.push({ level: 'error', msg: `武将名超9字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
-        if (genByName.has(n)) problems.push({ level: 'error', msg: `武将名重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${genByName.get(n)}` });
-        else genByName.set(n, fid);
+        if (!n.includes('·') && !n.includes('・') && over9(n)) {
+            problems.push({ level: 'error', msg: `武将名超9字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        }
+        const norm = normalizePersonNameForDup(n);
+        if (!norm) continue;
+        const prev = genByNormName.get(norm);
+        if (prev && prev.gid !== p.generalId) {
+            problems.push({ level: 'error', msg: `武将名重复: ${desc} 与 ${prev.label}"${prev.name}"(${prev.gid}) @ ${prev.fid}（${facNameOf(prev.fid)}）` });
+        } else {
+            genByNormName.set(norm, { name: n, gid: p.generalId, fid, label: p.sourceLabel });
+        }
+    }
+    for (const p of allPeople) {
+        const norm = normalizePersonNameForDup(p.generalName);
+        const stripped = norm.replace(/(首领|主将|守将|统帅|头目)$/, '');
+        if (stripped === norm || stripped.length < 2) continue;
+        const hit = genByNormName.get(stripped);
+        if (hit && hit.gid !== p.generalId) {
+            problems.push({ level: 'error', msg: `泛指与实名重复: ${p.sourceLabel}"${p.generalName}"(${p.generalId}@${p.factionId}) 与 ${hit.label}"${hit.name}"(${hit.gid}@${hit.fid})` });
+        }
     }
 
     // 精锐番号
@@ -2366,7 +2453,7 @@ function runNameAudit(): void {
     const errs = problems.filter(p => p.level === 'error').length;
     problems.push({
         level: errs === 0 ? 'info' : 'warn',
-        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；精锐 ≤5 字、旗号 1–2 字、武将/势力/据点 ≤9 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
+        msg: `名称审计：人物 ${allPeople.length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；旗号 1–2 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
     });
 
     issues = problems;

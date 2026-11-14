@@ -7,6 +7,7 @@ import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { CHRONICLE_SCRIPT } from '../../src/data/chronicle/ChronicleDirectorScript';
 import type { ChronicleMainlineEvent } from '../../src/data/chronicle/ChronicleTypes';
 import { FACTION_GENERALS } from '../../src/data/FactionGenerals';
+import { BATTLEFIELD_CHARACTERS } from '../../src/data/BattlefieldCharacters';
 import { FACTIONS } from '../../src/data/factions';
 import { CITIES_V2 } from '../../src/data/cities_v2';
 
@@ -32,11 +33,35 @@ const SEASON: Record<string, 0 | 1 | 2 | 3> = { 春: 0, 夏: 1, 秋: 2, 冬: 3 }
 
 const events = new Map((JSON.parse(readFileSync(SRC, 'utf-8')).events as Record<string, string>[]).map((e) => [e['事件ID'], e]));
 const generals = new Map<string, string>();
-for (const e of Object.values(FACTION_GENERALS)) for (const g of (Array.isArray(e) ? e : [e]) as { generalId: string; cityId: string }[]) generals.set(g.generalId, g.cityId);
+const errors: string[] = [];
+{
+    const normName = (s: string) => (s ?? '').replace(/[\s·・\-—–_'’"“”()（）\[\]【】]/g, '');
+    const seenNames = new Map<string, string>();
+    for (const [fk, e] of Object.entries(FACTION_GENERALS)) {
+        for (const g of (Array.isArray(e) ? e : [e]) as { generalId: string; generalName?: string; cityId: string }[]) {
+            if (generals.has(g.generalId)) errors.push(`武将 ID 重复：${g.generalId}`);
+            generals.set(g.generalId, g.cityId);
+            const nn = normName(g.generalName ?? '');
+            if (nn) {
+                const prev = seenNames.get(nn);
+                if (prev && prev !== g.generalId) errors.push(`人物重名：「${g.generalName}」(${g.generalId}@${fk}) 与 ${prev}`);
+                else seenNames.set(nn, `${g.generalId}`);
+            }
+        }
+    }
+    for (const c of Object.values(BATTLEFIELD_CHARACTERS)) {
+        if (generals.has(c.generalId)) errors.push(`战场人物与据点武将 ID 重复：${c.generalId}（${c.generalName}）`);
+        const nn = normName(c.generalName ?? '');
+        if (nn) {
+            const prev = seenNames.get(nn);
+            if (prev && prev !== c.generalId) errors.push(`战场人物与据点武将重名：「${c.generalName}」(${c.generalId}@${c.factionId}) 与 ${prev}`);
+            else seenNames.set(nn, `${c.generalId}`);
+        }
+    }
+}
 const factionName = new Map(FACTIONS.map((f) => [f.id, f.name]));
 const cityIds = new Set(CITIES_V2.map((c) => c.id));
 
-const errors: string[] = [];
 const out: ChronicleMainlineEvent[] = [];
 for (const s of CHRONICLE_SCRIPT) {
     const e = events.get(s.eventId);
