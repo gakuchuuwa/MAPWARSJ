@@ -112,8 +112,8 @@ export class VectorRoadEditor implements IEditor {
 
     // ===== 静态常量（供 batchAutoConnect 使用）=====
     private static readonly BATCH_AUTO_CONNECT_LIMIT = 50;
-    /** [2026-05-30] 绕行比例上限 2.5 → 2.0 (用户拍板, 2×已不能接受) */
-    private static readonly MAX_DETOUR_RATIO = 2.0;
+    /** 批量补路绕行比例上限 2.5（兼顾山谷/河谷蜿蜒白线，防极端大绕圈） */
+    private static readonly MAX_DETOUR_RATIO = 2.5;
     private static readonly NO_NE_PATH_MAX_STRAIGHT_KM = 150;
     /** [2026-05-30] 每个城连最近 K 个邻居 (两两相连 K-NN 自动连用) */
     private static readonly NEAREST_K_PER_CITY = 2;
@@ -207,6 +207,8 @@ export class VectorRoadEditor implements IEditor {
     private landMaskReady = false;
     /** 陆路直线段允许压到的水面（公里）：掩膜 0.03° 一格，海岸线锯齿和小河口别误杀 */
     private static readonly LAND_LINK_WATER_TOLERANCE_KM = 0.5;
+    /** 每个陆路/内河图节点所属连通分量的节点数（防城市接入点全困在城边孤立短碎线上） */
+    private nodeCompSize: Int32Array = new Int32Array(0);
     private geoGraphBuilt: boolean = false;
     private _dijkstraDebugLogged: boolean = false;
 
@@ -1332,14 +1334,18 @@ export class VectorRoadEditor implements IEditor {
             // [2026-05-30] 40 → 80km: 用户反馈 光禄城-头曼城 71km 也算直线
             //              NE 内蒙古/西伯利亚段 真实路网有 50-70km 断口
             //              桥接边权 ×2.5 高惩罚, Dijkstra 优先走真路, 不会乱连
-            // 🔴 [2026-09-28] 断头先接 10km 内任意陆路（卡什那类「一头是端点、另一头是路中间」的口子）。
-            //    必须排在 bridgeEndpointGaps(80) 之前：那一步会给断头加边，加完它就不再是「度=1 的断头」了。
-            this.bridgeEndpointToRoad(10);
+            // 🔴 [2026-09-28] 断头先接 25km 内任意陆路（卡什那类「一头是端点、另一头是路中间」的口子）。
+            //    必须排在 bridgeEndpointGaps(80) 与 addBridgeEdges(0.03) 之前：那两步会给断头加边，加完它就不再是「度=1 的断头」了。
+            this.bridgeEndpointToRoad(25);
             this.bridgeEndpointGaps(80);
+            // 邻近节点微距桥接放在端点桥接之后，避免提前把真实度=1断头连回自身后方节点而漏掉 T 字路口接驳
+            this.addBridgeEdges(0.03);
             // 🔴 [2026-11-02] 连通分量级浅海陆桥与窄海峡桥接（斯里兰卡保克海峡、达达尼尔海峡、琼州海峡、墨西拿海峡等）
             this.bridgeShallowStraitsAndComponents(45, 12);
             // 水系断口就近连通，「水路为主」才走得通
             this.bridgeWaterGaps(40);
+            // 缓存各节点连通块规模，供 findAccessGeoNodes 避开局部孤立碎线
+            this.computeNodeComponentSizes();
             // 港口接驳必须在 bridgeEndpointGaps 之后：那之前陆路节点还没补全
             if (geojsonSea) this.linkPortCities();
             this.geoGraphBuilt = true;
@@ -1460,9 +1466,6 @@ export class VectorRoadEditor implements IEditor {
                 for (const line of lines) addSeaLine(line, source, passage);
             }
         }
-
-        // 桥接断裂的路段
-        this.addBridgeEdges(0.03);
 
         console.log(`🛤️ [GraphBuilder] ${this.geoNodes.length} nodes, graph built from Natural Earth data (Roads + Water).`);
     }
@@ -1965,24 +1968,39 @@ export class VectorRoadEditor implements IEditor {
             if (!adj || adj.length !== 1) continue;
             const own = nearOnOwnRoad(node.id);
             const cx = Math.floor(node.lng / CELL), cy = Math.floor(node.lat / CELL);
-            let best: { id: number; d: number } | null = null;
+            const cands: { id: number; d: number }[] = [];
             for (let dx = -rings; dx <= rings; dx++) {
                 for (let dy = -rings; dy <= rings; dy++) {
                     for (const oid of grid.get(`${cx + dx}_${cy + dy}`) ?? []) {
                         if (own.has(oid)) continue;
                         const o = this.geoNodes[oid];
                         const d = this.haversine(node.lat, node.lng, o.lat, o.lng);
-                        if (d <= maxKm && (!best || d < best.d)) best = { id: oid, d };
+                        if (d <= maxKm) cands.push({ id: oid, d });
                     }
                 }
             }
-            if (!best) continue;
-            const o = this.geoNodes[best.id];
-            if (this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat) || this.isOverWater(node.lng, node.lat, o.lng, o.lat)) { seaRejected++; continue; }
+            if (cands.length === 0) continue;
+            cands.sort((a, b) => a.d - b.d);
+            let chosen: { id: number; d: number } | null = null;
+            let hitSea = false;
+            for (const cand of cands) {
+                const o = this.geoNodes[cand.id];
+                if (this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat) || this.isOverWater(node.lng, node.lat, o.lng, o.lat)) {
+                    hitSea = true;
+                    continue;
+                }
+                chosen = cand;
+                break;
+            }
+            if (!chosen) {
+                if (hitSea) seaRejected++;
+                continue;
+            }
+            const o = this.geoNodes[chosen.id];
             const coords: [number, number][] = [[node.lng, node.lat], [o.lng, o.lat]];
-            const weight = best.d * 1.5;
-            this.geoAdj.get(node.id)!.push({ from: node.id, to: best.id, weight, coords });
-            this.geoAdj.get(best.id)!.push({ from: best.id, to: node.id, weight, coords: [coords[1], coords[0]] });
+            const weight = chosen.d * 1.5;
+            this.geoAdj.get(node.id)!.push({ from: node.id, to: chosen.id, weight, coords });
+            this.geoAdj.get(chosen.id)!.push({ from: chosen.id, to: node.id, weight, coords: [coords[1], coords[0]] });
             bridged++;
         }
         console.log(`🔗 [EndpointToRoad] 断头接路 ${bridged} 条（≤${maxKm}km），横穿海路不补 ${seaRejected} 条`);
@@ -2307,7 +2325,13 @@ export class VectorRoadEditor implements IEditor {
         } else {
             // ⚠️ 尝试智能桥接 (连接断开的路网孤岛)
             console.warn(`[PathGen] Direct path failed. Trying smart bridging...`);
-            const bridgedPath = this.findSmartBridgedPath(startCandidates[0].id, endCandidates[0].id);
+            const bridgedPath = (startCandidates.length > 0 && endCandidates.length > 0)
+                ? this.findSmartBridgedPath(
+                    startCandidates.map(n => n.id),
+                    endCandidates.map(n => n.id),
+                    Math.max(200, directDist * 4.5)
+                )
+                : null;
 
             if (bridgedPath) {
                 console.log(`✅ [PathGen] Found bridged path! Off-road: ${bridgedPath.bridgeDist.toFixed(1)}km`);
@@ -2641,64 +2665,67 @@ export class VectorRoadEditor implements IEditor {
      * 3. 空间网格加速，寻找 Component A 和 B 之间距离最近的节点对
      * 4. 路径 = Start -> ... -> NodeA -> (Bridge) -> NodeB -> ... -> End
      */
-    private findSmartBridgedPath(startId: number, endId: number): { coordinates: [number, number][]; totalDistance: number; bridgeDist: number } | null {
-        // 1. 获取两端的可达区域
-        console.log(`🌉 [SmartBridge] Exploring Start Component...`);
-        const startReachable = this.getAllReachableNodes(startId);
-        console.log(`🌉 [SmartBridge] Start Component: ${startReachable.size} nodes`);
-
-        console.log(`🌉 [SmartBridge] Exploring End Component...`);
-        const endReachable = this.getAllReachableNodes(endId);
-        console.log(`🌉 [SmartBridge] End Component: ${endReachable.size} nodes`);
+    private findSmartBridgedPath(
+        startIds: number | number[],
+        endIds: number | number[],
+        maxExploreKm?: number
+    ): { coordinates: [number, number][]; totalDistance: number; bridgeDist: number; edgeKeys: Set<string> } | null {
+        const MAX_BRIDGE_KM = 50;
+        // 1. 获取两端的可达区域（不走海路边）
+        const startReachable = this.getAllReachableNodes(startIds, maxExploreKm);
+        const endReachable = this.getAllReachableNodes(endIds, maxExploreKm);
 
         if (startReachable.size === 0 || endReachable.size === 0) return null;
 
-        // 2. 建立 End Component 的空间网格索引 (0.1度 ~ 10km)
+        // 2. 建立 End Component 的空间网格索引 (0.1度 ~ 11km)
         const cellSize = 0.1;
         const grid: Map<string, number[]> = new Map();
 
         for (const nodeId of endReachable.keys()) {
             const node = this.geoNodes[nodeId];
             const key = `${Math.floor(node.lat / cellSize)}_${Math.floor(node.lng / cellSize)}`;
-            if (!grid.has(key)) grid.set(key, []);
-            grid.get(key)!.push(nodeId);
+            let bucket = grid.get(key);
+            if (!bucket) { bucket = []; grid.set(key, bucket); }
+            bucket.push(nodeId);
         }
 
-        // 3. 遍历 Start Component，寻找最近的 End Component 节点
+        // 3. 遍历 Start Component，寻找 ≤50km 且不跨海/水面的最优桥接节点对
+        const rings = Math.ceil(MAX_BRIDGE_KM / 11);
         let bestPair: { u: number; v: number; dist: number } | null = null;
         let minTotalPenalty = Infinity;
 
-        // 限制搜索范围，避免遍历所有组合。只搜索"看起来比较近"的。
-        // 优化: 只遍历 Start Component 的边界节点? 不，遍历所有吧，1万个点很快。
-
         for (const [uId, uInfo] of startReachable) {
+            if (uInfo.dist >= minTotalPenalty) continue;
             const uNode = this.geoNodes[uId];
             const cx = Math.floor(uNode.lat / cellSize);
             const cy = Math.floor(uNode.lng / cellSize);
 
-            // 搜索周围 5x5 网格 (范围 ~50km)
-            for (let dx = -2; dx <= 2; dx++) {
-                for (let dy = -2; dy <= 2; dy++) {
-                    const key = `${cx + dx}_${cy + dy}`;
-                    const targetNodes = grid.get(key);
+            for (let dx = -rings; dx <= rings; dx++) {
+                for (let dy = -rings; dy <= rings; dy++) {
+                    const targetNodes = grid.get(`${cx + dx}_${cy + dy}`);
                     if (!targetNodes) continue;
 
                     for (const vId of targetNodes) {
-                        const vNode = this.geoNodes[vId];
-
-                        // 计算欧氏距离 (近似)
-                        const dLat = uNode.lat - vNode.lat;
-                        const dLng = (uNode.lng - vNode.lng) * Math.cos(uNode.lat * Math.PI / 180);
-                        const dist = Math.sqrt(dLat * dLat + dLng * dLng) * 111; // km
-
-                        // 代价 = 起点到u距离 + 桥接距离*1.2 (轻微惩罚) + v到终点距离
+                        if (uId === vId) continue;
                         const vInfo = endReachable.get(vId)!;
-                        const totalPenalty = uInfo.dist + (dist * 1.2) + vInfo.dist;
+                        if (uInfo.dist + vInfo.dist >= minTotalPenalty) continue;
 
-                        if (totalPenalty < minTotalPenalty) {
-                            minTotalPenalty = totalPenalty;
-                            bestPair = { u: uId, v: vId, dist };
+                        const vNode = this.geoNodes[vId];
+                        const dist = this.haversine(uNode.lat, uNode.lng, vNode.lat, vNode.lng);
+                        if (dist > MAX_BRIDGE_KM || dist < 0.05) continue;
+
+                        // 代价 = 起点到u距离 + 桥接距离*1.5 + v到终点距离
+                        const totalPenalty = uInfo.dist + (dist * 1.5) + vInfo.dist;
+                        if (totalPenalty >= minTotalPenalty) continue;
+
+                        // 陆路桥接禁穿海路航线与水面
+                        if (this.crossesSeaLane(uNode.lng, uNode.lat, vNode.lng, vNode.lat)
+                            || this.isOverWater(uNode.lng, uNode.lat, vNode.lng, vNode.lat)) {
+                            continue;
                         }
+
+                        minTotalPenalty = totalPenalty;
+                        bestPair = { u: uId, v: vId, dist };
                     }
                 }
             }
@@ -2706,57 +2733,112 @@ export class VectorRoadEditor implements IEditor {
 
         if (!bestPair) return null;
 
-        // 4. 重建路径
-        const pathStart = this.reconstructPath(startReachable, startId, bestPair.u);
-        const pathEnd = this.reconstructPath(endReachable, endId, bestPair.v).reverse(); // 注意: getAllReachable 是从 source 出发的
+        // 4. 重建路径（保留原始边折线坐标与 edgeKeys）
+        const startSide = this.reconstructPath(startReachable, bestPair.u);
+        const endSide = this.reconstructPath(endReachable, bestPair.v);
+        const pathEndReversed = endSide.coords.slice().reverse();
 
-        const coords: [number, number][] = [];
-        pathStart.forEach(c => coords.push(c));
-        // 桥接段 (直线)无需插入，pathStart 包含 u, pathEnd 包含 v
-        pathEnd.forEach(c => coords.push(c));
+        const coords: [number, number][] = [...startSide.coords, ...pathEndReversed];
+        const edgeKeys = new Set<string>([...startSide.edgeKeys, ...endSide.edgeKeys]);
 
         return {
             coordinates: coords,
-            totalDistance: minTotalPenalty, // 近似值
-            bridgeDist: bestPair.dist
+            totalDistance: this.calculatePathLength(coords),
+            bridgeDist: bestPair.dist,
+            edgeKeys,
         };
     }
 
-    private getAllReachableNodes(startId: number): Map<number, { dist: number; prev: number }> {
-        const dists = new Map<number, { dist: number; prev: number }>();
-        const pq: { id: number; dist: number }[] = [];
+    private getAllReachableNodes(
+        startIds: number | number[],
+        maxExploreKm: number = Infinity
+    ): Map<number, { dist: number; prev: number; edge?: GeoEdge }> {
+        const sources = Array.isArray(startIds) ? startIds : [startIds];
+        const dists = new Map<number, { dist: number; prev: number; edge?: GeoEdge }>();
+        const heap: { id: number; dist: number }[] = [];
 
-        dists.set(startId, { dist: 0, prev: -1 });
-        pq.push({ id: startId, dist: 0 });
+        const heapPush = (item: { id: number; dist: number }) => {
+            heap.push(item);
+            let i = heap.length - 1;
+            while (i > 0) {
+                const parent = (i - 1) >> 1;
+                if (heap[parent].dist <= heap[i].dist) break;
+                [heap[parent], heap[i]] = [heap[i], heap[parent]];
+                i = parent;
+            }
+        };
+        const heapPop = (): { id: number; dist: number } | undefined => {
+            if (heap.length === 0) return undefined;
+            const top = heap[0];
+            const last = heap.pop()!;
+            if (heap.length > 0) {
+                heap[0] = last;
+                let i = 0;
+                while (true) {
+                    let smallest = i;
+                    const left = 2 * i + 1, right = 2 * i + 2;
+                    if (left < heap.length && heap[left].dist < heap[smallest].dist) smallest = left;
+                    if (right < heap.length && heap[right].dist < heap[smallest].dist) smallest = right;
+                    if (smallest === i) break;
+                    [heap[i], heap[smallest]] = [heap[smallest], heap[i]];
+                    i = smallest;
+                }
+            }
+            return top;
+        };
 
-        while (pq.length > 0) {
-            pq.sort((a, b) => a.dist - b.dist);
-            const { id: u, dist: d } = pq.shift()!;
+        for (const s of sources) {
+            if (s == null || s < 0 || this.seaNodeIds.has(s)) continue;
+            dists.set(s, { dist: 0, prev: -1 });
+            heapPush({ id: s, dist: 0 });
+        }
 
+        while (heap.length > 0) {
+            const { id: u, dist: d } = heapPop()!;
             if (d > (dists.get(u)?.dist ?? Infinity)) continue;
+            if (d > maxExploreKm) continue;
 
             const adj = this.geoAdj.get(u) || [];
             for (const edge of adj) {
+                if (edge.isSea || this.seaNodeIds.has(edge.to)) continue;
                 const v = edge.to;
                 const newDist = d + edge.weight;
-                if (newDist < (dists.get(v)?.dist ?? Infinity)) {
-                    dists.set(v, { dist: newDist, prev: u });
-                    pq.push({ id: v, dist: newDist });
+                if (newDist <= maxExploreKm && newDist < (dists.get(v)?.dist ?? Infinity)) {
+                    dists.set(v, { dist: newDist, prev: u, edge });
+                    heapPush({ id: v, dist: newDist });
                 }
             }
         }
         return dists;
     }
 
-    private reconstructPath(map: Map<number, { prev: number }>, startId: number, endId: number): [number, number][] {
-        const path: [number, number][] = [];
-        let curr = endId;
-        while (curr !== -1 && curr !== startId) {
-            path.push([this.geoNodes[curr].lng, this.geoNodes[curr].lat]);
-            curr = map.get(curr)?.prev ?? -1;
+    private reconstructPath(
+        map: Map<number, { prev: number; edge?: GeoEdge }>,
+        targetId: number
+    ): { coords: [number, number][]; edgeKeys: Set<string> } {
+        const edgeList: GeoEdge[] = [];
+        let curr = targetId;
+        while (curr !== -1) {
+            const info = map.get(curr);
+            if (!info || info.prev === -1 || !info.edge) break;
+            edgeList.unshift(info.edge);
+            curr = info.prev;
         }
-        path.push([this.geoNodes[startId].lng, this.geoNodes[startId].lat]);
-        return path.reverse();
+        if (edgeList.length === 0) {
+            const node = this.geoNodes[targetId];
+            return { coords: node ? [[node.lng, node.lat]] : [], edgeKeys: new Set() };
+        }
+        const coords: [number, number][] = [];
+        const edgeKeys = new Set<string>();
+        for (let i = 0; i < edgeList.length; i++) {
+            const edge = edgeList[i];
+            const startIdx = i === 0 ? 0 : 1;
+            for (let j = startIdx; j < edge.coords.length; j++) {
+                coords.push(edge.coords[j]);
+            }
+            edgeKeys.add(`${Math.min(edge.from, edge.to)}_${Math.max(edge.from, edge.to)}`);
+        }
+        return { coords, edgeKeys };
     }
 
     /** 水陆偏好权重系数（混合图内偏好，非 forbidWater） */
@@ -2981,15 +3063,56 @@ export class VectorRoadEditor implements IEditor {
         return best;
     }
 
+    /** 统计每个非海路节点所在连通分量的大小（O(V+E)，建图完跑一次） */
+    private computeNodeComponentSizes(): void {
+        const n = this.geoNodes.length;
+        const compId = new Int32Array(n);
+        const sizes: number[] = [0];
+        let cid = 0;
+
+        for (let i = 0; i < n; i++) {
+            if (this.seaNodeIds.has(i) || compId[i] !== 0) continue;
+            cid++;
+            let count = 0;
+            const stack: number[] = [i];
+            compId[i] = cid;
+            while (stack.length > 0) {
+                const u = stack.pop()!;
+                count++;
+                for (const e of this.geoAdj.get(u) ?? []) {
+                    if (e.isSea || this.seaNodeIds.has(e.to)) continue;
+                    if (compId[e.to] === 0) {
+                        compId[e.to] = cid;
+                        stack.push(e.to);
+                    }
+                }
+            }
+            sizes.push(count);
+        }
+
+        this.nodeCompSize = new Int32Array(n);
+        for (let i = 0; i < n; i++) {
+            const c = compId[i];
+            if (c > 0) this.nodeCompSize[i] = sizes[c];
+        }
+    }
+
     /**
      * 城/战场接进路网用的近邻节点：城到节点那段直线跨海的不要（伊兹密特湾对岸的路口离得再近也不能直接连）。
      * 优先选接有真实陆路边（!isWater && !isSea）的节点；若城自身坐标在掩膜上紧贴水面，按涉水公里数最少排序兜底。
+     * 同时做两项轻量保底：
+     *   1) 若近邻全落在局部短碎线上，而 ≤35km 内有主干白线大网（不跨海/水面），保底留 1 个名额给主干网最近点；
+     *   2) 若 ≤20km 内有内河节点（不穿海路航线且不跨宽水面），保底留 1 个名额给最近河道入口。
      */
     private findAccessGeoNodes(lat: number, lng: number, k: number): { id: number; dist: number }[] {
-        const pool = this.findKNearestGeoNodes(lat, lng, k * 6);
+        const pool = this.findKNearestGeoNodes(lat, lng, Math.max(48, k * 8));
         const hasLandEdge = (id: number): boolean => {
             const adj = this.geoAdj.get(id);
             return !!adj && adj.some(e => !e.isWater && !e.isSea);
+        };
+        const hasWaterEdge = (id: number): boolean => {
+            const adj = this.geoAdj.get(id);
+            return !!adj && adj.some(e => !!e.isWater);
         };
         const roadPool = pool.filter(n => hasLandEdge(n.id));
         const basePool = roadPool.length > 0 ? roadPool : pool;
@@ -2998,20 +3121,91 @@ export class VectorRoadEditor implements IEditor {
             return !this.isOverWater(lng, lat, node.lng, node.lat)
                 && !this.crossesSeaLane(lng, lat, node.lng, node.lat);
         });
-        if (dry.length > 0) return dry.slice(0, k);
-        // 海岸/岛屿据点自身坐标在掩膜上紧贴水面时，按涉水最少排序取最近节点（仍拦跨航线对岸点）
-        const nonCross = basePool.filter(n => {
-            const node = this.geoNodes[n.id];
-            return !this.crossesSeaLane(lng, lat, node.lng, node.lat);
-        });
-        const fallback = (nonCross.length > 0 ? nonCross : basePool).slice();
-        fallback.sort((a, b) => {
-            const na = this.geoNodes[a.id], nb = this.geoNodes[b.id];
-            const wa = this.waterKmAlong(lng, lat, na.lng, na.lat);
-            const wb = this.waterKmAlong(lng, lat, nb.lng, nb.lat);
-            return (wa - wb) || (a.dist - b.dist);
-        });
-        return fallback.slice(0, k);
+        let result: { id: number; dist: number }[];
+        if (dry.length > 0) {
+            result = dry.slice(0, k);
+        } else {
+            // 海岸/岛屿据点自身坐标在掩膜上紧贴水面时，按涉水最少排序取最近节点（仍拦跨航线对岸点）
+            const nonCross = basePool.filter(n => {
+                const node = this.geoNodes[n.id];
+                return !this.crossesSeaLane(lng, lat, node.lng, node.lat);
+            });
+            const fallback = (nonCross.length > 0 ? nonCross : basePool).slice();
+            fallback.sort((a, b) => {
+                const na = this.geoNodes[a.id], nb = this.geoNodes[b.id];
+                const wa = this.waterKmAlong(lng, lat, na.lng, na.lat);
+                const wb = this.waterKmAlong(lng, lat, nb.lng, nb.lat);
+                return (wa - wb) || (a.dist - b.dist);
+            });
+            result = fallback.slice(0, k);
+        }
+
+        if (k < 2 || result.length === 0) return result;
+
+        const MAJOR_COMP_MIN_NODES = 1000;
+        const MAX_TRUNK_SEARCH_KM = 35;
+        const MAX_RIVER_ACCESS_KM = 20;
+        const cosLat = Math.max(0.2, Math.cos(lat * Math.PI / 180));
+        let reservedTrunkSlot = false;
+
+        // 保底 1：全困在小碎线上时，若 ≤35km 内有主干白线网（不跨水/航线），腾 1 个名额给主干网最近点
+        if (this.nodeCompSize.length === this.geoNodes.length
+            && !result.some(r => this.nodeCompSize[r.id] >= MAJOR_COMP_MIN_NODES)) {
+            const dLatMax = MAX_TRUNK_SEARCH_KM / 111;
+            const dLngMax = MAX_TRUNK_SEARCH_KM / (111 * cosLat);
+            const trunkCands: { id: number; km: number; degDist: number }[] = [];
+            for (const node of this.geoNodes) {
+                if (this.seaNodeIds.has(node.id)) continue;
+                if (this.nodeCompSize[node.id] < MAJOR_COMP_MIN_NODES) continue;
+                if (Math.abs(node.lat - lat) > dLatMax || Math.abs(node.lng - lng) > dLngMax) continue;
+                if (!hasLandEdge(node.id)) continue;
+                const km = this.haversine(lat, lng, node.lat, node.lng);
+                if (km <= MAX_TRUNK_SEARCH_KM) {
+                    const degDist = Math.hypot(node.lat - lat, (node.lng - lng) * cosLat);
+                    trunkCands.push({ id: node.id, km, degDist });
+                }
+            }
+            trunkCands.sort((a, b) => a.km - b.km);
+            for (const tc of trunkCands) {
+                const tn = this.geoNodes[tc.id];
+                if (!this.isOverWater(lng, lat, tn.lng, tn.lat) && !this.crossesSeaLane(lng, lat, tn.lng, tn.lat)) {
+                    if (!result.some(r => r.id === tc.id)) {
+                        const entry = { id: tc.id, dist: tc.degDist };
+                        if (result.length < k) result.push(entry);
+                        else result[result.length - 1] = entry;
+                        reservedTrunkSlot = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        // 保底 2：候选里无内河入口且 ≤20km 内有河道节点（不穿海路航线、涉水 ≤4km），腾 1 个名额给最近河道点
+        if (!result.some(r => hasWaterEdge(r.id))) {
+            let bestRiver: { id: number; dist: number; km: number } | null = null;
+            for (const cand of pool) {
+                if (!hasWaterEdge(cand.id)) continue;
+                const wn = this.geoNodes[cand.id];
+                const km = this.haversine(lat, lng, wn.lat, wn.lng);
+                if (km > MAX_RIVER_ACCESS_KM) continue;
+                if (bestRiver && km >= bestRiver.km) continue;
+                if (this.crossesSeaLane(lng, lat, wn.lng, wn.lat)) continue;
+                if (this.waterKmAlong(lng, lat, wn.lng, wn.lat) > 4.0) continue;
+                bestRiver = { id: cand.id, dist: cand.dist, km };
+            }
+            if (bestRiver && !result.some(r => r.id === bestRiver!.id)) {
+                const entry = { id: bestRiver.id, dist: bestRiver.dist };
+                if (result.length < k) {
+                    result.push(entry);
+                } else if (reservedTrunkSlot && result.length >= 3) {
+                    result[result.length - 2] = entry;
+                } else if (!reservedTrunkSlot) {
+                    result[result.length - 1] = entry;
+                }
+            }
+        }
+
+        return result;
     }
 
     // ===== 参考层 =====
@@ -3143,7 +3337,7 @@ export class VectorRoadEditor implements IEditor {
     }
 
     /**
-     * 极端绕行判定（常规中短程 >2.4× 或长途 >4.0×；
+     * 极端绕行判定（常规中短程 >3.0× 或长途 >4.0×；
      * 若起终点球面直线跨越海湾/海峡/浅海，陆路需绕海湾或经海峡咽喉通行，放宽至 4.5× / 5.5×）。
      */
     private isExtremeDetour(
@@ -3160,7 +3354,7 @@ export class VectorRoadEditor implements IEditor {
         if (crossesWater) {
             return (directDist <= 400 && detourRatio > 4.5) || detourRatio > 5.5;
         }
-        return (directDist <= 400 && detourRatio > 2.4) || detourRatio > 4.0;
+        return (directDist <= 400 && detourRatio > 3.0) || detourRatio > 4.0;
     }
 
     /** 根据 edgeKeys 统计水路里程占比 */
@@ -3421,6 +3615,38 @@ export class VectorRoadEditor implements IEditor {
         }
         for (const c of [...waterRanked.slice(1), ...landRanked.slice(1), ...seaRanked.slice(1)]) {
             if (!this.isCandidateDuplicate(c, merged)) merged.push(c);
+        }
+        // 直连无路时，在落回纯直线之前尝试智能桥接（≤50km 陆上断口，不跨海/水面）
+        if (merged.length === 0 && this.geoGraphBuilt && this.geoNodes.length > 0) {
+            const sc = this.findAccessGeoNodes(startCity.lat, startCity.lng, 6);
+            const ec = this.findAccessGeoNodes(endCity.lat, endCity.lng, 6);
+            if (sc.length > 0 && ec.length > 0) {
+                const maxExploreKm = Math.max(200, directDist * 4.5);
+                const bridged = this.findSmartBridgedPath(
+                    sc.map(n => n.id),
+                    ec.map(n => n.id),
+                    maxExploreKm
+                );
+                if (bridged && bridged.coordinates.length >= 2) {
+                    const actualLen = this.calculatePathLength(bridged.coordinates);
+                    if (!this.isExtremeDetour(actualLen, directDist, startCity, endCity)) {
+                        const waterRatio = this.computeWaterRatioFromEdgeKeys(bridged.edgeKeys);
+                        const bridgedCandidate: RouteCandidate = {
+                            mode: 'prefer_land',
+                            label: `🛣️ 陆路桥接(补${bridged.bridgeDist.toFixed(0)}km)`,
+                            coordinates: bridged.coordinates,
+                            totalDistance: actualLen,
+                            edgeKeys: bridged.edgeKeys,
+                            isManualStraightLine: false,
+                            waterRatio,
+                            detourRatio: actualLen / Math.max(1, directDist),
+                            variantReason: '智能桥接',
+                        };
+                        bridgedCandidate.score = this.scoreRouteCandidate(bridgedCandidate, directDist, merged);
+                        merged.push(bridgedCandidate);
+                    }
+                }
+            }
         }
         const straight = straightRaw[0];
         if (straight && !this.isCandidateDuplicate(straight, merged)) {
@@ -5777,17 +6003,17 @@ export class VectorRoadEditor implements IEditor {
      *
      * 原来只能一对一对点：点起点、点终点，一次一条，视野里缺的边全靠手点，太慢。
      * 这里把**当前视野内**「最近、但还没有直路」的据点对一次算出来，规矩和手画一模一样：
-     *   - 只走 NE 路网 Dijkstra（第一原则，绝不用直线拼）
-     *   - ≤ connectDistanceKm（250km）· 禁水路 · 绕行 ≤ MAX_DETOUR_RATIO（跨水的放宽到 4.5×）
+     *   - 只走 NE 路网 + 水系 Dijkstra（第一原则，绝不用直线拼）
+     *   - ≤ connectDistanceKm（250km）· 陆路优先(可走河流) · 直连断口尝试 ≤50km 智能桥接 · 绕行 ≤ MAX_DETOUR_RATIO（跨水的放宽到 4.5×）
      *   - **只进内存**，点 💾 保存 才写盘（路归主人）
-     * 每座城每点一次补 K=2 条最近的空档；再点一次就补下一圈，或者用 1️⃣ 全面审查 收尾。
+     * 每座城每点一次补 K=4 条最近的空档；再点一次就补下一圈，或者用 1️⃣ 全面审查 收尾。
      */
     private async batchFillVisibleRoads(): Promise<void> {
         if (!this.geoGraphBuilt || this.geoNodes.length === 0) {
             this.setStatus('⏳ 路网图还在建，稍等再点「➕ 视野补路」');
             return;
         }
-        const K = VectorRoadEditor.NEAREST_K_PER_CITY;              // 每座城补几条空档
+        const K = 4;                                                // 每座城补几条空档（2 → 4）
         const LIMIT = VectorRoadEditor.BATCH_AUTO_CONNECT_LIMIT;    // 单次上限
         const maxDistKm = this.connectDistanceKm;
 
@@ -5832,9 +6058,9 @@ export class VectorRoadEditor implements IEditor {
         // 近的边先建：视野里先织密网，远边留给下一次
         pairs.sort((x, y) => x.dist - y.dist);
 
-        console.group(`➕ [FillVisible] 视野据点 ${inView.length} · 缺边候选 ${pairs.length} · K=${K} · ≤${maxDistKm}km · 禁水路`);
+        console.group(`➕ [FillVisible] 视野据点 ${inView.length} · 缺边候选 ${pairs.length} · K=${K} · ≤${maxDistKm}km · 陆路优先(可走河)`);
 
-        // === 逐对算路（同一套：NE Dijkstra → 清理 → 简化 → 吸附） ===
+        // === 逐对算路（同一套：NE/水系 Dijkstra → 断口智能桥接 → 清理 → 简化 → 吸附） ===
         const newRoads: Array<{ a: any; b: any; coordinates: [number, number][]; dist: number; pathKm: number }> = [];
         const rejects: string[] = [];
         let rejectedNoPath = 0;
@@ -5847,15 +6073,31 @@ export class VectorRoadEditor implements IEditor {
             processed++;
             if (processed % 8 === 0) await new Promise((r) => setTimeout(r, 0));   // 别把界面卡死
 
-            const sc = this.findAccessGeoNodes(a.lat, a.lng, 5);
-            const ec = this.findAccessGeoNodes(b.lat, b.lng, 5);
-            const bestPath = this.dijkstraGeo(sc.map((n) => n.id), ec.map((n) => n.id), { forbidWater: true });
-            if (!bestPath || !bestPath.coordinates || bestPath.coordinates.length < 2) {
+            const sc = this.findAccessGeoNodes(a.lat, a.lng, 6);
+            const ec = this.findAccessGeoNodes(b.lat, b.lng, 6);
+            const scIds = sc.map((n) => n.id);
+            const ecIds = ec.map((n) => n.id);
+            let routeCoords: [number, number][] | null = null;
+
+            const bestPath = this.dijkstraGeo(scIds, ecIds, {
+                forbidWater: false,
+                routePreference: 'land_first',
+            });
+            if (bestPath && bestPath.coordinates && bestPath.coordinates.length >= 2) {
+                routeCoords = bestPath.coordinates as [number, number][];
+            } else if (scIds.length > 0 && ecIds.length > 0) {
+                const bridged = this.findSmartBridgedPath(scIds, ecIds, Math.max(200, dist * 4.5));
+                if (bridged && bridged.coordinates && bridged.coordinates.length >= 2) {
+                    routeCoords = bridged.coordinates;
+                }
+            }
+
+            if (!routeCoords) {
                 rejectedNoPath++;
-                if (rejects.length < 6) rejects.push(`${a.name}↔${b.name}（${dist.toFixed(0)}km 无 NE 陆路）`);
+                if (rejects.length < 6) rejects.push(`${a.name}↔${b.name}（${dist.toFixed(0)}km 无连通白线/水路）`);
                 continue;
             }
-            const pathKm = bestPath.totalDistance ?? Infinity;
+            const pathKm = this.calculatePathLength(routeCoords);
             const crossesWater = this.waterKmAlong(a.lng, a.lat, b.lng, b.lat) > 2.0 || this.crossesSeaLane(a.lng, a.lat, b.lng, b.lat);
             const maxDetour = crossesWater ? 4.5 : VectorRoadEditor.MAX_DETOUR_RATIO;
             if (pathKm / Math.max(dist, 1) > maxDetour) {
@@ -5864,7 +6106,7 @@ export class VectorRoadEditor implements IEditor {
                 continue;
             }
 
-            const rawCoords: [number, number][] = [[a.lng, a.lat], ...bestPath.coordinates, [b.lng, b.lat]];
+            const rawCoords: [number, number][] = [[a.lng, a.lat], ...routeCoords, [b.lng, b.lat]];
             let simplified = this.simplifyCoords(removeBacktracks(rawCoords, 80), 0.002);
             simplified = this.simplifyCityVicinity(simplified, a, b, 15);
             const snapped = this.snapToExistingRoads(simplified, null) as [number, number][];
@@ -5883,11 +6125,11 @@ export class VectorRoadEditor implements IEditor {
             : '';
 
         if (newRoads.length === 0) {
-            this.setStatus(`⚠ 0 条新路（缺边候选 ${pairs.length} · 无 NE ${rejectedNoPath} · 绕行超限 ${rejectedDetour}）`);
+            this.setStatus(`⚠ 0 条新路（缺边候选 ${pairs.length} · 无连通 ${rejectedNoPath} · 绕行超限 ${rejectedDetour}）`);
             this.showInlineReport(`
                 <div style="color:#ff9800;font-weight:bold;margin-bottom:6px;">➕ 视野补路 · 视野内据点 ${inView.length} 座</div>
                 <div>缺边候选: <b>${pairs.length}</b></div>
-                <div style="color:#ff5722;">❌ 无 NE 陆路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
+                <div style="color:#ff5722;">❌ 无连通白线/水路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
                 <div style="margin-top:8px;color:#ff9800;">→ 0 条新路（这一圈已经补满，换个区域再点）</div>
                 ${rejectHtml}
             `);
@@ -5915,10 +6157,10 @@ export class VectorRoadEditor implements IEditor {
         this.setStatus(`➕ 视野补路: 新建 ${newRoads.length} 条${hitLimit ? `（达上限 ${LIMIT}，可再点）` : ''} · 未写盘，点 💾 保存`);
         this.showInlineReport(`
             <div style="color:#26a69a;font-weight:bold;margin-bottom:8px;font-size:14px;">
-                ➕ 视野补路 · 视野内据点 <b>${inView.length}</b> 座 · ≤${maxDistKm}km · <span style="color:#03a9f4">禁水路</span> · 绕行≤2× · 每城 ${K} 条空档
+                ➕ 视野补路 · 视野内据点 <b>${inView.length}</b> 座 · ≤${maxDistKm}km · <span style="color:#03a9f4">陆路优先(可走河)</span> · 绕行≤${VectorRoadEditor.MAX_DETOUR_RATIO}× · 每城 ${K} 条空档
             </div>
             <div>缺边候选: <b>${pairs.length}</b> · 新建: <b style="color:#4caf50">${newRoads.length}</b>${hitLimit ? ` <span style="color:#ff9800;">(达上限 ${LIMIT})</span>` : ''}</div>
-            <div style="color:#ff5722;">❌ 无 NE 陆路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
+            <div style="color:#ff5722;">❌ 无连通白线/水路: <b>${rejectedNoPath}</b> · 绕行超限: <b>${rejectedDetour}</b></div>
             <div style="margin-top:8px;color:#ddd;font-size:13px;line-height:1.9;">
                 ${newRoads.map((r) => `<span style="background:rgba(38,166,154,0.18);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">${r.a.name}↔${r.b.name} <span style="color:#888;font-size:11px;">${r.dist.toFixed(0)}km</span></span>`).join('')}
             </div>
