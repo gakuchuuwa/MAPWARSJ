@@ -205,7 +205,7 @@ export const BGM_TITLES: Record<string, string> = {
     xianqin: '先秦 大秦',
     zhaosong: '赵宋 兰陵王入阵曲',
     western_b: '二胡 雨碎江南',
-    persian_b: '波斯桑图尔琴 Chaharmezrab',
+    // 🔴 [2026-11-15 主人令] persian_b（波斯桑图尔琴 Chaharmezrab）已删除：触发 YouTube 版权主张「Nuzdeh - Roja Heneka」
     tibet_b: '藏传法铃 钹 号角',
     puru_b: '班苏里竹笛 Raga Shivranjani',
     CC_FINAL_BATTLE: 'CC0 最终决战 The Final Battle',

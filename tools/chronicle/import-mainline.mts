@@ -82,7 +82,8 @@ for (const s of CHRONICLE_SCRIPT) {
         // 按史：战斗类型照 json 原文（攻城战／守城战／标有据点的关隘战按攻城管线走），攻城战必须写明被攻的城
         const isSiege = e['战斗类型'] === '攻城战' || e['战斗类型'] === '守城战' || (e['战斗类型'] === '关隘战' && Boolean(s.city));
         // 主人定：跟守方武将守城 → 直接从被守的据点出发（就地守城，不行军）
-        const defendsCity = isSiege && s.role === 'defender' && s.city;
+        // 守方援军（relief）从城外赶来，不算就地守城
+        const defendsCity = isSiege && s.role === 'defender' && s.city && !s.relief;
         const from = defendsCity ? s.city!.cityId : (s.from ?? generals.get(s.leadGeneralId));
         if (!from || !cityIds.has(from)) errors.push(`${s.eventId} 出发据点 ${from} 不在库`);
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
@@ -104,7 +105,8 @@ for (const s of CHRONICLE_SCRIPT) {
             targetName: e['战场地点'],
             ...(isSiege && s.city ? { targetCityId: s.city.cityId } : {}),
             ...(s.city ? { chronicleCity: s.city } : {}),
-            ...(s.route?.length ? { routeVia: s.route } : {}),
+            // 就地守城不行军：守方守城时途经点一律不写
+            ...(s.route?.length && !defendsCity ? { routeVia: s.route } : {}),
             chronicleFrom: from,
             targetLat: lat,
             targetLng: lng,

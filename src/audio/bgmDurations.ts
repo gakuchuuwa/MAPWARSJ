@@ -190,7 +190,6 @@ export const BGM_DURATIONS: Record<string, number> = {
     muisca_b: 132,
     nobunaga: 214,
     ottoman_drums: 168,
-    persian_b: 260,
     poles_a: 240,
     poles_b: 196,
     portuguese_a: 164,

@@ -1492,8 +1492,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_tuerhute_donggui',
         name: '土尔扈特东归战役',
-        lat: 45.0206,
-        lng: 75.6492,
+        lat: 46.1424,
+        lng: 73.0962,
         scriptYear: 1771,
         note: '编年史 evt_2448 土尔扈特东归突围战（1771，土尔扈特渥巴锡 vs 俄罗斯帝国）。距最近据点碎叶 379.92km。不画路。',
     },

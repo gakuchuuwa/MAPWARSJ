@@ -4085,7 +4085,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    persian_b: 0.646,  // -17.2 LUFS
+    // 🔴 [2026-11-15 主人令] persian_b（波斯桑图尔琴 Chaharmezrab）触发 YouTube 版权主张「Nuzdeh - Roja Heneka」，已连同 .aud 文件删除。
 
 
 
@@ -5966,7 +5966,8 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    PERSIAN: ['de_PERSIAN', 'persian_b', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
+    // 🔴 [2026-11-15 主人令] persian_b 已删除（触发 YouTube 版权主张「Nuzdeh - Roja Heneka」），本文化池保留 3 首。
+    PERSIAN: ['de_PERSIAN', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
 
 
 
