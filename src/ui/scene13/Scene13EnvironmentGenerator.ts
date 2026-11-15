@@ -247,28 +247,51 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
     const isWinter = season === 2;
     const buildingStyle = input.buildingStyle ?? (hasCoord ? resolveNearestCityBuildingStyle(input.lat, input.lng) : undefined);
     // 底图由真实气候数据 + 16 种一级建筑风格（含 66 种二/三级子风格）共同决定，查不到才回退到主题逻辑
+    // 攻城战城外原野同样保留当地自然草甸/四季地表，区域踩踏土（siegeDirtTile）只用于城内、城周护坡、城门官道与营地
+    const nearRiver = hasCoord ? isNearStrategicRiver(input.lat!, input.lng!, 8) : false;
     const fromWorld = hasCoord
         ? queryStrategicBaseTile({
             lat: input.lat!,
             lng: input.lng!,
-            isSiege,
+            isSiege: false,
             isWinter,
             elevM: elev,
             slopeDeg: slope,
-            nearRiver: isNearStrategicRiver(input.lat!, input.lng!, 8),
+            nearRiver,
             buildingStyle,
         })
         : null;
     const rawFallbackTerrain: string = theme
-        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, isSiege, input.lng)
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, false, input.lng)
         : DEFAULT_TERRAIN_TILE;
     let baseTerrain: string = fromWorld ?? (hasCoord && buildingStyle
-        ? refineBaseTileWithBuildingStyle(rawFallbackTerrain, buildingStyle, input.lat!, input.lng!, isSiege, isWinter)
+        ? refineBaseTileWithBuildingStyle(rawFallbackTerrain, buildingStyle, input.lat!, input.lng!, false, isWinter)
         : rawFallbackTerrain);
+
+    const siegeFromWorld = (isSiege && hasCoord)
+        ? queryStrategicBaseTile({
+            lat: input.lat!,
+            lng: input.lng!,
+            isSiege: true,
+            isWinter,
+            elevM: elev,
+            slopeDeg: slope,
+            nearRiver,
+            buildingStyle,
+        })
+        : null;
+    const siegeFallbackTerrain = (isSiege && theme)
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, true, input.lng)
+        : null;
+    const siegeDirtTile = isSiege
+        ? (siegeFromWorld ?? (hasCoord && buildingStyle && siegeFallbackTerrain
+            ? refineBaseTileWithBuildingStyle(siegeFallbackTerrain, buildingStyle, input.lat!, input.lng!, true, isWinter)
+            : siegeFallbackTerrain))
+        : null;
 
     // ── 分气候带四季战术底图与副地表同步（地中海夏干冬润 · 热带旱雨季 · 温带秋草金黄） ──
     let seasonalDryOverride: string | undefined;
-    if (hasCoord && !isSiege) {
+    if (hasCoord) {
         const isSnowRaw = /^(sno|sn2|snd|snf|ic3|ice)/.test(baseTerrain);
         if (!isSnowRaw) {
             const [arid, sand] = queryAridSand(input.lat!, input.lng!);
@@ -312,6 +335,11 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
             ?? 'ds3';
         const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snd'
             || baseTerrain === 'snf' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+        const resolvedDirt = (isSiege && isSnowBase)
+            ? ((siegeDirtTile && /^(snd|sn2)$/.test(siegeDirtTile)) ? siegeDirtTile : 'snd')
+            : (isSiege && siegeDirtTile && siegeDirtTile !== baseTerrain && !/^(sno|sn2|snf|ic3|ice)$/.test(siegeDirtTile))
+                ? siegeDirtTile
+                : themeDirt;
         const isAlpineGravelBase = baseTerrain === 'gravel_default' || baseTerrain === 'rck';
         groundTiles = {
             grass: baseTerrain,
@@ -331,7 +359,7 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
                 const sea = waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng);
                 return sea === 'ic2' ? sea : freshWaterTileForStyle(buildingStyle);
             })(),
-            dirt: themeDirt,
+            dirt: resolvedDirt,
             dry: themeDry,
         };
     }

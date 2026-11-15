@@ -240,9 +240,10 @@ void main() {
   vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.01, 0.99);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
   float dirtNoise = clamp(tn1 * 0.48 + tn2 * 0.34 + tn3 * 0.18, -1.0, 1.0);
-  float fieldDirt = deEdgeBlend(dirtFieldVal, 0.08, 0.48, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.78;
-  float wildDirt  = deEdgeBlend(dirtNoise, -0.06, 0.36, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.48;
-  float dirtMix   = clamp(fieldDirt + wildDirt, 0.0, 0.85);
+  float fieldDirt    = deEdgeBlend(dirtFieldVal, 0.10, 0.48, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.62;
+  float trampledDirt = deEdgeBlend(dirtFieldVal, 0.50, 0.80, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.92;
+  float wildDirt     = deEdgeBlend(dirtNoise, 0.08, 0.46, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.22;
+  float dirtMix      = clamp(max(trampledDirt, fieldDirt + wildDirt), 0.0, 0.92);
   
   // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合：主草皮 + 旱草 + 泥土三层交织）
   float dryEdge = deEdgeBlend(terrainPatch, -0.26, 0.24, microGrain, (lumaDry - lumaGrass) * 2.5);
@@ -862,7 +863,7 @@ export class Scene13GroundLayerGL {
         dSeed = (dSeed * 1664525 + 1013904223) >>> 0;
         return dSeed / 4294967296;
       };
-      const patchClumps = 28;
+      const patchClumps = 18;
       for (let c = 0; c < patchClumps; c++) {
         // 前 10 个斑块优先锚定在首屏与近郊（|dx|<=18, |dy|<=18），确保一开战首屏即有丰富三层地表交织
         const sx = c < 10
@@ -880,7 +881,7 @@ export class Scene13GroundLayerGL {
           const [px, py] = q.splice(pickIdx, 1)[0];
           const cellIdx = py * N + px;
           if (rawWater[cellIdx] > 0.1 || rawDirt[cellIdx] > 0.5) continue;
-          rawDirt[cellIdx] = 0.85;
+          rawDirt[cellIdx] = 0.46;
           placed++;
           const nbrs: Array<[number, number]> = [[px + 1, py], [px - 1, py], [px, py + 1], [px, py - 1]];
           for (const [nx, ny] of nbrs) {
@@ -1405,25 +1406,46 @@ export class Scene13GroundLayerGL {
    * 地基：把以屏幕逻辑坐标 (screenX, screenY) 为中心、radiusCells 格内的水 / 沙 / 林势场清零（边缘平滑过渡），
    * 让城池建筑与营地站在干燥平地上，而不是漂在水里或压在树林上。同步更新水体查询用的平滑场。
    */
-  public carveFoundation(screenX: number, screenY: number, W: number, H: number, radiusCells: number): void {
+  public carveFoundation(
+    screenX: number,
+    screenY: number,
+    W: number,
+    H: number,
+    radiusCells: number,
+    trampleStrength = 0.92,
+    preserveWater = false,
+  ): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     const px = this.fieldPixels;
     if (!c || !px || !this.fieldTex) return;
     const N = this.N;
     const r = radiusCells;
-    const x0 = Math.max(0, Math.floor(c.gx - r - 1)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + 1));
-    const y0 = Math.max(0, Math.floor(c.gy - r - 1)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + 1));
+    const pad = 1.8;
+    const x0 = Math.max(0, Math.floor(c.gx - r - pad)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + pad));
+    const y0 = Math.max(0, Math.floor(c.gy - r - pad)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + pad));
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
+        const i = y * N + x;
+        if (preserveWater && (this.smoothWater[i] >= 0.20 || this.moatCells.has(i))) continue;
         const d = Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy);
         const t = Math.min(1, Math.max(0, (d - (r - 1)) / 1.5));   // 内圈 0（全清）→ 外缘 1（原样）
-        if (t >= 1) continue;
-        const i = y * N + x;
-        this.smoothWater[i] *= t;
-        this.smoothForest[i] *= t;
-        px[i * 4 + 0] = Math.round(px[i * 4 + 0] * t);
-        px[i * 4 + 1] = Math.round(px[i * 4 + 1] * t);
-        px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
+        if (t < 1) {
+          if (!preserveWater) {
+            this.smoothWater[i] *= t;
+            px[i * 4 + 0] = Math.round(px[i * 4 + 0] * t);
+            px[i * 4 + 1] = Math.round(px[i * 4 + 1] * t);
+          }
+          this.smoothForest[i] *= t;
+          px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
+        }
+        if (trampleStrength > 0 && !this.moatCells.has(i) && this.smoothWater[i] < 0.20) {
+          const td = Math.min(1, Math.max(0, (d - Math.max(0.35, r - 0.85)) / 1.85));
+          if (td < 1) {
+            const smoothT = td * td * (3 - 2 * td);
+            const dirtByte = Math.round((1 - smoothT) * trampleStrength * 255);
+            if (dirtByte > px[i * 4 + 3]) px[i * 4 + 3] = dirtByte;
+          }
+        }
       }
     }
     this.fieldDirty = true;
@@ -1521,6 +1543,7 @@ export class Scene13GroundLayerGL {
       px[i * 4 + 0] = Math.max(px[i * 4 + 0], Math.round(lvl * 255));
       px[i * 4 + 1] = Math.max(px[i * 4 + 1], Math.round((1 - lvl * 0.55) * 140));
       px[i * 4 + 2] = 30;   // 护城河/引水渠标记（见着色器 moatMark；水格没有森林，不会误触发林地）
+      if (lvl >= 0.35) px[i * 4 + 3] = 0;
       if (lvl >= 0.45) hitWater.push(i);
     }
     // 为护城河紧邻一圈岸线格补写湿沙过渡带（G 通道），消除生硬蓝边直切草地

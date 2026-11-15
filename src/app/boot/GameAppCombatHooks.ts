@@ -413,6 +413,7 @@ function startScene13War(
         // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放）
         battleBriefing: resolvedBattleBriefing,
         classicBattle: !!classicHeroGeneralId,
+        historicalWinner,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -542,7 +543,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 isNavalVsFortress ? 'siege' : battle.type, isNavalBattle,
                 battle.defender.id === followedId,
                 (battle as any).title ?? (battle as any).customTitle ?? null,
-                (battle as any).battleBriefing ?? (battle as any).siegeData?.battleBriefing ?? (battle as any).fieldBattleData?.battleBriefing ?? null);
+                (battle as any).battleBriefing ?? (battle as any).siegeData?.battleBriefing ?? (battle as any).fieldBattleData?.battleBriefing ?? null,
+                resolveScene13HistoricalWinner([battle.attacker], [battle.defender], battle.getScriptedWinner()));
             app.battleScene?.enter(t.id);
         }
     };
@@ -654,7 +656,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         isNavalBattle,
                         defenders.some((u) => u.id === followedId),
                         title,
-                        (battleField as any)?.battleBriefing ?? null
+                        (battleField as any)?.battleBriefing ?? null,
+                        resolveScene13HistoricalWinner(attackers, defenders, battleField.getScriptedWinner())
                     );
                 }
             }

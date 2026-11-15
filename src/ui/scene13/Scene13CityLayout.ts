@@ -363,6 +363,46 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
     }
+    // 城门外延踩踏土路（DE 城门官道：过护城河桥堤后带自然微弧渐窄淡入原野草地，遇天然水岸即止，严禁整格直线与擦断护城河）
+    const activeGates = this.wallGates.filter((b) => b.f === 1 && /GATE/.test(b.key));
+    if (activeGates.length > 0) {
+        const roadLenPx = this.defenderCityType === 'big_city'
+            ? TAC_TILE_W * 10.5
+            : this.defenderCityType === 'medium_city'
+                ? TAC_TILE_W * 8.5
+                : this.defenderCityType === 'small_city'
+                    ? TAC_TILE_W * 7.0
+                    : TAC_TILE_W * 5.6;
+        const bridgeClearPx = (moatOn && ringLm > 0)
+            ? (2.2 + moatW * 1.35) * TAC_TILE_W
+            : TAC_TILE_W * 1.2;
+        for (let gi = 0; gi < activeGates.length; gi++) {
+            const gt = activeGates[gi];
+            // 在等距还原地面空间（y*2）计算城心→城门外法向，使屏幕步进严格对齐 2:1 等轴桥面方向
+            const gdx = gt.x - cx;
+            const gdy = (gt.y - cy) * 2;
+            const gLen = Math.hypot(gdx, gdy) || 1;
+            const ux = gdx / gLen;
+            const uy = gdy / gLen;
+            const phase = (((hash >>> 0) % 997) / 997) * Math.PI * 2 + gi * 1.73;
+            for (let dist = 0; dist <= roadLenPx; dist += 38) {
+                const u = dist / roadLenPx;
+                const swayRamp = dist <= bridgeClearPx
+                    ? 0
+                    : Math.min(1, (dist - bridgeClearPx) / Math.max(1, roadLenPx - bridgeClearPx));
+                const sway = Math.sin(swayRamp * Math.PI * 1.55 + phase) * 30 * swayRamp;
+                const rxPt = gt.x + ux * dist - uy * sway;
+                const ryPt = gt.y + (uy * dist + ux * sway) * 0.5;
+                if (inMoat && inMoat(rxPt, ryPt)) continue;
+                const rc = gl.screenToCell(rxPt, ryPt, W, H);
+                if (!rc) break;
+                if (gl.getWaterDensityAt(rc.gx, rc.gy) >= 0.16) break;
+                const rad = 1.62 - 0.72 * u;
+                const str = (0.90 - 0.52 * (u * u));
+                gl.carveFoundation(rxPt, ryPt, W, H, rad, str, true);
+            }
+        }
+    }
     const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
     const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') && ringLm > 0;
     const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : 12.0);

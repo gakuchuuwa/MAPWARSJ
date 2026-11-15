@@ -11,7 +11,7 @@ import { DEFAULT_TERRAIN_TILE } from '../Scene13Biome';
 import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import { pickTree, type TreeSeason } from './TreeAssignment';
-import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree, snowToPlainTree } from './Scene13DeTrees';
+import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, isBareSandTerrain, seasonalDeTree, snowToPlainTree } from './Scene13DeTrees';
 import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf, syncTradeCartAnimals } from './Scene13Animals';
 import { animalHerdSize } from '../../world/environment/animalCatalog';
@@ -274,11 +274,18 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             if (data && data.objects) {
                 // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
                 //    并拿掉落在地基上的树木与建筑冲突物。
-                const foundations: Array<{ x: number; y: number; r: number }> = [];
+                const foundations: Array<{ x: number; y: number; r: number; dirt?: number }> = [];
                 const siegeBuildings = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
-                for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
-                for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
-                for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
+                const isSiegeMode = this.battleType === 'siege';
+                for (const sp of this.spawns) {
+                    if (sp.f === 1 && !sp.commander) {
+                        foundations.push({ x: sp.x, y: sp.y, r: 4, dirt: isSiegeMode ? 0.90 : 0 });
+                    } else if (isSiegeMode && !this.skirmish && sp.f === 0 && !sp.commander) {
+                        foundations.push({ x: sp.x, y: sp.y, r: 2.2, dirt: 0.84 });
+                    }
+                }
+                for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5, dirt: 0.86 });
+                for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r, fd.dirt ?? 0.88);
                 if (!this.deCity) {
                     const fieldProtect = [...foundations];
                     for (const sp of this.spawns) {
@@ -398,7 +405,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 /** 🔴 [2026-10-31 主人令「战术模式中的鸟不成群」] 待成群的飞鸟：先收集，出循环后按「同种 + 邻近」并群再下发 */
                 const pendingBirds: Array<{ species: string; sx: number; sy: number; hash: number }> = [];
                 const placedTreePts: Array<{ x: number; y: number }> = [];
-                const minTreeGap = 136 + Math.round((1 - Math.min(1, treeKeep)) * 42);
+                const stragglerTreeGap = 136 + Math.round((1 - Math.min(1, treeKeep)) * 42);
+                const forestTreeGap = 92 + Math.round((1 - Math.min(1, treeKeep)) * 22);
 
                 for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
                     const ob = data.objects[obIdx];
@@ -528,7 +536,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                             }
                             const treeHash01 = (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000;
                             const keepProb = deTerrainIsForest(tid)
-                                ? (0.45 * Math.max(0.55, treeKeep))
+                                ? (0.72 * Math.max(0.65, treeKeep))
                                 : Math.max(0.55, treeKeep);
                             if (!ob.riparian && treeHash01 >= keepProb) continue;
                             // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
@@ -592,7 +600,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                 sx = candX;
                                 sy = candY;
                             }
-                            if (placedTreePts.some((p) => Math.hypot(sx - p.x, (sy - p.y) * 1.45) < minTreeGap)) continue;
+                            const gapReq = deTerrainIsForest(tid) ? forestTreeGap : stragglerTreeGap;
+                            if (placedTreePts.some((p) => Math.hypot(sx - p.x, (sy - p.y) * 1.45) < gapReq)) continue;
                             placedTreePts.push({ x: sx, y: sy });
                         }
                         if (onFoundation(sx, sy)) continue;
@@ -2456,6 +2465,51 @@ function populateBattlefieldMicroDecor(
             if (pushMicro(scAsset, sp.x + jx, sp.y + jy, 0.78 + mRnd() * 0.14, -1)) {
                 placedScatters.push({ x: sp.x, y: sp.y });
                 scatterPlaced++;
+            }
+        }
+    }
+
+    // 4. 林缘低矮灌木过渡带（还原 DE BASE_FOREST_EDGE = Forest Bush：沿腐殖林底土外缘自然过渡到草地）
+    const allowLushEdgeBush = !isArid
+        && !decorCtx.winterSnow
+        && !/^(gr5|ds4|ds2|rck|gravel_default)/i.test(baseTerrain);
+    const rawEdgePool = allowLushEdgeBush
+        ? [...validFlat.filter((a) => !/^FLOWER/.test(a)), 'BUSH_GREEN', 'SHRUB_GREEN', 'UNDERBRUSH']
+        : validFlat.filter((a) => !/^FLOWER/.test(a));
+    const edgePool = Array.from(new Set(rawEdgePool)).filter((a) => decorFits(a, decorCtx));
+    if (edgePool.length > 0) {
+        const nGrid = glLayer.data?.width ?? 120;
+        const terrainArr: ArrayLike<number> | undefined = glLayer.data?.terrain;
+        const edgeSectorBuckets: Spot[][] = Array.from({ length: 16 }, () => []);
+        for (let gy = 8; gy <= 112; gy += 2) {
+            for (let gx = 8; gx <= 112; gx += 2) {
+                const idx = gy * nGrid + gx;
+                const sf = glLayer.smoothForest[idx] ?? 0;
+                if (sf < 0.14 || sf > 0.44) continue;
+                if (terrainArr && isBareSandTerrain(terrainArr[idx] ?? -1)) continue;
+                const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+                if (!isSafeMicroSpot(pt.x, pt.y)) continue;
+                const sec = Math.min(3, Math.floor((gy - 8) / 26)) * 4 + Math.min(3, Math.floor((gx - 8) / 26));
+                edgeSectorBuckets[sec].push({
+                    x: pt.x,
+                    y: pt.y,
+                    dist: Math.hypot(gx - 60, gy - 60),
+                    sec,
+                    isSlope: false,
+                });
+            }
+        }
+        const edgeCands = interleaveBuckets(secOrder.map((s) => edgeSectorBuckets[s]));
+        const targetEdge = isField ? 32 : 24;
+        const placedEdge: Array<{ x: number; y: number }> = [];
+        for (const es of edgeCands) {
+            if (placedEdge.length >= targetEdge) break;
+            if (placedEdge.some((p) => Math.hypot(p.x - es.x, (p.y - es.y) * 1.5) < 155)) continue;
+            const bushAsset = edgePool[Math.floor(mRnd() * edgePool.length)];
+            const jx = (mRnd() - 0.5) * 34;
+            const jy = (mRnd() - 0.5) * 18;
+            if (pushMicro(bushAsset, es.x + jx, es.y + jy, 0.78 + mRnd() * 0.16, -1)) {
+                placedEdge.push({ x: es.x, y: es.y });
             }
         }
     }

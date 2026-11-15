@@ -9405,6 +9405,18 @@ export class Scene13WarLayer {
 
             fr = Math.floor(this.battleSec * 15 + s.frame) % m.frames;
 
+        } else if (s.asset === 'JUNGLE' && m.frames === 39) {
+
+            // DE n_tree_jungle 条带 0..20 与 24..26 帧为林下低矮蕨丛/树桩，21..23 与 27..38 共 15 帧为高大热带乔木
+            const idx = Math.abs(s.frame) % 15;
+            fr = idx < 3 ? (21 + idx) : (24 + idx);
+
+        } else if (s.asset === 'RAINFOREST' && m.frames === 69) {
+
+            // DE n_tree_rainforest 条带 0..20 与 24..26 帧为低矮灌丛/树桩，21..23 与 27..68 共 45 帧为高大雨林乔木
+            const idx = Math.abs(s.frame) % 45;
+            fr = idx < 3 ? (21 + idx) : (24 + idx);
+
         } else {
 
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;
