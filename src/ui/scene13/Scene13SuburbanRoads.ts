@@ -221,7 +221,7 @@ export function resolveRoadPavingStyle(opts: {
             secondaryUrl: '/SUCAI_TERRAIN/rd5.png',
             maskUrl: '/SUCAI_TERRAIN/masks/road_gravel.png',
             winterFrost: opts.isSnow ? 0.24 : 0,
-            baseBrokenness: opts.cityType === 'stockade' ? 0.84 : opts.cityType === 'pass' ? 0.44 : 0.38,
+            baseBrokenness: opts.cityType === 'stockade' ? 0.56 : opts.cityType === 'pass' ? 0.28 : 0.24,
         };
     }
     if (isLushSubtropical) {
@@ -231,7 +231,7 @@ export function resolveRoadPavingStyle(opts: {
             secondaryUrl: '/SUCAI_TERRAIN/sr2.png',
             maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
             winterFrost: 0,
-            baseBrokenness: opts.cityType === 'small_city' ? 0.56 : (opts.cityType === 'medium_city' ? 0.34 : 0.24),
+            baseBrokenness: opts.cityType === 'small_city' ? 0.30 : (opts.cityType === 'medium_city' ? 0.20 : 0.14),
         };
     }
     return {
@@ -240,7 +240,7 @@ export function resolveRoadPavingStyle(opts: {
         secondaryUrl: '/SUCAI_TERRAIN/rd2.png',
         maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
         winterFrost: 0,
-        baseBrokenness: opts.cityType === 'big_city' ? 0.14 : (opts.cityType === 'medium_city' ? 0.28 : 0.52),
+        baseBrokenness: opts.cityType === 'big_city' ? 0.10 : (opts.cityType === 'medium_city' ? 0.18 : 0.28),
     };
 }
 
@@ -418,16 +418,16 @@ export function buildCurvedGateTrunkRoads(opts: {
     if (gates.length === 0) return [];
 
     const unitGroundPx = Math.hypot(TAC_TILE_W / 2, TAC_TILE_H); // 1 格对应地平面像素 (≈67.88px)
-    const defaultTiles = cityType === 'big_city'
-        ? 14.5
+    const postBridgeTiles = cityType === 'big_city'
+        ? 18.0
         : cityType === 'medium_city'
-            ? 12.2
+            ? 15.2
             : cityType === 'small_city'
-                ? 9.6
+                ? 13.0
                 : cityType === 'pass'
-                    ? 10.5
-                    : 7.2;
-    const baseLenGround = defaultTiles * unitGroundPx;
+                    ? 14.0
+                    : 10.5;
+    const postBridgeLenGround = postBridgeTiles * unitGroundPx;
     const startOffsetGround = -0.35 * unitGroundPx;
     const stepGround = 26;
 
@@ -451,38 +451,61 @@ export function buildCurvedGateTrunkRoads(opts: {
         const moatWaterMinG = (moatOn && ringLm > 0 && prof) ? ((prof.bridgeDIn + 0.10) * stepGroundLen) : 999999;
         const moatWaterMaxG = (moatOn && ringLm > 0 && prof) ? ((prof.bridgeDOut - 0.10) * stepGroundLen) : -999999;
         const bridgeBankClearG = (moatOn && ringLm > 0 && prof) ? ((prof.bridgeDOut + 1.45) * stepGroundLen) : 0;
+        const bridgeOutG = (moatOn && ringLm > 0 && prof)
+            ? ((prof.bridgeDOut + 0.35) * stepGroundLen)
+            : stepGroundLen * 0.85;
         const bridgeClearG = (moatOn && ringLm > 0 && prof)
             ? ((prof.bridgeDOut + 1.05) * stepGroundLen)
             : stepGroundLen * 1.15;
 
+        const baseLenGround = bridgeOutG + postBridgeLenGround;
         const alignToAtk = atkDist > 400 ? (ux * atkUx + uy * atkUy) : 0;
-        const reachesAtkApproach = alignToAtk > 0.58 && (cityType === 'big_city' || cityType === 'medium_city' || cityType === 'pass');
-        const atkTargetGroundDist = atkDist - Math.hypot(gt.x - cx, (gt.y - cy) * 2) - 420;
+        const reachesAtkApproach = alignToAtk > 0.52;
+        const atkTargetGroundDist = atkDist - Math.hypot(gt.x - cx, (gt.y - cy) * 2) - 340;
         const totalLenGround = reachesAtkApproach && atkTargetGroundDist > baseLenGround
-            ? Math.min(baseLenGround * 1.55, atkTargetGroundDist)
+            ? Math.min(baseLenGround * 1.50, atkTargetGroundDist)
             : baseLenGround;
+        const effectivePostBridgeLen = Math.max(unitGroundPx * 4, totalLenGround - bridgeOutG);
 
         const seed = (Math.imul(hash ^ (gi * 0x9e3779b9), 0x85ebca6b) >>> 0) / 4294967296;
         const phase = seed * Math.PI * 2 + gi * 1.91;
         const curveSign = ((hash >> gi) & 1) === 0 ? 1 : -1;
-        const amp1 = (54 + seed * 34) * curveSign;
-        const amp2 = 24 * Math.sin(phase * 1.7);
+        const amp1 = (68 + seed * 42) * curveSign;
+        const amp2 = 28 * Math.sin(phase * 1.7);
 
-        const baseHalfW = cityType === 'big_city' ? 56 : cityType === 'medium_city' ? 50 : cityType === 'pass' ? 50 : 40;
-        const endHalfW = cityType === 'big_city' ? 28 : cityType === 'medium_city' ? 26 : 22;
+        const baseHalfW = cityType === 'big_city'
+            ? 86
+            : cityType === 'medium_city'
+                ? 78
+                : cityType === 'pass'
+                    ? 76
+                    : cityType === 'small_city'
+                        ? 70
+                        : 58;
+        const endHalfW = cityType === 'big_city'
+            ? 54
+            : cityType === 'medium_city'
+                ? 48
+                : cityType === 'pass'
+                    ? 46
+                    : cityType === 'small_city'
+                        ? 44
+                        : 36;
 
         // 计算面向攻方营前汇聚点，平滑向敌方来向转弯靠拢
         let atkDriftMax = 0;
         if (reachesAtkApproach && atkCen) {
             const perpToAtk = ((atkCen.x - gt.x) * nx + (atkCen.y - gt.y) * 2 * ny);
-            atkDriftMax = Math.max(-240, Math.min(240, perpToAtk * 0.42));
+            atkDriftMax = Math.max(-280, Math.min(280, perpToAtk * 0.45));
         }
 
         const pts: RoadPoint[] = [];
         let curLat = 0;
 
         for (let gDist = startOffsetGround; gDist <= totalLenGround; gDist += stepGround) {
-            const u = Math.max(0, gDist / Math.max(1, totalLenGround));
+            const u = gDist <= bridgeOutG
+                ? 0
+                : Math.min(1, (gDist - bridgeOutG) / effectivePostBridgeLen);
             const ramp = gDist <= bridgeClearG
                 ? 0
                 : Math.min(1, (gDist - bridgeClearG) / Math.max(1, totalLenGround - bridgeClearG));
@@ -521,8 +544,8 @@ export function buildCurvedGateTrunkRoads(opts: {
 
             const halfW = gDist < 0
                 ? baseHalfW * 1.04
-                : baseHalfW * (1 - 0.52 * u) + endHalfW * 0.25 * u;
-            const brokenness = Math.min(0.94, baseBrokenness + 0.58 * Math.pow(u, 0.85));
+                : baseHalfW * (1 - u) + endHalfW * u;
+            const brokenness = Math.min(0.88, baseBrokenness + 0.48 * Math.pow(u, 1.05));
 
             pts.push({
                 x: px,
@@ -661,10 +684,10 @@ export function buildSuburbanBranchRoads(opts: {
                     blocked = true;
                     break;
                 }
-                const wStart = Math.min(bestAnchor.halfW * 0.82, 40);
-                const wEnd = tgt.kind === 'hamlet' || tgt.kind === 'trade' ? 30 : 25;
+                const wStart = Math.min(bestAnchor.halfW * 0.85, 56);
+                const wEnd = tgt.kind === 'hamlet' || tgt.kind === 'trade' ? 42 : 36;
                 const halfW = wStart * (1 - t) + wEnd * t;
-                const brokenness = Math.min(0.92, Math.max(bestAnchor.brokenness, 0.48) + 0.34 * t);
+                const brokenness = Math.min(0.86, Math.max(bestAnchor.brokenness, 0.36) + 0.32 * t);
                 candidate.push({
                     x,
                     y,
@@ -756,10 +779,10 @@ export function carveRoadNetworkOnGround(
             if (p.overMoat) continue;
             // 每隔 1 个采样点刻 1 次（步距 ~26-52px），保持连续平滑土边又不冗余耗时
             if (i % 2 === 1 && i < pts.length - 1) continue;
-            const radCells = isTrunk ? (1.46 - 0.56 * p.u) : (1.06 - 0.30 * p.u);
-            const str = isTrunk ? (0.86 - 0.44 * p.u * p.u) : (0.72 - 0.34 * p.u);
+            const radCells = isTrunk ? (2.10 - 0.55 * p.u) : (1.42 - 0.32 * p.u);
+            const str = isTrunk ? (0.90 - 0.36 * p.u * p.u) : (0.78 - 0.30 * p.u);
             gl.carveFoundation(p.x, p.y, W, H, radCells, str, true);
-            clearTreesAt(p.x, p.y, isTrunk ? 96 : 74);
+            clearTreesAt(p.x, p.y, isTrunk ? 118 : 88);
         }
     }
 }
@@ -860,8 +883,8 @@ export async function bakeSuburbanRoadChunks(
                 maxHW,
                 brkA: a.brokenness,
                 brkB: b.brokenness,
-                fadeA: a.u > 0.76 ? Math.max(0, 1 - (a.u - 0.76) / 0.24) : 1,
-                fadeB: b.u > 0.76 ? Math.max(0, 1 - (b.u - 0.76) / 0.24) : 1,
+                fadeA: a.u > 0.82 ? Math.max(0, 1 - (a.u - 0.82) / 0.18) : 1,
+                fadeB: b.u > 0.82 ? Math.max(0, 1 - (b.u - 0.82) / 0.18) : 1,
                 minDrawX: Math.min(a.x, b.x) - maxHW,
                 maxDrawX: Math.max(a.x, b.x) + maxHW,
                 minDrawY: Math.min(a.y - liftA, b.y - liftB) - padY,
@@ -976,13 +999,13 @@ export async function bakeSuburbanRoadChunks(
 
                         // DE 蒙版：white(1)=完整石块，black(0)=凹陷泥缺口
                         const maskVal = mskData[midx] / 255;
-                        const shoulder = Math.max(0, (rNorm - 0.42) / 0.58);
-                        const coreErode = Math.max(0, (hit.brk - 0.20) * 0.85);
-                        const threshold = shoulder * 0.72 + coreErode * 0.62;
+                        const shoulder = Math.max(0, (rNorm - 0.58) / 0.42);
+                        const coreErode = Math.max(0, (hit.brk - 0.26) * 0.68);
+                        const threshold = shoulder * 0.68 + coreErode * 0.52;
                         const stoneScore = maskVal - threshold;
                         if (stoneScore <= 0) continue;
 
-                        const a = Math.min(1, stoneScore * 4.2) * hit.fade * 0.94;
+                        const a = Math.min(1, stoneScore * 4.5) * hit.fade * 0.96;
                         if (a <= 0.03) continue;
 
                         const brkMix = Math.max(0, Math.min(1, hit.brk));
