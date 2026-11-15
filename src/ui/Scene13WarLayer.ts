@@ -766,6 +766,10 @@ export class Scene13WarLayer {
 
     deCityGround: HTMLDivElement | null = null;
 
+    /** 城郊 DE 碎石残破石路离线分块烘焙缓存（z 位于地面贴图之上、尸体/桥梁/建筑之下） */
+
+    suburbanRoadChunks: Array<{ cv: HTMLCanvasElement; x: number; y: number; w: number; h: number }> = [];
+
     groundLayerGL: Scene13GroundLayerGL | null = null;
 
     useGroundGL = false;
@@ -8514,6 +8518,8 @@ export class Scene13WarLayer {
 
         this.deCity = null;
 
+        this.suburbanRoadChunks = [];
+
         if (this.deCityGround) { this.deCityGround.remove(); this.deCityGround = null; }
 
     }
@@ -8590,7 +8596,9 @@ export class Scene13WarLayer {
 
         if (this.groundLayerGL && this.canvas) {
 
-            return this.groundLayerGL.isWaterAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
+            const W = this.worldCX * 2, H = this.worldCY * 2;
+
+            return this.groundLayerGL.isWaterAt(screenX, screenY, W, H) && !this.groundLayerGL.isBridgeAt(screenX, screenY, W, H);
 
         }
 
@@ -9077,6 +9085,8 @@ export class Scene13WarLayer {
 
                         ctx.globalCompositeOperation = 'source-over';
 
+                        (cv as unknown as { complete: boolean }).complete = true;
+
                         na.img = cv as unknown as HTMLImageElement;
 
                         return;
@@ -9121,7 +9131,7 @@ export class Scene13WarLayer {
 
         const gl = this.groundLayerGL, W = this.worldCX * 2, H = this.worldCY * 2;
 
-        const isWater = (x: number, y: number) => gl.isWaterAt(x, y, W, H);
+        const isWater = (x: number, y: number) => gl.isWaterAt(x, y, W, H) && !gl.isBridgeAt(x, y, W, H);
 
 
 
@@ -9339,7 +9349,7 @@ export class Scene13WarLayer {
 
         const na = this.natureCache[s.asset];
 
-        if (!na || !na.img || !na.img.complete || !na.meta) return;
+        if (!na || !na.img || !(na.img.complete || na.img instanceof HTMLCanvasElement) || !na.meta) return;
 
         const m = na.meta;
 

@@ -262,6 +262,14 @@ export function render(this: Scene13WarLayer): void {
     }
     _tSort = performance.now() - _tsort0;
 
+    // 0.5) 先画城郊 DE 碎石/残破石路分块（在地面与内城地基之上，在所有地面贴花/跨河桥/尸体/士兵之下）
+    if (this.suburbanRoadChunks.length > 0) {
+        for (const rc of this.suburbanRoadChunks) {
+            if (rc.x + rc.w < vMinX || rc.x > vMaxX || rc.y + rc.h < vMinY || rc.y > vMaxY) continue;
+            ctx.drawImage(rc.cv, rc.x, rc.y);
+        }
+    }
+
     // 1) 先画所有地面贴花层（z <= -5：道路 DECAL_PATH_*、贴地花草、农田、弹坑裂隙），确保道路等永远在尸体下方
     let flatEndIdx = 0;
     while (flatEndIdx < vis.length && vis[flatEndIdx].kind === 'environment' && vis[flatEndIdx].z <= -5) {

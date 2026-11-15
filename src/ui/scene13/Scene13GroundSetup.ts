@@ -12,7 +12,7 @@ import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, isBareSandTerrain, seasonalDeTree, snowToPlainTree } from './Scene13DeTrees';
-import { deriveDeGroundTiles } from './Scene13DeGround';
+import { deriveDeGroundTiles, mergeDeBakedGroundSlots } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf, syncTradeCartAnimals } from './Scene13Animals';
 import { animalHerdSize } from '../../world/environment/animalCatalog';
 import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
@@ -214,16 +214,19 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         //    旧做法只看据点建筑风格/气候主题，会让沙漠图铺成黄土、温带图铺成夯土，与 DE 原版观感不符。
         //    雪地例外：地面本身为积雪/冰原贴图时保留季节雪地贴图（不能把雪原铺成草地）。
         const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain);
-        const hasPlannedGround = !!(this.environmentPlan?.groundTiles?.grass) && !rawMapData?.isDeCampaign;
-        const deGroundTiles = (isSnowGround || hasPlannedGround)
-            ? null
-            : deriveDeGroundTiles(mapData?.terrain, this.environmentPlan?.groundTiles);
+        const isSiegeMode = !this.isSkirmish();
+        const deGroundTiles = rawMapData?.isDeCampaign
+            ? deriveDeGroundTiles(mapData?.terrain, this.environmentPlan?.groundTiles)
+            : mergeDeBakedGroundSlots(mapData?.terrain, mapData?.layer, this.environmentPlan?.groundTiles, {
+                isSiege: isSiegeMode,
+                isSnowGround,
+            });
         const groundTiles = deGroundTiles ?? this.environmentPlan?.groundTiles;
         if (deGroundTiles && this.environmentPlan) this.environmentPlan.groundTiles = deGroundTiles;
         try {
             if (this.groundLayerGL) this.groundLayerGL.destroy();
             // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
-            const glLayer = await Scene13GroundLayerGL.create(cv, mapData, groundTiles);
+            const glLayer = await Scene13GroundLayerGL.create(cv, mapData, groundTiles, { isSiege: isSiegeMode });
             if (gen !== this.assetGen) {
                 glLayer.destroy();
                 releaseGround();

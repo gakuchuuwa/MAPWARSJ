@@ -11102,7 +11102,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/PERSIAN/bfe_cb_midi_1.png": {
+        "/assets/PERSIAN/__闲置__PERSIAN_05.png": {
             "scale": 1,
             "offsetX": 11,
             "offsetY": -5

@@ -172,15 +172,14 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
-// ── REA 逆向：DE blendomatic_x2 格边草叶/砂砾颗粒咬合算子 ──
-// 将宏观团块势场 (macroVal) 与格边高频草叶微噪 (microVal) 及两张贴图局部明暗纹理差 (texDetail) 耦合，
-// 消除单纯 smoothstep 的「软喷枪雾化感」，还原 DE 草叶、砂砾、泥土在边界处错落咬合的颗粒感。
-float deEdgeBlend(float macroVal, float edgeLow, float edgeHigh, float microNoise, float texDetail) {
-  float baseT = smoothstep(edgeLow, edgeHigh, macroVal);
-  // 仅在交界过渡带 (0 < baseT < 1) 激活高频草叶/砂砾颗粒咬合，内部保持纯净原图
-  float borderMask = 4.0 * baseT * (1.0 - baseT);
-  float grain = (microNoise * 0.65 + texDetail * 0.35) * borderMask * 0.42;
-  return smoothstep(0.18, 0.82, baseT + grain);
+// ── REA 逆向：DE overlay_mask + blendomatic 1 格斜坡齿状咬合算子 ──
+// 当 s<=0 或 s>=1 时色块内部 100% 纯净，仅在 1 格宽交界斜坡带 (0 < s < 1)
+// 用原版 512px masks/*.png 按优先级的阈值切分，还原草叶/落叶锯齿咬合、杜绝软喷枪雾化。
+float deBlendMask(float s, float maskVal, float feather) {
+  if (s <= 0.001) return 0.0;
+  if (s >= 0.999) return 1.0;
+  float thresh = mix(feather, 1.0 - feather, maskVal);
+  return smoothstep(thresh - feather, thresh + feather, s);
 }
 
 void main() {
@@ -190,7 +189,7 @@ void main() {
   // 有机扰动：低频大尺度舒缓曲线打破方格阶梯，彻底消除高频毛刺锯齿，呈现圆润蜿蜒河岸
   float n1 = snoise(vGUV * 0.22 + uNoiseOff * 0.35);
   float n2 = snoise(vGUV * 0.50 - uNoiseOff * 0.25);
-  // 格边高频颗粒微噪（对应 DE blendomatic 单格 96×48 边缘草叶/碎石咬合掩码频率）
+  // 格边高频颗粒微噪（水体波浪高光、碎浪泡沫与斜坡明暗保留用）
   float nMicro1 = snoise(vGUV * 2.4 + vec2(19.7, 43.1) + uNoiseOff);
   float nMicro2 = snoise(vGUV * 5.2 + vec2(67.3, 11.9) - uNoiseOff);
   float microGrain = nMicro1 * 0.65 + nMicro2 * 0.35;
@@ -203,25 +202,28 @@ void main() {
   
   // 沙滩判定（近岸浅滩与干沙）
   float isSandRaw = clamp(field.g * 1.45 + smoothstep(0.22, 0.46, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
-  // 森林有机扰动：低频圆滑自然树林边缘与专属林下落叶底床（DE 原版：树下铺满落叶泥土）
+  // 森林有机扰动：轻幅连续低频噪声让林缘自然蜿蜒、消除整格直边
   float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8) + uNoiseOff);
   float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5) - uNoiseOff);
-  float fPerturb = field.b + fn1 * 0.035 + fn2 * 0.015;
+  float fPerturb = field.b + fn1 * 0.045 + fn2 * 0.018;
   
-  // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，无人工偏色，保持雪原/沙漠/黑土/绿草本色）
+  // 纹理与 DE overlay_mask 采样（RGB 为地面贴图、Alpha 通道无损打包 masks/*.png，1:1 无缝 512px 平铺）
   vec2 texUV = fract((vGUV * vec2(96.0, 48.0)) / 512.0);
-  vec3 colGrass = texture2D(uGrassTex, texUV).rgb;
-  vec3 colSand = texture2D(uSandTex, texUV).rgb;
-  vec3 colForest = texture2D(uForestTex, texUV).rgb;
-  vec3 colDirt = texture2D(uDirtTex, texUV).rgb;
-  vec3 colDry = texture2D(uDryTex, texUV).rgb;
-
-  // 提取各层贴图自身的像素级微纹理起伏（用于边界处草叶/石粒凹凸咬合）
-  float lumaGrass = dot(colGrass, vec3(0.299, 0.587, 0.114));
-  float lumaDry   = dot(colDry,   vec3(0.299, 0.587, 0.114));
-  float lumaDirt  = dot(colDirt,  vec3(0.299, 0.587, 0.114));
-  float lumaFor   = dot(colForest,vec3(0.299, 0.587, 0.114));
-  float lumaSand  = dot(colSand,  vec3(0.299, 0.587, 0.114));
+  vec4 sGrass  = texture2D(uGrassTex, texUV);
+  vec4 sSand   = texture2D(uSandTex, texUV);
+  vec4 sForest = texture2D(uForestTex, texUV);
+  vec4 sDirt   = texture2D(uDirtTex, texUV);
+  vec4 sDry    = texture2D(uDryTex, texUV);
+  vec3 colGrass  = sGrass.rgb;
+  vec3 colSand   = sSand.rgb;
+  vec3 colForest = sForest.rgb;
+  vec3 colDirt   = sDirt.rgb;
+  vec3 colDry    = sDry.rgb;
+  float maskGrass  = sGrass.a;
+  float maskSand   = sSand.a;
+  float maskForest = sForest.a;
+  float maskDirt   = sDirt.a;
+  float maskDry    = sDry.a;
   
   // ── DE 原版多底图碎块交织与 blendomatic 边缘咬合机制（参照 F_seasons.inc LAYER_A/B/C） ──
   // 1. 多尺度地貌碎块（低频原野起伏 + 中频 DE 1000-clumps 碎块交织，随据点种子 uNoiseOff 变化）
@@ -230,24 +232,20 @@ void main() {
   float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3) + uNoiseOff * 0.73);
   float terrainPatch = tn1 * 0.50 + tn2 * 0.32 + tn3 * 0.18;
   
-  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a ＋ 低频域扭曲错开第一层，原野碎块咬合）
-  // 🔴 [2026-10-31 主人报「有的贴图之间出现直线、直角」] 旧做法 abs(mod(uv+off,2)-1) 是镜像映射，
-  //    在 u/v 各留一条贯穿全图的镜像折线（两条折线相交就是直角）。改成低频噪声域扭曲：
-  //    采样点连续漂移、不折叠，泥斑边缘与 DE blendomatic 一样自然蜿蜒。
-  //    扭动量按「格」计（低频约 1.5 格 + 细碎约 0.1 格，再除以 uMapSize 换成 UV），
-  //    避免按全图比例放大到 9 格把泥斑搅乱、偏离地图数据原位。
-  vec2 dirtWarp = vec2(n1 * 1.5 + nMicro1 * 0.10, n2 * 1.2 + nMicro2 * 0.08) / uMapSize;
-  vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.01, 0.99);
+  // 2. 副地表二层泥斑与城基/官道（以 ~0.42 格连续域扭曲化开格线，按 DE 优先级由草叶蒙版 maskGrass 吃进泥地）
+  //    绝不使用镜像折线（防贯穿全图的直角折线）；删除全图泛灰褐的 wildDirt 雾化层，保底草块纯净度。
+  vec2 dirtWarp = vec2(n1 * 0.42 + n2 * 0.16, n2 * 0.38 - n1 * 0.14) / uMapSize;
+  vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.005, 0.995);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
-  float dirtNoise = clamp(tn1 * 0.48 + tn2 * 0.34 + tn3 * 0.18, -1.0, 1.0);
-  float fieldDirt    = deEdgeBlend(dirtFieldVal, 0.10, 0.48, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.62;
-  float trampledDirt = deEdgeBlend(dirtFieldVal, 0.50, 0.80, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.92;
-  float wildDirt     = deEdgeBlend(dirtNoise, 0.08, 0.46, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.22;
-  float dirtMix      = clamp(max(trampledDirt, fieldDirt + wildDirt), 0.0, 0.92);
+  float sDirtAmt = smoothstep(0.18, 0.48, dirtFieldVal);
+  float grassOverDirt = deBlendMask(1.0 - sDirtAmt, maskGrass, 0.095);
+  float dirtPeak = mix(0.84, 0.96, smoothstep(0.54, 0.78, dirtFieldVal));
+  float dirtMix = (1.0 - grassOverDirt) * dirtPeak;
   
-  // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合：主草皮 + 旱草 + 泥土三层交织）
-  float dryEdge = deEdgeBlend(terrainPatch, -0.26, 0.24, microGrain, (lumaDry - lumaGrass) * 2.5);
-  float dryMix  = clamp(dryEdge * 0.64 + uSeasonDryBias, 0.0, 1.0) * (1.0 - dirtMix * 0.55);
+  // 3. 副地表一层咬合（1 格紧致过渡 + masks/grass 齿状切分：色块干净、边界呈草叶咬合）
+  float sDryAmt = smoothstep(0.12, 0.28, terrainPatch + uSeasonDryBias * 0.42);
+  float dryEdge = deBlendMask(sDryAmt, maskDry, 0.10);
+  float dryMix  = clamp(dryEdge * 0.90 + max(0.0, uSeasonDryBias - 0.18) * 0.28, 0.0, 1.0);
   
   // 4. 基底主地形与副地表一层咬合 + 全球气候带四季色彩调制（与战略地图 100% 同步）
   vec3 baseLand = mix(colGrass, colDry, dryMix);
@@ -258,13 +256,18 @@ void main() {
   // 5. 混入副地表二层与道路/城基裸土斑块
   vec3 landCol = mix(baseLand, colDirt, dirtMix);
   
-  // 6. 森林底土与落叶垫底（🔴 [2026-10-12 主人令] 树林下铺满专属落叶腐殖土，边缘带落叶颗粒咬合）
-  float isForest = deEdgeBlend(fPerturb, 0.16, 0.40, microGrain, (lumaFor - lumaGrass) * 2.0) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
+  // 6. 森林底土与落叶垫底（草地侧草叶吃进林边、泥地侧由落叶 maskForest 咬合泥地）
+  float sForestAmt = smoothstep(0.24, 0.62, fPerturb);
+  float forestOverGrass = 1.0 - deBlendMask(1.0 - sForestAmt, maskGrass, 0.10);
+  float forestOverDirt  = deBlendMask(sForestAmt, maskForest, 0.10);
+  float isForest = mix(forestOverGrass, forestOverDirt, dirtMix) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   vec3 forTinted = mix(colForest, colForest * uSeasonTint, 0.45);
   landCol = mix(landCol, forTinted, isForest);
   
-  // 7. 水际沙滩与退潮湿沙带过渡（DE 经典海滩湿沙 + 沙岸颗粒咬合）
-  float sandBlend = deEdgeBlend(isSandRaw, 0.12, 0.62, microGrain, (lumaSand - lumaGrass) * 2.0);
+  // 7. 水际沙滩与退潮湿沙带过渡（水岸线保持圆滑；干沙外缘由草叶蒙版 maskGrass 齿状咬合草地）
+  float sSandAmt = smoothstep(0.22, 0.64, isSandRaw);
+  float grassOverSand = deBlendMask(1.0 - sSandAmt, maskGrass, 0.105);
+  float sandBlend = 1.0 - grassOverSand;
   landCol = mix(landCol, colSand, sandBlend);
   // 退潮湿沙带：近水际沙土受潮汐润泽，颜色加深呈润泽暗黄色
   float wetShore = smoothstep(0.32, 0.46, wPerturb);
@@ -374,7 +377,7 @@ void main() {
     float slopeField = vSlope + n2 * 0.016 + n1 * 0.010;
     float slopeFromGeom = smoothstep(0.030, 0.150, slopeField);
     float isSlopeFace = clamp(max(smoothstep(0.02, 0.11, slopeDiff), slopeFromGeom * 0.88), 0.0, 1.0);
-    float slopeEdge = deEdgeBlend(isSlopeFace, 0.10, 0.68, microGrain, (lumaDirt - lumaGrass) * 2.2);
+    float slopeEdge = 1.0 - deBlendMask(1.0 - smoothstep(0.16, 0.64, isSlopeFace), maskGrass, 0.12);
     // 斜坡面自然透出粗粝边坡土石肌理（泥土与旱草碎石交织），使高地四周坡面拥有坚实立体感
     vec3 slopeEarth = mix(colDirt, colDry, 0.35) * (0.95 + microGrain * 0.07);
     landCol = mix(landCol, slopeEarth, slopeEdge * 0.58);
@@ -461,7 +464,126 @@ export function transposeMapData(d: any): any {
 }
 
 const GROUND_TEXTURE_CACHE = new Map<string, Promise<HTMLImageElement | null>>();
-const GROUND_TEXTURE_CACHE_MAX = 48;
+const GROUND_TEXTURE_CACHE_MAX = 72;
+
+export type GroundMaskSlot = 'grass' | 'sand' | 'forest' | 'dirt' | 'dry';
+
+const DE_TILE_OVERLAY_MASK: Readonly<Record<string, string>> = {
+  snf: 'snow_underbrush.png',
+  snd: 'snow_light.png',
+  sn2: 'snow_strong.png',
+  sno: 'snow.png',
+  ic2: 'ice.png',
+  ic3: 'ice.png',
+  ice: 'ice.png',
+  ice_beach: 'ice.png',
+  gr6: 'jungle.png',
+  fo2: 'leaves_jungle.png',
+  for: 'leaves.png',
+  underbrush_leaves: 'leaves.png',
+  o_fo2: 'leaves.png',
+  grs: 'grass.png',
+  gr2: 'grass.png',
+  gr3: 'grass.png',
+  gr5: 'grass.png',
+  gr7: 'grass.png',
+  gr8: 'grass.png',
+  gr9: 'grass.png',
+  o_gr4: 'grass.png',
+  pc1: 'grass.png',
+  pc2: 'grass.png',
+  pc3: 'grass.png',
+  rd1: 'road_broken.png',
+  rd2: 'road_broken.png',
+  rd5: 'road_broken.png',
+  rd1_plaza: 'road_broken.png',
+  rd2_plaza: 'road_broken.png',
+  rck_plaza: 'road_broken.png',
+  sr2_plaza: 'road_broken.png',
+  pm1_plaza: 'road_broken.png',
+  rck: 'gravel.png',
+  ds5: 'gravel.png',
+  gravel_default: 'gravel.png',
+  gravel_wet: 'gravel.png',
+  rock_wet: 'gravel.png',
+  bch: 'beach.png',
+  bc2: 'beach.png',
+  bc3: 'beach.png',
+  bc4: 'beach.png',
+  beach_wet: 'beach.png',
+};
+
+/** 解析贴图对应的 DE 原生 512px overlay_mask 文件名（public/SUCAI_TERRAIN/masks/*.png）。 */
+export function resolveDeOverlayMaskName(tile: string, slot: GroundMaskSlot): string {
+  const mapped = DE_TILE_OVERLAY_MASK[tile];
+  if (mapped) return mapped;
+  if (slot === 'forest') return 'leaves.png';
+  if (slot === 'sand') return 'beach.png';
+  if (slot === 'grass') return 'grass.png';
+  return 'dirt.png';
+}
+
+export interface PackedTileMaskPixels {
+  width: number;
+  height: number;
+  pixels: Uint8Array;
+}
+
+const PACKED_TILE_MASK_CACHE = new Map<string, PackedTileMaskPixels>();
+const PACKED_TILE_MASK_CACHE_MAX = 36;
+let maskPackCanvas: HTMLCanvasElement | null = null;
+
+function getMaskPackCtx(w: number, h: number): CanvasRenderingContext2D | null {
+  if (typeof document === 'undefined') return null;
+  if (!maskPackCanvas) maskPackCanvas = document.createElement('canvas');
+  if (maskPackCanvas.width !== w) maskPackCanvas.width = w;
+  if (maskPackCanvas.height !== h) maskPackCanvas.height = h;
+  return maskPackCanvas.getContext('2d', { willReadFrequently: true });
+}
+
+/**
+ * 将地面 RGB 贴图与 DE 原生 512px 蒙版 R 通道无损打包为 RGBA 字节数组；
+ * 直接上传 Uint8Array 而不经 Canvas2D putImageData，彻底避免 alpha 预乘把草缘暗素 RGB 清零。
+ */
+export function packTileRgbaWithMask(
+  tileImg: HTMLImageElement,
+  maskImg: HTMLImageElement | null,
+  cacheKey: string,
+): PackedTileMaskPixels | null {
+  const hit = PACKED_TILE_MASK_CACHE.get(cacheKey);
+  if (hit) {
+    PACKED_TILE_MASK_CACHE.delete(cacheKey);
+    PACKED_TILE_MASK_CACHE.set(cacheKey, hit);
+    return hit;
+  }
+  const w = Math.max(1, tileImg.width || tileImg.naturalWidth || 512);
+  const h = Math.max(1, tileImg.height || tileImg.naturalHeight || 512);
+  const ctx = getMaskPackCtx(w, h);
+  if (!ctx) return null;
+  try {
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(tileImg, 0, 0, w, h);
+    const pixels = new Uint8Array(ctx.getImageData(0, 0, w, h).data);
+    if (maskImg && (maskImg.width || maskImg.naturalWidth)) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(maskImg, 0, 0, w, h);
+      const maskData = ctx.getImageData(0, 0, w, h).data;
+      for (let i = 3; i < pixels.length; i += 4) pixels[i] = maskData[i - 3];
+    } else {
+      for (let i = 3; i < pixels.length; i += 4) pixels[i] = 128;
+    }
+    const packed: PackedTileMaskPixels = { width: w, height: h, pixels };
+    PACKED_TILE_MASK_CACHE.set(cacheKey, packed);
+    while (PACKED_TILE_MASK_CACHE.size > PACKED_TILE_MASK_CACHE_MAX) {
+      const oldest = PACKED_TILE_MASK_CACHE.keys().next().value;
+      if (oldest === undefined) break;
+      PACKED_TILE_MASK_CACHE.delete(oldest);
+    }
+    return packed;
+  } catch {
+    return null;
+  }
+}
 
 /** 地面贴图是只读素材：跨场复用已解码 Image；每场只重建自己的 WebGLTexture，不共享 GPU 状态。 */
 function loadImg(u: string): Promise<HTMLImageElement | null> {
@@ -502,11 +624,9 @@ function smooth01(t: number): number {
   return x * x * (3 - 2 * x);
 }
 
-function blurGrid2D(src: Float32Array, N: number): Float32Array {
+function separableBlur2D(src: Float32Array, N: number, weights: readonly number[], K: number): Float32Array {
   const tmp = new Float32Array(N * N);
   const dst = new Float32Array(N * N);
-  const weights = [0.061, 0.121, 0.198, 0.240, 0.198, 0.121, 0.061];
-  const K = 3;
 
   for (let y = 0; y < N; y++) {
     const row = y * N;
@@ -532,6 +652,15 @@ function blurGrid2D(src: Float32Array, N: number): Float32Array {
   }
 
   return dst;
+}
+
+function blurGrid2D(src: Float32Array, N: number): Float32Array {
+  return separableBlur2D(src, N, [0.061, 0.121, 0.198, 0.240, 0.198, 0.121, 0.061], 3);
+}
+
+/** 约 1 格宽的紧凑斜坡势场卷积（对应 DE blendomatic 单格边界过渡带）。 */
+export function blurBevel1Tile(src: Float32Array, N: number): Float32Array {
+  return separableBlur2D(src, N, [0.09, 0.24, 0.34, 0.24, 0.09], 2);
 }
 
 const FLOATS_PER_VERT = 7;
@@ -602,6 +731,8 @@ export class Scene13GroundLayerGL {
   public readonly smoothWater: Float32Array;
   /** 护城河 / 引水渠格（addWaterCoverage 写入）：水生动物不进 */
   private readonly moatCells = new Set<number>();
+  /** 跨河/护城河实体桥面格：保留下方 WebGL 连续水体且阻止长树，但士兵踩上去移速=1.0且不触发涉水涟漪/沉尸 */
+  private readonly bridgeCells = new Set<number>();
   public readonly smoothForest: Float32Array;
   private readonly origElev: Uint8Array;
   private cornerElev: Float32Array;
@@ -623,7 +754,12 @@ export class Scene13GroundLayerGL {
     imgWater: any,
     imgDirt?: any,
     imgDry?: any,
-    grassTileName?: string
+    grassTileName?: string,
+    opts?: {
+      isSiege?: boolean;
+      masks?: Partial<Record<GroundMaskSlot, HTMLImageElement | null>>;
+      tileNames?: Partial<Record<GroundMaskSlot, string>>;
+    }
   ) {
     this.canvas = canvas;
     this.data = data;
@@ -815,65 +951,102 @@ export class Scene13GroundLayerGL {
       return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
     };
 
+    const baseGrass = grassTileName ?? 'gr2';
+    const isSparseTreelessBiome = baseGrass === 'pal' || baseGrass === 'des' || baseGrass === 'ds5'
+      || baseGrass === 'qs' || baseGrass === 'pal1'
+      || baseGrass === 'gr5' || baseGrass === 'gravel_default' || baseGrass === 'rck';
+
+    const isForestTerrainId = (id: number, fname: string, tname: string): boolean => (
+      fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48
+      || /Forest|Jungle|Leaves|Palm|Pine|Oak|Birch|Bamboo|Mediterranean|Acacia|Baobab|Mangrove|Dragon|Willow|Cypress|Bush/i.test(tname)
+    );
+
+    // 统计非水、非森林陆地地形频次：占比 >= 35% 视作主基底，修复全图以 Dirt 为基底时整张被染成泥斑的问题
+    const landTidCount = new Map<number, number>();
+    let totalNonWater = 0;
+    for (let i = 0; i < N * N; i++) {
+      const id = data.terrain[i];
+      if (id === 1 || id === 23 || isWaterId(id)) continue;
+      totalNonWater++;
+      if (id === 2 || id === 108) continue;
+      const m = DE_TERRAIN_MANIFEST[id];
+      if (isForestTerrainId(id, m?.name_2 ?? '', m?.name ?? '')) continue;
+      landTidCount.set(id, (landTidCount.get(id) ?? 0) + 1);
+    }
+    let dominantLandTid = -1;
+    let dominantLandCount = 0;
+    for (const [tid, cnt] of landTidCount) {
+      if (cnt > dominantLandCount) {
+        dominantLandCount = cnt;
+        dominantLandTid = tid;
+      }
+    }
+    if (totalNonWater === 0 || dominantLandCount < totalNonWater * 0.35) {
+      dominantLandTid = -1;
+    }
+
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
-        const id = data.terrain[y * N + x];
-        if (id === 1 || id === 23 || isWaterId(id)) rawWater[y * N + x] = 1.0;
-        if (id === 2) rawBeach[y * N + x] = 1.0;
+        const idx = y * N + x;
+        const id = data.terrain[idx];
+        const lid = data.layer?.[idx] ?? -1;
+        if (id === 1 || id === 23 || isWaterId(id)) rawWater[idx] = 1.0;
+        if (id === 2 || id === 108) rawBeach[idx] = 1.0;
         const m = DE_TERRAIN_MANIFEST[id];
         const fname = m?.name_2 ?? '';
         const tname = m?.name ?? '';
-        // 泥土/荒土判定（DE 原生 DIRT 斑块：3=Dirt 3, 6=Dirt, 11=Dirt 2, 42=Dirt 4, 76=Dirt Mud, 102 等）
-        if (id === 3 || id === 6 || id === 11 || id === 42 || id === 76 || id === 102 ||
-            /dirt|mud/i.test(tname) || /ds|des|rd/i.test(fname)) {
-          rawDirt[y * N + x] = 1.0;
+        // 泥土/荒土/烘焙叠层判定（同时读 layer[]，跳过全图主基底地形）
+        if (lid >= 0 && lid !== dominantLandTid && !isWaterId(lid)) {
+          rawDirt[idx] = 0.88;
+        } else if (id !== dominantLandTid && (
+          id === 3 || id === 6 || id === 11 || id === 42 || id === 76 || id === 102 ||
+          /dirt|mud/i.test(tname) || /^(g_ds|g_des|g_rd)/.test(fname)
+        )) {
+          rawDirt[idx] = 0.88;
         }
         // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」「森林地下是铺满整块 forestFloorTile 的」]
-        // 彻底按 DE dat 的所有森林/林地地形类型判定林地；
-        // 但当战场主底图为荒漠/戈壁/高寒砾石时，树木为沙漠棕榈或孤树，不铺大块深色森林底斑（gr7 属温带/泰加常见底图，照常铺林下腐殖土）
-        const baseGrass = grassTileName ?? 'gr2';
-        const isSparseTreelessBiome = baseGrass === 'pal' || baseGrass === 'des' || baseGrass === 'ds5'
-          || baseGrass === 'qs' || baseGrass === 'pal1'
-          || baseGrass === 'gr5' || baseGrass === 'gravel_default';
-        const isForestTerrain = !isSparseTreelessBiome && (
-          fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
-          /Forest|Jungle|Leaves|Palm|Pine|Oak|Birch|Bamboo|Mediterranean|Acacia|Baobab|Mangrove|Dragon|Willow|Cypress|Bush/i.test(tname)
-        );
-        if (isForestTerrain) rawForest[y * N + x] = 1.0;
+        // 彻底按 DE dat 的所有森林/林地地形类型判定林地；荒漠/戈壁/高寒砾石不铺大块深色森林底斑
+        if (!isSparseTreelessBiome && isForestTerrainId(id, fname, tname)) {
+          rawForest[idx] = 1.0;
+        }
       }
     }
 
-    // 照 DE Arabia.rms BASE_BLEND_A / B / C（terrain_mask 1 约 24% 覆盖率）机制：
-    // 检查全图及首屏中央区域（|x-60|<=24, |y-60|<=24）的泥土斑块占比；若中心交战区缺乏副地表斑块，
-    // 按确定性种子在首屏与全域生成有机多团块副地表斑块，彻底打破大面积单一底图平铺感
+    // 照 DE Arabia.rms BASE_BLEND_B 机制：若地图自身泥斑稀少，按攻城/野战撒紧凑有机的外野副地表团块
     let dirtCount = 0;
-    let centerDirtCount = 0;
     const halfN = Math.floor(N / 2);
-    for (let y = 0; y < N; y++) {
-      for (let x = 0; x < N; x++) {
-        if (rawDirt[y * N + x] > 0.5) {
-          dirtCount++;
-          if (Math.abs(x - halfN) <= 24 && Math.abs(y - halfN) <= 24) centerDirtCount++;
-        }
-      }
+    for (let i = 0; i < N * N; i++) {
+      if (rawDirt[i] > 0.5) dirtCount++;
     }
-    if (dirtCount < N * N * 0.08 || centerDirtCount < 48 * 48 * 0.10) {
+    if (dirtCount < N * N * 0.05) {
       let dSeed = ((Math.round((this.noiseOff[0] + 50) * 1000) * 73856093) ^ (Math.round((this.noiseOff[1] + 50) * 1000) * 19349663)) >>> 0;
       const dRnd = () => {
         dSeed = (dSeed * 1664525 + 1013904223) >>> 0;
         return dSeed / 4294967296;
       };
-      const patchClumps = 18;
+      const isSiegeMode = !!opts?.isSiege;
+      const patchClumps = isSiegeMode ? 8 : 14;
+      const clumpValue = isSiegeMode ? 0.56 : 0.58;
       for (let c = 0; c < patchClumps; c++) {
-        // 前 10 个斑块优先锚定在首屏与近郊（|dx|<=18, |dy|<=18），确保一开战首屏即有丰富三层地表交织
-        const sx = c < 10
-          ? (halfN - 18 + Math.floor(dRnd() * 37))
-          : (6 + Math.floor(dRnd() * (N - 12)));
-        const sy = c < 10
-          ? (halfN - 18 + Math.floor(dRnd() * 37))
-          : (6 + Math.floor(dRnd() * (N - 12)));
-        if (rawWater[sy * N + sx] > 0.1) continue;
-        const targetTiles = 28 + Math.floor(dRnd() * 48);
+        let sx = 0, sy = 0, picked = false;
+        for (let tries = 0; tries < 8; tries++) {
+          const cx = (!isSiegeMode && c < 7)
+            ? (halfN - 22 + Math.floor(dRnd() * 45))
+            : (6 + Math.floor(dRnd() * (N - 12)));
+          const cy = (!isSiegeMode && c < 7)
+            ? (halfN - 22 + Math.floor(dRnd() * 45))
+            : (6 + Math.floor(dRnd() * (N - 12)));
+          if (rawWater[cy * N + cx] > 0.1) continue;
+          if (isSiegeMode && Math.hypot(cx - halfN, cy - halfN) < 22) continue;
+          sx = cx;
+          sy = cy;
+          picked = true;
+          break;
+        }
+        if (!picked) continue;
+        const targetTiles = isSiegeMode
+          ? (14 + Math.floor(dRnd() * 13))
+          : (20 + Math.floor(dRnd() * 21));
         const q: Array<[number, number]> = [[sx, sy]];
         let placed = 0;
         while (q.length > 0 && placed < targetTiles) {
@@ -881,7 +1054,8 @@ export class Scene13GroundLayerGL {
           const [px, py] = q.splice(pickIdx, 1)[0];
           const cellIdx = py * N + px;
           if (rawWater[cellIdx] > 0.1 || rawDirt[cellIdx] > 0.5) continue;
-          rawDirt[cellIdx] = 0.46;
+          if (isSiegeMode && Math.hypot(px - halfN, py - halfN) < 20) continue;
+          rawDirt[cellIdx] = clumpValue;
           placed++;
           const nbrs: Array<[number, number]> = [[px + 1, py], [px - 1, py], [px, py + 1], [px, py - 1]];
           for (const [nx, ny] of nbrs) {
@@ -895,8 +1069,8 @@ export class Scene13GroundLayerGL {
 
     const sw = blurGrid2D(blurGrid2D(rawWater, N), N);
     const sb = blurGrid2D(blurGrid2D(rawBeach, N), N);
-    const sf = blurGrid2D(blurGrid2D(rawForest, N), N);
-    const sd = blurGrid2D(blurGrid2D(rawDirt, N), N);
+    const sf = blurGrid2D(rawForest, N);
+    const sd = blurBevel1Tile(rawDirt, N);
     this.smoothWater = sw;
     this.smoothForest = sf;
 
@@ -926,11 +1100,21 @@ export class Scene13GroundLayerGL {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    // 2. 加载基底平铺纹理（主草皮 / 沙滩 / 森林底土 / 水体 / 泥土斑块 / 旱草副草皮）
-    const makeRepeatTex = (img: any): WebGLTexture => {
+    // 2. 加载基底平铺纹理（并将 DE 512px overlay_mask 无损打包到各槽位的 Alpha 通道，不占额外采样器）
+    const makeRepeatTex = (img: any, slot?: GroundMaskSlot): WebGLTexture => {
       const tex = attachTexImage(gl.createTexture()!, img);
       gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      const maskImg = slot ? (opts?.masks?.[slot] ?? null) : null;
+      const tileName = slot ? (opts?.tileNames?.[slot] ?? '') : '';
+      const maskName = slot ? resolveDeOverlayMaskName(tileName, slot) : '';
+      const srcKey = tileName || img?.src || slot || '';
+      const packed = slot ? packTileRgbaWithMask(img, maskImg, `${srcKey}|${maskName}`) : null;
+      if (packed) {
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, packed.width, packed.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, packed.pixels);
+      } else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      }
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -938,12 +1122,12 @@ export class Scene13GroundLayerGL {
       return tex;
     };
 
-    if (imgGrass) this.grassTex = makeRepeatTex(imgGrass);
-    if (imgSand) this.sandTex = makeRepeatTex(imgSand);
-    if (imgForest) this.forestTex = makeRepeatTex(imgForest);
+    if (imgGrass) this.grassTex = makeRepeatTex(imgGrass, 'grass');
+    if (imgSand) this.sandTex = makeRepeatTex(imgSand, 'sand');
+    if (imgForest) this.forestTex = makeRepeatTex(imgForest, 'forest');
     if (imgWater) this.waterTex = makeRepeatTex(imgWater);
-    if (imgDirt) this.dirtTex = makeRepeatTex(imgDirt);
-    if (imgDry) this.dryTex = makeRepeatTex(imgDry);
+    if (imgDirt) this.dirtTex = makeRepeatTex(imgDirt, 'dirt');
+    if (imgDry) this.dryTex = makeRepeatTex(imgDry, 'dry');
 
     // 3. 高程与法线打光
     const V_SIZE = this.N + 1;
@@ -1321,6 +1505,43 @@ export class Scene13GroundLayerGL {
     return false;
   }
 
+  /** 清空跨河桥面格登记（重新布城时调用） */
+  public clearBridgeFootprints(): void {
+    this.bridgeCells.clear();
+  }
+
+  /** 将桥面覆盖范围内网格记为桥面通道：保留桥下 WebGL 水体渲染且阻止长树，但士兵行走与特效视为平地干脚 */
+  public markBridgeFootprint(screenX: number, screenY: number, W: number, H: number, radiusCells: number): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    if (!c) return;
+    const N = this.N;
+    const r = Math.max(0.25, radiusCells);
+    const x0 = Math.max(0, Math.floor(c.gx - r)), x1 = Math.min(N - 1, Math.ceil(c.gx + r));
+    const y0 = Math.max(0, Math.floor(c.gy - r)), y1 = Math.min(N - 1, Math.ceil(c.gy + r));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        if (Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy) <= r) {
+          this.bridgeCells.add(y * N + x);
+        }
+      }
+    }
+  }
+
+  /** 屏幕坐标是否位于已架设的实体跨河桥面上 */
+  public isBridgeAt(screenX: number, screenY: number, W: number, H: number): boolean {
+    if (this.bridgeCells.size === 0) return false;
+    const N = this.N;
+    const gx = (screenX - W / 2) / TW + N * 0.5;
+    const gy = (screenY - H / 2) / TH + N * 0.5;
+    if (gx < 0 || gy < 0 || gx >= N || gy >= N) return false;
+    const fx = Math.floor(gx);
+    const fy = Math.floor(gy);
+    if (this.bridgeCells.has(fy * N + fx)) return true;
+    const nx = Math.min(N - 1, Math.max(0, Math.round(gx)));
+    const ny = Math.min(N - 1, Math.max(0, Math.round(gy)));
+    return this.bridgeCells.has(ny * N + nx);
+  }
+
   public getWaterDensityAt(gx: number, gy: number): number {
     if (gx < 0 || gy < 0 || gx >= this.N || gy >= this.N) return 0;
     return this.smoothWater[Math.floor(gy) * this.N + Math.floor(gx)] ?? 0;
@@ -1330,9 +1551,12 @@ export class Scene13GroundLayerGL {
    * 从屏幕逻辑坐标 (screenX, screenY) 查询地形行军速度系数（2026-10-29 主人定案）：
    *   · 水体 / 沼泽：减20%（×0.8）
    *   · 森林（穿林减速）：减30%（×0.7）
-   *   · 平地 / 草地 / 道路：×1.0
+   *   · 平地 / 草地 / 道路 / 桥面：×1.0
    */
   public terrainSpeedAt(screenX: number, screenY: number, W: number, H: number): number {
+    if (this.isBridgeAt(screenX, screenY, W, H)) {
+      return 1.0;
+    }
     const N = this.N;
     const gx = (screenX - W / 2) / TW + N * 0.5;
     const gy = (screenY - H / 2) / TH + N * 0.5;
@@ -3623,7 +3847,12 @@ export class Scene13GroundLayerGL {
    *    来源统一为一份 `environmentPlan.groundTiles`（＝ Scene13DeMapThemes 那张表）；
    *    彻底实现 DE 原版多底图混搭原野。
    */
-  public static async create(canvas: HTMLCanvasElement, mapData: any, tiles?: Partial<Scene13GroundTiles>): Promise<Scene13GroundLayerGL> {
+  public static async create(
+    canvas: HTMLCanvasElement,
+    mapData: any,
+    tiles?: Partial<Scene13GroundTiles>,
+    opts?: { isSiege?: boolean },
+  ): Promise<Scene13GroundLayerGL> {
     const data = transposeMapData(mapData);
 
     /** 取图并记下最终用了哪个文件名（取不到 → 退回 fallback；两者都失败 → null） */
@@ -3644,7 +3873,30 @@ export class Scene13GroundLayerGL {
       loadTile(tiles?.dry, 'gr7'),
     ]);
 
-    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img, dirt.img, dry.img, grass.tile);
+    const [maskGrass, maskSand, maskForest, maskDirt, maskDry] = await Promise.all([
+      loadImg('/SUCAI_TERRAIN/masks/' + resolveDeOverlayMaskName(grass.tile, 'grass')),
+      loadImg('/SUCAI_TERRAIN/masks/' + resolveDeOverlayMaskName(sand.tile, 'sand')),
+      loadImg('/SUCAI_TERRAIN/masks/' + resolveDeOverlayMaskName(forest.tile, 'forest')),
+      loadImg('/SUCAI_TERRAIN/masks/' + resolveDeOverlayMaskName(dirt.tile, 'dirt')),
+      loadImg('/SUCAI_TERRAIN/masks/' + resolveDeOverlayMaskName(dry.tile, 'dry')),
+    ]);
+
+    const layer = new Scene13GroundLayerGL(
+      canvas,
+      data,
+      grass.img,
+      sand.img,
+      forest.img,
+      water.img,
+      dirt.img,
+      dry.img,
+      grass.tile,
+      {
+        isSiege: opts?.isSiege,
+        masks: { grass: maskGrass, sand: maskSand, forest: maskForest, dirt: maskDirt, dry: maskDry },
+        tileNames: { grass: grass.tile, sand: sand.tile, forest: forest.tile, dirt: dirt.tile, dry: dry.tile },
+      },
+    );
     layer.isIce = water.tile === 'ic2' || water.tile === 'ice' || water.tile === 'ic3';
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);

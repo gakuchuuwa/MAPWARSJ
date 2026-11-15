@@ -12,6 +12,19 @@ import { PASS_VALLEY_DIRS_8, passValleyDirAngle, type DecorSprite } from './Scen
 import { TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import { measureStrategicCity, strategicCityGroundElement } from './Scene13StrategicCity';
 import {
+    resolveMoatBridgeProfile,
+    resolveRoadPavingStyle,
+    selectPrimaryOuterGates,
+    spawnMoatGateBridges,
+    buildCurvedGateTrunkRoads,
+    buildSuburbanBranchRoads,
+    isPointOnRoadNetwork,
+    carveRoadNetworkOnGround,
+    bakeSuburbanRoadChunks,
+    type RoadCurve,
+    type SuburbanRoadTarget,
+} from './Scene13SuburbanRoads';
+import {
     WALL_GATE_STATS, MONGOL_CITY_YURTS, SIEGE_IMPERIAL_BUILDINGS, SIEGE_MEDIUM_BUILDINGS, SIEGE_FEUDAL_BUILDINGS,
     SIEGE_CITY_BUILDING_SCALE, SIEGE_CASTLE_SCALE, SIEGE_WONDER_SCALE, siegeBuildingScale,
 } from './Scene13UnitTables';
@@ -57,6 +70,7 @@ export function buildDeCity(this: Scene13WarLayer): void {
     const release = () => { if (released) return; released = true; if (gen === this.assetGen) this.pending--; };
     window.setTimeout(release, 8000);
     if (this.deCityGround) { this.deCityGround.remove(); this.deCityGround = null; }
+    this.suburbanRoadChunks = [];
     if (this.defenderCityType !== 'stockade') {
         this.deCityGround = strategicCityGroundElement(c, this.defenderCityType);
     }
@@ -147,6 +161,9 @@ export function buildDeCity(this: Scene13WarLayer): void {
 export function applyDeCityToGround(this: Scene13WarLayer): void {
     const c = this.deCity, gl = this.groundLayerGL, cv = this.canvas;
     if (!c || !gl || !cv) return;
+    const layoutGen = this.assetGen;
+    this.suburbanRoadChunks = [];
+    gl.clearBridgeFootprints();
     const { x: cx, y: cy } = this.deCityCenter;
     const W = this.worldCX * 2, H = this.worldCY * 2;
     const rx = c.width / 2, ry = c.height / 2;
@@ -207,6 +224,36 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //       现改为在屏幕像素空间直接向墙圈菱形线段 A=(0, half·TH)→B=(half·TW, 0) 投影求欧氏距离，左右角天然呈屏幕正圆弧包绕角楼，彻底消除尖刺。
     //    2) 多样化不规则河道：按每座城 seedStr 确定性生成不同频率/相位的内外岸独立起伏波、四段河面宽窄偏置、1~3 处天然宽阔水湾，以及门桥两侧圆弧收头。
     const ringLm = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
+    const defCityRecEarly: any = this.defenderCityRecord();
+    const deStyleEarly = this.buildingStyleFor(1);
+    const cultStyleEarly = String(defCityRecEarly?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? this.sideCulture?.[1] ?? this.sideCulture?.[0] ?? '');
+    const siteBaseTileEarly = this.environmentPlan?.baseTerrain ?? 'gr1';
+    const siteLatEarly = defCityRecEarly?.lat ?? this.centerLat ?? 30;
+    const siteLngEarly = defCityRecEarly?.lng ?? this.centerLng ?? 110;
+    const winterFlagEarly = queryWinterSnow(siteLatEarly, siteLngEarly);
+    const winterSnowEarly = winterFlagEarly === null ? true : (winterFlagEarly > 0 && winterFlagEarly !== 4);
+    const isSnowEarly = winterSnowEarly && (gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTileEarly));
+    const isAridEarly = /^(des|pal|qs|ds5|pal1)/i.test(siteBaseTileEarly);
+    const isHumidForestEarly = /rainforest|jungle|mangrove|swamp|tropical|indochina|amazon/i.test(String(this.environmentPlan?.deMapTheme ?? ''));
+    const atkSpawnsEarly = this.spawns.filter((s) => s.f === 0);
+    const atkCenEarly = atkSpawnsEarly.length > 0
+        ? {
+            x: atkSpawnsEarly.reduce((sum, s) => sum + s.x, 0) / atkSpawnsEarly.length,
+            y: atkSpawnsEarly.reduce((sum, s) => sum + s.y, 0) / atkSpawnsEarly.length,
+        }
+        : null;
+    const primaryGates = selectPrimaryOuterGates(this.wallGates, cx, cy, this.defenderCityType ?? '', atkCenEarly);
+    if (moatOn && ringLm > 0) {
+        for (const gt of primaryGates) {
+            gt.bridgeProfile = resolveMoatBridgeProfile({
+                moatW,
+                isWoodGate: gt.isWoodGate,
+                deStyle: deStyleEarly,
+                cultStyle: cultStyleEarly,
+            });
+        }
+    }
+
     let inMoat: ((x: number, y: number) => boolean) | null = null;
     if (moatOn && ringLm > 0) {
         let mh = (hash >>> 0) ^ 0x9e3779b9;
@@ -241,16 +288,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 wid: 0.16 + mrnd() * 0.14,
             });
         }
-        // 土堤：城门正前方不挖，每座门桥宽度带微幅差异，并在两侧做水滴圆头收口
-        const lanes: Array<{ axis: 'i' | 'j'; sign: number; along: number; bh: number }> = [];
-        for (const gt of this.wallGates) {
-            if (gt.f !== 1 || !/GATE/.test(gt.key)) continue;
-            const gu = (gt.x - cx) / (TAC_TILE_W / 2), gv = (gt.y - cy) / (TAC_TILE_H / 2);
-            const gi = (gu + gv) / 2 - 0.5, gj = (gv - gu) / 2 - 0.5;
-            const bh = bridgeHalfBase + (mrnd() - 0.5) * 0.26;
-            if (Math.abs(gi) >= Math.abs(gj)) lanes.push({ axis: 'i', sign: Math.sign(gi), along: gj, bh });
-            else lanes.push({ axis: 'j', sign: Math.sign(gj), along: gi, bh });
-        }
+        // 桥头两岸平滑规整带：取消旧版断水土堤，保留门下连续护城河水面并将桥下内外岸缘柔和对齐实体桥长度
+        const bridgeBanks = primaryGates.map((gt) => {
+            const prof = gt.bridgeProfile!;
+            return {
+                axis: gt.axis,
+                sign: gt.sign,
+                along: gt.axis === 'i' ? gt.gj : gt.gi,
+                bh: bridgeHalfBase + (mrnd() - 0.5) * 0.18,
+                bDIn: prof.bridgeDIn,
+                bDOut: prof.bridgeDOut,
+            };
+        });
         // 屏幕空间墙圈中心 (cx, rcy) 与第一象限墙段 A=(0, half·TH) → B=(half·TW, 0)
         const rcy = cy + 0.5 * TAC_TILE_H;
         const segAx = 0, segAy = half * TAC_TILE_H, segBx = half * TAC_TILE_W, segBy = 0;
@@ -261,6 +310,19 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const dx = Math.abs(x - cx), dy = Math.abs(y - rcy);
             const t = Math.max(0, Math.min(1, ((dx - segAx) * segVx + (dy - segAy) * segVy) / segLen2));
             return Math.hypot(dx - (segAx + t * segVx), dy - (segAy + t * segVy)) / unitPx;
+        };
+        const isNearGateBridge = (px: number, py: number): boolean => {
+            const pu = (px - cx) / (TAC_TILE_W / 2), pv = (py - cy) / (TAC_TILE_H / 2);
+            const pi = (pu + pv) / 2 - 0.5, pj = (pv - pu) / 2 - 0.5;
+            const pex = Math.abs(pi) - half, pey = Math.abs(pj) - half;
+            const pd = wallScreenDist(px, py, pex, pey);
+            for (const ln of bridgeBanks) {
+                const sameSide = ln.axis === 'i' ? (Math.sign(pi) === ln.sign) : (Math.sign(pj) === ln.sign);
+                if (!sameSide) continue;
+                const distAlong = Math.abs((ln.axis === 'i' ? pj : pi) - ln.along);
+                if (distAlong <= ln.bh + 1.6 && pd <= ln.bDOut + 2.2) return true;
+            }
+            return false;
         };
         inMoat = (x, y) => {
             const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
@@ -284,21 +346,22 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const lrComp = 0.22 * Math.pow(Math.cos(th), 4);
             const span = Math.max(moatW === 1 ? 1.25 : moatW * 0.88, baseSpan + sideBias[qIdx] + wOut + bulge * tipFade + lrComp);
             const dOut = dIn + span;
-            if (d < dIn || d >= dOut) return false;
-            const capZone = 0.90;
-            for (const ln of lanes) {
+            let effDIn = dIn;
+            let effDOut = dOut;
+            for (const ln of bridgeBanks) {
                 const sameSide = ln.axis === 'i' ? (Math.sign(ci) === ln.sign) : (Math.sign(cj) === ln.sign);
                 if (!sameSide) continue;
                 const distAlong = Math.abs((ln.axis === 'i' ? cj : ci) - ln.along);
-                if (distAlong <= ln.bh) return false;
-                if (distAlong < ln.bh + capZone) {
-                    const profile = Math.sqrt((distAlong - ln.bh) / capZone);
-                    const mid = dIn * 0.45 + dOut * 0.55;
-                    const halfW = (dOut - dIn) * 0.5 * profile;
-                    if (d < mid - halfW || d >= mid + halfW) return false;
+                if (distAlong < ln.bh + 1.15) {
+                    const blendSpan = ln.bh * 0.35 + 1.15;
+                    const w = distAlong <= ln.bh * 0.65
+                        ? 1
+                        : 0.5 * (1 + Math.cos(Math.PI * Math.min(1, (distAlong - ln.bh * 0.65) / blendSpan)));
+                    effDIn = effDIn * (1 - w) + ln.bDIn * w;
+                    effDOut = effDOut * (1 - w) + ln.bDOut * w;
                 }
             }
-            return true;
+            return d >= effDIn && d < effDOut;
         };
         // 🔴 [2026-10-13 主人令「有河流的可以和护城河连上」→「按这个方案做」] 护城河引水渠：
         //    只在**河流**地图（waterKind === 'river'）做；海、湖、城寨（无护城河）不连。
@@ -325,7 +388,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const moatPts: Array<[number, number]> = [];
             for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
                 const p = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                if (inMoat(p.x, p.y)) moatPts.push([p.x, p.y]);
+                if (inMoat(p.x, p.y) && !isNearGateBridge(p.x, p.y)) moatPts.push([p.x, p.y]);
             }
             let bestD = Infinity, a: [number, number] | null = null, b: [number, number] | null = null;
             for (const m of moatPts) for (const r of riverCells) {
@@ -333,9 +396,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 if (d < bestD) { bestD = d; a = m; b = r; }
             }
             const MAX_LEN = 15 * TAC_TILE_W;   // 15 个地面格
-            // 渠不许穿城：沿线抽样，有一点落进城池椭圆就放弃
+            // 渠不许穿城或斜切门桥桥头：沿线抽样，落入城圈或桥区即放弃
             let crossesCity = false;
-            if (a && b) for (let t = 0; t <= 1; t += 0.05) if (inCityE(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)) { crossesCity = true; break; }
+            if (a && b) for (let t = 0; t <= 1; t += 0.05) {
+                const sx = a[0] + (b[0] - a[0]) * t;
+                const sy = a[1] + (b[1] - a[1]) * t;
+                if (inCityE(sx, sy) || isNearGateBridge(sx, sy)) { crossesCity = true; break; }
+            }
             if (a && b && bestD <= MAX_LEN && !crossesCity) {
                 // 🔴 [2026-10-13 主人报「河流和护城河衔接的不太好」] 原来是一根等宽直棒、两头直角：
                 //    ① 两端各延长（渠首缩进护城河、渠尾伸进河心），不留缝；
@@ -363,56 +430,34 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
     }
-    // 城门外延踩踏土路（DE 城门官道：过护城河桥堤后带自然微弧渐窄淡入原野草地，遇天然水岸即止，严禁整格直线与擦断护城河）
-    const activeGates = this.wallGates.filter((b) => b.f === 1 && /GATE/.test(b.key));
-    if (activeGates.length > 0) {
-        const roadLenPx = this.defenderCityType === 'big_city'
-            ? TAC_TILE_W * 10.5
-            : this.defenderCityType === 'medium_city'
-                ? TAC_TILE_W * 8.5
-                : this.defenderCityType === 'small_city'
-                    ? TAC_TILE_W * 7.0
-                    : TAC_TILE_W * 5.6;
-        const bridgeClearPx = (moatOn && ringLm > 0)
-            ? (2.2 + moatW * 1.35) * TAC_TILE_W
-            : TAC_TILE_W * 1.2;
-        for (let gi = 0; gi < activeGates.length; gi++) {
-            const gt = activeGates[gi];
-            // 在等距还原地面空间（y*2）计算城心→城门外法向，使屏幕步进严格对齐 2:1 等轴桥面方向
-            const gdx = gt.x - cx;
-            const gdy = (gt.y - cy) * 2;
-            const gLen = Math.hypot(gdx, gdy) || 1;
-            const ux = gdx / gLen;
-            const uy = gdy / gLen;
-            const phase = (((hash >>> 0) % 997) / 997) * Math.PI * 2 + gi * 1.73;
-            for (let dist = 0; dist <= roadLenPx; dist += 38) {
-                const u = dist / roadLenPx;
-                const swayRamp = dist <= bridgeClearPx
-                    ? 0
-                    : Math.min(1, (dist - bridgeClearPx) / Math.max(1, roadLenPx - bridgeClearPx));
-                const sway = Math.sin(swayRamp * Math.PI * 1.55 + phase) * 30 * swayRamp;
-                const rxPt = gt.x + ux * dist - uy * sway;
-                const ryPt = gt.y + (uy * dist + ux * sway) * 0.5;
-                if (inMoat && inMoat(rxPt, ryPt)) continue;
-                const rc = gl.screenToCell(rxPt, ryPt, W, H);
-                if (!rc) break;
-                if (gl.getWaterDensityAt(rc.gx, rc.gy) >= 0.16) break;
-                const rad = 1.62 - 0.72 * u;
-                const str = (0.90 - 0.52 * (u * u));
-                gl.carveFoundation(rxPt, ryPt, W, H, rad, str, true);
-            }
-        }
-    }
+    // 城门外延 DE 蜿蜒官道（Road / Broken Road：过实体护城河门桥后沿地形平滑微弯延入原野，遇天然水岸即止）
+    const pavingStyle = resolveRoadPavingStyle({
+        cityType: this.defenderCityType ?? 'small_city',
+        isWallLessYurt: deStyleEarly === 'YURT',
+        isSnow: isSnowEarly,
+        isArid: isAridEarly,
+        isHumidForest: isHumidForestEarly,
+        deStyle: deStyleEarly,
+        cultStyle: cultStyleEarly,
+    });
+    const trunkRoadCurves = buildCurvedGateTrunkRoads({
+        gates: primaryGates,
+        cityType: this.defenderCityType ?? 'small_city',
+        moatOn,
+        ringLm,
+        hash,
+        cx,
+        cy,
+        atkCen: atkCenEarly,
+        gl,
+        inMoat,
+        W,
+        H,
+        baseBrokenness: pavingStyle.baseBrokenness,
+    });
+    let activeRoadCurves: RoadCurve[] = trunkRoadCurves;
     const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
-    const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') && ringLm > 0;
-    const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : 12.0);
-    const roadMaxV = this.defenderCityType === 'big_city' ? 2.1 : 1.8;
-    const inGateRoad = (x: number, y: number): boolean => {
-        if (!hasGateRoads) return false;
-        const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
-        const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
-        return (di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV);
-    };
+    const inGateRoad = (x: number, y: number): boolean => isPointOnRoadNetwork(activeRoadCurves, x, y, 38);
     const cityCell = gl.screenToCell(cx, cy, W, H);
     const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 9.5 : 7.5) : rCells + 5.5;
     const minHillDistCells = this.defenderCityType === 'pass'
@@ -427,7 +472,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    也不在山上另补人工林。只清「城内 + 城门大道 + 城郊碾平圈」这一带
     //    （DE 的 RMS 同样用 avoid_player_start_areas 把城周树林清开）。
     this.decorSprites = this.decorSprites.filter((sp) => {
-        if (sp.asset.startsWith('MOUNTAIN_') || (sp as any).cityInterior || (sp as any).cityOutskirts) return false;
+        if (sp.asset.startsWith('MOUNTAIN_') || (sp as any).cityInterior || (sp as any).cityOutskirts || (sp as any).moatBridge) return false;
         if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
         const isTree = TREE_FILTER_RE.test(sp.asset);
         const spCell = cityCell ? gl.screenToCell(sp.x, sp.y, W, H) : null;
@@ -449,6 +494,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
         return keep;
     });
+    if (moatOn && ringLm > 0 && primaryGates.length > 0) {
+        spawnMoatGateBridges(this, gl, primaryGates, moatW, deStyleEarly, cultStyleEarly, W, H);
+    }
 
     let mSeed = (hash >>> 0) ^ 0x6c8e9cf5;
     const mRnd = (): number => {
@@ -1448,6 +1496,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
     // ── DE 式城郊附郭七大生态建筑群（农田+磨坊/聚落+民居、河海船坞与水产、林缘伐木场、山麓采矿场、前哨木堡与帅帐、关厢集市与铁匠铺行商、城郊名胜古刹与雕像） ──
     //    纯视觉无碰撞，避开攻方主冲锋线、城门大道、护城河与出生营地
+    const suburbanRoadTargets: SuburbanRoadTarget[] = [];
+    const farmPlotCenters: Array<{ x: number; y: number }> = [];
     {
         const deStyle = this.buildingStyleFor(1);
         const cultStyle = String(defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? this.sideCulture?.[1] ?? this.sideCulture?.[0] ?? '');
@@ -1704,7 +1754,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
         const clearTreesInRadius = (centerX: number, centerY: number, radPx: number): void => {
             this.decorSprites = this.decorSprites.filter((sp) => {
-                if ((sp as any).cityOutskirts || (sp as any).cityInterior || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
+                if ((sp as any).cityOutskirts || (sp as any).cityInterior || (sp as any).moatBridge || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
                 if (!TREE_FILTER_RE.test(sp.asset)) return true;
                 const d = Math.hypot(sp.x - centerX, (sp.y - centerY) * 1.6);
                 if (d < radPx) {
@@ -1890,6 +1940,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (validPlotsPreview < 3 || validHousesPreview < 2) continue;
 
             placedCenters.push({ x: vx, y: vy });
+            suburbanRoadTargets.push({ kind: 'hamlet', x: vx, y: vy });
             clearTreesInRadius(vx, vy, 280);
             gl.carveFoundation(vx, vy, W, H, 2.5);
 
@@ -1906,6 +1957,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const px = vx + dx, py = vy + dy;
                 if (!isPointDryAndOpen(px, py)) continue;
                 if (pushOutskirtsSprite(plotAsset, px, py, plotScale, -6, false, 0)) {
+                    farmPlotCenters.push({ x: px, y: py });
                     clearTreesInRadius(px, py, 120);
                     gl.carveFoundation(px, py, W, H, 1.4);
                     plotsPlaced++;
@@ -1982,6 +2034,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const dAsset = pickUniqueOutskirts(dockPool);
                 if (!pushOutskirtsSprite(dAsset, dc.x, dc.y, 0.78, 0, mRnd() < 0.5, 0)) continue;
                 placedCenters.push({ x: dc.x, y: dc.y });
+                suburbanRoadTargets.push({ kind: 'dock', x: dc.x, y: dc.y });
                 clearTreesInRadius(dc.x, dc.y, 160);
                 const wDx = dc.waterX - dc.x, wDy = dc.waterY - dc.y;
                 const wLen = Math.hypot(wDx, wDy) || 1;
@@ -2055,6 +2108,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         if (!pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, ox < 0, 0)) continue;
 
                         placedCenters.push({ x: lx, y: ly });
+                        suburbanRoadTargets.push({ kind: 'lumber', x: lx, y: ly });
                         gl.carveFoundation(lx, ly, W, H, 1.8);
                         const cutPts: ReadonlyArray<readonly [number, number, boolean]> = [
                             [ox > 0 ? -155 : 155, 45, true],
@@ -2087,6 +2141,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 if (!canPlaceOutskirtsAt(miningCampAsset, campX, campY)) continue;
 
                 placedCenters.push({ x: mc.x, y: mc.y });
+                suburbanRoadTargets.push({ kind: 'mine', x: campX, y: campY });
                 clearTreesInRadius(mc.x, mc.y, 220);
                 gl.carveFoundation(mc.x, mc.y, W, H, 2.0);
                 gl.carveFoundation(campX, campY, W, H, 1.6);
@@ -2168,6 +2223,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const opScale = chosenOp.includes('CASTLE') ? 0.72 : 0.78;
             if (!pushOutskirtsSprite(chosenOp, oc.x, oc.y, opScale, 0, mRnd() < 0.5, 0)) continue;
             placedCenters.push({ x: oc.x, y: oc.y });
+            suburbanRoadTargets.push({ kind: 'outpost', x: oc.x, y: oc.y });
             clearTreesInRadius(oc.x, oc.y, 260);
             gl.carveFoundation(oc.x, oc.y, W, H, 1.8);
             pushOutskirtsSprite('DECAL_PATH_2', oc.x, oc.y + 24, 0.94, -6, false, 0);
@@ -2318,6 +2374,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                 : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`);
                         if (!pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.76, 0, mRnd() < 0.5, 0)) continue;
                         placedCenters.push({ x: sx, y: sy });
+                        suburbanRoadTargets.push({ kind: 'trade', x: sx, y: sy });
                         clearTreesInRadius(sx, sy, 280);
                         gl.carveFoundation(sx, sy, W, H, 2.2);
                         pushOutskirtsSprite('DECAL_PATH_2', sx - 20, sy + 20, 0.94, -6, false, 0);
@@ -2366,6 +2423,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                             : 0.78;
                         if (!pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0)) continue;
                         placedCenters.push({ x: sx, y: sy });
+                        suburbanRoadTargets.push({ kind: 'shrine', x: sx, y: sy });
                         clearTreesInRadius(sx, sy, 260);
                         gl.carveFoundation(sx, sy, W, H, 2.0);
                         pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 42, 0.92, -6, false, 0);
@@ -2426,6 +2484,33 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 }
             }
         }
+    }
+
+    const branchRoadCurves = buildSuburbanBranchRoads({
+        trunkCurves: trunkRoadCurves,
+        targets: suburbanRoadTargets,
+        farmPlots: farmPlotCenters,
+        gl,
+        inMoat,
+        inCity,
+        W,
+        H,
+        hash,
+    });
+    activeRoadCurves = [...trunkRoadCurves, ...branchRoadCurves];
+    if (activeRoadCurves.length > 0) {
+        const clearRoadTreesAt = (rxPt: number, ryPt: number, radPx: number): void => {
+            this.decorSprites = this.decorSprites.filter((sp) => {
+                if ((sp as any).cityOutskirts || (sp as any).cityInterior || (sp as any).moatBridge || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
+                if (!TREE_FILTER_RE.test(sp.asset)) return true;
+                if (Math.hypot(sp.x - rxPt, (sp.y - ryPt) * 1.6) < radPx) {
+                    gl.clearForestAt(sp.x, sp.y, W, H, 1.8);
+                    return false;
+                }
+                return true;
+            });
+        };
+        carveRoadNetworkOnGround(activeRoadCurves, gl, W, H, clearRoadTreesAt);
     }
 
     // 🔴 [2026-10-21 主人报「DD 昨天把护城河删了」] 10-19 版这里有 flushFoundation()：把护城河/引水渠写进水体势场、
@@ -2624,6 +2709,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     }
 
     for (const sp of this.decorSprites) {
+        if ((sp as any).moatBridge) continue;
         sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
     }
 
@@ -2633,6 +2719,17 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         this.tacticalAnimals,
         (a) => this.ensureNatureAsset(a),
     );
+    if (activeRoadCurves.length > 0 && pavingStyle.mode !== 'none') {
+        void bakeSuburbanRoadChunks(
+            activeRoadCurves,
+            pavingStyle,
+            (rxPt, ryPt) => this.elevationLiftAt(rxPt, ryPt),
+            () => layoutGen === this.assetGen && this.deCity === c,
+        ).then((chunks) => {
+            if (layoutGen !== this.assetGen || this.deCity !== c) return;
+            this.suburbanRoadChunks = chunks;
+        });
+    }
 }
 
 /** 各岩石素材的静态帧数表（_meta.json 尚未异步就绪时用于精确计算 frame % nFrames 视觉签名） */

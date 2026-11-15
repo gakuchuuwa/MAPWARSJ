@@ -1,0 +1,480 @@
+{
+  "foundedYears": [
+    {
+      "cityId": "city_xanthos",
+      "name": "克桑托斯",
+      "foundedYear": -700,
+      "comment": "约前8—前7世纪吕基亚人建克桑托斯卫城（希罗多德 I.176；考古层位）"
+    },
+    {
+      "cityId": "city_skyros",
+      "name": "斯库罗斯",
+      "foundedYear": -800,
+      "comment": "约前8世纪多洛佩斯人据斯库罗斯筑海岛卫城（修昔底德 I.98）"
+    },
+    {
+      "cityId": "city_thasos",
+      "name": "萨索斯",
+      "foundedYear": -680,
+      "comment": "约前680年帕罗斯移民于萨索斯岛建城邦（修昔底德 IV.104）"
+    },
+    {
+      "cityId": "city_corinth",
+      "name": "科林斯",
+      "foundedYear": -900,
+      "comment": "约前900年多利亚人据地峡建科林斯城邦（修昔底德 I.13）"
+    },
+    {
+      "cityId": "city_melos",
+      "name": "米洛斯",
+      "foundedYear": -700,
+      "comment": "约前700年拉科尼亚多利亚人建米洛斯城邦（修昔底德 V.84）"
+    },
+    {
+      "cityId": "city_torone",
+      "name": "托罗尼",
+      "foundedYear": -700,
+      "comment": "约前700年优卑亚卡尔基斯人建托罗尼城（修昔底德 IV.110）"
+    },
+    {
+      "cityId": "city_mytilene",
+      "name": "米蒂利尼",
+      "foundedYear": -800,
+      "comment": "约前8世纪伊奥利亚希腊人建米蒂利尼城邦（希罗多德 I.149）"
+    },
+    {
+      "cityId": "city_mantinea",
+      "name": "曼丁尼亚",
+      "foundedYear": -700,
+      "comment": "约前700年阿卡迪亚诸村并邑建曼丁尼亚城（荷马史诗 II.607）"
+    },
+    {
+      "cityId": "city_tarraco",
+      "name": "塔拉科",
+      "foundedYear": -500,
+      "comment": "约前5世纪伊比利亚凯塞邑，前218西庇阿建营（李维 XXI.61）"
+    },
+    {
+      "cityId": "city_ilerda",
+      "name": "伊莱尔达",
+      "foundedYear": -500,
+      "comment": "约前5世纪伊莱尔盖特人筑伊莱尔达山城（李维 XXI.61）"
+    },
+    {
+      "cityId": "city_cirta",
+      "name": "奇尔塔",
+      "foundedYear": -300,
+      "comment": "约前3世纪努米底亚人筑奇尔塔王都石城（李维 XXX.12）"
+    },
+    {
+      "cityId": "city_lilybaeum",
+      "name": "利利拜乌姆",
+      "foundedYear": -397,
+      "comment": "前397年迦太基于莫蒂亚毁后筑利利拜乌姆要塞（狄奥多罗斯）"
+    },
+    {
+      "cityId": "city_brundisium",
+      "name": "布林迪西",
+      "foundedYear": -500,
+      "comment": "约前5世纪梅萨比人建布伦迪西乌姆港邑（斯特拉波 VI.3.6）"
+    },
+    {
+      "cityId": "city_dyrrachium",
+      "name": "迪拉基乌姆",
+      "foundedYear": -627,
+      "comment": "前627年科孚与科林斯人合建埃皮达姆诺斯城（修昔底德 I.24）"
+    },
+    {
+      "cityId": "city_vetera",
+      "name": "维特拉",
+      "foundedYear": -13,
+      "comment": "前13年罗马统帅德鲁苏斯于莱茵河畔筑维特拉大营（狄奥 LIV.32）"
+    },
+    {
+      "cityId": "city_caen",
+      "name": "卡昂",
+      "foundedYear": 1025,
+      "comment": "1025年诺曼底公爵理查二世宪章首载卡昂城邑（诺曼底宪章）"
+    },
+    {
+      "cityId": "city_harfleur",
+      "name": "阿夫勒尔",
+      "foundedYear": 100,
+      "comment": "约100年罗马塞纳河口港邑卡拉科蒂努姆（安东尼行纪）"
+    },
+    {
+      "cityId": "city_rouen",
+      "name": "鲁昂",
+      "foundedYear": -27,
+      "comment": "约前27年罗马置韦利奥卡塞斯首府罗托马古斯（斯特拉波 IV.1）"
+    },
+    {
+      "cityId": "city_saint_valery",
+      "name": "圣瓦莱里",
+      "foundedYear": 611,
+      "comment": "611年修道院长瓦莱里于索姆河口建修院聚落（圣瓦莱里传）"
+    },
+    {
+      "cityId": "city_beauvais",
+      "name": "博韦",
+      "foundedYear": -15,
+      "comment": "约前15年罗马置贝洛瓦奇首府恺撒罗马古斯（托勒密 II.9）"
+    },
+    {
+      "cityId": "city_soissons",
+      "name": "苏瓦松",
+      "foundedYear": -57,
+      "comment": "前57年恺撒载苏埃西奥内斯都邑诺维奥杜努姆（高卢战记 II.12）"
+    },
+    {
+      "cityId": "city_nancy",
+      "name": "南锡",
+      "foundedYear": 1050,
+      "comment": "约1050年洛林公爵热拉尔筑南锡城堡聚落（洛林编年史）"
+    },
+    {
+      "cityId": "city_hericourt",
+      "name": "埃里库尔",
+      "foundedYear": 1173,
+      "comment": "1173年文献首载勃艮第东境埃里库尔城堡（蒙贝利亚尔宪章）"
+    },
+    {
+      "cityId": "city_eresburg",
+      "name": "埃雷斯堡",
+      "foundedYear": 700,
+      "comment": "约700年萨克森人于迪默尔河畔筑埃雷斯堡山寨（法兰克王家年代记）"
+    },
+    {
+      "cityId": "city_tortona",
+      "name": "托尔托纳",
+      "foundedYear": -120,
+      "comment": "约前120年罗马共和国于利古里亚置德尔托纳城（斯特拉波 V.1）"
+    },
+    {
+      "cityId": "city_aquileia",
+      "name": "阿奎莱亚",
+      "foundedYear": -181,
+      "comment": "前181年罗马元老院决议营建阿奎莱亚边防城（李维 XL.34）"
+    },
+    {
+      "cityId": "city_tabor",
+      "name": "塔博尔",
+      "foundedYear": 1420,
+      "comment": "1420年胡斯派于卢日尼采河畔筑塔博尔城（胡斯战争编年史）"
+    },
+    {
+      "cityId": "city_kljuc",
+      "name": "克柳奇",
+      "foundedYear": 1250,
+      "comment": "约1250年波斯尼亚于萨纳河畔筑克柳奇山堡（1322年首见宪章）"
+    },
+    {
+      "cityId": "city_khotyn",
+      "name": "霍京",
+      "foundedYear": 1000,
+      "comment": "约1000年基辅罗斯于德涅斯特河畔筑霍京木堡（罗斯考古层位）"
+    },
+    {
+      "cityId": "city_mansoura",
+      "name": "曼苏拉",
+      "foundedYear": 1219,
+      "comment": "1219年阿尤布苏丹卡米勒于尼罗河畔筑曼苏拉营城（伊本·阿西尔）"
+    },
+    {
+      "cityId": "city_damietta",
+      "name": "达米埃塔",
+      "foundedYear": -600,
+      "comment": "约前6世纪古埃及尼罗河东口港邑塔米亚蒂斯（古埃及地理铭文）"
+    },
+    {
+      "cityId": "city_qaqun",
+      "name": "卡昆",
+      "foundedYear": 1100,
+      "comment": "约1100年十字军于沙仑平原筑卡昆石堡（1123年富尔彻首载）"
+    },
+    {
+      "cityId": "city_mazaka",
+      "name": "凯撒利亚马扎卡",
+      "foundedYear": -400,
+      "comment": "约前400年卡帕多细亚建都邑马扎卡城（斯特拉波 XII.2.7）"
+    },
+    {
+      "cityId": "city_tephrike",
+      "name": "特夫里克",
+      "foundedYear": 843,
+      "comment": "约843年保罗派首领卡尔贝阿斯据山筑特夫里克堡（续塞奥法尼斯）"
+    },
+    {
+      "cityId": "city_melitene",
+      "name": "马拉蒂亚",
+      "foundedYear": -1200,
+      "comment": "约前1200年新赫梯米利德都城，后置罗马军团城（斯特拉波 XII.1）"
+    },
+    {
+      "cityId": "city_resaina",
+      "name": "雷萨伊纳",
+      "foundedYear": -900,
+      "comment": "约前900年亚述西坎努邑，195年罗马置城（亚述铭文；狄奥）"
+    },
+    {
+      "cityId": "city_amida",
+      "name": "阿米达",
+      "foundedYear": -900,
+      "comment": "约前900年亚述铭文首载底格里斯河畔阿米杜城（亚述王室年表）"
+    },
+    {
+      "cityId": "city_rahba",
+      "name": "拉赫巴",
+      "foundedYear": 815,
+      "comment": "约815年阿拔斯将领马利克于幼发拉底河筑拉赫巴城（白拉祖里）"
+    },
+    {
+      "cityId": "city_singara",
+      "name": "辛加拉",
+      "foundedYear": -1500,
+      "comment": "约前1500年中亚述载辛加拉邑，后为罗马边塞（阿米阿努斯 XX.6）"
+    },
+    {
+      "cityId": "city_hatra",
+      "name": "哈特拉",
+      "foundedYear": -150,
+      "comment": "约前150年塞琉古末期阿拉伯人筑哈特拉圣城（哈特拉铭文与层位）"
+    },
+    {
+      "cityId": "city_alamut",
+      "name": "阿剌模忒",
+      "foundedYear": 865,
+      "comment": "865年戴莱姆君主瓦赫苏丹于厄尔布尔士山筑阿剌模忒堡（志费尼）"
+    },
+    {
+      "cityId": "city_tamid",
+      "name": "怛蜜",
+      "foundedYear": -300,
+      "comment": "约前300年巴克特里亚于乌浒水北岸建忒耳迷城（大唐西域记卷一）"
+    },
+    {
+      "cityId": "city_shuman",
+      "name": "舒曼",
+      "foundedYear": 500,
+      "comment": "约500年嚈哒与吐火罗诸部建愉漫城（大唐西域记卷一；塔巴里）"
+    },
+    {
+      "cityId": "city_lianyun",
+      "name": "连云堡",
+      "foundedYear": 737,
+      "comment": "约737年吐蕃破小勃律后于瓦罕走廊筑连云堡（旧唐书高仙芝传）"
+    },
+    {
+      "cityId": "city_firozpur",
+      "name": "费罗兹普尔",
+      "foundedYear": 1360,
+      "comment": "约1360年德里苏丹菲鲁兹沙图格鲁克建费罗兹普尔（费里什塔史）"
+    },
+    {
+      "cityId": "city_kaungton",
+      "name": "老官屯",
+      "foundedYear": 1765,
+      "comment": "约1765年缅甸贡榜军于伊洛瓦底江东岸筑老官屯寨（清史稿缅甸传）"
+    },
+    {
+      "cityId": "city_chanthaburi",
+      "name": "尖竹汶",
+      "foundedYear": 1351,
+      "comment": "1351年阿瑜陀耶三印法典载暹罗东岸重镇尖竹汶（吞武里纪年）"
+    },
+    {
+      "cityId": "city_guankou",
+      "name": "灌口",
+      "foundedYear": -256,
+      "comment": "约前256年蜀郡守李冰凿离堆导江置湔氐道（史记河渠书；华阳国志）"
+    },
+    {
+      "cityId": "city_longcheng",
+      "name": "陇城",
+      "foundedYear": -114,
+      "comment": "前114年汉武帝置天水郡领略阳道，北魏改置陇城县（汉书地理志）"
+    },
+    {
+      "cityId": "city_giadinh",
+      "name": "嘉定",
+      "foundedYear": 1698,
+      "comment": "1698年阮福淍遣阮有镜经略南圻置嘉定府（大南实录前编）"
+    },
+    {
+      "cityId": "city_zhennanguan",
+      "name": "镇南关",
+      "foundedYear": -111,
+      "comment": "前111年汉平南越于凭祥隘口设鸡陵关，明改镇南关（明史地理志）"
+    },
+    {
+      "cityId": "city_baoanjun",
+      "name": "保安军",
+      "foundedYear": 977,
+      "comment": "977年北宋以延州永康镇建保安军筑边防军城（宋史地理志三）"
+    },
+    {
+      "cityId": "city_danhanshan",
+      "name": "弹汗山",
+      "foundedYear": 156,
+      "comment": "约156年鲜卑檀石槐于歠仇水上弹汗山立王庭（后汉书鲜卑传）"
+    },
+    {
+      "cityId": "city_luze",
+      "name": "陆泽",
+      "foundedYear": -202,
+      "comment": "约前202年西汉置下博与安平县，隋开皇置陆泽县（汉书地理志）"
+    },
+    {
+      "cityId": "city_dongping",
+      "name": "东平",
+      "foundedYear": -639,
+      "comment": "前639年左传首载春秋须句国邑，秦置须昌县（左传僖公二十一年）"
+    },
+    {
+      "cityId": "city_pinghaiwei",
+      "name": "平海卫",
+      "foundedYear": 1387,
+      "comment": "1387年明江夏侯周德兴于兴化海滨筑平海卫城（明史地理志）"
+    },
+    {
+      "cityId": "city_zhuluo",
+      "name": "诸罗",
+      "foundedYear": 1684,
+      "comment": "1684年清廷置台湾府诸罗县并筑木栅县城（清史稿地理志）"
+    },
+    {
+      "cityId": "city_zhoushan",
+      "name": "舟山",
+      "foundedYear": -473,
+      "comment": "前473年左传载越灭吴拟迁夫差于甬东海岛（左传哀公二十二年）"
+    },
+    {
+      "cityId": "city_pingguo",
+      "name": "平郭",
+      "foundedYear": -202,
+      "comment": "约前202年西汉初于辽东郡置平郭县城（汉书地理志下）"
+    },
+    {
+      "cityId": "city_kitanosho",
+      "name": "北之庄城",
+      "foundedYear": 1575,
+      "comment": "1575年柴田胜家受封越前于足羽川畔筑北之庄城（信长公记）"
+    },
+    {
+      "cityId": "city_rhandeia",
+      "name": "兰德亚",
+      "foundedYear": 62,
+      "comment": "62年罗马将领派图斯于河畔筑兰德亚营垒（塔西佗XV.10）"
+    },
+    {
+      "cityId": "city_tigranocerta",
+      "name": "提格拉诺塞塔",
+      "foundedYear": -77,
+      "comment": "前77年提格拉尼二世营建亚美尼亚南都（卢库鲁斯传26）"
+    },
+    {
+      "cityId": "city_sunzhong",
+      "name": "损中",
+      "foundedYear": -100,
+      "comment": "约前100年疏勒西境军屯小城，班超曾攻拔（后汉书班超传）"
+    },
+    {
+      "cityId": "city_lugidunum",
+      "name": "卢吉杜努姆",
+      "foundedYear": 100,
+      "comment": "约100年日耳曼东部卢吉人部族营寨（托勒密II.11）"
+    },
+    {
+      "cityId": "city_marisia",
+      "name": "马里西亚",
+      "foundedYear": 290,
+      "comment": "约290年穆列什河畔革皮德部族聚落（约达尼斯哥特史22）"
+    },
+    {
+      "cityId": "city_clavenna",
+      "name": "克拉文纳",
+      "foundedYear": -15,
+      "comment": "前15年罗马平阿尔卑斯山口置克拉文纳驿塞（安东尼行纪）"
+    },
+    {
+      "cityId": "city_wolgast",
+      "name": "沃尔加斯特",
+      "foundedYear": 750,
+      "comment": "约750年佩内河口西斯拉夫部族木土堡寨（萨克索XIV）"
+    },
+    {
+      "cityId": "city_kamba",
+      "name": "坎普堡",
+      "foundedYear": 700,
+      "comment": "约700年阿瓦尔人于坎普河口筑西境障塞（法兰克王家年代记）"
+    },
+    {
+      "cityId": "city_canburg",
+      "name": "卡努尔格",
+      "foundedYear": 750,
+      "comment": "约750年波希米亚斯拉夫人筑奥赫热河丘堡（莫瓦萨克编年史）"
+    },
+    {
+      "cityId": "city_dingkou",
+      "name": "鼎口寨",
+      "foundedYear": 1130,
+      "comment": "1130年钟相杨幺于洞庭湖口筑木栅水寨群（建炎以来系年要录）"
+    },
+    {
+      "cityId": "city_saerdulu",
+      "name": "撒儿都鲁",
+      "foundedYear": 1260,
+      "comment": "约1260年蒙古辽东宗王于潢水流域设驻冬大营（元史世祖纪）"
+    },
+    {
+      "cityId": "city_guikushan",
+      "name": "鬼哭山",
+      "foundedYear": 1440,
+      "comment": "约1440年麓川孟养部于金沙江西岸筑险要山寨（明史王骥传）"
+    },
+    {
+      "cityId": "city_orenburg",
+      "name": "奥伦堡",
+      "foundedYear": 1743,
+      "comment": "1743年俄国于乌拉尔河畔筑奥伦堡石砖棱堡（俄帝国法令集）"
+    },
+    {
+      "cityId": "city_vellica",
+      "name": "韦利卡",
+      "foundedYear": -200,
+      "comment": "约前200年坎塔布里人筑山地主寨（弗罗鲁斯II.33）"
+    },
+    {
+      "cityId": "city_bidar",
+      "name": "比达尔",
+      "foundedYear": 1322,
+      "comment": "1322年图格鲁克军攻取卡卡提亚比达尔堡（巴拉尼史）"
+    }
+  ],
+  "rebindDefaultFactions": [
+    {
+      "cityId": "city_cirta",
+      "oldFactionId": "luoma_diguo",
+      "newFactionId": "numidia",
+      "reason": "努米底亚王都，现库 numidia（努米底亚王国）已建"
+    },
+    {
+      "cityId": "city_nancy",
+      "oldFactionId": "gaolu",
+      "newFactionId": "lorraine",
+      "reason": "洛林公爵都城，现库 lorraine（洛林公国）已建"
+    },
+    {
+      "cityId": "city_hatra",
+      "oldFactionId": "ansxi",
+      "newFactionId": "hatra",
+      "reason": "哈特拉王国都城，现库 hatra（哈特拉王国）已建"
+    },
+    {
+      "cityId": "city_alamut",
+      "oldFactionId": "yilihanguo_d",
+      "newFactionId": "nizari",
+      "reason": "尼扎里派山堡中枢，现库 nizari（木剌夷国）已建"
+    }
+  ]
+}

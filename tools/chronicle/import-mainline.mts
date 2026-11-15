@@ -11,7 +11,7 @@ import { BATTLEFIELD_CHARACTERS } from '../../src/data/BattlefieldCharacters';
 import { FACTIONS } from '../../src/data/factions';
 import { CITIES_V2 } from '../../src/data/cities_v2';
 
-const SRC = 'docs/战争编年史（纯史实重写）/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json';
+const SRC = '剧本模式/01_事件与故事/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json';
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
 const OPENING_OUT = 'src/data/chronicle/ChronicleOpening.ts';
 /** 经典战口径：攻守兵力 1–2 万，兵力比 ≤1:2 */

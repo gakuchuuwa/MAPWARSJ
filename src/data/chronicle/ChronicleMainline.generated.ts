@@ -43703,7 +43703,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
         "title": "徐达常遇春北伐克大都战",
         "kind": "battle",
         "place": {
-            "name": "元朝首都大都齐化门与健德门",
+            "name": "大元国都大都齐化门与健德门",
             "lat": 39.904,
             "lng": 116.407
         },
@@ -43724,7 +43724,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleYear": 1368,
             "battleType": "siege",
             "role": "attacker",
-            "targetName": "元朝首都大都齐化门与健德门",
+            "targetName": "大元国都大都齐化门与健德门",
             "targetCityId": "city_beijing",
             "chronicleCity": {
                 "cityId": "city_beijing",

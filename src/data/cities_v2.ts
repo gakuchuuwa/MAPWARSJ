@@ -2,7 +2,7 @@
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
- * - T0 大城 (big_city): 见 AGENTS.md §五.1（2026-10-25 标准：城居人口 ≥40 万，含 40–50 万边缘）
+ * - T0 大城 (big_city): 见 AGENTS.md §五.1（2026-11-15 标准：≤1850 年城居人口峰值 ≥40 万，含 40–50 万边缘）
  * - T1 中城 (medium_city): 城居人口 ≥8 万（含 8–10 万边缘）
  * - T2 关隘/要塞 (pass): 军事设施（关/隘/渡/堡/戍/镇/哨卡）＋有墙（石/砖/夯土）
  * - 周边: 日本七道、朝鲜八道、各古代政权首都 — 待补充
@@ -224,7 +224,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     
     { id: 'city_taiyuan', name: '晋阳', factionId: 'hou_han', lat: 37.87, lng: 112.55, type: 'medium_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '[唐北都至五代北汉晋阳·夯土包砖三城重镇] 唐天宝至北汉时期晋阳西城、东城与中城（汾水两岸连城）城居峰值约15–20万（《新唐书·地理志》太原府户128,905扣除属县，晋阳、太原两赤县在城折算），>10万定中城。' },
 
-    { id: 'city_xiangyang', name: '襄阳', factionId: 'song', lat: 32.01, lng: 112.12, type: 'small_city', troops: 10000, region: 'SONG', buildingStyle: 'CENTRAL' , note: '[南宋至明代荆襄锁钥·条石包砖江防城池] 南宋抗蒙至明万历间襄阳砖石府城（周七里余）加汉水对岸樊城关厢，常住城居峰值约5–7万（《万历襄阳府志》襄阳县坊厢户数及曹树基《中国人口史》折算），未满8万中城容差线，定小城。' },
+    { id: 'city_xiangyang', name: '襄阳', factionId: 'song', lat: 32.01, lng: 112.12, type: 'medium_city', troops: 10000, region: 'SONG', buildingStyle: 'CENTRAL' , note: '[东汉荆州牧治、南宋抗蒙铁打襄阳至明清九省通衢襄樊双城·汉水南岸条石包砖襄阳城与北岸樊城商镇] 宋元六年围城名镇、明洪武包砖重修夫人城；清乾隆嘉庆间（≤1850年）襄阳府城连同紧隔汉水浮桥相接之樊城会馆商厢城居峰值达10–13万（《嘉庆襄阳府志》及曹树基《中国人口史·清时期》），>10万定中城。' },
 
 
 
@@ -262,12 +262,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         name: '重庆',
         factionId: 'ba',
         lat: 29.56, lng: 106.58,
-        type: 'small_city',
+        type: 'medium_city',
         region: 'BASHU',
         buildingStyle: 'BASHU',
         troops: 10000,
         tier: 1,
-        note: '[巴国江州至南宋重庆府明代巨镇·嘉陵长江交汇条石悬崖九开八闭十七门城垣] 南宋淳熙升重庆府、彭大雅与余玠筑巨石城墙拒蒙，明洪武戴鼎重筑十七门条石巨城（《宋史·余玠传》《明一统志》），两江水运总埠城居达4–6万，>1万定小城。' },
+        note: '[战国巴国江州、南宋抗蒙钓鱼城后方重镇至明清重庆府·戴鼎十七门条石巨城与两江关厢] 性质与条石高垣承巴渝及明洪武重庆府城；清乾嘉道间（≤1850年）重庆城内及朝天门、江北水运商厢城居峰值达16–18.5万（曹树基《中国人口史·清时期》及Chandler 1850年表18.5万），>10万定中城。' },
     {
         id: 'city_zizhou',
         name: '盘石',
@@ -447,7 +447,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         
         note: '[孙吴周瑜水军大本营柴桑至唐江州浔阳明九江府·长江鄱阳湖口条石包砖巨埠] 东晋陶侃庾亮镇武昌寻阳、唐白居易贬江州，明代设九江钞关并筑周十二里条石包砖府城（《三国志·周瑜传》《万历九江府志》），赣江长江交汇钞关商民达3–5万，>1万定小城。', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
-    { id: 'city_changsha', name: '长沙', factionId: 'machu', lat: 28.19, lng: 112.97, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[西汉吴氏刘氏长沙国都临湘至五代马殷楚国都潭州·湘江东岸夯土包砖王都] 西汉长沙王都、五代十国马楚建都潭州开茶马贸易盛局，南宋抗蒙潭州大城及明吉王藩封长沙府城（《汉书·地理志》《新五代史·楚世家》），城关常住人口约5–7万（未满8万），定小城。' },
+    { id: 'city_changsha', name: '长沙', factionId: 'machu', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[西汉长沙国都、五代马楚王都潭州至清湖南省会长沙府·湘江东岸条石包砖七门省城] 性质锁定汉唐马楚潭州与明清省垣；清康熙置湖南省会后乾嘉道间（≤1850年）城内及沿湘江南关西关米市商厢峰值达14–16万（曹树基《中国人口史·清时期》及Chandler 1850年表16万），>10万定中城。' },
 
 
     {
@@ -461,7 +461,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         troops: 10000,
         note: '[春秋吴季札封邑延陵至隋唐常州毗陵宋明常州府·江南运河包砖罗城大邑] 南朝兰陵萧氏桑梓、隋唐江南大州（《新唐书·地理志》常州户102,631），明洪武汤和改筑包砖新罗城，运河穿城贯东中西三关厢，城关实居达4–6万，>1万定小城。',
     },
-    { id: 'city_gusu', name: '姑苏', factionId: 'wu', lat: 31.3, lng: 120.62, type: 'big_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[明万历至清康熙前期·包砖石基府城郭] 明万历至清康熙（≤1700年）苏州府城垣内及阊门、南濠、枫桥连片关厢城居峰值约50–60万（曹树基《中国人口史》据吴县、长洲在城坊厢折算；Chandler 1600年表40–50万），≥50万定大城。' },
+    { id: 'city_gusu', name: '姑苏', factionId: 'wu', lat: 31.3, lng: 120.62, type: 'big_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[明万历至清康熙前期·包砖石基府城郭] 明万历至清康熙（≤1850年）苏州府城垣内及阊门、南濠、枫桥连片关厢城居峰值约50–60万（曹树基《中国人口史》据吴县、长洲在城坊厢折算；Chandler 1600年表40–50万），≥50万定大城。' },
     { id: 'city_jiaxing', name: '嘉兴', factionId: 'wuyue', lat: 30.75, lng: 120.76, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[孙吴嘉兴、五代吴越开元府秀州至宋明嘉兴府·江南运河条石包砖周十二里巨郡] 南宋孝宗潜邸升嘉兴府，明万历丝绸米市甲于浙西，条石包砖府城内（嘉兴、秀水两附郭县坊厢）及四门关厢常住达5–7万（《万历嘉兴府志》及曹树基考算），>1万定小城。' },
 
     { id: 'city_shanxian', name: '剡城', factionId: 'tang', lat: 29.556746, lng: 120.822144, type: 'small_city', region: 'JIANGNAN',
@@ -549,7 +549,7 @@ buildingStyle: 'WESTERN', tier: 1,
         troops: 10000,
         note: '[两汉河西敦煌郡治至晚唐五代张议潮曹氏归义军节度首府沙州·党河夯土大州城] 丝路总咽喉敦煌，吐蕃与张议潮归义军时期敦煌文书《沙州诸乡户口帐》及寺院僧尼工匠名籍可考，沙州子城罗城内常住军民僧俗峰值约1.5–2.5万（冻国栋《唐代人口问题研究》），>1万定小城。',
     },
-    { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI' , note: '[西汉金城至隋唐兰州金城郡及明肃王藩封兰州卫·黄河铁桥南岸夯土包砖内外双城] 隋置兰州总管府控河湟，明建肃王府并包砖修筑内城与十四里外郭关城锁控甘青茶马大市（《元和郡县图志》《兰州市志》），明万历藩城卫所与关厢商民达3–5万，>1万定小城。' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI' , note: '[西汉金城郡允吾金城关、隋唐兰州至明肃王藩封与清陕甘总督省会·黄河南岸包砖内城与外郭四关] 明洪武筑砖城、正统增修外郭；清乾隆移陕甘总督驻兰州后至道光间（≤1850年）内外双城及黄河水烟皮毛关厢城居达8.5–10万（曹树基《中国人口史·清时期》及Chandler 1850年表9万），≥8万容差线，定中城。' },
 
 
     { id: 'city_ledu', name: '浇河', factionId: 'tubo', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'TIBET', note: '[十六国吐谷浑阿豺筑浇河城至唐吐蕃争夺廓州达化·黄河上游贵德夯土军州小城] 吐谷浑王阿豺兼并氐羌筑浇河城，北周隋唐置廓州宁塞郡、宋唃厮啰改积石军（《晋书·西戎传》《旧唐书·地理志》廓州三县合计仅户4,261），夯土河谷小城且在城不足3000人，定城寨。' },
@@ -966,7 +966,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.22937, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', note: '[两汉葱岭西塞种行国休循国·帕米尔阿赖山谷鸟飞谷毡帐游牧聚落] 《汉书·西域传》明载休循国王治鸟飞谷，「户三百五十八，口千三十，民俗衣服类乌孙，因畜随水草，本故塞种也」，举国仅千余人且无城郭，定城寨。', mirror: true },
     { id: 'city_yinai', name: '英吉沙尔', factionId: 'yarkand', lat: 38.929502, lng: 76.225891, type: 'stockade', region: 'WESTERN_IMPERIAL',
 buildingStyle: 'WESTERN', troops: 10000,
-        note: '[喀喇汗至16至17世纪叶尔羌汗国西道驿镇英吉沙尔·昆仑山北麓生土泥砖绿洲小邑] 疏勒与莎车间驿路手工制刀绿洲镇英吉沙尔（清乾隆筑土城在1759年后超限不采），≤1700年叶尔羌汗国时期仅为生土泥砖小集镇且常住不足5000人，定城寨。',
+        note: '[喀喇汗叶尔羌汗国驿镇至清乾隆筑土城英吉沙尔·昆仑山北麓夯土小城] 疏勒与莎车间驿路制刀绿洲英吉沙尔，乾隆二十四年（1759）后筑周二里余小型夯土领队大臣驻城（《西域图志》），无砖石城墙且≤1850年在城兵民仅约3000–5000人<1万，定城寨。',
     },
     { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '[西汉元鼎至东汉魏晋·疏勒河南岸夯土小方盘关城] 汉武帝置玉门关扼丝路北道咽喉，现存小方盘城夯土关垣高近十米（《汉书·西域传》、敦煌汉简），带「关」字且具坚固夯土城墙，纯关塞无万人城，定险要。' },
 
@@ -1042,9 +1042,9 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_kaesong', name: '开城', factionId: 'goryeo', lat: 37.97, lng: 126.55, type: 'medium_city', isPort: true, troops: 10000, region: 'KOREA', buildingStyle: 'KOREA' , note: '[11至12世纪高丽王朝开京盛期·石筑罗城与内城] 高丽文宗至仁宗盛期开京罗城（周23公里石土混筑）内五部三十五坊人口约10–15万（徐兢《宣和奉使高丽图经》卷三「城中户十余万」折实及韩国学界考算），>10万定中城。' },
 
     { id: 'city_hamhung', name: '咸兴', factionId: 'goryeo', lat: 39.968685, lng: 127.499084, type: 'stockade', troops: 10000, 
-        note: '[汉沃沮故地、高丽尹瓘筑东北九城咸州至朝鲜太祖李成桂潜邸咸兴府·城川江卵石土筑邑城] 1107年高丽尹瓘征女真筑咸州城旋还，李成桂晚年归居咸兴（《高丽史·尹瓘传》《朝鲜王朝实录》），≤1700年北道苦寒边邑咸兴城内民户仅数千人未满1万，定城寨。', region: 'GORYEO',
+        note: '[汉沃沮故地、高丽尹瓘筑东北九城咸州至朝鲜太祖李成桂潜邸咸兴府·城川江卵石土筑邑城] 1107年高丽尹瓘征女真筑咸州城旋还，李成桂晚年归居咸兴（《高丽史·尹瓘传》《朝鲜王朝实录》），≤1850年北道苦寒边邑咸兴城内民户仅数千人未满1万，定城寨。', region: 'GORYEO',
         buildingStyle: 'KOREA' },
-    { id: 'city_longer', name: '笼耳', factionId: 'joseon', lat: 40.967, lng: 129.551, type: 'stockade', troops: 10000, region: 'GORYEO', buildingStyle: 'KOREA', note: '[朝鲜世宗开拓豆满江六镇之会宁都护府（古女真斡木河／笼耳）·图们江岸木栅石土边镇] 明宣德至正统间建州女真猛哥帖木儿旧居斡木河，1434年朝鲜世宗金宗瑞设会宁镇（《世宗实录》），实为豆满江屯田军民杂居小邑而非单立关门，≤1700年城内常住约3000–5000人<1万，定城寨。' },
+    { id: 'city_longer', name: '笼耳', factionId: 'joseon', lat: 40.967, lng: 129.551, type: 'stockade', troops: 10000, region: 'GORYEO', buildingStyle: 'KOREA', note: '[朝鲜世宗开拓豆满江六镇之会宁都护府（古女真斡木河／笼耳）·图们江岸木栅石土边镇] 明宣德至正统间建州女真猛哥帖木儿旧居斡木河，1434年朝鲜世宗金宗瑞设会宁镇（《世宗实录》），实为豆满江屯田军民杂居小邑而非单立关门，≤1850年城内常住约3000–5000人<1万，定城寨。' },
 
     { id: 'city_guoyuancheng', name: '国原城', factionId: 'joseon', lat: 36.991, lng: 127.926, type: 'small_city', troops: 10000, region: 'JOSEON', buildingStyle: 'KOREA' , note: '[7至10世纪统一新罗五小京之中原京至朝鲜忠州邑城·南汉江花岗岩石筑邑城] 新罗真兴王拓地置国原小京、统一期定为中原京迁贵戚豪民实之（《三国史记·地理志》），高丽朝鲜筑花岗岩忠州石邑城（1592年申砬弹琴台背水战处），具完整石砌邑城且盛期城居约1–1.5万，定小城。' },
 
@@ -1087,7 +1087,7 @@ buildingStyle: 'KOREA', troops: 10000, tier: 0,
     }, // 金城：按「边缘算大城」保留（2026-10-25），依据见 note
         { id: 'city_haeju', name: '瀑池', factionId: 'goryeo', lat: 38.03, lng: 125.71, type: 'stockade', isPort: true, troops: 10000, region: 'GORYEO', buildingStyle: 'KOREA', note: '[高丽太祖赐名海州（古瀑池／孤竹）至朝鲜黄海道海州牧·首阳山南麓海湾小牧邑] 高丽成宗置海州牧，《世宗实录地理志》卷一五二明载海州牧全境乡村合计仅户1,683、口6,757，举州城乡尚不足七千口、邑内仅二三千人，定城寨。' },
 
-    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'stockade', troops: 10000, region: 'KOREA', buildingStyle: 'KOREA', note: '[辽保州、1029年大延琳兴辽国声援地至高丽朝鲜鸭绿江口义州龙湾馆·江岸互市迎使驿邑] 中朝使臣渡鸭绿江首站义州龙湾，《世宗实录地理志》载义州牧全境合计户仅1,400余、口约6,000余，≤1700年邑内常住仅数千人<1万，定城寨。', mirror: true },
+    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'stockade', troops: 10000, region: 'KOREA', buildingStyle: 'KOREA', note: '[辽保州、1029年大延琳兴辽国声援地至高丽朝鲜鸭绿江口义州龙湾馆·江岸互市迎使驿邑] 中朝使臣渡鸭绿江首站义州龙湾，《世宗实录地理志》载义州牧全境合计户仅1,400余、口约6,000余，≤1850年邑内常住仅数千人<1万，定城寨。', mirror: true },
 
     // === 第三批新增据点 ===
     { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'CENTRAL' , note: '[汉护羌校尉治、十六国乞伏西秦三十年国都至唐宋河州·大夏河畔夯土包砖王都州城] 太初元年至永康间乞伏乾归、炽磐定都枹罕（今临夏），唐置河州安乡郡、北宋王韶克河州，明置河州卫包砖筑城为茶马司重镇（《晋书·乞伏炽磐载记》《河州志》），西秦国都及明茶马城达2–3.5万，>1万定小城。' },
@@ -1165,7 +1165,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 
     { id: 'city_guanglu', name: '光禄城', factionId: 'shatuo', lat: 41.9, lng: 108.2, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI' , note: '[西汉光禄塞故址至唐末沙陀边地·阴山北麓夯土塞城聚落] 西汉太初三年光禄勋徐自为筑塞垣列城，唐振武北境沙陀驻牧边邑（《汉书·匈奴传》《新唐书·沙陀传》），夯土塞邑无万人居民记载，定城寨。' },
 
-    { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'stockade', troops: 10000, region: 'MONGOL', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 燕然山刻石处（杭爱山）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'stockade', troops: 10000, region: 'MONGOL', buildingStyle: 'MONGOL', note: '[东汉永元元年窦宪北伐纪功处至薛延陀杭爱山南麓驻牧地·无城垣山地营地] 永元元年（89）窦宪破北匈奴登燕然山命班固作铭刻石纪功（《后汉书·窦宪传》及蒙古国杭爱山摩崖真迹），无石砖城郭且常住不足1万，定城寨。' },
 
 
     { id: 'city_luhun', name: '涿邪山', factionId: 'han_d', lat: 43.58829, lng: 104.661255, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '[西汉去病赵破奴北征至南北朝柔然汗国南道涿邪山（阿尔泰东延尼赤金山）·戈壁北缘山地牧营] 汉天汉年间出塞会师地及北魏拓跋焘北伐柔然经行山岭（《汉书·匈奴传》《魏书·蠕蠕传》），沙漠山地游牧歇马水源地，无城垣且常住<1万，定城寨。' },
@@ -1180,7 +1180,7 @@ buildingStyle: 'KOREA', troops: 10000,
         note: '[538至660年百济后期国都泗沘（扶余）·扶苏山城与8公里石土罗城条坊王都] 百济圣王十六年自熊津迁都泗沘，筑东、北石土罗城围合棋盘五部二十二巷王都，显庆五年（660）苏定方破泗沘俘义慈王（《三国史记·百济本纪》及扶余罗城考古），都城峰值约3–5万，>1万定小城。',
     },
     
-    { id: 'city_edo', name: '江户城', factionId: 'tokugawa', lat: 35.75, lng: 139.8007, type: 'big_city', isPort: true, troops: 10000, note: '[17世纪江户幕府元禄期·巨石垣总构城下町] 元禄六年（1693）江户町方实测353,588人，合旗本大名武家屋敷与寺社人口，≤1700年连片城下町峰值约60–70万（鬼头宏《日本二千年の人口史》），>50万定大城。', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
+    { id: 'city_edo', name: '江户城', factionId: 'tokugawa', lat: 35.75, lng: 139.8007, type: 'big_city', isPort: true, troops: 10000, note: '[17世纪江户幕府元禄期·巨石垣总构城下町] 元禄六年（1693）江户町方实测353,588人，合旗本大名武家屋敷与寺社人口，≤1850年连片城下町峰值约60–70万（鬼头宏《日本二千年の人口史》），>50万定大城。', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
  // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
 
@@ -1195,7 +1195,7 @@ buildingStyle: 'KOREA', troops: 10000,
         tier: 1,
         region: 'JAPAN',
         buildingStyle: 'JAPAN',
-        note: '[室町至江户宽永盛期·土垒石垣洛中都城] 宽永十一年（1634）《京都御役所向大概觉书》实载洛中町方410,089人，合公家、武家与寺社人口约45万（≤1700年城居确证），≥40万容差线，定大城。' },
+        note: '[室町至江户宽永盛期·土垒石垣洛中都城] 宽永十一年（1634）《京都御役所向大概觉书》实载洛中町方410,089人，合公家、武家与寺社人口约45万（≤1850年城居确证），≥40万容差线，定大城。' },
     { id: 'city_tainan', name: '承天', factionId: 'ming_zheng', lat: 22.99, lng: 120.2, type: 'small_city', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[荷建普罗民遮赤嵌砖堡至1662至1683年明郑东宁王都承天府·安平热兰遮红砖棱堡与十字大街都邑] 永历十五年郑成功克红砖棱堡热兰遮与普罗民遮城，改设东宁承天府划定东安、西定、宁南、镇北四坊，明郑时期至康熙台湾府治城坊军民商贾达2.5–4万（江日昇《台湾外记》《台湾府志》），>1万定小城。' },
 
     { id: 'city_weirong', name: '威戎', factionId: 'yiqu', lat: 35.585841, lng: 105.512695, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', note: '[北宋熙宁元丰秦凤路御夏防线·陇山葫芦河道夯土军寨堡] 北宋经略熙河与防御西夏于秦州陇城西筑威戎军堡控陇右通道（《宋史·地理志三》《元丰九域志》），纯守道军事夯土寨堡且未成万人居民城，定险要。' },
@@ -1222,7 +1222,7 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_okafu', name: '冈丰城', factionId: 'chosokabe', lat: 33.5972, lng: 133.5756, type: 'stockade', isPort: true, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[日本战国长宗我部元亲统一四国初期本城·高知平原北丘土垒空堀小山城（冈丰城）] 长宗我部氏累代居城，考古发掘仅诘诺段存少量低矮积石而主体为土垒堀切山城，1588年迁大高坂浦户后彻底废城，冈丰山下市集仅两三千人<1万，定城寨。' },
     { id: 'city_himeji', name: '姬路城', factionId: 'toyotomi', lat: 34.8394, lng: 134.6939, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' , note: '[安土桃山至江户前期·白漆天守巨石垣姬路城下町] 丰臣秀吉筑城、池田辉政大扩建后形成播磨藩首府姬路城下町，1650–1700年町方合武家常住城居达2.1–2.5万（斋藤诚治《江户时代的都市人口》），已成超万人城市不再算设施，定小城。' },
 
-    { id: 'city_utsunomiya', name: '宇都宫城', factionId: 'utsunomiya', lat: 36.604491, lng: 139.858704, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[镰仓战国宇都宫氏本据至江户奥州街道大藩城·本多正纯修筑土垒石垣城下町] 日光社参必经奥州街道首邑宇都宫，元和年间本多正纯大修城郭与町割，元禄年间（≤1700）城下町常住人口约1.2–1.5万（《宇都宫市史》町方武家合算），>1万定小城。' },
+    { id: 'city_utsunomiya', name: '宇都宫城', factionId: 'utsunomiya', lat: 36.604491, lng: 139.858704, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[镰仓战国宇都宫氏本据至江户奥州街道大藩城·本多正纯修筑土垒石垣城下町] 日光社参必经奥州街道首邑宇都宫，元和年间本多正纯大修城郭与町割，元禄年间（≤1850）城下町常住人口约1.2–1.5万（《宇都宫市史》町方武家合算），>1万定小城。' },
     { id: 'city_tsuruga', name: '鹤之城', factionId: 'toyotomi', lat: 37.4878, lng: 139.9297, type: 'small_city', region: 'JAPAN_IMPERIAL',
 buildingStyle: 'JAPAN', troops: 10000,
         note: '[安土桃山至江户前期·蒲生氏巨石垣会津若松城下町] 文禄元年蒲生氏乡扩建鹤之城并整备若松城下町，1650–1700年会津藩城下常住人口达2.5–2.7万（斋藤诚治《江户时代的都市人口》及《会津藩家世实纪》），已逾1万按城判，定小城。',
@@ -1232,7 +1232,7 @@ buildingStyle: 'JAPAN', troops: 10000,
 
 
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城）──
-    { id: 'city_jianghu', name: '金泽', factionId: 'kaga_d', lat: 36.56, lng: 136.65, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[安土桃山前田利家入封至江户元禄加贺百万石藩都·高石垣金泽城下町] 前田氏金泽城下町据元禄十年（1697）《国事杂抄》官方实测本町与地子町12,085户共68,636人，合少量陪臣约7–7.5万（确证逾6.8万而未满8万中城容差线），定小城。' },
+    { id: 'city_jianghu', name: '金泽', factionId: 'kaga_d', lat: 36.56, lng: 136.65, type: 'medium_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[安土桃山前田利家入封至江户中期加贺百万石藩都·高石垣金泽城与北陆第一城下町] 元禄十年（1697）仅本町与地子町人即实测68,636人，至江户宝历—文化文政期（≤1850年）合前田藩武家陪臣屋敷常住人口达10.5–11.5万（斋藤诚治《江户时代的都市人口》及鬼头宏考算），>10万定中城。' },
     { id: 'city_xiantai', name: '青叶馆', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'small_city', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[17世纪江户伊达六十二万石藩都·青叶山巨石垣与仙台棋盘城下町] 庆长六年（1601）伊达政宗营建青叶城石垣与广濑川东岸仙台城下町，宽文至元禄年间（1660–1700）武家合町人城居达5–5.7万（斋藤诚治《江户时代的都市人口》），>1万定小城。' },
 
     { id: 'city_xiongben', name: '熊本', factionId: 'nanchou', lat: 32.81, lng: 130.71, type: 'small_city', region: 'JAPAN', buildingStyle: 'JAPAN', troops: 10000, note: '[庆长六年加藤清正筑城至江户细川五十四万石藩都·武者返巨石垣熊本城下町] 1601–1607年加藤清正筑高大扇形石垣熊本巨城并迁古府中商工入新町、古町，17世纪中后期城下武家与町人达4–5万（斋藤诚治《江户时代的都市人口》），>1万定小城。' },
@@ -1438,7 +1438,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         note: '[辽金阻卜塔塔儿六部核心牧地与1202年答阑捏木儿格思战场·呼伦贝尔哈拉哈河草原营盘] 金章宗明昌七年完颜襄合铁木真破塔塔儿蔑古真笑儿罕、1202年成吉思汗全歼塔塔儿四部于哈拉哈河流域（《金史·完颜襄传》《元朝秘史》），草原游牧营地无城墙，定城寨。',
     },
 
-    { id: 'city_merkit', name: '买卖城', factionId: 'manzhou_d', lat: 50.264779, lng: 106.152649, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[12世纪蔑儿乞三部脱黑脱阿色楞格河牧地（清雍正五年1727年后始建恰克图买卖城）·河谷木栅营聚] 清俄恰克图互市买卖木城建于1727年（晚于1700年红线不采）；≤1700年该地为色楞格河支流蔑儿乞部与喀尔喀土谢图汗游牧渡口，无石砖城垣且常住<1万，定城寨。' },
+    { id: 'city_merkit', name: '买卖城', factionId: 'manzhou_d', lat: 50.264779, lng: 106.152649, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[12世纪蔑儿乞三部色楞格河牧地至清雍正五年（1727）恰克图互市买卖城·河谷木栅商聚] 《恰克图条约》后建买卖木城，四周围立原木排栅（木栅不算城墙，《朔方备乘》），且≤1850年城内晋商伙计常住仅约1500–3000人<1万，定城寨。' },
 
     // 第四类：汉军世侯及元末军阀
     // 第五类：元末起义政权
@@ -1469,7 +1469,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：瑞金（江西）：宋瑞金监，客家大本营
-    { id: 'city_ruijin', name: '瑞金', factionId: 'nantang', lat: 25.9262, lng: 116.0458, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '[五代南唐保大十一年由瑞金淘金场升瑞金县·武夷西麓贡水源头山地小县邑] 因掘地得金置瑞金场、南唐升县（《太平寰宇记》《赣州府志》），宋元及明正德前僻处赣闽万山之中，早期夯土土垣（明正德后始修小砖城周仅三里余），≤1700年在城不足6000人，定城寨。' },
+    { id: 'city_ruijin', name: '瑞金', factionId: 'nantang', lat: 25.9262, lng: 116.0458, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '[五代南唐保大十一年由瑞金淘金场升瑞金县·武夷西麓贡水源头山地小县邑] 因掘地得金置瑞金场、南唐升县（《太平寰宇记》《赣州府志》），宋元及明正德前僻处赣闽万山之中，早期夯土土垣（明正德后始修小砖城周仅三里余），≤1850年在城不足6000人，定城寨。' },
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄
@@ -1514,7 +1514,7 @@ buildingStyle: 'MONGOL', troops: 10000,
     // 第五类：边疆民族
     { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI', note: '[明天顺成化至嘉靖鞑靼阿鲁台癿加思兰达延汗入套驻牧中枢·黄河后套平原水草毡帐大营] 明中叶蒙古诸部渡河入驻河套沃野威胁延绥宁夏，成化九年王越夜袭红盐池破套寇老营（《明史·鞑靼传》《王越传》），草原游牧毡帐营盘无城墙，定城寨。' },
 
-    { id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming', lat: 48.01, lng: 91.64, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[15至17世纪卫拉特四部与准噶尔汗国阿尔泰东麓牧场（清科布多参赞城建于1730至1762年超限）·河谷帐营] 清筑科布多城在雍正乾隆间（晚于1700年红线不采）；≤1700年布彦图河与哈喇乌苏湖畔为瓦剌马哈木及噶尔丹东征驻牧草场，无城垣且常住<1万，定城寨。' },
+    { id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming', lat: 48.01, lng: 91.64, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[卫拉特准噶尔阿尔泰东麓牧场至清乾隆科布多参赞大臣驻城·布彦图河夯土小城与买卖帐街] 乾隆二十七年（1762）筑科布多夯土小城周仅二里余（无砖石包砌，《科布多政务总册》），≤1850年驻防换防兵与商民仅约2000–4000人<1万，定城寨。' },
 
 
     { id: 'city_yeren_base', name: '瑷珲', factionId: 'yeren_nvzhen', lat: 50.25, lng: 127.5, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清康熙二十二年（1683）初设黑龙江将军萨布素驻城瑷珲·黑龙江左岸旧瑷珲与右岸原木夹土方城] 为雅克萨抗俄屯兵造船，康熙二十二至二十四年先后于精奇里江口与黑河右岸筑松木立栅夹夯土内外方城（《平定罗刹方略》《柳边纪略》详记木栅土城规制），木土墙且八旗驻兵水手家口约6000–8000人<1万，定城寨。' },
@@ -1544,7 +1544,7 @@ buildingStyle: 'MONGOL', troops: 10000,
     { id: 'city_angkor', name: '吴哥', factionId: 'chenla', lat: 13.41, lng: 103.87, type: 'medium_city', troops: 10000, region: 'KHMER', buildingStyle: 'KHMER', note: '[12世纪末吴哥王朝阇耶跋摩七世期·红土石巨垣大吴哥城] 大吴哥城（Angkor Thom）9平方公里红土石城墙及贴城坊市常住人口约10–15万（Chandler 1200年表15万；75万说系低密度大吴哥全水利农业区，按规不含远郊），>10万定中城。' },
 
     // ── 2026-05-25 明清之际新城市 ──
-    { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.80203, lng: 123.43689, type: 'small_city', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '[后金天聪崇德盛京期·青砖石基八门都城] 皇太极改筑盛京砖城（周九里三百三十二步，约2.2平方公里）及八门关厢，崇德年间八旗入关前峰值约5–7万，顺治元年从龙入关后城居骤降至3万余（《盛京通志》及王景泽《清初东北人口研究》），≤1700年未满8万，定小城。' },
+    { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.80203, lng: 123.43689, type: 'medium_city', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '[后金天聪崇德盛京皇都至清代留都奉天府·青砖石基八门内城与八关圆廓外城] 皇太极改筑盛京八门砖城与外镶八关，清乾嘉道间（≤1850年）陪都驻防八旗与关厢商民城居峰值达13–16万（《盛京通志》及Chandler 1850年表16万），>10万定中城。' },
 
 
     {
@@ -1556,23 +1556,23 @@ buildingStyle: 'MONGOL', troops: 10000,
     },
     {
         id: 'city_kulun', name: '库伦', factionId: 'kaerka',
-        lat: 47.92, lng: 106.84, type: 'stockade', region: 'STEPPE_IMPERIAL',
+        lat: 47.92, lng: 106.84, type: 'small_city', region: 'STEPPE_IMPERIAL',
         buildingStyle: 'MONGOL', troops: 10000,
-        note: '[17世纪喀尔喀土谢图汗部与一世哲布尊丹巴游牧移驻大毡帐寺院（定居木城在1778年后超限）·图拉河移动宫帐] 康熙年间库伦（Ikh Khüree）尚为随水草二十余次迁徙之巨型毛毡大经堂与僧帐营盘（1778年方定址色尔格河畔，晚于1700年，《蒙古游牧记》），无城垣且≤1700年随迁僧众仅数千人，定城寨。',
+        note: '[清喀尔喀哲布尊丹巴呼图克图驻锡大库伦与库伦办事大臣驻城·图拉河北岸大昭寺木石经院与买卖商城区] 乾隆四十三年（1778）定址图拉河北岸不再迁徙，嘉道年间（1800–1850）东营甘丹大寺僧侣逾万、合汉蒙商民买卖区常住人口达1.8–2.5万（《蒙古游牧记》及季姆科夫斯基1820使华实录），≤1850年>1万，定小城。',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：固尔札（伊犁）：准噶尔汗庭所在，归鞑靼（中亚草原）
-    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[17世纪末准噶尔汗国策妄阿拉布坦夏冬王庭伊犁河谷（清惠远伊宁城建于1762年后超限）·毡帐斡耳朵与固尔札佛寺] 噶尔丹与策妄阿拉布坦以伊犁河谷为汗国心脏，≤1700年尚未建固尔札大庙（1740年代建）与清伊犁九城，纯属游牧汗庭金帐群无城墙且单营常住<1万，定城寨。；代理说明：本库无「卫拉特」键（不新增文化），帝国时代军团取 MONGOL 这一格＝「帝国时代喀尔喀军团」，名字属代理' },
+    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[准噶尔汗庭固尔札至清乾嘉道伊犁将军驻节惠远与宁远（固尔札）九城·伊犁河北岸高大包砖夯土驻防商贸双城] 乾隆二十七年（1762）设总统伊犁等处将军筑惠远大城及固尔札（宁远）回城等伊犁九城，嘉道盛期（≤1850年）惠远驻防八旗锡伯索伦官兵家口与固尔札商回常住达2.5–3.5万（松筠《西陲总统事略》、徐松《西域水道记》），>1万定小城。；代理说明：本库无「卫拉特」键（不新增文化），帝国时代军团取 MONGOL 这一格＝「帝国时代喀尔喀军团」，名字属代理' },
 
     { id: 'city_yadong', name: '卓木', factionId: 'ganden', lat: 28.243709, lng: 89.376526, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[吐蕃至17世纪甘丹颇章时期喜马拉雅南麓春丕河谷商驿卓木（亚东）·印藏通道石木边贸小聚] 连接帕里宗、哲孟雄（锡金）与不丹之春丕峡谷温暖林区驿镇（非设防砌墙关城），≤1700年藏印背夫商站村落常住不足3000人，定城寨。',
+        note: '[吐蕃至17世纪甘丹颇章时期喜马拉雅南麓春丕河谷商驿卓木（亚东）·印藏通道石木边贸小聚] 连接帕里宗、哲孟雄（锡金）与不丹之春丕峡谷温暖林区驿镇（非设防砌墙关城），≤1850年藏印背夫商站村落常住不足3000人，定城寨。',
     },
-    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '[明至清康熙嘉绒藏区大金川土司世袭官寨勒乌围（乾隆金川之役在1747年后超限）·大金川河岸片石高碉官寨] 嘉绒藏族促浸（大金川）土司依河筑数十米四角八角片石高碉与官寨群（《明史·四川土司传》《平定两金川方略》），系氏族土司碉房村寨而非守道关门亦无万人城市，常住仅两三千人，定城寨。', mirror: true },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '[明清嘉绒藏区大金川土司世袭官寨勒乌围（乾隆大小金川之役核心）·大金川河岸片石高碉官寨] 嘉绒藏族促浸（大金川）土司莎罗奔、索诺木依河修筑数十米四角八角片石高碉与官寨群抗清（《平定两金川方略》），系氏族土司碉楼村寨而非守道关门亦无万人居民城，≤1850年常住仅两三千人，定城寨。', mirror: true },
 
 
 
  // 镜像
-    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'TIBET', note: '[明至清初嘉绒藏区小金川攒拉土司官寨美诺寨·沃日河与小金川汇口石砌高碉寨落] 与大金川唇齿相依之小金川土司中心石碉官寨（乾隆三十七年阿桂攻克在1772年超限），≤1700年为山谷石碉农牧村寨而非城市城郭，常住不足3000人，定城寨。' },
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'TIBET', note: '[明清嘉绒藏区小金川攒拉土司官寨美诺寨（乾隆金川之役僧格桑驻寨）·沃日河与小金川汇口石砌高碉寨落] 小金川土司僧格桑中心石碉官寨，乾隆三十七年阿桂攻克后设美诺厅旋裁（《平定两金川方略》），属山谷石碉农牧村寨而非城市环垣，≤1850年常住不足3000人，定城寨。' },
 
 
 
@@ -1586,11 +1586,11 @@ buildingStyle: 'TIBET', troops: 10000,
         lat: 23.6697, lng: 116.6394, type: 'small_city', isPort: true, troops: 10000, region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：海阳（广东潮州）：汉地郡治
         buildingStyle: 'JIANGNAN', note: '[东晋义安郡至唐韩愈治潮州、宋元明潮州府（海阳附郭）·韩江西岸条石包砖广济桥商都] 南宋末马发阖城抗元殉节，明洪武指挥俞良辅大修条石包砖潮州府城，外接湘子浮桥通粤东闽西南洋瓷糖贸易（《永乐潮州府志》），城内坊厢及桥东关厢达4–6万，>1万定小城。' },
-    { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[1700年前台湾中部半线平原·巴布萨族半线社与明郑屯垦小聚] 清雍正元年（1723）方割诸罗北境设彰化县、雍正十二年植刺竹为城（砖城更迟至嘉庆，均超1700年红线）；≤1700年半线庄无砖石城垣且常住不足5000人，定城寨。' },
+    { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[明郑半线屯垦至清雍正乾嘉道彰化县城·嘉庆十六年（1811）四门红砖县城垣与鹿港腹地街坊] 雍正元年（1723）设彰化县，嘉庆十六年（1811）知县杨桂森捐建完整红砖四门环城墙周九百二十二丈（《彰化县志》），嘉道间（≤1850年）在城及四门街厢常住达1.2–1.6万且具完整砖城，定小城。' },
 
     { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
-        note: '[明清湘西腊尔山苗疆·高山深谷木石苗寨] 湘西乾州苗民吴八月、石柳邓所据平陇山寨（乾隆六十年事且晚于1700年；≤1700年为苗疆山谷聚落，《圣武记》），名字不带关隘堡戍且非常设守道关城，人口<1万，定城寨。',
+        note: '[明清湘西腊尔山苗疆腹地·乾隆六十年石柳邓吴八月抗清大本营平陇山寨] 湘西乾州厅深谷苗寨平陇，乾隆六十年至嘉庆二年（1795–1797）乾嘉苗民起义中心（魏源《圣武记》），名字不带关隘堡戍且系苗民聚居山寨，无城市砖石环垣且≤1850年常住不足5000人，定城寨。',
     },
     { id: 'city_kathmandu', name: '加德满都', factionId: 'gurkha', lat: 27.715138, lng: 85.185242, type: 'small_city', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
@@ -1603,23 +1603,23 @@ buildingStyle: 'TIBET', troops: 10000,
         note: '[14世纪末帖木儿敕建亚萨维圣陵至16至17世纪哈萨克汗国冬都亚西·生土帕赫萨夯墙绿洲小王城] 16世纪末额什木汗至头克汗定亚西（突厥斯坦）为哈萨克汗国可汗驻冬中心，1509年鲁兹比汗《布哈拉客籍录》详载其外垣为生土夯筑泥墙（非石墙包砖），常住定居居民与陵户约5000–8000人<1万，定城寨。', region: 'STEPPE_IMPERIAL',
         // 🔴 [2026-10-19 按史] 亚西（突厥斯坦城）是中亚定居城市（霍贾·艾哈迈德·亚萨维陵），建筑风格 CENTRAL_ASIA；不是库曼营地
         buildingStyle: 'CENTRAL_ASIA' },
-    { id: 'city_kokand', name: '浩罕', factionId: 'kokand', lat: 40.5333, lng: 70.9333, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN' , note: '[10世纪伊斯兰地理志霍瓦坎德小邑（浩罕汗国筑堡立都始于1709至1740年超限）·费尔干纳西端泥砖集镇] 浩罕明格部沙鲁赫伯克筑堡立国在1709年、建浩罕新城在1740年（均晚于1700年红线不采）；≤1700年仅为伊本·豪卡勒所记费尔干纳西南小村镇霍瓦坎德，泥砖无石墙且不足5000人，定城寨。' },
+    { id: 'city_kokand', name: '浩罕', factionId: 'kokand', lat: 40.5333, lng: 70.9333, type: 'small_city', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN' , note: '[18至19世纪上半叶浩罕汗国首都·费尔干纳盆地西端烧砖王宫（乌尔达）与十二门高垣都城] 1709年沙鲁赫伯克立国、1740年阿卜杜·卡里姆建浩罕新城，至爱玛尔汗与马达里汗极盛期（1810–1842）城内清真寺数百座、常住人口达5–7.5万（纳扎罗夫游记及Bregel《中亚历史地图集》），>1万定小城。' },
 
 
     { id: 'city_fayzabad', name: '法扎巴德', factionId: 'badakhshan', lat: 37.068341, lng: 70.675049, type: 'stockade', region: 'CENTRAL_ASIA_IMPERIAL',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：法扎巴德（巴达赫尚）：中亚—吐火罗
 buildingStyle: 'CENTRAL_ASIA', troops: 10000,
-        note: '[17世纪末巴达赫尚亚里德王朝首邑法扎巴德（1691年迎藏圣袍改名）·科克恰河峡谷卵石泥木山镇] 1680–1690年代亚尔贝格汗迁治科克恰河畔焦兹贡并因供奉先知圣袍改名法扎巴德（Grevemeyer《巴达赫尚史》），≤1700年初创山谷小镇无城墙且常住仅约3000–5000人<1万，定城寨。',
+        note: '[17世纪末巴达赫尚亚里德王朝首邑法扎巴德（1691年迎藏圣袍改名）·科克恰河峡谷卵石泥木山镇] 1680–1690年代亚尔贝格汗迁治科克恰河畔焦兹贡并因供奉先知圣袍改名法扎巴德（Grevemeyer《巴达赫尚史》），≤1850年初创山谷小镇无城墙且常住仅约3000–5000人<1万，定城寨。',
     },
 
     // ── 2026-05-25 晚清／近代城市（35个）──
     // 第一类：太平天国
-    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[明清广西浔州府桂平北境紫荆山麓金田村（1851年太平天国起义超限不采）·客家壮瑶杂居无墙农庄] 道光三十年（1851）金田起义远超1700年红线不采；≤1700年桂平北境荆山脚下仅为百余户无城墙山麓农耕村落，定城寨。' },
+    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[明清广西浔州府桂平北境紫荆山麓金田村（1851年太平天国起义晚于1850年不采）·客家壮瑶杂居无墙农庄] 咸丰元年（1851）金田起义晚于1850年判定线；≤1850年桂平北境荆山脚下仅为百余户无城墙山麓农耕村落，定城寨。' },
 
 
 
     // 第三类：大明国/小刀会
-    { id: 'city_shanghai', name: '上海', factionId: 'tang', lat: 31.23, lng: 121.47, type: 'small_city', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[北宋上海酒务市舶镇、元至元二十九年立上海县至明嘉靖抗倭包砖城·黄浦江畔周九里棉布海运巨邑] 元明「衣被天下」松江棉布织染出口中心，嘉靖三十二年为御倭寇两月筑成周九里高二丈四尺包砖县城（《嘉靖上海县志》《阅世编》），万历至康熙城内及小东门十六铺关厢达4–6万，>1万定小城。' },
+    { id: 'city_shanghai', name: '上海', factionId: 'tang', lat: 31.23, lng: 121.47, type: 'medium_city', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[宋上海镇、元上海县至明嘉靖筑包砖抗倭城与清嘉道沙船海运巨埠·黄浦江西岸砖石环城与十六铺南市关厢] 明嘉靖三十二年筑周九里包砖县城，清嘉道间（1820–1850）沙船漕运与南北洋豆市鼎盛，县城及大小东门十六铺关厢常住达16–20万（道光开埠初实测及曹树基《中国人口史·清时期》），>10万定中城。' },
 
 
     // ── 洋州@兴势山（王平·兴势之战/无当飞军T1）──
@@ -1634,7 +1634,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     
     { id: 'city_piandaoshui', name: '偏刀水', factionId: 'qianhui', lat: 27.921633, lng: 107.685242, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
-        note: '[明清黔东北思南府乌江东岸山地苗汉聚落偏刀水（同治白号军据点超限）·绝壁山顶卡寨] 19世纪同治年间黔北号军据点远超1700年红线；≤1700年仅为思南土司辖境乌江山地小村寨，无城郭且常住不足2000人，定城寨。',
+        note: '[明清黔东北思南府乌江东岸山地聚落偏刀水（同治白号军据点晚于1850年不采）·绝壁山顶卡寨] 同治年间（1860年代）黔北白号军据点晚于1850年判定线；≤1850年仅为思南府乌江山地小村寨，无城郭且常住不足2000人，定城寨。',
     },
     // 第九类：黔西南回军
     // 第十类：苗民起义
@@ -1643,18 +1643,18 @@ buildingStyle: 'BASHU', troops: 10000,
 
     { id: 'city_wuliyasutai', name: '乌城', factionId: 'kaerka', lat: 47.74, lng: 96.84, type: 'stockade', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MONGOL', troops: 10000,
-        note: '[17世纪喀尔喀扎萨克图汗部杭爱山西麓牧地（清乌里雅苏台定边左副将军木城建于1733年超限）·河谷毡帐营] 雍正十一年（1733）策棱督建乌里雅苏台木栅戍城晚于1700年红线不采；≤1700年博格多河谷仅为喀尔喀西路素巴第汗部游牧草场，无城墙且人口<1万，定城寨。',
+        note: '[喀尔喀杭爱山西麓牧地至清雍正十一年（1733）乌里雅苏台定边左副将军木城·博格多河谷原木立栅戍城] 雍正十一年额驸策棱督建乌里雅苏台城，以松木排桩立栅夹土为垣（木栅与土垒不算石砖墙，《蒙古游牧记》），≤1850年驻防官兵与东侧买卖街商民合计仅约3000–4000人<1万，定城寨。',
     },
 
 
     // 第十三类：西南土司
     // 第十四类：回疆割据（托克逊等）
-    { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉山国危须北道至唐天山托克逊驿道绿洲（清筑城在1759年后超限）·白杨河戈壁驿村] 控吐鲁番盆地西通焉耆与翻天山至乌鲁木齐三岔水草驿点（《汉书·西域传》《西域图志》），≤1700年仅为生土小庄聚无砖石城垣且常住不足3000人，定城寨。' },
+    { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉山国危须北道至唐清天山托克逊驿道绿洲·白杨河戈壁夯土小驿堡] 控吐鲁番西通焉耆与北翻达坂城三岔水草驿点，乾隆二十四年（1759）后仅筑小型夯土腰站土堡（《西域图志》），无砖石城垣且≤1850年常住不足4000人，定城寨。' },
 
-    { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'stockade', region: 'WESTERN',
+    { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'pass', region: 'WESTERN',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：达坂城：天山北麓白杨沟通道，准噶尔—回部交界，归鞑靼（中亚）
 buildingStyle: 'WESTERN', troops: 10000,
-        note: '[1700年前天山白水涧道·山口游牧驿路小聚落] 清乾隆二十年（1755）后始筑达坂城军台堡垣（晚于1700年红线不采）；≤1700年仅为吐鲁番通天山北路山口游牧歇马小聚落，无石砖夯土关城且人口不足千人，定城寨。', mirror: true },
+        note: '[清乾隆二十年（1755）后天山白水涧道咽喉·达坂城夯土包石军台堡垣] 控扼吐鲁番盆地翻越天山通迪化（乌鲁木齐）之白水涧峡谷唯一孔道，乾隆平准后筑达坂城军台堡塞驻兵守隘（《西域图志》《新疆识略》），系守山口通道之有墙军事堡塞且≤1850年未成万人城，定险要。', mirror: true },
 
     // 第十五类：越南阮朝
     { id: 'city_nanghar', name: '囊哈儿', factionId: 'jilimi', lat: 52.209343, lng: 141.951599, type: 'stockade', isPort: true, region: 'JURCHEN',
@@ -1708,9 +1708,9 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     { id: 'city_xiaoyenisei', name: '贝加尔', factionId: 'gaoche', lat: 51.8368, lng: 107.6138, type: 'stockade', region: 'STEPPE_ANTIQUITY', buildingStyle: 'MONGOL', troops: 10000, note: '[西汉苏武牧羊北海与卫律受封丁零王牧地贝加尔湖南岸·色楞格河入湖口森林草原游牧毡帐营] 汉代高车丁零先民游牧北海、唐骨利干昼长夜短之地（《汉书·苏武传》《新唐书·回鹘传》），湖滨游牧渔猎帐营无城垣且<1万，定城寨。' },
     { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'stockade', troops: 10000, region: 'NORTHEAST', buildingStyle: 'NORTHEAST', note: '[鲜卑拓跋部远祖大鲜卑山石室祖庙嘎仙洞·大兴安岭嫩江支流甘河天然花岗岩巨洞与林中营地] 北魏太武帝太平真君四年（443）遣中书侍郎李敞诣祖宗石室祝祭刊刻祝文（1980年鄂伦春旗嘎仙洞发现北魏石刻真迹印证《魏书·礼志》），森林狩猎圣洞无城郭聚落，定城寨。' },
 
-    { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'pass', region: 'STEPPE_FEUDAL',
+    { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'stockade', region: 'STEPPE_FEUDAL',
 buildingStyle: 'MONGOL', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 汉浚稽山（阿尔泰东）；浚稽山；高车关隘',
+        note: '[西汉天汉二年浚稽山之战至高车漠北驻牧地·戈壁山地无墙营聚] 天汉二年（前99）李陵率步卒五千出居延北至浚稽山与匈奴交战（《史记·李将军列传》《汉书·李陵传》），名不带关隘堡戍且无砖石夯土关墙、人口<1万，定城寨。',
     },
     { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'stockade', troops: 20000, region: 'MONGOL', buildingStyle: 'MONGOL', note: '[6至9世纪突厥第一第二汗国与回鹘汗国神圣可汗牙帐于都斤山（都斤山）·杭爱山东麓森林草原金帐圣地] 《周书·突厥传》与阙特勤碑、毗伽可汗碑反复铭刻「住于都斤山森林则国永存」之突厥大可汗金帐驻地，草原森林圣山毡帐无城垣，定城寨。', },
 
@@ -1745,7 +1745,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
 
-    { id: 'city_hanhai', name: '瀚海', factionId: 'gaoche', lat: 44.144832, lng: 103.697205, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 戈壁瀚海；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_hanhai', name: '瀚海', factionId: 'gaoche', lat: 44.144832, lng: 103.697205, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '[西汉元狩四年漠北远征登临瀚海至敕勒高车漠南漠北通道·大戈壁无墙营地] 元狩四年（前119）霍去病北伐匈奴左贤王封狼居胥山、登临瀚海（《史记·卫将军骠骑列传》），无砖石城郭且常住<1万，定城寨。' },
 
     { id: 'city_keyimen', name: '克夷门', factionId: 'dangxiang', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 10000, region: 'TANGUT', buildingStyle: 'HEXI', note: '[西夏贺兰山中段东口·石砌夯土关门戍塞] 扼漠南草原翻越贺兰山直逼西夏国都中兴府咽喉，1209年成吉思汗攻西夏于克夷门大破嵬名令公五万军（《元史·太祖纪》《西夏书事》），史明为护都关门且具石土塞垣，未成万人城，定险要。' },
 
@@ -1755,7 +1755,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：布哈拉：粟特—布哈拉汗国，中亚
     { id: 'city_bukhara', name: '布哈拉', factionId: 'an', lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_IMPERIAL', buildingStyle: 'CENTRAL_ASIA' , note: '[9至10世纪萨曼王朝都城·烧砖内城与泥砖外郭] 萨曼王朝都城极盛期布哈拉内堡雅克、沙赫里斯坦与拉巴特连片城区峰值约8–12万（纳尔沙希《布哈拉史》及Chandler 900–1000年表10万），≥8万且达10万，定中城。' },
-    { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CENTRAL_ASIA' , note: '[唐石国柘折至萨曼期宾卡特·泥砖夯土内城与外郭] 10–12世纪石国故地宾卡特（塔什干）虽具泥砖内城与双外郭，据巴托尔德《蒙古入侵前的突厥斯坦》与布里亚科夫考古测算城居峰值约5–7万（Chandler历代百大城市表未达8万），<8万容差线，定小城。' },
+    { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'medium_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CENTRAL_ASIA' , note: '[唐石国柘折城、萨曼宾卡特至19世纪上半叶浩罕汗国北都塔什干·周24公里十二门泥砖高垣商都] 唐石国故地，1809年并入浩罕汗国后为中亚对俄商贸最大都会，至1830–1850年四达尔哈（四城区）城垣内常住人口达8–10万（俄使纳扎罗夫、哈尼科夫实记及Chandler 1850年表8万），≥8万容差线，定中城。' },
 
     // ── 2026-05-26 新增：青藏高原势力城市（24个）──
     // === 第一类：高原帝国与割据强权 ===
@@ -1788,9 +1788,9 @@ buildingStyle: 'TIBET', troops: 10000,
         id: 'city_kangyanchuan', name: '察木多', factionId: 'tubo',
         lat: 31.1333, lng: 97.1667, type: 'stockade', region: 'TIBET_CASTLE',
         buildingStyle: 'TIBET', troops: 10000, tier: 4,
-        note: '[隋唐东女白兰羌南境至明正统帕巴拉呼图克图创强巴林寺察木多（昌都）·昂曲扎曲两江汇口寺院茶马聚落] 1444年宗喀巴弟子喜饶桑布建昌都强巴林寺形成政教聚落（《昌都强巴林寺志》），两江台地无城墙（非设防城市），≤1700年寺僧与茶马脚夫商户合计约5000–7000人<1万，定城寨。',
+        note: '[隋唐东女白兰羌南境至明正统帕巴拉呼图克图创强巴林寺察木多（昌都）·昂曲扎曲两江汇口寺院茶马聚落] 1444年宗喀巴弟子喜饶桑布建昌都强巴林寺形成政教聚落（《昌都强巴林寺志》），两江台地无城墙（非设防城市），≤1850年寺僧与茶马脚夫商户合计约5000–7000人<1万，定城寨。',
     },
-    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.04071, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET', note: '[吐蕃苏毗皇家牧场至17世纪甘丹颇章设黑河（那曲）总管·藏北唐古拉南麓海拔4500米游牧帐房部落驻点] 控青藏北路入拉萨门户之藏北羌塘草原中心那曲（清设那曲卡抚绥三十九族在18世纪，《卫藏通志》），≤1700年纯属游牧黑牛毛帐篷集散地无城墙且常住不足2000人，定城寨。' },
+    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.04071, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET', note: '[吐蕃苏毗皇家牧场至17世纪甘丹颇章设黑河（那曲）总管·藏北唐古拉南麓海拔4500米游牧帐房部落驻点] 控青藏北路入拉萨门户之藏北羌塘草原中心那曲（清设那曲卡抚绥三十九族在18世纪，《卫藏通志》），≤1850年纯属游牧黑牛毛帐篷集散地无城墙且常住不足2000人，定城寨。' },
 
     { id: 'city_cuona', name: '错那', factionId: 'ganden', lat: 27.979850, lng: 91.928101, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '[14世纪帕竹至17世纪五世达赖门隅边贸宗治错那宗·喜马拉雅东段高寒湖盆片石小宗堡与村聚] 控山南翻越喜马拉雅南下达旺门隅茶盐互市通道，五世达赖时期扩修小型片石宗署（《西藏王臣记》），海拔4300米苦寒风口常住宗吏与边民不足2000人，定城寨。' },
     { id: 'city_metuo', name: '墨脱', factionId: 'ganden', lat: 29.250477, lng: 95.213013, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '[吐蕃莲花生隐修秘境白玛岗至甘丹颇章时期雅鲁藏布大峡谷墨脱·亚热带雨林门巴珞巴竹木吊脚村寨] 深处雪山封锁之雅鲁藏布江大拐弯峡谷，珞巴族义都部与东迁门巴族建竹木藤网吊脚寨聚，无城墙且单村仅数百人，定城寨。' },
@@ -1847,10 +1847,10 @@ buildingStyle: 'BASHU', mirror: true, troops: 10000,
 
     { id: 'city_mufu', name: '独克宗', factionId: 'tubo', lat: 27.82, lng: 99.7, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[唐吐蕃神川铁桥南屏至15至17世纪丽江木氏与和硕特拉锯重镇建塘独克宗·中甸龟山石木藏房茶马古镇] 崇祯间丽江木增北拓与康熙六年蒙古达赖势力争夺中甸建塘（《明史·云南土司传》《中甸厅志》），龟山顶设大佛寺与藏式土石闪片民居而无砖石合围城墙，≤1700年常住数千人<1万，定城寨。',
+        note: '[唐吐蕃神川铁桥南屏至15至17世纪丽江木氏与和硕特拉锯重镇建塘独克宗·中甸龟山石木藏房茶马古镇] 崇祯间丽江木增北拓与康熙六年蒙古达赖势力争夺中甸建塘（《明史·云南土司传》《中甸厅志》），龟山顶设大佛寺与藏式土石闪片民居而无砖石合围城墙，≤1850年常住数千人<1万，定城寨。',
     },
 
-    { id: 'city_dongxu_old', name: '凯图玛蒂', factionId: 'dongxu', lat: 18.8, lng: 96.4, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '[13世纪建栅至1510年明吉瑜筑凯图玛蒂（东吁旧都，莽瑞体起兵地）·锡当河谷红砖木栅起兵小王城] 1510年明吉瑜筑凯图玛蒂砖木城，1539年莽瑞体旋即南迁富庶海港勃固（汉达瓦底）为帝国首都，东吁降格为内陆山地支藩（《琉璃宫史》），≤1700年留守小邑常住不足1万确数，定城寨。' },
+    { id: 'city_dongxu_old', name: '凯图玛蒂', factionId: 'dongxu', lat: 18.8, lng: 96.4, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '[13世纪建栅至1510年明吉瑜筑凯图玛蒂（东吁旧都，莽瑞体起兵地）·锡当河谷红砖木栅起兵小王城] 1510年明吉瑜筑凯图玛蒂砖木城，1539年莽瑞体旋即南迁富庶海港勃固（汉达瓦底）为帝国首都，东吁降格为内陆山地支藩（《琉璃宫史》），≤1850年留守小邑常住不足1万确数，定城寨。' },
     { id: 'city_kangla', name: '康格拉', factionId: 'meitai', lat: 24.82, lng: 93.94, type: 'stockade', troops: 10000, region: 'BURMESE', buildingStyle: 'BENGALIS', note: '[公元1至17世纪印度东北梅泰人曼尼普尔王国王宫康格拉（因帕尔）·伊帕尔河畔夯土竹刺壕墙宫寨] 17世纪初哈根巴王扩建康格拉双道夯土泥墙与护城水渠击败阿豪姆与东吁边军（《切塔罗尔·库姆巴巴王室编年史》），但王宫外梅泰百姓散居河谷竹木稻村无砖石城郭，宫城内常住不足8000人，定城寨。' },
 
     // ── 第四类：岭南帝国、安南正统与海岛王国 ──
@@ -1906,16 +1906,16 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     {
         id: 'city_mudan', name: '牡丹社', factionId: 'paiwan',
         lat: 22.20, lng: 120.8333, type: 'stockade', isPort: true, region: 'HUAXIA_IMPERIAL',
-        buildingStyle: 'MALAY', troops: 10000, tier: 4, note: '[1700年前台湾恒春半岛琅峤山地排湾族斯卡罗与高士佛牡丹诸社·页岩石板屋猎首部落山社] 同治十三年（1874）牡丹社事件远超1700年红线不采；郁永河康熙三十六年《裨海纪游》记琅峤生番诸社不通教化，山地页岩石板屋部落无城墙且单社仅数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】台湾排湾族石板屋聚落，取最近南岛MALAY' },
+        buildingStyle: 'MALAY', troops: 10000, tier: 4, note: '[明清台湾恒春半岛琅峤山地排湾族牡丹诸社（1874年牡丹社事件晚于1850年）·页岩石板屋部落山社] 同治十三年（1874）事件晚于1850年；康熙至道光间（≤1850年）琅峤排湾族诸社散居山地页岩石板屋（郁永河《裨海纪游》、黄叔璥《台海使槎录》），无城墙且单社仅数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】台湾排湾族石板屋聚落，取最近南岛MALAY' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
-    { id: 'city_cen', name: '凌云', factionId: 'cen_d', lat: 24.462119, lng: 106.627808, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[北宋皇祐随狄青南征落籍至元明广西泗城州岑氏土司世袭治所凌云·澄碧河山谷土石司衙寨聚] 元置泗城州、明洪武岑善忠归附世袭泗城土知州逾六百年（清乾隆五年1740改流设凌云县筑石城超限，《明史·广西土司传》），≤1700年土司治所无砖石环城墙且常住仅数千人<1万，定城寨。' },
+    { id: 'city_cen', name: '凌云', factionId: 'cen_d', lat: 24.462119, lng: 106.627808, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[北宋皇祐至清初广西泗城州岑氏土司六百年世袭治所凌云·澄碧河山谷土石司衙寨聚] 性质与城防锁定泗城岑氏土司代表阶段（元明至雍正五年改流前无环城石墙，《明史·广西土司传》），且即便至1850年山谷小县在城常住亦仅约3000–5000人<1万，定城寨。' },
 
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1」] 原「ASIA」只给一级、二级靠 region 推 → 归 VIETNAMESE：蓝山（Lam Son）：越南黎利蓝山起义地；AGENTS 归位原则「越南归东南亚」，一级随 VIETNAMESE = SEAS
     { id: 'city_xidu', name: '蓝山', factionId: 'dayue', lat: 19.8, lng: 105.7833, type: 'stockade', troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE' , note: '[1418至1428年黎利蓝山起义策源地与后黎朝丰沛陵寝西京蓝山·清化朱江上游山地竹木山寨与陵庙] 永乐十六年（1418）清化蓝山豪族黎利聚义兵据至灵山、蓝山密林竹栅抗明军十年开创立国，称帝后仍定都东京昇龙而以蓝山为奉祀祖陵之西京殿庙区（《大越史记全书》），无万人居民城，定城寨。' },
 
-    { id: 'city_fuchun', name: '富春', factionId: 'yuenan', lat: 16.4667, lng: 107.5833, type: 'small_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'VIETNAMESE' , note: '[17世纪末广南阮主定都富春（顺化）·香江北岸木石宫垣与连片水陆坊市] 1687年阮福溙正式移广南正营定都富春（顺化前身，1805年嘉隆砖石京城超限不采），1695年英商鲍耶与禅师释大汕《海外纪事》亲历记香江两岸兵营坊市连绵，常住约1.5–2.5万，>1万定小城。' },
+    { id: 'city_fuchun', name: '富春', factionId: 'yuenan', lat: 16.4667, lng: 107.5833, type: 'medium_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'VIETNAMESE' , note: '[广南阮主旧都富春至1802年越南阮朝统一帝都顺化·香江北岸周10公里砖石沃邦式十门京城] 1687年阮主定都富春，1802年嘉隆帝统一越南定都于此并筑完整砖石棱堡京城、皇城与紫禁城（《大南一统志》），明命至嗣德初（≤1850年）京城与东巴关厢常住达8.5–10万（Chandler表9万），≥8万容差线，定中城。' },
 
 
 
@@ -1983,7 +1983,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 // ── 大夏(西夏)都城：兴庆府 ──
 { id: 'city_yongan', name: '永安', factionId: 'taiping', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
-        note: '[唐置蒙州、宋立永安砦至明成化十三年升永安州·大瑶山东麓湄江条石包砖周三里余州城] 明成化十三年韩雍平大藤峡瑶乱后升立永安州并采青石火砖修筑完整砖石州城（清咸丰元年太平天国永安建制即据守此砖石州城半年，《明宪宗实录》《永安州志》），≤1700年城居虽不足1万但具完整明代石砖城墙，定小城。', region: 'JIANGNAN',
+        note: '[唐置蒙州、宋立永安砦至明成化十三年升永安州·大瑶山东麓湄江条石包砖周三里余州城] 明成化十三年韩雍平大藤峡瑶乱后升立永安州并采青石火砖修筑完整砖石州城（清咸丰元年太平天国永安建制即据守此砖石州城半年，《明宪宗实录》《永安州志》），≤1850年城居虽不足1万但具完整明代石砖城墙，定小城。', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
     { id: 'city_xinzheng', name: '新郑', factionId: 'han', lat: 34.4, lng: 113.74, type: 'small_city', region: 'CENTRAL',
 buildingStyle: 'CENTRAL', troops: 10000,
@@ -2009,7 +2009,7 @@ buildingStyle: 'JAPAN', troops: 10000,
 
     { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.4265, lng: 124.6591, type: 'stockade', region: 'MOHE',
 buildingStyle: 'NORTHEAST', troops: 10000,
-        note: '[南北朝勿吉北境、辽长春州塔虎城至元代乃颜故地纳仁汗驿（清伯都讷新城建于1693年）·松花江嫩江汇口夯土土城] 康熙三十二年（1693）移驻水师副都统修筑伯都讷夯土小城周仅四里余（《盛京通志》《吉林外纪》），≤1700年八旗驻兵与蒙汉猎户合计仅约3000人<1万且为夯土墙，定城寨。',
+        note: '[南北朝勿吉北境、辽长春州塔虎城至元代乃颜故地纳仁汗驿（清伯都讷新城建于1693年）·松花江嫩江汇口夯土土城] 康熙三十二年（1693）移驻水师副都统修筑伯都讷夯土小城周仅四里余（《盛京通志》《吉林外纪》），≤1850年八旗驻兵与蒙汉猎户合计仅约3000人<1万且为夯土墙，定城寨。',
     },
     // 🔴 [2026-09-24 主人批间距特许] 第 11 场「前327 索格狄亚那岩」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
     // 🔴 [2026-09-30 坐标纠错 · 主人令「必须符合历史」] 原取英文维基信息框 40.4,69.4 —— 该坐标**与同条目正文第一句
@@ -2070,7 +2070,7 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
     { id: 'city_cili', name: '慈利', factionId: 'ming_d', lat: 29.43, lng: 111.12, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'BASHU', note: '[秦慈姑、汉零阳吴置慈利县至明初覃垕土司起事大庸慈利·澧水中游土家苗汉杂居卵石土垣小县] 洪武三年慈利安福土酋覃垕据茅冈木石山寨反明、杨璟周德兴平之（《明太祖实录》），明代慈利县治小城仅砌溪石土垣周三里余，在城民户不足5000人，定城寨。' },
 
-    { id: 'city_xiushan', name: '秀山', factionId: 'ming_d', lat: 28.379316, lng: 109.061279, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[五代宋元酉阳平茶邑梅石耶四洞土司地（清乾隆元年1736改土归流始设秀山县超限）·武陵山区木石土司洞寨] 明洪武置平茶洞、邑梅洞长官司由杨氏冉氏土司世袭助调征倭征播（《明史·四川土司传》），≤1700年尚无秀山县城而为分散吊脚木石土司寨，单寨不足3000人，定城寨。' },
+    { id: 'city_xiushan', name: '秀山', factionId: 'ming_d', lat: 28.379316, lng: 109.061279, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[五代宋元至明代酉阳平茶邑梅石耶四洞土司地（助征倭征播代表期）·武陵山区木石土司洞寨] 性质锁定明代平茶、邑梅长官司土兵基地阶段（无县城石墙，《明史·四川土司传》；乾隆元年1736改流后山邑在城至1850年亦仅约4000–6000人<1万），定城寨。' },
 
     { id: 'city_qianshan', name: '潜山', factionId: 'han_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '[春秋皖国、汉末陆康守庐江郡皖城（孙策周瑜克皖取二乔）至唐舒州北宋安庆军·潜水畔包砖石城] 东汉末庐江太守陆康据皖城拒袁术近两年、建安四年孙策攻拔皖城（《后汉书·陆康传》《三国志·孙策传》），唐至南宋嘉定迁宜城前久为舒州同安郡治，明筑包砖县城，盛期州郡城居约1.5–2.5万，>1万定小城。' },
 
@@ -2084,7 +2084,7 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
     // ── 2026-05-27 新增：生苗(甲定) ──
     { id: 'city_jiading', name: '甲定', factionId: 'shengmiao', lat: 26.485279, lng: 107.523193, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
-        note: '[明万历至崇祯黔东南都匀八寨生苗聚落甲定（丹寨）·月亮山北麓杉木吊脚苗寨群] 万历末收入羁縻青岩司而实为「新疆六厅」未辟生苗腹地（清雍正七年1729鄂尔泰开辟丹江厅筑石城超限，《黔南职方纪略》），≤1700年纯木构苗寨无城墙且单寨不足2000人，定城寨。',
+        note: '[明清黔东南都匀八寨生苗腹地甲定（丹寨）·月亮山北麓杉木吊脚苗寨群] 性质锁定黔东南抗清生苗木寨聚落（《黔南职方纪略》；雍正七年1729置丹江通判小厅后至1850年山厅在城亦仅约2000–3000人<1万），定城寨。',
     },
 
     // ── 2026-05-27 新增：且兰(且兰城) ──
@@ -2173,7 +2173,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         lat: 24.40, lng: 111.55,
         type: 'small_city', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN',
-        troops: 10000, note: '[汉置临贺县、三国吴临贺郡至唐宋贺州及明正统瑶乱防城·贺江北岸明洪武成化条石包砖周四里城垣] 扼潇贺古道入粤咽喉，明洪武二十九年始建守御千户所砖石城、成化弘治平盘瑶之乱后全城包砌青砖条石（《明史·地理志》《贺县志》），≤1700年城居虽约6000–9000人但具完整明代砖石城墙，定小城。',
+        troops: 10000, note: '[汉置临贺县、三国吴临贺郡至唐宋贺州及明正统瑶乱防城·贺江北岸明洪武成化条石包砖周四里城垣] 扼潇贺古道入粤咽喉，明洪武二十九年始建守御千户所砖石城、成化弘治平盘瑶之乱后全城包砌青砖条石（《明史·地理志》《贺县志》），≤1850年城居虽约6000–9000人但具完整明代砖石城墙，定小城。',
         tier: 4 },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：麦岭关（广西）：汉地关隘
     { id: 'city_mailingguan', name: '麦岭关', factionId: 'song', lat: 25.02, lng: 111.23, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[五代马楚南汉至两宋·萌渚岭湘桂界石砌关隘] 扼萌渚岭贺州至永州岭道咽喉，五代楚汉争岭北、宋置戍兵守关（《太平寰宇记》《读史方舆纪要》），带「关」字且具岭口石垒关墙，未成万人城，定险要。', mirror: true },
@@ -2206,12 +2206,12 @@ buildingStyle: 'TIBET', troops: 10000,
         factionId: 'xibanya',
         lat: -33.04,
         lng: -71.62,
-        type: 'stockade',
+        type: 'small_city',
         isPort: true,
         troops: 10000,
         region: 'INCA',
         buildingStyle: 'SPANISH',
-        note: '[16至17世纪西属智利外港·海湾木石仓栈无环墙小埠] 1544年巴尔迪维亚定为圣地亚哥出海口，16–17世纪屡遭德雷克等私掠船焚掠，≤1700年常住仅数百至千余人且无合围石砖城墙（仅小炮台），定城寨。',
+        note: '[西属智利外港至19世纪上半叶智利共和国太平洋第一海港瓦尔帕莱索·海湾石砌炮台群与山坡连片商埠] 1810年独立后跃居南美太平洋航运总枢纽，据1843–1854年智利国家官方人口普查瓦尔帕莱索城区常住达4.2–5.2万（1854普查52,413人），≤1850年>1万，定小城。',
     },
     {
         id: 'city_buenosaires',
@@ -2219,12 +2219,12 @@ buildingStyle: 'TIBET', troops: 10000,
         factionId: 'xibanya',
         lat: -34.60,
         lng: -58.38,
-        type: 'stockade',
+        type: 'medium_city',
         isPort: true,
         troops: 10000,
         region: 'INCA',
         buildingStyle: 'SPANISH',
-        note: '[1580至1700年西属拉普拉塔河口港镇·夯土小堡与无墙棋盘泥砖镇] 1580年胡安·德·加赖重建，至1700年仅河岸一座夯土小堡（Fuerte）而市镇无城墙，常住人口约4000–6000人（Besio Moreno布宜诺斯艾利斯人口史），<1万无石砖墙，定城寨。',
+        note: '[西属拉普拉塔河口重镇至1776年副王区首都与阿根廷首府·河岸棱堡与棋盘砖石城区] 1776年升格拉普拉塔副王区首都后商贸激增，1806–1807年市民巷战两败英军，至1850年连片城区常住达9.0万（Besio Moreno人口史实算及Chandler 1850年表9.1万），≥8万容差线，定中城。',
     },
     {
         id: 'city_jamestown',
@@ -2237,7 +2237,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'BRITONS',
-        note: '[17世纪英属弗吉尼亚早期首府·詹姆斯河三角形原木立栅营镇] 1607年约翰·史密斯等建三角形木栅堡，1676年培根起义焚毁、1699年迁都威廉斯堡，≤1700年常住始终不足1500人且仅木栅土垒（Kelso詹姆斯敦考古），定城寨。',
+        note: '[17世纪英属弗吉尼亚早期首府·詹姆斯河三角形原木立栅营镇] 1607年约翰·史密斯等建三角形木栅堡，1676年培根起义焚毁、1699年迁都威廉斯堡，≤1850年常住始终不足1500人且仅木栅土垒（Kelso詹姆斯敦考古），定城寨。',
     },
     {
         id: 'city_portroyal',
@@ -2276,7 +2276,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '[10至17世纪波利尼西亚社会群岛·珊瑚祭坛（马拉埃）与木竹海岸村社] 波利尼西亚远洋航海枢纽大溪地，≤1700年岛民散居海岸木竹村落与干石祭坛而无城郭，最大单聚落仅千余人<1万（Oliver《古代大溪地社会》），定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】社会群岛毛利神庙Marae，取最近南岛MALAY',
+        note: '[10至17世纪波利尼西亚社会群岛·珊瑚祭坛（马拉埃）与木竹海岸村社] 波利尼西亚远洋航海枢纽大溪地，≤1850年岛民散居海岸木竹村落与干石祭坛而无城郭，最大单聚落仅千余人<1万（Oliver《古代大溪地社会》），定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】社会群岛毛利神庙Marae，取最近南岛MALAY',
     },
     {
         id: 'city_rapanui',
@@ -2315,7 +2315,7 @@ buildingStyle: 'TIBET', troops: 10000,
         troops: 10000,
         region: 'AMERICA',
         buildingStyle: 'MALAY',
-        note: '[1700年前夏威夷瓦胡岛南岸·木竹茅屋渔农聚落（寇乌港）] ≤1700年檀香山湾（古名Kou）仅为瓦胡岛阿里伊酋长治下散居芋田与独木舟湾村，无石砖城垣且单聚落人口不足3000人（近代商港兴于1790年代后不采），定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】夏威夷Heiau神庙，取最近南岛MALAY',
+        note: '[夏威夷瓦胡岛南岸寇乌湾聚落至1850年前初兴无墙港镇火奴鲁鲁·木构草屋与珊瑚矮屋海湾镇] 古为阿里伊酋长芋田渔湾，19世纪上半叶成捕鲸停泊埠，据1850年夏威夷王国户口统计虽全科纳（Kona）山谷辖区约1.4万，但火奴鲁鲁港镇连片建成区实居仅约7000–9000人<1万且全镇无城墙，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】夏威夷Heiau神庙，取最近南岛MALAY',
     },
     {
         id: 'city_sainthelena',
@@ -2350,12 +2350,12 @@ buildingStyle: 'TIBET', troops: 10000,
         factionId: 'gaolu',
         lat: -20.16,
         lng: 57.50,
-        type: 'stockade',
+        type: 'small_city',
         isPort: true,
         troops: 10000,
         region: 'AFRICA',
         buildingStyle: 'FRANKS',
-        note: '[17世纪荷属毛里求斯补给站期·东南岸木石小堡与百人垦殖点] 法国拉布尔多内建设路易港石城在1735年（晚于1700年红线不采）；≤1700年仅为荷兰东印度公司弗雷德里克·亨德里克小驻站，全岛人口不足300人，定城寨。',
+        note: '[18世纪法属法兰西岛印度洋海军基地至19世纪上半叶英属毛里求斯首府路易港·圣路易山石砌棱堡与糖贸石构港城] 1735年总督拉布尔多内营建路易港石砌船坞、兵营与防御堡垒（1781–1810年法军远征印度母港），1830–1850年路易港常住人口达2.8–3.5万（Toussaint《路易港城市史》），>1万定小城。',
     },
 
     {
@@ -2452,8 +2452,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_barawa', name: '布拉瓦', factionId: 'mogadishu', lat: 1.1000, lng: 44.0300, type: 'stockade', isPort: true, region: 'ETHIOPIANS', buildingStyle: 'ORIE', troops: 10000, note: '[15世纪索马里海岸斯瓦希里港邦卜剌哇·珊瑚石民居无环墙商镇] 郑和分䑸曾抵卜剌哇（费信《星槎胜览》），1506年葡将特里斯唐·达·库尼亚攻掠时为珊瑚石屋港镇但史无城居破万与完整环城石墙确证，按查无人口定城寨。；【建筑风格代理】同东非，取埃塞俄比亚分支；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：布拉瓦伊斯兰海商名城，珊瑚石宅与清真寺' },
     { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'small_city', isPort: true, troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '[13至15世纪摩加迪沙苏丹国盛期·珊瑚巨石环城墙东非首邑] 1331年伊本·白图泰亲访记木骨都束为「极大之城」并筑有环城珊瑚石墙，郑和船队曾抵，14–15世纪城居约1.5–2.5万（Chittick东非海岸考古），>1万且具石墙，定小城。；【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：摩加迪沙苏丹国，1269法赫鲁丁清真寺，沙斐仪派印度洋海商' },
     { id: 'city_mozambique', name: '莫桑比克', factionId: 'putaoya', lat: -15.03, lng: 40.74, type: 'stockade', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[16至17世纪葡属东非首府莫桑比克岛·圣塞巴斯蒂昂小石堡与无环墙珊瑚石镇] 1507年葡人设站、1558年于北端筑圣塞巴斯蒂昂石堡（1607–1608年两拒荷兰围攻），但岛上石屋镇区本身无合围城墙，1635年博卡罗《要塞图志》载常住葡非居民仅约2000–4000人<1万，定城寨。' },
-    { id: 'city_luanda', name: '罗安达', factionId: 'putaoya', lat: -8.8383, lng: 13.2344, type: 'stockade', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[16至17世纪葡属安哥拉首府圣保罗德罗安达·圣米格尔山顶小堡与无环墙海湾港镇] 1576年诺瓦伊斯建镇为南大西洋贸易港（1641–1648年荷军一度攻占），除山岬圣米格尔炮堡外下城泥木砖瓦街区无合围城墙，≤1700年常住市民与士兵约3000–5000人<1万，定城寨。' },
-    { id: 'city_cape_town', name: '开普敦', factionId: 'nidelan', lat: -33.9253, lng: 18.4239, type: 'stockade', isPort: true, troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '[1652至1700年荷属东印度公司好望角补给首府·五角好望小石堡与无墙桌湾村镇] 1652年范·里贝克建木土垒、1666–1679年改建五角好望小石堡，桌湾定居镇无外郭城墙，据VOC开普殖民地1700年人口册全境自由民与奴隶驻军合计仅约2800人、本镇不足2000人，定城寨。' },
+    { id: 'city_luanda', name: '罗安达', factionId: 'putaoya', lat: -8.8383, lng: 13.2344, type: 'small_city', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[1576至1850年葡属安哥拉首府圣保罗德罗安达·圣米格尔巨石棱堡、彭达石堡与上下城海湾港市] 南大西洋葡属最大行政与贸易首府，18世纪中叶重修圣米格尔巨石星堡，1845–1850年葡属官方人口册载上下城常住人口达1.1–1.2万（Curto《罗安达人口史》），>1万定小城。' },
+    { id: 'city_cape_town', name: '开普敦', factionId: 'nidelan', lat: -33.9253, lng: 18.4239, type: 'small_city', isPort: true, troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '[1652年荷属好望角首府至1806年后英属开普殖民地首府开普敦·五角好望巨石棱堡与桌湾石构港市] 1679年建成五角花岗岩好望堡，18世纪末至19世纪上半叶为欧亚航线总咽喉，据1849–1850年英属开普官方统计本城常住人口达2.4–2.6万，>1万定小城。' },
     { id: 'city_aden', name: '亚丁', factionId: 'zuraid', lat: 12.7855, lng: 45.0187, type: 'small_city', isPort: true, troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[12至15世纪祖拉伊德与拉苏里德王朝·火山岩切石海陆城墙红海门户] 扼曼德海峡咽喉之亚丁大港，马可·波罗与马欢《瀛涯胜览》（阿丹国）记其石砌城垣与巨富商舶，13–15世纪城居约3–5万（Margariti 2007《中世纪亚丁》），>1万定小城。' },
 
     { id: 'city_moyoro', name: '莫约罗', factionId: 'ayinu_ezo', lat: 44.02, lng: 144.27, type: 'stockade', isPort: true, troops: 10000, region: 'AINU', buildingStyle: 'JAPAN', note: '[7至13世纪北海道鄂霍次克文化与早期阿伊努期·网走河口半地穴木骨聚落与查希土寨] 鄂霍次克海洋渔猎民族与阿伊努交融核心聚落莫约罗贝冢遗址（日本国史迹发掘大型六角木骨半地穴屋群），无石砖城垣且聚落常住人口仅数百至千余人<1万，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN' },
@@ -2487,18 +2487,18 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_si', lat: 57.7, lng: 11.97, type: 'small_city', isPort: true, troops: 10000, region: 'SWEDISH', buildingStyle: 'VIKINGS' , note: '[17世纪瑞典帝国西海门户·古斯塔夫二世石砖星形棱堡运河港城] 1621年古斯塔夫二世·阿道夫敕建并延荷兰工程师修筑全套花岗岩棱堡与水壕城墙，1690–1700年城内市民与驻军达1–1.2万（Lilja瑞典早期近代城市人口统计）且具完整石墙，定小城。' },
     { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'small_city', isPort: true, troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '[14至16世纪梅克伦堡汉萨重镇·红砖哥特环城墙与二十二塔港城] 波罗的海汉萨核心成员罗斯托克，筑完整红砖环城墙与克罗佩林砖门，1500–1600年城居达1.4–1.5万（Bairoch 1988《欧洲城市人口》p.9），>1万且具包砖城墙，定小城。' },
     { id: 'city_bruges', name: '布鲁日', factionId: 'didi', lat: 51.21, lng: 3.22, type: 'small_city', isPort: true, troops: 10000, region: 'HRE', buildingStyle: 'BURGUNDIANS', note: '[13至15世纪佛兰德伯国与勃艮第商贸金融之都·砖石双壕九门环城墙] 西北欧中世纪最大毛纺与汉萨交易中心布鲁日，1297年扩筑第二道砖石高墙与四座现存砖石城门，1340–1400年城居峰值达4–4.6万（Prevenier低地人口考及de Vries表），>1万定小城。' },
-    { id: 'city_bulusaier', name: '布鲁塞尔', factionId: 'bulabante', lat: 50.8465, lng: 4.3518, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'BURGUNDIANS', note: '[15至17世纪勃艮第公爵与哈布斯堡尼德兰首府·8公里石砖七门第二城墙] 布拉班特首府布鲁塞尔1357年筑8公里第二道巨石城墙，1650–1700年城内实居达7–7.5万（de Vries 1984 p.272载1700年7.5万，贴近但未满8万中城容差线），定小城。' },
+    { id: 'city_bulusaier', name: '布鲁塞尔', factionId: 'bulabante', lat: 50.8465, lng: 4.3518, type: 'medium_city', troops: 10000, region: 'HRE', buildingStyle: 'BURGUNDIANS', note: '[15世纪勃艮第尼德兰首府至1830年后比利时王国首都·石砖七门内城与近郊连片坊区] 1700年城居7.5万，1830年定为比利时王都，1846–1850年官方普查本城及紧贴关厢达14.2–18.8万（1846比利时普查及Chandler 1850年表），>10万定中城。' },
 
     { id: 'city_pisa', name: '比萨', factionId: 'pisa', lat: 43.72, lng: 10.4, type: 'small_city', isPort: true, troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '[11至13世纪比萨海洋共和国极盛期·1155年白色大理石石灰岩环城高墙] 西地中海海权霸主比萨，1155年执政官科科筑现存7公里完整石砌环城墙，1293年户籍税册折算城内实居峰值约3.8–4.5万（Herlihy 1958《中世纪商业城市比萨》），>1万定小城。' },
     { id: 'city_seville', name: '塞维利亚', factionId: 'kasidiliya', lat: 37.38, lng: -5.98, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' , note: '[16世纪卡斯蒂利亚黄金期·石砖城墙河海商都] 西印度贸易垄断港塞维利亚1565年市政户籍10.9万、1588–1597年达12.1–12.6万（Ruiz马丁人口考证及de Vries 1600年表12.6万），>10万定中城。' },
-    { id: 'city_valencia', name: '巴伦西亚', factionId: 'alagong', lat: 39.47, lng: -0.37, type: 'small_city', isPort: true, troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' , note: '[15世纪阿拉贡黄金世纪至16世纪·克里斯蒂安巨石十二门环城墙港都] 1356年佩德罗四世敕筑厚重巨石新墙与塞拉诺斯双石塔门，15世纪末至1600年城居达5–6.5万（de Vries 1984 p.278载1600年6.5万，未满8万），>1万定小城。' },
-    { id: 'city_messina', name: '梅西纳', factionId: 'xixiliwangguo', lat: 38.19, lng: 15.55, type: 'small_city', isPort: true, troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '[诺曼西西里至16至17世纪海峡丝绸大埠·查理五世巨石棱堡环城墙] 扼墨西拿海峡咽喉、1571年勒班陀联军集结母港，1537年筑完整巨石棱堡环城墙，1600–1674年反西起义前城居峰值达5–6万（Beloch及de Vries 1600年表5万），>1万定小城。' },
+    { id: 'city_valencia', name: '巴伦西亚', factionId: 'alagong', lat: 39.47, lng: -0.37, type: 'medium_city', isPort: true, troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' , note: '[摩尔瓦伦西亚泰法至19世纪中叶阿拉贡名城·佩德罗四世巨石十二门城墙与关厢] 1356年筑巨石城墙，至1850年城垣内外连片城区实测达10.6万（Chandler 1850年表10.6万、Bairoch 1988），≤1850年峰值>10万，定中城。' },
+    { id: 'city_messina', name: '梅西纳', factionId: 'xixiliwangguo', lat: 38.19, lng: 15.55, type: 'medium_city', isPort: true, troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '[诺曼西西里至波旁两西西里王国海峡副都·巨石星形棱堡海防城垣梅西纳] 控扼梅西纳海峡咽喉，1783年震后以石砖重建，至1850年本城常住人口达9.7万（Chandler 1850年表9.7万、Bairoch 1988），≥8万容差线，定中城。' },
     { id: 'city_cagliari', name: '卡利亚里', factionId: 'alagong', lat: 39.22, lng: 9.12, type: 'small_city', isPort: true, troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '[14至17世纪比萨与阿拉贡撒丁王国首府·卡斯特罗石灰岩巨塔环城墙] 比萨筑大象塔与圣潘克拉齐奥石塔、阿拉贡与西班牙增筑海防巨石棱堡城垣，1578–1650年炉灶税册（fuochi）折算城居约1–1.5万（Day《撒丁人口史》）且具完整石墙，定小城。' },
     { id: 'city_feisi', name: '非斯', factionId: 'yidelisi', lat: 34.03, lng: -5, type: 'medium_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' , note: '[12至13世纪穆瓦希德与马林期·石砖夯土双城古都] 穆瓦希德王朝盛期（1150–1250年）非斯老城与新城城垣内人口约16–20万（利奥·阿非利加努斯《非洲志》及Chandler 1200年表20万），>10万定中城。' },
     { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'gesake', lat: 49.44, lng: 32.06, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC', note: '[14至17世纪第聂伯河哥萨克发祥重镇切尔卡瑟·河岸原木立栅城堡与木屋市镇] 奥斯塔菲·达什克维奇任长官整编第聂伯哥萨克抗鞑靼、1648年赫梅利尼茨基起义据点，据1552年卢斯特拉齐亚清册全镇仅255户木屋与原木城堡（17世纪仍不足6000人且为木栅），定城寨。' },
     { id: 'city_sofia', name: '索非亚', factionId: 'baojialiya', lat: 42.7, lng: 23.32, type: 'small_city', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '[第一保加利亚帝国斯雷德茨至奥斯曼鲁米利亚省会·罗马拜占庭砖石城墙] 809年克鲁姆汗攻克后为保加利亚重镇，承完整罗马—拜占庭红砖夹石双层城墙，16–17世纪作为鲁米利亚首府城居达1.5–2.5万（Bairoch 1988 p.56），>1万且具砖石墙，定小城。' },
     { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '[16至17世纪奥斯曼波斯尼亚省首府·石砌弗拉트尼克卫城与连片商坊] 加齐·胡斯雷夫贝伊扩建巴什察尔希亚石构商坊，1600–1660年奥斯曼税册与切莱比《旅行记》载城内逾四千五百户、常住人口达2.5–3.5万（Bairoch 1988），>1万定小城。' },
-    { id: 'city_gradeci', name: '格拉代茨', factionId: 'habusibao', lat: 45.81, lng: 15.97, type: 'small_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'MAGYAR', note: '[13至17世纪克罗地亚王家自由市格拉代茨·石门与石灰岩环城墙] 1242年匈王贝拉四世颁金玺诏书敕建格拉代茨（萨格勒布上城），1266年建成完整石灰岩环城墙、洛特尔什查克石塔与石门，≤1700年城居约4000–6000人，<1万具石墙，定小城。；🔴 [2026-11-11 按史改] 据点文化 SLAVIC→MAGYAR（代理）：萨格勒布格拉代茨，1242 年金玺诏书敕建自由王城，自 1102 年起属匈牙利圣伊什特万王冠，罗马天主教、中欧哥特石构；同贝尔格莱德先例取 MAGYAR 代理' },
+    { id: 'city_gradeci', name: '格拉代茨', factionId: 'habusibao', lat: 45.81, lng: 15.97, type: 'small_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'MAGYAR', note: '[13至17世纪克罗地亚王家自由市格拉代茨·石门与石灰岩环城墙] 1242年匈王贝拉四世颁金玺诏书敕建格拉代茨（萨格勒布上城），1266年建成完整石灰岩环城墙、洛特尔什查克石塔与石门，≤1850年城居约4000–6000人，<1万具石墙，定小城。；🔴 [2026-11-11 按史改] 据点文化 SLAVIC→MAGYAR（代理）：萨格勒布格拉代茨，1242 年金玺诏书敕建自由王城，自 1102 年起属匈牙利圣伊什特万王冠，罗马天主教、中欧哥特石构；同贝尔格莱德先例取 MAGYAR 代理' },
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' , note: '[12世纪穆拉比特至穆瓦希德期·红土石基王都城垣] 穆拉比特与穆瓦希德两朝帝都盛期（1100–1200年）19公里城垣内人口约12.5–15万（Chandler 1150–1200年表15万），>10万定中城。' },
 
@@ -2529,13 +2529,13 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', isPort: true, troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC' , note: '[17世纪荷兰共和国三级会议与执政驻都·运河环壕建成区海牙] 荷兰政治中枢内庭（Binnenhof）所在地，虽无外郭高墙但按连片建成区计，1622年普查1.58万、1700年实居达3万（de Vries 1984 p.271荷兰官方人口统计），>1万定小城。' },
     { id: 'city_gdansk', name: '格但斯克', factionId: 'bolan', lat: 54.35, lng: 18.64, type: 'small_city', isPort: true, troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '[16至17世纪波兰王室普鲁士第一海港·红砖哥特城墙与星形棱堡巨邑] 波罗的海谷物贸易总枢纽格但斯克（但泽），具红砖城门与巨型棱堡环墙，1600年城居5万、1650年峰值达7万（de Vries 1984 p.272、Bogucka波兰城市史），>1万（未满8万）定小城。' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', isPort: true, troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '[13至17世纪波美拉尼亚公国都城与瑞属重镇·红砖石砌环城墙与星形棱堡] 奥得河口汉萨名城什切青，具中世纪红砖城墙与17世纪瑞典星形棱堡（1677年抗大选帝侯六月围攻），1600–1670年城居约1.2–1.8万（Bairoch 1988 p.30），>1万定小城。' },
-    { id: 'city_toulouse', name: '图卢兹', factionId: 'gaolu', lat: 43.6, lng: 1.44, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '[中世纪图卢兹伯国都城至17世纪朗格多克首府·古罗马红砖石砌环城墙] 加龙河玫瑰红砖名城图卢兹，1218年抗西蒙·德·蒙福尔围攻，1600–1700年城墙内常住人口达4–4.3万（de Vries 1984 p.274），>1万定小城。' },
-    { id: 'city_nantes', name: '南特', factionId: 'bulietani', lat: 47.21, lng: -1.55, type: 'small_city', isPort: true, troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '[14至15世纪布列塔尼公爵驻都至17世纪大西洋商港·花岗岩公爵堡与石墙] 卢瓦尔河口重镇南特，弗朗索瓦二世重筑花岗岩公爵石堡与环城石墙，1600年城居约2.5万、1700年达4万（de Vries 1984 p.273），>1万定小城。' },
+    { id: 'city_toulouse', name: '图卢兹', factionId: 'gaolu', lat: 43.6, lng: 1.44, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '[中世纪图卢兹伯国都城至19世纪中叶朗格多克首府·古罗马红砖石砌城垣与米迪运河商都] 加龙河红砖名城图卢兹，1851年法国官方普查本城常住人口达9.4万（Bairoch 1988载9.4万），≥8万容差线，定中城。' },
+    { id: 'city_nantes', name: '南特', factionId: 'bulietani', lat: 47.21, lng: -1.55, type: 'medium_city', isPort: true, troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '[14至15世纪布列塔尼公国驻都至18至19世纪中叶法国卢瓦尔河口大港·花岗岩公爵石堡与石构港区] 18世纪法国大西洋航运都会南特，1851年法国官方普查本城常住人口达9.6万（Bairoch 1988载9.6万），≥8万容差线，定中城。' },
     { id: 'city_florence', name: '佛罗伦萨', factionId: 'florence', lat: 43.76, lng: 11.25, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '[14世纪初共和国与文艺复兴期·阿诺河巨石第三城墙] 黑死病前（1338年）佛罗伦萨第三道石墙内实居人口约9.5–11万（乔瓦尼·维拉尼《新编年史》XI.94面粉消费账册折算；Chandler 1300年表9.5万），≥8万且逾10万，定中城。' },
     { id: 'city_venice', name: '威尼斯', factionId: 'kelite', lat: 45.44, lng: 12.31, type: 'medium_city', isPort: true, troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '[15至16世纪威尼斯共和国·潟湖砖石水城] 威尼斯主岛六区建成区1563年官方普查168,627人、1575年鼠疫前达17.5万（Beloch《意大利人口史》及de Vries 1550年表15.8万），>10万定中城。' },
         { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'SPARTANS', note: '[前4世纪大希腊阿契塔执政期·巨石地峡港都] 斯巴达殖民母邦塔兰托前4世纪盛期石墙围合530公顷，城居峰值约8–10万（斯特拉波VI.3.4载可征市民步骑兵3.4万，Hansen 2004《城邦名录》折算城居8–10万），≥8万容差线，定中城。' },
-{ id: 'city_naples', name: '那不勒斯', factionId: 'xixiliwangguo', lat: 40.85, lng: 14.26, type: 'medium_city', isPort: true, troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '[16至17世纪西属那不勒斯王国·凝灰岩棱堡首府] 1600–1650年那不勒斯城墙与贴城关厢实居达28–30万（1656年大鼠疫前户籍，de Vries 1600年表28.1万、Chandler表30万），<40万而>10万，定中城。' },
-    { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'small_city', isPort: true, troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'SPANISH' , note: '[13至17世纪阿拉贡联合王国与加泰罗尼亚首府·海梅一世与佩德罗四世巨石城墙] 地中海海权与商法重镇巴塞罗那，筑完整中世纪三道巨石城墙与船坞石垣，1340年及1700年城居约4.3–6.4万（de Vries 1984 p.277及Chandler表，未满8万），>1万定小城。' },
+{ id: 'city_naples', name: '那不勒斯', factionId: 'xixiliwangguo', lat: 40.85, lng: 14.26, type: 'big_city', isPort: true, troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' , note: '[诺曼安茹至波旁两西西里王国首都·圣埃莫巨石星堡与海湾石构王都那不勒斯] 1656年大鼠疫前达30万，波旁王都时期1850年实测达41.6万（Chandler 1850年表41.6万），≥40万容差线，定大城。' },
+    { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', isPort: true, troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'SPANISH' , note: '[13至19世纪中叶加泰罗尼亚首府·中世纪巨石环城墙与巴塞罗内塔港厢] 地中海商工重镇巴塞罗那1850年拆墙前夕石墙内及巴塞罗内塔关厢实测达16.7万（Chandler 1850年表16.7万、Bairoch 1988载17.5万），≤1850年峰值>10万，定中城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：格拉纳达：西班牙安达卢斯
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'ORIE' , note: '[14至15世纪纳斯尔王朝·石砖红堡与阿尔拜辛城垣] 纳斯尔王朝末期（1450–1492年）格拉纳达城垣与阿尔拜辛城区人口约10–16.5万（Ladero Quesada据摩尔人税册考算及Chandler 1450年表16.5万），>10万定中城。' },
     { id: 'city_genoa', name: '热那亚', factionId: 'kelimiya', lat: 44.4, lng: 8.94, type: 'medium_city', isPort: true, troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN' , note: '[13至17世纪热那亚共和国·依山巨石新旧城墙港都] 热那亚海权与金融黄金期石墙城区1300年约8–10万、1650年约7.5–9万（Chandler 1300年表10万；Bairoch《欧洲城市人口》），≥8万容差线，定中城。' },
@@ -2543,10 +2543,10 @@ export const CITIES_V2: CityDataV2[] = [
 { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '[腓力二世菲利波波利斯至罗马拜占庭奥斯曼期·三丘巨石夹砖环城墙] 色雷斯平原首邑普罗夫迪夫，现存马其顿巨石基与罗马拜占庭砖石城门（Hisar Kapia），罗马盛期及17世纪奥斯曼时期（切莱比记述与税册）城居达2–3万，>1万且具石墙，定小城。' },
 
     { id: 'city_brest', name: '布列斯特', factionId: 'litaowan', lat: 52.09, lng: 23.68, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '[14至16世纪立陶宛大公国西布格河要邑布列斯特·木土城堡与木构市镇] 1409年雅盖沃与维陶塔斯筹划格伦瓦尔德会战地、1596年教会联合会议城，据1566年立陶宛王室清册实载1,091户约6000–6500人且市镇仅具木土防垣无石砖环墙，定城寨。' },
-    { id: 'city_zhytomyr', name: '日托米尔', factionId: 'jialixiya', lat: 50.25, lng: 28.65, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '[10世纪德列夫利安聚落至14至17世纪立陶宛波属基辅省副邑·捷捷列夫河木构城堡市镇] 1320年格季米纳斯并入立陶宛，1545年王室巡视清册详载日托米尔为双层原木塔楼城堡及百余户木屋市镇，≤1700年屡经鞑靼与哥萨克战火常住仅2000–4000人，定城寨。' },
+    { id: 'city_zhytomyr', name: '日托米尔', factionId: 'jialixiya', lat: 50.25, lng: 28.65, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '[立陶宛波兰重镇至1804年后俄属沃伦省会日托米尔·捷捷列夫河花岗岩高岸省府城] 1793年入俄、1804年正式定为沃伦省会后迅速扩建砖石官署街区，据1850年俄国官方统计本城常住人口达2.6–2.8万，>1万定小城。' },
 
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '[14至17世纪普法尔茨选侯国首府·砂岩城堡与石墙大学城] 1196年建镇、1386年设海德堡大学，为莱茵普法尔茨选侯驻都与有市政户籍的居民城（非守道关塞），1689年战火前城居约6000–8000人且具完整中世纪石砌城墙，按<1万石墙城定小城。' },
-    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'small_city', isPort: true, troops: 10000, region: 'HRE', buildingStyle: 'SAXONS' , note: '[13至17世纪汉萨核心帝国自由市·1616至1625年约翰·范·瓦尔肯堡巨型砖石棱堡环墙] 易北河下游大港汉堡，三十年战争前建成22座棱堡巨型环城防线而免遭战火，1650年城居达7.5万、1700年约7万（de Vries 1984 p.272，贴近但未满8万中城容差线），定小城。' },
+    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'medium_city', isPort: true, troops: 10000, region: 'HRE', buildingStyle: 'SAXONS' , note: '[13至19世纪中叶汉萨自由市与德国第一海港·22座巨型砖石棱堡环墙与圣保利关厢] 易北河大港汉堡1650年7.5万，至1850年棱堡城垣及紧邻圣保利关厢实测达14.9万（Chandler 1850年表14.9万、Bairoch 1988），≤1850年峰值>10万，定中城。' },
     { id: 'city_lubeck', name: '吕贝克', factionId: 'hansa', lat: 53.87, lng: 10.69, type: 'small_city', isPort: true, region: 'HRE', buildingStyle: 'GERMANIC', troops: 10000, note: '[13至16世纪汉萨同盟盟主帝国自由市·红砖哥特城墙与荷尔斯泰因门] 波罗的海贸易枢纽吕贝克具完整红砖环城墙与棱堡，1400–1600年城居稳定达2.2–2.5万（de Vries 1984 p.272及Hammel-Kiesow吕贝克地籍考证），>1万定小城。' },
     { id: 'city_amsterdam', name: '阿姆斯特丹', factionId: 'nidelan', lat: 52.3676, lng: 4.9041, type: 'medium_city', isPort: true, troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '[17世纪荷兰黄金时代·砖石星形棱堡运河商都] 荷属东印度公司总部阿姆斯特丹1650年约17.5万、1700年运河环棱堡城垣内达20万（de Vries 1984 p.271荷兰户籍实测），>10万定中城。' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'BRITONS' , note: '[罗马埃博拉库姆、维京约维克至中世纪英格兰北都·完整4公里镁质石灰岩城墙] 英格兰保存最完整中世纪石砌四门环城墙与克利福德塔，1377年人头税居英格兰第二大城，1650–1700年城居约1.2–1.4万（de Vries 1984 p.270）且具完整石墙，定小城。' },
@@ -2558,9 +2558,9 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_shangbeili', name: '尚贝里', factionId: 'safuyi', lat: 45.57, lng: 5.92, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '[13至16世纪中叶萨伏伊伯国与公国首府·公爵石堡与十四世纪石砌环城墙] 1295–1563年萨伏伊王朝法定首都尚贝里，控阿尔卑斯西麓孔道，1352年后筑完整石砌环城墙与三城门，16世纪迁都前城居约6000–8000人，<1万但具完整石墙，定小城。' },
-    { id: 'city_lyon', name: '里昂', factionId: 'luoma_diguo', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '[罗马高卢首府卢格杜努姆·罗讷河石砌都城郭] 性质与石墙锁定罗马三高卢首府卢格杜努姆（罗马时城居约5–7万）；≤1700年同址城居峰值于1700年达9.7万（de Vries 1984 p.273），≥8万容差线，定中城。' },
+    { id: 'city_lyon', name: '里昂', factionId: 'luoma_diguo', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '[罗马高卢首府卢格杜努姆·罗讷河石砌都城郭] 性质与石墙锁定罗马三高卢首府卢格杜努姆（罗马时城居约5–7万）；≤1850年同址城居峰值于1700年达9.7万（de Vries 1984 p.273），≥8万容差线，定中城。' },
 
-    { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', isPort: true, troops: 10000, region: 'BRITONS', buildingStyle: 'FRANKS' , note: '[12至15世纪英属阿基坦首府至17世纪法国大港·三道石灰岩环城墙与喇叭堡] 加龙河口葡萄酒海贸都会波尔多，1302年扩筑第三道巨石城墙围合全城，1600年城居约4万、1700年达4.5万（de Vries 1984 p.273），>1万定小城。' },
+    { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'medium_city', isPort: true, troops: 10000, region: 'BRITONS', buildingStyle: 'FRANKS' , note: '[12至15世纪阿基坦首府至18至19世纪中叶法国大西洋巨港·石灰岩城垣与月亮港石构城区] 18世纪外贸黄金期扩建石构广场街区，1851年法国官方人口普查波尔多本城实居达13.1万（Chandler 1850年表13万），>10万定中城。' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '[14世纪天主教阿维尼翁教廷驻都·4.3公里三十九方塔完整石灰岩城墙] 1309–1377年七任教皇驻都，英诺森六世与乌尔班五世筑现存完整巨石垛口环城墙与教皇宫，1370年代城居峰值达3–4万（Guillemain《阿维尼翁教廷与城市考》），>1万定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：米兰：意大利，用意大利古典石堡
     { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 10000, region: 'LOMBARDS', buildingStyle: 'LATIN', note: '[伦巴第至中世纪公国盛期·石砖双环城垣大邑] 13世纪末邦维辛《米兰奇观》载城民约15万，1600年西班牙墙内实测12–13万（de Vries 1600年表12万、Chandler 1300年表12万），>10万定中城。' },
@@ -2574,9 +2574,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_eger', name: '维雷茨基', factionId: 'mazhaer', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'MAGYAR', note: '[895年马扎尔七部征服潘诺尼亚通道·喀尔巴阡山维雷茨基山口木栅边卡聚落] 《匈牙利人业绩记》（Gesta Hungarorum）载895年阿尔帕德率马扎尔部众越维雷茨基山口入蒂萨平原、1241年拔都主力亦破此山口原木鹿砦栅门入匈，木栅不算墙且山口聚落不足千人，定城寨。' },
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：都柏林：爱尔兰，凯尔特（region=CELTS_FEUDAL）
-    { id: 'city_dublin', name: '都柏林', factionId: 'dalriada', lat: 53.34, lng: -6.26, type: 'small_city', isPort: true, troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' , note: '[诺斯都柏林王国至12至17世纪英属爱尔兰首府·利菲河石砌城堡与环城墙] 1100年诺斯—爱尔兰时期已筑石墙，盎格鲁-诺曼扩建都柏林城堡与市政石垣，1650年约1.7万、1700年飙升至6万（de Vries 1984 p.271），>1万定小城。' },
+    { id: 'city_dublin', name: '都柏林', factionId: 'dalriada', lat: 53.34, lng: -6.26, type: 'medium_city', isPort: true, troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' , note: '[诺斯都柏林王国至18至19世纪中叶爱尔兰首府·利菲河石砌城堡与乔治亚连片城区] 1100年筑石墙、1700年城居6万，至1850年都柏林连片城区实测达25.8万（1851年爱尔兰普查及Chandler 1850年表26万），≤1850年峰值>10万，定中城。' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡舍尔：爱尔兰凯尔特王城（region=CELTS_FEUDAL）
-    { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS', note: '[12至17世纪爱尔兰芒斯特旧王都与主教市镇·石灰岩环城墙卡舍尔] 卡舍尔岩皇家圣地山脚自治市镇，1319年爱德华二世颁筑墙税修筑完整石灰岩环城墙（围合12公顷市民城区），≤1700年城居约1500–3000人，<1万具完整石墙，定小城。' },
+    { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS', note: '[12至17世纪爱尔兰芒斯特旧王都与主教市镇·石灰岩环城墙卡舍尔] 卡舍尔岩皇家圣地山脚自治市镇，1319年爱德华二世颁筑墙税修筑完整石灰岩环城墙（围合12公顷市民城区），≤1850年城居约1500–3000人，<1万具完整石墙，定小城。' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」只给一级、二级靠 region(BRITONS) 推
     //    → 归 CELTS：利默里克在爱尔兰（凯尔特语族地区，region 里的 BRITONS 是英伦泛称，不适用爱尔兰）
     { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'small_city', isPort: true, troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '[13至17世纪爱尔兰香农河口港城·英王城与爱尔兰城双重石砌环城墙] 约翰王城堡及南北双城区完整石灰岩高墙（1651与1690–1691年两度抗击克伦威尔军与威廉三世重炮围攻），17世纪下半叶城居约5000–8000人，<1万具坚固石墙，定小城。' },
@@ -2589,20 +2589,20 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS', note: '[15至17世纪布列塔尼公国都城与高等法院首府·三代花岗岩石砌城墙] 15世纪扩筑完整三道石砌环城墙与莫尔代莱斯石门，1600–1700年城居达2–3万（de Vries 1984 p.273载1700年约2.5–3万），>1万且具石墙，定小城。' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xixiliwangguo', lat: 37.07, lng: 15.28, type: 'medium_city', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'SICILIANS' , note: '[前4至前3世纪希腊化西西里霸主·埃皮波莱巨石长城] 狄奥尼修斯一世至阿加索克利、希耶罗二世时期27公里巨石城垣内五区连片人口约10–15万（斯特拉波VI.2.4及Chandler前300年表10–12万），>10万定中城。' },
-    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'walajiyia', lat: 44.43, lng: 26.1, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '[16至17世纪瓦拉几亚公国都城·登博维察河畔王宫与连片商工都邑] 弗拉德三世筑旧宫后渐替特尔戈维什泰为瓦拉几亚正式都城，17世纪下半叶切莱比与西方使臣实记城居达4–5万（Chandler 1700年表5万、Giurescu《布加勒斯特史》），>1万定小城。' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'walajiyia', lat: 44.43, lng: 26.1, type: 'medium_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '[16至19世纪中叶瓦拉几亚公国首都·登博维察河畔王宫与巴尔干第一商都] 1700年约5万，至1850年瓦拉几亚首府布加勒斯特连片城区常住人口达10.4万（Chandler 1850年表10.4万、Giurescu《布加勒斯特史》），>10万定中城。' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'MAGYAR', note: '[15世纪塞尔维亚专制公国都与匈牙利南门要邑·卡莱梅格丹双重巨石城垣] 1404年斯特凡·拉扎列维奇扩筑上城下城双重石墙，1456年匈雅提守城大捷，16–17世纪奥斯曼统治期下城多尔乔尔商坊繁盛、城居达4–6万（切莱比游记及Bairoch表5万），>1万定小城。' },
 
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
-    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', isPort: true, troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' , note: '[12至17世纪苏格兰王国首都·火山岩城堡与弗洛登石砌环城高墙] 苏格兰王室议会与最高法院首府爱丁堡，1450年筑国王墙、1513年后扩筑弗洛登石墙，1650–1700年连同坎农门关厢城居达3–3.5万（de Vries 1984 p.271），>1万定小城。' },
-    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian_si', lat: 59.85, lng: 17.63, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '[6至11世纪瑞典维京时代斯维阿王廷旧乌普萨拉·皇家大土冢木构神庙与祭祀聚落] 不来梅的亚当《汉堡大主教史》与斯诺里《挪威王列传》所载北欧斯维阿诸王加冕土冢与木构大神庙中心，无石砖城墙且中世纪乌普萨拉至1700年常住仅约3000–4000人，定城寨。' },
+    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'medium_city', isPort: true, troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' , note: '[12至19世纪中叶苏格兰首都·火山岩城堡、弗洛登石墙与新旧城连片城区] 苏格兰王都爱丁堡18世纪末兴建石构新城，至1850年新旧城连片城区实测达16.0万（1851年苏格兰官方普查160,302人），≤1850年峰值>10万，定中城。' },
+    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian_si', lat: 59.85, lng: 17.63, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '[6至11世纪瑞典维京时代斯维阿王廷旧乌普萨拉·皇家大土冢木构神庙与祭祀聚落] 不来梅的亚当《汉堡大主教史》与斯诺里《挪威王列传》所载北欧斯维阿诸王加冕土冢与木构大神庙中心，无石砖城墙且中世纪乌普萨拉≤1850年常住仅约3000–4000人，定城寨。' },
     // 🔴 [2026-10-25 主人定「B」] 维斯比/哥特兰＝哥特人起源地 Scandza；离最近据点斯德哥尔摩约 190km（>50km）故新建；文化按当地政权＝北欧日耳曼 → VIKINGS
     { id: 'city_weishibi', name: '维斯比', factionId: 'donggete', lat: 57.64, lng: 18.29, type: 'stockade', isPort: true, troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '[铁器时代至维京前期哥得兰岛海上聚落（哥特人起源传说地）·海岸干石木栅商港营聚] 约达尼斯《哥特史》4章所述哥特南迁传说与维京时代哥得兰海商锚地（本据点锁定VIKINGS维京及早期哥特阶段，早于13世纪日耳曼汉萨石墙），维京期仅土垒木栅且常住数千人<1万，定城寨。' },
-    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', isPort: true, troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '[17世纪英格兰王国·石砖都城与关厢] 斯图亚特王朝晚期伦敦城墙内外及威斯敏斯特、南华克连片关厢1650年约40万、1700年达57.5万（Chandler 1987；Wrigley英格兰人口史考算），≤1700年峰值>50万，定大城。' },
+    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', isPort: true, troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '[17世纪英格兰王国·石砖都城与关厢] 斯图亚特王朝晚期伦敦城墙内外及威斯敏斯特、南华克连片关厢1650年约40万、1700年达57.5万（Chandler 1987；Wrigley英格兰人口史考算），≤1850年峰值>50万，定大城。' },
 
 
     { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS' , note: '[盎格鲁撒克逊威塞克斯王都至诺曼期·罗马地基燧石切石环城墙古都] 阿尔弗雷德大帝规划街道并重修罗马基石环城墙与西门，11–12世纪《温彻斯特调查》载城居峰值约8000–10000人（Keene 1985《中世纪温彻斯特考》），具完整石墙定小城。' },
-    { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[17世纪法兰西波旁期·石砌棱堡都城郭] 路易十四时期巴黎城垣及圣日耳曼等连片关厢1650年约42万、1700年达50–53万（de Vries《欧洲城市化1500–1800》及Chandler 1700年表），≤1700年峰值≥50万，定大城。' },
+    { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[17世纪法兰西波旁期·石砌棱堡都城郭] 路易十四时期巴黎城垣及圣日耳曼等连片关厢1650年约42万、1700年达50–53万（de Vries《欧洲城市化1500–1800》及Chandler 1700年表），≤1850年峰值≥50万，定大城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：沙特尔（法国）：法兰克，改前误挂意大利(LATIN)
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'FRANKS', note: '[12至17世纪法兰西沙特尔伯爵与朝圣主教城·厄尔河石砌环城墙与纪尧姆石门] 中世纪经院哲学与哥特大教堂圣城沙特尔，筑完整石砌环城墙（1591年亨利四世围攻石墙破城并于此加冕），16–17世纪城居约1–1.2万（de Vries 1984 p.273）且具石墙，定小城。' },
     { id: 'city_luoma', name: '罗马', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', isPort: true, troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA' , note: '[1至2世纪罗马帝国盛期·砖石帝都城垣] 罗马帝国元首制盛期奥勒良城墙圈及台伯河西岸连片城区居民峰值约80–100万（奥古斯都谷物配给民册与Storey 1997／Modelski 2003考算），>50万定大城。' },
@@ -2611,12 +2611,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jiadisi', name: '加的斯', factionId: 'buni', lat: 36.52, lng: -6.28, type: 'small_city', isPort: true, troops: 10000, region: 'CARTHAGE', buildingStyle: 'SPANISH' , note: '[腓尼基迦太基西海巨埠至16至17世纪西印度大帆船港·巨石棱堡环海防墙] 古典加迪尔（斯特拉波III.5.3载其骑士富豪人数仅次罗马、帕塔维乌姆），1596年后西班牙筑完整巨石海防城墙与陆门，1700年城居达4万（de Vries 1984 p.277），>1万定小城。' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[16至17世纪葡萄牙王国·费尔南多石墙海权王都] 大航海鼎盛期里斯本费尔南多石墙及沿河关厢1600年约10–13万、1700年达16.5–18万（罗德里格斯户籍考证及de Vries 1700年表18万），>10万定中城。' },
 
-    { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'medium_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '[17世纪末哈布斯堡帝国皇都·砖石星形棱堡城垣与关厢] 1683年抗奥斯曼大围攻后维也纳内城棱堡与近郊关厢（Vorstädte）迅速繁盛，1700年城关实居达11.4万（de Vries 1984 p.274及Chandler 1700年表11.4万），≤1700年峰值>10万，定中城。' },
-    { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'small_city', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'BOHEMIANS' , note: '[14世纪卢森堡查理四世与1600年鲁道夫二世帝都·饥饿石墙与四城石垣] 神圣罗马帝国皇都布拉格（老城、新城、小城、城堡区石砌高墙合围），1370年代约4万、1600年鲁道夫二世驻跸期峰值达6–7万（Janáček考算及de Vries 1600年表6万，未满8万），>1万定小城。' },
-    { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'small_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR' , note: '[15世纪匈牙利马加什一世黄金时代王都·布达城堡山与佩斯双岸石墙] 多瑙河西岸王都布达与东岸商城佩斯均筑完整石砌城垣，1490年马加什一世卒前双城连片常住人口约2.5–3.5万（Kubinyi《中世纪晚期布达人口史》），>1万定小城。' },
+    { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'big_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '[18至19世纪中叶哈布斯堡奥地利帝国皇都·砖石星形棱堡内城与连片关厢] 哈布斯堡皇都维也纳内城棱堡及近郊连片关厢（Vorstädte）1700年11.4万，至1850年实测达42.6万（Chandler 1850年表42.6万、Bairoch 1988载44.4万），≤1850年峰值≥40万容差线，定大城。' },
+    { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'BOHEMIANS' , note: '[14世纪卢森堡查理四世神罗皇都至19世纪中叶波希米亚首府·四城巨石环垣与砖石棱堡] 查理四世扩建新城石墙时约4–5万，至1850年奥属波希米亚首府四城垣内实测达11.8万（Chandler 1850年表11.8万、Bairoch 1988），>10万定中城。' },
+    { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'medium_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR' , note: '[15世纪马加什一世匈牙利王都布达至19世纪中叶布达与佩斯双城·多瑙河石砌城堡山与佩斯城区] 1849年塞切尼链桥贯通多瑙河两岸，1850年布达、老布达与佩斯连片建成区实测达15.6万（Chandler 1850年表15.6万），>10万定中城。' },
     { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'mazhaer', lat: 45.749, lng: 22.888, type: 'stockade', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR', note: '[15世纪匈牙利摄政匈雅提家族领地胡内多阿拉·哥特石堡与无墙冶铁小镇] 匈雅提·亚诺什与马加什一世修筑科尔温石堡，但堡外市镇（Oppidum）无环城石墙且非守道关塞，1512年地籍册实载仅196户约1000人、17世纪约1200人，定城寨。' },
     { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'stockade', troops: 10000, region: 'HUNS', buildingStyle: 'HUNS', note: '[5世纪匈人帝国阿提拉王庭营地·蒂萨河与马罗什河汇流平原大型木构王宫营帐] 449年东罗马使臣普里斯库斯《出使匈人纪》亲访详记阿提拉大本营具雕花原木围栏、木构大殿与浴池而无城石墙（非守道关塞），草原汗庭常住侍卫部众不足万人城市规模，定城寨。' },
-    { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' , note: '[12至16世纪神圣罗马帝国最大自由市与选侯大主教城·7.5公里十二门中世纪石墙] 1180年起修筑半圆形巨型石砖城墙（现存塞弗林门、哈嫩门等巨型双塔石门），1300–1600年城居长期维持4–5.2万（de Vries 1984 p.272），>1万定小城。' },
+    { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' , note: '[罗马科隆尼亚、中世纪神圣罗马帝国最大自由市至19世纪中叶莱茵首邑·7.5公里十二石门半圆巨墙] 中世纪4万，1815年入普鲁士后重筑砖石要塞环墙，1849年普鲁士官方普查墙内常住人口达9.7万（Chandler 1850年表9.7万），≥8万容差线，定中城。' },
     { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'wende', lat: 50.402359, lng: 7.252187, type: 'stockade', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC', note: '[11至13世纪莱茵普法尔茨伯爵创建拉赫本笃会修道院·火山湖畔罗曼石教堂修院聚落] 1093年拉赫的亨利二世创立之本笃会修道院（非军事要塞亦非设防市镇），中世纪常住修士与依附佃工仅数百人<1万，定城寨。' },
     { id: 'city_yachen', name: '亚琛', factionId: 'falanji', lat: 50.77, lng: 6.08, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' , note: '[8至16世纪查理曼加洛林王城与神圣罗马加冕自由市·巴尔巴罗萨内外两道石墙] 查理大帝宫廷中枢，腓特烈一世与13–14世纪市民修筑内外两道多塔巨石环城墙（庞特门与马尔斯门现存），1500–1600年城居约1.5–1.8万（de Vries 1984 p.272），>1万定小城。' },
     { id: 'city_meiyinci', name: '美因茨', factionId: 'falanji', lat: 50, lng: 8.27, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '[中世纪神圣罗马帝国首席选侯大主教驻都·莱茵河砂岩石砌环城墙与棱堡] 「黄金美因茨」帝国大宰相驻地与古腾堡印刷发祥城，具中世纪红砂岩环城墙与17世纪圣约翰棱堡，1500–1700年城居约1.5–2万（de Vries 1984 p.273），>1万定小城。' },
@@ -2635,10 +2635,10 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', mirror: true , note: '[11至13世纪初基辅罗斯盛期·土垒石门与波多尔商城区] 1240年蒙军破城前雅罗斯拉夫城垣及第聂伯河畔波多尔商区常住人口约4.5–5万（托洛奇科《古基辅研究》考古测算及Chandler 1100–1200年表4.8–5万；1700年仅约2万），未达8万容差线，定小城。' },
     { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'luosi', lat: 58.52, lng: 31.27, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '[12至15世纪诺夫哥罗德封建共和国·沃尔霍夫河红砖石克里姆林与外郭土木高垣] 俄罗斯北方汉萨商贸共和国首府大诺夫哥罗德，石砖内城（Detinets）与两岸五端连片城区14–15世纪盛期常住人口达2.5–3.5万（雅宁《诺夫哥罗德桦树皮文书与城市考古》），>1万定小城。' },
-    { id: 'city_ladoga', name: '拉多加', factionId: 'luosi', lat: 59.9967, lng: 32.2961, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '[8至10世纪瓦良格留里克初驻旧拉多加·沃尔霍夫河木土垒墙与小石垒北欧商站] 《往年纪事》862年条载留里克初驻拉多加（Aldeigjuborg），考古发掘北欧长屋手工业聚落及早期干石土垒小堡，10世纪后重心南移诺夫哥罗德，≤1700年常住仅1000–2000人，定城寨。' },
+    { id: 'city_ladoga', name: '拉多加', factionId: 'luosi', lat: 59.9967, lng: 32.2961, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '[8至10世纪瓦良格留里克初驻旧拉多加·沃尔霍夫河木土垒墙与小石垒北欧商站] 《往年纪事》862年条载留里克初驻拉多加（Aldeigjuborg），考古发掘北欧长屋手工业聚落及早期干石土垒小堡，10世纪后重心南移诺夫哥罗德，≤1850年常住仅1000–2000人，定城寨。' },
     { id: 'city_baihu', name: '白湖', factionId: 'luosi', lat: 60.03, lng: 37.79, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '[9至15世纪瓦良格西涅乌斯驻地与白湖公国首邑·谢克斯纳河源高大土垒木栅克里姆林] 《往年纪事》862年条载留里克之弟西涅乌斯驻白湖（Beloozero），1487年伊凡三世筑高30米土垒原木塔墙而无石砖城垣，1678年俄国普查册载镇民不足3000人，定城寨。' },
-    { id: 'city_mosike', name: '莫斯科', factionId: 'eluosi_diguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '[16至17世纪沙皇俄国·红砖克里姆林与白城土城环垣] 莫斯科白城与土城（斯科罗多姆）环垣内1600年约10–12万、1700年约13–15万（沃达尔斯基据1678年俄国户籍册考算及Chandler 1700年表13万），>10万定中城。' },
-    { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'big_city', isPort: true, troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '🔴 [2026-11-12 按史定级] 俄罗斯新都圣彼得堡；彼得大帝1703年建，1712-1918俄罗斯帝国首都；按历史峰值口径19世纪帝国首都超50万（1800年22万，1850年超50万）；按 2026-10-25 标准：≥40 万 → 大城' },
+    { id: 'city_mosike', name: '莫斯科', factionId: 'eluosi_diguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '[16至17世纪沙皇俄国帝都至19世纪中叶帝国旧都·红砖克里姆林与白城土城环垣] 莫斯科1700年约13–15万，1812年大火后重建，至1850年俄国官方统计及Chandler表实测常住人口为36.6–37.3万（Bairoch 1988载36.6万、Chandler 1850年表37.3万，贴近而未满40万大城容差线），定中城。' },
+    { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'big_city', isPort: true, troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[18至19世纪中叶俄罗斯帝国首都·涅瓦河花岗岩护岸与彼得保罗石砖棱堡帝都] 1703年彼得一世建城、1712年定为俄罗斯帝国首都，1800年城居22万、1850年实测达50.2万（Chandler 1850年表50.2万、Bairoch 1988），≤1850年峰值>50万，定大城。' },
     { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'eluosi_diguo', lat: 54.92, lng: 37.41, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '[14至17世纪莫斯科南屏奥卡河防线分封王公城·勇者弗拉基米尔木石内堡与无墙木屋商区] 1374年筑橡木克里姆林（1556年改筑小内堡而外镇Posad无石墙），据俄国1552年清册623户约3000人、1678年清册约2500人（沃达尔斯基考证）<1万，定城寨。' },
     { id: 'city_fulajimier', name: '弗拉基米尔', factionId: 'suzidaer', lat: 56.12, lng: 40.4, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '[12至13世纪初弗拉基米尔-苏兹达尔大公国首都·白石金门与土垒木石重城] 安德烈·博戈柳布斯基与大窝弗谢沃洛德时期东北罗斯最高大公都城，筑白石金门与7公里城垣，1238年拔都破城前城居约1.5–2.5万（沃罗宁《东北罗斯建筑与城市考古》），>1万定小城。' },
     { id: 'city_simolengsike', name: '斯摩棱斯克', factionId: 'daniebo', lat: 54.78, lng: 32.04, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '[12世纪罗斯公国都城至1596至1602年鲍里斯沙皇筑城·6.5公里三十八塔砖石巨墙] 第聂伯河通莫斯科西门重镇，戈东诺夫命筑厚达5米、周6.5公里巨石红砖长城（1609–1611年抗波兰西吉斯蒙德三世二十月围攻），16–17世纪城居约1.5–2.5万且具砖石巨墙，定小城。' },
@@ -2655,10 +2655,10 @@ export const CITIES_V2: CityDataV2[] = [
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', isPort: true, troops: 10000, region: 'EAST', buildingStyle: 'LATIN', mirror: true, note: '[14至15世纪热那亚黑海殖民首府与奥斯曼克里米亚大港·双层巨石二十六塔城墙] 黑海丝路终点卡法（费奥多西亚），热那亚筑内外两道巨石高塔城垣，1475年奥斯曼攻占前及16世纪税册实载城居达2–4万（Balard热那亚罗马尼亚考及伊本·白图泰游记），>1万定小城。' },
 
-    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'eluosi_diguo', lat: 51.53, lng: 46.03, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1590至1700年沙俄伏尔加河中游边防据点·扎谢金王公所筑双层松木立栅塔寨] 1590年督军图罗夫与扎谢金筑原木尖塔立栅边城防诺盖骑兵，1670年拉辛哥萨克起义军占领，1678–1700年俄国军镇册载驻军与商民约3000–5000人且为纯木栅墙，定城寨。' },
+    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'eluosi_diguo', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[16世纪末沙俄河防寨至18至19世纪中叶伏尔加中游第一大省会萨拉托夫·伏尔加西岸砖石省城] 1780年升萨拉托夫省会后凭伏尔加粮盐航运人口激增，据1850年俄国官方城市统计本城实居达5.2–5.5万（Chandler 1850年表5.2万），>1万定小城。' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' , note: '[14至17世纪立陶宛大公国首都·格季米纳斯红砖石堡与1503年九门砖石环城墙] 格季米纳斯迁都维尔纽斯，亚历山大一世于1503–1522年筑完整砖石环城墙（黎明门现存），1600–1650年大洪水战火前城居达2–3万（Kiaupa《立陶宛史》及Bairoch表），>1万定小城。' },
 
-    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'small_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' , note: '[16世纪末至17世纪波兰立陶宛联邦新都·双道红砖哥特老城墙与皇家城堡] 1596年西吉斯蒙德三世自克拉科夫迁王廷至华沙，具完整双层红砖环城墙与瓮城（Barbakan），1655年瑞军破城前及1700年城居达2.5–3万（Bogucka及de Vries 1984 p.275），>1万定小城。' },
+    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' , note: '[16世纪末波兰立陶宛联邦迁都至19世纪中叶波兰首府·双道红砖老城墙与亚历山大砖石要塞] 1596年迁都华沙，1792年突破10万，至1850年官方统计本城实居达16.3万（Chandler 1850年表16.3万、Bairoch 1988），>10万定中城。' },
 
     // ── 2026-08-04 新增：波兹南（大波兰公国治所；普热梅斯二世故都）──
     { id: 'city_poznan', name: '波兹南', factionId: 'bolan', lat: 52.4064, lng: 16.9252, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES' , note: '[10至17世纪大波兰首府与皮亚斯特旧都·红砖双层环城墙贸易大邑] 普热米斯尔二世筑完整红砖环城墙，16世纪波兰文艺复兴商贸盛期城墙内外连片城区人口达1.8–2万（Bogucka & Samsonowicz 1986《波兰城市与市民史》），>1万且具砖墙，定小城。' },
@@ -2666,27 +2666,27 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kelakefu', name: '克拉科夫', factionId: 'bolan', lat: 50.06, lng: 19.94, type: 'small_city', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'POLES', note: '[14至16世纪波兰王国首都雅盖隆黄金时代·瓦维尔石堡与红砖弗洛里安门环城墙] 卡齐米日大帝扩建主城并连结卡齐米日犹太石墙辅城，1550–1600年波兰极盛期连片城居达2.8–3.5万（Bogucka & Samsonowicz 1986及de Vries表2.8万），>1万定小城。' },
     { id: 'city_liweifu', name: '利沃夫', factionId: 'bolan', lat: 49.84, lng: 24.03, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '[14至17世纪波兰红鲁塞尼亚首府·双层石砖高墙与火药塔贸易坚城利沃夫] 东方陆路商队门户利沃夫，筑内外两道石砖高墙与18座行会戍塔（1648与1672年抗赫梅利尼茨基与奥斯曼围攻），1600–1650年城居达2–2.5万（Kapral利沃夫人口史），>1万定小城。' },
     { id: 'city_liga', name: '里加', factionId: 'baojian_qishi', lat: 56.95, lng: 24.1, type: 'small_city', isPort: true, troops: 10000, region: 'LITHUANIANS', buildingStyle: 'GERMANIC', note: '[13至17世纪利沃尼亚首府与瑞属波罗的海第二大港·红砖石墙与近代星形棱堡] 1201年阿尔伯特主教建城，具中世纪红砖城墙与17世纪瑞典星形棱堡（1656年挫败俄沙皇阿列克谢御驾围攻），1650–1700年城居约1.2–1.5万（Bairoch 1988）且具砖石墙，定小城。' },
-    { id: 'city_teweier', name: '特维尔', factionId: 'teweier_gongguo', lat: 56.86, lng: 35.9, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '[13至15世纪特维尔大公国首都（莫斯科劲敌）·伏尔加特维尔察汇口高土垒橡木克里姆林] 米哈伊尔大公抗金帐与莫斯科争霸重都，经1569年伊凡雷帝特辖军屠城与波兰战火重创，特维尔克里姆林至1763年大火前始终为土垒原木墙，1678年俄国户籍册载城民仅约4500人<1万，定城寨。' },
+    { id: 'city_teweier', name: '特维尔', factionId: 'teweier_gongguo', lat: 56.86, lng: 35.9, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '[13至15世纪特维尔大公国首都至18至19世纪中叶两都走廊省会·1763年后凯瑟琳二世新古典砖石重建省城] 特维尔大公争霸古都，1763年大火后叶卡捷琳娜二世敕令全以砖石按三射线规划重建，1850年俄国官方统计本城常住达2.0–2.4万且全城砖石营建，定小城。' },
     { id: 'city_xianuofugeerdede', name: '下诺城', factionId: 'suzidaer', lat: 56.32, lng: 44, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' , note: '[16至17世纪沙皇俄国伏尔加奥卡交汇大商埠·1500至1515年红砖白石十三塔克里姆林] 瓦西里三世延意大利工匠筑2公里红砖白石高墙克里姆林（从未被攻陷），1611年米宁与波扎尔斯基义勇军起兵地，1678年俄国普查册载上下商区（Posad）合驻军逾1.2–1.5万，定小城。' },
     { id: 'city_zhapoluore', name: '塞契', factionId: 'gesake', lat: 47.83, lng: 35.16, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[16至17世纪乌克兰扎波罗热哥萨克大本营塞契·第聂伯河心岛原木栅栏战车壕垒营寨] 维什涅维茨基始筑小霍尔季察木塞、1648年赫梅利尼茨基据此起兵（博普兰《乌克兰图志》详绘岛上原木栅栏、土壕与库连木营房），无石砖墙且平时驻营哥萨克数千人<1万，定城寨。' },
     { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC' , note: '[16至17世纪摩尔达维亚公国首都·石砖设防宫院与连片都邑雅西] 1564年亚历山德鲁·勒普什内亚努自苏恰瓦迁都雅西，1653年阿勒颇的保罗随牧首亲访记城内逾两万户商民云集，学界折实17世纪城居约2–2.5万（Bairoch 1988），>1万定小城。' },
     { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '[15至17世纪瓦拉几亚王公都城·石砖王廷垣与土石城防都邑] 米尔恰一世至马泰·巴萨拉布长期定都特尔戈维什泰，1580年代王公秘书弗兰科·西沃里记述及17世纪保罗游记折算全盛期城居约1.5–2万，>1万定小城。' },
     { id: 'city_kenisibao', name: '柯尼斯堡', factionId: 'tiaodun_qishi', lat: 54.71, lng: 20.51, type: 'small_city', isPort: true, troops: 10000, region: 'TEUTONS', buildingStyle: 'GERMANIC', note: '[13至17世纪条顿骑士团与普鲁士首府·红砖城堡与三联石砖港城] 1255年条顿骑士团筑堡后迅速形成老城、勒伯尼希特、克奈普霍夫三联汉萨居民城，17世纪中叶城居达3–4万（Bairoch 1988载1663年4万），已成超万人城市不再算设施，定小城。' },
     { id: 'city_talin', name: '塔林', factionId: 'baojian_qishi', lat: 59.43, lng: 24.75, type: 'small_city', isPort: true, troops: 10000, region: 'LITHUANIANS', buildingStyle: 'GERMANIC', note: '[13至17世纪丹麦条顿与瑞属汉萨石城雷瓦尔·托姆比亚石堡与2.4公里石灰岩高墙] 北欧保存最完好中世纪石灰岩环城高墙与26座防御石塔，16–17世纪城居约0.8–1.2万（Bairoch 1988载1700年约1万），具完整石砌城墙，定小城。' },
-    { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'luosi', lat: 58.37, lng: 26.72, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '[11世纪雅罗斯拉夫大公建尤里耶夫至爱沙尼亚主教区塔尔图·埃马约吉河丘堡与战毁小邑] 1030年建木堡，本据点锁定波罗的海爱沙尼亚与早期罗斯争夺及1558–1700年俄瑞波立百年拉锯战毁期（1625与1704年屡成废墟，17世纪常住仅2000–3000人），定城寨。' },
+    { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'luosi', lat: 58.37, lng: 26.72, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '[11世纪雅罗斯拉夫建尤里耶夫、汉萨主教石城多尔帕特至19世纪上半叶帝国大学城塔尔图·教堂山红砖遗址与石构新古典城区] 中世纪原具完整汉萨红砖石墙（1708年北方战争拆毁），1802年亚历山大一世复建多尔帕特帝国大学后以砖石重建全城，1850年常住人口达1.2–1.4万，>1万定小城。' },
     { id: 'city_jiridao', name: '基日岛', factionId: 'luosi', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[16至17世纪俄罗斯北疆奥涅加湖基日教区中心·海岛全木构多穹顶教堂与农渔小聚] 俄国北方纯木构榫卯建筑代表基日岛，据1601与1678年奥涅加土地清册岛上教堂院旁仅4至12户农渔民不足百人，无城墙且<1万，定城寨。' },
     { id: 'city_akeman', name: '阿克曼', factionId: 'osman', lat: 46.19, lng: 30.34, type: 'small_city', isPort: true, troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '[15至16世纪摩尔达维亚与奥斯曼黑海重镇·德涅斯特河口石灰岩巨垣港城] 蒙卡斯特罗／阿克曼不仅具内堡且外围2公里石灰岩高墙与深壕围合整个港市民居区，1574年奥斯曼税册实载城民4,664人，<1万但具完整石砌环城墙，定小城。；石堡主体虽为摩尔多瓦亚历山大善主（1407）与斯特凡二世（1440）所筑，但 66 分支无摩尔多瓦，按《建筑风格判定与代理规则》§三 用现有最接近的 TURKS（奥斯曼海峡要塞）代理，非精确' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「GREEK」推出的二级与史实不符 → 归 ATHENIANS：塔纳伊斯（亚速海）：希腊殖民城，一级希腊素材
     { id: 'city_asu', name: '塔纳伊斯', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'small_city', isPort: true, troops: 10000, region: 'SCYTHIANS', buildingStyle: 'GREECE', note: '[前3至公元3世纪博斯普鲁斯王国顿河口商埠·方形切石高墙与深壕塔纳伊斯] 斯特拉波XI.2.3明载塔纳伊斯为欧亚游牧民与希腊人最大共同商市，考古发掘确证规整方形厚重石砌城墙与角塔（今涅德维戈夫卡石城遗址），古典盛期常住约0.6–1万且具石墙，定小城。' },
     { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'litaowan', lat: 53.68, lng: 23.83, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '[14至16世纪立陶宛维陶塔斯与波兰巴托里行宫重镇·尼曼河城堡与无石墙木屋城区格罗德诺] 虽高崖建有新旧王室小城堡，但整个格罗德诺市民城区无环城石墙，1558–1560年王室土地丈量清册实载全镇716座木宅约3600–4300人<1万，定城寨。' },
-    { id: 'city_chalijin', name: '察里津', factionId: 'eluosi_diguo', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1589至1700年沙俄伏尔加顿河地峡哨镇察里津·扎谢金原木立栅方塔军镇] 1589年俄国于察里察河入伏尔加口筑原木立栅哨城控水陆拖船道（1670年斯捷潘·拉辛攻破木寨），≤1700年纯木构墙垣且驻兵居民仅约1500–3000人，定城寨。' },
-    { id: 'city_samala', name: '萨马拉', factionId: 'eluosi_diguo', lat: 53.2, lng: 50.15, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1586至1700年沙俄伏尔加中游边镇萨马拉·扎谢金原木立栅十一塔河防木城] 1586年奉费奥多尔沙皇诏筑长600米原木高栅防诺盖与卡尔梅克游骑，17世纪末发展为河运盐鱼集镇，1678年户籍册载军民仅约2000–3000人且为木栅无石砖墙，定城寨。' },
-    { id: 'city_wufa', name: '乌法', factionId: 'eluosi_diguo', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1574至1700年沙俄经略巴什基尔首府乌法·别拉亚河高岸440米橡木立栅克里姆林] 1574年伊凡·纳戈伊筑橡木立栅与米哈伊洛夫原木塔楼，17世纪屡抗巴什基尔与卡尔梅克围攻，≤1700年无石砖城垣且驻军市民约2500–4000人<1万，定城寨。' },
-    { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'eluosi_diguo', lat: 50.6, lng: 36.58, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1596至1700年沙俄南疆别尔哥罗德防线中枢·白垩山橡木立栅土垒军镇] 鲍里斯·戈东诺夫始筑、1635年起为800公里别尔哥罗德鹿砦土垒防线总督驻地，三次迁址皆筑橡木塔墙与夯土坡垒无石砖环城墙，1678年镇内常住军民约4000–5000人<1万，定城寨。' },
+    { id: 'city_chalijin', name: '察里津', factionId: 'eluosi_diguo', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1589年沙俄伏尔加顿河地峡哨镇至19世纪中叶县邑察里津·原木立栅与18世纪夯土棱堡镇] 1589年筑原木立栅寨（1670年拉辛攻占、1774年抗普加乔夫时为夯土棱堡，后拆毁），铁路通车前至1850年常住人口仅约5000–6000人<1万且无石砖城墙，定城寨。' },
+    { id: 'city_samala', name: '萨马拉', factionId: 'eluosi_diguo', lat: 53.2, lng: 50.15, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1586年伏尔加河防寨至19世纪中叶伏尔加东岸小麦集散省会萨马拉·河湾砖木商埠] 18世纪末至1850年发展为俄国东南草原最大小麦水运埠（1850年底诏升萨马拉省会），1850年俄国官方统计本城常住人口达1.5万，>1万定小城。' },
+    { id: 'city_wufa', name: '乌法', factionId: 'eluosi_diguo', lat: 54.73, lng: 55.96, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1574年沙俄巴什基尔首镇至19世纪上半叶奥伦堡省行政首府乌法·别拉亚河高岸省会城] 1781年设乌法总督区、1802–1865年为奥伦堡省民政首府，至1850年俄国官方统计本城常住人口达1.3–1.5万，>1万定小城。' },
+    { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'eluosi_diguo', lat: 50.6, lng: 36.58, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[17世纪沙俄南疆别尔哥罗德防线军镇至18世纪省城、19世纪中叶商业县城·白垩山南麓砖木城邑] 1727–1779年曾为别尔哥罗德省会，至1850年俄国官方统计本城常住人口达1.2–1.3万，>1万定小城。' },
     // ── 2026-08-04 新增：哈尔科夫（1654哥萨克要塞；斯洛博达乌克兰·哈尔科夫团治所）──
-    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'eluosi_diguo', lat: 49.9935, lng: 36.2304, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1654至1700年斯洛博达乌克兰哥萨克团治所哈尔科夫·十座木塔双排橡木立栅寨城] 1654年乌克兰哥萨克流民筑十塔橡木栅城拒克里米亚鞑靼，据1660–1680年代俄国督军清册城内哥萨克与市民约4000–6000人且为纯木栅城垣，定城寨。' },
+    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'eluosi_diguo', lat: 49.9935, lng: 36.2304, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[17世纪哥萨克团治所至18至19世纪中叶斯洛博达乌克兰省会与大学名城哈尔科夫·砖石主教座堂与四大集市省城] 1765年设省会、1805年创哈尔科夫帝国大学，至1850年俄国官方统计本城常住人口达3.5–4.0万（Bairoch 1988），>1万定小城。' },
     // ── 2026-08-04 新增：沃罗涅日（1586南疆要塞，守穆拉夫小道防鞑靼）──
-    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'eluosi_diguo', lat: 51.6608, lng: 39.2003, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[1586至1700年沙俄顿河上游造船军镇沃罗涅日·萨布罗夫橡木高塔寨城] 1586年筑橡木立栅要塞御鞑靼、1696年彼得一世设亚速海帆船造船坞，≤1700年城垣为橡木原木结构（无石砖城墙）且常住居民约5000–7000人<1万，定城寨。' },
+    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'eluosi_diguo', lat: 51.6608, lng: 39.2003, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[彼得一世海军摇篮至18至19世纪中叶俄国黑土区省会沃罗涅日·沃罗涅日河高岸砖石省城] 1696年彼得大帝建亚速舰队船坞，1725年起定为沃罗涅日省会，至1850年俄国官方人口统计本城常住达3.2–3.6万（Bairoch 1988），>1万定小城。' },
     { id: 'city_peilieyasilafu', name: '佩列斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '[10至13世纪初南罗斯屏障公国首邑佩列亚斯拉夫·特鲁别日河高大土垒原木上城] 弗拉基米尔·莫诺马赫镇守抗库曼前线重邑（《往年纪事》），1239年遭蒙军拔都彻底焚毁沦为哥萨克小聚落，罗斯时代为泥芯土垒立木墙（无石砖环城墙）且常住未满1万确数，定城寨。' },
     { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'litaowan', lat: 55.19, lng: 30.2, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '[10世纪奥丽加始建至14世纪立陶宛阿尔吉尔达斯王公领地·西德维纳河石堡与木栅下城维捷布斯克] 阿尔吉尔达斯曾修上城石塔，但16世纪战火毁坏后重建原木塔墙，据1641年王室清册全城990栋木宅约5000人（1654年俄波战争再毁），<1万且市民城为木墙，定城寨。' },
 
@@ -2741,11 +2741,11 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 4,
         // 🔴 [2026-09-18 主人定] 原 'SEAS' 只是一级母体、无二级/三级 → 按真实地理历史归**高棉 KHMER**：
         //    呵叻（Nakhon Ratchasima）在呵叻高原，高棉帝国时期为吴哥属邑，城郊披迈石宫即吴哥式建筑。
         buildingStyle: 'KHMER', troops: 10000, tier: 4,
-        note: '[17世纪下半叶阿瑜陀耶王朝那莱王东北重镇·红砖高墙四角棱堡呵叻城] 1656–1688年暹罗那莱王延法国工程师筑长1.7公里、宽1公里完整红砖包砌城墙、四砖石城门与护城河控澜沧与高棉边境，≤1700年城居约1–1.5万且具完整包砖城墙，定小城。',
+        note: '[17世纪下半叶阿瑜陀耶王朝那莱王东北重镇·红砖高墙四角棱堡呵叻城] 1656–1688年暹罗那莱王延法国工程师筑长1.7公里、宽1公里完整红砖包砌城墙、四砖石城门与护城河控澜沧与高棉边境，≤1850年城居约1–1.5万且具完整包砖城墙，定小城。',
     },
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族据点 ──
-    { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'heishui', lat: 47.654208, lng: 132.497864, type: 'stockade', troops: 10000, region: 'MOHE', buildingStyle: 'NORTHEAST', note: '[唐黑水靺鞨故地、辽五国部越里吉旁聚至明女真三万卫北胡里改江（清三姓副都统设于1715年超限）·江口渔猎木寨] 清设三姓（依兰）协领筑土城在康熙五十四年（1715，晚于1700年红线不采）；≤1700年松花江牡丹江汇口为赫哲（黑斤）与女真三姓木栅桦皮庐聚落，人口不足3000人，定城寨。' },
+    { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'heishui', lat: 47.654208, lng: 132.497864, type: 'stockade', troops: 10000, region: 'MOHE', buildingStyle: 'NORTHEAST', note: '[唐黑水靺鞨故地、明胡里改江至清三姓副都统辖境拉哈苏苏（同江）·松花江混同江汇口赫哲渔猎木寨] 清康熙五十四年（1715）设三姓副都统于上游依兰夯土城，拉哈苏苏江口至1850年始终为赫哲（黑斤）桦皮庐与木栅渔村（《吉林外纪》），无城墙且不足2000人，定城寨。' },
 
 
     { id: 'city_valen', name: '瓦伦', factionId: 'manzhou_d', lat: 50.5500, lng: 137.0000, type: 'stockade', region: 'MANCHU',
@@ -2785,7 +2785,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     },
     { id: 'city_moergen', name: '莫尔根', factionId: 'suolun', lat: 49.176, lng: 125.228, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清康熙二十四年设驿站、二十九年（1690）黑龙江将军自瑷珲移驻墨尔根（嫩江）·松木立栅夹土方城] 康熙二十九至三十八年曾为黑龙江将军驻节十年（后移齐齐哈尔），杨宾《柳边纪略》实记墨尔根城「木植立栅实土其中，周数里」，木栅土墙且八旗索伦达斡尔官兵家口仅约4000–5000人<1万，定城寨。' },
 
-    { id: 'city_donghai', name: '洞海城', factionId: 'yuenan', lat: 17.620424, lng: 106.495972, type: 'stockade', isPort: true, troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', mirror: true, note: '[17世纪广南阮主福源用陶维慈计修筑抗北郑主防线洞海垒（定北长城）·日丽江口夯土夹铁力木长垒军屯] 1630–1631年陶维慈督筑自山麓直抵日丽海口长十八公里夯土巨木防垒，七次挫败郑主南征大军（《大南实录前编》），属战线军屯营寨而非万人居民城市，≤1700年守兵屯户数千人，定城寨。' },
+    { id: 'city_donghai', name: '洞海城', factionId: 'yuenan', lat: 17.620424, lng: 106.495972, type: 'stockade', isPort: true, troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', mirror: true, note: '[17世纪广南阮主福源用陶维慈计修筑抗北郑主防线洞海垒（定北长城）·日丽江口夯土夹铁力木长垒军屯] 1630–1631年陶维慈督筑自山麓直抵日丽海口长十八公里夯土巨木防垒，七次挫败郑主南征大军（《大南实录前编》），属战线军屯营寨而非万人居民城市，≤1850年守兵屯户数千人，定城寨。' },
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐) ──
     { id: 'city_baidalik', name: '拜达里克', factionId: 'kaerka', lat: 46.189304, lng: 99.159851, type: 'stockade', region: 'STEPPE_IMPERIAL',
@@ -2794,7 +2794,7 @@ buildingStyle: 'MONGOL', troops: 10000,
     },
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
-    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET', note: '[唐吐蕃多弥苏毗道至明清康藏茶马北道枢纽玉树结古（结古寺创于1398年）·扎曲巴塘河谷石木寺院商站] 萨迦派结古顿珠林寺山坡石木僧舍及山下西宁至拉萨茶马羊毛互市锅庄聚落（清雍正会勘囊谦玉树二十五族在1725年，《卫藏通志》），无城墙且≤1700年常住僧商约3000–5000人<1万，定城寨。' },
+    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET', note: '[唐吐蕃多弥苏毗道至明清康藏茶马北道枢纽玉树结古（结古寺创于1398年）·扎曲巴塘河谷石木寺院商站] 萨迦派结古顿珠林寺山坡石木僧舍及山下西宁至拉萨茶马羊毛互市锅庄聚落（清雍正会勘囊谦玉树二十五族在1725年，《卫藏通志》），无城墙且≤1850年常住僧商约3000–5000人<1万，定城寨。' },
 
 
 
@@ -2802,7 +2802,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '[象雄东境苯教重镇至元代吐蕃等路宣慰司琼布（丁青）万户府·怒江支流孜曲山崖石木宗署与苯教寺聚] 苯教大寺孜珠寺近邻及元代授印世袭琼布部落首邑（《元史·释老传》《藏族史料集》），高山石木碉楼村聚无砖石环城墙且常住不足4000人，定城寨。',
     },
-    { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清康熙三十年（1691）火器营协领玛布岱筑齐齐哈尔城、三十八年黑龙江将军移驻卜奎·嫩江东岸松木立栅夹土双重城] 原达斡尔卜奎村，康熙三十年筑内城木栅千步、外城土垣数里（西清《黑龙江外纪》详载直至清季仍为松木排桩与土墙无砖石），≤1700年初建九年驻防八旗水师官兵家口约5000–7000人<1万，定城寨。' },
+    { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清康熙三十年（1691）火器营协领玛布岱筑齐齐哈尔城、三十八年黑龙江将军移驻卜奎·嫩江东岸松木立栅夹土双重城] 原达斡尔卜奎村，康熙三十年筑内城木栅千步、外城土垣数里（西清《黑龙江外纪》详载直至清季仍为松木排桩与土墙无砖石），≤1850年初建九年驻防八旗水师官兵家口约5000–7000人<1万，定城寨。' },
 
 
     { id: 'city_teshuolankalun', name: '唐努', factionId: 'kaerka', lat: 49.419915, lng: 98.432007, type: 'stockade', region: 'STEPPE_IMPERIAL',
@@ -2812,7 +2812,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     // ── 2026-05-28 新增：大隅(赤尾木城/九州)、奄美(赤木名城/琉球) ──
     { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'shimazu', lat: 30.7300, lng: 131.0000, type: 'stockade', isPort: true, troops: 10000, tier: 4, 
-        note: '[天文十二年（1543）葡船漂着铁炮传来之地种子岛时尧居城赤尾木城·海岸凝灰岩台地土垒空堀小居馆] 南浦文之《铁炮记》所载种子岛时尧以二千金购两挺火绳枪仿制之历史现场赤尾木港与山丘土垒居城，岛窄民稀，≤1700年港村与武家屋敷常住仅约3000–4000人且无石垣环城墙，定城寨。', region: 'JAPAN_IMPERIAL',
+        note: '[天文十二年（1543）葡船漂着铁炮传来之地种子岛时尧居城赤尾木城·海岸凝灰岩台地土垒空堀小居馆] 南浦文之《铁炮记》所载种子岛时尧以二千金购两挺火绳枪仿制之历史现场赤尾木港与山丘土垒居城，岛窄民稀，≤1850年港村与武家屋敷常住仅约3000–4000人且无石垣环城墙，定城寨。', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
     { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'ryukyu', lat: 28.4540, lng: 129.6740, type: 'pass', isPort: true, region: 'JAPAN_IMPERIAL',
 buildingStyle: 'JAPAN', troops: 10000, tier: 4,
@@ -2826,15 +2826,15 @@ buildingStyle: 'TIBET', troops: 10000, tier: 4,
     },
     { id: 'city_derge', name: '德格', factionId: 'gar_kham', lat: 31.924163, lng: 99.181824, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[15世纪中叶博东巴创更庆寺与德格土司迁驻龚垭（印经院建于1729年超限）·金沙江支流色曲峡谷石木官寨] 康区四大土司之首德格家族15世纪迁驻更庆沟筑石木土司官寨与更庆寺（17世纪受五世达赖与固始汗扶植扩土，《德格土司世系》），峡谷狭长无环城墙且≤1700年沟内僧俗约3000–5000人<1万，定城寨。',
+        note: '[15至19世纪上半叶康区四大土司之首德格土司官寨与1729年德格印经院·色曲峡谷石木寺寨] 15世纪建更庆寺、雍正七年（1729）土司登巴泽仁建德格印经院（《德格土司世系》），狭长山谷仅石木官寨与寺院而无城市环墙，≤1850年沟内僧俗常住约4000–6000人<1万，定城寨。',
     },
     { id: 'city_ganzi', name: '甘孜', factionId: 'kongsa', lat: 31.615967, lng: 99.981079, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[明末清初固始汗长孙达赖汗建霍尔甘孜寺与孔萨麻书双土司官寨·雅砻江上游甘孜坝子石木土堡聚落] 康熙元年（1662）建甘孜大寺（千五百僧），山下并立孔萨与麻书两家霍尔土司夯土片石高官寨（《清史稿·四川土司传》），无合围县城墙且≤1700年僧俗常住约4000–6000人<1万，定城寨。',
+        note: '[明末清初固始汗长孙达赖汗建霍尔甘孜寺与孔萨麻书双土司官寨·雅砻江上游甘孜坝子石木土堡聚落] 康熙元年（1662）建甘孜大寺（千五百僧），山下并立孔萨与麻书两家霍尔土司夯土片石高官寨（《清史稿·四川土司传》），无合围县城墙且≤1850年僧俗常住约4000–6000人<1万，定城寨。',
     },
     { id: 'city_dajianlu', name: '打箭炉', factionId: 'manzhou_d', lat: 30.0500, lng: 101.9600, type: 'stockade', region: 'SONG',
 buildingStyle: 'BASHU', troops: 10000, tier: 4,
-        note: '[明正长官司（木雅西吴王后裔）驻地与川藏茶马包销总口打箭炉（康定）·折多河炉城峡谷无墙石木商锅庄镇] 康熙三十九年（1700）唐希顺平昌侧集烈之乱收复打箭炉（清设打箭炉厅及筑小石门更在雍正乾隆间，《清圣祖实录》《西藏图考》），≤1700年两山夹水无城墙，常住锅庄商户脚夫约4000–6000人<1万，定城寨。；藏式部分并入巴蜀代理，不另改青藏',
+        note: '[明正长官司（木雅西吴王后裔）驻地与川藏茶马包销总口打箭炉（康定）·折多河炉城峡谷无墙石木商锅庄镇] 康熙三十九年（1700）唐希顺平昌侧集烈之乱收复打箭炉（清设打箭炉厅及筑小石门更在雍正乾隆间，《清圣祖实录》《西藏图考》），≤1850年两山夹水无城墙，常住锅庄商户脚夫约4000–6000人<1万，定城寨。；藏式部分并入巴蜀代理，不另改青藏',
     },
     // ── 2026-05-28 新增：波密(博窝/西藏) ──
     // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
@@ -2865,9 +2865,9 @@ buildingStyle: 'TIBET', troops: 10000, tier: 4,
     // ── 工布土王(尼池/林芝)；巴塘宗改叛军点 ──
     { id: 'city_nichi', name: '太昭', factionId: 'tubo', lat: 29.752, lng: 93.232, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[吐蕃工布王阿吉杰布领地至清前藏东通波密驿镇太昭（江达）·尼洋河上游高山林谷石木驿镇] 工布地区东大门古名江达（太昭名始于光绪末超限，≤1700年为工布江达宗驿，《卫藏通志》），峡谷林间石木民居一街无城墙且常住仅千余人，定城寨。',
+        note: '[吐蕃工布王领地至清代川藏驿道工布江达宗驿（太昭名始于光绪末晚于1850年）·尼洋河高山林谷石木驿镇] 清代拉萨东通嘉黎、察木多之工布江达驿镇（《卫藏通志》），峡谷林间石木民居一街无城墙且≤1850年常住仅千余人，定城寨。',
     },
-    { id: 'city_litangzong', name: '理塘宗', factionId: 'ganden', lat: 30.0000, lng: 100.2700, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '[明万历八年三世达赖索南嘉措创建长青春科尔寺至和硕特驻防理塘·海拔4014米毛垭大草原石木大寺高城] 1580年建康南格鲁派第一大寺理塘寺，草原边缘僧舍与土司头人藏房聚落无城市环墙，≤1700年寺僧与牧商常住约4000–6000人<1万，定城寨。' },
+    { id: 'city_litangzong', name: '理塘宗', factionId: 'ganden', lat: 30.0000, lng: 100.2700, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '[明万历八年三世达赖索南嘉措创建长青春科尔寺至和硕特驻防理塘·海拔4014米毛垭大草原石木大寺高城] 1580年建康南格鲁派第一大寺理塘寺，草原边缘僧舍与土司头人藏房聚落无城市环墙，≤1850年寺僧与牧商常住约4000–6000人<1万，定城寨。' },
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
     { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'tujue', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MONGOL', note: '[唐调露至圣历后突厥骨咄禄阿史德元珍复国南牙黑沙城·阴山北麓呼和浩特北或杭爱南道游牧汗庭营城] 永淳元年（682）骨咄禄纠合亡散五千骑据黑沙城南掠蔚定复建后突厥汗国（《旧唐书·突厥传上》），系草原游牧可汗驻兵休牧土石营帐，无万人居民城市，定城寨。' },
@@ -2882,7 +2882,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：迪化城（乌鲁木齐）：准噶尔牧地，归鞑靼（中亚草原）
-    { id: 'city_wutucheng', name: '迪化城', factionId: 'shanshan', lat: 43.735353, lng: 87.574768, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '[唐轮台戍故地至17世纪准噶尔汗国乌鲁木齐牧场（清乾隆筑迪化城在1755至1763年超限）·天山北麓草场帐营] 清筑迪化土石城在乾隆二十三年后（晚于1700年红线不采）；≤1700年乌鲁木齐（蒙古语优美牧场）为卫拉特准噶尔游牧骑兵牧地（唐北庭轮台县故城早废为夯土残垣），常住<1万，定城寨。' },
+    { id: 'city_wutucheng', name: '迪化城', factionId: 'shanshan', lat: 43.735353, lng: 87.574768, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '[清乾隆钦定迪化州（乌鲁木齐都统驻城）·红山东麓迪化汉城与巩宁满城双城垣大邑] 乾隆二十八年至三十七年（1763–1772）筑迪化城与八旗巩宁城，纪昀《乌鲁木齐杂诗》亲记「万家烟火暖云蒸」商肆戏园繁盛冠天山南北，乾嘉道间（≤1850年）双城及南关常住达3.5–5万（《新疆识略》），>1万定小城。' },
 
 
     { id: 'city_gaochangcheng', name: '高昌', factionId: 'huihu', lat: 42.8533, lng: 89.53, type: 'small_city', region: 'WESTERN_CASTLE',
@@ -2899,7 +2899,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     },
     { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'medium_city', troops: 10000, region: 'TIMURID', buildingStyle: 'CENTRAL_ASIA' , note: '[12世纪西辽河中至15世纪初帖木儿帝都·砖石泥砖巨都] 1220年前阿弗拉西阿卜城及1404年帖木儿帝都撒马尔罕城关连片人口峰值约10–20万（克拉维约《东使记》及Chandler 1200／1400年表10–15万），>10万定中城。' },
 
-    { id: 'city_jizhake', name: '吉扎克', factionId: 'buhala', lat: 40.1167, lng: 67.8333, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA' , note: '[9至12世纪萨曼王朝乌斯特鲁沙那边境圣战军营镇迪扎克（吉扎克）·努拉塔山口泥砖拉巴特驿镇] 10世纪伊本·豪卡勒《大地志》记迪扎克为河中平原通草原游牧边界聚集志愿圣战者（Ghazis）之泥砖拉巴特军驿小镇（布哈拉埃米尔大堡建于18–19世纪超限），≤1700年泥砖小镇不足8000人，定城寨。' },
+    { id: 'city_jizhake', name: '吉扎克', factionId: 'buhala', lat: 40.1167, lng: 67.8333, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA' , note: '[萨曼王朝边境拉巴特至18至19世纪中叶布哈拉埃米尔国东门泥砖城吉扎克·努拉塔山口生土泥砖邑] 控撒马尔罕东北门户，18–19世纪上半叶布哈拉埃米尔筑厚重生土夯筑泥砖垒墙（无石砖城垣），≤1850年镇内常住约5000–8000人<1万，定城寨。' },
 
 
 
@@ -2912,9 +2912,9 @@ buildingStyle: 'WESTERN', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：轮台：汉轮台屯田、西域都护地，塔里木
     { id: 'city_luntai', name: '轮台', factionId: 'han_d', lat: 41.77, lng: 84.25, type: 'stockade', troops: 10000, region: 'KHITAN', buildingStyle: 'WESTERN' , note: '[西汉贰师破仑头至轮台屯田·天山南麓夯土军屯小城] 《汉书·西域传》载原仑头国全境仅户六百八十、口四千八百，汉置使者校尉领士卒数百人屯田轮台（奎玉克协海尔夯土遗址），夯土小城不足5000人，定城寨。' },
 
-    { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'stockade', region: 'STEPPE_IMPERIAL',
+    { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'pass', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MONGOL', troops: 10000,
-        note: '[1700年前喀尔喀图音河畔·杭爱南麓游牧驻帐营地] 清雍正九年（1731）始于图音河筑推河戍堡屯兵防准噶尔（《清实录·世宗实录》，晚于1700年红线不采）；≤1700年仅为喀尔喀牧地河谷帐营，无城墙且人口<1万，定城寨。',
+        note: '[清雍正九年（1731）漠北抗准前线戍塞·图音河推河堡夯土塞垣] 雍正九年清廷防准噶尔东犯，于喀尔喀杭爱山南麓图音河（推河）要冲筑推河戍堡屯驻重兵护卫粮道（《清世宗实录》《朔方备乘》），名带「堡」字、具夯土塞垣且≤1850年无万人居民城，定险要。',
     },
     { id: 'city_guyanshan', name: '姑衍山', factionId: 'xiongnu', lat: 48.6184, lng: 110.6488, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[西汉元狩四年霍去病封狼居胥山、禅于姑衍山·肯特山西北或鄂尔浑上游漠北森林山岭牧营] 《史记·卫将军骠骑列传》载霍去病北伐深入二千余里禅姑衍山临瀚海，系漠北游牧部族山谷草场，无城垣且常住<1万，定城寨。' },
 
@@ -2948,24 +2948,24 @@ buildingStyle: 'KOREA', troops: 10000,
 
     { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'stockade', isPort: true, region: 'JAPAN_ANTIQUITY', buildingStyle: 'JAPAN', troops: 10000, note: '[弥生时代《魏志·倭人传》一支国王都原之辻遗址·壹岐岛幡鉾川三重环壕木栅聚落] 陈寿《三国志·魏书·倭人传》明载渡一海至一大国（一支国）「有三千许家，差有田地犹不足食」，日本国特别史迹原之辻发掘三重环壕与码头，全岛合计三千家、环壕聚落常住约2000–3000人无石墙，定城寨。' },
     { id: 'city_taizaifu', name: '太宰府', factionId: 'shoni', lat: 33.51, lng: 130.52, type: 'small_city', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN' , note: '[8至12世纪日本律令西海道总督府大宰府·大野基肄朝鲜式石垒与条坊都市] 管辖九州二岛外交海防之「远朝廷」大宰府，北依大野城百济式巨石垒、南展二十四条十二坊棋盘街区，奈良平安盛期条坊人口约1.5–2万（Farris《古代日本人口与经济》），>1万定小城。' },
-    { id: 'city_goto', name: '五岛', factionId: 'goto', lat: 32.6955, lng: 128.841, type: 'stockade', isPort: true, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[室町战国宇久五岛氏期·福江土垒空堀水军居馆（江川城）] 遣唐使南路末站值嘉岛、战国五岛玄雅水军本据江川城（宽永火毁；石垣福江城迟至1849年方筑，超年不采），≤1700年为土垒无石墙且港町人口不足5000，定城寨。' },
+    { id: 'city_goto', name: '五岛', factionId: 'goto', lat: 32.6955, lng: 128.841, type: 'stockade', isPort: true, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[室町战国五岛水军居馆至江户五岛藩福江港町·土垒屋敷（石垣福江城1849年动工至1863年方成）] 战国五岛氏水军本据江川城宽永火毁后长期无城郭，幕末石垣福江城嘉永二年（1849）始建、文久三年（1863，晚于1850年）方竣工，≤1850年无石垣城墙且港町仅约5000–6000人<1万，定城寨。' },
     { id: 'city_nagasaki', name: '长崎', factionId: 'omura', lat: 32.7555, lng: 129.8777, type: 'small_city', isPort: true, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[安土桃山南蛮开港至江户元禄天领期·出岛石岸与连片唐兰贸易港市] 1571年开港后为幕府直辖唯一锁国对外贸易港，据《宽文元禄长崎人口帐》实测1669年城居40,563人、1696年达64,523人（远超1万且未满8万），定小城。' },
     { id: 'city_aomen', name: '澳门', factionId: 'putaoya', lat: 22.1975, lng: 113.5438, type: 'small_city', isPort: true, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', troops: 10000, note: '[明嘉靖开埠至17世纪葡居自治盛期·大炮台与三巴石筑火炮城垣港市] 1557年开埠后成中日丝银与果阿航线枢纽，1622–1626年筑三合土包石环城墙与大炮台，1635年博卡罗《东方要塞图志》实载城中葡人华民家庭合计逾2万口，>1万且具石墙，定小城。' },
     { id: 'city_kelunpo', name: '科伦坡', factionId: 'putaoya', lat: 6.9271, lng: 79.8612, type: 'small_city', isPort: true, region: 'INDIA', buildingStyle: 'PORTUGUESE', troops: 10000, note: '[16至17世纪葡属与荷属锡兰首府·红土巨石十二棱堡环城港都] 1518年葡建要塞、1597年起为葡属锡兰首府，筑完整红土石环城墙与十二座石棱堡围合总督府及市民坊区，1635年博卡罗《要塞图志》载城居约7000–9000人，<1万具完整石墙，定小城。' },
-    { id: 'city_cebu', name: '宿务', factionId: 'xibanya', lat: 10.3157, lng: 123.8854, type: 'stockade', isPort: true, region: 'SPANISH', buildingStyle: 'SPANISH', troops: 10000, note: '[16至17世纪西属菲律宾初创城宿务·三角形小石堡与竹木无墙市镇] 1565年莱加斯皮登陆建圣佩德罗小型三角棱堡（每边仅30米），1571年殖民中心迁马尼拉后宿务市镇本身无外郭石墙，≤1700年常住仅3000–5000人<1万，定城寨。' },
+    { id: 'city_cebu', name: '宿务', factionId: 'xibanya', lat: 10.3157, lng: 123.8854, type: 'stockade', isPort: true, region: 'SPANISH', buildingStyle: 'SPANISH', troops: 10000, note: '[16至17世纪西属菲律宾初创城宿务·三角形小石堡与竹木无墙市镇] 1565年莱加斯皮登陆建圣佩德罗小型三角棱堡（每边仅30米），1571年殖民中心迁马尼拉后宿务市镇本身无外郭石墙，≤1850年常住仅3000–5000人<1万，定城寨。' },
     { id: 'city_plymouth', name: '普利茅斯', factionId: 'yinggelan', lat: 50.3755, lng: -4.1427, type: 'small_city', isPort: true, region: 'BRITONS', buildingStyle: 'BRITONS', troops: 10000, note: '[15至17世纪英格兰皇家海军西港·石灰岩城墙与石砌皇家棱堡港城] 1588年德雷克迎击西班牙无敌舰队母港，16世纪具市政石墙、1665年增筑皇家石砌大棱堡，1670年代至1700年城居约8000–10000人（Chalklin英国城镇人口考），具完整石墙定小城。' },
     { id: 'city_ambon', name: '安汶', factionId: 'nidelan', lat: -3.6954, lng: 128.1814, type: 'stockade', isPort: true, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '[16至17世纪葡荷摩鹿加丁香中心·维多利亚小堡与马来木屋港镇] 1575年葡建堡、1605年荷兰VOC夺为香料据点，市镇为马来式木竹民居且无环镇石墙，1690年代VOC人口册载城堡周边镇民约5000–6000人（Knaap 1987考证）<1万，定城寨。' },
     { id: 'city_banda', name: '班达奈拉', factionId: 'nidelan', lat: -4.5213, lng: 129.9054, type: 'stockade', isPort: true, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '[17世纪荷属肉豆蔻专卖中心班达奈拉·比利时小石堡与岛屿庄园聚落] 1609–1621年科恩征服班达群岛建纳苏与比利时两小堡，全群岛在籍种植园人口合计仅约4000–6000人、奈拉本镇约2000人且镇无环城墙（Hanna《印尼殖民地班达》），定城寨。' },
     { id: 'city_wandan', name: '万丹', factionId: 'wandan', lat: -6.0333, lng: 106.1500, type: 'small_city', isPort: true, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '[16至17世纪爪哇万丹苏丹国极盛期·红砖珊瑚石环城墙胡椒大都会] 毛拉纳·优素福筑红砖与珊瑚石外郭城墙，阿贡苏丹时期（1651–1682）为东南亚最大胡椒集散港都，城关实居达4–7万（Reid《商业时代的东南亚》第2卷及Chandler表5万），>1万定小城。' },
 
-    { id: 'city_chijianguan', name: '赤间关', factionId: 'heishi', lat: 33.95, lng: 130.93, type: 'pass', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[平安末坛之浦至镰仓战国·关门海峡咽喉海防渡口关所] 扼本州与九州间早鞆濑户水道，寿永四年（1185）平氏与源义经决战坛之浦即在关前，历代设关司海检戍卫（《平家物语》《吾妻镜》），带「关」字之海峡关塞且≤1700年未满万人城，定险要。' },
+    { id: 'city_chijianguan', name: '赤间关', factionId: 'heishi', lat: 33.95, lng: 130.93, type: 'pass', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[平安末坛之浦至镰仓战国·关门海峡咽喉海防渡口关所] 扼本州与九州间早鞆濑户水道，寿永四年（1185）平氏与源义经决战坛之浦即在关前，历代设关司海检戍卫（《平家物语》《吾妻镜》），带「关」字之海峡关塞且≤1850年未满万人城，定险要。' },
 
     { id: 'city_guizhicheng', name: '备中高松城', factionId: 'mori', lat: 34.69, lng: 133.82, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '[安土桃山时代毛利境目七城·低湿地石垣土垒水防要塞] 毛利氏备中前线境目要塞高松城，天正十年（1582）羽柴秀吉筑长堤水攻，城将清水宗治切腹保兵（《信长公记》），纯前线军事城塞具石垣土垒且常住<1万，定险要。' },
     { id: 'city_junfucheng', name: '骏府', factionId: 'imagawa', lat: 34.97, lng: 138.38, type: 'medium_city', isPort: true, region: 'JAPAN_IMPERIAL',
 buildingStyle: 'JAPAN', troops: 10000,
         note: '[17世纪初德川家康大御所期·巨石垣三重堀骏府城下町] 庆长十二年至元和二年（1607–1616）德川家康隐居骏府执掌大政期间，骏府九十六町城下町峰值达8–10万（1609年西属吕宋总督比韦罗《日本见闻录》估10万、鬼头宏考算8–10万），≥8万定中城。',
     },
-    { id: 'city_hamamatsu', name: '浜松城', factionId: 'tokugawa', lat: 34.71, lng: 137.73, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' , note: '[元龟天正德川家康十七年居城至江户谱代要藩·野面积石垣浜松城与东海道城下町] 1570–1586年德川家康扩建引马城为浜松城并兴城下町（三方原合战退守本城），江户五万石谱代藩都兼东海道宿场，≤1700年武家合町人约1.5–2万且具石垣城郭，定小城。' },
+    { id: 'city_hamamatsu', name: '浜松城', factionId: 'tokugawa', lat: 34.71, lng: 137.73, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' , note: '[元龟天正德川家康十七年居城至江户谱代要藩·野面积石垣浜松城与东海道城下町] 1570–1586年德川家康扩建引马城为浜松城并兴城下町（三方原合战退守本城），江户五万石谱代藩都兼东海道宿场，≤1850年武家合町人约1.5–2万且具石垣城郭，定小城。' },
 
     { id: 'city_atsuta', name: '宫宿', factionId: 'oda', lat: 35.12, lng: 136.95, type: 'small_city', troops: 20000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[战国织田氏至江户东海道第一大宿场港·热田神宫门前连片港町宫宿] 织田信长桶狭间出阵祈愿地，江户时代为东海道五十三次规模最大宿场兼伊势湾七里渡海港，元禄至享保间宫宿町家逾二千五百户、常住人口达1.1–1.4万（《尾张徇行记》），>1万定小城。', },
 
@@ -2991,7 +2991,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 buildingStyle: 'WEI', troops: 10000,
         note: '[春秋晋国羊舌氏封邑·浊漳水北源夯土采邑小城] 晋国铜鞮宫及羊舌赤（铜鞮伯华）封邑（《左传·成公九年》《襄公三十一年》），春秋晋邑为夯土城垣且查无破万城居人口，定城寨。',
     },
-    { id: 'city_huixian', name: '河池', factionId: 'shu', lat: 33.80, lng: 106.06, type: 'stockade', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '[西汉元鼎置武都郡河池县、东汉末曹操取汉中经河池氐王窦茂至南宋吴璘河池军粮站·嘉陵江上游徽县盆地夯土小县] 建安二十年曹操自陈仓出散关至河池屠氐王窦茂，元升徽州（《三国志·武帝纪》《元史·地理志》），秦蜀间山间小盆地夯土县州城（明成化后始部分砌砖周仅三里），≤1700年在城不足6000人，定城寨。' },
+    { id: 'city_huixian', name: '河池', factionId: 'shu', lat: 33.80, lng: 106.06, type: 'stockade', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '[西汉元鼎置武都郡河池县、东汉末曹操取汉中经河池氐王窦茂至南宋吴璘河池军粮站·嘉陵江上游徽县盆地夯土小县] 建安二十年曹操自陈仓出散关至河池屠氐王窦茂，元升徽州（《三国志·武帝纪》《元史·地理志》），秦蜀间山间小盆地夯土县州城（明成化后始部分砌砖周仅三里），≤1850年在城不足6000人，定城寨。' },
 { id: 'city_huojia', name: '获嘉', factionId: 'wei', lat: 35.26, lng: 113.66, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '[西汉元鼎置县至曹魏河内期·太行南麓夯土小县城] 汉武帝元鼎六年巡幸至汲县新中乡得南越吕嘉首级置获嘉县（《汉书·武帝纪》），汉魏时期为普通夯土小县城，查无城居破万史料，定城寨。' },
 
 
@@ -3057,7 +3057,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.53, lng: 114.32, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true , note: '[孙吴武昌至南宋鄂州明武昌府·条石包砖江防省会] 南宋岳飞屯驻时鄂州城外南市关厢沿江十里商贾辐辏，及明万历湖广省会武昌府砖石城垣加南关汉口埠岸，城居峰值约10–15万（陆游《入蜀记》、Chandler表8.4–10万及曹树基考算），≥10万定中城。' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', buildingStyle: 'WEI', troops: 10000, note: '[春秋初晋桓叔庄伯武公六十七年强宗别都曲沃·浍水畔曲村天马晋都遗址与大邑夯土城垣] 前745年晋昭侯封成师于曲沃，《诗经·唐风》刺晋昭公微弱「曲沃邑大于翼（晋国都）」，前679年曲沃武公代晋并国（《左传·桓公二年》《史记·晋世家》），春秋晋宗大都城居逾1.5–2.5万，>1万定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：塔城（塔尔巴哈台）：准噶尔牧地，归鞑靼（中亚草原）
-    { id: 'city_tacheng', name: '塔城', factionId: 'oirat_ming', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[17世纪卫拉特准噶尔巴图尔珲台吉冬牧中心楚呼楚（塔尔巴哈台，清筑绥靖城在1766年超限）·塔尔巴哈台南麓牧帐营] 1635年巴图尔珲台吉建准噶尔汗国早期驻冬牙帐即在塔尔巴哈台霍博克与额敏谷地（清参赞大臣筑绥靖城在乾隆三十一年超1700年红线），≤1700年纯草原游牧牙帐无城墙，定城寨。；代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'oirat_ming', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '[准噶尔巴图尔珲台吉冬牧牙帐楚呼楚至清乾隆三十一年（1766）塔尔巴哈台绥靖城·额敏河谷夯土驻防小城] 1635年准噶尔初建汗庭冬营地，乾隆三十一年参赞大臣阿桂筑绥靖夯土城周仅四里半（夯土无砖石，《塔尔巴哈台事宜》），≤1850年换防官兵与商民约4000–6000人<1万，定城寨。；代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
 
 
 
@@ -3076,12 +3076,12 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：巴里坤：天山北路，汉—准噶尔通道
-    { id: 'city_balikun', name: '巴里坤', factionId: 'han_d', lat: 43.6, lng: 93, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '[两汉天山北道行国蒲类国（东汉戊己校尉索班与班勇屯兵处；清筑巴里坤汉满双城在1731至1772年超限）·巴里坤湖草原帐营] 《汉书·西域传》明载蒲类国王治天山西疏榆谷，「户三百二十五，口二千三十二」，清雍正九年岳钟琪筑城晚于1700年红线不采；≤1700年为草原游牧小行国与准噶尔牧场无石砖城，定城寨。' },
+    { id: 'city_balikun', name: '巴里坤', factionId: 'han_d', lat: 43.6, lng: 93, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '[两汉蒲类国至清雍正乾隆筑巴里坤汉满双城镇西府治·天山北路东门高垣重镇] 雍正九年（1731）岳钟琪筑巴里坤绿营汉城、乾隆三十七年（1772）增筑会宁满城并升镇西府（《镇西厅乡土志》《西域图志》），乾嘉道间（≤1850年）满汉驻兵家口与晋商驼帮常住达1.2–1.8万，>1万定小城。' },
 
     { id: 'city_buergenjuntai', name: '布尔根', factionId: 'duerbote', lat: 46.09, lng: 91.53, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000,
-        note: '[蒙元至准噶尔杜尔伯特期·阿尔泰南麓布尔根河谷牧营] 科布多南境布尔根河谷乌梁海与卫拉特杜尔伯特部游牧驻地（清乾隆中期以后方设军台卡伦，晚于1700年，《朔方备乘》），≤1700年为无墙河谷牧帐营地且人口<1万，定城寨。',
+        note: '[蒙元至清代准噶尔杜尔伯特与新土尔扈特牧地·阿尔泰南麓布尔根河谷牧营卡伦] 科布多南境布尔根河谷乌梁海与卫拉特游牧驻地，乾隆后期仅设毡帐卡伦台站（《朔方备乘》），≤1850年无任何城墙且单营人口不足2000人，定城寨。',
     },
-    { id: 'city_zhabuhanjuntai', name: '扎布汗', factionId: 'manzhou_d', lat: 47.844489, lng: 94.174805, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '[13至17世纪漠北扎布汗河流域喀尔喀扎萨克图部牧地（清策棱驻防军台设于1730年代超限）·杭爱西麓河谷毡帐营] 雍正十年额驸策棱统喀尔喀骑兵破准噶尔在1732年（晚于1700年红线）；≤1700年扎布汗河沿岸为喀尔喀西路随水草游牧草场，无城郭且单营人口<1万，定城寨。' },
+    { id: 'city_zhabuhanjuntai', name: '扎布汗', factionId: 'manzhou_d', lat: 47.844489, lng: 94.174805, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '[漠北扎布汗河喀尔喀西路牧地与雍正抗准前线营盘·杭爱西麓河谷毡帐军台] 雍正十年（1732）额驸策棱率喀尔喀军破准噶尔进军通道，沿岸仅设游牧军台毡帐而无砖石夯土城垣（《蒙古游牧记》），≤1850年单营常住<1万，定城寨。' },
     { id: 'city_teerhunjuntai', name: '特尔浑', factionId: 'zubu', lat: 48.089107, lng: 99.538879, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[辽金北方阻卜（鞑靼）诸部磨古斯驻牧后杭爱特尔浑河谷·鄂尔浑西源高山草甸游牧营盘] 辽道宗大安至寿昌间阻卜诸部长磨古斯据后杭爱河谷反辽十余年（《辽史·道宗纪》），纯草原河谷毡帐牧营无城垣且常住<1万，定城寨。' },
 
     { id: 'city_woluduocheng', name: '青岭牙帐', factionId: 'huihu', lat: 47.698601, lng: 102.631531, type: 'stockade', troops: 10000, region: 'MONGOL', buildingStyle: 'MONGOL', note: '[8至9世纪漠北回鹘汗国可汗夏秋别牙青岭牙帐·杭爱山脉北麓山林草原毡帐行宫] 唐回鹘顿莫贺达干（武义成功可汗）及后裔驻夏行帐青岭（《新唐书·回鹘传》），游牧汗廷毡帐营地无砖石城郭且常住<1万，定城寨。' },
@@ -3105,7 +3105,7 @@ buildingStyle: 'MONGOL', troops: 10000,
     },
     { id: 'city_bayantumen', name: '巴彦图门', factionId: 'kaerka', lat: 48.053, lng: 114.538, type: 'stockade', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MONGOL', troops: 10000,
-        note: '[17世纪喀尔喀东路车臣汗硕垒（摩诃萨嘛谛）汗庭巴彦图门·克鲁伦河下游库伦寺帐聚落] 1650年代硕垒车臣汗于克鲁伦河岸建东库伦僧帐与汗庭（今东方省乔巴山前身，《蒙古源流》），≤1700年全为毡帐木经堂无砖石城垣且常住仅两三千人，定城寨。',
+        note: '[17世纪喀尔喀东路车臣汗硕垒（摩诃萨嘛谛）汗庭巴彦图门·克鲁伦河下游库伦寺帐聚落] 1650年代硕垒车臣汗于克鲁伦河岸建东库伦僧帐与汗庭（今东方省乔巴山前身，《蒙古源流》），≤1850年全为毡帐木经堂无砖石城垣且常住仅两三千人，定城寨。',
     },
     { id: 'city_huzhan', name: '忽毡', factionId: 'zhaowu', lat: 40.248096, lng: 69.658813, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CENTRAL_ASIA' , note: '[前4世纪极北亚历山大城至唐俱战提萨曼花剌子模期·锡尔河南岸砖石内堡商城苦盏] 扼费尔干纳谷地西口，10世纪伊本·豪卡勒记其内堡、主城与拉巴特商区繁盛，1220年帖木儿·灭里率军民拒蒙古围攻（志费尼《世界征服者史》），中世纪盛期城居约1.5–2.5万，>1万定小城。' },
 
@@ -3114,8 +3114,8 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
 
-    { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉塔里木西北道温宿国王治温宿城（今乌什大乌什；清筑永宁城在1758年后超限）·托什干河绿洲夯土小城] 《汉书·西域传》明载温宿国全境总人口仅「户二千二百，口八千四百」，举国尚不满九千人，王城为夯土小邑且城居仅两三千人，定城寨。' },
-    { id: 'city_kungang', name: '昆岗', factionId: 'manzhou_d', lat: 40.54, lng: 81.26, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '[1700年前龟兹西境丝路北道·戈壁绿洲驿路小聚落] 清乾隆平定回部后始设阿克苏道昆岗军台（晚于1700年红线不采）；≤1700年仅为拜城至阿克苏间小绿洲歇马聚落，名字不带关隘堡戍且无石砖夯土关墙，人口<1万，定城寨。' },
+    { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉温宿国王治至清乾隆乌什办事大臣永宁夯土小城·托什干河绿洲夯土邑] 《汉书·西域传》温宿全境仅八千四百人，乾隆三十一年（1766）平乌什回变后筑永宁夯土城周仅四里（夯土墙，《回疆通志》），≤1850年在城兵回合计约4000–6000人<1万，定城寨。' },
+    { id: 'city_kungang', name: '昆岗', factionId: 'manzhou_d', lat: 40.54, lng: 81.26, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '[汉唐龟兹西境丝路北道至清代阿克苏东路驿站·戈壁绿洲歇马小聚落] 阿克苏至拜城间绿洲军台小村落（名字不带关隘堡戍且无石砖夯土关城，《西域水道记》），≤1850年常住不足2000人，定城寨。' },
     { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'yuchi', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '[8世纪末吐蕃攻占于阗北屏麻扎塔格红白山戍堡·和田河横穿塔克拉玛干沙漠红白断崖土石古戍] 斯坦因发掘出土大批古藏文与汉文简纸文书之唐蕃麻扎塔格小戍堡（面积仅数十米见方生土石块小垒，非守正式大道咽喉名关亦无居民城，9世纪后沙埋废弃），戍卒仅数十人，定城寨。' },
 
     { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'small_city', region: 'WESTERN_FEUDAL',
@@ -3156,9 +3156,9 @@ buildingStyle: 'TIBET', troops: 10000,
     },
     { id: 'city_adunzi', name: '阿墩子', factionId: 'bailang', lat: 28.48, lng: 98.85, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '[东汉白狼王唐菆归汉故地至明清滇藏茶马咽喉阿墩子（德钦）·白马雪山梅里雪山夹峙高寒一街商集] 《后汉书·西南夷传》永平中白狼王献《白狼歌》故地，明丽江木氏北拓设哨，清初为澜沧江梅里峡谷茶马换驮狭长山街（无城墙），≤1700年常住藏纳商户不足2000人，定城寨。',
+        note: '[东汉白狼王唐菆归汉故地至明清滇藏茶马咽喉阿墩子（德钦）·白马雪山梅里雪山夹峙高寒一街商集] 《后汉书·西南夷传》永平中白狼王献《白狼歌》故地，明丽江木氏北拓设哨，清初为澜沧江梅里峡谷茶马换驮狭长山街（无城墙），≤1850年常住藏纳商户不足2000人，定城寨。',
     },
-    { id: 'city_dayan', name: '大研', factionId: 'ming_d', lat: 26.87, lng: 100.22, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[元至元置丽江路至明代木氏纳西土司世袭府治大研镇·玉龙雪山南麓黑龙潭水网无墙瓦屋古镇] 明洪武赐阿甲阿得木姓世袭丽江土知府，崇祯十二年徐霞客亲访《滇游日记》明载木氏忌「木加框成困」故绝不筑城墙，虽木府宏丽瓦屋栉比，因无石砖环城墙且≤1700年镇居约6000–9000人未满1万整，定城寨。' },
+    { id: 'city_dayan', name: '大研', factionId: 'ming_d', lat: 26.87, lng: 100.22, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[元明木氏纳西土司府治至清雍正改流后丽江府城大研镇·玉龙雪山南麓四方街水网瓦屋大镇] 明代木氏不筑城墙，清雍正元年（1723）改土归流设流官丽江府后滇藏茶马铜盐贸易大盛，乾嘉道间（≤1850年）大研镇四方街连片建成区常住人口达1.2–1.6万（《乾隆丽江府志略》），>1万定小城。' },
 
     { id: 'city_tengyuecheng', name: '腾越城', factionId: 'ming_d', lat: 25.02, lng: 98.48, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '[明正统至嘉靖滇西极边第一城腾越州·火山玄武岩巨石包砌方城] 正统十年王骥麓川之役后筑腾冲军民指挥使司石城，弘治嘉靖采火山巨石砌筑城垣周七里余高二丈五尺（《明史·地理志》《腾越州志》），州卫同城军民商贾约1.2–1.8万且具巨石城墙，定小城。' },
 
@@ -3209,7 +3209,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     },
     { id: 'city_puding', name: '普定', factionId: 'yelang', lat: 26.25, lng: 105.93, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
-        note: '[战国夜郎旁邑、元至元置普定路习安州至明洪武置普定府卫（安顺前身）·黔中喀斯特坝子卫所屯堡邑] 洪武十四年傅友德克普定筑卫城，本据点代表夜郎与元代罗甸普定土司部族阶段（明安顺石城属后期改建，且≤1700年屯堡军户散居九溪十八寨、卫城内仅约5000–8000人<1万，《元史·地理志》），定城寨。',
+        note: '[战国夜郎旁邑、元至元置普定路习安州至明洪武置普定府卫（安顺前身）·黔中喀斯特坝子卫所屯堡邑] 洪武十四年傅友德克普定筑卫城，本据点代表夜郎与元代罗甸普定土司部族阶段（明安顺石城属后期改建，且≤1850年屯堡军户散居九溪十八寨、卫城内仅约5000–8000人<1万，《元史·地理志》），定城寨。',
     },
     { id: 'city_shengjingguan', name: '胜境关', factionId: 'tang', lat: 25.651438, lng: 104.350891, type: 'pass', region: 'NANZHAO',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 BASHU：胜境关（云南富源）：滇黔锁钥，南诏/大理故地
@@ -3221,7 +3221,7 @@ buildingStyle: 'BASHU', troops: 10000,
         note: '[蜀汉建宁郡味县、两晋南北朝爨氏大姓世领南中四百年治城至大理石城郡明曲靖军民府·南盘江包砖府卫城] 诸葛亮南征班师留李恢镇建宁郡味县（《三国志·李恢传》，出土《爨宝子碑》《爨龙颜碑》），元置曲靖宣抚司、明洪武二十年筑条石包砖曲靖卫府大城控入滇东大门，城居约2–3万，>1万定小城。',
     },
     { id: 'city_weichu', name: '威楚', factionId: 'dali', lat: 25.045791, lng: 101.574097, type: 'small_city', region: 'DALI', buildingStyle: 'BASHU', troops: 10000, note: '[唐南诏银生北屏威楚城、大理国威楚府（高氏封地）至明洪武楚雄府卫城·龙川江畔条石包砖周七里府城] 大理国相高升泰家族重镇威楚府，明洪武十六年袁义改筑条石包砖六门楚雄府卫同城扼大理至昆明驿道中枢（《元史·地理志》《楚雄府志》），滇西咽喉城居约1.5–2.5万，>1万定小城。' },
-    { id: 'city_tuodongcheng', name: '滇池', factionId: 'dianguo', lat: 25.05, lng: 102.7, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '[战国汉滇王都、唐南诏副都拓东城（鄯阐府）至元赛典赤云南行省中庆路明云南府·盘龙江包砖龟城省会] 凤伽异筑南诏东都拓东城，元为云南行省省会（马可·波罗记押赤大城），明洪武十五年沐英改筑周九里三百步六门青砖条石云南府省城（《蛮书》《云南通志》），明万历省垣关厢达4–6万，>1万定小城。' },
+    { id: 'city_tuodongcheng', name: '滇池', factionId: 'dianguo', lat: 25.05, lng: 102.7, type: 'medium_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '[汉滇国、唐南诏拓东城至元中庆路与明清云贵总督驻节云南府·盘龙江青砖条石六门龟城] 明沐英筑砖石省城；清乾嘉道间（≤1850年）云贵总督与云南巡抚同城驻节，城内及南关三市街商厢城居达8.5–10万（曹树基《中国人口史·清时期》及Chandler 1850年表8.5万），≥8万容差线，定中城。' },
 
 
     { id: 'city_luoxiong', name: '罗雄', factionId: 'cuanshi', lat: 24.769307, lng: 104.224548, type: 'stockade', region: 'BASHU',
@@ -3243,14 +3243,14 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         factionId: 'nanhan',
         lat: 23.120000,
         lng: 113.260000,
-        type: 'medium_city',
+        type: 'big_city',
         isPort: true,
         troops: 10000,
         tier: 1,
         region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：番禺（广东广州）：南越国都、南海郡治，汉地城郭
         buildingStyle: 'JIANGNAN',
-        note: '[唐宋广州三城至明末广州府·红砂岩包砖内外新城] 宋筑子城东西两翼城至明嘉靖增筑外城，广州城垣内（南海、番禺两附郭县坊厢）及河南、西关商厢≤1700年峰值约20–30万（《万历广东通志》及Chandler 1600年表20万；乾隆40万超年不取），>10万定中城。' },
+        note: '[秦汉番禺、南汉兴王府至明清广州府·红砂岩包砖内外三城与十三行西关商厢] 明万历20–30万，清乾嘉道一口通商盛期（≤1850年）广州城内及西关、河南商厢峰值逾45–50万（Chandler 1850年表50万），≥40万容差线，定大城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：龙川（广东）：秦置龙川县，赵佗任所
     { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.1, lng: 115.26, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[秦始皇三十三年赵佗任龙川令筑佗城至五代南汉祯州宋循州治龙川·东江上游明洪武包砖石基千户所县城] 岭南最早古邑赵佗兴王根本龙川佗城（《史记·南越列传》），北宋为循州海丰郡治（苏辙谪居处），明洪武二十一年置龙川守御千户所筑周四里包砖条石城墙（现存越王井与明砖城门），宋州治逾万且明具砖石墙，定小城。' },
 
@@ -3296,7 +3296,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 
 
 
-    { id: 'city_datong2', name: '大通', factionId: 'ming_d', lat: 30.8188, lng: 117.7762, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[唐大通水驿至宋明沿江商镇·铜陵江岸无城墙开放市镇] 池州与铜陵间长江澜溪口商税水驿大通镇（《明史·地理志》设巡检司与河泊所），明清至1700年始终为无城墙沿江集镇且常住人口约5000–8000人<1万，定城寨。' },
+    { id: 'city_datong2', name: '大通', factionId: 'ming_d', lat: 30.8188, lng: 117.7762, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[唐大通水驿至宋明沿江商镇·铜陵江岸无城墙开放市镇] 池州与铜陵间长江澜溪口商税水驿大通镇（《明史·地理志》设巡检司与河泊所），明清至1850年始终为无城墙沿江集镇且常住人口约5000–8000人<1万，定城寨。' },
 
 
     // ── 2026-05-30 新增：哈拉和林(蒙古帝国首都) ──
@@ -3328,7 +3328,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
 
-    { id: 'city_kuanchengzi', name: '宽城屯', factionId: 'manzhou_d', lat: 43.8725, lng: 125.3595, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[17世纪科尔沁郭尔罗斯前旗伊通河牧地（嘉庆五年1800设长春厅宽城子远超1700年红线）·柳条边外草原牧屯] 清设长春厅流民商埠宽城子始于1791–1800年（违反≤1700年红线不采）；≤1700年柳条边伊通门外仅为蒙古郭尔罗斯旗游牧草甸与零星台站，无城墙且不足千人，定城寨。' },
+    { id: 'city_kuanchengzi', name: '宽城屯', factionId: 'manzhou_d', lat: 43.8725, lng: 125.3595, type: 'small_city', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清嘉道吉林北路商业重埠长春厅宽城子·伊通河西岸连片粮栈钱庄商埠] 嘉庆五年（1800）设长春厅、道光五年（1825）移治宽城子，凭松辽平原大豆粮栈与蒙汉互市迅猛勃兴，道光末（≤1850年）连片商市街区常住商民达1.5–2.5万（《吉林通志》），>1万定小城。' },
 
     { id: 'city_wuliyasitai', name: '乌里雅斯太', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'XIANBEI', note: '[17世纪漠南察哈尔东迁后东乌珠穆沁旗多尔济贝勒驻牧地乌里雅斯太·大兴安岭西麓拉尕拉河草甸王帐] 多尔济号色臣济农于崇德间率部归清封东乌珠穆沁扎萨克亲王（《蒙古游牧记》卷二），草原游牧王府毡帐无城郭且常住<1万，定城寨。' },
 
@@ -3382,7 +3382,7 @@ buildingStyle: 'WESTERN', troops: 10000,
         // 🔴 [2026-10-30 按史修正] 沙陀李克用父子已移归漠南/河朔祖邑（光禄城/彰国军城），大石堡位于天山别迭里达坂南麓阿克苏乌什北，属古尉头/安西西域要隘，归属尉头（weitou）
         note: '[汉尉头国至唐安西大石城·天山南麓绿洲夯土小邑] 即唐温肃州大石城（今乌什，《新唐书·地理志》卷四十三下引贾耽道里记），实为西域绿洲居民小城邑而非砌墙关门，查无城居人口确数且为夯土小邑<1万，定城寨。',
     },
-    { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉葱岭北道山谷半游牧小国尉头国王治尉头谷（今阿合奇；清设卡在1759年后超限）·托什干河上游石土山牧寨] 《汉书·西域传》明载尉头国全境总人口仅「户三百，口二千三百，随畜逐水草，衣服类乌孙」，举国仅两千三百人且无城郭，定城寨。' },
+    { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '[两汉葱岭北道半游牧小国尉头国王治尉头谷（今阿合奇）至清代布鲁特牧卡·托什干河上游石土山牧寨] 《汉书·西域传》明载尉头国全境仅二千三百人随畜逐水草，清乾隆后为冲巴噶什布鲁特（柯尔克孜）游牧山谷卡伦，≤1850年无城郭且人口不足3000人，定城寨。' },
     { id: 'city_wosedecheng', name: '握瑟德', factionId: 'tang', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', troops: 10000, note: '[唐安西四镇龟兹西赴拨换要驿握瑟德城（郁头州，今巴楚东北唐王城）·叶尔羌河下游夯土圆城] 开元二十七年盖嘉运平突骑施经略西域、贾耽道里记明载自拨换南行经握瑟德城（巴楚托库孜萨来唐王城夯土遗址），沙漠边缘夯土军驿小城常住不足5000人，定城寨。' },
     { id: 'city_jiaseni', name: '哥疾宁', factionId: 'jiazini', lat: 33.55, lng: 68.42, type: 'medium_city', region: 'SASANIAN',
 buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
@@ -3404,9 +3404,9 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     { id: 'city_patala', name: '帕塔拉', factionId: 'maqidun', lat: 25.39, lng: 68.36, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[前4世纪亚历山大东征终点·印度河三角洲分流处泥砖木构港邑] 前325年亚历山大抵帕塔拉时当地人举邑逃散，马其顿军修整木土船坞与卫垒（阿里安《远征记》VI.17–20），冲积三角洲无石砖城郭且古典史料查无人口数字，定城寨。' },
     { id: 'city_pula', name: '普拉', factionId: 'maqidun', lat: 27.2025, lng: 60.6858, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '[前4世纪阿契美尼德与亚历山大西归休整之吉德罗西亚行省治所普拉（今伊朗沙赫尔Bampur土丘）·沙漠绿洲生土泥砖小省邑] 前325年亚历山大穿越莫克兰酷热沙漠死伤惨重后抵普拉休整补给（阿里安《远征记》VI.24–26），俾路支干旱绿洲泥砖高台小邑古典史料查无人口数字且<1万，定城寨。' },
     { id: 'city_kamanniya', name: '卡曼尼亚', factionId: 'aqimeinide', lat: 28.67, lng: 57.74, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '[塞尔柱克尔曼王朝至萨法维期（承阿契美尼德卡曼尼亚）·烧砖泥砖六门商都克尔曼] 11–12世纪克尔曼塞尔柱都城及17世纪萨法维甘贾利汗扩建大巴扎时期，马可·波罗与塔维尼埃记其地毯军械贸易兴盛，城垣内常住人口约2.5–4万（Matthee萨法维经济考），>1万定小城。' },
-    { id: 'city_xierzhan', name: '锡尔詹', factionId: 'seljuq', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '[萨珊至10世纪白益与塞尔柱克尔曼西门商道城锡尔詹·卡拉伊桑石丘与平原泥砖城垣] 10世纪伊斯塔赫里记锡尔詹为法尔斯入克尔曼商站泥砖城，1396年帖木儿军围破卡拉伊桑后彻底夷毁荒废（哈菲兹·阿布鲁《史汇》），泥砖生土垣且≤1700年无破万确证，定城寨。' },
+    { id: 'city_xierzhan', name: '锡尔詹', factionId: 'seljuq', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '[萨珊至10世纪白益与塞尔柱克尔曼西门商道城锡尔詹·卡拉伊桑石丘与平原泥砖城垣] 10世纪伊斯塔赫里记锡尔詹为法尔斯入克尔曼商站泥砖城，1396年帖木儿军围破卡拉伊桑后彻底夷毁荒废（哈菲兹·阿布鲁《史汇》），泥砖生土垣且≤1850年无破万确证，定城寨。' },
     { id: 'city_hulewan', name: '呼勒万', factionId: 'sashan', lat: 34.35, lng: 45.9, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', stockadeShape: 'trapezoid', stockadeFence: 'ARCHAIC', note: '[萨珊波斯晚期·扎格罗斯山口西麓驿道市镇] 萨珊霍斯劳二世设宫驿之山口聚落呼勒万（637年阿拉伯军进占，《塔巴里史》），实为无环城石墙之山麓小镇而非正式砌墙关塞，城居不足1万，定城寨。', mirror: true },
-    { id: 'city_yilamu', name: '伊拉姆', factionId: 'ailan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', note: '[埃兰西境山地与萨珊塞尔柱洛雷斯坦北缘山谷集镇伊拉姆·扎格罗斯西麓石木游牧冬营小镇] 库尔德与卢尔山地部落冬牧集市，中世纪阿拉伯地理志仅列为山间小村镇（总督卡迪姆宫迟至卡扎尔王朝方建），无石砖大城墙且≤1700年常住仅两三千人，定城寨。' },
+    { id: 'city_yilamu', name: '伊拉姆', factionId: 'ailan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', note: '[埃兰西境山地与萨珊塞尔柱洛雷斯坦北缘山谷集镇伊拉姆·扎格罗斯西麓石木游牧冬营小镇] 库尔德与卢尔山地部落冬牧集市，中世纪阿拉伯地理志仅列为山间小村镇（总督卡迪姆宫迟至卡扎尔王朝方建），无石砖大城墙且≤1850年常住仅两三千人，定城寨。' },
     { id: 'city_guerpayegan', name: '古尔帕耶甘', factionId: 'seljuq', lat: 33.4536, lng: 50.2884, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '[萨珊传说建邑至12世纪大塞尔柱穆罕默德·塔帕尔建清真寺古尔帕耶甘·扎格罗斯东麓谷口泥砖烧砖驿镇] 连接伊斯法罕与哈马丹山间走廊之农业绿洲小镇（现存1105–1118年塞尔柱砖砌清真寺），非设防大都会亦非关门，中世纪常住人口无确载（约数千<1万），定城寨。' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 兰巴基亚＝莫克兰海岸（判不出→最近同风格据点卡拉奇）→ PURU；原标 INDIA
     { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[前325年亚历山大征服俾路支沿海奥里泰人最大村落兰巴基亚（今拉斯贝拉）·波拉利河谷泥砖茅屋大村] 阿里安《亚历山大远征记》VI.21.5明确界定兰巴基亚为「奥里泰人最大之村落（κώμη）」，亚历山大命赫费斯提翁留建新屯旋即因土著反叛废弃，无石砖城郭且村落人口不足1万，定城寨。' },
@@ -3476,7 +3476,7 @@ buildingStyle: 'MONGOL', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：真珠河：锡尔河上游，中亚
     { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'xierhe', lat: 41.2773, lng: 67.9312, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '[8至11世纪突厥碑铭与乌古斯叶护国南界真珠河（锡尔河中游药杀水）渡口牧营·河岸胡杨芦苇冬营聚落] 《暾欲谷碑》明载突厥西征远渡「真珠河（Yinčü ügüz，即锡尔河）」直抵铁门，10世纪为乌古斯人冬季沿河驻牧营地，无砖石城墙且单营<1万，定城寨。', mirror: true },
 //镜像
-    { id: 'city_wuyun', name: '乌云', factionId: 'manzhou_d', lat: 49.018048, lng: 129.91539, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '[清初黑龙江中游右岸鄂伦春索伦使马猎部游牧地乌云河口（嘉荫，设县在民国超限）·小兴安岭江岸撮罗子猎营] 康熙间沙尔虎达、萨布素巡江通道沿岸索伦鄂伦春桦皮斜仁柱（撮罗子）狩猎聚落（《柳边纪略》），无城墙且常住仅数百人，定城寨。' },
+    { id: 'city_wuyun', name: '乌云', factionId: 'manzhou_d', lat: 49.018048, lng: 129.91539, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '[清代黑龙江中游右岸鄂伦春索伦使马猎部游牧地乌云河口·小兴安岭江岸撮罗子猎营] 康熙至道光间黑龙江将军辖境沿岸索伦、鄂伦春桦皮斜仁柱狩猎聚落（《黑龙江外纪》；设县迟至民国），≤1850年无城墙且常住仅数百人，定城寨。' },
 
 
 
@@ -3508,7 +3508,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-06-11 新增：库页岛民族据点 ──
     { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '[元明库页岛东岸中部诺托罗河口鄂罗克（乌尔奇）驯鹿海豹部族聚落·海滨圆木鱼皮帐营] 库页岛东海岸通古斯语系鄂罗克氏族夏渔冬猎集散河口（间宫林藏《东鞑纪行》考述传统聚落），无城郭且仅数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛鄂罗克/阿伊努渔猎聚落，取最近NORTHEAST' },
     { id: 'city_baizhu', name: '白主', factionId: 'jilimi', lat: 46.71, lng: 142.52, type: 'stockade', isPort: true, region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '[元至元二十一年至大德末征东元帅府跨海征骨嵬（阿伊努）登陆终点库页岛最南端白主土城·宗谷海峡北岸方形夯土小垒] 《元史·世祖纪》《经世大典》骨嵬招讨司遗迹，今库页岛南端克里利翁角现存元代风格120×110米仅1.3公顷方形夯土矮垣（日本称白主土城），纯渡海前哨小土垒常住不足千人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】库页岛骨嵬/吉里迷渔猎聚落，取最近NORTHEAST' },
-    { id: 'city_bailao', name: '白老', factionId: 'ayinu_ezo', lat: 42.55, lng: 141.36, type: 'stockade', isPort: true, region: 'AINU', buildingStyle: 'JAPAN', troops: 10000, note: '[15世纪康正三年（1457）胡奢魔犬抗和人起义时代北海道太平洋岸阿伊努大聚落白老·海滨茅草奇塞（Chise）与木栅查希] 北海道胆振海岸阿伊努重要Kotan（村落）与山丘壕沟木栅祭祀防砦（Chashi，《新罗之记录》），无石垣城郭且≤1700年单聚落阿伊努居民仅数百至千余人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN' },
+    { id: 'city_bailao', name: '白老', factionId: 'ayinu_ezo', lat: 42.55, lng: 141.36, type: 'stockade', isPort: true, region: 'AINU', buildingStyle: 'JAPAN', troops: 10000, note: '[15世纪康正三年（1457）胡奢魔犬抗和人起义时代北海道太平洋岸阿伊努大聚落白老·海滨茅草奇塞（Chise）与木栅查希] 北海道胆振海岸阿伊努重要Kotan（村落）与山丘壕沟木栅祭祀防砦（Chashi，《新罗之记录》），无石垣城郭且≤1850年单聚落阿伊努居民仅数百至千余人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN' },
     { id: 'city_zonggu', name: '宗谷', factionId: 'ayinu_ezo', lat: 45.5, lng: 141.93, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[15至17世纪北海道最北端阿伊努对库页山丹锦缎交易口宗谷（1669年沙牟奢允之战时代松前商场所）·海岬木屋渔番屋] 松前藩设宗谷场所与阿伊努、库页岛民以海产易清朝丝锦（「山丹贸易」，《松前志》），严寒海角无城墙且常住阿伊努渔民仅数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】北海道阿伊努/鄂霍次克渔猎聚落，67键无此文化，取最近JAPAN' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'manzhou_d', lat: 46.9, lng: 134.1, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[辽女真故地至明永乐置奴儿干属卫乌苏里江支流锡尔喀（今俄罗斯希尔卡／伊曼河口）·林江木栅渔猎聚落] 明代乌苏里江流域野人女真与那乃部族朝贡水驿河口村寨（《明实录》《皇舆全览图》），木屋树皮帐无城墙且常住不足2000人，定城寨。' },
     { id: 'city_niman', name: '尼满', factionId: 'wure', lat: 45.51, lng: 131.96, type: 'stockade', region: 'MOHE', buildingStyle: 'NORTHEAST', troops: 10000, note: '[辽统和十三年兀惹国主乌昭度降辽故境至明永乐七年置兀者／尼满河卫·乌苏里江东支大乌苏里河（尼满河）口土垣木寨] 《辽史·圣宗纪》兀惹乌昭度据勃海故地及《明太宗实录》永乐置尼满河卫羁縻女真诸部，江口林地小型土垒木栅聚落人口无载<1万，定城寨。' },
@@ -3519,20 +3519,20 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_geerbiqi', name: '格尔必齐', factionId: 'manzhou_d', lat: 53.33, lng: 121.45, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '[清康熙二十八年（1689）《中俄尼布楚条约》法定界河格尔必齐河口立碑处·黑龙江北岸针叶林河口哨卡猎营] 清廷以满汉蒙俄拉丁五体勒石立界碑于格尔必齐河入黑龙江东岸（《清圣祖实录》《朔方备乘》），林莽界河巡边卡伦营点无城墙无居民城，定城寨。' },
 
     { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'eluosi_diguo', lat: 51.7321, lng: 115.8151, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '[17世纪末沙俄外贝加尔扩张·石勒喀河岸圆木栅寨（奥斯特罗格）] 1650年代至1689年《尼布楚条约》前后俄国哥萨克帕什科夫等于石勒喀河筑原木立栅尖桩寨（《清圣祖实录》及俄国西伯利亚档案），木栅按规不算墙，驻兵仅数百人<1万，定城寨。' },
-    { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '[17世纪外贝加尔布里亚特游牧猎场与1653年俄哥萨克别克托夫建印戈达越冬木屋（赤塔木寨建于1687年）·河口原木冬营] 1653年建越冬木屋、1699年仅升格小型原木立栅奥斯特罗格（1825年十二月党人流放前全镇仅三百居民！俄国西伯利亚地志实载），木栅且≤1700年不足500人，定城寨。' },
+    { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '[17世纪外贝加尔布里亚特游牧猎场与1653年俄哥萨克别克托夫建印戈达越冬木屋（赤塔木寨建于1687年）·河口原木冬营] 1653年建越冬木屋、1699年仅升格小型原木立栅奥斯特罗格（1825年十二月党人流放前全镇仅三百居民！俄国西伯利亚地志实载），木栅且≤1850年不足500人，定城寨。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：养吉干：锡尔河入咸海处要塞，花剌子模/钦察故地，归库曼 CUMAN
     { id: 'city_yangjigan', name: '养吉干', factionId: 'xierhe', lat: 45.6, lng: 62, type: 'stockade', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '[10至12世纪乌古斯叶护国首都养吉干（Yangi-kent「新城」）·锡尔河入咸海三角洲泥砖高台沼泽王城] 10世纪伊本·鲁斯塔与马苏第记养吉干为乌古斯叶护冬都，苏联托尔斯托夫花剌子模考古队发掘泥砖T形遗址（面积仅约12公顷泥砖生土垣），1219年成吉思汗长子术赤攻取后渐废，生土小城不足8000人，定城寨。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：毡的（Jand）：锡尔河下游乌古斯—钦察要城，归库曼 CUMAN
     { id: 'city_zhande', name: '毡的', factionId: 'seljuq', lat: 44.85, lng: 65.5, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '[10世纪末塞尔柱贝伊始迁伊斯兰改宗圣战起点毡的（Jand）·锡尔河下游左岸泥砖草原边贸城] 985年前后塞尔柱率乌古斯部众驻牧毡的改信伊斯兰，花剌子模沙阿屡以此为讨钦察前哨、1220年术赤攻占（志费尼《世界征服者史》），沙漠河道改道后沙埋，泥砖城垣且人口无确载<1万，定城寨。' },
 
     // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
-    { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', isPort: true, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 台北艋舺；清代台北府淡水厅南境要地，万华故称艋舺；定级依据§6.2：艋舺非关隘/要塞/堡垒（淡水河内河港市，"一府二鹿三艋舺"），按城市判级；1875年约1.8万人（臺北府淡水縣大加蚋堡艋舺）→ 小城；推算：城居 1.8 万（艋舺，1875 年约 1.8 万）→ 小城' },
-    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'ming_d', lat: 25.75, lng: 123.5, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '🔴 [2026-11-07 按史补依据] 钓鱼岛；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', isPort: true, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '[清乾嘉道淡水河第一内河商埠艋舺（今台北万华）·龙山寺砖瓦街肆连片商市] 康熙末开垦，至嘉庆道光年间（1820–1850）与台南府城、鹿港并称「一府二鹿三艋舺」，淡水厅艋舺街肆常住城居达1.5–1.8万（姚莹《东槎纪略》、陈培桂《淡水厅志》），≤1850年>1万，定小城。' },
+    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'ming_d', lat: 25.75, lng: 123.5, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[明代册封琉球针路航标岛·东海海路节点特例城寨] 陈侃《使琉球录》与《顺风相送》所载福州至那霸针路航标钓鱼屿，无常住居民城郭，按主人定案作海路航标特例城寨（2026-11-15）。' },
 
 
 
 
-    { id: 'city_gugudao', name: '平良', factionId: 'ryukyu', lat: 24.805, lng: 125.281, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[14至16世纪琉球三山朝贡统一期宫古岛仲宗根丰见亲平良治所·珊瑚礁岛涨水御岳与干砌珊瑚石屋村落] 1500年仲宗根丰见亲率宫古水军助尚真王平八重山赤蜂之乱（《球阳》《宫古岛旧记》），岛上无城郭天守，≤1700年平良五村散居人口仅约3000–4000人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】琉球宫古/先岛石城聚落，67键无琉球，取最近JAPAN' },
+    { id: 'city_gugudao', name: '平良', factionId: 'ryukyu', lat: 24.805, lng: 125.281, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[14至16世纪琉球三山朝贡统一期宫古岛仲宗根丰见亲平良治所·珊瑚礁岛涨水御岳与干砌珊瑚石屋村落] 1500年仲宗根丰见亲率宫古水军助尚真王平八重山赤蜂之乱（《球阳》《宫古岛旧记》），岛上无城郭天守，≤1850年平良五村散居人口仅约3000–4000人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】琉球宫古/先岛石城聚落，67键无琉球，取最近JAPAN' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：哲德：锡尔河下游毡的故址一带，乌古斯后钦察，归库曼 CUMAN
     { id: 'city_qihe', name: '哲德', factionId: 'xierhe', lat: 44.2219, lng: 64.3332, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '[10至11世纪乌古斯与早期塞尔柱家族锡尔河下游右岸冬牧营邑哲德（巴尔奇肯特一带）·河岸芦苇生土冬营] 乌古斯叶护国与钦察汗部交替控制之锡尔河下游右岸过冬泥砖小邑（巴托尔德《突厥斯坦史》），生土泥墙且常住不足5000人，定城寨。' },
@@ -3549,7 +3549,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
     { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.36, type: 'small_city', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '[9世纪萨法尔重镇至11至12世纪伽色尼帝国冬都博斯特·赫尔曼德河烧砖巨拱内堡与拉什卡里巴扎王城] 马哈茂德与马斯乌德冬都博斯特，法国DAFA考古发掘7公里沿河烧砖宫苑与大巴扎，伊斯塔赫里《道路与王国志》与拜哈基《马斯乌德史》记其商旅辐辏，盛期城居约2–4万，>1万定小城。' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
-    { id: 'city_fala', name: '法拉', factionId: 'ansxi', lat: 32.3700, lng: 62.1100, type: 'stockade', region: 'PERSIAN', buildingStyle: 'PERSIAN', troops: 10000, note: '[前330年亚历山大进占弗拉达（普罗夫塔西亚）至安息苏伦家族锡斯坦北门法拉·法拉河畔泥砖高垣绿洲城] 亚历山大在此破获菲罗塔斯谋反案，伊斯塔赫里记法拉具生土泥砖内堡与枣椰巴扎，经成吉思汗与1383年帖木儿两度屠毁，生土夯筑泥墙（无石砖城垣）且≤1700年常住约5000–8000人<1万，定城寨。' },
+    { id: 'city_fala', name: '法拉', factionId: 'ansxi', lat: 32.3700, lng: 62.1100, type: 'stockade', region: 'PERSIAN', buildingStyle: 'PERSIAN', troops: 10000, note: '[前330年亚历山大进占弗拉达（普罗夫塔西亚）至安息苏伦家族锡斯坦北门法拉·法拉河畔泥砖高垣绿洲城] 亚历山大在此破获菲罗塔斯谋反案，伊斯塔赫里记法拉具生土泥砖内堡与枣椰巴扎，经成吉思汗与1383年帖木儿两度屠毁，生土夯筑泥墙（无石砖城垣）且≤1850年常住约5000–8000人<1万，定城寨。' },
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
     { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN' , note: '[亚历山大阿拉霍西亚至16至17世纪莫卧儿萨法维争霸重镇·厚重石基泥砖棱堡坚城] 阿富汗南路总锁钥坎大哈，1622与1649–1653年萨法维与莫卧儿三次十万大军围城争夺旧坎大哈坚固山腰垒城，17世纪常住军民商旅达2–3.5万（塔维尼埃记述），>1万定小城。' },
 
@@ -3565,12 +3565,12 @@ buildingStyle: 'TIBET', troops: 10000,
     // —— 2026-06-20 新增：旁遮普·阿托克 ——
     { id: 'city_atuoke', name: '阿托克', factionId: 'xike', lat: 33.7666, lng: 72.3608, type: 'pass', region: 'PURU', buildingStyle: 'PURU', troops: 10000, note: '[莫卧儿阿克巴至锡克帝国·印度河渡口红砂岩石砖巨堡] 1581年阿克巴命筑阿托克石砖要塞（周逾一英里）锁控开伯尔山口东出渡印度河唯一咽喉，后哈里·辛格驻守（《阿克巴纪》），纯守渡口军事石堡且未成万人居民城，定险要。' },
     { id: 'city_meng', name: '蒙格', factionId: 'bulu', lat: 32.64744, lng: 73.50914, type: 'stockade', region: 'PURU', buildingStyle: 'PURU', troops: 10000, note: '[前326年五月亚历山大与印度波鲁斯王海达斯佩斯河决战渡岸蒙格（尼凯亚古址）·杰赫勒姆河南岸高丘泥砖村镇] 亚历山大击败波鲁斯战象大军后于战场南岸建纪念城尼凯亚（阿里安《远征记》V.19，斯坦因勘定今巴基斯坦旁遮普Mung土丘），希腊化后湮没为普通泥砖大村且查无人口数字，定城寨。' },
-    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '[1700年前上缅甸穆河平原猎人小村木疏（Moksobo，雍笈牙1752年起兵称帝改都瑞波远超1700年红线）·竹木栅栏旱塬村落] 贡榜王朝开国君主雍笈牙筑木栅起兵定都瑞波在1752–1753年（违反≤1700年红线，18世纪中叶都城人口不采）；≤1700年木疏仅为三百余户无城墙猎农小村（《琉璃宫史》），定城寨。' },
+    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'small_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '[18世纪中叶缅甸贡榜帝国开国皇都瑞波（木疏）·穆河平原4公里方城红砖护城河王都] 1752年雍笈牙起兵木疏挫败汉达瓦底军，1753–1765年定为贡榜王朝首座帝国首都，修筑完整烧砖内宫与外郭砖石方城（《琉璃宫史》），都城盛期常住军民达2–3万，>1万且具砖城，定小城。' },
 
     { id: 'city_hengyu', name: '横屿', factionId: 'ming_d', lat: 26.77, lng: 119.7, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[明嘉靖四十一年（1562）戚继光踏烂泥破倭老巢横屿大捷·福建宁德三都澳近岸泥涂孤岛木栅贼巢] 倭寇数千盘踞宁德海滩涨潮成岛、退潮陷泥之横屿立双层木栅大营数年，戚继光命士卒人持草束填泥仰攻焚破木寨斩首二千六百（《明史·戚继光传》《纪效新书》），纯海岛木栅营寨无居民城，定城寨。' },
 
 
-    { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[宋元罗番罗甸南界至明清黔南红水河畔仲家（布依族）韦氏王氏土司寨聚罗博（罗甸）·樟江河谷干栏竹木山寨] 地处贵州南部红水河炎瘴低谷（清置罗斛厅更在乾隆四十七年1782超限，《黔南识略》），≤1700年纯属布依族干栏木楼村寨无城墙且单寨不足2000人，定城寨。' },
+    { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[宋元罗番南界至明清黔南红水河仲家（布依族）土司寨聚罗博（乾隆置罗斛厅）·樟江河谷干栏竹木山寨] 乾隆四十七年（1782）虽设罗斛厅分驻通判，因红水河低谷瘴疠不筑石城（《黔南识略》），≤1850年仍为布依族干栏木楼聚落且常住不足3000人，定城寨。' },
 
     { id: 'city_situo', name: '思陀', factionId: 'ming_d', lat: 23.2243, lng: 102.8485, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
@@ -3580,7 +3580,7 @@ buildingStyle: 'BASHU', troops: 10000,
         // 🔴 [2026-09-18 主人定] 原 'SEAS' 只是一级母体、无二级/三级 → 按真实地理历史归**高棉 KHMER**：
         //    上丁（Stung Treng）在今柬埔寨北部，湄公河畔高棉故地（巴沙/占巴塞一带）。
         buildingStyle: 'KHMER', troops: 10000,
-        note: '[真腊水陆道要津至15至17世纪澜沧王国南境湄公河孔恩瀑布下水陆换船埠上丁·色公河入湄公口高脚木屋商镇] 因上游孔恩大瀑布阻断舟楫而成老挝下寮至柬埔寨木材象牙换船集镇（《老挝史》），全为木竹干栏民居无城墙且≤1700年常住不足4000人，定城寨。',
+        note: '[真腊水陆道要津至15至17世纪澜沧王国南境湄公河孔恩瀑布下水陆换船埠上丁·色公河入湄公口高脚木屋商镇] 因上游孔恩大瀑布阻断舟楫而成老挝下寮至柬埔寨木材象牙换船集镇（《老挝史》），全为木竹干栏民居无城墙且≤1850年常住不足4000人，定城寨。',
     },
     // ── 2026-06-12 新增：夏顿@廷布 ──
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '[1641年夏仲阿旺朗杰统一不丹建扎西却宗（廷布宗）为夏宫政教署·旺楚河谷石木大宗寺与散居农庄] 不丹夏仲法王制度下廷布扎西却宗仅为政府夏季驻锡寺院宗堡（冬季迁普那卡宗），17–19世纪英使博格尔与彭伯顿亲访实记河谷全无市镇街坊，仅宗内数百喇嘛官役与谷坡零星农舍，定城寨。' },
@@ -3637,7 +3637,7 @@ buildingStyle: 'TIBET', troops: 10000,
     //    结果间距全部 ≥50km：镰仓↔箱根关 52.1 / 镰仓↔江户城 53.0 / 江户城↔箱根关 95.9。
     { id: 'city_kamakura', name: '镰仓', factionId: 'genji', lat: 35.3195, lng: 139.5503, type: 'medium_city', isPort: true, troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN' , note: '[13世纪镰仓幕府执权盛期·切通山隘土垒武家都城] 北条执权后期镰仓七口切通与由比滨连片武家屋敷町屋建成区，城居峰值约8–12万（河野真一郎镰仓考古及鬼头宏估6–10万、Chandler 1250年表估20万，取审慎区间8–12万），≥8万定中城。' },
 
-    { id: 'city_osaka', name: '大阪', factionId: 'toyotomi', lat: 34.6873, lng: 135.5262, type: 'medium_city', isPort: true, troops: 20000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[丰臣至江户元禄期·巨石垣水网商都] 江户元禄十二年（1699）大坂三乡町人实测345,524人、元禄十六年（1703）351,708人，合城代武家约36–38万（《新修大阪市史》实测户籍，宝历年间1749年方破40万），≤1700年未满40万，定中城。', },
+    { id: 'city_osaka', name: '大阪', factionId: 'toyotomi', lat: 34.6873, lng: 135.5262, type: 'big_city', isPort: true, troops: 20000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '[丰臣至江户宝历盛期·巨石垣水网天下台所商都] 江户宝历年间（1749–1760）大坂三乡町人实测40.4–41.9万，合大坂城代与藏屋敷武家常住逾42万（《新修大阪市史》实测户籍），≤1850年峰值≥40万容差线，定大城。', },
 
 
 
@@ -3647,7 +3647,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'goryeo', lat: 38.8102, lng: 127.4959, type: 'pass', troops: 10000, region: 'SONG', buildingStyle: 'KOREA', note: '[高丽末至朝鲜王朝·太白山脉东北界道石筑关隘] 扼江原道北入咸镜道唯一山岭孔道，高丽恭愍王收复双城后及朝鲜世宗筑石城关门戍守（《高丽史·地理志》《新增东国舆地胜览》），带「关」字且具石墙，未成万人城，定险要。' },
 
-    { id: 'city_penghu', name: '澎湖', factionId: 'manzhou_d', lat: 23.5, lng: 119.5, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[元至元立澎湖巡检司、明天启沈有容俞咨皋驱荷拆红毛木石小城至康熙二十二年施琅克澎湖·妈宫港水师澳寨] 天启四年明军攻毁荷兰风柜尾临时乱石土城，康熙二十二年（1683）施琅破明郑刘国轩于澎湖设水师副将驻防（澎湖砖石厅城迟至光绪十三年1887方筑，超限不采，《澎湖纪略》），≤1700年无城墙且渔军数千人<1万，定城寨。' },
+    { id: 'city_penghu', name: '澎湖', factionId: 'manzhou_d', lat: 23.5, lng: 119.5, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[元澎湖巡检司、明天启驱荷与清康熙施琅克澎湖设水师协标·妈宫港无城墙水师澳镇] 康熙二十二年（1683）施琅克澎湖设水师副将及通判，妈宫街直至1850年始终未筑城墙（澎湖砖石城迟至光绪十三年1887中法战后方筑，晚于1850年不采，《澎湖厅志》），≤1850年妈宫街兵民约5000–7000人<1万，定城寨。' },
 
     { id: 'city_fengtian', name: '奉天', factionId: 'tang', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '[唐光宅置奉天县拱护乾陵、建中四年唐德宗奉天之难浑瑊死守行在至后唐乾州·梁山南麓夯土包砖子母双城] 建中四年（783）泾原兵变德宗奔奉天，浑瑊率神策军与城民拒朱泚十万大军围攻月余，战后扩筑罗城升赤县（《旧唐书·浑瑊传》《奉天录》），唐行在赤县及宋明乾州城居约1.5–2.5万，>1万定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：它乾城：东汉西域都护治所，塔里木
@@ -3671,13 +3671,13 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_huma', name: '呼玛', factionId: 'elunchunzu', lat: 51.72, lng: 126.65, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' , note: '[17世纪达斡尔鄂伦春呼玛尔河口窝集与1655年清军明安达礼围攻俄哥萨克斯特潘诺夫呼玛尔木寨·黑龙江右岸原木土垒寨] 顺治十二年俄人据呼玛尔河口筑原木夹土小寨抗清军围攻旋弃（《清世祖实录》《平定罗刹方略》，清设呼玛卡伦金厂更在晚清），木土小寨且常住鄂伦春猎户不足千人，定城寨。' },
 
-    { id: 'city_cangyuan', name: '沧源', factionId: 'manzhou_d', lat: 23.3725, lng: 99.4263, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[明代孟定耿马土司南邻阿佤山葫芦王地（清乾隆茂隆银厂兴于1743年后超限）·澜沧江怒江间竹木牛头桩佤寨] 明清之际滇西南佤族司岗里部族聚居深山（茂隆银厂吴尚贤聚矿工数万在乾隆八年1743以后，违反≤1700年红线不采），≤1700年纯木竹干栏刺竹壕沟佤寨且单寨仅一二千人，定城寨。' },
+    { id: 'city_cangyuan', name: '沧源', factionId: 'manzhou_d', lat: 23.3725, lng: 99.4263, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[明清滇西南阿佤山葫芦王地班洪沧源·澜沧江怒江间竹木牛头桩佤寨] 乾隆八年（1743）吴尚贤开茂隆银厂聚散矿夫在深山矿硐而非建城、嘉庆五年即封禁离散（《滇系》），沧源本寨≤1850年始终为木竹干栏刺竹壕沟佤族山寨且常住仅一二千人，定城寨。' },
 
-    { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', note: '[唐识匿国（五个山谷部族）至中世纪帕米尔舒格南伯克山寨霍罗格·喷赤河与贡特河交汇高寒石木山村] 慧超《往五天竺国传》与《新唐书·西域传》载识匿国「散居山谷有五大城涧，地寒无五谷」（俄军帕米尔哨所建于1895年超限），深谷石木小寨常住仅千余人，定城寨。' },
+    { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', note: '[唐识匿国五山谷部族至清代帕米尔舒格南伯克山寨霍罗格（俄军哨所建于1895年晚于1850年）·喷赤河高寒石木山村] 《新唐书·西域传》识匿国散居深谷，至1850年仅为帕米尔舒格南塔吉克山谷小石木寨，无城墙且常住仅千余人，定城寨。' },
 
-    { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'stockade', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE' , note: '[元征缅江头城北道至东吁时期上缅甸伊洛瓦底江上游景颇（克钦）与掸族渡口寨聚密支那·江岸竹木栅村] 控迈立开江与恩梅开江合流下八莫水路之掸语「大江边」渡村（英属铁路城镇兴于1890年代后），≤1700年仅为竹木高脚屋集镇无砖石城垣且常住不足5000人，定城寨。' },
+    { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'stockade', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE' , note: '[元征缅江头城北道至东吁时期上缅甸伊洛瓦底江上游景颇（克钦）与掸族渡口寨聚密支那·江岸竹木栅村] 控迈立开江与恩梅开江合流下八莫水路之掸语「大江边」渡村（英属铁路城镇兴于1890年代后），≤1850年仅为竹木高脚屋集镇无砖石城垣且常住不足5000人，定城寨。' },
 
-    { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[唐抚水州水族源地至元明都匀烂土合江州陈蒙蒙氏土司辖境三都·都柳江上游水族干栏木楼村寨] 黔南九阡三洞水族聚居山林河谷（清设三脚屯州同在雍正十年1732后超限，《贵州通志》），≤1700年全为杉木干栏村寨无城墙且常住不足3000人，定城寨。' },
+    { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[唐抚水州水族源地至明清都柳江上游九阡三洞水族聚落三都（三脚屯）·杉木干栏村寨] 雍正十年（1732）设都江、三脚屯厅汛弹压苗疆，屯汛仅小土石卡而无万人县城（《贵州通志》），≤1850年全境散居干栏木寨、单聚落不足3000人，定城寨。' },
 
     { id: 'city_tanzhong', name: '潭中', factionId: 'tang', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '[西汉潭中县、唐柳宗元刺柳州龙城郡至明洪武包砖柳州府卫同城·柳江壶城三面环水条石包砖周七里桂中重镇] 元和十年柳宗元任柳州刺史兴学凿井，明洪武十二年桂林右卫分调置柳州卫并采青石火砖环江筑城、嘉靖名将沈希仪镇柳庆（《旧唐书·柳宗元传》《柳州府志》），卫府同城商民约1.5–2.5万，>1万定小城。' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'ming_d', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'CENTRAL' , note: '[汉钖县、宋明郧县至成化十二年平荆襄流民特设郧阳抚治及郧阳府·汉江北岸条石包砖周六里三省军门府城] 成化间原杰抚安荆襄百余万流民，奏置郧阳府并设郧阳巡抚都御史开府节制鄂豫陕川四省交界兵备，修筑坚固条石包砖府卫城（《明史·原杰传》《郧阳府志》），抚治军门及汉水码头城居达2–3万，>1万定小城。' },
@@ -3702,7 +3702,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_wulihong', name: '乌利洪', factionId: 'menggu_d', lat: 49.53, lng: 112.54, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[12世纪末成吉思汗创业功臣忙忽部畏答儿驻牧地乌利洪·克鲁伦河土拉河分水草原毡帐营盘] 畏答儿率忙忽部精骑血战阔亦田受封世袭千户牧地（《元史·畏答儿传》），漠北纯草原毡帐牧营无城郭，定城寨。' },
     { id: 'city_mubang', name: '木邦', factionId: 'xingwei', lat: 23.32, lng: 97.98, type: 'stockade', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE' , note: '[元木邦路总管府至明永乐二年升木邦军民宣慰使司（掸邦北部兴威Hsenwi）·瑞丽江支流南渡河竹木夯土司城] 明代滇缅边境六慰大土司之一木邦罕氏，助明征麓川、万历间遭东吁莽应里攻破焚掠（《明史·云南土司传》），掸族坝子夯土矮堤竹木栅王寨无砖石城墙且司城常住约5000–8000人<1万，定城寨。' },
-    { id: 'city_baihage', name: '白哈格', factionId: 'saerbadaer', lat: 36.21, lng: 57.68, type: 'stockade', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '[11世纪史学家拜哈基故乡至1337至1381年呼罗珊萨尔巴达尔起义国首都萨卜泽瓦尔（白哈格区）·泥砖城垣绿洲邑] 反抗伊利汗国暴政建立之什叶派平民国家萨尔巴达尔都城，1383年帖木儿破城屠杀将生人筑入泥砖塔中彻底夷毁（伊本·白图泰游记及哈菲兹·阿布鲁《史汇》），生土泥砖墙且灾后≤1700年常住不足1万确数，定城寨。', stockadeShape: 'square', stockadeFence: 'HARDWOOD' },
+    { id: 'city_baihage', name: '白哈格', factionId: 'saerbadaer', lat: 36.21, lng: 57.68, type: 'stockade', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '[11世纪史学家拜哈基故乡至1337至1381年呼罗珊萨尔巴达尔起义国首都萨卜泽瓦尔（白哈格区）·泥砖城垣绿洲邑] 反抗伊利汗国暴政建立之什叶派平民国家萨尔巴达尔都城，1383年帖木儿破城屠杀将生人筑入泥砖塔中彻底夷毁（伊本·白图泰游记及哈菲兹·阿布鲁《史汇》），生土泥砖墙且灾后≤1850年常住不足1万确数，定城寨。', stockadeShape: 'square', stockadeFence: 'HARDWOOD' },
     { id: 'city_damugan', name: '达姆甘', factionId: 'seljuq', lat: 36.17, lng: 54.35, type: 'small_city', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', note: '[安息早期百门王都赫卡托姆皮洛斯至塞尔柱库米斯省首府达姆甘·烧砖泥砖城垣丝路大邑] 帕提亚早期王都百门之城（波利比乌斯X.28、斯特拉波XI.9.1），伊斯兰至塞尔柱时期为呼罗珊大道库米斯省会（塔里哈内清真寺现存，穆卡达西《地理志》记其城郭繁盛），盛期城居约1.5–2.5万，>1万定小城。', stockadeShape: 'square', stockadeFence: 'HARDWOOD' },
     { id: 'city_bistam', name: '比斯塔姆', factionId: 'sashan', lat: 36.48, lng: 55.00, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '[萨珊北境重邑至塞尔柱伊利汗国丝路名城比斯塔姆·石砖多塔城垣与苏菲圣祠群] 扼呼罗珊大道入里海山口之比斯塔姆，现存萨珊至伊利汗国烧砖清真寺群与带圆塔城垣，10–14世纪穆卡达西与哈姆杜拉·穆斯陶菲《心悦志》记其为商业重邑，城居约1–1.5万，定小城。' },
     // [2026-08-19 修] region 原为 WEST_ASIA，与紧邻的达姆甘、加兹温（均 CENTRAL_ASIA）不一致：
@@ -3713,7 +3713,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei_d', lat: 36.27, lng: 50, type: 'small_city', troops: 10000, region: 'SAFAVID', buildingStyle: 'PERSIAN' , note: '[1555至1598年萨法维帝国首都加兹温·烧砖宫苑城门与大巴扎王都] 塔赫玛斯普一世自大不里士迁都加兹温逾四十年，英国商人安东尼·詹金森1562年出使亲历记王都繁盛，迁伊斯法罕前城居峰值达4–6万（Chandler 1575年表5–6万），>1万定小城。' },
 
 
-    { id: 'city_zanzhan', name: '赞詹', factionId: 'safawei_d', lat: 36.67, lng: 48.48, type: 'stockade', troops: 10000, region: 'ILKHANATE', buildingStyle: 'SASANIAN', note: '[13世纪伊利汗国阿杰姆走廊重驿与16世纪萨法维红头军集结镇赞詹·赞詹河谷泥砖夯土市镇] 1220年遭蒙军哲别速不台彻底攻毁，1340年本土学者哈姆杜拉·穆斯陶菲《心悦志》明记赞詹旧墙倾圮大半荒芜，17世纪奥莱阿里乌斯游记亦记为无城墙泥砖集镇，≤1700年常住约5000–8000人<1万，定城寨。' },
+    { id: 'city_zanzhan', name: '赞詹', factionId: 'safawei_d', lat: 36.67, lng: 48.48, type: 'stockade', troops: 10000, region: 'ILKHANATE', buildingStyle: 'SASANIAN', note: '[13世纪伊利汗国阿杰姆走廊重驿与16世纪萨法维红头军集结镇赞詹·赞詹河谷泥砖夯土市镇] 1220年遭蒙军哲别速不台彻底攻毁，1340年本土学者哈姆杜拉·穆斯陶菲《心悦志》明记赞詹旧墙倾圮大半荒芜，17世纪奥莱阿里乌斯游记亦记为无城墙泥砖集镇，≤1850年常住约5000–8000人<1万，定城寨。' },
 
 
 
@@ -3756,8 +3756,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '[10至16世纪埃塞俄比亚北部塞米恩高山贝塔以色列（法拉沙人）吉迪恩王朝据点·海拔4000米火山断崖安巴干石山寨] 传说尤迪特女王兴起及15–17世纪抗所罗门王朝征讨之天险孤峰山寨（Amba Jew，《埃塞俄比亚编年史》），非守大道关门且高寒山顶散寨常住仅数千人<1万，定城寨。' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'osman', lat: 40.03, lng: 30.18, type: 'stockade', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '[1299至1326年奥斯曼一世与埃尔图鲁尔贝伊肇基第一牧邑瑟于特·比提尼亚桑加里乌斯河谷土库曼冬牧小镇] 罗姆塞尔柱赐予卡伊部落越冬小邑，1326年奥尔汗攻克布尔萨迁都后瑟于特即退为陵墓小镇（阿什克帕夏扎德《奥斯曼史》），16世纪奥斯曼税册实载全镇仅百余户不足2000人且无城墙，定城寨。' },
     { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'lagoniya', lat: 40.82, lng: 23.85, type: 'small_city', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '[前437年雅典殖民重邦与腓力二世马其顿银矿商都·7.5公里斯特里蒙河切石长城] 前422年布拉西达斯与克里昂同殁于城下（修昔底德V.6–11），希腊考古学家Lazaridis发掘出保存极佳之7.5公里古典切石环城高墙与木石大桥，前4世纪城居约1.5–2.5万，>1万定小城。' },
-    { id: 'city_yanghe', name: '羊河', factionId: 'xila', lat: 40.332, lng: 26.6, type: 'stockade', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', stockadeShape: 'rect', stockadeFence: 'ARCHAIC', note: '🔴 [2026-11-07 按史补依据] 羊河（埃戈斯波塔米，雅典舰队覆灭处）；羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 40.36,26.61 偏离 3.23 公里，按英文维基百科 Aegospotami 坐标改为 40.332,26.6。' },
-    { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'aqimeinide', lat: 40.32, lng: 27.28, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '🔴 [2026-11-07 按史补依据] 格拉尼库斯河（亚历山大首战）；格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
+    { id: 'city_yanghe', name: '羊河', factionId: 'xila', lat: 40.332, lng: 26.6, type: 'stockade', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', stockadeShape: 'rect', stockadeFence: 'ARCHAIC', note: '[前405年伯罗奔尼撒终战埃戈斯波塔米（羊河口）·赫勒斯滂海峡泊船滩头营寨] 色诺芬《希腊史》II.1.21–28载吕山德于羊河口奇袭全歼雅典舰队，无石砖城郭且常住人口<1万，定城寨。' },
+    { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'aqimeinide', lat: 40.32, lng: 27.28, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '[前334年亚历山大东征首战·小亚细亚格拉尼库斯河渡口营地] 阿里安《亚历山大远征记》I.13–16载马其顿军强渡格拉尼库斯河击溃波斯联军，无石砖城郭且常住<1万（与bf_gelanikusihe小于50km共用一点），定城寨。' },
     // 🔴 [2026-09-12 主人定] 战场**不再是据点**（主人：「把战场独立出来，不做为据点，就叫战场。
     //   一个地名而已。类似奇观」）→ 原先这里的 `city_yisusi`、`city_gelanikusihe` 两行
     //   已迁到 **`src/data/Battlefields.ts`**（`bf_yisusi` / `bf_gelanikusihe`），
@@ -3790,13 +3790,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_brundisium', name: '布林迪西', factionId: 'luoma_gongheguo', lat: 40.63, lng: 17.94, type: 'small_city', isPort: true, troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA', note: '[前3至前1世纪罗马东渡主港·阿庇亚大道终点石砖城墙港市] 前244年设罗马殖民城，前49年恺撒围庞培于港城内（恺撒《内战记》I.24–28），具完整罗马石砖城墙与双内港，共和末至帝国初城居约1.5–2.5万，定小城。' },
     { id: 'city_dyrrachium', name: '迪拉基乌姆', factionId: 'luoma_gongheguo', lat: 41.32, lng: 19.46, type: 'small_city', isPort: true, troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA', note: '[罗马共和末至拜占庭军区首府·埃格那提亚大道起点石砖高墙港城] 古埃皮达姆诺斯，前48年庞培以此为基地拒恺撒（恺撒《内战记》III.41–72），5世纪皇帝阿纳斯塔修斯一世筑三道砖石高墙，盛期城居约1.5–2.5万，定小城。' },
     { id: 'city_vetera', name: '维特拉', factionId: 'luoma_diguo', lat: 51.65, lng: 6.45, type: 'pass', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '[罗马帝国早期莱茵河防线·双军团石砖长城大营要塞] 前12年德鲁苏斯始建、尼禄与弗拉维期改筑石砖军团城垣之维特拉双军团大营，控利珀河入莱茵河渡口（塔西佗《编年史》I.45、《历史》IV.21–60），纯军事石砖军营未成万人市民城，定险要。' },
-    { id: 'city_caen', name: '卡昂', factionId: 'gaolu', lat: 49.19, lng: -0.36, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'FRANKS', note: '[11至15世纪诺曼底公国副都·卡昂石灰岩城堡与环城石墙大邑] 约1060年征服者威廉筑石堡与双修道院，1346与1417年英王爱德华三世、亨利五世两度围攻（弗鲁瓦萨尔《编年史》），1700年前城居达2.5–3万（de Vries 1984 p.273）且具石墙，定小城。' },
+    { id: 'city_caen', name: '卡昂', factionId: 'gaolu', lat: 49.19, lng: -0.36, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'FRANKS', note: '[11至15世纪诺曼底公国副都·卡昂石灰岩城堡与环城石墙大邑] 约1060年征服者威廉筑石堡与双修道院，1346与1417年英王爱德华三世、亨利五世两度围攻（弗鲁瓦萨尔《编年史》），≤1850年城居达2.5–3万（de Vries 1984 p.273）且具石墙，定小城。' },
     { id: 'city_harfleur', name: '阿夫勒尔', factionId: 'gaolu', lat: 49.51, lng: 0.2, type: 'small_city', isPort: true, troops: 10000, region: 'LATIN', buildingStyle: 'FRANKS', note: '[14至15世纪百年战争法兰西王家军港·塞纳河口二十六塔石砌城墙] 诺曼底首席海防商港阿夫勒尔，筑有完整石砌环城墙、护城水闸与26座石塔，1415年亨利五世率万军重炮围攻五周方陷（《亨利五世行纪》），城居约5000–8000人<1万但具石墙，定小城。' },
     { id: 'city_rouen', name: '鲁昂', factionId: 'gaolu', lat: 49.44, lng: 1.1, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[中世纪末至17世纪诺曼底首府·石砌城墙塞纳河大邑] 诺曼底高等法院首府鲁昂1418年英军围城时逾4万，至1650年石墙内与圣塞韦尔关厢城居达8.2万（de Vries 1984 p.273、Benedict《宗教战争时期的鲁昂》），≥8万容差线，定中城。' },
     { id: 'city_saint_valery', name: '圣瓦莱里', factionId: 'gaolu', lat: 50.19, lng: 1.63, type: 'stockade', isPort: true, troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[11世纪诺曼征服前夕·索姆河口木石锚泊渔商小港] 1066年9月诺曼底公爵威廉远征舰队集结候风之圣瓦莱里锚地（普瓦捷的威廉《威廉事迹》II.6–7、贝叶挂毯），11世纪尚无合围石砌城墙且常住仅千余人<1万，定城寨。' },
     { id: 'city_beauvais', name: '博韦', factionId: 'gaolu', lat: 49.43, lng: 2.08, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[中世纪至15世纪法兰西主教伯爵城·高卢罗马地基石砌环城墙] 法国王家纺织重镇博韦，1472年大胆查理率勃艮第军猛攻石墙城门，让娜·阿谢特率市民击退之（科明《回忆录》III.8），16–17世纪城居约1.2–1.5万（de Vries 1984）且具石墙，定小城。' },
     { id: 'city_soissons', name: '苏瓦松', factionId: 'falanji', lat: 49.38, lng: 3.32, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[5至6世纪高卢罗马末期与墨洛温王都·晚期罗马石砌城墙都邑] 西阿格里乌斯辖区首邑，486年克洛维击败西阿格里乌斯后定为墨洛温早期王都（图尔的格雷戈里《法兰克人史》II.27），承晚期罗马巨石城垣，中世纪至17世纪城居约8000–10000人具石墙，定小城。' },
-    { id: 'city_nancy', name: '南锡', factionId: 'gaolu', lat: 48.68, lng: 6.19, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[15至17世纪洛林公国首都·石砖星形棱堡双城垣都城] 洛林公爵雷内二世都城，1477年大胆查理围攻石墙坚城败亡于城外（科明《回忆录》V.8），16世纪末夏尔三世扩筑新旧双棱堡石城，≤1700年城居约1.2–1.6万，定小城。' },
+    { id: 'city_nancy', name: '南锡', factionId: 'gaolu', lat: 48.68, lng: 6.19, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[15至17世纪洛林公国首都·石砖星形棱堡双城垣都城] 洛林公爵雷内二世都城，1477年大胆查理围攻石墙坚城败亡于城外（科明《回忆录》V.8），16世纪末夏尔三世扩筑新旧双棱堡石城，≤1850年城居约1.2–1.6万，定小城。' },
     { id: 'city_hericourt', name: '埃里库尔', factionId: 'bogendigongguo', lat: 47.58, lng: 6.76, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '[15世纪勃艮第战争期·贝尔福山口西侧石砌棱塔要塞堡] 控勃艮第通上莱茵贝尔福走廊之石砌领主军堡，1474年瑞士与上莱茵同盟军围攻埃里库尔堡大破勃艮第援军（科明《回忆录》及《伯尔尼编年史》），石堡要塞且附镇仅千余人<1万，定险要。' },
     { id: 'city_eresburg', name: '埃雷斯堡', factionId: 'wende', lat: 51.46, lng: 8.85, type: 'stockade', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'SAXONS', note: '[8世纪撒克逊战争期·迪默尔河山巅木栅土垒部族丘堡] 《法兰克王家年代记》772年条载查理曼攻克撒克森人埃雷斯堡并毁伊尔明柱；其撒克森本相为原木夹土部族山丘营寨（木栅不算正式城墙，亦非守道关门），常住不足3000人，定城寨。' },
     { id: 'city_tortona', name: '托尔托纳', factionId: 'lunbadi', lat: 44.9, lng: 8.87, type: 'small_city', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN', note: '[12世纪伦巴第同盟自治市镇·山丘卫城与石砖环城墙] 米兰南翼盟邦托尔托纳，1155年红胡子腓特烈一世围攻石砖城墙两月断水方降，后米兰助其复筑石城（弗赖辛的奥托《腓特烈事迹》II.20–26），城居约6000–9000人<1万具石砖墙，定小城。' },
@@ -3819,19 +3819,19 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_tamid', name: '怛蜜', factionId: 'womaya', lat: 37.22, lng: 67.28, type: 'small_city', troops: 10000, region: 'KUSHAN', buildingStyle: 'CENTRAL_ASIA', note: '[唐代怛蜜至萨曼花剌子模期·阿姆河北岸烧砖包砌大城忒耳迷] 《大唐西域记》卷一载怛蜜国大都城周二十余里，10–13世纪初铁尔梅兹具烧砖河岸内城与商业外郭，1220年成吉思汗围破前城居约2–4万（穆卡达西《地理志》、志费尼《世界征服者史》），>1万定小城。' },
     { id: 'city_shuman', name: '舒曼', factionId: 'womaya', lat: 38.52, lng: 68.55, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CENTRAL_ASIA', note: '[7至8世纪吐火罗北境舒曼侯国·吉萨尔谷地生土山丘小城] 玄奘《大唐西域记》卷一载苏漫国（舒曼），710年倭马亚名将屈底波攻拔舒曼王城（塔巴里《历代先知与帝王史》II.1227），生土夯筑小邑且人口无载，定城寨。' },
     { id: 'city_lianyun', name: '连云堡', factionId: 'tubo', lat: 36.89, lng: 73.71, type: 'pass', troops: 10000, region: 'TIBET', buildingStyle: 'WESTERN', note: '[8世纪唐与吐蕃争夺帕米尔期·瓦罕河谷石土戍堡] 吐蕃于小勃律北道瓦罕河畔置连云堡屯兵千人据险阻唐，天宝六载（747）高仙芝自护密渡河仰攻拔连云堡（《旧唐书·高仙芝传》《资治通鉴》），名带「堡」且具石土堡垣，<1万定险要。' },
-    { id: 'city_firozpur', name: '费罗兹普尔', factionId: 'yinggelan', lat: 30.93, lng: 74.61, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[14世纪德里苏丹国菲鲁兹沙始建·萨特莱杰河岸泥砖边镇] 14世纪中叶图格鲁克苏丹菲鲁兹沙三世始建河畔边镇（阿菲夫《菲鲁兹沙史》；1846年英锡战争属1700年后不采），≤1700年无石砖大城且人口无载，定城寨。；取最近拉合尔 PURU 代理' },
-    { id: 'city_kaungton', name: '老官屯', factionId: 'konbaung', lat: 24.13, lng: 97.21, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BURMESE', note: '[1700年前伊洛瓦底江东岸·勐卯入缅水陆渡口木栅江村] 乾隆三十四年（1769）贡榜缅军筑双层湿圆木栅水寨拒清军傅恒、阿桂（《清史稿·缅甸传》，且晚于1700年）；木栅不算墙，≤1700年仅为江岸竹木渡村且人口<1万，定城寨。' },
-    { id: 'city_chanthaburi', name: '尖竹汶', factionId: 'siam', lat: 12.61, lng: 102.1, type: 'stockade', isPort: true, troops: 10000, region: 'SEAS', buildingStyle: 'KHMER', note: '[阿瑜陀耶时期暹罗东岸·竹木土垒沿海小邑尖竹汶] 阿瑜陀耶王朝暹罗湾东岸边鄙海邑（1767年郑信破城整军属1700年后，《吞武里纪年》），≤1700年仅为土垒木栅小港镇且人口不足5000，定城寨。；取吞武里 KHMER 代理' },
+    { id: 'city_firozpur', name: '费罗兹普尔', factionId: 'yinggelan', lat: 30.93, lng: 74.61, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[14世纪德里苏丹菲鲁兹沙始建至1845年第一次英锡战争前哨镇费罗兹普尔·萨特莱杰河岸泥砖边镇] 菲鲁兹沙三世建河畔泥砖旧堡，1835–1846年英军设为对锡克前线补给营地，≤1850年镇区为生土泥砖无石砌环城大墙且常住镇民不足8000人，定城寨。；取最近拉合尔 PURU 代理' },
+    { id: 'city_kaungton', name: '老官屯', factionId: 'konbaung', lat: 24.13, lng: 97.21, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BURMESE', note: '[清乾隆三十四年（1769）清缅战争决战地老官屯·伊洛瓦底江东岸双层湿圆木栅水寨] 贡榜名将玛哈·希哈修亚据老官屯筑双层湿圆木排桩水寨力拒傅恒、阿桂大军并在此议和（《清史稿·缅甸传》《琉璃宫史》），按规木栅不算城墙且≤1850年江村常住不足3000人，定城寨。' },
+    { id: 'city_chanthaburi', name: '尖竹汶', factionId: 'siam', lat: 12.61, lng: 102.1, type: 'stockade', isPort: true, troops: 10000, region: 'SEAS', buildingStyle: 'KHMER', note: '[阿瑜陀耶至1767年郑信破城整军复国基地尖竹汶·暹罗湾东岸红土垒木栅港邑] 1767年阿瑜陀耶陷落后郑信率五百义兵东取尖竹汶造战船整军复国（《吞武里纪年》），1830年代拉玛三世移筑土石小垒，≤1850年港镇常住仅约5000–7000人<1万，定城寨。；取吞武里 KHMER 代理' },
     { id: 'city_guankou', name: '灌口', factionId: 'song', lat: 30.99, lng: 103.62, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '[唐灌口镇至北宋平蜀之役·都江堰岷江出山口军商镇寨] 扼岷江出山入川西平原水口，乾德四年（966）宋军破蜀地全师雄乱军于灌口寨（《宋史·太祖纪》《元丰九域志》永康军导江县灌口镇），宋代为镇寨无砖石县城墙且人口<1万，定城寨。' },
     { id: 'city_longcheng', name: '陇城', factionId: 'han_d', lat: 35.03, lng: 105.91, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', note: '[东汉来歙袭略阳至北魏隋唐陇城县·清水河谷夯土县城] 建武八年（32）来歙伐山开道奇袭隗嚣略阳城坚守待援，北魏改置陇城县（《后汉书·来歙传》《魏书·地形志》），夯土山谷小县城且城居无破万记载，定城寨。' },
-    { id: 'city_giadinh', name: '嘉定', factionId: 'yuenan', lat: 10.78, lng: 106.7, type: 'stockade', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', note: '[1698年广南阮主初置嘉定府·西贡河畔竹木营屯新垦聚落] 1698年阮有镜始置嘉定府柴棍营，1790年阮福映方筑砖石八卦棱堡城（《大南实录》，1790年砖石城超1700年红线不采）；≤1700年初设两年仅为竹木无墙屯垦镇且城居不足1万，定城寨。' },
+    { id: 'city_giadinh', name: '嘉定', factionId: 'yuenan', lat: 10.78, lng: 106.7, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', note: '[18世纪末至19世纪上半叶越南南方首府嘉定城（西贡）·1790年阮福映八门砖石沃邦棱堡巨城与堤岸商埠] 1790年阮福映聘法工程师奥利维耶修筑周4公里完整红石青砖八角星形棱堡大城（八卦城），1820年代白泰博（John White）等亲历记嘉定与紧邻华人堤岸（Cholon）连片城居达5–6万（《大南一统志》），>1万定小城。' },
     { id: 'city_zhennanguan', name: '镇南关', factionId: 'ming_d', lat: 21.97, lng: 106.75, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[汉鸡陵关至宋大南关明镇南关·凭祥两山夹峙条石关城] 扼广西入交趾陆路第一咽喉，永乐五年（1407）张辅大军由此出关平定安南胡氏，明筑条石包砖关楼城垣（《明史·安南传》《广西通志》），带「关」字且具石砖关墙，未成万人城，定险要。；取最近花山 JIANGNAN 代理' },
     { id: 'city_baoanjun', name: '保安军', factionId: 'song', lat: 36.82, lng: 108.77, type: 'pass', troops: 10000, region: 'SONG', buildingStyle: 'WEI', note: '[北宋太平兴国至康定庆历御夏期·洛河上游夯土边防军寨] 宋改永康镇置保安军扼延州西北入西夏孔道，宝元至康定间狄青驻此四年中流矢屡破夏兵（《宋史·地理志》《狄青传》），纯西北边防夯土军城且常住不足1万，定险要。' },
     { id: 'city_danhanshan', name: '弹汗山', factionId: 'xianbei', lat: 41.08, lng: 114.02, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI', note: '[2世纪东汉末鲜卑檀石槐霸业期·歠水畔游牧毡帐王庭] 檀石槐立庭于高柳北三百余里弹汗山歠水之上统领东西中三部大人，熹平六年挫汉夏育等三路出塞军（《后汉书·鲜卑传》），草原毡帐汗庭无城垣且常住<1万，定城寨。' },
     { id: 'city_luze', name: '陆泽', factionId: 'tang', lat: 38.01, lng: 115.55, type: 'stockade', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '[唐代河北藩镇深州治陆泽·滹沱河北岸夯土州治小城] 长庆二年（822）成德王庭凑围深州治陆泽城，刺史牛元翼率骑突围（《旧唐书·牛元翼传》《元和郡县图志》），唐代为夯土城垣且在城常住人口无确数（约数千<1万），定城寨。' },
     { id: 'city_dongping', name: '东平', factionId: 'tang', lat: 35.92, lng: 116.3, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', note: '[唐淄青节度郓州至北宋京东西路东平府·夯土包砖漕运重镇] 中晚唐李正己至李师道三代经营郓州为淄青十二州藩府，北宋升东平府（《旧唐书·李师道传》《宋史·地理志》东平府崇宁户130,305），州府在城及汶济漕渠关厢常住约2–4万，>1万定小城。' },
     { id: 'city_pinghaiwei', name: '平海卫', factionId: 'ming_d', lat: 25.23, lng: 119.34, type: 'pass', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[明洪武至嘉靖抗倭期·莆田平海湾条石海防卫城] 洪武二十年江夏侯周德兴筑平海卫条石城垣（周四里余）控兴化湾海防，嘉靖四十二年戚继光、俞大猷合破倭寇收复卫城（《明史·戚继光传》《八闽通志》），纯海防石砌卫堡且常住<1万，定险要。' },
-    { id: 'city_zhuluo', name: '诸罗', factionId: 'manzhou_d', lat: 23.48, lng: 120.45, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[清康熙二十三年初设诸罗县·台湾嘉南平原木栅刺竹县治] 康熙二十三年（1684）置诸罗县，康熙四十三年始筑木栅城（乾隆林爽文事在1787年超限，《诸罗县志》），≤1700年县治草创仅数百户不足5000人且为木栅无砖石墙，定城寨。' },
+    { id: 'city_zhuluo', name: '诸罗', factionId: 'manzhou_d', lat: 23.48, lng: 120.45, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[清康熙置诸罗县至乾隆赐名嘉义、道光筑砖石城·嘉南平原条石三合土包砖四门县城] 乾隆五十二年（1787）诸罗军民死守拒林爽文围攻诏改嘉义，道光十三年（1833）王得禄等督建完整石基砖砌县城垣（《嘉义管内采访册》），≤1850年在城及四门街肆常住达1.2–1.5万且具砖石城墙，定小城。' },
     { id: 'city_zhoushan', name: '舟山', factionId: 'ming_d', lat: 30.02, lng: 122.11, type: 'stockade', isPort: true, troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '[东晋孙恩起事至明代嘉靖双屿抗倭·舟山群岛海防所寨聚落] 隆安三年孙恩据翁洲海岛起兵、明洪武废昌国县置中中千户所（嘉靖二十七年卢镗破双屿港木栅窝巢，《晋书·孙恩传》《筹海图编》），明代岛上卫所与港聚分散未成万人城市，定城寨。' },
     { id: 'city_pingguo', name: '平郭', factionId: 'murong', lat: 40.25, lng: 122.12, type: 'stockade', troops: 10000, region: 'KOREA', buildingStyle: 'KOREA', note: '[两汉辽东郡属县至前燕慕容皝袭城·辽东半岛西岸夯土县城] 汉置平郭县有铁官盐官，咸康二年（336）慕容皝自昌黎踏冰渡海奇袭平郭擒慕容仁（《汉书·地理志》《晋书·慕容皝载记》），魏晋战乱后夯土边县城居不足1万，定城寨。；取最近安市城 KOREA 代理' },
     { id: 'city_kitanosho', name: '北之庄城', factionId: 'oda', lat: 36.06, lng: 136.22, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[安土桃山柴田胜家至江户越前松平藩·九头龙川石垣巨城与福井城下町] 天正三年（1575）柴田胜家筑九重天守石垣北之庄城，庆长六年结城秀康扩建为越前68万石福井城下町，17世纪中叶城居达2.5–3万（《福井县史》及斋藤诚治江户都市人口表），>1万定小城。' },
@@ -3845,13 +3845,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_mierkefu', name: '密尔科夫', factionId: 'kuman_oleshky', lat: 45.65, lng: 27.05, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '[13世纪初钦察库曼汗博尔奇受洗所设天主教库曼主教区驻地密尔科夫·东喀尔巴阡米尔科夫河谷木土寨聚] 1227年匈牙利安德烈二世与教皇格列高利九世敕立库曼主教区（1241年蒙古拔都大军西征首破密尔科夫彻底焚毁，罗杰修士《悲歌》），原木土垒山麓教寨且人口不足3000人，定城寨。' },
     { id: 'city_oleshky', name: '奥列什基', factionId: 'kuman_oleshky', lat: 46.61, lng: 32.72, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '[10至13世纪基辅罗斯第聂伯河口飞地商站奥列什耶（库曼草原南门）·河口芦苇沙洲木栅转运埠] 《往年纪事》与1223年迦勒迦河战前罗斯船队集结地奥列什耶，1220–1240年代库曼忽炭汗牧地南缘，沙洲木构码头聚落无石砖墙且常住仅两三千人，定城寨。', mirror: true },
     { id: 'city_saksin', name: '萨克辛', factionId: 'kuman_oleshky', lat: 46.72, lng: 47.92, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '[11至13世纪初伏尔加河三角洲库曼乌古斯国际商都·烧砖泥砖多族坊区萨克辛] 接替可萨伊蒂尔兴起之里海北岸商贸大都会，1130–1150年代阿拉伯旅行家阿布·哈米德·格拉纳达人旅居萨克辛二十年亲笔记城分四十部族坊区、商民数万，1236年毁于蒙军，>1万定小城。', mirror: true },
-    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'mowoer', lat: 40.89, lng: 71.34, type: 'stockade', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '[15世纪末帖木儿后裔乌马儿·谢赫（巴布尔之父）费尔干纳国都阿赫西克特·锡尔河北岸黄土断崖生土泥砖高城] 巴布尔《回忆录》开卷详述阿赫西克特据锡尔河深涧黄土高台筑生土泥砖城（非烧砖石墙），1620年特大地震彻底震塌沦为废墟迁往纳曼干，≤1700年存续期泥砖小王城常住约6000–9000人<1万，定城寨。' },
+    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'mowoer', lat: 40.89, lng: 71.34, type: 'stockade', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '[15世纪末帖木儿后裔乌马儿·谢赫（巴布尔之父）费尔干纳国都阿赫西克特·锡尔河北岸黄土断崖生土泥砖高城] 巴布尔《回忆录》开卷详述阿赫西克特据锡尔河深涧黄土高台筑生土泥砖城（非烧砖石墙），1620年特大地震彻底震塌沦为废墟迁往纳曼干，≤1850年存续期泥砖小王城常住约6000–9000人<1万，定城寨。' },
     { id: 'city_hongsa', name: '洪萨', factionId: 'muisca', lat: 5.53, lng: -73.36, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '[15至16世纪初哥伦比亚高原穆伊斯卡北盟扎克王都·双层巨木栅墙宫苑与连片都邑洪萨] 穆伊斯卡北方最高君主扎克（Zaque）首都洪萨（今通哈），1537年西军克萨达入城目击报告载城内宫宇神庙与密集圆形房舍逾数千座、常住人口约2–3万（Langebaek穆伊斯卡聚落考古），>1万定小城。' },
     { id: 'city_kabufoliwu', name: '卡布弗里乌', factionId: 'tamoyue', lat: -22.88, lng: -42.03, type: 'stockade', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '[16世纪巴西东南岸图皮南巴人塔莫约部族联盟昆汉贝贝大木栅村寨卡布弗里乌·海岸红木林双排原木尖桩长屋寨] 1550年代德国炮手汉斯·施塔登被俘亲历所著《真实记述》插图详绘昆汉贝贝海滨寨落：双圈粗原木立栅围绕数座巨型茅顶长屋（Maloca），无石墙且单寨人口约2000–4000人<1万，定城寨。' },
     { id: 'city_kelipuli', name: '科利普利', factionId: 'mapuche', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '[16世纪智利阿劳科战争马普切人抗西集结要地科利普利·马列科河谷原木栅栏土壕部族战寨（普卡拉）] 埃尔西利亚史诗《阿劳卡纳》所记马普切战酋考波利坎、加尔瓦里诺誓师抗西之纳韦尔布塔山麓谷地，原木栅栏战壕营寨且无万人城镇，定城寨。' },
     { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'mapuche', lat: -35.03, lng: -71.55, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '[1557年马普切青年统帅劳塔罗北逼圣地亚哥阵亡殉国地彼得罗阿·马塔基托河岸原木鹿砦壕沟军寨] 劳塔罗率马普切军于马塔基托河岸彼得罗阿筑原木削尖拒马深壕营寨，遭西班牙总督比亚格拉偷袭力战阵亡（贡戈拉·马莫莱霍《智利王国史》），战时木栅营垒无居民城，定城寨。' },
     { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '[百年战争勃艮第与法兰西争衡期·塞纳约讷两河汇口石砌桥堡] 扼塞纳河与约讷河交汇水陆锁钥之石砌桥头城堡，1419年无畏的约翰于蒙特罗桥塞会盟被刺、1437年查理七世围克（科明及蒙斯特勒莱《编年史》），守津石堡且常住<1万，定险要。' },
-    { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[高卢罗马奥古斯塔奥斯乔鲁姆至中世纪阿马尼亚克伯爵首府与大主教座·热尔河高岸石砌环城墙] 加斯科涅历史首府与阿马尼亚克派大本营欧什，上城筑完整中世纪石灰岩环城墙与普伊斯特里石门，≤1700年城居约6000–8000人，<1万但具完整石砌城墙，定小城。' },
+    { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[高卢罗马奥古斯塔奥斯乔鲁姆至中世纪阿马尼亚克伯爵首府与大主教座·热尔河高岸石砌环城墙] 加斯科涅历史首府与阿马尼亚克派大本营欧什，上城筑完整中世纪石灰岩环城墙与普伊斯特里石门，≤1850年城居约6000–8000人，<1万但具完整石砌城墙，定小城。' },
     { id: 'city_geluosite', name: '格洛斯特', factionId: 'yinggelan', lat: 51.86, lng: -2.24, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '[罗马格莱维姆殖民城至英格兰伯爵首府·塞文河石砌环城墙自治市] 沿袭罗马石墙地基修筑中世纪四门石砌环城墙，11–17世纪为西英格兰航运与羊毛市镇（1643年凭石墙土垒抗查理一世围攻），城居约5000–7000人，<1万具石墙，定小城。' },
     { id: 'city_kesenza', name: '科森扎', factionId: 'xigete', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN', note: '[布鲁蒂人古都、410年西哥特亚拉里克卒地至诺曼斯瓦本卡拉布里亚重镇·石堡与石砌城墙] 扼克拉蒂河谷孔道之科森扎，腓特烈二世扩建潘多西亚石堡与中世纪石砌城墙，16世纪那不勒斯王国户灶清册（fuochi）实测城居约1–1.3万且具石墙，定小城。' },
     { id: 'city_nabone', name: '纳博讷', factionId: 'xigete', lat: 43.18, lng: 3.00, type: 'small_city', isPort: true, troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '[罗马纳博高卢行省首府、5世纪西哥特阿陶尔夫王廷至16世纪法南边防石城·文艺复兴巨石棱堡墙] 罗马外高卢第一殖民首府（盛期逾3万），西哥特曾驻王廷，16世纪弗朗索瓦一世镶嵌古罗马石碑重筑完整巨石棱堡环城墙，16–17世纪城居约1–1.2万且具石墙，定小城。' },
@@ -3859,7 +3859,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-10-13 主人令「查不到的一律城寨」] 定级：非险要（拉特石柱是屋基、无石头城墙）→ 城市档；
     //    阿加尼亚**单邑城居人口史料查不到**，不许拿全岛 4–10 万去推一个村落 ⇒ 按「算不出来一律按城寨」落 **城寨(stockade)**。
     { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', isPort: true, troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '[15至17世纪马里亚纳群岛查莫罗人拉提石柱主村与1668年西属教区阿加尼亚·关岛珊瑚礁岸高脚拉提石木屋聚落] 1521年麦哲伦环球首靠岛屿，1670年代查莫罗首领胡劳率众围攻西班牙木栅教会寨（《马里亚纳传教史》），拉提石基柱茅顶木屋无城墙且全村不足3000人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】密克罗尼西亚查莫罗拉提石聚落，取最近南岛MALAY' },
-    { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '[15世纪勃艮第公国北都（好人菲利普宫廷）至1668年沃邦扩建·砖石星形棱堡纺织大城里尔] 佛兰德商业重镇里尔，好人菲利普筑里尔宫，1667年路易十四攻克后沃邦筑巴黎门与五角砖石棱堡外城，1600年城居3.3万、1700年达5.5万（de Vries 1984 p.273），>1万定小城。' },
+    { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'medium_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '[15世纪勃艮第北都至17至19世纪中叶法国北方纺织重镇·沃邦砖石五角棱堡与关厢] 沃邦砖石星形棱堡重镇里尔，至1850年棱堡城内及紧贴瓦泽姆纺织关厢实居达9.8万（Chandler 1850年表9.8万），≥8万容差线，定中城。' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
     { id: 'city_hawadeng', name: '哈瓦登', factionId: 'weiershigongguo', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '[13世纪威尔士抗英战争·迪河口砂岩石砌圆形主塔边堡] 扼切斯特入北威尔士沿海走廊之哈瓦登石堡，1282年棕枝主日戴菲德突袭英军守将克利福德引发威尔士终战（《威尔士王公编年史》），纯边境石堡且<1万，定险要。' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：布伊尔斯：威尔士中部，凯尔特
@@ -3877,7 +3877,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'medium_city', troops: 10000, region: 'HEBREWS', buildingStyle: 'ORIE', note: '[公元1世纪第二圣殿末期·希律巨石三重城墙圣城] 公元41–66年阿格里帕一世增筑第三道巨石城墙后，城垣围合180公顷，扣除逾越节临时朝圣客后常住城居约8–10万（Levine 2002《第二圣殿时期耶路撒冷》及Geva考古测算），≥8万容差线，定中城。' },
     { id: 'city_ake', name: '阿卡', factionId: 'yelusalengwg', lat: 32.92139, lng: 35.06889, type: 'small_city', isPort: true, troops: 10000, region: 'ORIE', buildingStyle: 'FRANKS', mirror: true, note: '[1191至1291年十字军耶路撒冷王国后期首都圣让达克尔·双层巨石高塔海陆城墙] 第三次十字军收复后为东地中海十字军王都及三大骑士团总部，外扩蒙穆萨尔新城区并筑双道巨石高墙，1291年马穆鲁克破城前城居达3–4万（Jacoby十字军阿卡人口考），>1万定小城。' },
-    { id: 'city_beirut', name: '贝鲁特', factionId: 'mamuluke', lat: 33.8900, lng: 35.5000, type: 'small_city', isPort: true, region: 'ORIE', buildingStyle: 'ORIE', troops: 10000, note: '[马穆鲁克至17世纪法赫尔丁埃米尔都城·砂岩石砌环城墙黎凡特商港] 1291年后大马士革首席外港，17世纪初德鲁兹埃米尔法赫尔丁二世扩建宫苑与砂岩石砌城墙，≤1700年城居约1–1.5万且具完整石墙，定小城。' },
+    { id: 'city_beirut', name: '贝鲁特', factionId: 'mamuluke', lat: 33.8900, lng: 35.5000, type: 'small_city', isPort: true, region: 'ORIE', buildingStyle: 'ORIE', troops: 10000, note: '[马穆鲁克至17世纪法赫尔丁埃米尔都城·砂岩石砌环城墙黎凡特商港] 1291年后大马士革首席外港，17世纪初德鲁兹埃米尔法赫尔丁二世扩建宫苑与砂岩石砌城墙，≤1850年城居约1–1.5万且具完整石墙，定小城。' },
     // 🔴 [2026-09-23 主人令「先添加据点」] 推罗城（腓尼基母城、黎凡特海岛港市）。
     //    id / 坐标取**英文维基百科 Tyre, Lebanon 的坐标 33.27083,35.19611**；2026-09-12 主人特批时它与阿卡相距 39.42 km、
     //    曾列入 §2.1.1.1 唯一一条特许例外；🔴 [2026-09-24 主人令「可以稍微移动一点坐标」] 阿卡锚点改取旧城坐标后，
@@ -3943,26 +3943,26 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jidagang', name: '吉大港', factionId: 'gurjara', lat: 22.335, lng: 91.8325, type: 'small_city', isPort: true, troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '[14至17世纪孟加拉苏丹国、若开与莫卧儿争夺第一海港·卡纳普利河口砖石海防大埠吉大港] 伊本·白图泰与马欢《瀛涯胜览》（榜葛剌国「察地港」）所载入孟加拉门户大港，葡人称「大港」（Porto Grande），16–17世纪港城常住人口达2–4万（Qanungo《吉大港史》），>1万定小城。' },
         { id: 'city_danmoledi', name: '耽摩栗底', factionId: 'shunga', lat: 22.28, lng: 87.92, type: 'small_city', isPort: true, troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '[孔雀巽伽至5至7世纪笈多时期东印度第一海港耽摩栗底·鲁普纳拉扬河口烧砖港城遗址] 阿育王送菩提树苗出海港、法显《佛国记》住二年写经乘商舶泛海与玄奘《大唐西域记》（城周十余里）所记东印总海口，考古发掘烧砖码头与城垣，盛期城居约2–3万，>1万定小城。' },
     { id: 'city_beileinisi', name: '贝雷尼斯', factionId: 'tuolemi', lat: 23.91, lng: 35.48, type: 'small_city', isPort: true, troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '[前3世纪托勒密二世建至罗马帝国红海第一天竺商港·珊瑚石砌城区贝雷尼斯] 普林尼《自然史》VI.26与《厄立特里亚海航行记》所载埃及对印香料胡椒贸易总港，美荷Sidebotham考古队发掘珊瑚石街区与码头，1–2世纪盛期港镇约0.8–1.2万且为石构港城，定小城。' },
-    { id: 'city_taima', name: '泰马', factionId: 'dedan', lat: 27.6, lng: 38.5, type: 'stockade', troops: 10000, region: 'ORIE_ANTIQUITY', buildingStyle: 'ORIE', note: '[前6世纪新巴比伦末王那波尼德驻跸十年与德丹利哈扬古国绿洲泰马·阿拉伯西北沙漠砂岩泥砖古墙绿洲聚落] 《那波尼德编年史》载前552–前543年巴比伦王那波尼德远驻泰马绿洲十年，虽青铜铁器时代遗有泥砖砂石沙埋矮垣，但伊斯兰至1700年穆卡达西等仅记为汲井枣园沙漠小驿镇（常住数千人<1万），定城寨。' },
+    { id: 'city_taima', name: '泰马', factionId: 'dedan', lat: 27.6, lng: 38.5, type: 'stockade', troops: 10000, region: 'ORIE_ANTIQUITY', buildingStyle: 'ORIE', note: '[前6世纪新巴比伦末王那波尼德驻跸十年与德丹利哈扬古国绿洲泰马·阿拉伯西北沙漠砂岩泥砖古墙绿洲聚落] 《那波尼德编年史》载前552–前543年巴比伦王那波尼德远驻泰马绿洲十年，虽青铜铁器时代遗有泥砖砂石沙埋矮垣，但中世纪至1850年穆卡达西等仅记为汲井枣园沙漠小驿镇（常住数千人<1万），定城寨。' },
         { id: 'city_maidina', name: '麦地那', factionId: 'maidina', lat: 24.5, lng: 39.6, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[7世纪先知穆罕默德与四大哈里发伊斯兰首任帝都·974年阿杜德道莱重筑玄武岩砖石环城墙] 伊斯兰政教发祥帝都麦地那（叶斯里卜），正统哈里发时期及中世纪阿拔斯、奥斯曼苏莱曼大帝重筑完整玄武岩石墙，常住市民（不含朝觐客）峰值约2–4万，>1万且具石墙，定小城。' },
         { id: 'city_maijia', name: '麦加', factionId: 'gulaishi', lat: 21.4, lng: 39.8, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[7世纪伊斯兰第一圣城至阿拔斯马穆鲁克奥斯曼谢里夫驻都·山谷石构城区麦加] 古莱什商业圣城及历代麦加谢里夫首府，扣除朝觐季数十万流动信众后，中世纪至17世纪山谷连片石屋坊区常住居民约3–5万（Faroqhi《朝觐者与苏丹》），>1万定小城。' },
     { id: 'city_baku', name: '巴库', factionId: 'safawei_d', lat: 40.4, lng: 49.9, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'SASANIAN', note: '[萨珊阿尔巴尼亚至希尔万海防期·阿普歇伦半岛双层石灰岩海防石堡] 萨珊帝国沿里海防线修筑巴库石堡基垣，后希尔万沙阿增筑双层石灰岩内城海防塔墙控里海西岸航道（巴托尔德《里海沿岸史地研究》），本据点锁定萨珊海防要塞阶段且常住<1万，定险要。' },
     { id: 'city_xiemianjieer', name: '谢缅杰尔', factionId: 'xiemian', lat: 43, lng: 47.4, type: 'stockade', troops: 10000, region: 'KHAZARS', buildingStyle: 'CUMAN', note: '[7至10世纪可萨汗国早期旧都·达吉斯坦里海西岸木柳泥墙园邑] 阿拉伯与可萨战争要地谢缅杰尔，10世纪伊斯塔赫里与伊本·豪卡勒《大地志》明载该城房屋与围篱以木条编织涂泥筑成并多葡萄园，965年毁于罗斯，无石砖墙且人口无确数<1万，定城寨。' },
         { id: 'city_yidier', name: '伊蒂尔', factionId: 'kesa', lat: 46, lng: 48, type: 'small_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CUMAN', note: '[8至10世纪可萨汗国极盛期首都伊蒂尔·伏尔加三角洲两岸烧砖王宫城垣与多族商都] 马苏第《黄金草原》与伊斯塔赫里《道路与王国志》详载伊蒂尔分西岸可萨汗烧砖宫城（惟大汗准用烧砖筑墙）与东岸三十法区商业大城，965年毁城前常住约3–5万（Dunlop《犹太可萨史》），>1万定小城。' },
     { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'luosi', lat: 47.705, lng: 42.27306, type: 'pass', troops: 10000, region: 'SLAVIC', buildingStyle: 'CUMAN', note: '[9世纪可萨汗国联拜占庭筑塞·顿河左岸烧砖白石渡口要塞] 君士坦丁七世《帝国治理论》第42章详载830年代拜占庭技师佩特罗纳斯助可萨烧红砖夹白灰石筑萨尔克尔（「白堡」）扼顿河渡口，堡址仅2.6公顷、常驻轮戍骑兵300人及附塞千人，纯砖石军事要塞<1万，定险要。' },
-    { id: 'city_weishen', name: '维申斯卡亚', factionId: 'gesake', lat: 49.63, lng: 41.74, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[17世纪下半叶顿河上游哥萨克军村维申斯卡亚（首见于1672年俄国档案）·顿河岸木栅教堂哥萨克斯坦尼察村镇] 布拉温起义军与上游顿河哥萨克聚居木屋大村（1708年彼得大帝镇压起义时曾焚掠上游诸木寨），≤1700年全村仅数百户哥萨克木屋无石砖城墙，定城寨。' },
+    { id: 'city_weishen', name: '维申斯卡亚', factionId: 'gesake', lat: 49.63, lng: 41.74, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '[17世纪下半叶顿河上游哥萨克军村维申斯卡亚（首见于1672年俄国档案）·顿河岸木栅教堂哥萨克斯坦尼察村镇] 布拉温起义军与上游顿河哥萨克聚居木屋大村（1708年彼得大帝镇压起义时曾焚掠上游诸木寨），≤1850年全村仅数百户哥萨克木屋无石砖城墙，定城寨。' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CENTRAL_ASIA', note: '[13至15世纪金帐汗国东道大城与诺盖汗国都城·乌拉尔河渡口烧砖泥砖手工业商都] 1333年伊本·白图泰经萨莱楚克记其浮桥宏阔，哈萨克考古队发掘100余公顷烧砖陶管供水城区与钱币铸造坊，14世纪极盛期城居约1.5–2.5万（Samashev发掘报告），>1万定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：曼格什拉克：里海东岸乌古斯—塞尔柱草原，归突厥 TURKS
     { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'seljuq', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', note: '[10至12世纪乌古斯与塞尔柱恰格里贝伊控扼里海东岸曼格什拉克半岛商船锚站（克孜勒卡拉）·荒漠海岸白垩土石商栈] 连接伏尔加河口萨克辛与花剌子模陆路之里海东岸半岛转运站（11世纪穆卡达西与雅库特记其设商栈堡寨），干旱荒漠半岛无淡水大城，常住商兵仅一二千人，定城寨。' },
     { id: 'city_kefu', name: '科孚', factionId: 'kelite', lat: 39.62, lng: 19.92, type: 'small_city', isPort: true, troops: 10000, region: 'ATHENIANS', buildingStyle: 'LATIN', note: '[古典科基拉名邦至1386至1700年威尼斯亚得里亚海门户首府·旧堡新堡与斯皮亚纳达巨石棱堡环墙] 修昔底德笔下海军强邦，威尼斯统治期筑全套圣米凯利式巨石海防棱堡城墙（1537与1716年两挫奥斯曼围攻），16–17世纪城墙内市民达1.5–2万（Miller《拉丁黎凡特》），>1万且具巨石墙，定小城。' },
     { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', isPort: true, troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN', note: '[16世纪医院骑士团海防要塞期·大港比尔古与圣埃尔莫巨石棱堡群] 1530年医院骑士团入驻筑圣安杰洛、圣埃尔莫巨石星形海防棱堡扼中地中海咽喉，1565年大团长拉·瓦莱特率军民约9000人死守挫败奥斯曼四万军（巴尔比《马耳他大围攻日记》），要塞岛堡<1万，定险要。' },
-    { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', isPort: true, troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '[15至17世纪丹麦挪威联合王国首都·砖石星形棱堡环海都城] 1443年定为丹麦王都，克里斯蒂安四世大扩建克里斯蒂安港与砖石棱堡环墙，1658–1659年抗瑞典围城，1700年城居达6.2–6.5万（de Vries 1984 p.269），>1万（未满8万）定小城。' },
+    { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'medium_city', isPort: true, troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '[15至19世纪中叶丹麦王国首都·克里斯蒂安砖石星形棱堡环海都城] 丹麦王都哥本哈根1700年6.5万，1850年丹麦官方人口普查棱堡环墙内实测129,695人（约13.0万，Chandler 1850年表13万），>10万定中城。' },
     { id: 'city_jelling', name: '耶灵', factionId: 'danmai', lat: 55.756, lng: 9.42, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '[10世纪丹麦老戈姆王与蓝牙哈拉尔一世王室祖陵圣地耶灵·日德兰双皇家巨土冢、卢恩大石碑与橡木立栅围院] 965年前后蓝牙哈拉尔立耶灵大石碑宣示统一丹麦归信基督，近年丹麦国家博物馆发掘确证外围1.4公里菱形橡木原木立栅围墙（UNESCO遗产），木栅不算墙且王庄常住仅数百人，定城寨。' },
     { id: 'city_hedeby', name: '海瑟比', factionId: 'danmai', lat: 54.487, lng: 9.565, type: 'stockade', isPort: true, troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '[808至1066年维京时代北欧最大地峡转运商埠海瑟比·施莱湾高10米半圆形夯土覆木栅城垣与木排街巷] 丹麦王戈德弗雷德迁商民所建、连结丹麦长城之24公顷半圆形高土堤木栅商镇（1050年哈拉尔·哈德拉达焚掠、1066年斯拉夫人彻底毁灭废弃），纯土垒木栅无石砖墙且常住峰值约1500–3000人（Hilberg海瑟比考古），定城寨。' },
-    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'small_city', isPort: true, troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'VIKINGS' , note: '[13世纪建城至17世纪瑞典波罗的海帝国首都·城岛石墙与南北关厢斯德哥尔摩] 古斯塔夫二世与克里斯蒂娜女王时期随瑞典帝国崛起人口激增，1600年约1万、1690–1700年连片主岛及南北马尔姆城区达4.5–5.7万（de Vries 1984 p.269、Lilja考证），>1万定小城。' },
+    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', isPort: true, troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'VIKINGS' , note: '[13世纪建城至17至19世纪中叶瑞典王国首都·城岛石垣与南北马尔姆石构城区] 瑞典王都斯德哥尔摩1700年约5.5万，1850年瑞典官方人口统计主城实居达93,070人（9.3万，Bairoch 1988），≥8万容差线，定中城。' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '[16世纪末至17世纪哈布斯堡西班牙王都·砖石税墙都城] 1561年腓力二世迁都后马德里迅速扩建，1600年约8.5–9.5万、1650年达12.5–13万（Carbajo Isla《马德里人口史》教区受洗账册实算及de Vries 1650年表13万），>10万定中城。' },
     { id: 'city_numantia', name: '努曼提亚', factionId: 'arevaci', lat: 41.81, lng: -2.43, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '[前2世纪凯尔特伊比利亚抗罗战争·杜罗河台地巨石厚墙山城邦] 阿雷瓦西人首邑努曼提亚，前134–133年小西庇阿筑九公里围墙困城十五月（阿庇安《伊比利亚战争》76–98），考古发掘确证厚达5米石砌城垣，守兵4000–8000、居民约8000–12000且具石墙，定小城。' },
-    { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'small_city', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[12至17世纪葡萄牙第二大城与航海王恩里克舰队出发港·1336至1376年费尔南多花岗岩环城高墙] 杜罗河口海贸重镇波尔图，阿方索四世与费尔南多一世筑完整3公里花岗岩高塔城垣，1600–1700年城居达1.5–2.4万（de Vries 1984 p.278），>1万且具石墙，定小城。' },
+    { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'medium_city', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[12至19世纪中叶葡萄牙第二大城·费尔南多花岗岩高墙与杜罗河口港市] 1376年建成花岗岩环城墙，1832–1833年自由派战争坚守围城，1850年连片城区达8.0–8.9万（Chandler 1850年表8万、Bairoch 1988载8.9万），≥8万容差线，定中城。' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'stockade', isPort: true, troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'GREECE', note: '[青铜晚期特洛伊第六至七层王城（荷马史诗伊利昂）与前4世纪波斯吕底亚辖下小邑·希萨尔勒克山丘切石卫城与木石下城] 施里曼、布莱根与科夫曼（Korfmann）考古实测青铜晚期特洛伊VI/VIIa石砌卫城仅2公顷、连外围挖壕木栅下城共约25–30公顷，人口峰值约5000–8000人<1万（古典时代更萎缩为希罗多德与斯特拉波XIII.1.27所称小村邑），定城寨。' },
 
     { id: 'city_bashila', name: '巴士拉', factionId: 'womaya', lat: 30.50, lng: 47.78, type: 'medium_city', isPort: true, troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ORIE', note: '[7至9世纪倭马亚阿拔斯初期·泥砖烧砖海贸大军镇城] 636年建营后迅即成城，倭马亚中期至阿拔斯初期巴士拉城垣与运河坊市居民达15–20万（巴拉祖里《诸国征服史》在册军民赡养名额及Chandler 800年表18万），>10万定中城。' },
@@ -3973,40 +3973,40 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_palenque', name: '帕伦克', factionId: 'maya', lat: 17.484, lng: -92.046, type: 'stockade', troops: 10000, region: 'MAYANS', buildingStyle: 'MAYANS', note: '[7世纪玛雅古典期巴加尔王国帕卡尔大帝都城拉卡姆哈（帕伦克）·恰帕斯雨林山麓石灰岩宫庙台地无墙王城] 铭文神庙与水道宫殿群所在地，据Barnhart（2001）全城测绘发掘报告，帕伦克无防御城墙、山坡高密度台地建筑约1,480座，折算7–8世纪极盛期常住人口约6000–8000人（不足1万整且9世纪彻底荒废），定城寨。' },
     { id: 'city_tucapel', name: '图卡佩尔', factionId: 'mapuche', lat: -37.7, lng: -73.4, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '[1553年十二月马普切领袖劳塔罗全歼西班牙征服者佩德罗·德·瓦尔迪维亚战场图卡佩尔·阿劳科海岸山脉原木土垒小堡] 瓦尔迪维亚始建三座前线原木泥土小砦之一，旋遭劳塔罗攻毁并诱歼西军全队（比瓦尔《智利编年史》），阿劳科战争中屡建屡焚之百人原木栅砦无居民城，定城寨。' },
     { id: 'city_bacata', name: '巴卡塔', factionId: 'muisca', lat: 4.71, lng: -74.07, type: 'small_city', troops: 10000, region: 'MUISCA', buildingStyle: 'MUISCA', note: '[15世纪末至1538年穆伊斯卡南部西帕最高王都·波哥大高原双重巨木栅宫垣与连片聚落] 穆伊斯卡南盟君主西帕（Zipa）首邑巴卡塔，1538年西班牙征服者克萨达《墓志纪略》记其木构大宫与平原中心连片屋舍上万座，折算中心建成区常住约2–3万（Broadbent考证），>1万定小城。' },
-    { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'stockade', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '[1555至1567年法属南极法兰西殖民岛寨与塔莫约图皮盟军决战地瓜纳巴拉湾（初创期里约热内卢）·海湾木石炮台与丘顶小镇] 1565–1567年葡军梅姆·德·萨联合图皮酋长阿拉里博亚驱逐法军迁镇卡斯特罗山，≤1700年黄金出口兴起前里约无环城陆墙且常住白人市民与印非人口仅约5000–8000人<1万（Boxer《巴西黄金时代》），定城寨。' },
+    { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'medium_city', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '[1555至1567年塔莫约图皮盟军与法葡决战瓜纳巴拉湾（同址里约热内卢）·海湾石堡与山海连片王都] 性质锁定16世纪瓜纳巴拉湾图皮与法葡争夺据点；同址里约热内卢1763年升巴西首府、1808年迁驻葡萄牙王室、1822年为巴西帝国皇都，1849年市政普查主城建成堂区实居达18–20万（Chandler 1850年表18.6万），>10万定中城。' },
     { id: 'city_onondaga', name: '奥农多加', factionId: 'yiluokui', lat: 43.05, lng: -76.15, type: 'stockade', troops: 10000, region: 'IROQUOIS', buildingStyle: 'AMERICA', note: '[15至17世纪北美五大湖易洛魁五族联盟中央火塘大议事村奥农多加·三排圆木立栅围绕榆树皮长屋大寨] 海华沙与和平缔造者创立易洛魁联盟盟会中心，1650年代法国《耶稣会士关系书》与1677年格林哈尔希实测记奥农多加主寨有约140座长屋、常住人口约2000–3000人且每隔十余年迁址重建木栅，定城寨。；城堡外观用 VIKI_CASTLE_AGE3（诺斯长屋环形要塞）代理长屋+木栅，不再用 MESO 金字塔' },
     { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'small_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '[13至15世纪中叶秘鲁北海岸奇穆帝国首都·十座高9米巨型生土宫城（Ciudadelas）与工匠坊区] 前哥伦布美洲最大生土泥砖城市昌昌（UNESCO遗产，核心建成区6平方公里），1470年印加征服前城内十座高墙宫院及周围2.6万工匠常住人口达3–5万（Moseley & Mackey考古测算），>1万定小城。；🔴 [2026-11-11 补标] 【建筑风格代理】奇穆王国土坯城，67键无奇穆，取最近INCA' },
     { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'small_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '[15世纪至1522年西墨西哥塔拉斯科（普雷佩查）帝国首都·帕茨夸罗湖石筑五圆台与连片王都] 唯一屡挫阿兹特克入侵之强国塔拉斯科王都钦聪灿，美国考古学家Pollard（1993）实测王都6.7平方公里石基阶地连片建成区，1520年前夕常住城居达2.5–3.5万，>1万定小城。；🔴 [2026-11-11 补标] 【建筑风格代理】塔拉斯坎圆形阶梯金字塔Yacata，67键无塔拉斯坎，取最近AMERICA' },
     // 🔴 [2026-10-18 主人令] 新阿姆斯特丹按建城者（荷兰西印度公司）定 SAXONS（低地日耳曼/北海砖木要塞）；旧注释「归 BRITONS」作废。
-    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'nidelan', lat: 40.71, lng: -74.01, type: 'stockade', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '[1626至1664年荷属新尼德兰首府新阿姆斯特丹（1664年后英属早期纽约）·曼哈顿南端阿姆斯特丹小堡与华尔街木栅镇] 1653年总督斯泰弗森特筑横跨半岛之华尔街原木立栅防英人，据1664年降英时1500人及1698年英属纽约官方人口普查全城实数仅4,937人（≤1700年远不满1万且市镇无环城石墙），定城寨。' },
+    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'nidelan', lat: 40.71, lng: -74.01, type: 'big_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '[1626年荷属新阿姆斯特丹至英属纽约与1850年美国第一大港·曼哈顿南端石堡与建成区] 1626年建城，1740年破万、1775年2.5万，至1850年美国联邦普查曼哈顿岛建成区达51.5万（US Census 1850；Chandler 1850年表64.5万），>50万定大城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：魁北克：法兰西殖民地（新法兰西）
-    { id: 'city_quebec', name: '魁北克', factionId: 'gaolu', lat: 46.81, lng: -71.21, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '[1608至1700年尚普兰所建法属新法兰西首府魁北克·圣劳伦斯河钻石岬圣路易木石堡与1690年急筑木土防线] 1608年尚普兰建木构居住站、1690年总督弗龙特纳克凭木栅土垒石台击退英军菲普斯舰队，据新法兰西1698年官方逐户人口普查魁北克全城实居仅1,988人（石砌环城大墙亦在1745年后方成），<1万定城寨。' },
+    { id: 'city_quebec', name: '魁北克', factionId: 'gaolu', lat: 46.81, lng: -71.21, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '[1608年新法兰西首府至18至19世纪中叶英属下加拿大首府魁北克·1745年后完整4.6公里巨石星形棱堡环城高墙] 北美墨西哥以北唯一保留完整巨石环城墙之名城（1745年法军筑石墙、1759年亚伯拉罕平原之战、1820年代英军增筑钻石岬石砌星形大要塞），1851年加拿大普查本城实居达4.2万，>1万且具巨石墙，定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：阿卡普尔科：西班牙殖民地（马尼拉大帆船港）
     { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xibanya', lat: 16.85, lng: -99.92, type: 'stockade', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[1565至1700年马尼拉大帆船美洲唯一法定终点港阿卡普尔科·海湾五角圣迭戈石堡与无墙棕榈木泥屋港镇] 虽1617年于港湾小山建圣迭戈五角石堡护锚地，但炎热瘴疠使平时市镇仅住黑人混血码头工与兵役约2000–3000人且镇无城墙（仅每年冬船到商展一月骤聚客商，意大利旅行家卡雷里1697年亲历实记），定城寨。' },
     { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'stockade', troops: 10000, region: 'TAIRONA', buildingStyle: 'MUISCA', note: '[12至16世纪哥伦比亚圣玛尔塔雪山泰罗纳文明山地中心特尤纳（失落之城Buritaca-200）·169级干石护坡圆台木茅屋山聚] 海拔1200米热带云雾林山脊筑169座干石挡土圆台基承托木骨茅顶圆屋（无防御外城墙，1600年前后弃置），哥伦比亚人类学研究所Giraldo（2010）测算常住人口约2000–4000人<1万，定城寨。；🔴 [2026-11-11 按史改] 据点文化 INCA→MUISCA（代理）：泰罗纳山城，与穆伊斯卡同属奇布查语系、同金铜祭祀信仰，从未属印加' },
     // 🔴 [2026-10-18 按史] 圣胡利安港历史上从未建过欧洲永久石造城郭/要塞，仅麦哲伦等临时泥木锚地；真实长期实体建筑为特维尔切木骨皮蒙营帐，故取南安第斯 MAPUCHE（无 TEHUELCHE 分支）。
-    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'stockade', isPort: true, troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '[1520年麦哲伦环球舰队越冬平叛与1578年德雷克停泊之巴塔哥尼亚圣胡利安湾·特维尔切游猎民兽皮帐营锚地] 皮加费塔《麦哲伦首次环球航行记》详载在此越冬五个月首遇高大特维尔切（巴塔哥尼）游猎小群，≤1700年无常设欧洲城镇，仅土著流动猎营数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】巴塔哥尼亚特维尔切营地，取最近MAPUCHE' },
+    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'stockade', isPort: true, troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '[1520年麦哲伦环球舰队越冬平叛与1578年德雷克停泊之巴塔哥尼亚圣胡利安湾·特维尔切游猎民兽皮帐营锚地] 皮加费塔《麦哲伦首次环球航行记》详载在此越冬五个月首遇高大特维尔切（巴塔哥尼）游猎小群，≤1850年无常设欧洲城镇，仅土著流动猎营数百人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】巴塔哥尼亚特维尔切营地，取最近MAPUCHE' },
     // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──
     //  1501 韦斯普奇船队：里斯本 → 佛得角 → 借东北信风横渡 → 圣罗克角 → 沿岸南下
     //  → 1502-01-01 发现瓜纳巴拉湾（误认作河，命名 Rio de Janeiro）。
     //  1565-67 葡军自圣维森特北上逐走法国「南极法兰西」，正式建里约城。
     { id: 'city_ribeira', name: '里贝拉', factionId: 'putaoya', lat: 14.92, lng: -23.60, type: 'small_city', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[15至17世纪葡属佛得角首府与跨大西洋奴隶航线中枢·圣菲利佩皇家石堡与石砌海防墙旧城] 1462年建热带首座欧洲城市里贝拉格兰德（UNESCO遗产旧城），1585年德雷克袭掠后腓力二世敕筑山顶圣菲利佩巨石棱堡及海岸石砌防墙连防体系，城居约3000–5000人<1万具石砌城防，定小城。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 PORTUGUESE：萨尔瓦多（巴西巴伊亚）：葡萄牙殖民地
-    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'putaoya', lat: -12.97, lng: -38.51, type: 'small_city', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '[1549至1700年葡属巴西总督区首都圣萨尔瓦多·全圣湾上下城石砖棱堡环城防线] 1549年托梅·德·索萨建都并筑城墙，1624–1625年西葡联军收复荷占萨尔瓦多后增筑完整石砖棱堡，1700年常住人口达2–2.5万（Schwartz《巴西糖业种植园与城市》），>1万定小城。' },
+    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'putaoya', lat: -12.97, lng: -38.51, type: 'medium_city', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '[1549至1763年葡属巴西首都及19世纪上半叶巴伊亚首府·全圣湾石砖棱堡上下城] 巴西早期首都圣萨尔瓦多，至1850年上下城连片港区常住人口达8.5–10万（Mattoso《十九世纪巴伊亚》及Chandler 1850年表8–10万），≥8万容差线，定中城。' },
     // 🔴 [2026-10-18 按史] 圣维森特 1532 年葡萄牙首座永久拓殖城镇：石木防御要塞屋、总督府、小教堂、葡式石砌磨坊 → PORTUGUESE；不因驻将本地而降为 TUPI。
-    { id: 'city_saovicente', name: '圣维森特', factionId: 'putaoya', lat: -23.96, lng: -46.39, type: 'stockade', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '[1532年马丁·阿方索·德·索萨所建葡萄牙美洲第一座永久自治市镇圣维森特·大西洋海岛泥木糖坊小镇] 巴西殖民母镇及1565年反攻里约基地，后深水航道淤塞商贸转入邻港桑托斯与高原圣保罗，≤1700年全镇常住仅约1500–2500人且无石砌环城墙，定城寨。' },
+    { id: 'city_saovicente', name: '圣维森特', factionId: 'putaoya', lat: -23.96, lng: -46.39, type: 'stockade', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '[1532年马丁·阿方索·德·索萨所建葡萄牙美洲第一座永久自治市镇圣维森特·大西洋海岛泥木糖坊小镇] 巴西殖民母镇及1565年反攻里约基地，后深水航道淤塞商贸转入邻港桑托斯与高原圣保罗，≤1850年全镇常住仅约1500–2500人且无石砌环城墙，定城寨。' },
     // ── [2026-08-26] 跨大西洋航线据点：让美洲接入旧大陆，并给特诺奇提特兰补出海口 ──
     //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
     // 🔴 [2026-10-18 按史] 韦拉克鲁斯真实建成的实体是西班牙圣胡安德乌卢阿珊瑚石星形棱堡、防御石墙与西属美洲殖民巴洛克建筑群 → SPANISH；不因驻将奇科马卡特为托托纳克人而降为 AMERICA。
-    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xibanya', lat: 19.19, lng: -96.14, type: 'stockade', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[1519年科尔特斯登陆建镇至17世纪新西班牙大西洋银船门户韦拉克鲁斯·圣胡安德乌卢阿礁岛石堡与对岸木板无墙港镇] 虽离岸珊瑚礁筑乌卢阿海堡，但陆岸韦拉克鲁斯市镇全为木板房且无环城石墙（故1683年海盗洛伦西略率千人自陆侧一夜洗劫全镇，城墙迟至18世纪方筑），黄热病肆虐使平时常住仅约5000–6000人<1万，定城寨。' },
+    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xibanya', lat: 19.19, lng: -96.14, type: 'small_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[1519年科尔特斯登陆建埠至18至19世纪中叶墨西哥第一海防坚城韦拉克鲁斯·圣胡安德乌卢阿海中巨石堡与完整珊瑚石九棱堡环城墙] 新西班牙大西洋唯一法定正港，除乌卢阿巨石海堡外，1740–1790年建成完整珊瑚石灰岩九棱堡环城陆墙（1838年糕点战争与1847年美军围攻石墙），城居约0.9–1.2万且具完整石砌环城墙，定小城。' },
     // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
     // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
     { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'TUPI', note: '[1511至1512年古巴东部泰诺人酋长哈土依率众抗击西班牙征服者贝拉斯克斯据点亚拉·棕榈圆屋（Bohío）原住民林寨] 拉斯·卡萨斯《西印度毁灭述略》动情记述哈土依自海地渡海聚古巴泰诺部民于亚拉河林莽抗西就义，新石器木竹村社无城墙且常住仅千余人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】古巴泰诺人木屋村寨，67键无泰诺，取最近TUPI' },
-    { id: 'city_havana', name: '哈瓦那', factionId: 'xibanya', lat: 23.13, lng: -82.38, type: 'small_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[16至17世纪西属古巴首府与珍宝船队总集结港·莫罗石堡与1674年珊瑚石灰岩环城墙] 西印度护航大帆船总母港哈瓦那，除海口莫罗、蓬塔双石堡外1674年起修筑完整厚重珊瑚石环城陆墙，1690–1700年城内常住人口达1.2–1.5万（Fuente《16至17世纪哈瓦那港城考》），>1万定小城。' },
+    { id: 'city_havana', name: '哈瓦那', factionId: 'xibanya', lat: 23.13, lng: -82.38, type: 'medium_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[16至19世纪中叶西属古巴首府与西印度总母港·莫罗卡瓦尼亚巨石要塞与珊瑚石环城墙内外城区] 1674年筑珊瑚石环城墙、1774年增筑卡瓦尼亚巨石大堡，据1841与1846年西属古巴官方人口普查墙内外连片城区常住达13.0–15.0万（Chandler 1850年表15万），>10万定中城。' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'stockade', isPort: true, troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '[14至15世纪西班牙征服前大加那利岛柏柏尔裔关切人两大土王首邑特尔德·火山凝灰岩千洞聚落与干石圆屋] 1483年卡斯蒂利亚征服前关切王本特胡伊等治下特尔德（四门山与塔拉百洞聚落，《加那利征服纪事》），无城墙且征服后16–17世纪蔗糖小镇常住仅约2000–3000人<1万，定城寨。' },
-    { id: 'city_angra', name: '安格拉', factionId: 'putaoya', lat: 38.66, lng: -27.22, type: 'stockade', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[15至17世纪葡属亚速尔群岛首府与东印度大帆船返航补给港安格拉·巴西山圣若昂石堡与无陆墙海湾市镇] 1581年萨尔加湾牛群冲阵破西军、1591年后西军在港侧巴西山半岛修圣若昂石堡，但安格拉市镇陆侧敞开无环城墙，≤1700年常住人口约5000–7000人<1万，定城寨。' },
-    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', isPort: true, troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '[1535至1700年西属秘鲁总督区首都「诸王之城」·1684至1687年11公里三十四棱堡泥砖石基环城墙] 皮萨罗所建南美西属最高政治银贸首都利马，17世纪接连人口普查实载1614年25,454人、1700年墙内常住达3.7万（Cook《秘鲁殖民人口史》1700年实查册37,234人），>1万定小城。' },
+    { id: 'city_angra', name: '安格拉', factionId: 'putaoya', lat: 38.66, lng: -27.22, type: 'stockade', isPort: true, troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[15至17世纪葡属亚速尔群岛首府与东印度大帆船返航补给港安格拉·巴西山圣若昂石堡与无陆墙海湾市镇] 1581年萨尔加湾牛群冲阵破西军、1591年后西军在港侧巴西山半岛修圣若昂石堡，但安格拉市镇陆侧敞开无环城墙，≤1850年常住人口约5000–7000人<1万，定城寨。' },
+    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'medium_city', isPort: true, troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '[1535至1821年西属秘鲁副王区首都至秘鲁共和国首都·11公里三十四棱堡城墙内城区] 南美西属首府利马，据1836–1850年秘鲁官方户口与人口统计三十四棱堡城墙及里马克关厢实居达8.5–9万（Gootenberg秘鲁人口考及Chandler 1850年表8.5万），≥8万容差线，定中城。' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '[15至16世纪马里与桑海阿斯基亚王朝黄金学术之都·泥砖清真寺学府与高密度商队城区] 桑科雷经学院与跨撒哈拉金盐贸易总都会廷巴克图，1591年摩洛哥火枪军入侵前夕据《苏丹史》（Tarikh al-Fattash）户数记录折算城居峰值达5–7万（Hunwick 1999考证，<8万），定小城。' },
 
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'small_city', troops: 10000, region: 'AFRICA_ANTIQUITY', buildingStyle: 'ETHIOPIANS' , note: '[3至6世纪东非阿克苏姆帝国极盛王都·巨石方尖碑群与石砌多层王宫城区] 摩尼列为世界四大帝国之一、埃扎纳王与卡莱布王东征也门之都阿克苏姆，核心石构宫邸与工商业建成区逾100公顷，4–6世纪城居峰值约2–3万（Munro-Hay 1991《阿克苏姆考》），>1万定小城。' },
@@ -4019,13 +4019,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_huoluo', name: '霍洛', factionId: 'sulu', lat: 6.0531, lng: 121.0008, type: 'stockade', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '[15至17世纪苏禄苏丹国都霍洛·海湾高脚木屋与圆木栅王寨] 永乐十五年苏禄三王来朝（《明史·苏禄传》），16–17世纪西军屡征苏禄史料明载霍洛为木构水屋与圆木防栅（Kota木寨，无石砖城垣），本镇常住仅数千人未满1万，定城寨。' },
     // 🔴 [2026-11-02 主人令「添加三个（海上丝绸之路与郑和下西洋枢纽港）」]
     { id: 'city_yaqi', name: '亚齐', factionId: 'yaqi', lat: 5.55, lng: 95.32, type: 'small_city', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '[17世纪前半亚齐苏丹国伊斯坎达尔·穆达极盛期·石木王宫与连片港都] 马六甲海峡北口霸主亚齐都城库塔拉贾，1607–1636年全盛期连片港区与坊巷常住人口达4–6万（法国航海家博利厄1621年目击记述及Reid 1993考算），>1万定小城。' },
-    { id: 'city_manila', name: '马尼拉', factionId: 'maynila', lat: 14.5904, lng: 120.9804, type: 'small_city', isPort: true, troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', note: '[1571至1700年西属菲律宾都督府首府·王城（Intramuros）巨石棱堡城墙与华人八连关厢] 达斯马里尼亚斯总督筑完整火山凝灰岩巨石王城环墙，合紧贴城墙外之华人涧内（Parian，常住华商工匠逾两万）与岷伦洛关厢，17世纪前半叶城关实居达4–5万（Reed《殖民马尼拉》），>1万定小城。' },
+    { id: 'city_manila', name: '马尼拉', factionId: 'maynila', lat: 14.5904, lng: 120.9804, type: 'medium_city', isPort: true, troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', note: '[1571至1850年西属菲律宾都督府首府·王城（Intramuros）巨石棱堡环墙与岷伦洛汤都连片商厢] 王城巨石棱堡隔帕西格河紧接岷伦洛（Binondo）华人商坊与汤都城区，1845–1850年西属官方教区与市政户口实测连片城居达13–14万（Buzeta 1850《菲律宾辞典》及Chandler 1850年表14万），>10万定中城。' },
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 10000, region: 'GURJARAS', buildingStyle: 'GURJARAS', note: '[11至13世纪索兰基（遮娄其）古吉拉特王都·石砖城垣阿纳希拉瓦拉] 索兰基王朝都城阿纳希拉帕塔卡（帕坦）1100–1250年石砖城垣内人口峰值约10万（海马赞德拉文献及Chandler 1100–1200年表10万），≥10万定中城。' },
     { id: 'city_suomunate', name: '索姆纳特', factionId: 'suomunate', lat: 20.8878, lng: 70.4014, type: 'stockade', isPort: true, troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', note: '[1026年伽色尼马哈茂德远征洗劫与12世纪索兰基库马拉帕拉王重建之印度教圣庙索姆纳特·海滨神庙石垣朝圣小港镇] 十二光辉林伽之首湿婆大庙所在地帕布哈斯帕坦，伊本·阿西尔《全史》记神庙卫垣而非巨型市民都城，中世纪屡经苏丹国拆毁，平时常住祭司渔商约4000–7000人<1万，定城寨。' },
     { id: 'city_surat', name: '苏拉特', factionId: 'mowoer', lat: 21.1702, lng: 72.8311, type: 'medium_city', isPort: true, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', troops: 10000, startYear: 1615, note: '[17世纪莫卧儿西岸第一大港·烧砖石砌双道城墙商都] 奥朗则布筑砖石内外墙时期（1660–1700年）苏拉特港城常住人口达15–20万（欧亚商船日志及Chandler 1700年表20万、Gokhale《苏拉特与十七世纪》），>10万定中城。' },
-    { id: 'city_madras', name: '马德拉斯', factionId: 'yinggelan', lat: 13.0827, lng: 80.2707, type: 'small_city', isPort: true, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', troops: 10000, startYear: 1639, note: '[17世纪下半叶英属东印度公司东岸总部·圣乔治砖石堡城与黑城连片港区] 1639年建圣乔治堡后印欧商工云集，1670–1700年白城与毗连黑城砖墙坊市常住人口达4–6万（Love《旧马德拉斯遗录》及Fryer 1673年纪行），>1万定小城。' },
-    { id: 'city_mumbai', name: '孟买', factionId: 'yinggelan', lat: 18.9388, lng: 72.8354, type: 'small_city', isPort: true, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', troops: 10000, startYear: 1668, note: '[17世纪末英属东印度公司西岸总部·孟买石堡与岛港建成区] 1668年英东印度公司接管后昂吉尔总督修筑石堡炮台、招徕古吉拉特织工，1675–1690年代岛城常住人口增至1.5–3万（大卫《孟买早期史》及1698年瘴疫前商馆报告），>1万定小城。' },
-    { id: 'city_kolkata', name: '加尔各答', factionId: 'yinggelan', lat: 22.5726, lng: 88.3639, type: 'small_city', region: 'BENGALIS', buildingStyle: 'BENGALIS', troops: 10000, startYear: 1690, note: '[1690至1700年英属孟加拉总部初创期·旧威廉砖石堡与三镇连片商埠] 1690年查诺克建商站、1698年购苏塔努蒂、戈宾德布尔、卡利卡塔三镇筑旧威廉砖堡，1700–1701年连片商埠常住人口达1–1.2万（Hamilton《新东印度纪》及Nair考算），刚逾1万定小城。' },
+    { id: 'city_madras', name: '马德拉斯', factionId: 'yinggelan', lat: 13.0827, lng: 80.2707, type: 'medium_city', isPort: true, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', troops: 10000, startYear: 1639, note: '[17至19世纪中叶英属马德拉斯管区首府·圣乔治砖石棱堡城与黑城连片城区] 1639年建圣乔治堡，1700年约5万，至1850年达约30万（Love《旧马德拉斯遗录》及Chandler 1850年表30万），>10万定中城。' },
+    { id: 'city_mumbai', name: '孟买', factionId: 'yinggelan', lat: 18.9388, lng: 72.8354, type: 'big_city', isPort: true, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', troops: 10000, startYear: 1668, note: '[1661年英属东印度公司西岸总部孟买·孟买石砌星形城堡墙与港岛连片商都] 1668年移交英国东印度公司筑石砌堡城，18世纪末至1850年鸦片与棉花海贸激增至约50万（Chandler 1850年表50万），≥50万定大城。' },
+    { id: 'city_kolkata', name: '加尔各答', factionId: 'yinggelan', lat: 22.5726, lng: 88.3639, type: 'big_city', region: 'BENGALIS', buildingStyle: 'BENGALIS', troops: 10000, startYear: 1690, note: '[18世纪末至1850年英属印度总督府首都·威廉堡砖石棱堡与连片大都会] 1773年起定为英属印度最高总督驻都，至1850年威廉堡与白城、黑城连片建成区常住人口达41.3万（Chandler 1850年表41.3万及1850年加尔各答市政普查），≤1850年峰值≥40万容差线，定大城。' },
     { id: 'city_guoa', name: '果阿', factionId: 'putaoya', lat: 15.5023, lng: 73.9117, type: 'medium_city', isPort: true, troops: 10000, region: 'INDIA', buildingStyle: 'PORTUGUESE', note: '[16世纪末至17世纪初葡属东方首府黄金果阿·红土巨石城垣] 1580–1620年「东方罗马」果阿旧城红土石外墙与近关教区常住人口峰值约8–10万（林斯霍滕《东印度水路志》及Pearson／Subrahmanyam据教会户籍折算约8–10万；Chandler 1600年表7.5–10万），≥8万定中城。' },
     { id: 'city_guli', name: '古里', factionId: 'zhamolin', lat: 11.25, lng: 75.78, type: 'medium_city', isPort: true, troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '[15世纪萨穆里王朝香料大港古里·红土石木宫垣连片港市] 郑和七下西洋与1498年达·伽马登陆时卡利卡特（古里）连片海岸商埠常住人口约8–10万（马欢《瀛涯胜览》、瓦尔泰马游记及Chandler 1500年表8–9万），≥8万容差线，定中城。' },
     { id: 'city_cochin', name: '柯枝', factionId: 'zhamolin', lat: 9.9700, lng: 76.2400, type: 'small_city', isPort: true, region: 'INDIA', buildingStyle: 'INDIA', troops: 10000, note: '[15至17世纪柯枝王国与葡荷首府·圣十字石砖棱堡环城港市] 郑和立碑之柯枝国，1503年葡筑首堡并发展为石砖环墙之圣十字城与邻接马坦切里商区，16–17世纪初城居约2–3万（博卡罗1635《要塞图志》及Malekandathil考算），>1万定小城。' },
@@ -4037,7 +4037,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jiale', name: '加勒', factionId: 'sengjialuo', lat: 6.05, lng: 80.21, type: 'small_city', isPort: true, troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '[15至17世纪科提王国主港与葡荷石城期·花岗岩珊瑚石环海棱堡城] 郑和立《布施锡兰山佛寺三语碑》之别罗里（加勒），1588年葡筑石墙、1663年荷扩建36公顷花岗岩珊瑚石环城墙（UNESCO遗产），城居约0.8–1.5万且具完整石墙，定小城。' },
     // 🔴 [2026-11-02 主人令「请添加这三个据点，然后把昇龙，阿瑜陀耶，麦加的港口属性取消，删除海路」]
     { id: 'city_yuntun', name: '云屯', factionId: 'dayue', lat: 20.86, lng: 106.68, type: 'small_city', isPort: true, troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE', note: '[12至15世纪大越李陈二朝唯一法定海贸港·云屯海岛石岸连片商庄] 1149年李英宗设云屯庄为唯一外贸海港，1288年陈庆余于此截歼元军张文虎粮船（《大越史记全书》），陈朝盛期本港及连片商庄常住商民水手逾1–1.5万，定小城。' },
-    { id: 'city_tunwuli', name: '吞武里', factionId: 'siam', lat: 13.68, lng: 100.53, type: 'small_city', isPort: true, troops: 10000, region: 'SEAS', buildingStyle: 'KHMER', note: '[16至17世纪阿瑜陀耶王朝湄南河口重镇·砖石星形棱堡海关港城] 阿瑜陀耶海防门户吞武里（曼谷），1680年代那莱王聘法工程师德·拉马尔筑东西两岸砖石星形棱堡、1688年围城战所在地，≤1700年港镇常住人口约1.5–2.5万，定小城。' },
+    { id: 'city_tunwuli', name: '吞武里', factionId: 'siam', lat: 13.68, lng: 100.53, type: 'medium_city', isPort: true, troops: 10000, region: 'SEAS', buildingStyle: 'KHMER', note: '[阿瑜陀耶海防门户至吞武里王朝与拉达那哥欣（曼谷）王都·湄南河两岸红砖雉堞王城与水上连片坊市] 1767年郑信定都吞武里、1782年拉玛一世跨河营建曼谷砖石环城墙与运河坊市，至1850年两岸连片王都常住达16–20万（巴莱哥主教1854《暹罗国志》及Chandler 1850年表16万），>10万定中城。' },
     { id: 'city_jida', name: '吉达', factionId: 'maidina', lat: 21.49, lng: 39.19, type: 'small_city', isPort: true, troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[7世纪设港至16世纪马穆鲁克奥斯曼海防期·珊瑚石砖环城墙朝觐主港] 646年哈里发奥斯曼定为麦加外港，1517年马穆鲁克将领侯赛因·库尔迪筑六门珊瑚石砖环城墙击退葡国苏亚雷斯舰队（伊本·伊亚斯《埃及编年史》），常住约1–1.5万且具石墙，定小城。' },
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：万象：澜沧（寮）王国都城，同圈
@@ -4075,12 +4075,12 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '[15世纪末至1537年穆伊斯卡宗教圣城苏阿莫斯（索加莫索）·伊拉卡大祭司巨木太阳神庙与山谷散居村社] 1537年9月西军士兵夜持火把抢掠黄金不慎焚毁涂树脂巨木茅顶太阳神庙大火数日不熄（卡斯特利亚诺斯《新格拉纳达挽歌》），全为木栅茅屋宗教聚落无石墙且常住不足6000人，定城寨。' },
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '[1542年卡韦萨·德·巴卡徒步穿越发现伊瓜苏大瀑布与17世纪初耶稣会瓜拉尼传教村·亚热带雨林木竹村社] 巴拉那河与伊瓜苏河交汇瓜拉尼人农猎雨林及1626年圣玛利亚传教点（旋避保利斯塔捕奴队南迁，《巴拉圭耶稣会史》），无石墙且常住一二千人，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】瓜拉尼人长屋，取最近TUPI' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
-    { id: 'city_banama', name: '巴拿马', factionId: 'xibanya', lat: 9.0056, lng: -79.4858, type: 'small_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[1519至1671年西班牙美洲太平洋首府老巴拿马与1673年新石墙城·秘鲁白银地峡终点城] 1671年亨利·摩根焚毁老巴拿马时城内石木宅院市民与奴仆约1万，1673年迁址半岛修筑完整高10米珊瑚巨石环海棱堡城墙（Casco Viejo世遗），≤1700年破万且具完整石墙，定小城。' },
+    { id: 'city_banama', name: '巴拿马', factionId: 'xibanya', lat: 9.0056, lng: -79.4858, type: 'small_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[1519至1671年西班牙美洲太平洋首府老巴拿马与1673年新石墙城·秘鲁白银地峡终点城] 1671年亨利·摩根焚毁老巴拿马时城内石木宅院市民与奴仆约1万，1673年迁址半岛修筑完整高10米珊瑚巨石环海棱堡城墙（Casco Viejo世遗），≤1850年破万且具完整石墙，定小城。' },
     // 🔴 [2026-11-02 主人令「添加波多韦洛据点」] 圣费利佩-德波多韦洛：西属美洲珍宝船队大西洋白银大帆船装船要塞港
     { id: 'city_portobelo', name: '波多韦洛', factionId: 'xibanya', lat: 9.5544, lng: -79.6644, type: 'stockade', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[17世纪西属巴拿马珍宝船队装银港·湾口分立石炮台与无环墙海关镇] 1597年设港，虽湾口山嘴分设圣费利佩、圣地亚哥海防炮台，但市镇本身无合围城墙（1668年摩根自陆侧长驱入镇），平时常住仅2000–3000人（商展客商属临时流动），<1万定城寨。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
     { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[1496至1700年西班牙美洲首座总督最高法院首府·奥萨马河西岸珊瑚石灰岩完整环城棱堡墙] 哥伦布胞弟建城、奥万多按石构棋盘重建，1543年起修筑完整珊瑚石灰岩环城墙与二十二棱堡门（1655年凭石墙击退英军佩恩与维纳布尔斯万军登陆），城居约6000–10000人具完整石墙，定小城。' },
-    { id: 'city_martinique', name: '马提尼克', factionId: 'gaolu', lat: 14.60, lng: -61.07, type: 'stockade', isPort: true, region: 'AMERICA', buildingStyle: 'FRANKS', troops: 10000, startYear: 1635, note: '[17世纪法属安的列斯首府皇家堡·海岬木石小堡与木构港镇] 1635年设防、1669年筑皇家堡（Fort-Royal），1674年击退荷兰德·鲁伊特舰队，≤1700年市镇人口仅约2000–3000人且镇区无环城石墙（Pritchard法属美洲史），定城寨。' },
+    { id: 'city_martinique', name: '马提尼克', factionId: 'gaolu', lat: 14.60, lng: -61.07, type: 'stockade', isPort: true, region: 'AMERICA', buildingStyle: 'FRANKS', troops: 10000, startYear: 1635, note: '[17世纪法属安的列斯首府皇家堡·海岬木石小堡与木构港镇] 1635年设防、1669年筑皇家堡（Fort-Royal），1674年击退荷兰德·鲁伊特舰队，≤1850年市镇人口仅约2000–3000人且镇区无环城石墙（Pritchard法属美洲史），定城寨。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
     { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xibanya', lat: 10.4266, lng: -75.5442, type: 'small_city', isPort: true, troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '[16至17世纪西属新格拉纳达珍宝船队第一坚城·圣费利佩石堡与环城珊瑚石灰岩巨墙卡塔赫纳] 南美白银黄金与奴隶总集散港，1586年后安东尼利父子设计修筑厚重珊瑚石灰岩环城高墙（Murallas）围合主城与赫塞马尼关厢，17世纪下半叶常住人口达1–1.5万且具巨石城墙，定小城。' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '[12世纪末至13世纪初埃塞俄比亚扎格维王朝拉利贝拉王凿建「新耶路撒冷」罗哈·凝灰岩整石下沉式十一教堂圣镇] 海拔2600米拉斯塔山区向下凿岩而成之朝圣宗教中心（1520年葡国神父阿尔瓦雷斯亲访实记当时罗哈已非政治都城，仅住祭司修士与少量农户），无防御城墙且常住不足5000人，定城寨。' },
@@ -4101,7 +4101,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'small_city', troops: 10000, region: 'MAYANS', buildingStyle: 'MAYANS', note: '[9至10世纪古典终末期尤卡坦普克玛雅霸主都城·总督宫石灰岩建筑群与同心石砌防墙乌斯马尔] 查克王（Chan Chak K\'ak\'nal Ajaw）统治极盛期普克区域首都，考古实测中心纪念区外筑有周3公里同心石灰岩防御矮墙，连片建成区常住人口约1.5–2.5万（Dunning & Kowalski普克考古），>1万定小城。' },
     { id: 'city_bam_citadel', name: '巴姆', factionId: 'xisi', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '[萨珊至9世纪萨法尔王朝期·卢特沙漠南缘高台生土夯筑巨堡（阿格-巴姆）] 扼克尔曼通锡斯坦沙漠商道咽喉，高岩台筑重重夯土生土高墙与三十八座戍塔护卫水源要冲（伊斯塔赫里《道路与王国志》），守道绿洲要塞且堡内常住<1万，定险要。' },
     { id: 'city_bedzin', name: '本津堡', factionId: 'bolan', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '[14世纪波兰卡齐米日三世期·黑普热姆沙河畔石灰岩王家边防石堡] 1348年卡齐米日大帝筑本津王家石堡，属鹰巢石堡防线最西端锁钥以御波希米亚西里西亚方向入侵（《扬·德乌戈什波兰史》），纯边境守道石堡且镇民仅千余人<1万，定险要。' },
-    { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[12至15世纪葡萄牙王国与布拉干萨公爵领·花岗岩环城石墙边城] 1187年桑乔一世赐市镇特许状、1464年升格城市（Cidade），具完整市政厅、教区户籍及花岗岩环城石墙（非纯军事哨卡），≤1700年城居约3000–5000人，按<1万石墙城市定小城。' },
+    { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[12至15世纪葡萄牙王国与布拉干萨公爵领·花岗岩环城石墙边城] 1187年桑乔一世赐市镇特许状、1464年升格城市（Cidade），具完整市政厅、教区户籍及花岗岩环城石墙（非纯军事哨卡），≤1850年城居约3000–5000人，按<1万石墙城市定小城。' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'kasidiliya', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '[15世纪卡斯蒂利亚特拉斯塔马拉与天主教双王期·红砖高塔王家军械要塞] 1440年代扩建拉莫塔双层红砖高墙与深壕大要塞，为王室火炮军械总库及伊莎贝拉女王驻防重堡（门多萨编年史），名带「堡」且具包砖厚墙之纯王家军堡，定险要。' },
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'seleisi', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '[前4世纪末色雷斯奥德里西亚国王塞乌特斯三世新都·石基泥砖五公顷四角塔王城塞乌托波利] 约前320年塞乌特斯三世仿希腊化棋盘规划营建，1948–1954年水库抢救发掘确证全城筑厚2米花岗岩与碎石高基城墙、四角方塔及王宫内堡（Dimitrov发掘报告），<1万但具石砌城郭，定小城。' },
     { id: 'city_chimarros', name: '希马鲁塔', factionId: 'xila', lat: 36.965, lng: 25.53, type: 'pass', isPort: true, troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '[前4至前3世纪希腊化基克拉泽斯海防期·纳克索斯大理石圆塔哨塞] 筑于纳克索斯东南扎斯山麓之高15米双层大理石圆形设防戍塔外加方形石砌外院，专司爱琴海航道烽火预警与驻兵守险（Lawrence《希腊筑城学》），纯军事石砌哨塔且无居民城，定险要。' },
@@ -4119,14 +4119,14 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'MACEDONIAN', note: '[前4世纪伊利里亚达萨雷提部设防首邑佩利昂·德沃尔河峡口干砌巨石山城垣] 前335年克莱图斯与格劳基亚斯据城抗亚历山大，阿里安I.5.5称佩利昂为全境最坚固之城，阿尔巴尼亚考古探明兹韦兹代一带伊利里亚巨石砌筑城垣，具石墙城郭，定小城。' },
     { id: 'city_peierge', name: '阿斯彭杜斯', factionId: 'aqimeinide', lat: 36.9389, lng: 31.1722, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '[前5至前4世纪潘菲利亚富邦至罗马巨石剧场名城阿斯彭杜斯·欧里梅东河切石高台城墙] 前334年亚历山大课银五十塔兰特并派兵进驻其坚固高台石墙城（阿里安I.26–27），现存罗马巨石剧场、高架石水道与希腊化切石城门，古典至罗马盛期城居约1.5–2.5万，>1万定小城。' },
     { id: 'city_baihaliye', name: '拜哈里耶', factionId: 'aiji', lat: 28.35, lng: 28.86, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'rect', stockadeFence: 'FENCE', note: '[古埃及第26王朝神庙商站与罗马「小绿洲」驻点拜哈里耶·西部沙漠椰枣葡萄酒绿洲泥砖村聚] 撒哈拉西部沙漠绿洲链北站（发掘第26王朝总督杰德孔苏伊乌夫安赫墓与亚历山大泥砖小庙），罗马置小队辅兵戍泉，绿洲散村泥砖墙且总常住仅数千人<1万，定城寨。' },
-    { id: 'city_kuida', name: '奎达', factionId: 'dulan_d', lat: 30.58, lng: 67.01, type: 'stockade', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '[萨珊至近代前俾路支沙尔（奎达）·波兰山口北端土丘聚落] 古称沙尔科特（Shal Kot），18世纪前仅为土坯夯筑小土丘村镇而无石砖夯土正式关塞城垣（1876年英军占领后方建近代棱堡要塞，超年不采），常住数千人<1万，定城寨。' },
+    { id: 'city_kuida', name: '奎达', factionId: 'dulan_d', lat: 30.58, lng: 67.01, type: 'stockade', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '[萨珊至19世纪中叶卡拉特汗国北境沙尔科特（奎达）·波兰山口北端夯土泥砖小堡聚落] 古称沙尔（Shal），1839年第一次英阿战争英军途经时记为高土丘上泥砖夯土小堡与三四百户泥屋集镇（Masson 1842亲历实录；1876年英军大要塞晚于1850年不采），常住约3000–4000人<1万且非石砖城，定城寨。' },
     { id: 'city_zhalange', name: '扎兰格', factionId: 'xisi', lat: 30.96, lng: 61.86, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '[9世纪萨法尔王朝开国首都扎兰格（锡斯坦首府）·烧砖泥砖双重深壕五门大城] 铜匠雅库布·伊本·莱斯861年自扎兰格起兵建立萨法尔王朝，10世纪伊斯塔赫里《道路与王国志》详记内外两城周数里、引赫尔曼德河入壕、巴扎绵延，帖木儿毁城前盛期城居约3–5万，>1万定小城。' },
     { id: 'city_teerbate', name: '特尔巴特', factionId: 'dulan_d', lat: 26.00, lng: 63.05, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '[阿契美尼德马卡行省至中世纪莫克兰内陆首邑凯奇（特尔巴特）·凯奇河谷坎儿井枣椰林泥砖土堡聚落] 马可·波罗与伊本·白图泰所记莫克兰（吉德罗西亚）内陆凯奇河谷绿洲集镇，山丘立泥砖米里小土堡（Miri Kalat）而镇无石砖环墙，干旱绿洲常住约4000–7000人<1万，定城寨。' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 奥拉＝欣戈尔河口（莫克兰，判不出→最近同风格据点卡拉奇）→ PURU；原标 INDIA
     { id: 'city_aola', name: '奥拉', factionId: 'yinduxila', lat: 25.51, lng: 65.51, type: 'stockade', isPort: true, troops: 10000, region: 'PURU', buildingStyle: 'PURU', stockadeShape: 'trapezoid', stockadeFence: 'FENCE', note: '[前325年亚历山大西征穿越奥里泰境攻拔之沿海土邑奥拉（Ora）·俾路支欣戈尔河流域生土泥砖村邑] 阿里安《亚历山大远征记》VI.22.1–3载亚历山大派兵轻取奥里泰人奥拉邑并留阿波罗多洛斯筹粮，旋随马其顿军撤退废弃，生土小邑查无人口数字且<1万，定城寨。' },
     { id: 'city_wuqi', name: '乌奇', factionId: 'deli', lat: 29.24, lng: 71.05, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[前325年印度河亚历山大城故地至13世纪纳西尔丁·卡巴查王都·烧砖高垣苏菲圣城乌奇] 五河交汇重镇乌奇（Uch Sharif），1206–1228年卡巴查苏丹定为信德与旁遮普王国首都广纳流亡学者，朱兹贾尼《纳昔儿史话》记其烧砖高城与经学院繁盛，13–16世纪城居约2–3万，>1万定小城。' },
     { id: 'city_aluoer', name: '阿罗尔', factionId: 'kongque', lat: 27.68, lng: 68.9, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '[前4世纪穆西卡诺斯王都至7至8世纪信德拉伊与查奇王朝首都·印度河岸石砖高墙阿罗尔] 711年阿拉伯名将穆罕默德·伊本·卡西姆围攻信德达希尔王首都阿罗尔，《查奇纪年》（Chachnama）详载其濒河筑有高大石砖城墙、王宫与神庙，信德古都城居约1.5–2.5万且具石砖墙，定小城。' },
-    { id: 'city_kalaqi', name: '卡拉奇', factionId: 'deli', lat: 24.86, lng: 67.01, type: 'stockade', isPort: true, troops: 10000, region: 'PURU', buildingStyle: 'PURU' , note: '[前325年尼阿尔库斯印度洋舰队起航锚地克罗卡拉至1700年前信德海岸木栅小渔村科拉奇（卡拉奇）·红树林泻湖渔埠] 阿里安《印度志》21章载尼阿尔库斯舰队泊克罗卡拉沙岛一日，而泥筑科拉奇商埠迟至1729年方因邻港淤塞建双门泥栅小寨（违反≤1700年红线），≤1700年仅为数十户俾路支渔民小村，定城寨。' },
+    { id: 'city_kalaqi', name: '卡拉奇', factionId: 'deli', lat: 24.86, lng: 67.01, type: 'small_city', isPort: true, troops: 10000, region: 'PURU', buildingStyle: 'PURU' , note: '[18世纪信德塔尔普尔王朝海港至1843年英属信德首府卡拉奇·泥石双门城垣与阿拉伯海商埠] 1729年建科拉奇商埠、1795年塔尔普尔埃米尔筑马诺拉石炮堡，1838–1850年英军入驻前夕及初年官方实查城居达1.4–2.2万（Burton 1851《信德志》及1843英军统计1.4万），≤1850年>1万，定小城。' },
     { id: 'city_dunadd', name: '邓纳德', factionId: 'dalriada', lat: 56.0914, lng: -5.4875, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '[6至9世纪苏格兰达尔里阿达王国·克里南沼泽岩丘干石王廷寨] 盖尔人达尔里阿达王国的加冕岩丘王都邓纳德（《阿尔斯特编年史》683、736年条及Lane & Campbell 2000发掘报告），实为部族王室居住工坊丘寨而非守道关隘，常住数百人<1万，定城寨。' },
     { id: 'city_scone', name: '斯昆', factionId: 'scotland', lat: 56.4189, lng: -3.4217, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '[9至17世纪苏格兰王国历代国王命运之石加冕圣地斯昆·泰河东岸莫特山丘与奥古斯丁修道院聚落] 肯尼思一世至1651年查理二世加冕之苏格兰王权礼仪圣所斯昆修道院（非设防城市，邻近市镇在珀斯），无城墙且修院附村常住仅数百人<1万，定城寨。' },
     // 🔴 [2026-10-25 主人令「存在就建」] 因弗内斯＝苏格兰高地首府/因弗内斯城堡；离最近据点斯昆 128km（>50km）故新建；文化按当地政权＝苏格兰高地 → CELTS
@@ -4136,7 +4136,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_comagre', name: '科马格雷', factionId: 'cueva', lat: 8.95, lng: -78.15, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '[1511年巴尔沃亚探获太平洋（南海）与印加黄金情报之达连库埃瓦大酋邦科马格雷·热带丛林巨木宫屋木栅村寨] 彼得·马特《新世界十年记》与拉斯·卡萨斯详记科马格雷酋长拥有百五十步巨木雕梁大殿及长子潘基亚科指路越山见太平洋，系热带雨林原木长屋酋长寨（约3000人）无石砖墙，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】巴拿马库埃瓦木构宫寨，取最近MUISCA' },
     { id: 'city_ahmedabad', name: '艾哈迈达巴德', factionId: 'gujarat', lat: 23.0225, lng: 72.5714, type: 'big_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', note: '[16至17世纪古吉拉特苏丹国与莫卧儿巨镇·烧砖石门十二门大城] 艾哈迈德沙始建后为西印度最大工商业都会，城垣内与贴城普拉坊厢1600年约30万、1650年约38万、1700年达40万（Chandler 1700年表40万；Gillion《艾哈迈达巴德城市史》），踩40万容差线，定大城。' },
     { id: 'city_miaowu', name: '妙乌', factionId: 'arakan', lat: 20.5925, lng: 93.1953, type: 'medium_city', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '[16至17世纪若开阿拉干王国都城·巨石山棱石墙水网王都] 明彬筑30公里依山巨石水闸城防至1630年代极盛期，妙乌城内及贴城外侨商馆常住人口约10–16万（葡国修士曼里克1630年亲历记16万，Gutman／Charney折实约10–12万），>10万定中城。' },
-    { id: 'city_batavia', name: '巴达维亚', factionId: 'nidelan', lat: -6.1352, lng: 106.8133, type: 'small_city', isPort: true, troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '[17世纪荷兰东印度公司亚洲总督府总部巴达维亚·珊瑚巨石棱堡城堡与砖墙运河城区] 1619年科恩于爪哇顺达卡拉帕建巴达维亚砖石环城墙与四角珊瑚石城堡，据VOC官方年度户口清册（Dagh-Register）1673–1700年城墙内连同紧贴南关厢常住人口达2.7–5万（Blussé考证），>1万定小城。' },
+    { id: 'city_batavia', name: '巴达维亚', factionId: 'nidelan', lat: -6.1352, lng: 106.8133, type: 'medium_city', isPort: true, troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '[17至19世纪上半叶荷属东印度首府巴达维亚·珊瑚巨石棱堡旧城与韦尔特弗雷登新城连片城区] 1619年科恩建砖石城垣，18世纪中叶至1850年连同南侧韦尔特弗雷登（Weltevreden）行政商住区常住人口达8.5–9.5万（荷属官方户口统计及Chandler 1800–1850年表），≥8万容差线，定中城。' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 舍卫城＝拘萨罗国都、恒河北印 → MUGHAL；原标 INDIA（南印）
     { id: 'city_sheweicheng', name: '舍卫城', factionId: 'kosala', lat: 27.5112, lng: 82.0388, type: 'small_city', troops: 10000, region: 'MUGHAL', buildingStyle: 'MUGHAL', note: '[前6至前4世纪十六大国憍萨罗国都·马赫特5公里烧砖土基新月巨垣] 《长阿含·游行经》所列古印度六大城之一舍卫城（玄奘《大唐西域记》室罗伐悉底），考古实测城墙围合160公顷，佛世至孔雀期城居峰值约3–5万（Erdösy 1988及Chandler前500年表5万），>1万定小城。' },
     { id: 'city_danta', name: '丹塔普拉', factionId: 'kalinga', lat: 18.4, lng: 84, type: 'stockade', isPort: true, troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '[古印度羯陵伽王国传说供奉佛牙舍利圣港丹塔普拉（帕卢拉一带）·奥里萨海岸河口早期铁器泥砖海贸遗址] 巴利文《佛牙史》（Dathavamsa）记4世纪自羯陵伽丹塔普拉护送佛牙渡海赴锡兰阿努拉德普勒，具体城址学界尚存多说且无可靠人口史料与石墙确证，按查无人口定城寨。' },
@@ -4162,7 +4162,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_atacama', name: '阿塔卡马', factionId: 'inca', lat: -22.91, lng: -68.20, type: 'pass', troops: 10000, region: 'AMERICA', buildingStyle: 'INCA', note: '[12至16世纪阿塔卡梅尼奥与印加南道期·基托尔红石普卡拉山堡] 筑基托尔（Pukará de Quitor）多层红石干砌山坡堡垣控阿塔卡马沙漠绿洲与印加南征孔道，1540年巴尔迪维亚率西军仰攻夺取此石堡（比瓦尔《智利王国编年史》），石堡要塞且常住<1万，定险要。；🔴 [2026-11-11 补标] 【建筑风格代理】阿塔卡梅尼奥石堡Pukara，取最近INCA' },
     { id: 'city_nicaragua', name: '尼加拉瓜', factionId: 'xibanya', lat: 11.44, lng: -85.83, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属尼加拉瓜格拉纳达港镇·尼加拉瓜湖畔土坯木屋无墙市镇] 1524年科尔多瓦建格拉纳达镇，旧注所谓逾万系混入全辖区农村印第安村社（违反城居红线）；16–17世纪本镇无城墙（1665–1685年屡遭海盗徒步焚掠），城居仅约3000–5000人，定城寨。' },
     { id: 'city_mendoza', name: '门多萨', factionId: 'xibanya', lat: -32.89, lng: -68.84, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属库约山麓首府·乌斯帕亚塔道口生土泥砖无墙小邑] 1561年建镇控安第斯山东麓通道，17世纪全镇仅数十西班牙市民户合印第安劳役约2000–3000人，生土泥砖民居无石砖城垣，定城寨。' },
-    { id: 'city_saopaulo', name: '圣保罗', factionId: 'putaoya', lat: -23.35, lng: -46.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'PORTUGUESE', note: '[16至17世纪葡属巴西内陆保利斯塔基地·高原夯土泥墙小市镇] 1554年耶稣会建院，17世纪为旗队（Bandeirantes）内陆远征大本营，≤1700年黄金热兴起前镇内常住人口仅约3000–6000人且为夯土泥墙无石砖城郭（Morse《圣保罗城市史》），定城寨。' },
+    { id: 'city_saopaulo', name: '圣保罗', factionId: 'putaoya', lat: -23.35, lng: -46.85, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'PORTUGUESE', note: '[葡属巴西内陆旗队大本营至1822年佩德罗一世高呼独立名城圣保罗·皮拉廷加高原学院城邑] 1711年升格城市（Cidade）、1822年伊皮兰加宣告巴西独立、1827年创圣保罗法学院，至1850年主城堂区常住人口约1.4–1.5万（Morse《圣保罗城市史》），>1万定小城。' },
     { id: 'city_sanaa', name: '萨那', factionId: 'ayoubu', lat: 15.35, lng: 44.21, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[希木叶尔古都至阿尤布拉苏里德期·石基生土高楼城垣] 也门高原千年首邑萨那（古姆丹宫故地），阿尤布至拉苏里德及宰德派伊玛目盛期城墙与比尔阿扎卜城区峰值约8–10万（哈姆达尼《阿拉伯半岛志》及Serjeant《萨那：阿拉伯伊斯兰城市》），≥8万定中城。' },
     // 🔴 [2026-11-03 主人批准超长海路增补中转岛屿据点]
     { id: 'city_nanmadol', name: '南马都尔', factionId: 'bolinixiya', lat: 6.84, lng: 158.33, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'MALAY', note: '[12至17世纪波纳佩绍德雷尔王朝·珊瑚礁人工岛玄武岩柱祭仪王廷] 以玄武岩六棱石柱垒筑92座人工礁岛平台（UNESCO遗产），实为无外郭城墙之海上贵族祭司礼仪居所，常住仅约500–1000人（Ayres波纳佩考古测算）<1万，定城寨。；🔴 [2026-11-11 补标] 【建筑风格代理】波纳佩玄武岩水上巨石城，取最近南岛MALAY' },
@@ -4171,38 +4171,38 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_guangning', name: '广宁', factionId: 'ming_d', lat: 41.6, lng: 121.8, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI', note: '[明洪武至天启辽东镇总兵巡抚驻城·医巫闾山麓包砖重垣卫城] 洪武二十三年置广宁卫、永乐至成化包砖扩建周十二里五门大城，为辽东巡抚与总兵李成梁驻节首镇，军余商民城居达3–4万（《全辽志》《明史·李成梁传》），>1万定小城。' },
     { id: 'city_anshicheng', name: '安市城', factionId: 'gaogouli', lat: 40.8, lng: 122.75, type: 'small_city', troops: 10000, region: 'KOREA', buildingStyle: 'KOREA', note: '[高句丽晚期辽东核心防城·海城英城子石筑山城邑] 贞观十九年（645）唐太宗亲率大军围攻安市城六十余日不克，《旧唐书·高丽传》《资治通鉴》明载城中精兵与居民数万、城主率众死守石筑城垣，城居逾1万且具石墙，定小城。' },
     { id: 'city_burgos', name: '布尔戈斯', factionId: 'kasidiliya', lat: 42.34, lng: -3.7, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '[9至16世纪卡斯蒂利亚旧都与美利奴羊毛商都·石灰岩环城高墙与圣玛利亚门] 884年建城为卡斯蒂利亚早期王都，16世纪上半叶羊毛领事商会鼎盛期石墙城区人口达2–2.7万（Ruiz与de Vries 1550年表2.7万），>1万且具完整石墙，定小城。' },
-    { id: 'city_turin', name: '都灵', factionId: 'safuyi', lat: 45.07, lng: 7.69, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '[16至17世纪萨伏伊公国首都·砖石五角星形棱堡与巴洛克棋盘都城] 1563年伊曼纽尔·菲利贝托迁都都灵并筑棱堡城墙，1700年（1706年大围城前夕）城内实测人口达4.2万（de Vries 1984 p.276及Symcox《都灵围城考》），>1万定小城。' },
+    { id: 'city_turin', name: '都灵', factionId: 'safuyi', lat: 45.07, lng: 7.69, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '[16至19世纪中叶萨伏伊与撒丁王国首都·砖石五角星形棱堡与巴洛克棋盘王都] 撒丁王国首都都灵1700年4.2万，至1848–1850年官方统计连片城区实测达13.5–13.7万（Chandler 1850年表13.5万、Bairoch 1988），>10万定中城。' },
     { id: 'city_evora', name: '埃武拉', factionId: 'putaoya', lat: 38.57, lng: -7.91, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '[12至16世纪葡萄牙阿连特茹首府与第二王廷·罗马摩尔双环石墙名城] 1165年无畏者吉拉尔多夜袭夺城，15–16世纪阿维斯王朝常驻王廷，具罗马与中世纪双层花岗岩石墙，1527年葡国人口普查城居约1.3–1.8万，>1万定小城。' },
     // 🔴 [2026-11-05 主人批准新建] 商路补点第二批（埃尔祖鲁姆、巴约讷、桑塔伦、巴达霍斯、潘普洛纳、尼什）
     { id: 'city_erzurum', name: '埃尔祖鲁姆', factionId: 'osman', lat: 39.9, lng: 41.27, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '[拜占庭狄奥多西波利斯至16至17世纪奥斯曼东方大镇·玄武岩双城墙商都] 安纳托利亚东门与波斯丝路税关首府，具拜占庭与奥斯曼玄武岩石墙，17世纪埃夫利亚·切莱比与图尔内福尔实记城居约2.5–4万（Faroqhi《奥斯曼城镇与市民》），>1万定小城。' },
-    { id: 'city_bayonne', name: '巴约讷', factionId: 'gaolu', lat: 43.49, lng: -1.47, type: 'small_city', isPort: true, troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[中世纪英属加斯科涅至17世纪沃邦棱堡期·阿杜尔河口石砌双城垣港城] 罗马石墙基址上扩筑中世纪城垣与1680年代沃邦石砌星形棱堡，1700年前城居约1.1–1.5万（de Vries 1984 p.273）且具完整石墙，定小城。' },
+    { id: 'city_bayonne', name: '巴约讷', factionId: 'gaolu', lat: 43.49, lng: -1.47, type: 'small_city', isPort: true, troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '[中世纪英属加斯科涅至17世纪沃邦棱堡期·阿杜尔河口石砌双城垣港城] 罗马石墙基址上扩筑中世纪城垣与1680年代沃邦石砌星形棱堡，≤1850年城居约1.1–1.5万（de Vries 1984 p.273）且具完整石墙，定小城。' },
     { id: 'city_badajoz', name: '巴达霍斯', factionId: 'kasidiliya', lat: 38.88, lng: -6.97, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '[9世纪摩尔泰法王都至17世纪西葡战争·石砖夯土卫城与八棱堡环城墙] 875年伊本·马尔万建城为巴达霍斯泰法都城，1640–1668年葡萄牙王政复古战争增筑完整石砖八棱堡环城墙，16–17世纪城居约1.2–1.5万，定小城。' },
     { id: 'city_pamplona', name: '潘普洛纳', factionId: 'kasidiliya', lat: 42.82, lng: -1.64, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '[10至16世纪纳瓦拉王国首都·三区合一石墙与腓力二世五角石棱堡] 纳瓦拉王都潘普洛纳（1521年围城罗耀拉负伤），1571年增筑五角石棱堡与厚重石砌环城墙，16–17世纪城居约1–1.2万且具完整石墙，定小城。' },
-    { id: 'city_nis', name: '尼什', factionId: 'saierweiya', lat: 43.32, lng: 21.9, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '[罗马奈苏斯至塞尔维亚与奥斯曼巴尔干要冲·尼沙瓦河石砖城垣重邑] 巴尔干大道咽喉尼什，罗马拜占庭石砖城墙基址，16–17世纪奥斯曼商旅税册与西方使团记城居约1–1.5万且具石砖城防（1809年战事超限不采），定小城。' },
+    { id: 'city_nis', name: '尼什', factionId: 'saierweiya', lat: 43.32, lng: 21.9, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '[罗马奈苏斯、塞尔维亚重镇至18至19世纪上半叶奥斯曼巴尔干要冲尼什·尼沙瓦河1723年巨石棱堡要塞城] 罗马拜占庭石城基址，1719–1723年奥斯曼苏丹敕建周2.2公里完整巨石切石棱堡城垣（1809年塞尔维亚起义切加尔山之战名城），≤1850年城居约1.2–1.6万且具完整巨石墙，定小城。' },
     // 🔴 [2026-11-05 主人批准新建] 商路补点第三批（锡瓦斯、埃尔津詹、梅里达；新势力三家）
     { id: 'city_sivas', name: '锡瓦斯', factionId: 'xiwasi', lat: 39.75, lng: 37.02, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '[13至14世纪罗姆塞尔柱重都与布尔汉丁苏丹国·切石双层城墙商都] 1221年凯库巴德一世重筑坚固切石城垣，1381–1398年卡迪·布尔汉丁定都，1400年帖木儿破城前城居达3–4万（伊本·阿拉伯沙记述及Faroqhi考算），>1万定小城。' },
     { id: 'city_erzincan', name: '埃尔津詹', factionId: 'mengguqieke', lat: 39.75, lng: 39.49, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '[12至13世纪门古切克侯国都城至白羊期·幼发拉底上游石墙丝路商邑] 门古切克王朝巴赫拉姆沙治下文化商贸盛期及马可·波罗所记丝银织造名城，具石砌内堡与城墙，13–15世纪城居约1.5–2万，>1万定小城。' },
     { id: 'city_merida', name: '梅里达', factionId: 'womaya', lat: 38.92, lng: -6.34, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '[罗马卢西塔尼亚首府至西哥特后倭马亚期·花岗岩巨石城墙与罗马石桥] 罗马奥古斯塔埃梅里塔盛期城居逾2–3万，9世纪后倭马亚阿卜杜·拉赫曼二世拆罗马巨石增筑伊斯兰石砌阿卡萨巴城垣（868年伊本·马尔万据城），具完整罗马与摩尔石墙，定小城。' },
     // 🔴 [2026-11-05 主人批准新建] 航行港口第四批（鸟羽、奥林达、菲利普王城、雷亚尔港、康塞普西翁）
-    { id: 'city_toba', name: '鸟羽', factionId: 'oda', lat: 34.48, lng: 136.84, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[文禄三年九鬼嘉隆水军本据·志摩海湾小石垣海城与渔港聚落] 1594年九鬼嘉隆筑鸟羽水军小城控伊势湾口，江户时代鸟羽藩仅二至三万石小藩，≤1700年城下町狭仄仅约3000–4000人且町区无外郭石墙，定城寨。' },
+    { id: 'city_toba', name: '鸟羽', factionId: 'oda', lat: 34.48, lng: 136.84, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[文禄三年九鬼嘉隆水军本据·志摩海湾小石垣海城与渔港聚落] 1594年九鬼嘉隆筑鸟羽水军小城控伊势湾口，江户时代鸟羽藩仅二至三万石小藩，≤1850年城下町狭仄仅约3000–4000人且町区无外郭石墙，定城寨。' },
     { id: 'city_olinda', name: '奥林达', factionId: 'putaoya', lat: -8.01, lng: -34.86, type: 'stockade', isPort: true, troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '[16至17世纪初葡属伯南布哥首府·海丘土垒栅栏蔗糖商镇] 1537年科埃略建镇，1630年荷兰西印度公司攻占前常住市民与教士奴仆约4000–7000人，因仅设海滩土垒木栅无完整环城石墙故被荷军一举攻入焚毁（Boxer《巴西荷兰人》），<1万定城寨。' },
     { id: 'city_felipe', name: '菲利普王城', factionId: 'xibanya', lat: -53.64, lng: -70.92, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[1584年西属麦哲伦海峡殖民定居点·泥木栅寨饥饿港] 1584年萨米恩托率三百余军民于麦哲伦海峡建泥木栅栏小城菲利普王城，三年内严寒断粮殆尽、1587年卡文迪什名之饥饿港，木栅无墙且人口仅三百余，定城寨。' },
-    { id: 'city_realejo', name: '雷亚尔港', factionId: 'xibanya', lat: 12.54, lng: -87.17, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属中美洲太平洋造船港·红树林河口木构船厂小镇] 1532年辟港、阿尔瓦拉多太平洋舰队造船地，镇内皆木屋船坞无石砌城墙（1685年遭海盗丹皮尔焚掠），≤1700年常住工匠水手不足3000人，定城寨。' },
-    { id: 'city_concepcion', name: '康塞普西翁', factionId: 'xibanya', lat: -36.83, lng: -73.05, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属智利阿劳科前线军港·彭科湾木栅土垒边镇] 1550年巴尔迪维亚始建于彭科湾，阿劳科战争中屡遭马普切人攻毁重建，≤1700年仅具木栅土垒防卫且常住军民约2000–4000人<1万，定城寨。' },
+    { id: 'city_realejo', name: '雷亚尔港', factionId: 'xibanya', lat: 12.54, lng: -87.17, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属中美洲太平洋造船港·红树林河口木构船厂小镇] 1532年辟港、阿尔瓦拉多太平洋舰队造船地，镇内皆木屋船坞无石砌城墙（1685年遭海盗丹皮尔焚掠），≤1850年常住工匠水手不足3000人，定城寨。' },
+    { id: 'city_concepcion', name: '康塞普西翁', factionId: 'xibanya', lat: -36.83, lng: -73.05, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属智利阿劳科前线军港·彭科湾木栅土垒边镇] 1550年巴尔迪维亚始建于彭科湾，阿劳科战争中屡遭马普切人攻毁重建，≤1850年仅具木栅土垒防卫且常住军民约2000–4000人<1万，定城寨。' },
     // 🔴 [2026-11-05 主人批准新建] 航行港口第五批（瓜亚基尔、瓦尔迪维亚、下田、索法拉、阿里卡、帕拉帕格）
-    { id: 'city_guayaquil', name: '瓜亚基尔', factionId: 'xibanya', lat: -2.19, lng: -79.89, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属太平洋皇家造船港·瓜亚斯河高脚木屋无墙港镇] 1538年奥雷利亚纳建镇，全镇以热带硬木与竹材建房且无环城石墙（1687年遭英法海盗攻破勒索），≤1700年常住人口约4000–6000人（Clayton瓜亚基尔船厂史）<1万，定城寨。；1538 年奥雷利亚纳建城并任代理总督（武将自利马移来）' },
+    { id: 'city_guayaquil', name: '瓜亚基尔', factionId: 'xibanya', lat: -2.19, lng: -79.89, type: 'small_city', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[西属太平洋皇家造船大港至1822年玻利瓦尔圣马丁会晤名城瓜亚基尔·瓜亚斯河西岸连片商船港市] 1820年独立起义与1822年南美双雄瓜亚基尔会晤地，凭可可出口与造船繁盛，1840–1850年常住人口达2.0–2.2万（Hamerly《瓜亚基尔历史人口考》），>1万定小城。；1538 年奥雷利亚纳建城并任代理总督（武将自利马移来）' },
     { id: 'city_valdivia', name: '瓦尔迪维亚', factionId: 'xibanya', lat: -39.81, lng: -73.25, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属智利南疆河口据点·木栅市镇与河口外岛炮台] 1552年建镇、1599年马普切大起义彻底夷平荒废近五十年，1645年后仅于科拉尔湾口修筑海防炮台守港而内镇常住军民不足2000人，定城寨。' },
     { id: 'city_shimoda', name: '下田', factionId: 'hojo', lat: 34.68, lng: 138.95, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[战国末后北条水军伊豆据点·海岸丘陵土垒空堀海城（下田城）] 天正十八年（1590）清水康英率六百兵据伊豆下田土垒海城抗丰臣一万水军五十日（《北条五代记》），土垒木栅无高石垣且港村人口仅约3000人<1万，定城寨。' },
     { id: 'city_sofala', name: '索法拉', factionId: 'kilwa', lat: -20.18, lng: 34.73, type: 'stockade', isPort: true, troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ORIE', note: '[10至16世纪斯瓦希里黄金贸易港与葡建小堡·沙洲红树林木石港镇] 基尔瓦苏丹国南端黄金出口港，1505年葡建圣卡埃塔诺小石堡，海岸泥沙侵蚀且镇无环城墙，常住人口约2000–4000人（Newitt《莫桑比克史》）<1万，定城寨。；【建筑风格代理】同基尔瓦；🔴 [2026-11-11 按史改] 据点文化 ETHIOPIANS→ORIE（代理）：斯瓦希里海岸最南伊斯兰黄金贸易港，同基尔瓦' },
-    { id: 'city_arica', name: '阿里卡', factionId: 'xibanya', lat: -18.48, lng: -70.31, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属秘鲁波托西装银港·干旱海岸土坯无墙小埠] 1541年建埠专司波托西白银下海转运利马，因疟疾与干旱≤1700年常住居民与水手仅约1500–2500人且镇无环城石墙（屡拒海盗仅靠海滩胸墙），定城寨。' },
+    { id: 'city_arica', name: '阿里卡', factionId: 'xibanya', lat: -18.48, lng: -70.31, type: 'stockade', isPort: true, troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '[16至17世纪西属秘鲁波托西装银港·干旱海岸土坯无墙小埠] 1541年建埠专司波托西白银下海转运利马，因疟疾与干旱≤1850年常住居民与水手仅约1500–2500人且镇无环城石墙（屡拒海盗仅靠海滩胸墙），定城寨。' },
     { id: 'city_palapag', name: '帕拉帕格', factionId: 'sumuroyi', lat: 12.57, lng: 125, type: 'stockade', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '[17世纪西属菲律宾萨马岛锚泊港·木石教会围院与高脚木屋村社] 马尼拉大帆船返航首锚地，1649年米沙鄢人苏穆罗伊据山林木栅起事（布莱尔与罗伯逊《菲律宾群岛史料》第38卷），村镇无石城墙且人口不足4000，定城寨。' },
     // 🔴 [2026-11-05 主人批准新建] 航行中转站（昆仑岛、尼科巴）
-    { id: 'city_kunlundao', name: '昆仑岛', factionId: 'yuenan', lat: 8.69, lng: 106.61, type: 'stockade', isPort: true, troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', note: '[1700年前南海针路候风淡水岛·广南阮氏海岛渔樵小聚落] 英东印度公司筑木栅堡在1702年（且1705年即因兵变焚毁，超1700年红线不采）；≤1700年仅为《顺风相送》所载昆仑山淡水补给小聚落，无墙且常住数百人，定城寨。' },
-    { id: 'city_nikoba', name: '尼科巴', factionId: 'danmai', lat: 8.03, lng: 93.53, type: 'stockade', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '[1700年前孟加拉湾翠蓝屿·无城垣南亚语系岛民椰林村社] 丹麦1756年殖民远超1700年红线不采；≤1700年即义净与马欢《瀛涯胜览》所记翠蓝屿，岛民散居茅屋、无城郭且单村仅数百人，定城寨。' },
+    { id: 'city_kunlundao', name: '昆仑岛', factionId: 'yuenan', lat: 8.69, lng: 106.61, type: 'stockade', isPort: true, troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', note: '[南海针路候风淡水岛至广南阮主与越南阮朝昆仑岛屯所·海岛木石小栅与渔村] 1702年英东印度公司建木栅小寨旋于1705年兵变焚毁，嘉隆明命间（≤1850年）仅为海防巡哨小屯与百户渔民聚落（《大南一统志》），无城墙且<1万，定城寨。' },
+    { id: 'city_nikoba', name: '尼科巴', factionId: 'danmai', lat: 8.03, lng: 93.53, type: 'stockade', isPort: true, troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '[孟加拉湾翠蓝屿（尼科巴群岛）与1756至1848年丹麦小型殖民点·无城垣岛民椰林茅屋村社] 义净与《瀛涯胜览》所记翠蓝屿，1756–1848年丹麦数度设数十人传教贸易小站均因疟疾废弃，≤1850年无任何城墙且单村仅数百人，定城寨。' },
     // 🔴 [2026-11-05 主人批准新建] 航行港口第七批（串本）
     { id: 'city_kushimoto', name: '串本', factionId: 'toyotomi', lat: 33.47, lng: 135.78, type: 'stockade', isPort: true, troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '[战国末熊野水军潮岬锚泊港·纪伊南端无墙候风渔港聚落] 熊野水军首领堀内氏善辖下绕行纪伊潮岬候风良港串本浦（《纪伊续风土记》），无城郭石垣且江户前期渔商人口仅约2000–3000人<1万，定城寨。' },
 
-    { id: 'city_rhandeia', name: '兰德亚', factionId: 'armenia_arsacid', lat: 38.69, lng: 39.93, type: 'pass', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '塔西佗《编年史》XV.10–15：62年罗马将领派图斯于阿尔萨尼亚斯河畔筑兰德亚营垒受围，系河谷军事关隘要塞，未成万人城，定险要。' },
+    { id: 'city_rhandeia', name: '兰德亚', factionId: 'armenia_arsacid', lat: 38.69, lng: 39.93, type: 'stockade', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '[公元62年罗帕战争阿尔萨尼亚斯河岸·罗马军团临时冬营] 塔西佗《编年史》XV.10–15载罗马将领派图斯于阿尔萨尼亚斯河岸筑临时行军冬营遭帕提亚王沃洛吉斯一世合围，名不带关隘堡戍且无常设关墙、人口<1万，定城寨。' },
     { id: 'city_tigranocerta', name: '提格拉诺塞塔', factionId: 'armenia_arsacid', lat: 38.14, lng: 41.0, type: 'medium_city', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '[前1世纪亚美尼亚帝国·巨石高墙都城] 前77年提格拉尼二世迁希腊与卡帕多西亚居民约30万营建南都（普鲁塔克《卢库鲁斯传》26、阿庇安《米特拉达梯战争史》84），城居峰值逾10万，定中城。' },
     { id: 'city_sunzhong', name: '损中', factionId: 'shule', lat: 39.58, lng: 75.39, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '[东汉西域·夯土军屯小城] 《后汉书·班超传》载疏勒西境损中城，葱岭东麓军屯小邑，城居不足5000且为夯土墙，定城寨。' },
     { id: 'city_lugidunum', name: '卢吉杜努姆', factionId: 'lugii', lat: 51.21, lng: 16.16, type: 'stockade', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '[公元1至2世纪日耳曼尼亚卢吉部联盟·奥得河支流木栅土垒部族聚落] 托勒密《地理志》II.11所载日耳曼东部卢吉人聚落（琥珀之路节点），为早期原木栅栏与土垒部族寨聚，查无人口数字且无石砖墙，定城寨。' },
@@ -4214,7 +4214,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_dingkou', name: '鼎口寨', factionId: 'zhongxiang', lat: 29.15, lng: 112.65, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'HUGUANG', note: '[南宋绍兴洞庭钟相杨幺起义·沅澧入湖口巨木水寨群] 李心传《建炎以来系年要录》绍兴五年载杨幺于洞庭鼎口立木栅水寨屯车船抗岳飞，纯木栅水寨无石砖城郭且非常设万人居民城，定城寨。' },
     { id: 'city_saerdulu', name: '撒儿都鲁', factionId: 'yuan_d', lat: 43.85, lng: 120.55, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '[元至元二十四年辽东宗王乃颜之乱·西拉木伦河畔毡帐驻冬大营] 《元史·世祖纪》至元二十四年载忽必烈亲征辽东斡赤斤后王乃颜于撒儿都鲁之地，系草原游牧宗王毡帐驻营无城郭且常住<1万，定城寨。' },
     { id: 'city_guikushan', name: '鬼哭山', factionId: 'luchuan', lat: 24.85, lng: 96.82, type: 'stockade', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '[明正统麓川之役·山巅木栅营寨] 《明史·王骥传》载正统十三年麓川思陆发据孟养鬼哭山立木栅大寨；木栅不算墙且名不带关隘堡戍，非正式关塞，人口<1万，定城寨。' },
-    { id: 'city_orenburg', name: '奥伦堡', factionId: 'eluosi_diguo', lat: 51.77, lng: 55.1, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '[1700年前乌拉尔河中游巴什基尔草原·无城垣游牧河滩] 俄国奥伦堡石砖棱堡始建于1743年（违反≤1700年红线，18世纪中后期人口与城墙一概不采）；≤1700年乌拉尔河该处仅为巴什基尔与哈萨克游牧渡滩，无城墙无万人聚落，定城寨。' },
+    { id: 'city_orenburg', name: '奥伦堡', factionId: 'eluosi_diguo', lat: 51.77, lng: 55.1, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '[18至19世纪中叶俄罗斯帝国经略哈萨克与中亚总督首府奥伦堡·乌拉尔河十棱砖石星形要塞城] 1743年涅普柳耶夫督建完整十座砖石棱堡环城防线与中亚互市石砌商栈（1773年抗普加乔夫半年围攻），1850年俄国官方统计城居达1.5–1.8万且具完整砖石棱堡城墙，定小城。' },
     { id: 'city_vellica', name: '韦利卡', factionId: 'cantabri', lat: 42.79, lng: -4.27, type: 'stockade', troops: 10000, region: 'SPANISH', buildingStyle: 'CELTS', note: '[前1世纪罗马坎塔布里亚战争·伊比利亚北麓山地干石木栅部族主寨] 弗罗鲁斯《罗马史纲》II.33载前25年奥古斯都亲征于韦利卡山寨下击破坎塔布里人，系铁器时代山地部族丘寨而非石墙城市，人口<1万，定城寨。' },
 ].map((city): CityDataV2 => { const base = city as CityDataV2; return HUGUANG_CITY_IDS.has(base.id) ? { ...base, buildingStyle: 'HUGUANG' as const } : base; });
 // ── 14 文化区（RegionType）────────────────────────────────

@@ -14,6 +14,8 @@ AnimationTools
 scripts
 backup
 docs
+剧本模式
+_待删隔离区*
 plans
 # 构建需 factionTierClassify 引用的 4 份审计 JSON；勿整目录排除 scratch
 scratch/*

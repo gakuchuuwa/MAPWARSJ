@@ -1,0 +1,7904 @@
+[
+  {
+    "eventId": "evt_0001",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_bosibolisi",
+    "route": [],
+    "source": "大马士革的尼古拉残篇；希罗多德I.125–128：居鲁士二世自安善起兵据帕萨尔加德山隘迎击米底王阿斯提阿格斯"
+  },
+  {
+    "eventId": "evt_0005",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "defender",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "埃克巴坦那",
+        "lat": 34.8,
+        "lng": 48.51
+      },
+      {
+        "name": "阿尔贝拉",
+        "lat": 36.19,
+        "lng": 44.01
+      },
+      {
+        "name": "马扎卡",
+        "lat": 38.72,
+        "lng": 35.48
+      }
+    ],
+    "source": "那波尼德编年史II.15–16；希罗多德I.76：居鲁士二世定米底后自阿尔贝拉下渡底格里斯河，经卡帕多细亚趋普特里亚迎敌"
+  },
+  {
+    "eventId": "evt_0006",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "安居拉",
+        "lat": 39.94,
+        "lng": 32.86
+      },
+      {
+        "name": "戈尔迪乌姆",
+        "lat": 39.65,
+        "lng": 31.99
+      }
+    ],
+    "source": "希罗多德I.79–80：居鲁士二世自普特里亚冒冬雪横穿弗里吉亚直扑撒狄城东提姆布拉平原"
+  },
+  {
+    "eventId": "evt_0007",
+    "baton": 1,
+    "leadGeneralId": "aqimeinide_mazares",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_geerdiweng",
+    "route": [
+      {
+        "name": "凯莱奈",
+        "lat": 38.07,
+        "lng": 30.17
+      },
+      {
+        "name": "科洛赛",
+        "lat": 37.79,
+        "lng": 29.26
+      }
+    ],
+    "source": "希罗多德I.156–161：居鲁士东归途中闻帕克提亚斯围撒狄卫城，遣马扎雷斯循王家大道星夜西返解围"
+  },
+  {
+    "eventId": "evt_0008",
+    "baton": 1,
+    "leadGeneralId": "aqimeinide_harpagus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sifaerde",
+    "route": [
+      {
+        "name": "马格尼西亚",
+        "lat": 38.61,
+        "lng": 27.43
+      }
+    ],
+    "source": "希罗多德I.162–163：哈尔帕古斯接掌撒狄驻军，循赫尔穆斯河谷经马格尼西亚西进合围福西亚"
+  },
+  {
+    "eventId": "evt_0009",
+    "baton": 1,
+    "leadGeneralId": "aqimeinide_harpagus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      },
+      {
+        "name": "哈利卡纳苏斯",
+        "lat": 37.03,
+        "lng": 27.43
+      },
+      {
+        "name": "考诺斯",
+        "lat": 36.83,
+        "lng": 28.62
+      }
+    ],
+    "source": "希罗多德I.168–176：哈尔帕古斯自伊奥尼亚挥师南下，平卡里亚与考诺斯后进逼吕基亚克桑托斯"
+  },
+  {
+    "eventId": "evt_0013",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_susa",
+    "route": [
+      {
+        "name": "金德斯河",
+        "lat": 33.9,
+        "lng": 44.9
+      }
+    ],
+    "source": "希罗多德I.188–189；那波尼德编年史III.12：居鲁士二世自苏萨出师，渡金德斯河进逼底格里斯河畔俄庇斯"
+  },
+  {
+    "eventId": "evt_0014",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [
+      {
+        "name": "西帕尔",
+        "lat": 33.06,
+        "lng": 44.25
+      }
+    ],
+    "source": "那波尼德编年史III.14–16；希罗多德I.191：居鲁士二世克俄庇斯后收降西帕尔，南下合围巴比伦"
+  },
+  {
+    "eventId": "evt_0021",
+    "baton": 1,
+    "leadGeneralId": "ailan_julushi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "埃克巴坦那",
+        "lat": 34.8,
+        "lng": 48.51
+      },
+      {
+        "name": "巴克特拉",
+        "lat": 36.71,
+        "lng": 67.08
+      },
+      {
+        "name": "马拉坎达",
+        "lat": 39.65,
+        "lng": 66.97
+      }
+    ],
+    "source": "希罗多德I.201–214；斯特拉波XI.11.4：居鲁士二世经略伊朗高原与巴克特里亚，北越粟特至药杀水征马萨革泰"
+  },
+  {
+    "eventId": "evt_0025",
+    "baton": 2,
+    "leadGeneralId": "gen_cambyses",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_susa",
+    "route": [
+      {
+        "name": "巴比伦",
+        "lat": 32.54,
+        "lng": 44.42
+      },
+      {
+        "name": "大马士革",
+        "lat": 33.51,
+        "lng": 36.29
+      },
+      {
+        "name": "阿卡",
+        "lat": 32.92,
+        "lng": 35.07
+      }
+    ],
+    "source": "希罗多德III.4–5；波利比乌斯XVI.22a：冈比西斯二世统军西出两河，会师腓尼基海岸阿卡后南下合围加沙"
+  },
+  {
+    "eventId": "evt_0026",
+    "baton": 2,
+    "leadGeneralId": "gen_cambyses",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "拉菲亚",
+        "lat": 31.29,
+        "lng": 34.24
+      },
+      {
+        "name": "佩卢西姆",
+        "lat": 31.04,
+        "lng": 32.54
+      }
+    ],
+    "source": "希罗多德III.5–13：冈比西斯二世借阿拉伯驼队济水穿西奈沙海，破佩卢西姆后溯尼罗河攻取孟菲斯"
+  },
+  {
+    "eventId": "evt_0028",
+    "baton": 2,
+    "leadGeneralId": "gen_cambyses",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [
+      {
+        "name": "底比斯",
+        "lat": 25.7,
+        "lng": 32.64
+      }
+    ],
+    "source": "希罗多德III.25：冈比西斯二世自孟菲斯溯尼罗河南上至底比斯分兵，亲率主力续征库施"
+  },
+  {
+    "eventId": "evt_0031",
+    "baton": 3,
+    "leadGeneralId": "aqimeinide_daliushi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_hamadan",
+    "route": [
+      {
+        "name": "贝希斯敦",
+        "lat": 34.39,
+        "lng": 47.44
+      },
+      {
+        "name": "呼勒万",
+        "lat": 34.35,
+        "lng": 45.9
+      },
+      {
+        "name": "底格里斯津",
+        "lat": 33.35,
+        "lng": 44.4
+      }
+    ],
+    "source": "贝希斯敦铭文§13–20：大流士一世于米底诛高墨达后下扎格罗斯山，强涉底格里斯津破敌于扎扎纳并克巴比伦"
+  },
+  {
+    "eventId": "evt_0032",
+    "baton": 3,
+    "leadGeneralId": "aqimeinide_daliushi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "呼勒万",
+        "lat": 34.35,
+        "lng": 45.9
+      },
+      {
+        "name": "坎加瓦尔",
+        "lat": 34.5,
+        "lng": 47.96
+      }
+    ],
+    "source": "贝希斯敦铭文§31–32：大流士一世自巴比伦东攀扎格罗斯山道入米底，于昆杜鲁什击溃弗拉奥尔特斯"
+  },
+  {
+    "eventId": "evt_0041",
+    "baton": 3,
+    "leadGeneralId": "aqimeinide_megabazus",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "佩林索斯",
+        "lat": 40.98,
+        "lng": 27.96
+      },
+      {
+        "name": "阿布德拉",
+        "lat": 40.93,
+        "lng": 24.97
+      }
+    ],
+    "source": "希罗多德IV.143、V.1–15：梅加巴佐斯留驻海峡欧陆，先拔佩林索斯，循色雷斯海岸经阿布德拉西进斯特鲁马河"
+  },
+  {
+    "eventId": "evt_0056",
+    "baton": 3,
+    "leadGeneralId": "aqimeinide_megabates",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_miletus",
+    "route": [
+      {
+        "name": "希俄斯",
+        "lat": 38.37,
+        "lng": 26.14
+      },
+      {
+        "name": "考卡萨",
+        "lat": 38.21,
+        "lng": 25.93
+      }
+    ],
+    "source": "希罗多德V.32–34：梅加巴特斯与米利都军北泊希俄斯岛考卡萨港候北风，南航围攻纳克索斯"
+  },
+  {
+    "eventId": "evt_0058",
+    "baton": 3,
+    "leadGeneralId": "gen_artaphernes",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_sifaerde",
+    "route": [],
+    "source": "希罗多德V.100–101：伊奥尼亚联军奇袭焚撒狄下城，波斯总督阿尔塔弗涅斯就地据守撒狄卫城"
+  },
+  {
+    "eventId": "evt_0059",
+    "baton": 3,
+    "leadGeneralId": "gen_artaphernes",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "特摩卢斯山",
+        "lat": 38.33,
+        "lng": 27.72
+      }
+    ],
+    "source": "希罗多德V.102：阿尔塔弗涅斯集结河西波斯驻军自撒狄翻越特摩卢斯山，疾追至以弗所城外大破希腊军"
+  },
+  {
+    "eventId": "evt_0066",
+    "baton": 3,
+    "leadGeneralId": "gen_artaphernes",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "米卡列角",
+        "lat": 37.68,
+        "lng": 27.02
+      }
+    ],
+    "source": "希罗多德VI.6–16：阿尔塔弗涅斯调海陆重兵自以弗所南绕米卡列角，进逼米利都外海拉德岛水师决战"
+  },
+  {
+    "eventId": "evt_0067",
+    "baton": 3,
+    "leadGeneralId": "gen_artaphernes",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "希罗多德VI.18：拉德海战获胜后波斯军当即水陆合围近在咫尺的米利都本城"
+  },
+  {
+    "eventId": "evt_0070",
+    "baton": 3,
+    "leadGeneralId": "bfe2_mardonius",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_susa",
+    "route": [
+      {
+        "name": "塔尔苏斯",
+        "lat": 36.92,
+        "lng": 34.9
+      },
+      {
+        "name": "米利都",
+        "lat": 37.53,
+        "lng": 27.28
+      },
+      {
+        "name": "赫勒斯滂",
+        "lat": 40.23,
+        "lng": 26.4
+      }
+    ],
+    "source": "希罗多德VI.43–45：马尔多尼乌斯自苏萨至奇里乞亚塔尔苏斯会舰，循伊奥尼亚经赫勒斯滂西入色雷斯与马其顿"
+  },
+  {
+    "eventId": "evt_0072",
+    "baton": 3,
+    "leadGeneralId": "gen_datis",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_adana",
+    "route": [
+      {
+        "name": "萨摩斯",
+        "lat": 37.69,
+        "lng": 26.94
+      },
+      {
+        "name": "纳克索斯",
+        "lat": 37.1,
+        "lng": 25.38
+      },
+      {
+        "name": "提洛",
+        "lat": 37.4,
+        "lng": 25.27
+      },
+      {
+        "name": "卡里斯托斯",
+        "lat": 38.02,
+        "lng": 24.42
+      },
+      {
+        "name": "埃雷特里亚",
+        "lat": 38.39,
+        "lng": 23.79
+      }
+    ],
+    "source": "希罗多德VI.95–102：达提斯自奇里乞亚阿勒伊昂平原登舟，经萨摩斯、纳克索斯、提洛、卡里斯托斯、埃雷特里亚趋马拉松"
+  },
+  {
+    "eventId": "evt_0081",
+    "baton": "4",
+    "leadGeneralId": "gen_leonidas",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "科林斯",
+        "lat": 37.91,
+        "lng": 22.88
+      },
+      {
+        "name": "底比斯",
+        "lat": 38.32,
+        "lng": 23.32
+      }
+    ],
+    "source": "希罗多德VII.202–206：列奥尼达一世自斯巴达率军北上，经科林斯地峡与底比斯进驻温泉关阻敌"
+  },
+  {
+    "eventId": "evt_0082",
+    "baton": "4",
+    "leadGeneralId": "gen_themistocles",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_yadian",
+    "route": [],
+    "source": "希罗多德VIII.40–85：雅典军民撤离本城移驻近岸萨拉米斯岛，地米斯托克利于海峡就近设伏迎战"
+  },
+  {
+    "eventId": "evt_0083",
+    "baton": "4",
+    "leadGeneralId": "gen_aristides",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "埃莱夫西斯",
+        "lat": 38.04,
+        "lng": 23.54
+      }
+    ],
+    "source": "希罗多德IX.19：阿里斯提德率雅典重步兵赴埃莱夫西斯会合帕萨尼亚斯联军，北越基泰龙山赴普拉提亚"
+  },
+  {
+    "eventId": "evt_0084",
+    "baton": "4",
+    "leadGeneralId": "lagoniya_leotychidas",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_tiluo",
+    "route": [
+      {
+        "name": "萨摩斯",
+        "lat": 37.69,
+        "lng": 26.94
+      }
+    ],
+    "source": "希罗多德VIII.131–132、IX.90–96：列奥提基达斯统希腊同盟舰队驻提洛岛，应请东航萨摩斯逼近米卡列"
+  },
+  {
+    "eventId": "evt_0085",
+    "baton": "4",
+    "leadGeneralId": "gen_aristides",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "塞浦路斯",
+        "lat": 35.12,
+        "lng": 33.94
+      },
+      {
+        "name": "赫勒斯滂",
+        "lat": 40.23,
+        "lng": 26.4
+      }
+    ],
+    "source": "修昔底德I.94：阿里斯提德率雅典分舰队随帕萨尼亚斯先征塞浦路斯，再折北穿赫勒斯滂合围拜占庭"
+  },
+  {
+    "eventId": "evt_0087",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "斯基亚索斯",
+        "lat": 39.16,
+        "lng": 23.49
+      },
+      {
+        "name": "阿索斯",
+        "lat": 40.16,
+        "lng": 24.33
+      }
+    ],
+    "source": "修昔底德I.98；普鲁塔克《客蒙传》7：客蒙统提洛同盟舰队自比雷埃夫斯北航，经北斯波拉泽斯与阿索斯趋埃伊翁"
+  },
+  {
+    "eventId": "evt_0088",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "莱姆诺斯",
+        "lat": 39.88,
+        "lng": 25.06
+      }
+    ],
+    "source": "修昔底德I.98；普鲁塔克《客蒙传》8：客蒙拔埃伊翁后自北爱琴海经莱姆诺斯南下讨平斯库罗斯岛"
+  },
+  {
+    "eventId": "evt_0092",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "安德罗斯",
+        "lat": 37.83,
+        "lng": 24.93
+      },
+      {
+        "name": "提洛",
+        "lat": 37.4,
+        "lng": 25.27
+      }
+    ],
+    "source": "修昔底德I.98：客蒙调同盟舰队自北爱琴海经安德罗斯与提洛南下，合围退盟的纳克索斯岛"
+  },
+  {
+    "eventId": "evt_0094",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [
+      {
+        "name": "克尼多斯",
+        "lat": 36.69,
+        "lng": 27.37
+      },
+      {
+        "name": "法塞利斯",
+        "lat": 36.52,
+        "lng": 30.55
+      }
+    ],
+    "source": "普鲁塔克《客蒙传》12：客蒙自基克拉泽斯东航克尼多斯，迫降吕基亚法塞利斯后直捣欧律墨冬河口"
+  },
+  {
+    "eventId": "evt_0095",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "罗得",
+        "lat": 36.44,
+        "lng": 28.22
+      },
+      {
+        "name": "希俄斯",
+        "lat": 38.37,
+        "lng": 26.14
+      },
+      {
+        "name": "莱姆诺斯",
+        "lat": 39.88,
+        "lng": 25.06
+      }
+    ],
+    "source": "修昔底德I.100；普鲁塔克《客蒙传》14：客蒙自南小亚细亚循爱琴海东岸经罗得、希俄斯、莱姆诺斯北讨萨索斯"
+  },
+  {
+    "eventId": "evt_0096",
+    "baton": "5",
+    "leadGeneralId": "lagoniya_archidamus_ii",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_sparta",
+    "route": [],
+    "source": "修昔底德I.101–102；普鲁塔克《客蒙传》16：斯巴达强震引发黑劳士暴动，阿基达穆斯二世就地聚兵保卫本邦"
+  },
+  {
+    "eventId": "evt_0097",
+    "baton": "5",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "优卑亚",
+        "lat": 38.65,
+        "lng": 23.85
+      },
+      {
+        "name": "莱姆诺斯",
+        "lat": 39.88,
+        "lng": 25.06
+      }
+    ],
+    "source": "修昔底德I.101：客蒙自雅典督同盟水师循优卑亚与莱姆诺斯海道北上，收紧对萨索斯主城之合围"
+  },
+  {
+    "eventId": "evt_0102",
+    "baton": "6A",
+    "leadGeneralId": "xila_pericles",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "帕尔奈斯山口",
+        "lat": 38.17,
+        "lng": 23.72
+      }
+    ],
+    "source": "修昔底德I.107–108；普鲁塔克《伯里克利传》10：雅典倾城出师越帕尔奈斯山北进维奥蒂亚塔纳格拉"
+  },
+  {
+    "eventId": "evt_0103",
+    "baton": "6A",
+    "leadGeneralId": "xila_myronides",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "基泰龙山隘",
+        "lat": 38.18,
+        "lng": 23.32
+      }
+    ],
+    "source": "修昔底德I.108：塔纳格拉战后六十二日，米隆尼德斯率雅典军越基泰龙山北入阿索波斯河谷决战奥诺菲塔"
+  },
+  {
+    "eventId": "evt_0105",
+    "baton": "6A",
+    "leadGeneralId": "xila_tolmides",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "埃伊纳",
+        "lat": 37.75,
+        "lng": 23.43
+      },
+      {
+        "name": "马利亚角",
+        "lat": 36.44,
+        "lng": 23.2
+      }
+    ],
+    "source": "修昔底德I.108；狄奥多罗斯XI.84：托尔米德斯率雅典舰队南下萨罗尼克湾，绕马利亚角奇袭斯巴达吉雄军港"
+  },
+  {
+    "eventId": "evt_0109",
+    "baton": "6A",
+    "leadGeneralId": "xila_cimon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "提洛",
+        "lat": 37.4,
+        "lng": 25.27
+      },
+      {
+        "name": "罗得",
+        "lat": 36.44,
+        "lng": 28.22
+      },
+      {
+        "name": "帕福斯",
+        "lat": 34.76,
+        "lng": 32.41
+      }
+    ],
+    "source": "修昔底德I.112；普鲁塔克《客蒙传》18：客蒙统二百艘三列桨战舰自雅典经提洛、罗得与帕福斯远征塞浦路斯"
+  },
+  {
+    "eventId": "evt_0111",
+    "baton": "6A",
+    "leadGeneralId": "xila_tolmides",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "喀罗尼亚",
+        "lat": 38.5,
+        "lng": 22.84
+      }
+    ],
+    "source": "修昔底德I.113；普鲁塔克《伯里克利传》18：托尔米德斯率军北攻喀罗尼亚得手后回师，于科罗尼亚遭伏阵亡"
+  },
+  {
+    "eventId": "evt_0112",
+    "baton": "6A",
+    "leadGeneralId": "xila_pericles",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "奥罗波斯",
+        "lat": 38.3,
+        "lng": 23.75
+      }
+    ],
+    "source": "修昔底德I.114：优卑亚全岛举兵叛离，伯里克利急统雅典重步兵经奥罗波斯渡海峡登岛讨叛"
+  },
+  {
+    "eventId": "evt_0117",
+    "baton": "6A",
+    "leadGeneralId": "xila_pericles",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "安德罗斯",
+        "lat": 37.83,
+        "lng": 24.93
+      },
+      {
+        "name": "伊卡里亚",
+        "lat": 37.6,
+        "lng": 26.15
+      }
+    ],
+    "source": "修昔底德I.115–116：伯里克利定优卑亚后统舰横渡爱琴海经安德罗斯、伊卡里亚，于特拉吉亚岛外截破萨摩斯舰队"
+  },
+  {
+    "eventId": "evt_0118",
+    "baton": "6A",
+    "leadGeneralId": "xila_pericles",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "修昔底德I.116–117：特拉吉亚海战获胜后伯里克利当即登岸筑三道壁垒合围萨摩斯主城"
+  },
+  {
+    "eventId": "evt_0121",
+    "baton": "6B",
+    "leadGeneralId": "xila_hagenong",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_anfeibolisi",
+    "route": [],
+    "source": "修昔底德IV.102：哈格农自斯特里蒙河口埃伊翁就近溯河至九道口驱逐埃多尼人筑城"
+  },
+  {
+    "eventId": "evt_0122",
+    "baton": "6B",
+    "leadGeneralId": "corinth_timanor",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_corinth",
+    "route": [
+      {
+        "name": "莱夫卡斯",
+        "lat": 38.83,
+        "lng": 20.71
+      },
+      {
+        "name": "阿克兴",
+        "lat": 38.95,
+        "lng": 20.77
+      }
+    ],
+    "source": "修昔底德I.26–30：科林斯统帅提马诺尔率舰出科林斯湾，经莱夫卡斯与阿克兴北航科孚琉喀墨海角"
+  },
+  {
+    "eventId": "evt_0123",
+    "baton": "6B",
+    "leadGeneralId": "corinth_xenocleides",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_corinth",
+    "route": [
+      {
+        "name": "帕特雷",
+        "lat": 38.25,
+        "lng": 21.73
+      },
+      {
+        "name": "莱夫卡斯",
+        "lat": 38.83,
+        "lng": 20.71
+      },
+      {
+        "name": "凯梅里翁",
+        "lat": 39.35,
+        "lng": 20.29
+      }
+    ],
+    "source": "修昔底德I.46：克塞诺克利德斯统百五十舰出科林斯湾经莱夫卡斯，驻营塞斯普罗蒂亚凯梅里翁后扑向叙博塔"
+  },
+  {
+    "eventId": "evt_0124",
+    "baton": "6B",
+    "leadGeneralId": "xila_callias",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "哈尔基斯",
+        "lat": 38.46,
+        "lng": 23.6
+      },
+      {
+        "name": "皮德纳",
+        "lat": 40.37,
+        "lng": 22.58
+      },
+      {
+        "name": "韦里亚",
+        "lat": 40.52,
+        "lng": 22.2
+      }
+    ],
+    "source": "修昔底德I.61：卡利亚斯率军自雅典北航马其顿海岸皮德纳与韦里亚，折东循海逼近波提狄亚地峡"
+  },
+  {
+    "eventId": "evt_0126",
+    "baton": "6B",
+    "leadGeneralId": "gen_brasidas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_aolinpiya",
+    "route": [
+      {
+        "name": "基利尼",
+        "lat": 37.94,
+        "lng": 21.14
+      },
+      {
+        "name": "帕特雷",
+        "lat": 38.25,
+        "lng": 21.73
+      }
+    ],
+    "source": "修昔底德II.84–86：巴西达斯赴埃利斯基利尼港重整伯罗奔尼撒舰队，东入帕特雷湾进逼诺帕克都"
+  },
+  {
+    "eventId": "evt_0127",
+    "baton": "6B",
+    "leadGeneralId": "xila_paches",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "苏尼翁角",
+        "lat": 37.65,
+        "lng": 24.02
+      },
+      {
+        "name": "斯基罗斯南海",
+        "lat": 38.65,
+        "lng": 25.1
+      }
+    ],
+    "source": "修昔底德III.18：雅典遣帕凯斯率千名重步兵自桨战舰绕苏尼翁角横越爱琴海，登莱斯博斯岛筑墙锁困米蒂利尼"
+  },
+  {
+    "eventId": "evt_0128",
+    "baton": "6B",
+    "leadGeneralId": "lagoniya_archidamus_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "科林斯地峡",
+        "lat": 37.93,
+        "lng": 22.99
+      },
+      {
+        "name": "墨伽拉",
+        "lat": 38,
+        "lng": 23.34
+      }
+    ],
+    "source": "修昔底德II.71、III.52：斯巴达王阿基达穆斯二世统同盟陆军北越科林斯地峡与墨伽拉山地，围困普拉提亚"
+  },
+  {
+    "eventId": "evt_0129",
+    "baton": "6B",
+    "leadGeneralId": "xila_demosthenes",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_deerfei",
+    "route": [
+      {
+        "name": "诺帕克都",
+        "lat": 38.39,
+        "lng": 21.83
+      },
+      {
+        "name": "阿格里尼翁",
+        "lat": 38.62,
+        "lng": 21.41
+      },
+      {
+        "name": "安菲洛基亚",
+        "lat": 38.93,
+        "lng": 21.18
+      }
+    ],
+    "source": "修昔底德III.105–107：德摩斯梯尼自诺帕克都西赴阿卡纳尼亚，至安菲洛基亚会合联军迎敌于奥尔派"
+  },
+  {
+    "eventId": "evt_0130",
+    "baton": "7A",
+    "leadGeneralId": "xila_demosthenes",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "马利亚角",
+        "lat": 36.44,
+        "lng": 23.2
+      },
+      {
+        "name": "泰纳龙角",
+        "lat": 36.39,
+        "lng": 22.48
+      }
+    ],
+    "source": "修昔底德IV.2–5：德摩斯梯尼随雅典西航舰队自比雷埃夫斯绕马利亚角与泰纳龙角，遇风暴泊筑派洛斯海岬"
+  },
+  {
+    "eventId": "evt_0131",
+    "baton": "7A",
+    "leadGeneralId": "bfe2_cleon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "马利亚角",
+        "lat": 36.44,
+        "lng": 23.2
+      },
+      {
+        "name": "泰纳龙角",
+        "lat": 36.39,
+        "lng": 22.48
+      }
+    ],
+    "source": "修昔底德IV.28–31：克里昂自雅典领林诺斯与因布罗斯轻盾射手绕伯罗奔尼撒南端海角驰抵派洛斯总攻孤岛"
+  },
+  {
+    "eventId": "evt_0132",
+    "baton": "7A",
+    "leadGeneralId": "boootiya_pagondas",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_thebes",
+    "route": [],
+    "source": "修昔底德IV.91–96：底比斯主帅帕贡达斯统维奥蒂亚军自底比斯就近迎截筑垒德利乌姆之雅典军（战场与底比斯同格坐标）"
+  },
+  {
+    "eventId": "evt_0134",
+    "baton": "7A",
+    "leadGeneralId": "bfe2_cleon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "斯基罗斯",
+        "lat": 38.9,
+        "lng": 24.56
+      },
+      {
+        "name": "托罗尼",
+        "lat": 39.98,
+        "lng": 23.89
+      }
+    ],
+    "source": "修昔底德V.2–6：克里昂率舰队自雅典北航攻拔托罗尼，进驻斯特里蒙河口埃伊翁后北逼安菲波利斯"
+  },
+  {
+    "eventId": "evt_0135",
+    "baton": "7A",
+    "leadGeneralId": "xila_nixiyasi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "哈尔基斯",
+        "lat": 38.46,
+        "lng": 23.6
+      },
+      {
+        "name": "门德",
+        "lat": 39.98,
+        "lng": 23.38
+      }
+    ],
+    "source": "修昔底德IV.129–133、V.32：尼西亚斯统雅典军北航帕勒涅半岛，先收门德再合围攻拔斯基奥内"
+  },
+  {
+    "eventId": "evt_0136",
+    "baton": "7A",
+    "leadGeneralId": "xila_alcibiades",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "埃伊纳",
+        "lat": 37.75,
+        "lng": 23.43
+      }
+    ],
+    "source": "修昔底德V.53–56：亚西比德自雅典渡萨罗尼克湾经埃伊纳赴阿尔戈利斯，协同盟军进逼埃皮道鲁斯"
+  },
+  {
+    "eventId": "evt_0137",
+    "baton": "7A",
+    "leadGeneralId": "lagoniya_agis_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "奥瑞斯提翁",
+        "lat": 37.39,
+        "lng": 22.27
+      },
+      {
+        "name": "泰格亚",
+        "lat": 37.46,
+        "lng": 22.42
+      }
+    ],
+    "source": "修昔底德V.64–65：斯巴达王阿基斯二世急统全邦重步兵北出奥瑞斯提翁驰援泰格亚，进军曼丁尼亚平原"
+  },
+  {
+    "eventId": "evt_0139",
+    "baton": "7A",
+    "leadGeneralId": "xila_cleomedes",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "苏尼翁角",
+        "lat": 37.65,
+        "lng": 24.02
+      },
+      {
+        "name": "基斯诺斯",
+        "lat": 37.39,
+        "lng": 24.42
+      }
+    ],
+    "source": "修昔底德V.84：克莱奥梅德斯与提西亚斯统雅典及同盟舰队绕苏尼翁角经西基克拉泽斯水道南扑米洛斯岛"
+  },
+  {
+    "eventId": "evt_0140",
+    "baton": "7A",
+    "leadGeneralId": "xila_nixiyasi",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "科西拉",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "利吉翁",
+        "lat": 38.11,
+        "lng": 15.65
+      },
+      {
+        "name": "卡塔纳",
+        "lat": 37.5,
+        "lng": 15.09
+      }
+    ],
+    "source": "修昔底德VI.30–52：尼西亚斯统远征大舰队自比雷埃夫斯出航，会师科西拉，经意大利南端利吉翁与卡塔纳趋叙拉古"
+  },
+  {
+    "eventId": "evt_0141",
+    "baton": "7A",
+    "leadGeneralId": "xila_nixiyasi",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "修昔底德VI.94–99：雅典军自大港冬营就近北抢叙拉古外围西北埃皮波莱高地筑围墙"
+  },
+  {
+    "eventId": "evt_0142",
+    "baton": "7A",
+    "leadGeneralId": "xila_nixiyasi",
+    "role": "defender",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "修昔底德VII.70–85：尼西亚斯军由埃皮波莱退困叙拉古大港滩头，突围海战败后南撤阿西纳罗斯河覆没"
+  },
+  {
+    "eventId": "evt_0144",
+    "baton": "7B",
+    "leadGeneralId": "xila_alcibiades",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_miletus",
+    "route": [
+      {
+        "name": "萨摩斯",
+        "lat": 37.69,
+        "lng": 26.94
+      },
+      {
+        "name": "希俄斯",
+        "lat": 38.37,
+        "lng": 26.14
+      },
+      {
+        "name": "莱斯博斯",
+        "lat": 39.11,
+        "lng": 26.55
+      }
+    ],
+    "source": "色诺芬《希腊史》I.1.5–6：亚西比德率十八舰自萨摩斯基地疾航北上，经希俄斯与莱斯博斯突入阿比多斯海峡助战"
+  },
+  {
+    "eventId": "evt_0145",
+    "baton": "7B",
+    "leadGeneralId": "xila_alcibiades",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "帕里翁",
+        "lat": 40.42,
+        "lng": 27.07
+      },
+      {
+        "name": "普罗孔内苏斯",
+        "lat": 40.62,
+        "lng": 27.61
+      }
+    ],
+    "source": "色诺芬《希腊史》I.1.11–15：亚西比德自赫勒斯滂潜行集舰于帕里翁，夜航普罗孔内苏斯岛乘暴雨奇袭库梓库斯"
+  },
+  {
+    "eventId": "evt_0148",
+    "baton": "7B",
+    "leadGeneralId": "xila_alcibiades",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "普罗孔尼苏斯",
+        "lat": 40.62,
+        "lng": 27.62
+      },
+      {
+        "name": "塞利姆布里亚",
+        "lat": 41.07,
+        "lng": 28.25
+      }
+    ],
+    "source": "色诺芬《希腊史》I.1.13–22、I.3.10：亚西比德自库梓库斯北驻普罗孔尼苏斯，收降塞利姆布里亚后东进合围拜占庭"
+  },
+  {
+    "eventId": "evt_0150",
+    "baton": "7B",
+    "leadGeneralId": "lagoniya_callicratidas",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_mytilene",
+    "route": [
+      {
+        "name": "马利亚海岬",
+        "lat": 39.01,
+        "lng": 26.72
+      }
+    ],
+    "source": "色诺芬《希腊史》I.6.26–28：斯巴达提督卡利克拉提达斯留兵封锁米蒂利尼，亲率主力舰队夜泊莱斯博斯南端马利亚海岬迎战"
+  },
+  {
+    "eventId": "evt_0152",
+    "baton": "7B",
+    "leadGeneralId": "gen_lysander",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_rhodes",
+    "route": [
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      },
+      {
+        "name": "希俄斯",
+        "lat": 38.37,
+        "lng": 26.14
+      },
+      {
+        "name": "阿比多斯",
+        "lat": 40.2,
+        "lng": 26.41
+      }
+    ],
+    "source": "色诺芬《希腊史》II.1.15–19：吕山德自罗得北航以弗所整舰，循希俄斯岸入阿比多斯与羊河口对岸设伏"
+  },
+  {
+    "eventId": "evt_0153",
+    "baton": "7B",
+    "leadGeneralId": "gen_lysander",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "莱斯博斯",
+        "lat": 39.11,
+        "lng": 26.55
+      },
+      {
+        "name": "埃伊纳",
+        "lat": 37.75,
+        "lng": 23.43
+      }
+    ],
+    "source": "色诺芬《希腊史》II.2.5–9：吕山德自赫勒斯滂南下收服莱斯博斯诸邦，经埃伊纳封锁比雷埃夫斯海口困降雅典"
+  },
+  {
+    "eventId": "evt_0155",
+    "baton": "7B",
+    "leadGeneralId": "xila_thrasybulus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_thebes",
+    "route": [
+      {
+        "name": "菲莱堡",
+        "lat": 38.14,
+        "lng": 23.64
+      }
+    ],
+    "source": "色诺芬《希腊史》II.4.2–11：斯拉叙布卢斯率七十流亡志士自底比斯出发先占帕尔奈斯山菲莱堡，继夜入比雷埃夫斯"
+  },
+  {
+    "eventId": "evt_0156",
+    "baton": "7B",
+    "leadGeneralId": "lagoniya_agis_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "梅格洛玻利斯谷",
+        "lat": 37.4,
+        "lng": 22.13
+      }
+    ],
+    "source": "色诺芬《希腊史》III.2.25–26：斯巴达王阿基斯二世经阿卡迪亚山谷西出奥隆河道，进讨伊利斯腹地"
+  },
+  {
+    "eventId": "evt_0157",
+    "baton": "8A",
+    "leadGeneralId": "xila_xenophon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sifaerde",
+    "route": [
+      {
+        "name": "科洛赛",
+        "lat": 37.79,
+        "lng": 29.26
+      },
+      {
+        "name": "凯莱奈",
+        "lat": 38.07,
+        "lng": 30.17
+      },
+      {
+        "name": "塔尔苏斯",
+        "lat": 36.92,
+        "lng": 34.9
+      },
+      {
+        "name": "伊苏斯",
+        "lat": 36.84,
+        "lng": 36.2
+      },
+      {
+        "name": "塔普萨库斯",
+        "lat": 35.85,
+        "lng": 38.95
+      }
+    ],
+    "source": "色诺芬《长征记》I.2–4：色诺芬随小居鲁士军自撒狄东发，经科洛赛、凯莱奈、塔尔苏斯、伊苏斯及塔普萨库斯趋库纳克萨"
+  },
+  {
+    "eventId": "evt_0158",
+    "baton": "8A",
+    "leadGeneralId": "xila_xenophon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "大扎卜河",
+        "lat": 35.99,
+        "lng": 43.35
+      },
+      {
+        "name": "肯特里特斯河",
+        "lat": 37.85,
+        "lng": 41.8
+      },
+      {
+        "name": "金姆尼亚斯",
+        "lat": 40.25,
+        "lng": 40.25
+      }
+    ],
+    "source": "色诺芬《长征记》III.3–IV.7：希腊孤军自巴比伦北溯底格里斯河越扎卜河，穿卡尔杜奇山与亚美尼亚雪原抵特拉佩祖斯"
+  },
+  {
+    "eventId": "evt_0159",
+    "baton": "8A",
+    "leadGeneralId": "bfe2_pharnabazus",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_teluoyi",
+    "route": [],
+    "source": "色诺芬《希腊史》III.1.16–28：斯巴达德基利达斯进攻特罗阿德诸要塞，守方按守城战规制就地据守特洛伊据点"
+  },
+  {
+    "eventId": "evt_0164",
+    "baton": "8B",
+    "leadGeneralId": "gen_lysander",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_deerfei",
+    "route": [
+      {
+        "name": "奥尔霍迈诺斯",
+        "lat": 38.49,
+        "lng": 22.98
+      }
+    ],
+    "source": "色诺芬《希腊史》III.5.6–18：吕山德自福基斯集兵东进，先招纳奥尔霍迈诺斯背离底比斯，继扑哈利亚托斯城下"
+  },
+  {
+    "eventId": "evt_0165",
+    "baton": "8B",
+    "leadGeneralId": "bfe2_conon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_rhodes",
+    "route": [
+      {
+        "name": "洛里马",
+        "lat": 36.56,
+        "lng": 28.02
+      }
+    ],
+    "source": "狄奥多罗斯XIV.83；色诺芬《希腊史》IV.3.10–12：科农与法那巴佐斯集舰于卡里亚半岛洛里马湾，西出克尼多斯截敌"
+  },
+  {
+    "eventId": "evt_0166",
+    "baton": "8B",
+    "leadGeneralId": "bfe2_conon",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "科斯",
+        "lat": 36.89,
+        "lng": 27.29
+      },
+      {
+        "name": "米洛斯",
+        "lat": 36.74,
+        "lng": 24.43
+      },
+      {
+        "name": "费拉",
+        "lat": 37.03,
+        "lng": 22.11
+      }
+    ],
+    "source": "色诺芬《希腊史》IV.8.7–8：科农自克尼多斯率舰横越基克拉泽斯诸岛，先掠美塞尼亚费拉海岸，再南下攻取基西拉岛"
+  },
+  {
+    "eventId": "evt_0168",
+    "baton": "8B",
+    "leadGeneralId": "xila_iphicrates",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "墨伽拉",
+        "lat": 38,
+        "lng": 23.34
+      }
+    ],
+    "source": "色诺芬《希腊史》IV.4–5：伊菲克拉特斯统雅典轻盾兵自阿提卡经墨伽拉进驻科林斯，出击西港勒卡乌姆"
+  },
+  {
+    "eventId": "evt_0171",
+    "baton": "8B",
+    "leadGeneralId": "gen_chabrias",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_yadian",
+    "route": [],
+    "source": "色诺芬《希腊史》V.1.10–13：卡布里亚斯率雅典重步兵与轻盾兵自比雷埃夫斯夜航萨罗尼克湾埃伊纳岛设伏"
+  },
+  {
+    "eventId": "evt_0174",
+    "baton": "8B",
+    "leadGeneralId": "lagoniya_agesipolis_i",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "泰格亚",
+        "lat": 37.46,
+        "lng": 22.42
+      }
+    ],
+    "source": "色诺芬《希腊史》V.2.1–7：斯巴达王阿格西波利斯一世统军自拉科尼亚北越泰格亚高原，进围阿卡迪亚曼丁尼亚"
+  },
+  {
+    "eventId": "evt_0176",
+    "baton": "9",
+    "leadGeneralId": "lagoniya_phoebidas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "特吉亚",
+        "lat": 37.46,
+        "lng": 22.42
+      },
+      {
+        "name": "科林斯",
+        "lat": 37.91,
+        "lng": 22.88
+      }
+    ],
+    "source": "色诺芬《希腊史》V.2.24–29：福比达斯率北征援军自斯巴达北经特吉亚与科林斯地峡入维奥蒂亚，奇袭底比斯卫城"
+  },
+  {
+    "eventId": "evt_0177",
+    "baton": "9",
+    "leadGeneralId": "lagoniya_teleutias",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "底比斯",
+        "lat": 38.32,
+        "lng": 23.31
+      },
+      {
+        "name": "拉里萨",
+        "lat": 39.64,
+        "lng": 22.42
+      },
+      {
+        "name": "佩拉",
+        "lat": 40.76,
+        "lng": 22.52
+      }
+    ],
+    "source": "色诺芬《希腊史》V.2.37–V.3.3：特琉提亚斯统万兵自斯巴达北上，过维奥蒂亚、色萨利会合马其顿骑兵进逼奥林索斯"
+  },
+  {
+    "eventId": "evt_0179",
+    "baton": "9",
+    "leadGeneralId": "lagoniya_agesipolis_i",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_sparta",
+    "route": [
+      {
+        "name": "温泉关",
+        "lat": 38.8,
+        "lng": 22.54
+      },
+      {
+        "name": "拉里萨",
+        "lat": 39.64,
+        "lng": 22.42
+      },
+      {
+        "name": "奥林索斯",
+        "lat": 40.29,
+        "lng": 23.35
+      }
+    ],
+    "source": "色诺芬《希腊史》V.3.8–18：阿格西波利斯一世自斯巴达经色萨利征调骑兵北进奥林索斯郊，旋折南强攻托罗尼"
+  },
+  {
+    "eventId": "evt_0180",
+    "baton": "9",
+    "leadGeneralId": "boootiya_pelopidas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "帕尔奈斯山",
+        "lat": 38.17,
+        "lng": 23.72
+      }
+    ],
+    "source": "色诺芬《希腊史》V.4.2–9；普鲁塔克《佩洛皮达斯传》7–12：佩洛皮达斯率流亡义士自雅典越帕尔奈斯山雪夜潜入底比斯"
+  },
+  {
+    "eventId": "evt_0182",
+    "baton": "9",
+    "leadGeneralId": "gen_chabrias",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "苏尼翁角",
+        "lat": 37.65,
+        "lng": 24.02
+      },
+      {
+        "name": "凯阿岛",
+        "lat": 37.62,
+        "lng": 24.33
+      }
+    ],
+    "source": "狄奥多罗斯XV.34–35：卡布里亚斯统雅典新编舰队自比雷埃夫斯出航，绕苏尼翁角经基克拉泽斯赴纳克索斯破敌"
+  },
+  {
+    "eventId": "evt_0183",
+    "baton": "9",
+    "leadGeneralId": "boootiya_pelopidas",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_thebes",
+    "route": [],
+    "source": "普鲁塔克《佩洛皮达斯传》16–17：佩洛皮达斯统神圣队自底比斯出击维奥蒂亚近郊泰吉拉撞破斯巴达军（战场与底比斯同格坐标）"
+  },
+  {
+    "eventId": "evt_0184",
+    "baton": "9",
+    "leadGeneralId": "xila_timotheus",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "马利亚角",
+        "lat": 36.44,
+        "lng": 23.2
+      },
+      {
+        "name": "凯法利尼亚",
+        "lat": 38.18,
+        "lng": 20.49
+      }
+    ],
+    "source": "色诺芬《希腊史》V.4.63–66：提莫修斯率六十舰自雅典绕伯罗奔尼撒经凯法利尼亚招抚科孚，南驻阿吕齐亚迎战"
+  },
+  {
+    "eventId": "evt_0186",
+    "baton": "9",
+    "leadGeneralId": "xila_iphicrates",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "马利亚角",
+        "lat": 36.44,
+        "lng": 23.2
+      },
+      {
+        "name": "皮洛斯",
+        "lat": 36.91,
+        "lng": 21.7
+      },
+      {
+        "name": "凯法利尼亚",
+        "lat": 38.18,
+        "lng": 20.49
+      }
+    ],
+    "source": "色诺芬《希腊史》VI.2.27–38：伊菲克拉特斯率七十舰自比雷埃夫斯绕伯罗奔尼撒，沿途强训桨手经凯法利尼亚驰救科孚"
+  },
+  {
+    "eventId": "evt_0187",
+    "baton": "9",
+    "leadGeneralId": "gen_epaminondas",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_thebes",
+    "route": [],
+    "source": "色诺芬《希腊史》VI.4.4–15：克莱奥姆布罗图斯入维奥蒂亚，伊巴密浓达率底比斯军就近出屯西南近郊留克特拉迎敌"
+  },
+  {
+    "eventId": "evt_0190",
+    "baton": "9",
+    "leadGeneralId": "lagoniya_archidamus_iii",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_sparta",
+    "route": [],
+    "source": "色诺芬《希腊史》VII.1.28–32：斯巴达王储阿基达穆斯三世自斯巴达出师拉科尼亚北境梅莱亚迎破联军（战场与斯巴达同格坐标）"
+  },
+  {
+    "eventId": "evt_0192",
+    "baton": "9",
+    "leadGeneralId": "xila_timotheus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "安德罗斯",
+        "lat": 37.83,
+        "lng": 24.93
+      },
+      {
+        "name": "希俄斯",
+        "lat": 38.37,
+        "lng": 26.14
+      }
+    ],
+    "source": "狄奥多罗斯XV.47；伊索克拉底《论财产交换》111：提莫修斯率三十舰与八千轻盾兵自雅典经爱琴诸岛东渡合围萨摩斯"
+  },
+  {
+    "eventId": "evt_0194",
+    "baton": "9",
+    "leadGeneralId": "boootiya_pelopidas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_thebes",
+    "route": [
+      {
+        "name": "温泉关",
+        "lat": 38.8,
+        "lng": 22.54
+      },
+      {
+        "name": "法尔萨卢斯",
+        "lat": 39.29,
+        "lng": 22.38
+      }
+    ],
+    "source": "普鲁塔克《佩洛皮达斯传》31–32：佩洛皮达斯自底比斯率三百骑北越温泉关至法尔萨卢斯会合色萨利同盟，趋库诺斯克法莱"
+  },
+  {
+    "eventId": "evt_0195",
+    "baton": "9",
+    "leadGeneralId": "xila_timotheus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "斯基亚索斯",
+        "lat": 39.16,
+        "lng": 23.49
+      }
+    ],
+    "source": "狄奥多罗斯XV.81：提莫修斯统雅典舰队北航爱琴海西岸，联合马其顿王佩尔狄卡斯三世攻取托罗尼与波提狄亚"
+  },
+  {
+    "eventId": "evt_0196",
+    "baton": "9",
+    "leadGeneralId": "gen_epaminondas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_thebes",
+    "route": [
+      {
+        "name": "科林斯地峡",
+        "lat": 37.93,
+        "lng": 22.99
+      },
+      {
+        "name": "涅墨亚",
+        "lat": 37.81,
+        "lng": 22.71
+      },
+      {
+        "name": "泰格亚",
+        "lat": 37.46,
+        "lng": 22.42
+      }
+    ],
+    "source": "色诺芬《希腊史》VII.5.4–18：伊巴密浓达统军自底比斯过地峡驻涅墨亚，进屯泰格亚并袭斯巴达后回师曼丁尼亚决战"
+  },
+  {
+    "eventId": "evt_0198",
+    "baton": "10",
+    "leadGeneralId": "yili_bardylis",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_peiliang",
+    "route": [
+      {
+        "name": "奥赫里德",
+        "lat": 41.12,
+        "lng": 20.8
+      }
+    ],
+    "source": "狄奥多罗斯XVI.2：达达尼亚老王巴尔迪利斯统伊利里亚大军自奥赫里德湖谷东越山隘，入侵上马其顿利恩库斯盆地"
+  },
+  {
+    "eventId": "evt_0199",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_salonica",
+    "route": [],
+    "source": "狄奥多罗斯XVI.3：雅典护送阿尔盖乌斯自梅托涅趋埃盖，腓力二世自佩拉率马其顿军于皮埃里亚近畿半途截破之"
+  },
+  {
+    "eventId": "evt_0200",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "埃泽萨",
+        "lat": 40.8,
+        "lng": 22.05
+      },
+      {
+        "name": "利克尼斯托斯",
+        "lat": 40.9,
+        "lng": 21.55
+      }
+    ],
+    "source": "狄奥多罗斯XVI.4：腓力二世整训长矛方阵后自下马其顿经埃泽萨西进上马其顿埃里贡河谷，决战巴尔迪利斯"
+  },
+  {
+    "eventId": "evt_0203",
+    "baton": "10",
+    "leadGeneralId": "phokis_feiluomoluosi",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_deerfei",
+    "route": [],
+    "source": "狄奥多罗斯XVI.30–31：福基斯主帅菲洛墨洛斯据德尔斐圣所募军，就近于帕纳苏斯山北麓霓虹山迎战维奥蒂亚联军"
+  },
+  {
+    "eventId": "evt_0204",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_salonica",
+    "route": [],
+    "source": "狄奥多罗斯XVI.34：腓力二世自马其顿都城佩拉就近南压塞尔迈湾西岸雅典盟城梅托涅围攻"
+  },
+  {
+    "eventId": "evt_0206",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "迪翁",
+        "lat": 40.17,
+        "lng": 22.49
+      },
+      {
+        "name": "坦佩谷",
+        "lat": 39.88,
+        "lng": 22.57
+      },
+      {
+        "name": "拉里萨",
+        "lat": 39.64,
+        "lng": 22.42
+      }
+    ],
+    "source": "狄奥多罗斯XVI.35：腓力二世克梅托涅后自皮埃里亚迪翁穿坦佩峡谷入色萨利拉里萨，南进帕加塞湾番红花原野"
+  },
+  {
+    "eventId": "evt_0209",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "拉里萨",
+        "lat": 39.64,
+        "lng": 22.42
+      },
+      {
+        "name": "塞尔迈",
+        "lat": 40.64,
+        "lng": 22.94
+      }
+    ],
+    "source": "狄奥多罗斯XVI.52：腓力二世定色萨利后北返马其顿，经塞尔迈湾东扑卡尔基季基东岸要冲斯塔吉拉"
+  },
+  {
+    "eventId": "evt_0210",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "迈格多尼亚",
+        "lat": 40.63,
+        "lng": 23.47
+      }
+    ],
+    "source": "狄奥多罗斯XVI.53：腓力二世拔斯塔吉拉后西越迈格多尼亚，连破外围城邑合围卡尔基季基首府奥林索斯"
+  },
+  {
+    "eventId": "evt_0212",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "佩拉",
+        "lat": 40.76,
+        "lng": 22.52
+      },
+      {
+        "name": "利克尼都斯",
+        "lat": 41.12,
+        "lng": 20.8
+      }
+    ],
+    "source": "狄奥多罗斯XVI.69：腓力二世平卡尔基季基后西返佩拉，越利克尼都斯山道深入伊利里亚讨伐普莱乌拉图斯"
+  },
+  {
+    "eventId": "evt_0216",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "佩拉",
+        "lat": 40.76,
+        "lng": 22.52
+      },
+      {
+        "name": "安菲波利斯",
+        "lat": 40.82,
+        "lng": 23.85
+      },
+      {
+        "name": "腓立比",
+        "lat": 41.01,
+        "lng": 24.28
+      }
+    ],
+    "source": "狄奥多罗斯XVI.71：腓力二世自西境回师佩拉，东经安菲波利斯与腓立比溯赫布鲁斯河谷征服色雷斯腹地"
+  },
+  {
+    "eventId": "evt_0219",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "卡比莱",
+        "lat": 42.55,
+        "lng": 26.48
+      },
+      {
+        "name": "奥德苏斯",
+        "lat": 43.21,
+        "lng": 27.91
+      }
+    ],
+    "source": "查士丁IX.2：腓力二世自色雷斯腹地经卡比莱与黑海西岸奥德苏斯北入多布罗加草原，击败斯基泰王阿泰阿斯"
+  },
+  {
+    "eventId": "evt_0220",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "海姆斯山口",
+        "lat": 42.77,
+        "lng": 25.32
+      },
+      {
+        "name": "佩拉",
+        "lat": 40.76,
+        "lng": 22.52
+      },
+      {
+        "name": "拉里萨",
+        "lat": 39.64,
+        "lng": 22.42
+      },
+      {
+        "name": "埃拉特亚",
+        "lat": 38.63,
+        "lng": 22.77
+      }
+    ],
+    "source": "狄奥多罗斯XVI.84–86；查士丁IX.3：腓力二世越海姆斯山返佩拉养伤，南经色萨利抢占埃拉特亚，进军喀罗尼亚"
+  },
+  {
+    "eventId": "evt_0221",
+    "baton": "10",
+    "leadGeneralId": "gen_philip_ii",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "科林斯",
+        "lat": 37.91,
+        "lng": 22.88
+      },
+      {
+        "name": "佩拉",
+        "lat": 40.76,
+        "lng": 22.52
+      },
+      {
+        "name": "斯库皮",
+        "lat": 42,
+        "lng": 21.43
+      }
+    ],
+    "source": "狄奥多罗斯XVI.89–93：腓力二世南赴科林斯缔结同盟后北返佩拉，经斯库皮谷地进讨奥塔里亚泰王普莱乌里亚斯"
+  },
+  {
+    "eventId": "evt_0222",
+    "baton": "10",
+    "leadGeneralId": "gen_parmenion",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_teluoyi",
+    "route": [
+      {
+        "name": "阿比多斯",
+        "lat": 40.2,
+        "lng": 26.41
+      },
+      {
+        "name": "佩尔加蒙",
+        "lat": 39.12,
+        "lng": 27.18
+      }
+    ],
+    "source": "狄奥多罗斯XVI.91、XVII.7；波吕埃努斯V.44.4：帕曼纽先遣军渡赫勒斯滂据阿比多斯，经爱奥尼亚南进马格尼西亚迎战门农"
+  },
+  {
+    "eventId": "evt_0223",
+    "baton": "11A",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_peiliang",
+    "route": [
+      {
+        "name": "埃奥尔达亚",
+        "lat": 40.51,
+        "lng": 21.68
+      },
+      {
+        "name": "佩林纳",
+        "lat": 39.57,
+        "lng": 21.93
+      },
+      {
+        "name": "温泉关",
+        "lat": 38.8,
+        "lng": 22.54
+      },
+      {
+        "name": "翁凯斯托斯",
+        "lat": 38.36,
+        "lng": 23.14
+      }
+    ],
+    "source": "阿里安《亚历山大远征记》I.7.5–7：亚历山大三世自伊利里亚佩利昂兼程经埃奥尔达亚、佩林纳、温泉关与翁凯斯托斯直抵底比斯"
+  },
+  {
+    "eventId": "evt_0224",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_salonica",
+    "route": [
+      {
+        "name": "安菲波利斯",
+        "lat": 40.82,
+        "lng": 23.85
+      },
+      {
+        "name": "塞斯托斯",
+        "lat": 40.23,
+        "lng": 26.4
+      },
+      {
+        "name": "伊利昂",
+        "lat": 39.96,
+        "lng": 26.24
+      }
+    ],
+    "source": "阿里安I.11–12：亚历山大三世自佩拉誓师，经安菲波利斯至塞斯托斯渡赫勒斯滂，谒伊利昂后东进格拉尼库斯河"
+  },
+  {
+    "eventId": "evt_0225",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [
+      {
+        "name": "撒狄",
+        "lat": 38.49,
+        "lng": 28.04
+      },
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      },
+      {
+        "name": "米利都",
+        "lat": 37.53,
+        "lng": 27.28
+      }
+    ],
+    "source": "阿里安I.17–20：亚历山大三世自格拉尼库斯河受降撒狄、进驻以弗所、攻拔米利都，南下合围哈利卡纳苏斯"
+  },
+  {
+    "eventId": "evt_0226",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "克桑托斯",
+        "lat": 36.36,
+        "lng": 29.32
+      },
+      {
+        "name": "佩尔格",
+        "lat": 36.96,
+        "lng": 30.85
+      },
+      {
+        "name": "戈尔迪乌姆",
+        "lat": 39.65,
+        "lng": 31.99
+      },
+      {
+        "name": "安居拉",
+        "lat": 39.94,
+        "lng": 32.86
+      },
+      {
+        "name": "塔尔苏斯",
+        "lat": 36.92,
+        "lng": 34.9
+      }
+    ],
+    "source": "阿里安I.24–II.7：亚历山大三世收服吕基亚克桑托斯与潘菲利亚佩尔格，北会戈尔迪乌姆、安居拉，越奇里乞亚门经塔尔苏斯趋伊苏斯"
+  },
+  {
+    "eventId": "evt_0227",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [
+      {
+        "name": "马拉托斯",
+        "lat": 34.84,
+        "lng": 35.9
+      },
+      {
+        "name": "比布鲁斯",
+        "lat": 34.12,
+        "lng": 35.65
+      },
+      {
+        "name": "西顿",
+        "lat": 33.56,
+        "lng": 35.37
+      }
+    ],
+    "source": "阿里安II.13–16：亚历山大三世自伊苏斯循腓尼基海岸南下，历受马拉托斯、比布鲁斯与西顿迎降，进围推罗"
+  },
+  {
+    "eventId": "evt_0228",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿卡",
+        "lat": 32.92,
+        "lng": 35.07
+      },
+      {
+        "name": "约帕",
+        "lat": 32.05,
+        "lng": 34.75
+      }
+    ],
+    "source": "阿里安II.25–26；库尔提乌斯IV.5：亚历山大三世克推罗后循巴勒斯坦海岸经阿卡与约帕南下合围加沙"
+  },
+  {
+    "eventId": "evt_0229",
+    "baton": "11B",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "孟菲斯",
+        "lat": 29.85,
+        "lng": 31.25
+      },
+      {
+        "name": "推罗",
+        "lat": 33.27,
+        "lng": 35.2
+      },
+      {
+        "name": "塔普萨库斯",
+        "lat": 35.85,
+        "lng": 38.95
+      },
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      }
+    ],
+    "source": "阿里安III.1–7：亚历山大三世入孟菲斯平埃及后北返推罗，东渡幼发拉底河塔普萨库斯津，经美索不达米亚北道趋高加米拉"
+  },
+  {
+    "eventId": "evt_0231",
+    "baton": "11C",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_babilun",
+    "route": [
+      {
+        "name": "苏萨",
+        "lat": 32.19,
+        "lng": 48.25
+      },
+      {
+        "name": "乌克西亚山隘",
+        "lat": 31.55,
+        "lng": 49.85
+      }
+    ],
+    "source": "阿里安III.16–18：亚历山大三世入主巴比伦与苏萨后，破乌克西亚山地部族，东攻扎格罗斯山波斯门险隘"
+  },
+  {
+    "eventId": "evt_0232",
+    "baton": "11C",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "埃克巴坦那",
+        "lat": 34.8,
+        "lng": 48.51
+      },
+      {
+        "name": "里海门",
+        "lat": 35.22,
+        "lng": 52.34
+      },
+      {
+        "name": "巴克特拉",
+        "lat": 36.71,
+        "lng": 67.08
+      },
+      {
+        "name": "马拉坎达",
+        "lat": 39.65,
+        "lng": 66.97
+      }
+    ],
+    "source": "阿里安III.19–IV.3：亚历山大三世入波斯波利斯后北追至埃克巴坦那与里海门，翻兴都库什山经巴克特拉、马拉坎达抵药杀水"
+  },
+  {
+    "eventId": "evt_0233",
+    "baton": "11C",
+    "leadGeneralId": "maqidun_coenus",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_samaerhan",
+    "route": [
+      {
+        "name": "泽拉夫尚河谷",
+        "lat": 39.9,
+        "lng": 65.8
+      }
+    ],
+    "source": "阿里安IV.16–17：科伊诺斯奉命留守索格狄亚那要冲，闻斯皮塔米尼斯引马萨革泰骑兵来犯，自马拉坎达西境驰截于加拜"
+  },
+  {
+    "eventId": "evt_0234",
+    "baton": "11C",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_nuotaka",
+    "route": [],
+    "source": "阿里安IV.18：亚历山大三世冬驻索格狄亚那诺塔卡，开春踏雪就近南攻天险粟特岩堡"
+  },
+  {
+    "eventId": "evt_0235",
+    "baton": "11D",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_lanshi",
+    "route": [
+      {
+        "name": "高加索亚历山大城",
+        "lat": 34.99,
+        "lng": 69.31
+      },
+      {
+        "name": "普什卡拉瓦蒂",
+        "lat": 34.17,
+        "lng": 71.74
+      },
+      {
+        "name": "塔克西拉",
+        "lat": 33.75,
+        "lng": 72.82
+      }
+    ],
+    "source": "阿里安IV.22–V.8：亚历山大三世自巴克特拉翻兴都库什山抵高加索亚历山大城，循喀布尔河谷渡印度河经塔克西拉趋希达斯皮斯河"
+  },
+  {
+    "eventId": "evt_0236",
+    "baton": "11D",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "桑伽拉",
+        "lat": 31.62,
+        "lng": 74.87
+      },
+      {
+        "name": "阿凯西涅斯河口",
+        "lat": 30.58,
+        "lng": 71.82
+      }
+    ],
+    "source": "阿里安V.22–VI.7：亚历山大三世东克桑伽拉后自希达斯皮斯河顺流南航，会流阿凯西涅斯河后横穿沙荒奇袭木尔坦"
+  },
+  {
+    "eventId": "evt_0237",
+    "baton": "11E",
+    "leadGeneralId": "gen_alexander_great",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_bageda",
+    "route": [
+      {
+        "name": "苏萨",
+        "lat": 32.19,
+        "lng": 48.25
+      }
+    ],
+    "source": "阿里安VII.13–15：亚历山大三世于俄庇斯整军后经苏萨赴埃克巴坦那途中，冬入扎格罗斯山讨平科赛亚诸部"
+  },
+  {
+    "eventId": "evt_0238",
+    "baton": "12A",
+    "leadGeneralId": "maqidun_antipater",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_deerfei",
+    "route": [],
+    "source": "狄奥多罗斯XVIII.12–15：拉米亚战争爆发，马其顿摄政安提帕特退入拉米亚坚城据守待援（守城战就地固守）"
+  },
+  {
+    "eventId": "evt_0239",
+    "baton": "12A",
+    "leadGeneralId": "maqidun_antipater",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "法尔萨卢斯",
+        "lat": 39.29,
+        "lng": 22.38
+      }
+    ],
+    "source": "狄奥多罗斯XVIII.16–17：安提帕特自拉米亚解围北迎克拉特罗斯援军，合兵经法尔萨卢斯推进色萨利克兰农平原"
+  },
+  {
+    "eventId": "evt_0240",
+    "baton": "12B",
+    "leadGeneralId": "maqidun_craterus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_salonica",
+    "route": [
+      {
+        "name": "塞斯托斯",
+        "lat": 40.23,
+        "lng": 26.4
+      }
+    ],
+    "source": "狄奥多罗斯XVIII.25–30：克拉特罗斯随安提帕特自马其顿东出，由切尔索尼斯塞斯托斯渡海峡入小亚细亚迎战欧迈尼斯"
+  },
+  {
+    "eventId": "evt_0242",
+    "baton": "12B",
+    "leadGeneralId": "gen_perdiccas",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_adana",
+    "route": [
+      {
+        "name": "大马士革",
+        "lat": 33.51,
+        "lng": 36.29
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      }
+    ],
+    "source": "狄奥多罗斯XVIII.29–33：摄政佩尔狄卡斯自奇里乞亚统王师南下，经叙利亚大马士革与加沙穿西奈直扑尼罗河佩卢西姆"
+  },
+  {
+    "eventId": "evt_0243",
+    "baton": "12B",
+    "leadGeneralId": "bfe_antigonus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_kailaina",
+    "route": [
+      {
+        "name": "伊科尼乌姆",
+        "lat": 37.87,
+        "lng": 32.48
+      }
+    ],
+    "source": "狄奥多罗斯XVIII.39–40：安提柯一世受任亚洲统帅后自弗里吉亚凯莱奈整军，经吕卡奥尼亚伊科尼乌姆东进卡帕多细亚奥尔基尼亚"
+  },
+  {
+    "eventId": "evt_0246",
+    "baton": "12B",
+    "leadGeneralId": "bfe_antigonus",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      },
+      {
+        "name": "苏萨",
+        "lat": 32.19,
+        "lng": 48.25
+      },
+      {
+        "name": "埃克巴坦那",
+        "lat": 34.8,
+        "lng": 48.51
+      }
+    ],
+    "source": "狄奥多罗斯XIX.12–26：安提柯一世自小亚细亚越美索不达米亚至苏萨渡科普拉塔斯河，北上米底埃克巴坦那东趋帕莱塔西奈"
+  },
+  {
+    "eventId": "evt_0248",
+    "baton": "12B",
+    "leadGeneralId": "bfe_antigonus",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "狄奥多罗斯XIX.34–43：帕莱塔西奈战后两军于米底与伽比埃奈比邻驻冬，安提柯一世穿盐原就近逼欧迈尼斯决战"
+  },
+  {
+    "eventId": "evt_0253",
+    "baton": "13A",
+    "leadGeneralId": "tuolemi_tuolemi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yalishanda",
+    "route": [
+      {
+        "name": "佩卢西姆",
+        "lat": 31.04,
+        "lng": 32.55
+      },
+      {
+        "name": "拉菲亚",
+        "lat": 31.29,
+        "lng": 34.24
+      }
+    ],
+    "source": "狄奥多罗斯XIX.80：托勒密一世偕塞琉古自亚历山大里亚发兵，经佩卢西姆穿西奈海岸过拉菲亚直抵加沙"
+  },
+  {
+    "eventId": "evt_0256",
+    "baton": "13A",
+    "leadGeneralId": "gen_seleucus_i",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_babilun",
+    "route": [],
+    "source": "波吕埃努斯IV.9.1；狄奥多罗斯XIX.91–100：塞琉古一世已克复巴比伦，于巴比伦近郊黎明夜袭破安提柯一世大营"
+  },
+  {
+    "eventId": "evt_0259",
+    "baton": "13A",
+    "leadGeneralId": "tuolemi_tuolemi",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yalishanda",
+    "route": [
+      {
+        "name": "帕福斯",
+        "lat": 34.76,
+        "lng": 32.41
+      },
+      {
+        "name": "基提翁",
+        "lat": 34.92,
+        "lng": 33.62
+      }
+    ],
+    "source": "狄奥多罗斯XX.49：托勒密一世统百四十艘战舰自亚历山大里亚跨海抵塞浦路斯帕福斯，循南岸基提翁驰援萨拉米斯"
+  },
+  {
+    "eventId": "evt_0260",
+    "baton": "13A",
+    "leadGeneralId": "antigonid_demetrius",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_halikanasu",
+    "route": [
+      {
+        "name": "洛里马",
+        "lat": 36.56,
+        "lng": 28.02
+      }
+    ],
+    "source": "狄奥多罗斯XX.82：德米特里一世于卡里亚海岸洛里马港集结舰船与攻城重械，南渡海峡登罗得岛筑垒围城"
+  },
+  {
+    "eventId": "evt_0261",
+    "baton": "13B",
+    "leadGeneralId": "gen_seleucus_i",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_lanshi",
+    "route": [
+      {
+        "name": "高加索亚历山大城",
+        "lat": 34.99,
+        "lng": 69.31
+      },
+      {
+        "name": "普什卡拉瓦蒂",
+        "lat": 34.17,
+        "lng": 71.74
+      }
+    ],
+    "source": "查士丁XV.4；阿庇安《叙利亚战争》55：塞琉古一世定巴克特拉后翻兴都库什山，循喀布尔河经普什卡拉瓦蒂抵印度河"
+  },
+  {
+    "eventId": "evt_0262",
+    "baton": "14",
+    "leadGeneralId": "lingqiu_zhaowuling",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_handan",
+    "route": [
+      {
+        "name": "房子",
+        "lat": 37.65,
+        "lng": 114.43
+      },
+      {
+        "name": "曲阳",
+        "lat": 38.52,
+        "lng": 114.68
+      }
+    ],
+    "source": "《史记·赵世家》：赵武灵王行胡服骑射后自邯郸北上，经房子、曲阳进攻中山国丹丘、华阳与鸱之塞"
+  },
+  {
+    "eventId": "evt_0266",
+    "baton": "14",
+    "leadGeneralId": "lingqiu_zhaowuling",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "代郡",
+        "lat": 39.84,
+        "lng": 114.41
+      },
+      {
+        "name": "句注塞",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "善无",
+        "lat": 40,
+        "lng": 112.42
+      }
+    ],
+    "source": "《史记·赵世家》：赵武灵王略中山北境后西驻代郡，率胡服骑兵出句注塞经善无西拓云中、九原，大破林胡楼烦"
+  },
+  {
+    "eventId": "evt_0270",
+    "baton": "14",
+    "leadGeneralId": "lingqiu_zhaowuling",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "善无",
+        "lat": 40,
+        "lng": 112.42
+      },
+      {
+        "name": "井陉",
+        "lat": 38.04,
+        "lng": 114.14
+      }
+    ],
+    "source": "《史记·赵世家》：赵主父经营云中代北后，统代北劲骑经善无东下太行井陉，会合赵王何主力合围中山都城灵寿"
+  },
+  {
+    "eventId": "evt_0272",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "宜阳",
+        "lat": 34.51,
+        "lng": 112.18
+      }
+    ],
+    "source": "《史记·白起王翦列传》：秦左庶长白起统关中军东出函谷关，循洛水经宜阳攻拔韩国伊水重镇新城"
+  },
+  {
+    "eventId": "evt_0273",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "《史记·白起王翦列传》：白起拔新城后就近于洛阳南郊伊阙龙门山口迎破韩魏联军"
+  },
+  {
+    "eventId": "evt_0274",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "平阴",
+        "lat": 34.83,
+        "lng": 112.38
+      }
+    ],
+    "source": "《史记·白起王翦列传》：伊阙捷后秦大良造白起自伊洛北趋平阴济河，攻取魏国河东重镇垣邑"
+  },
+  {
+    "eventId": "evt_0282",
+    "baton": "15A",
+    "leadGeneralId": "yan_leyi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_beijing",
+    "route": [
+      {
+        "name": "河间",
+        "lat": 38.44,
+        "lng": 116.09
+      },
+      {
+        "name": "清河",
+        "lat": 37.05,
+        "lng": 115.68
+      }
+    ],
+    "source": "《史记·乐毅列传》：燕上将军乐毅自蓟城南下，经河间、清河会合三晋秦师进逼济水西岸"
+  },
+  {
+    "eventId": "evt_0290",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "武关",
+        "lat": 33.74,
+        "lng": 110.32
+      },
+      {
+        "name": "邓城",
+        "lat": 32.06,
+        "lng": 112.14
+      },
+      {
+        "name": "鄢城",
+        "lat": 31.72,
+        "lng": 112.26
+      }
+    ],
+    "source": "《史记·白起王翦列传》：白起率秦师出武关南下汉水，经邓城水灌鄢城后直捣楚都纪南郢城"
+  },
+  {
+    "eventId": "evt_0295",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      }
+    ],
+    "source": "《史记·白起王翦列传》：韩使陈筮赴咸阳告急，武安君白起自关中倍道东出函谷、洛阳，八日疾驰华阳破魏赵联军"
+  },
+  {
+    "eventId": "evt_0299",
+    "baton": "15A",
+    "leadGeneralId": "liguo_zhaoshe",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_handan",
+    "route": [
+      {
+        "name": "武安",
+        "lat": 36.69,
+        "lng": 114.05
+      }
+    ],
+    "source": "《史记·廉颇蔺相如列传》：赵奢自邯郸西出武安坚壁二十八日，继而卷甲倍道疾趋太行险塞阏与破秦军"
+  },
+  {
+    "eventId": "evt_0304",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "野王",
+        "lat": 35.09,
+        "lng": 112.95
+      }
+    ],
+    "source": "《史记·白起王翦列传》：白起率秦军东出函谷攻韩陉城与野王，夺南阳并截断太行羊肠坂道"
+  },
+  {
+    "eventId": "evt_0308",
+    "baton": "15A",
+    "leadGeneralId": "xin_baiqi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "高平关",
+        "lat": 35.8,
+        "lng": 112.92
+      }
+    ],
+    "source": "《史记·白起王翦列传》：秦军自河内南阳循太行陉北越泫氏高平关，潜赴长平丹水河谷合围赵括"
+  },
+  {
+    "eventId": "evt_0309",
+    "baton": "15A",
+    "leadGeneralId": "zhao_lianpo",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_handan",
+    "route": [],
+    "source": "《史记·廉颇蔺相如列传》：秦军乘长平之胜进围邯郸，赵帅廉颇与平原君就地据守邯郸本城"
+  },
+  {
+    "eventId": "evt_0311",
+    "baton": "15A",
+    "leadGeneralId": "shang_weiwuji",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_bianliang",
+    "route": [
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      }
+    ],
+    "source": "《史记·魏公子列传》：信陵君魏无忌自大梁北经酸枣赴邺城矫诏夺晋鄙兵符，精选八万锐卒北救邯郸"
+  },
+  {
+    "eventId": "evt_0312",
+    "baton": "15B",
+    "leadGeneralId": "qin_jiu",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "阳城",
+        "lat": 34.45,
+        "lng": 113.03
+      }
+    ],
+    "source": "《史记·秦本纪》：秦将摎东出函谷先拔韩阳城、负黍，继北向进捣洛阳西周王城"
+  },
+  {
+    "eventId": "evt_0319",
+    "baton": "15B",
+    "leadGeneralId": "qin_mengao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "宜阳",
+        "lat": 34.51,
+        "lng": 112.18
+      }
+    ],
+    "source": "《史记·秦本纪》：秦庄襄王遣相国吕不韦、将军蒙骜自关中东出函谷关，循洛水经宜阳攻灭东周巩邑"
+  },
+  {
+    "eventId": "evt_0320",
+    "baton": "15B",
+    "leadGeneralId": "qin_mengao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "野王",
+        "lat": 35.09,
+        "lng": 112.95
+      },
+      {
+        "name": "长子",
+        "lat": 36.12,
+        "lng": 112.88
+      },
+      {
+        "name": "榆次",
+        "lat": 37.68,
+        "lng": 112.73
+      }
+    ],
+    "source": "《史记·秦本纪》：蒙骜定三川后北渡河内野王，越上党长子入榆次，合围晋阳略定太原"
+  },
+  {
+    "eventId": "evt_0321",
+    "baton": "15B",
+    "leadGeneralId": "shang_weiwuji",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_bianliang",
+    "route": [
+      {
+        "name": "荥阳",
+        "lat": 34.79,
+        "lng": 113.38
+      },
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      }
+    ],
+    "source": "《史记·魏公子列传》：信陵君魏无忌统五国联军自大梁西进，经荥阳、洛阳败蒙骜于河外并追叩函谷关"
+  },
+  {
+    "eventId": "evt_0324",
+    "baton": "15B",
+    "leadGeneralId": "wuzhou_limu",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_wuzhousai",
+    "route": [],
+    "source": "《史记·廉颇蔺相如列传》：李牧驻守雁门善无塞垣蓄锐诱敌，于塞外近郊设奇阵大破匈奴十余万骑"
+  },
+  {
+    "eventId": "evt_0328",
+    "baton": "15B",
+    "leadGeneralId": "chunshen_huangxie",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_shouxian",
+    "route": [
+      {
+        "name": "陈城",
+        "lat": 33.63,
+        "lng": 114.7
+      },
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      }
+    ],
+    "source": "《史记·春申君列传》：春申君黄歇自楚新都寿春统五国合纵军，经陈城、洛阳绕函谷进逼咸阳东翼蕞城"
+  },
+  {
+    "eventId": "evt_0333",
+    "baton": "15B",
+    "leadGeneralId": "qin_hengyi",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "河内",
+        "lat": 35.09,
+        "lng": 112.95
+      },
+      {
+        "name": "山阳",
+        "lat": 35.24,
+        "lng": 113.24
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：桓齮率秦军东出函谷经河内、山阳渡河突入赵南境，连拔邺与安阳九城"
+  },
+  {
+    "eventId": "evt_0335",
+    "baton": "15B",
+    "leadGeneralId": "qin_hengyi",
+    "role": "attacker",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "《史记·秦始皇本纪》：桓齮驻屯邺城就近北渡漳水攻平阳、武城，斩赵将扈辄"
+  },
+  {
+    "eventId": "evt_0336",
+    "baton": "15B",
+    "leadGeneralId": "wuzhou_limu",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_wuzhousai",
+    "route": [
+      {
+        "name": "雁门关",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "孟县",
+        "lat": 38.09,
+        "lng": 113.41
+      }
+    ],
+    "source": "《史记·廉颇蔺相如列传》：李牧奉赵王急诏自代雁门善无统北边精骑南越句注、太行西陉，驰驻宜安肥下破桓齮"
+  },
+  {
+    "eventId": "evt_0337",
+    "baton": "15B",
+    "leadGeneralId": "wuzhou_limu",
+    "role": "defender",
+    "action": "keep",
+    "from": null,
+    "route": [],
+    "source": "《史记·廉颇蔺相如列传》：肥之战翌年春秦军再犯番吾，李牧自宜安防区就近移师灵寿番吾迎击却敌"
+  },
+  {
+    "eventId": "evt_0338",
+    "baton": "16",
+    "leadGeneralId": "qin_teng",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "颍阳",
+        "lat": 34.12,
+        "lng": 113.06
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：秦内史腾驻守南阳三川，自洛阳南渡汝颍经颍阳疾扑韩都新郑虏韩王安"
+  },
+  {
+    "eventId": "evt_0340",
+    "baton": "16",
+    "leadGeneralId": "ruo_wangjian",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "晋阳",
+        "lat": 37.87,
+        "lng": 112.55
+      },
+      {
+        "name": "井陉",
+        "lat": 38.04,
+        "lng": 114.14
+      }
+    ],
+    "source": "《史记·白起王翦列传》：王翦将上地兵北经太原晋阳东下井陉，会合河内秦军合围攻克赵都邯郸"
+  },
+  {
+    "eventId": "evt_0342",
+    "baton": "16",
+    "leadGeneralId": "ruo_wangjian",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "中山",
+        "lat": 38.47,
+        "lng": 115.06
+      },
+      {
+        "name": "高阳",
+        "lat": 38.69,
+        "lng": 115.78
+      },
+      {
+        "name": "易水",
+        "lat": 39.28,
+        "lng": 115.68
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：王翦灭赵后屯兵中山，北经高阳破燕代军于易水之西，乘胜进围燕都蓟城"
+  },
+  {
+    "eventId": "evt_0343",
+    "baton": "16",
+    "leadGeneralId": "qin_wangben",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "荥阳",
+        "lat": 34.79,
+        "lng": 113.38
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：秦将王贲自关中东出函谷至荥阳，引黄河鸿沟水灌魏都大梁破城"
+  },
+  {
+    "eventId": "evt_0344",
+    "baton": "16",
+    "leadGeneralId": "gen_li_xin",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "武关",
+        "lat": 33.74,
+        "lng": 110.32
+      },
+      {
+        "name": "平舆",
+        "lat": 32.98,
+        "lng": 114.63
+      },
+      {
+        "name": "鄢郢",
+        "lat": 31.72,
+        "lng": 112.26
+      }
+    ],
+    "source": "《史记·白起王翦列传》：李信出武关略平舆，西破鄢郢后引军东还会蒙恬于城父，遭楚帅项燕衔尾三日夜奇袭大败"
+  },
+  {
+    "eventId": "evt_0345",
+    "baton": "16",
+    "leadGeneralId": "ruo_wangjian",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "武关",
+        "lat": 33.74,
+        "lng": 110.32
+      },
+      {
+        "name": "陈城",
+        "lat": 33.63,
+        "lng": 114.7
+      },
+      {
+        "name": "平舆",
+        "lat": 32.98,
+        "lng": 114.63
+      }
+    ],
+    "source": "《史记·白起王翦列传》：王翦统六十万秦师自咸阳南出武关，经陈城屯平舆坚壁疲敌，追击东撤楚军至蕲南大破之"
+  },
+  {
+    "eventId": "evt_0346",
+    "baton": "16",
+    "leadGeneralId": "ruo_wangjian",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "涡口",
+        "lat": 33.15,
+        "lng": 116.8
+      }
+    ],
+    "source": "《史记·白起王翦列传》：王翦自蕲南顺涡水南下渡淮，合围楚都寿春虏楚王负刍"
+  },
+  {
+    "eventId": "evt_0348",
+    "baton": "16",
+    "leadGeneralId": "qin_wangben",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_beijing",
+    "route": [
+      {
+        "name": "无终",
+        "lat": 39.95,
+        "lng": 117.4
+      },
+      {
+        "name": "临渝关",
+        "lat": 40,
+        "lng": 119.75
+      },
+      {
+        "name": "徒河",
+        "lat": 41.12,
+        "lng": 121.14
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：王贲与李信自燕蓟东出无终、临渝关，循辽西走廊经徒河渡辽水攻拔襄平"
+  },
+  {
+    "eventId": "evt_0349",
+    "baton": "16",
+    "leadGeneralId": "qin_wangben",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "无终",
+        "lat": 39.95,
+        "lng": 117.4
+      },
+      {
+        "name": "平原津",
+        "lat": 37.16,
+        "lng": 116.43
+      },
+      {
+        "name": "历下",
+        "lat": 36.67,
+        "lng": 117.02
+      }
+    ],
+    "source": "《史记·秦始皇本纪》：王贲平辽东代北后移屯燕南，自无终经平原津、历下避齐西界守军南下直入临淄"
+  },
+  {
+    "eventId": "evt_0352",
+    "baton": "17",
+    "leadGeneralId": "bfe3_14",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_ying",
+    "route": [
+      {
+        "name": "巴陵",
+        "lat": 29.37,
+        "lng": 113.09
+      },
+      {
+        "name": "临湘",
+        "lat": 28.2,
+        "lng": 112.97
+      },
+      {
+        "name": "泉陵",
+        "lat": 26.23,
+        "lng": 111.59
+      }
+    ],
+    "source": "《淮南子·人间训》；《史记·平津侯主父列传》：秦尉屠睢统楼船之士自荆楚南浮湘水，经巴陵、临湘、泉陵入越城岭"
+  },
+  {
+    "eventId": "evt_0357",
+    "baton": "17",
+    "leadGeneralId": "baiyang_mengtian",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_fushi",
+    "route": [
+      {
+        "name": "榆中",
+        "lat": 35.85,
+        "lng": 104.11
+      },
+      {
+        "name": "富平",
+        "lat": 38.05,
+        "lng": 106.25
+      },
+      {
+        "name": "朔方",
+        "lat": 40.3,
+        "lng": 107
+      }
+    ],
+    "source": "《史记·蒙恬列传》：蒙恬统三十万军自上郡肤施北出，收河南地经富平、朔方渡黄河进逼阴山高阙"
+  },
+  {
+    "eventId": "evt_0359",
+    "baton": "17",
+    "leadGeneralId": "nanyue_zhaotuo",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_lingqu",
+    "route": [
+      {
+        "name": "苍梧",
+        "lat": 23.48,
+        "lng": 111.3
+      },
+      {
+        "name": "四会",
+        "lat": 23.35,
+        "lng": 112.68
+      }
+    ],
+    "source": "《史记·南越列传》：史禄凿通灵渠运饷，任嚣与赵佗统秦师自始安灵渠下漓水，经苍梧、四会顺流攻定番禺"
+  },
+  {
+    "eventId": "evt_0365",
+    "baton": "17",
+    "leadGeneralId": "zhangchu_chensheng",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_xucheng",
+    "route": [
+      {
+        "name": "谯县",
+        "lat": 33.88,
+        "lng": 115.77
+      },
+      {
+        "name": "苦县",
+        "lat": 33.88,
+        "lng": 115.42
+      }
+    ],
+    "source": "《史记·陈涉世家》：陈胜吴广于蕲县大泽乡起兵攻下铚、酂，西取谯县与苦县，汇聚车骑进拔陈县"
+  },
+  {
+    "eventId": "evt_0366",
+    "baton": "18",
+    "leadGeneralId": "wazhai_zhanghan",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_changan",
+    "route": [],
+    "source": "《史记·秦始皇本纪》《陈涉世家》：周文孤军逼咸阳东郊戏水，秦少府章邯发骊山徒就近于戏水迎破之"
+  },
+  {
+    "eventId": "evt_0367",
+    "baton": "18",
+    "leadGeneralId": "wazhai_zhanghan",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陈县",
+        "lat": 33.63,
+        "lng": 114.7
+      },
+      {
+        "name": "濮阳",
+        "lat": 35.76,
+        "lng": 115.03
+      }
+    ],
+    "source": "《史记·项羽本纪》：章邯自戏水出函谷至渑池破周文，捣陈县后北战濮阳，衔枚夜袭定陶破杀项梁"
+  },
+  {
+    "eventId": "evt_0368",
+    "baton": "18",
+    "leadGeneralId": "xichu_xiangyu",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_pengcheng",
+    "route": [
+      {
+        "name": "安阳",
+        "lat": 34.92,
+        "lng": 116.03
+      },
+      {
+        "name": "汤阴",
+        "lat": 35.92,
+        "lng": 114.35
+      },
+      {
+        "name": "漳水津",
+        "lat": 36.75,
+        "lng": 114.85
+      }
+    ],
+    "source": "《史记·项羽本纪》：项羽随宋义自彭城北救赵，行至楚魏安阳斩宋义夺帅印，北越汤阴渡漳水破釜沉舟救巨鹿"
+  },
+  {
+    "eventId": "evt_0371",
+    "baton": "18",
+    "leadGeneralId": "han_d_liubang",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_hanzhong",
+    "route": [
+      {
+        "name": "沔阳",
+        "lat": 33.15,
+        "lng": 106.67
+      },
+      {
+        "name": "河池",
+        "lat": 33.85,
+        "lng": 106.25
+      }
+    ],
+    "source": "《史记·高祖本纪》《曹相国世家》：汉王刘邦自南郑西经沔阳、河池潜出秦岭北口，奇袭陈仓大破章邯"
+  },
+  {
+    "eventId": "evt_0372",
+    "baton": "18",
+    "leadGeneralId": "xichu_xiangyu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ju",
+    "route": [
+      {
+        "name": "鲁县",
+        "lat": 35.6,
+        "lng": 116.99
+      },
+      {
+        "name": "胡陵",
+        "lat": 34.78,
+        "lng": 116.65
+      }
+    ],
+    "source": "《史记·项羽本纪》：项羽闻汉入彭城，留诸将击齐，自率精兵三万自城阳南从鲁出胡陵绕西晨击汉军于彭城"
+  },
+  {
+    "eventId": "evt_0373",
+    "baton": "18",
+    "leadGeneralId": "xianyu_hanxin",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_eyu",
+    "route": [
+      {
+        "name": "武安",
+        "lat": 36.69,
+        "lng": 114.05
+      },
+      {
+        "name": "沙河",
+        "lat": 36.99,
+        "lng": 114.3
+      }
+    ],
+    "source": "《史记·淮阴侯列传》：韩信破代擒夏说于阏与后，收精兵东逾太行北进井陉口背水破赵"
+  },
+  {
+    "eventId": "evt_0374",
+    "baton": "18",
+    "leadGeneralId": "xianyu_hanxin",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "修武",
+        "lat": 35.26,
+        "lng": 113.43
+      },
+      {
+        "name": "平原津",
+        "lat": 37.16,
+        "lng": 116.43
+      },
+      {
+        "name": "临淄",
+        "lat": 36.88,
+        "lng": 118.43
+      }
+    ],
+    "source": "《史记·淮阴侯列传》：韩信定赵后南驻修武分兵助汉，复东渡平原津袭破临淄，追齐楚联军至高密潍水"
+  },
+  {
+    "eventId": "evt_0375",
+    "baton": "18",
+    "leadGeneralId": "han_d_liubang",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_huojia",
+    "route": [
+      {
+        "name": "武陟津",
+        "lat": 35.02,
+        "lng": 113.4
+      }
+    ],
+    "source": "《史记·高祖本纪》《项羽本纪》：刘邦自修武整军南渡黄河逼成皋，乘大司马曹咎半渡汜水击破之"
+  },
+  {
+    "eventId": "evt_0377",
+    "baton": "18",
+    "leadGeneralId": "xianyu_hanxin",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_linzi",
+    "route": [
+      {
+        "name": "泰山南麓",
+        "lat": 35.8,
+        "lng": 117.15
+      },
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      }
+    ],
+    "source": "《史记·高祖本纪》《淮阴侯列传》：齐王韩信应刘邦封地之约，统齐军自临淄南越鲁境经彭城会师垓下合围项羽"
+  },
+  {
+    "eventId": "evt_0378",
+    "baton": "18",
+    "leadGeneralId": "xiongnu_maodun",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_toumancheng",
+    "route": [
+      {
+        "name": "云中",
+        "lat": 40.27,
+        "lng": 111.14
+      },
+      {
+        "name": "善无",
+        "lat": 40,
+        "lng": 112.42
+      }
+    ],
+    "source": "《史记·匈奴列传》《韩信卢绾列传》：冒顿单于统控弦精骑自阴山头曼城南下，经云中、善无合围韩王信于马邑"
+  },
+  {
+    "eventId": "evt_0380",
+    "baton": "18",
+    "leadGeneralId": "han_d_liubang",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_taiyuan",
+    "route": [
+      {
+        "name": "广武",
+        "lat": 39.13,
+        "lng": 112.83
+      },
+      {
+        "name": "马邑",
+        "lat": 39.38,
+        "lng": 112.43
+      }
+    ],
+    "source": "《史记·高祖本纪》《匈奴列传》：刘邦亲征自晋阳北越句注山广武，经马邑冒寒追敌至平城白登山受围"
+  },
+  {
+    "eventId": "evt_0381",
+    "baton": "19",
+    "leadGeneralId": "han_d_liubang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_datong",
+    "route": [
+      {
+        "name": "马邑",
+        "lat": 39.38,
+        "lng": 112.43
+      },
+      {
+        "name": "晋阳",
+        "lat": 37.87,
+        "lng": 112.55
+      },
+      {
+        "name": "井陉",
+        "lat": 38.04,
+        "lng": 114.14
+      }
+    ],
+    "source": "《史记·高祖本纪》：高祖自平城白登南还，经马邑、晋阳东出井陉过赵，攻讨韩王信余寇王黄等于东垣"
+  },
+  {
+    "eventId": "evt_0384",
+    "baton": "19",
+    "leadGeneralId": "han_d_liubang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      }
+    ],
+    "source": "《史记·高祖本纪》《陈豨列传》：陈豨反代地，刘邦自长安兼程经洛阳、邺城驰抵邯郸督师破之（剔除终点重复与越界点）"
+  },
+  {
+    "eventId": "evt_0385",
+    "baton": "19",
+    "leadGeneralId": "yangshao_zhoubo",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "蒲反",
+        "lat": 34.82,
+        "lng": 110.35
+      },
+      {
+        "name": "晋阳",
+        "lat": 37.87,
+        "lng": 112.55
+      },
+      {
+        "name": "楼烦",
+        "lat": 38.67,
+        "lng": 111.78
+      },
+      {
+        "name": "马邑",
+        "lat": 39.38,
+        "lng": 112.43
+      }
+    ],
+    "source": "《史记·绛侯周勃世家》：太尉周勃自关中渡河入太原晋阳，北经楼烦、马邑攻拔代北参合屠城斩韩王信（修正原南北倒置顺序）"
+  },
+  {
+    "eventId": "evt_0386",
+    "baton": "19",
+    "leadGeneralId": "han_d_liubang",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "睢阳",
+        "lat": 34.41,
+        "lng": 115.66
+      }
+    ],
+    "source": "《史记·高祖本纪》《黥布列传》：淮南王英布举兵东向，刘邦抱病自长安经洛阳、睢阳进至蕲西会甄迎破英布"
+  },
+  {
+    "eventId": "evt_0387",
+    "baton": "19",
+    "leadGeneralId": "yangshao_zhoubo",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "邯郸",
+        "lat": 36.61,
+        "lng": 114.49
+      },
+      {
+        "name": "蓟城",
+        "lat": 39.9,
+        "lng": 116.41
+      }
+    ],
+    "source": "《史记·绛侯周勃世家》：燕王卢绾叛，周勃代樊哙统军自长安经洛阳、邯郸抵蓟城，北破卢绾军于上兰、沮阳"
+  },
+  {
+    "eventId": "evt_0392",
+    "baton": "20",
+    "leadGeneralId": "sailiugu_antiaoke",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_kalisituosi",
+    "route": [
+      {
+        "name": "底比斯",
+        "lat": 38.32,
+        "lng": 23.31
+      },
+      {
+        "name": "埃拉特亚",
+        "lat": 38.63,
+        "lng": 22.77
+      }
+    ],
+    "source": "李维XXXVI.11–16；阿庇安《叙利亚战争》17：安条克三世冬驻优卑亚卡尔基斯，开春经维奥蒂亚与埃拉特亚退扼温泉关（剔除原误填之罗马军阿波罗尼亚进攻路线）"
+  },
+  {
+    "eventId": "evt_0393",
+    "baton": "20",
+    "leadGeneralId": "sailiugu_antiaoke",
+    "role": "defender",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "哈尔基斯",
+        "lat": 38.46,
+        "lng": 23.6
+      },
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      }
+    ],
+    "source": "李维XXXVI.21、XXXVII.37：温泉关败后安条克三世自优卑亚哈尔基斯登舰东渡以弗所，聚诸省大军进屯吕底亚马格尼西亚迎战"
+  },
+  {
+    "eventId": "evt_0394",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_1",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yifusuo",
+    "route": [
+      {
+        "name": "阿帕米亚",
+        "lat": 38.07,
+        "lng": 30.17
+      },
+      {
+        "name": "辛纳达",
+        "lat": 38.54,
+        "lng": 30.55
+      }
+    ],
+    "source": "李维XXXVIII.12–18：罗马执政官曼利乌斯·武尔索自以弗所东进，经弗里吉亚阿帕米亚与辛纳达直扑加拉太奥林匹斯山"
+  },
+  {
+    "eventId": "evt_0395",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_1",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿帕米亚",
+        "lat": 38.07,
+        "lng": 30.17
+      },
+      {
+        "name": "阿比多斯",
+        "lat": 40.2,
+        "lng": 26.41
+      },
+      {
+        "name": "利西马其亚",
+        "lat": 40.55,
+        "lng": 26.75
+      }
+    ],
+    "source": "李维XXXVIII.37–41：曼利乌斯于阿帕米亚缔约后班师，经阿比多斯渡海峡过利西马其亚，入色雷斯库普塞拉林谷遇伏"
+  },
+  {
+    "eventId": "evt_0402",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_59",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_tarraco",
+    "route": [
+      {
+        "name": "伊莱尔达",
+        "lat": 41.62,
+        "lng": 0.62
+      },
+      {
+        "name": "孔特雷比亚",
+        "lat": 41.15,
+        "lng": -1.03
+      }
+    ],
+    "source": "李维XL.30–32：近西班牙总督弗拉库斯自塔拉科向内陆进军，穿越埃布罗河谷进驻卡尔佩塔尼亚埃布拉城外诱破凯尔特伊比利亚联军"
+  },
+  {
+    "eventId": "evt_0403",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_59",
+    "role": "defender",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "孔特雷比亚",
+        "lat": 41.15,
+        "lng": -1.03
+      }
+    ],
+    "source": "李维XL.33–39：弗拉库斯自埃布拉攻克孔特雷比亚后引满役兵员东归塔拉科，途经曼利亚努斯山隘遭伏反胜"
+  },
+  {
+    "eventId": "evt_0404",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_shouling",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_tarraco",
+    "route": [
+      {
+        "name": "蒙达",
+        "lat": 41.2,
+        "lng": -1.55
+      },
+      {
+        "name": "克尔蒂马",
+        "lat": 41.35,
+        "lng": -1.8
+      },
+      {
+        "name": "阿尔克",
+        "lat": 41.55,
+        "lng": -2.1
+      }
+    ],
+    "source": "李维XL.47–50：提比略·格拉古自塔拉科西进埃布罗上游高原，连克蒙达、克尔蒂马与阿尔克，进逼孔普莱加受降"
+  },
+  {
+    "eventId": "evt_0411",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_63",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_dyrrachium",
+    "route": [
+      {
+        "name": "阿波罗尼亚",
+        "lat": 40.72,
+        "lng": 19.47
+      },
+      {
+        "name": "贡菲",
+        "lat": 39.46,
+        "lng": 21.69
+      }
+    ],
+    "source": "李维XLII.55–58：罗马执政官克拉苏自亚得里亚海岸阿波罗尼亚登陆，翻越阿塔马尼亚群山抵色萨利贡菲，东进拉里萨北郊卡利尼库斯迎战"
+  },
+  {
+    "eventId": "evt_0413",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_shouling",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_prilep",
+    "route": [],
+    "source": "李维XLIII.18–19：马其顿王珀尔修斯冒隆冬突袭伊利里亚乌斯卡纳要塞，罗马守军就地凭塞拒守"
+  },
+  {
+    "eventId": "evt_0414",
+    "baton": "21A",
+    "leadGeneralId": "luoma_gongheguo_gen_64",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoma",
+    "route": [
+      {
+        "name": "布林迪西",
+        "lat": 40.63,
+        "lng": 17.94
+      },
+      {
+        "name": "德尔斐",
+        "lat": 38.48,
+        "lng": 22.5
+      },
+      {
+        "name": "赫拉克利乌姆",
+        "lat": 40,
+        "lng": 22.59
+      },
+      {
+        "name": "皮提翁",
+        "lat": 40.06,
+        "lng": 22.22
+      }
+    ],
+    "source": "普鲁塔克《埃米利乌斯·保卢斯传》15–16：罗马军自意大利经布林迪西与德尔斐北上，纳西卡率精兵自赫拉克利乌姆绕皮提翁山隘包抄皮德纳"
+  },
+  {
+    "eventId": "evt_0431",
+    "baton": "21B",
+    "leadGeneralId": "luoma_gongheguo_gen_65",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": "city_tarraco",
+    "route": [
+      {
+        "name": "塞格达",
+        "lat": 41.33,
+        "lng": -1.56
+      },
+      {
+        "name": "奥基利斯",
+        "lat": 41.13,
+        "lng": -2.43
+      }
+    ],
+    "source": "阿庇安《伊比利亚战争》45–47：执政官诺比利奥尔自塔拉科溯哈隆河攻塞格达，置军资于奥基利斯后北趋努曼提亚"
+  },
+  {
+    "eventId": "evt_0432",
+    "baton": "21B",
+    "leadGeneralId": "luoma_gongheguo_gen_67",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_tarraco",
+    "route": [
+      {
+        "name": "伊莱尔达",
+        "lat": 41.62,
+        "lng": 0.62
+      },
+      {
+        "name": "塞尔萨",
+        "lat": 41.37,
+        "lng": -0.42
+      }
+    ],
+    "source": "阿庇安《伊比利亚战争》48：执政官马塞卢斯自塔拉科经伊莱尔达、塞尔萨溯埃布罗河入哈隆河谷，迫降奥基利斯与内尔托布里加"
+  },
+  {
+    "eventId": "evt_0433",
+    "baton": "21B",
+    "leadGeneralId": "luoma_gongheguo_gen_3",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_cordoba",
+    "route": [
+      {
+        "name": "塔古斯津",
+        "lat": 39.96,
+        "lng": -4.83
+      },
+      {
+        "name": "考卡",
+        "lat": 41.22,
+        "lng": -4.52
+      }
+    ],
+    "source": "阿庇安《伊比利亚战争》51–54：西庇阿·埃米利安努斯随卢库卢斯自贝提卡北上渡塔古斯河，屠考卡城后北围因泰尔卡蒂亚"
+  },
+  {
+    "eventId": "evt_0434",
+    "baton": "21B",
+    "leadGeneralId": "numidia_gen_69",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_cirta",
+    "route": [
+      {
+        "name": "锡卡",
+        "lat": 36.18,
+        "lng": 8.71
+      }
+    ],
+    "source": "阿庇安《阿非利加战争》70–73：努米底亚老王马西尼萨自王都奇尔塔东越边境经锡卡进围大平原奥罗斯科帕"
+  },
+  {
+    "eventId": "evt_0437",
+    "baton": "21B",
+    "leadGeneralId": "bfe_vetilius",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_cordoba",
+    "route": [
+      {
+        "name": "伊利帕",
+        "lat": 37.52,
+        "lng": -5.98
+      }
+    ],
+    "source": "阿庇安《伊比利亚战争》61–63：远西班牙法务官维特里乌斯率新军自贝提斯河谷科尔多瓦经伊利帕南追维里阿图斯，误入特里博拉峡谷覆没"
+  },
+  {
+    "eventId": "evt_0438",
+    "baton": "21B",
+    "leadGeneralId": "luoma_gongheguo_gen_3",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoma",
+    "route": [
+      {
+        "name": "利利拜乌姆",
+        "lat": 37.8,
+        "lng": 12.43
+      },
+      {
+        "name": "乌提卡",
+        "lat": 37.06,
+        "lng": 10.06
+      }
+    ],
+    "source": "阿庇安《阿非利加战争》75、112–127：西庇阿·埃米利安努斯自罗马经西西里利利拜乌姆航抵北非乌提卡大营，水陆锁死迦太基破城"
+  },
+  {
+    "eventId": "evt_0436",
+    "baton": "22",
+    "leadGeneralId": "ansxi_gen_4",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_nisa",
+    "route": [
+      {
+        "name": "赫卡托姆皮洛斯",
+        "lat": 36.15,
+        "lng": 54.38
+      },
+      {
+        "name": "雷伊",
+        "lat": 35.59,
+        "lng": 51.44
+      }
+    ],
+    "source": "查士丁XLI.6；摩西《亚美尼亚史》：安息王米特拉达梯一世自帕提亚尼萨西出赫卡托姆皮洛斯与雷伊，进克米底夏都埃克巴坦那"
+  },
+  {
+    "eventId": "evt_0443",
+    "baton": "22",
+    "leadGeneralId": "ansxi_gen_4",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "呼勒万",
+        "lat": 34.46,
+        "lng": 45.86
+      }
+    ],
+    "source": "查士丁XLI.6；巴比伦天文日记：安息王米特拉达梯一世克埃克巴坦那后西下扎格罗斯门户呼勒万，进占塞琉西亚与巴比伦"
+  },
+  {
+    "eventId": "evt_0444",
+    "baton": "22",
+    "leadGeneralId": "ansxi_gen_4",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_nisa",
+    "route": [
+      {
+        "name": "赫卡托姆皮洛斯",
+        "lat": 36.15,
+        "lng": 54.38
+      },
+      {
+        "name": "埃克巴坦那",
+        "lat": 34.8,
+        "lng": 48.51
+      }
+    ],
+    "source": "查士丁XXXVI.1、XXXVIII.9：米特拉达梯一世自东方平塞种战场兼程经赫卡托姆皮洛斯与埃克巴坦那回师西南，生俘东侵之德米特里二世（剔除原误填之塞琉古军安条克路线）"
+  },
+  {
+    "eventId": "evt_0456",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_juyongguan",
+    "route": [
+      {
+        "name": "上谷",
+        "lat": 40.38,
+        "lng": 115.8
+      },
+      {
+        "name": "兴和塞",
+        "lat": 41.25,
+        "lng": 113.85
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：车骑将军卫青自上谷居庸出塞，北穿瀚海奇袭匈奴祭天圣地茏城"
+  },
+  {
+    "eventId": "evt_0457",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_wuzhousai",
+    "route": [],
+    "source": "《史记·卫将军骠骑列传》：卫青率三万骑自雁门善无出塞，就近迎破南侵雁门塞外之匈奴骑兵"
+  },
+  {
+    "eventId": "evt_0458",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yunzhongcheng",
+    "route": [
+      {
+        "name": "五原",
+        "lat": 40.75,
+        "lng": 108.65
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：卫青自云中君子津循黄河大几北岸西击，经五原进抵高阙合围白羊楼烦王（剔除终点重复与战后陇西点）"
+  },
+  {
+    "eventId": "evt_0459",
+    "baton": "23",
+    "leadGeneralId": "xiongnu_yizhixie",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_toumancheng",
+    "route": [
+      {
+        "name": "涿邪山",
+        "lat": 44.52,
+        "lng": 101.45
+      }
+    ],
+    "source": "《史记·匈奴列传》：军臣单于卒，左谷蠡王伊稚斜自南境封地北越涿邪山进扑漠北单于庭，击败太子于单自立"
+  },
+  {
+    "eventId": "evt_0461",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_chilechuan",
+    "route": [
+      {
+        "name": "鸡鹿塞",
+        "lat": 41.25,
+        "lng": 108.85
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：卫青统三万骑与诸将自朔方九原出鸡鹿塞，衔枚夜围高阙塞外右贤王庭"
+  },
+  {
+    "eventId": "evt_0462",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_shengle",
+    "route": [],
+    "source": "《史记·卫将军骠骑列传》：大将军卫青统六将军十余万骑自定襄盛乐出塞百余里迎战伊稚斜单于"
+  },
+  {
+    "eventId": "evt_0464",
+    "baton": "23",
+    "leadGeneralId": "suzhou_huoqubing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "陇西",
+        "lat": 35,
+        "lng": 104.63
+      },
+      {
+        "name": "乌戾山",
+        "lat": 36.45,
+        "lng": 103.5
+      },
+      {
+        "name": "姑臧",
+        "lat": 37.93,
+        "lng": 102.64
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：骠骑将军霍去病自长安西出陇西，渡河越乌戾山与姑臧，转战六日直捣焉支山"
+  },
+  {
+    "eventId": "evt_0465",
+    "baton": "23",
+    "leadGeneralId": "suzhou_huoqubing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_fangqu",
+    "route": [
+      {
+        "name": "灵州津",
+        "lat": 38.05,
+        "lng": 106.25
+      },
+      {
+        "name": "居延泽",
+        "lat": 41.89,
+        "lng": 101.04
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：霍去病夏出北地方渠，北渡黄河经灵州孤军深入居延泽，折西南奇袭祁连山北麓浑邪休屠部"
+  },
+  {
+    "eventId": "evt_0466",
+    "baton": "23",
+    "leadGeneralId": "li_lx_d_liguang",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_wuzhong",
+    "route": [
+      {
+        "name": "卢龙塞",
+        "lat": 40.42,
+        "lng": 118.35
+      }
+    ],
+    "source": "《史记·李将军列传》：郎中令李广率四千骑自右北平无终北出卢龙塞，独当匈奴左贤王四万骑合围"
+  },
+  {
+    "eventId": "evt_0467",
+    "baton": "23",
+    "leadGeneralId": "shuofang_weiqing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_shengle",
+    "route": [
+      {
+        "name": "二连盐池",
+        "lat": 43.65,
+        "lng": 111.98
+      },
+      {
+        "name": "涿邪北漠",
+        "lat": 45.5,
+        "lng": 106.5
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：大将军卫青自定襄盛乐北绝大漠千余里，西折直抵阗颜山赵信城大破伊稚斜单于"
+  },
+  {
+    "eventId": "evt_0468",
+    "baton": "23",
+    "leadGeneralId": "suzhou_huoqubing",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_daixian",
+    "route": [
+      {
+        "name": "平舒",
+        "lat": 40.32,
+        "lng": 114.25
+      },
+      {
+        "name": "离侯山",
+        "lat": 44.82,
+        "lng": 106.8
+      },
+      {
+        "name": "弓闾河",
+        "lat": 47.26,
+        "lng": 110.72
+      }
+    ],
+    "source": "《史记·卫将军骠骑列传》：霍去病自代郡北出平舒塞，绝大漠越离侯山、弓闾河直抵狼居胥山与瀚海（剔除终点狼居胥山及战后姑衍山）"
+  },
+  {
+    "eventId": "evt_0476",
+    "baton": "24A",
+    "leadGeneralId": "han_lubode",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_guiyang",
+    "route": [
+      {
+        "name": "湟水",
+        "lat": 24.7,
+        "lng": 112.73
+      },
+      {
+        "name": "浈阳峡",
+        "lat": 24.18,
+        "lng": 113.42
+      }
+    ],
+    "source": "《史记·南越列传》：伏波将军路博德自桂阳下湟水，过浈阳峡疾趋石门，会楼船将军杨仆攻拔番禺（剔除楼船支线横浦关）"
+  },
+  {
+    "eventId": "evt_0477",
+    "baton": "24A",
+    "leadGeneralId": "han_d_gen_78",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_kuaiji",
+    "route": [
+      {
+        "name": "句章",
+        "lat": 29.99,
+        "lng": 121.43
+      },
+      {
+        "name": "东瓯海口",
+        "lat": 28,
+        "lng": 120.7
+      }
+    ],
+    "source": "《史记·东越列传》：横海将军韩说自会稽句章浮海南下直指东冶，平灭东越（剔除杨仆武林与王温舒梅岭他路支线）"
+  },
+  {
+    "eventId": "evt_0480",
+    "baton": "24A",
+    "leadGeneralId": "han_d_gen_81",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_liaoyang",
+    "route": [
+      {
+        "name": "西安平",
+        "lat": 40.15,
+        "lng": 124.36
+      },
+      {
+        "name": "萨水",
+        "lat": 39.62,
+        "lng": 125.55
+      }
+    ],
+    "source": "《史记·朝鲜列传》：左将军荀彘自辽东出塞，经鸭绿口西安平、萨水南进浿水围攻王险城（剔除双线拼接之杨仆水路齐地洌口支线）"
+  },
+  {
+    "eventId": "evt_0479",
+    "baton": "24B",
+    "leadGeneralId": "han_d_gen_74",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_dunhuang",
+    "route": [
+      {
+        "name": "玉门关",
+        "lat": 40.35,
+        "lng": 93.86
+      },
+      {
+        "name": "盐泽",
+        "lat": 40.5,
+        "lng": 91.2
+      }
+    ],
+    "source": "《史记·大宛列传》：从票侯赵破奴率属国精骑自敦煌出玉门关，掠盐泽奇袭攻破楼兰扜泥城"
+  },
+  {
+    "eventId": "evt_0484",
+    "baton": "24B",
+    "leadGeneralId": "bfe3_36",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_dunhuang",
+    "route": [
+      {
+        "name": "盐泽",
+        "lat": 40.5,
+        "lng": 90.5
+      },
+      {
+        "name": "轮台",
+        "lat": 41.77,
+        "lng": 84.25
+      },
+      {
+        "name": "疏勒",
+        "lat": 39.48,
+        "lng": 76
+      }
+    ],
+    "source": "《史记·大宛列传》：贰师将军李广利首征大宛，自敦煌经盐泽、车师轮台与葱岭疏勒道饥疲抵郁成受挫"
+  },
+  {
+    "eventId": "evt_0487",
+    "baton": "24B",
+    "leadGeneralId": "bfe3_36",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_dunhuang",
+    "route": [
+      {
+        "name": "轮台",
+        "lat": 41.77,
+        "lng": 84.25
+      },
+      {
+        "name": "龟兹",
+        "lat": 41.72,
+        "lng": 82.93
+      },
+      {
+        "name": "郁成",
+        "lat": 40.53,
+        "lng": 72.79
+      }
+    ],
+    "source": "《史记·大宛列传》：李广利再率六万大军自敦煌西出，屠轮台慑西域，越葱岭经郁成合围大宛都城贵山城"
+  },
+  {
+    "eventId": "evt_0490",
+    "baton": "24B",
+    "leadGeneralId": "bfe3_36",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_jiuquan",
+    "route": [
+      {
+        "name": "玉门塞",
+        "lat": 40.35,
+        "lng": 96.8
+      },
+      {
+        "name": "伊吾",
+        "lat": 42.3,
+        "lng": 94.5
+      }
+    ],
+    "source": "《汉书·武帝纪》《赵充国传》：贰师将军李广利统三万骑自酒泉北出塞外，经伊吾进击东天山右贤王庭"
+  },
+  {
+    "eventId": "evt_0491",
+    "baton": "24B",
+    "leadGeneralId": "ningkou_liling",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_juyansai",
+    "route": [
+      {
+        "name": "居延泽",
+        "lat": 42.35,
+        "lng": 101.15
+      },
+      {
+        "name": "涿邪西麓",
+        "lat": 44.1,
+        "lng": 100.95
+      }
+    ],
+    "source": "《汉书·李陵传》：骑都尉李陵率五千荆楚步卒自居延遮虏障北行三十日，经居延泽深入浚稽山迎战且鞮侯单于（剔除终点重复及战后南撤节点）"
+  },
+  {
+    "eventId": "evt_0493",
+    "baton": "24B",
+    "leadGeneralId": "bfe3_36",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_linrong",
+    "route": [
+      {
+        "name": "鸡鹿塞",
+        "lat": 41.25,
+        "lng": 106.95
+      },
+      {
+        "name": "受降城",
+        "lat": 42.1,
+        "lng": 107.1
+      },
+      {
+        "name": "涿邪东漠",
+        "lat": 45.2,
+        "lng": 106.9
+      }
+    ],
+    "source": "《汉书·武帝纪》《匈奴传》：李广利统骑六万步七万自朔方临戎出塞，经受降城绝漠北进余吾水"
+  },
+  {
+    "eventId": "evt_0500",
+    "baton": "24B",
+    "leadGeneralId": "bfe3_36",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": "city_chilechuan",
+    "route": [
+      {
+        "name": "高阙",
+        "lat": 41.2,
+        "lng": 107.17
+      },
+      {
+        "name": "夫羊句山",
+        "lat": 43.2,
+        "lng": 105.5
+      }
+    ],
+    "source": "《汉书·匈奴传》：李广利自五原九原出高阙塞，先破左大将等于夫羊句山，乘胜北渡郅居水至燕然山"
+  },
+  {
+    "eventId": "evt_0520",
+    "baton": "25",
+    "leadGeneralId": "han_d_gen_84",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_chigucheng",
+    "route": [
+      {
+        "name": "伊列水",
+        "lat": 43.9,
+        "lng": 81.3
+      },
+      {
+        "name": "乌贪訾离",
+        "lat": 44.15,
+        "lng": 86.85
+      }
+    ],
+    "source": "《汉书·常惠传》《西域传》：校尉常惠驻乌孙赤谷城，督乌孙五万骑东越伊列水与天山北麓乌贪訾离境，远袭匈奴右谷蠡王庭"
+  },
+  {
+    "eventId": "evt_0524",
+    "baton": "25",
+    "leadGeneralId": "bfe3_45",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luntai",
+    "route": [
+      {
+        "name": "渠犁",
+        "lat": 41.6,
+        "lng": 86.15
+      },
+      {
+        "name": "焉耆",
+        "lat": 42.06,
+        "lng": 86.56
+      }
+    ],
+    "source": "《汉书·郑吉传》：侍郎郑吉自轮台、渠犁发西域诸国兵与田卒，东经焉耆逾天山南道攻破车师交河城（剔除终点重复）"
+  },
+  {
+    "eventId": "evt_0526",
+    "baton": "25",
+    "leadGeneralId": "han_d_gen_88",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ruoqiang",
+    "route": [
+      {
+        "name": "伊循城",
+        "lat": 39.02,
+        "lng": 88.16
+      },
+      {
+        "name": "且末",
+        "lat": 38.14,
+        "lng": 85.53
+      },
+      {
+        "name": "于阗",
+        "lat": 37.1,
+        "lng": 79.92
+      }
+    ],
+    "source": "《汉书·冯奉世传》：卫候冯奉世自鄯善伊循西行，发且末、于阗等南道诸国兵合围攻拔莎车城"
+  },
+  {
+    "eventId": "evt_0530",
+    "baton": "25",
+    "leadGeneralId": "lanzhou_zhaochongguo",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "天水",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "狄道",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "source": "《汉书·赵充国传》：后将军赵充国年逾七旬自长安驰赴金城前线，经天水、陇西狄道抵黄河渡口夜渡破先零羌"
+  },
+  {
+    "eventId": "evt_0538",
+    "baton": "26",
+    "leadGeneralId": "delan_sulun",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_bageda",
+    "route": [
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      },
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      }
+    ],
+    "source": "普鲁塔克《克拉苏传》21–23；卡西乌斯·狄奥XL.16：安息统帅苏伦率万骑弓骑与具装铁骑自塞琉西亚北上，经辛加拉、尼西比斯迎截克拉苏于卡莱"
+  },
+  {
+    "eventId": "evt_0543",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_genoa",
+    "route": [
+      {
+        "name": "马西利亚",
+        "lat": 43.3,
+        "lng": 5.37
+      },
+      {
+        "name": "纳博讷",
+        "lat": 43.18,
+        "lng": 3
+      },
+      {
+        "name": "比利牛斯隘",
+        "lat": 42.46,
+        "lng": 2.86
+      }
+    ],
+    "source": "恺撒《内战记》I.34–37：恺撒自北意大利西赴马西利亚留兵围城，经纳博讷越比利牛斯山隘进逼近西班牙伊莱尔达"
+  },
+  {
+    "eventId": "evt_0544",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_brundisium",
+    "route": [
+      {
+        "name": "帕莱斯特",
+        "lat": 40.16,
+        "lng": 19.6
+      },
+      {
+        "name": "奥里库姆",
+        "lat": 40.32,
+        "lng": 19.43
+      },
+      {
+        "name": "阿波罗尼亚",
+        "lat": 40.72,
+        "lng": 19.47
+      }
+    ],
+    "source": "恺撒《内战记》III.6–13：恺撒自布林迪西冬夜强渡亚得里亚海登帕莱斯特，连收奥里库姆与阿波罗尼亚北趋迪拉基乌姆"
+  },
+  {
+    "eventId": "evt_0545",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿波罗尼亚",
+        "lat": 40.72,
+        "lng": 19.47
+      },
+      {
+        "name": "埃吉尼乌姆",
+        "lat": 39.71,
+        "lng": 21.63
+      },
+      {
+        "name": "贡菲",
+        "lat": 39.46,
+        "lng": 21.69
+      }
+    ],
+    "source": "恺撒《内战记》III.78–81：恺撒自迪拉基乌姆南退阿波罗尼亚，翻品都斯山抵埃吉尼乌姆会师，拔贡菲入法萨卢斯（剔除庞培坎达维亚守方路线）"
+  },
+  {
+    "eventId": "evt_0546",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "defender",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿比多斯",
+        "lat": 40.2,
+        "lng": 26.41
+      },
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      },
+      {
+        "name": "罗得",
+        "lat": 36.44,
+        "lng": 28.22
+      }
+    ],
+    "source": "恺撒《内战记》III.101–106：法萨卢斯战后恺撒追庞培渡阿比多斯海峡，经以弗所、罗得乘战舰直抵亚历山大里亚港湾"
+  },
+  {
+    "eventId": "evt_0547",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿卡",
+        "lat": 32.92,
+        "lng": 35.07
+      },
+      {
+        "name": "安条克",
+        "lat": 36.2,
+        "lng": 36.16
+      },
+      {
+        "name": "塔尔苏斯",
+        "lat": 36.92,
+        "lng": 34.9
+      },
+      {
+        "name": "马扎卡",
+        "lat": 38.72,
+        "lng": 35.48
+      }
+    ],
+    "source": "《亚历山大里亚战记》65–72：恺撒定埃及后自海路抵阿卡，经安条克、奇里乞亚塔尔苏斯与卡帕多细亚马扎卡兼程疾扑本都泽拉"
+  },
+  {
+    "eventId": "evt_0548",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_lilybaeum",
+    "route": [
+      {
+        "name": "哈德鲁梅图姆",
+        "lat": 35.83,
+        "lng": 10.64
+      },
+      {
+        "name": "鲁斯皮纳",
+        "lat": 35.76,
+        "lng": 10.82
+      }
+    ],
+    "source": "《阿非利加战记》1–9、79：恺撒集军西西里利利拜乌姆扬帆渡海，于哈德鲁梅图姆与鲁斯皮纳立营，南攻塔普苏斯"
+  },
+  {
+    "eventId": "evt_0549",
+    "baton": "27A",
+    "leadGeneralId": "gen_julius_caesar",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoma",
+    "route": [
+      {
+        "name": "马西利亚",
+        "lat": 43.3,
+        "lng": 5.37
+      },
+      {
+        "name": "塔拉科",
+        "lat": 41.12,
+        "lng": 1.25
+      },
+      {
+        "name": "萨贡托",
+        "lat": 39.68,
+        "lng": -0.28
+      },
+      {
+        "name": "奥布尔科",
+        "lat": 37.88,
+        "lng": -4.19
+      }
+    ],
+    "source": "斯特拉波III.4.9；《西班牙战记》2–27：恺撒自罗马二十七日疾驰经高卢、塔拉科、萨贡托抵奥布尔科，南进穆达原野决战"
+  },
+  {
+    "eventId": "evt_0550",
+    "baton": "27A",
+    "leadGeneralId": "luoma_gongheguo_gen_101",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_cordoba",
+    "route": [],
+    "source": "卡西乌斯·狄奥XLV.10；阿庇安《内战史》IV.84：远西班牙总督波利奥驻守贝提斯河谷科尔多瓦，就近迎战南下的塞克斯图斯·庞培"
+  },
+  {
+    "eventId": "evt_0551",
+    "baton": "27A",
+    "leadGeneralId": "antonians_gen_5",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_verona",
+    "route": [],
+    "source": "阿庇安《内战史》III.49–72：穆蒂纳攻防战按守城战规制，马克·安东尼就地系于山南高卢据点维罗纳"
+  },
+  {
+    "eventId": "evt_0552",
+    "baton": "27A",
+    "leadGeneralId": "antonians_gen_5",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_brundisium",
+    "route": [
+      {
+        "name": "迪拉基乌姆",
+        "lat": 41.32,
+        "lng": 19.46
+      },
+      {
+        "name": "利克尼都斯",
+        "lat": 41.12,
+        "lng": 20.8
+      },
+      {
+        "name": "安菲波利斯",
+        "lat": 40.82,
+        "lng": 23.85
+      }
+    ],
+    "source": "阿庇安《内战史》IV.86–106：安东尼与屋大维自布林迪西渡海抵迪拉基乌姆，循埃格那提亚大道经利克尼都斯、安菲波利斯趋腓立比（剔除共和派撒狄路线）"
+  },
+  {
+    "eventId": "evt_0553",
+    "baton": "27A",
+    "leadGeneralId": "antonians_gen_105",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_florence",
+    "route": [],
+    "source": "阿庇安《内战史》V.32–49：佩鲁西亚围城战卢基乌斯·安东尼乌斯为被围守方，就地固守据点"
+  },
+  {
+    "eventId": "evt_0554",
+    "baton": "27B",
+    "leadGeneralId": "luoma_gongheguo_gen_108",
+    "role": "defender",
+    "action": "fix_from",
+    "from": "city_antiejiya",
+    "route": [],
+    "source": "卡西乌斯·狄奥XLVIII.24–25：叙利亚总督萨克萨驻防安条克与阿帕梅亚防区，就近迎拒帕科鲁斯与拉比埃努斯"
+  },
+  {
+    "eventId": "evt_0555",
+    "baton": "27B",
+    "leadGeneralId": "luoma_gongheguo_gen_6",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_yadian",
+    "route": [
+      {
+        "name": "以弗所",
+        "lat": 37.94,
+        "lng": 27.34
+      },
+      {
+        "name": "伊科尼乌姆",
+        "lat": 37.87,
+        "lng": 32.48
+      }
+    ],
+    "source": "卡西乌斯·狄奥XLVIII.39–40：安东尼自雅典遣文蒂迪乌斯渡爱琴海登以弗所，横穿小亚细亚经伊科尼乌姆抢据托罗斯山奇里乞亚山门"
+  },
+  {
+    "eventId": "evt_0556",
+    "baton": "27B",
+    "leadGeneralId": "luoma_gongheguo_gen_6",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": null,
+    "route": [
+      {
+        "name": "阿马努斯山隘",
+        "lat": 36.92,
+        "lng": 36.56
+      }
+    ],
+    "source": "卡西乌斯·狄奥XLIX.19–20：文蒂迪乌斯自奇里乞亚越阿马努斯山隘收复北叙利亚，驻营金达鲁斯山诱歼渡河来犯之帕科鲁斯（剔除敌军泽乌格马渡口）"
+  },
+  {
+    "eventId": "evt_0557",
+    "baton": "27B",
+    "leadGeneralId": "luoma_gongheguo_gen_110",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_antiejiya",
+    "route": [
+      {
+        "name": "推罗",
+        "lat": 33.27,
+        "lng": 35.2
+      },
+      {
+        "name": "撒马利亚",
+        "lat": 32.28,
+        "lng": 35.19
+      }
+    ],
+    "source": "约瑟夫斯《犹太古史》XIV.447–469：叙利亚总督索西乌斯奉安东尼命自安条克南下，经推罗至撒马利亚会合希律，合围耶路撒冷"
+  },
+  {
+    "eventId": "evt_0558",
+    "baton": "27B",
+    "leadGeneralId": "antonians_gen_5",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_antiejiya",
+    "route": [
+      {
+        "name": "泽乌格马",
+        "lat": 37.06,
+        "lng": 37.87
+      },
+      {
+        "name": "卡拉纳",
+        "lat": 39.91,
+        "lng": 41.27
+      },
+      {
+        "name": "阿尔塔克萨塔",
+        "lat": 39.89,
+        "lng": 44.58
+      }
+    ],
+    "source": "普鲁塔克《安东尼传》37–38：安东尼统十万大军自安条克渡泽乌格马，北绕亚美尼亚卡拉纳与阿尔塔克萨塔南袭米底都城普拉斯帕"
+  },
+  {
+    "eventId": "evt_0560",
+    "baton": "28",
+    "leadGeneralId": "quli_chentang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luntai",
+    "route": [
+      {
+        "name": "温宿",
+        "lat": 41.27,
+        "lng": 80.24
+      },
+      {
+        "name": "赤谷城",
+        "lat": 42.15,
+        "lng": 77.59
+      },
+      {
+        "name": "阗池",
+        "lat": 42.45,
+        "lng": 76.2
+      },
+      {
+        "name": "碎叶川",
+        "lat": 42.85,
+        "lng": 74.6
+      }
+    ],
+    "source": "《汉书·陈汤传》：西域副校尉陈汤偕甘延寿自轮台发兵，亲统北道三校经温宿、乌孙赤谷城、阗池与碎叶川直捣康居郅支城（剔除南道偏师支线）"
+  },
+  {
+    "eventId": "evt_0565",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_8",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_brundisium",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "托里涅",
+        "lat": 39.5,
+        "lng": 20.26
+      }
+    ],
+    "source": "卡西乌斯·狄奥L.11–12：屋大维统主力舰队自布林迪西横渡伊奥尼亚海收科孚与托里涅，南压安布拉基亚湾阿克兴（剔除阿格里帕伯罗奔尼撒偏师点）"
+  },
+  {
+    "eventId": "evt_0566",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_8",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_antiejiya",
+    "route": [
+      {
+        "name": "阿卡",
+        "lat": 32.92,
+        "lng": 35.07
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "佩卢西姆",
+        "lat": 31.04,
+        "lng": 32.54
+      }
+    ],
+    "source": "卡西乌斯·狄奥LI.5–9：屋大维自叙利亚安条克循黎凡特海岸经阿卡、加沙攻拔佩卢西姆，东郊逼降亚历山大里亚（剔除西路加卢斯昔兰尼支线）"
+  },
+  {
+    "eventId": "evt_0567",
+    "baton": "29A",
+    "leadGeneralId": "luoma_gongheguo_gen_116",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_salonica",
+    "route": [
+      {
+        "name": "塞尔迪卡",
+        "lat": 42.7,
+        "lng": 23.32
+      }
+    ],
+    "source": "卡西乌斯·狄奥LI.23–24：马其顿总督小克拉苏自佩拉循斯特里蒙河谷北越塞尔迪卡山口，入默西亚基亚布鲁斯河斩巴斯塔奈王"
+  },
+  {
+    "eventId": "evt_0568",
+    "baton": "29A",
+    "leadGeneralId": "luoma_gongheguo_gen_118",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_nabone",
+    "route": [
+      {
+        "name": "托洛萨",
+        "lat": 43.6,
+        "lng": 1.44
+      }
+    ],
+    "source": "提布鲁斯I.7；阿庇安《内战史》IV.38：执政官梅萨拉自纳博讷经阿基坦门户托洛萨西进加龙河与阿杜尔河流域平叛"
+  },
+  {
+    "eventId": "evt_0575",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_119",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_verona",
+    "route": [
+      {
+        "name": "布里克西亚",
+        "lat": 45.54,
+        "lng": 10.22
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.20：执政官西利乌斯·涅尔瓦自山南高卢维罗纳经布里克西亚北入阿尔卑斯卡莫尼卡河谷清剿"
+  },
+  {
+    "eventId": "evt_0576",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_9",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_bordeaux",
+    "route": [
+      {
+        "name": "庞帕埃洛",
+        "lat": 42.81,
+        "lng": -1.64
+      },
+      {
+        "name": "塞吉萨马",
+        "lat": 42.49,
+        "lng": -4.01
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.11；弗罗鲁斯II.33：阿格里帕自高卢阿基坦南越西比利牛斯庞帕埃洛至塞吉萨马大营，进剿坎塔布里亚山寨"
+  },
+  {
+    "eventId": "evt_0579",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_121",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_teerier",
+    "route": [
+      {
+        "name": "波恩",
+        "lat": 50.73,
+        "lng": 7.1
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.20；维莱伊乌斯II.97：高卢总督洛利乌斯率第五军团自特里尔东北进抵下莱茵西岸迎截西坎布里骑兵失利"
+  },
+  {
+    "eventId": "evt_0580",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_122",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_verona",
+    "route": [
+      {
+        "name": "特里登图姆",
+        "lat": 46.07,
+        "lng": 11.12
+      },
+      {
+        "name": "庞斯德鲁西",
+        "lat": 46.5,
+        "lng": 11.35
+      },
+      {
+        "name": "布雷诺隘",
+        "lat": 47,
+        "lng": 11.51
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.22；斯特拉波IV.6.9：德鲁苏斯自维罗纳北上特里登图姆与庞斯德鲁西，翻布雷诺山隘征服雷蒂亚（剥离脏前缀）"
+  },
+  {
+    "eventId": "evt_0582",
+    "baton": "29A",
+    "leadGeneralId": "luoma_diguo_gen_9",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_gradeci",
+    "route": [],
+    "source": "卡西乌斯·狄奥LIV.28：阿格里帕冒冬寒进驻萨瓦河上游要冲，逼压萨瓦河与德拉瓦河间潘诺尼亚诸部归服"
+  },
+  {
+    "eventId": "evt_0583",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_122",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_vetera",
+    "route": [
+      {
+        "name": "奈梅亨",
+        "lat": 51.84,
+        "lng": 5.86
+      },
+      {
+        "name": "弗莱沃湖",
+        "lat": 52.6,
+        "lng": 5.4
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.32；塔西佗《编年史》II.8：德鲁苏斯自维特拉大营北经巴塔维奈梅亨与弗莱沃湖水道，出北海攻埃姆斯河口"
+  },
+  {
+    "eventId": "evt_0584",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_122",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_vetera",
+    "route": [
+      {
+        "name": "威悉河",
+        "lat": 51.78,
+        "lng": 9.38
+      }
+    ],
+    "source": "卡西乌斯·狄奥LIV.33：德鲁苏斯自维特拉渡莱茵河深入威悉河西岸，回师途中于利珀河谷阿尔巴洛山隘突围破敌"
+  },
+  {
+    "eventId": "evt_0586",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_122",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_meiyinci",
+    "route": [
+      {
+        "name": "赫德尔恩海姆",
+        "lat": 50.15,
+        "lng": 8.64
+      },
+      {
+        "name": "威悉津",
+        "lat": 51.42,
+        "lng": 9.65
+      }
+    ],
+    "source": "卡西乌斯·狄奥LV.1：德鲁苏斯自美因茨渡莱茵河穿卡蒂境越威悉津，长驱直抵易北河西岸立碑"
+  },
+  {
+    "eventId": "evt_0592",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_123",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_vetera",
+    "route": [
+      {
+        "name": "阿利索",
+        "lat": 51.67,
+        "lng": 8.34
+      }
+    ],
+    "source": "维莱伊乌斯II.104：莱茵统帅维尼基乌斯自维特拉循利珀河军道经阿利索要塞深入威悉河西原平叛"
+  },
+  {
+    "eventId": "evt_0596",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_124",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_belgrade",
+    "route": [],
+    "source": "卡西乌斯·狄奥LV.29：潘诺尼亚大起义布雷乌人猛攻西尔米乌姆，默西亚总督凯基纳据城固守（守城战就地防守）"
+  },
+  {
+    "eventId": "evt_0597",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_124",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": null,
+    "route": [
+      {
+        "name": "巴西亚奈",
+        "lat": 44.98,
+        "lng": 19.35
+      }
+    ],
+    "source": "卡西乌斯·狄奥LV.32；维莱伊乌斯II.112：凯基纳与西尔瓦努斯合五军团自西尔米乌姆循萨瓦河西上赴援，于沃尔凯亚沼泽苦战破敌（剔除脏词与战后终点）"
+  },
+  {
+    "eventId": "evt_0599",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_10",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_gradeci",
+    "route": [
+      {
+        "name": "锡斯基亚",
+        "lat": 45.48,
+        "lng": 16.37
+      },
+      {
+        "name": "萨洛纳",
+        "lat": 43.54,
+        "lng": 16.48
+      }
+    ],
+    "source": "卡西乌斯·狄奥LVI.12–14：提比略自潘诺尼亚锡斯基亚南下达尔马提亚首府萨洛纳，进山合围巴托据守之安德特里乌姆山城"
+  },
+  {
+    "eventId": "evt_0600",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_127",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_vetera",
+    "route": [
+      {
+        "name": "阿利索",
+        "lat": 51.67,
+        "lng": 8.34
+      },
+      {
+        "name": "威悉河",
+        "lat": 52.29,
+        "lng": 8.92
+      }
+    ],
+    "source": "卡西乌斯·狄奥LVI.18–21；维莱伊乌斯II.117：瓦鲁斯统三军团自维特拉经阿利索东驻威悉河，秋返途中被阿米尼乌斯诱入卡尔克里泽覆没"
+  },
+  {
+    "eventId": "evt_0606",
+    "baton": "29B",
+    "leadGeneralId": "luoma_diguo_gen_11",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_vetera",
+    "route": [
+      {
+        "name": "弗莱沃湖",
+        "lat": 52.6,
+        "lng": 5.4
+      },
+      {
+        "name": "埃姆斯河",
+        "lat": 53.15,
+        "lng": 7.3
+      }
+    ],
+    "source": "塔西佗《编年史》II.6–16：日耳曼尼库斯统千舰自维特拉入水道越弗莱沃湖登埃姆斯河，东进威悉河东岸伊迪斯塔维索平原决战"
+  },
+  {
+    "eventId": "evt_0610",
+    "baton": "30",
+    "leadGeneralId": "chimei_fanchong",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ju",
+    "route": [],
+    "source": "《后汉书·刘盆子传》：樊崇起兵于琅邪莒县就地聚众抗击新莽州郡兵（战场与据点均在莒城，剔除折返泰山冗余点）"
+  },
+  {
+    "eventId": "evt_0613",
+    "baton": "30",
+    "leadGeneralId": "lvlin_gen_128",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_dangyang",
+    "route": [
+      {
+        "name": "绿林山",
+        "lat": 31.05,
+        "lng": 112.98
+      }
+    ],
+    "source": "《后汉书·刘玄传》：王匡、王凤自当阳绿林山弃险东出，疾趋江夏云杜迎破新莽荆州牧精兵（剔除起终点重复与战后安陆）"
+  },
+  {
+    "eventId": "evt_0614",
+    "baton": "30",
+    "leadGeneralId": "chimei_fanchong",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ju",
+    "route": [
+      {
+        "name": "泰山",
+        "lat": 36.19,
+        "lng": 117.13
+      }
+    ],
+    "source": "《后汉书·刘盆子传》：樊崇统赤眉主力自莒地转战泰山，西入东平无盐与成昌大破王莽太师王匡、更始将军廉丹（剔除守方长安脏前缀）"
+  },
+  {
+    "eventId": "evt_0615",
+    "baton": "30",
+    "leadGeneralId": "lulin_liuxiu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yancheng2",
+    "route": [
+      {
+        "name": "定陵",
+        "lat": 33.52,
+        "lng": 113.78
+      }
+    ],
+    "source": "《后汉书·光武帝纪上》：刘秀夜出昆阳赴定陵、郾城调集诸营精兵，自郾城经定陵驰还昆水畔击溃王寻王邑（剔除双线拼接与王邑守方长安洛阳路线）"
+  },
+  {
+    "eventId": "evt_0616",
+    "baton": "31A",
+    "leadGeneralId": "lulin_liuxiu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xindu",
+    "route": [
+      {
+        "name": "宋子",
+        "lat": 37.75,
+        "lng": 114.92
+      },
+      {
+        "name": "巨鹿",
+        "lat": 37.22,
+        "lng": 115.03
+      },
+      {
+        "name": "广阿",
+        "lat": 37.02,
+        "lng": 114.73
+      }
+    ],
+    "source": "《后汉书·光武帝纪上》：刘秀自河北根本信都发兵，拔宋子、围巨鹿、会渔阳上谷突骑于广阿，南下攻拔王郎都城邯郸"
+  },
+  {
+    "eventId": "evt_0617",
+    "baton": "31A",
+    "leadGeneralId": "lulin_liuxiu",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": null,
+    "route": [
+      {
+        "name": "巨鹿",
+        "lat": 37.22,
+        "lng": 115.04
+      },
+      {
+        "name": "鄡县",
+        "lat": 37.85,
+        "lng": 115.2
+      },
+      {
+        "name": "南宫",
+        "lat": 37.36,
+        "lng": 115.39
+      }
+    ],
+    "source": "《后汉书·光武帝纪上》：刘秀克邯郸后北经巨鹿击铜马于鄡县，复追截南走之敌经南宫至清阳、馆陶受降"
+  },
+  {
+    "eventId": "evt_0619",
+    "baton": "31A",
+    "leadGeneralId": "lulin_liuxiu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "鄗南",
+        "lat": 37.48,
+        "lng": 114.7
+      },
+      {
+        "name": "怀县",
+        "lat": 35.1,
+        "lng": 113.4
+      },
+      {
+        "name": "河阳津",
+        "lat": 34.86,
+        "lng": 112.58
+      }
+    ],
+    "source": "《后汉书·光武帝纪上》：刘秀收铜马后于鄗南即帝位，南驻河内怀县督吴汉诸军自河阳孟津渡河合围洛阳迫降朱鲔"
+  },
+  {
+    "eventId": "evt_0620",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_142",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "敖仓",
+        "lat": 34.9,
+        "lng": 113.43
+      },
+      {
+        "name": "襄邑",
+        "lat": 34.43,
+        "lng": 115.07
+      }
+    ],
+    "source": "《后汉书·盖延传》：虎牙大将军盖延自洛阳东出敖仓，破刘永军于襄邑，乘胜进围梁郡都城睢阳（剔除终点睢阳与战后虞县）"
+  },
+  {
+    "eventId": "evt_0621",
+    "baton": "31A",
+    "leadGeneralId": "xiayang_d_dengyu",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "宜阳",
+        "lat": 34.51,
+        "lng": 112.18
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      }
+    ],
+    "source": "《后汉书·邓禹传》《冯异传》：邓禹于关中交防后东还会冯异，自宜阳、渑池西进弘农湖县邀击东归赤眉失利（剔除原误填之赤眉长安华阴路线）"
+  },
+  {
+    "eventId": "evt_0622",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_144",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_hanguguan",
+    "route": [
+      {
+        "name": "回溪",
+        "lat": 34.55,
+        "lng": 111.28
+      }
+    ],
+    "source": "《后汉书·冯异传》：征西大将军冯异自弘农西境收兵保回溪，东向诱击饥疲出关之赤眉军于崤底、渑池（剔除终点渑池崤底宜阳）"
+  },
+  {
+    "eventId": "evt_0623",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_145",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "信都",
+        "lat": 37.55,
+        "lng": 115.57
+      },
+      {
+        "name": "良乡",
+        "lat": 39.73,
+        "lng": 116.14
+      }
+    ],
+    "source": "《后汉书·祭遵传》：征虏将军祭遵奉诏自洛阳北征彭宠，经邺城、信都进屯涿郡良乡，破匈奴援骑并进围渔阳"
+  },
+  {
+    "eventId": "evt_0624",
+    "baton": "31A",
+    "leadGeneralId": "you_gengyan",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "祝阿",
+        "lat": 36.68,
+        "lng": 116.78
+      },
+      {
+        "name": "历下",
+        "lat": 36.67,
+        "lng": 117.02
+      },
+      {
+        "name": "巨里",
+        "lat": 36.73,
+        "lng": 117.65
+      }
+    ],
+    "source": "《后汉书·耿弇传》：建威大将军耿弇自洛阳东渡济水，连拔祝阿、历下与巨里，直逼齐郡临淄大破张步（剔除终点临淄与战后剧县）"
+  },
+  {
+    "eventId": "evt_0625",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_144",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "咸阳",
+        "lat": 34.35,
+        "lng": 108.71
+      },
+      {
+        "name": "云阳",
+        "lat": 34.65,
+        "lng": 108.55
+      }
+    ],
+    "source": "《后汉书·冯异传》：隗嚣毁约遣行巡东取栒邑，冯异自长安潜师经咸阳、云阳倍道抢据栒邑城击破蜀陇联军（剔除耿弇西路汧县陇坻支线）"
+  },
+  {
+    "eventId": "evt_0627",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_150",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "汧县",
+        "lat": 34.67,
+        "lng": 106.87
+      },
+      {
+        "name": "番须口",
+        "lat": 34.82,
+        "lng": 106.63
+      },
+      {
+        "name": "回中道",
+        "lat": 34.92,
+        "lng": 106.32
+      }
+    ],
+    "source": "《后汉书·来歙传》：中郎将来歙自长安西出汧县，经番须口伐山开回中道奇袭占领天水略阳"
+  },
+  {
+    "eventId": "evt_0629",
+    "baton": "31A",
+    "leadGeneralId": "you_gengyan",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "安定",
+        "lat": 35.33,
+        "lng": 107.36
+      },
+      {
+        "name": "高平",
+        "lat": 36,
+        "lng": 106.28
+      },
+      {
+        "name": "略阳",
+        "lat": 35.03,
+        "lng": 105.91
+      }
+    ],
+    "source": "《后汉书·耿弇传》《来歙传》：耿弇随驾自长安北收安定与高平，南会来歙经略阳合围隗纯残部于冀县落门聚"
+  },
+  {
+    "eventId": "evt_0630",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_153",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ying",
+    "route": [
+      {
+        "name": "枝江",
+        "lat": 30.42,
+        "lng": 111.76
+      }
+    ],
+    "source": "《后汉书·岑彭传》：征南大将军岑彭率楼船水师自南郡江陵溯江经枝江，纵火烧毁夷陵荆门浮桥破田戎（剔除终点及战后巫县江州越界点）"
+  },
+  {
+    "eventId": "evt_0631",
+    "baton": "31A",
+    "leadGeneralId": "han_d_gen_156",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yiling",
+    "route": [
+      {
+        "name": "鱼复",
+        "lat": 31.02,
+        "lng": 109.47
+      },
+      {
+        "name": "江州",
+        "lat": 29.56,
+        "lng": 106.55
+      },
+      {
+        "name": "武阳",
+        "lat": 30.18,
+        "lng": 103.85
+      }
+    ],
+    "source": "《后汉书·吴汉传》：大司马吴汉自夷陵溯江入鱼复，过巴郡江州攻克犍为武阳，北进合围成都灭公孙述（剔除近郊重复点广都）"
+  },
+  {
+    "eventId": "evt_0632",
+    "baton": "31B",
+    "leadGeneralId": "li_s_mayuan",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_lintao",
+    "route": [
+      {
+        "name": "西县",
+        "lat": 34.3,
+        "lng": 105.25
+      }
+    ],
+    "source": "《后汉书·马援传》：陇西太守马援统步骑三千自狄道南经陇西西县，深入武都氐道山谷击破参狼羌"
+  },
+  {
+    "eventId": "evt_0634",
+    "baton": "31B",
+    "leadGeneralId": "han_d_gen_158",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_datong",
+    "route": [],
+    "source": "《后汉书·张堪传》：骑都尉张堪领杜茂营兵驻代北平城，就近驰援高柳城北破走匈奴骑兵"
+  },
+  {
+    "eventId": "evt_0637",
+    "baton": "31B",
+    "leadGeneralId": "li_s_mayuan",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_hepu",
+    "route": [
+      {
+        "name": "白藤江口",
+        "lat": 20.92,
+        "lng": 106.78
+      }
+    ],
+    "source": "《后汉书·马援传》：伏波将军马援统楼船军自合浦缘海西进，穿白藤江口入红河三角洲，于浪泊大破征侧（剔除终点浪泊与战后禁溪）"
+  },
+  {
+    "eventId": "evt_0641",
+    "baton": "31B",
+    "leadGeneralId": "li_s_mayuan",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_datong",
+    "route": [],
+    "source": "《后汉书·马援传》：马援率三千骑自代郡平城出高柳塞巡击乌桓，乌桓望风散走"
+  },
+  {
+    "eventId": "evt_0643",
+    "baton": "31B",
+    "leadGeneralId": "bfe_liu_shang",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": "city_ying",
+    "route": [
+      {
+        "name": "孱陵",
+        "lat": 29.95,
+        "lng": 112.35
+      },
+      {
+        "name": "临沅",
+        "lat": 29.03,
+        "lng": 111.69
+      }
+    ],
+    "source": "《后汉书·南蛮传》：武威将军刘尚发南郡水步兵自江陵南过孱陵、武陵临沅，溯沅水深入武溪峡谷遇伏覆没"
+  },
+  {
+    "eventId": "evt_0644",
+    "baton": "31B",
+    "leadGeneralId": "han_d_gen_162",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_wuling",
+    "route": [],
+    "source": "《后汉书·光武帝纪下》《南蛮传》：五溪蛮顺沅水东围武陵治所临沅，汉将李嵩等据守临沅本城待援"
+  },
+  {
+    "eventId": "evt_0645",
+    "baton": "31B",
+    "leadGeneralId": "nan_xiongnu_gen_164",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_chilechuan",
+    "route": [
+      {
+        "name": "鸡鹿塞",
+        "lat": 41.25,
+        "lng": 108.85
+      }
+    ],
+    "source": "《后汉书·南匈奴传》：南单于比自五原塞下遣弟莫将万余骑北出鸡鹿塞，奇袭漠南阴山北原生擒北单于弟薁鞬左贤王"
+  },
+  {
+    "eventId": "evt_0646",
+    "baton": "31B",
+    "leadGeneralId": "li_s_mayuan",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "宛城",
+        "lat": 32.96,
+        "lng": 112.52
+      },
+      {
+        "name": "襄阳",
+        "lat": 32.01,
+        "lng": 112.12
+      },
+      {
+        "name": "临沅",
+        "lat": 29.03,
+        "lng": 111.69
+      }
+    ],
+    "source": "《后汉书·马援传》：马援自洛阳督十二郡募士南经宛城、襄阳抵武陵临沅，采壶头山捷径西进围剿五溪蛮"
+  },
+  {
+    "eventId": "evt_0655",
+    "baton": "32B",
+    "leadGeneralId": "luoma_diguo_gen_12",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_erzurum",
+    "route": [
+      {
+        "name": "阿拉克斯河",
+        "lat": 40.02,
+        "lng": 43.3
+      }
+    ],
+    "source": "塔西佗《编年史》XIII.39–41：罗马东方统帅科尔布罗自卡拉纳大营循阿拉克斯河东进，攻拔亚美尼亚王都阿尔塔克萨塔"
+  },
+  {
+    "eventId": "evt_0657",
+    "baton": "32B",
+    "leadGeneralId": "luoma_diguo_gen_12",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "巴格雷万德",
+        "lat": 39.65,
+        "lng": 43.15
+      },
+      {
+        "name": "塔龙",
+        "lat": 38.73,
+        "lng": 41.5
+      }
+    ],
+    "source": "塔西佗《编年史》XIV.23–24：科尔布罗毁阿尔塔克萨塔后南越巴格雷万德与塔龙山地，迫降亚美尼亚南都提格拉诺塞塔"
+  },
+  {
+    "eventId": "evt_0660",
+    "baton": "32B",
+    "leadGeneralId": "luoma_diguo_gen_168",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_rhandeia",
+    "route": [],
+    "source": "塔西佗《编年史》XV.10–15：派图斯营垒于阿尔萨尼亚斯河畔兰德亚遭安息王沃洛吉斯一世合围（守方守城战就地据守，剔除尼西比斯敌线）"
+  },
+  {
+    "eventId": "evt_0672",
+    "baton": "33A",
+    "leadGeneralId": "pulei_dougu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_jiuquan",
+    "route": [
+      {
+        "name": "玉门关",
+        "lat": 40.35,
+        "lng": 93.86
+      },
+      {
+        "name": "白山",
+        "lat": 42.15,
+        "lng": 94.8
+      }
+    ],
+    "source": "《后汉书·窦融列传附窦固传》：奉车都尉窦固与耿忠率万二千骑自酒泉出玉门关，北越白山击破呼衍王于天山蒲类海"
+  },
+  {
+    "eventId": "evt_0674",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_balikun",
+    "route": [
+      {
+        "name": "伊吾",
+        "lat": 42.8,
+        "lng": 93.5
+      },
+      {
+        "name": "白龙堆",
+        "lat": 40.8,
+        "lng": 91.5
+      }
+    ],
+    "source": "《后汉书·班超传》：假司马班超奉窦固遣自蒲类海伊吾南穿白龙堆瀚海，率三十六吏士夜袭鄯善扜泥城外北匈奴使营"
+  },
+  {
+    "eventId": "evt_0675",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "且末",
+        "lat": 38.14,
+        "lng": 85.53
+      },
+      {
+        "name": "精绝",
+        "lat": 37.9,
+        "lng": 82.8
+      }
+    ],
+    "source": "《后汉书·班超传》：班超定鄯善后奉诏循昆仑北麓南道西行，历且末、精绝抵于阗诛杀匈奴监护使"
+  },
+  {
+    "eventId": "evt_0678",
+    "baton": "33A",
+    "leadGeneralId": "chagatai_genggong",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_bieshibali",
+    "route": [],
+    "source": "《后汉书·耿恭传》：戊校尉耿恭移据天山北麓车师后部疏勒城，引涧水绝境固守抗击北匈奴重围"
+  },
+  {
+    "eventId": "evt_0679",
+    "baton": "33A",
+    "leadGeneralId": "han_d_gen_170",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_jiuquan",
+    "route": [
+      {
+        "name": "敦煌",
+        "lat": 40.14,
+        "lng": 94.66
+      },
+      {
+        "name": "伊吾",
+        "lat": 42.83,
+        "lng": 93.52
+      },
+      {
+        "name": "柳中",
+        "lat": 42.73,
+        "lng": 89.78
+      }
+    ],
+    "source": "《后汉书·耿恭传》：酒泉太守段彭会张掖敦煌兵七千人西出伊吾、柳中，击破车师交河城并越天山迎归耿恭（剔除起点酒泉与回师玉门关）"
+  },
+  {
+    "eventId": "evt_0681",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_shule",
+    "route": [
+      {
+        "name": "巴楚津",
+        "lat": 39.78,
+        "lng": 78.55
+      }
+    ],
+    "source": "《后汉书·班超传》：班超发疏勒、康居、于阗兵万余人自盘橐城循喀什噶尔河东进巴楚津，攻拔姑墨石城"
+  },
+  {
+    "eventId": "evt_0682",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "巴楚津",
+        "lat": 39.78,
+        "lng": 78.55
+      }
+    ],
+    "source": "《后汉书·班超传》：疏勒都尉番辰乘虚叛乱引尉头兵攻疏勒，班超自东线回师盘橐会徐干击破之"
+  },
+  {
+    "eventId": "evt_0687",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": null,
+    "route": [],
+    "source": "《后汉书·班超传》：班超自疏勒盘橐城就近西向五十四里设伏损中城，诱斩诈降之叛王忠"
+  },
+  {
+    "eventId": "evt_0689",
+    "baton": "33A",
+    "leadGeneralId": "xiyuduhu_banchao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "蒲犁东口",
+        "lat": 38.9,
+        "lng": 76.25
+      }
+    ],
+    "source": "《后汉书·班超传》：班超平损中后发于阗诸国兵二万五千人自疏勒南下，鸡鸣奇袭莎车营垒迫降莎车"
+  },
+  {
+    "eventId": "evt_0691",
+    "baton": "33B",
+    "leadGeneralId": "jiluo_d_douxian",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_guanglu",
+    "route": [
+      {
+        "name": "鸡鹿塞",
+        "lat": 42.3,
+        "lng": 106.95
+      },
+      {
+        "name": "涿邪山",
+        "lat": 44.52,
+        "lng": 101.45
+      }
+    ],
+    "source": "《后汉书·窦宪传》：车骑将军窦宪与耿秉自朔方塞出鸡鹿塞，会南单于于涿邪山，横绝大漠大破北单于于稽落山（剔除终点与战后燕然山）"
+  },
+  {
+    "eventId": "evt_0693",
+    "baton": "33B",
+    "leadGeneralId": "han_d_gengkui",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_juyansai",
+    "route": [
+      {
+        "name": "蒲类海",
+        "lat": 43.6,
+        "lng": 93
+      },
+      {
+        "name": "乌孙北塞",
+        "lat": 45.8,
+        "lng": 90.2
+      }
+    ],
+    "source": "《后汉书·窦宪传》：左校尉耿夔率八百精骑自居延塞出塞五千余里，西北越蒲类海直捣阿尔泰金微山北单于王庭"
+  },
+  {
+    "eventId": "evt_0694",
+    "baton": "33B",
+    "leadGeneralId": "han_d_gen_175",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_juyansai",
+    "route": [
+      {
+        "name": "白山北麓",
+        "lat": 42.95,
+        "lng": 95.8
+      }
+    ],
+    "source": "《后汉书·匈奴列传》：护羌校尉任尚与王辅率千骑自居延塞疾驰西北，追击叛遁之北单于弟於除鞬至蒲类海北塞斩之"
+  },
+  {
+    "eventId": "evt_0696",
+    "baton": "33B",
+    "leadGeneralId": "han_d_gen_179",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_chilechuan",
+    "route": [
+      {
+        "name": "鸡鹿塞",
+        "lat": 41.25,
+        "lng": 108.85
+      },
+      {
+        "name": "受降故城",
+        "lat": 42.3,
+        "lng": 106.5
+      }
+    ],
+    "source": "《后汉书·南匈奴传》：行度辽将军朱徽与邓鸿督汉胡精骑自五原九原出鸡鹿塞，北追叛王逢侯至漠南涿邪山"
+  },
+  {
+    "eventId": "evt_0697",
+    "baton": "33B",
+    "leadGeneralId": "han_d_gen_181",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_chilechuan",
+    "route": [
+      {
+        "name": "固阳塞",
+        "lat": 41.08,
+        "lng": 109.92
+      }
+    ],
+    "source": "《后汉书·南匈奴传》：度辽将军庞奋与冯柱自五原九原北出固阳塞，追斩叛逃之右温禺犊王乌居战"
+  },
+  {
+    "eventId": "evt_0699",
+    "baton": "33B",
+    "leadGeneralId": "nan_xiongnu_gen_184",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_eyangling",
+    "route": [
+      {
+        "name": "云中",
+        "lat": 40.27,
+        "lng": 111.14
+      }
+    ],
+    "source": "《后汉书·南匈奴传》：南单于檀自西河美稷北越云中边塞，出击频扰朔方之叛王逢侯"
+  },
+  {
+    "eventId": "evt_0707",
+    "baton": "34A",
+    "leadGeneralId": "luoma_diguo_gen_13",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoma",
+    "route": [
+      {
+        "name": "安科纳",
+        "lat": 43.62,
+        "lng": 13.52
+      },
+      {
+        "name": "西尔米乌姆",
+        "lat": 44.97,
+        "lng": 19.61
+      },
+      {
+        "name": "德罗贝塔",
+        "lat": 44.62,
+        "lng": 22.67
+      },
+      {
+        "name": "塔派",
+        "lat": 45.51,
+        "lng": 22.5
+      }
+    ],
+    "source": "卡西乌斯·狄奥LXVIII.10–14；图拉真纪功柱浮雕：图拉真自安科纳渡海经西尔米乌姆，由德罗贝塔过河破塔派关，合围萨尔米泽杰图萨（剥离跨桥动作词）"
+  },
+  {
+    "eventId": "evt_0715",
+    "baton": "34B",
+    "leadGeneralId": "luoma_diguo_gen_13",
+    "role": "attacker",
+    "action": "keep",
+    "from": "city_antiejiya",
+    "route": [
+      {
+        "name": "梅利特内",
+        "lat": 38.35,
+        "lng": 38.31
+      },
+      {
+        "name": "萨塔拉",
+        "lat": 40.05,
+        "lng": 39.6
+      }
+    ],
+    "source": "卡西乌斯·狄奥LXVIII.19：图拉真自叙利亚安条克北上，经幼发拉底河畔梅利特内与小亚美尼亚萨塔拉进驻埃莱吉亚大营"
+  },
+  {
+    "eventId": "evt_0717",
+    "baton": "34B",
+    "leadGeneralId": "luoma_diguo_gen_13",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      },
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      },
+      {
+        "name": "巴比伦",
+        "lat": 32.54,
+        "lng": 44.42
+      }
+    ],
+    "source": "卡西乌斯·狄奥LXVIII.22–28：图拉真自亚美尼亚南下克尼西比斯与辛加拉，循幼发拉底河抵巴比伦拖船入底格里斯河攻克泰西封（剔除终点塞琉西亚泰西封）"
+  },
+  {
+    "eventId": "evt_0719",
+    "baton": "34B",
+    "leadGeneralId": "luoma_diguo_gen_13",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "萨迈拉",
+        "lat": 34.21,
+        "lng": 43.88
+      }
+    ],
+    "source": "卡西乌斯·狄奥LXVIII.31：图拉真自泰西封沿底格里斯河北返，经萨迈拉折入美索不达米亚荒漠围攻哈特拉"
+  },
+  {
+    "eventId": "evt_0722",
+    "baton": "35A",
+    "leadGeneralId": "yumen_suoban",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_hamiwei",
+    "route": [],
+    "source": "《后汉书·西域传》：长史索班屯驻伊吾卢，北匈奴呼衍王合车师后部来攻，索班就地据屯城死战"
+  },
+  {
+    "eventId": "evt_0726",
+    "baton": "35A",
+    "leadGeneralId": "han_d_gen_14",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_dunhuang",
+    "route": [
+      {
+        "name": "玉门关",
+        "lat": 40.35,
+        "lng": 93.86
+      },
+      {
+        "name": "楼兰",
+        "lat": 40.52,
+        "lng": 89.92
+      },
+      {
+        "name": "焉耆",
+        "lat": 42.06,
+        "lng": 86.56
+      }
+    ],
+    "source": "《后汉书·班勇传》：西域长史班勇自敦煌出玉门关，经楼兰、焉耆进驻龟兹，率姑墨温宿兵北赴伊尔王谷击走北匈奴伊蠡王"
+  },
+  {
+    "eventId": "evt_0727",
+    "baton": "35A",
+    "leadGeneralId": "han_d_gen_14",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": null,
+    "route": [
+      {
+        "name": "焉耆",
+        "lat": 42.06,
+        "lng": 86.56
+      },
+      {
+        "name": "柳中",
+        "lat": 42.73,
+        "lng": 89.78
+      }
+    ],
+    "source": "《后汉书·班勇传》：班勇发龟兹诸国兵自西向东经焉耆屯柳中，北越东天山道攻破车师后王军就于务涂谷"
+  },
+  {
+    "eventId": "evt_0728",
+    "baton": "35A",
+    "leadGeneralId": "han_d_gen_14",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "金满",
+        "lat": 44,
+        "lng": 89.18
+      },
+      {
+        "name": "东且弥",
+        "lat": 43.85,
+        "lng": 90.8
+      }
+    ],
+    "source": "《后汉书·班勇传》：班勇定车师后部后循天山北麓经金满、东且弥东进，于蒲类海西岸大破北匈奴呼衍王"
+  },
+  {
+    "eventId": "evt_0730",
+    "baton": "35A",
+    "leadGeneralId": "han_d_gen_14",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "柳中",
+        "lat": 42.73,
+        "lng": 89.78
+      },
+      {
+        "name": "危须",
+        "lat": 42.26,
+        "lng": 87.28
+      }
+    ],
+    "source": "《后汉书·班勇传》：班勇自蒲类海返柳中整军，发西域诸国四万兵经危须南攻爵离关迫焉耆王元孟出降"
+  },
+  {
+    "eventId": "evt_0739",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_15",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yunwu",
+    "route": [
+      {
+        "name": "枹罕",
+        "lat": 35.58,
+        "lng": 103.21
+      }
+    ],
+    "source": "《后汉书·西羌传》：护羌校尉马续自金城允吾南渡黄河经枹罕，进击陇西临洮闾吾谷大破钟羌良封"
+  },
+  {
+    "eventId": "evt_0744",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_195",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_lingju",
+    "route": [],
+    "source": "《后汉书·西羌传》：烧当羌那离冬袭金城浩亹与令居塞垣，护羌校尉马贤就地据令居塞防拒敌"
+  },
+  {
+    "eventId": "evt_0745",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_15",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yunwu",
+    "route": [],
+    "source": "《后汉书·西羌传》：护羌校尉马续自金城允吾就近溯湟水西进湟中河谷，斩烧当羌首领那离（剔除起点允吾重复）"
+  },
+  {
+    "eventId": "evt_0746",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_15",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_eyangling",
+    "route": [],
+    "source": "《后汉书·南匈奴传》：南匈奴左部句龙王吾斯反叛围攻西河美稷，度辽将军马续就地据美稷塞城守御"
+  },
+  {
+    "eventId": "evt_0747",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_195",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_tianshui",
+    "route": [
+      {
+        "name": "汧源",
+        "lat": 34.89,
+        "lng": 106.86
+      },
+      {
+        "name": "泾阳",
+        "lat": 35.42,
+        "lng": 106.95
+      }
+    ],
+    "source": "《后汉书·西羌传》：征西将军马贤屯汉阳冀城，闻且冻羌寇掠北地，轻兵北越陇山经汧源、泾阳孤军追入射姑山覆没"
+  },
+  {
+    "eventId": "evt_0748",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_201",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_eyangling",
+    "route": [
+      {
+        "name": "善无",
+        "lat": 40,
+        "lng": 112.42
+      }
+    ],
+    "source": "《后汉书·南匈奴传》：中郎将马实自西河美稷东进雁门善无，募刺客斩叛王吾斯并出塞击破乌桓余党"
+  },
+  {
+    "eventId": "evt_0749",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_202",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_yunwu",
+    "route": [
+      {
+        "name": "金城",
+        "lat": 36.06,
+        "lng": 103.77
+      },
+      {
+        "name": "会宁",
+        "lat": 35.69,
+        "lng": 105.05
+      }
+    ],
+    "source": "《后汉书·西羌传》：护羌校尉赵冲自允吾渡黄河经金城、会宁东追叛羌，孤骑深入安定阿阳参狼山谷战死"
+  },
+  {
+    "eventId": "evt_0757",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_16",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_fushi",
+    "route": [
+      {
+        "name": "奢延",
+        "lat": 37.57,
+        "lng": 108.86
+      },
+      {
+        "name": "龟兹塞",
+        "lat": 38.45,
+        "lng": 110.15
+      }
+    ],
+    "source": "《后汉书·张奂传》：安定属国都尉张奂初到上郡，率二百人北经奢延、龟兹塞疾入美稷长城，连战破降左薁鞬台耆"
+  },
+  {
+    "eventId": "evt_0760",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_16",
+    "role": "attacker",
+    "action": "add_route",
+    "from": null,
+    "route": [
+      {
+        "name": "云中",
+        "lat": 40.27,
+        "lng": 111.14
+      }
+    ],
+    "source": "《后汉书·张奂传》：北中郎将张奂驻防美稷，联合东羌经云中北塞迎击鲜卑与叛胡联军"
+  },
+  {
+    "eventId": "evt_0761",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_17",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_yunwu",
+    "route": [
+      {
+        "name": "金城津",
+        "lat": 36.06,
+        "lng": 103.77
+      }
+    ],
+    "source": "《后汉书·段颎传》：护羌校尉段颎率湟中义从羌万二千骑自允吾南过金城津出塞，于罗亭谷迎头痛击烧当八种羌（剔除终点罗亭谷）"
+  },
+  {
+    "eventId": "evt_0762",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_17",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "允吾",
+        "lat": 36.3,
+        "lng": 102.9
+      },
+      {
+        "name": "廓州津",
+        "lat": 36.05,
+        "lng": 102.5
+      }
+    ],
+    "source": "《后汉书·段颎传》：段颎自罗亭旋师允吾整补，复南逾积石雪岭追歼烧何当煎羌（剔除终点积石山与越界点）"
+  },
+  {
+    "eventId": "evt_0769",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_17",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "令居",
+        "lat": 36.73,
+        "lng": 103.26
+      },
+      {
+        "name": "苍松",
+        "lat": 37.22,
+        "lng": 102.95
+      }
+    ],
+    "source": "《后汉书·段颎传》：段颎自河湟北逾乌鞘岭经令居、苍松星夜疾扑武威鸾鸟，击破当煎羌（剔除终点鸾鸟）"
+  },
+  {
+    "eventId": "evt_0770",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_17",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "靖远津",
+        "lat": 36.56,
+        "lng": 104.68
+      },
+      {
+        "name": "海原",
+        "lat": 36.56,
+        "lng": 105.65
+      }
+    ],
+    "source": "《后汉书·段颎传》：破羌将军段颎统万余步骑自武威东渡黄河经海原直趋安定高平逢义山，大破先零东羌"
+  },
+  {
+    "eventId": "evt_0771",
+    "baton": "35B",
+    "leadGeneralId": "han_d_gen_17",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [],
+    "source": "《后汉书·段颎传》：段颎自高平逢义山就近东南追逼六十里，筑木栅长墙合围东羌残部于泾阳凡亭山与射虎谷（剔除终点重复与战后西县）"
+  },
+  {
+    "eventId": "evt_0778",
+    "baton": "35C",
+    "leadGeneralId": "han_d_gen_206",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_anding",
+    "route": [
+      {
+        "name": "灵州",
+        "lat": 38.05,
+        "lng": 106.25
+      }
+    ],
+    "source": "《后汉书·鲜卑传》：北地太守夏育自郡境率休屠各精骑经灵州北上河套南缘，迎头痛击越冰南掠之鲜卑大人"
+  },
+  {
+    "eventId": "evt_0781",
+    "baton": "35C",
+    "leadGeneralId": "han_d_gen_206",
+    "role": "defender",
+    "action": "keep",
+    "from": "city_datong",
+    "route": [
+      {
+        "name": "高柳",
+        "lat": 40.36,
+        "lng": 113.75
+      }
+    ],
+    "source": "《后汉书·鲜卑传》：护乌桓校尉夏育奉诏统东路军自平城经高柳出塞，深入弹汗山南大漠遭檀石槐合围覆没"
+  },
+  {
+    "eventId": "evt_0785",
+    "baton": "35C",
+    "leadGeneralId": "jingzhou_gs_huangfusong",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "轩辕关",
+        "lat": 34.5,
+        "lng": 112.92
+      },
+      {
+        "name": "阳翟",
+        "lat": 34.21,
+        "lng": 113.47
+      }
+    ],
+    "source": "《后汉书·皇甫嵩传》：左中郎将皇甫嵩自洛阳出轩辕关经颍川阳翟驰赴长社，乘夜风纵火大破波才黄巾（剔除终点长社及后续河北另战节点）"
+  },
+  {
+    "eventId": "evt_0786",
+    "baton": "35C",
+    "leadGeneralId": "han_d_gen_212",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xinzheng",
+    "route": [
+      {
+        "name": "叶县",
+        "lat": 33.62,
+        "lng": 113.35
+      },
+      {
+        "name": "鲁阳",
+        "lat": 33.74,
+        "lng": 112.9
+      }
+    ],
+    "source": "《后汉书·朱儁传》：右中郎将朱儁定颍川后合孙坚南下，经鲁阳、叶县进围南阳黄巾韩忠于宛城"
+  },
+  {
+    "eventId": "evt_0787",
+    "baton": "35C",
+    "leadGeneralId": "lushui_dongzhuo",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "槐里",
+        "lat": 34.29,
+        "lng": 108.45
+      }
+    ],
+    "source": "《后汉书·皇甫嵩传》《董卓传》：皇甫嵩与中郎将董卓自长安循渭水西进槐里，于右扶风美阳击破北宫伯玉与韩遂（剔除终点美阳及周慎西路榆中）"
+  },
+  {
+    "eventId": "evt_0788",
+    "baton": "35C",
+    "leadGeneralId": "xianbei_gen_217",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_danhanshan",
+    "route": [
+      {
+        "name": "云中",
+        "lat": 40.27,
+        "lng": 111.14
+      },
+      {
+        "name": "富平",
+        "lat": 38.85,
+        "lng": 107.8
+      }
+    ],
+    "source": "《后汉书·鲜卑传》：檀石槐嗣子和连自弹汗山王庭纵骑西南越云中、河套富平，猛攻北地廉县边塞中流矢毙命"
+  },
+  {
+    "eventId": "evt_0789",
+    "baton": "35C",
+    "leadGeneralId": "han_d_gen_219",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_tianshui",
+    "route": [],
+    "source": "《后汉书·傅燮传》：王国合韩遂马腾进围汉阳郡治冀城，太守傅燮就地据城死战殉国"
+  },
+  {
+    "eventId": "evt_0790",
+    "baton": "35C",
+    "leadGeneralId": "jingzhou_gs_huangfusong",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "郿县",
+        "lat": 34.27,
+        "lng": 107.75
+      }
+    ],
+    "source": "《后汉书·皇甫嵩传》：左将军皇甫嵩督董卓自长安西经郿县驰救陈仓，乘王国久攻疲退之际纵兵大破之"
+  },
+  {
+    "eventId": "evt_0791",
+    "baton": "35C",
+    "leadGeneralId": "xiliangjun_gen_220",
+    "role": "defender",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "陕津",
+        "lat": 34.78,
+        "lng": 111.18
+      },
+      {
+        "name": "安邑",
+        "lat": 35.14,
+        "lng": 110.99
+      }
+    ],
+    "source": "《后汉书·董卓传》：董卓遣女婿中郎将牛辅自洛阳西经陕津北渡黄河，过安邑进击河东襄陵白波军"
+  },
+  {
+    "eventId": "evt_0792",
+    "baton": "35C",
+    "leadGeneralId": "xiliangjun_gen_221",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "成皋",
+        "lat": 34.81,
+        "lng": 113.1
+      }
+    ],
+    "source": "《三国志·武帝纪》：董卓西迁长安，遣中郎将徐荣自洛阳东出成皋，于荥阳汴水设伏击破西进之曹操卫兹军（剔除讨董军酸枣营点）"
+  },
+  {
+    "eventId": "evt_0793",
+    "baton": "36A",
+    "leadGeneralId": "xiliangjun_gen_222",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "广成泽",
+        "lat": 34.3,
+        "lng": 112.68
+      }
+    ],
+    "source": "《后汉书·董卓传》；《三国志·孙破虏传》：董卓遣东郡太守胡轸督吕布自洛阳出大谷经广成泽南拒孙坚，将帅相疑溃于阳人聚（剔除孙坚鲁阳北上进攻路线）"
+  },
+  {
+    "eventId": "evt_0794",
+    "baton": "36A",
+    "leadGeneralId": "hejian_gongsunzan",
+    "role": "defender",
+    "action": "add_route",
+    "from": "city_beijing",
+    "route": [
+      {
+        "name": "河间",
+        "lat": 38.44,
+        "lng": 116.09
+      },
+      {
+        "name": "武垣",
+        "lat": 38.28,
+        "lng": 116.05
+      },
+      {
+        "name": "信都",
+        "lat": 37.55,
+        "lng": 115.57
+      }
+    ],
+    "source": "《三国志·公孙瓒传》：公孙瓒自幽州蓟城倾师南下，经河间、信都进抵巨鹿广宗清河界桥迎战袁绍"
+  },
+  {
+    "eventId": "evt_0795",
+    "baton": "36A",
+    "leadGeneralId": "xiliangjun_gen_223",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_hanguguan",
+    "route": [
+      {
+        "name": "华阴",
+        "lat": 34.57,
+        "lng": 110.09
+      },
+      {
+        "name": "郑县",
+        "lat": 34.5,
+        "lng": 109.77
+      },
+      {
+        "name": "霸陵",
+        "lat": 34.28,
+        "lng": 109.18
+      }
+    ],
+    "source": "《三国志·董卓传》：李傕、郭汜纳贾诩计自陕县函谷关收拢凉州旧部西返，沿途收兵经华阴、郑县、霸陵合围长安"
+  },
+  {
+    "eventId": "evt_0796",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_puyang",
+    "route": [
+      {
+        "name": "范县",
+        "lat": 35.88,
+        "lng": 115.52
+      },
+      {
+        "name": "东阿",
+        "lat": 36.15,
+        "lng": 116.12
+      }
+    ],
+    "source": "《三国志·武帝纪》：东郡太守曹操自濮阳东经范县、东阿迎击青州黄巾主力于寿张至济北（剔除终点寿张与济北）"
+  },
+  {
+    "eventId": "evt_0797",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "鄄城",
+        "lat": 35.56,
+        "lng": 115.51
+      },
+      {
+        "name": "白马",
+        "lat": 35.53,
+        "lng": 114.68
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操自济北移驻鄄城，闻袁术屯封丘，督军经白马南下迎击于封丘匡亭（剔除终点封丘匡亭及战后追至寿春越界点）"
+  },
+  {
+    "eventId": "evt_0799",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xiapi",
+    "route": [
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      },
+      {
+        "name": "亢父",
+        "lat": 35.42,
+        "lng": 116.58
+      },
+      {
+        "name": "鄄城",
+        "lat": 35.56,
+        "lng": 115.51
+      }
+    ],
+    "source": "《三国志·武帝纪》：陈宫迎吕布袭据兖州，正攻徐州郯城的曹操急引军经彭城、亢父回保鄄城，进围吕布于濮阳"
+  },
+  {
+    "eventId": "evt_0800",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "鄄城",
+        "lat": 35.56,
+        "lng": 115.51
+      },
+      {
+        "name": "乘氏",
+        "lat": 35.24,
+        "lng": 115.48
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操自濮阳还军鄄城，复南进乘氏经营济阴，于定陶巨野设伏大破自东缗来攻之吕布（剔除吕布东缗路线及终点重叠）"
+  },
+  {
+    "eventId": "evt_0801",
+    "baton": "36A",
+    "leadGeneralId": "shanyue_sunce",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_shouxian",
+    "route": [
+      {
+        "name": "阜陵",
+        "lat": 31.95,
+        "lng": 118.02
+      },
+      {
+        "name": "横江",
+        "lat": 31.65,
+        "lng": 118.48
+      }
+    ],
+    "source": "《三国志·孙讨逆传》：孙策自寿春东南经阜陵赴历阳，渡江拔横江津后东进丹阳曲阿大破刘繇（剔除终点近郊神亭岭）"
+  },
+  {
+    "eventId": "evt_0804",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_nanyang",
+    "route": [],
+    "source": "《三国志·武帝纪》：张绣听贾诩计于宛城突然夜袭曹营，按守城战规制曹操就地于宛城迎敌"
+  },
+  {
+    "eventId": "evt_0806",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xuchang",
+    "route": [
+      {
+        "name": "睢阳",
+        "lat": 34.41,
+        "lng": 115.66
+      },
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      }
+    ],
+    "source": "《三国志·武帝纪》《吕布传》：曹操偕刘备自许都东征，经梁国睢阳攻拔彭城，进抵下邳决沂泗水灌城擒吕布"
+  },
+  {
+    "eventId": "evt_0807",
+    "baton": "36A",
+    "leadGeneralId": "hejian_gongsunzan",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_fanyang",
+    "route": [],
+    "source": "《三国志·公孙瓒传》：袁绍掘地道火攻易京重楼，公孙瓒作为被围守方就地困守易京"
+  },
+  {
+    "eventId": "evt_0808",
+    "baton": "36A",
+    "leadGeneralId": "shanyue_sunce",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_qianshan",
+    "route": [
+      {
+        "name": "寻阳",
+        "lat": 29.73,
+        "lng": 115.98
+      },
+      {
+        "name": "樊口",
+        "lat": 30.4,
+        "lng": 114.88
+      }
+    ],
+    "source": "《三国志·孙破虏讨逆传》：孙策袭取庐江皖城后溯江经寻阳、樊口西进江夏沙羡，大破黄祖水陆连营"
+  },
+  {
+    "eventId": "evt_0809",
+    "baton": "36A",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_bianliang",
+    "route": [
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "韦城",
+        "lat": 35.36,
+        "lng": 114.52
+      }
+    ],
+    "source": "《三国志·武帝纪》《荀攸传》：曹操自官渡大营北经酸枣声东击西，倍道自韦城疾驰白马斩颜良，复循河南岸西退破文丑（剔除袁军黎阳与起点官渡）"
+  },
+  {
+    "eventId": "evt_0810",
+    "baton": "36A",
+    "leadGeneralId": "bfe3_71",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_zhaoge",
+    "route": [
+      {
+        "name": "黎阳",
+        "lat": 35.67,
+        "lng": 114.55
+      },
+      {
+        "name": "延津",
+        "lat": 35.15,
+        "lng": 114.2
+      },
+      {
+        "name": "阳武",
+        "lat": 35.05,
+        "lng": 114.05
+      }
+    ],
+    "source": "《三国志·袁绍传》《武帝纪》：袁绍统河北十万大军自邺南驻黎阳，渡河经延津越阳武连营压迫官渡（剔除终点官渡）"
+  },
+  {
+    "eventId": "evt_0811",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_xuchang",
+    "route": [
+      {
+        "name": "中牟",
+        "lat": 34.72,
+        "lng": 114.02
+      },
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "白马",
+        "lat": 35.58,
+        "lng": 114.85
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操自许都北出中牟、酸枣、白马扬兵河上，循河东进平丘仓亭击破袁绍军"
+  },
+  {
+    "eventId": "evt_0812",
+    "baton": "36B",
+    "leadGeneralId": "shu_liubei",
+    "role": "attacker",
+    "action": "fix_from",
+    "from": "city_zaoyang",
+    "route": [
+      {
+        "name": "新野",
+        "lat": 32.52,
+        "lng": 112.36
+      }
+    ],
+    "source": "《三国志·先主传》：刘备屯驻荆北新野，自汉北防区经新野北出叶县境，于博望坡设伏火烧夏侯惇追兵"
+  },
+  {
+    "eventId": "evt_0814",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_bianliang",
+    "route": [
+      {
+        "name": "黎阳",
+        "lat": 35.67,
+        "lng": 114.55
+      },
+      {
+        "name": "内黄",
+        "lat": 35.95,
+        "lng": 114.9
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操自河南北渡黎阳，经魏郡内黄进围冀州治所邺城，凿堑决漳水灌城（剔除偏北之邯郸与近郊滏水）"
+  },
+  {
+    "eventId": "evt_0815",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "清河",
+        "lat": 37.05,
+        "lng": 115.68
+      },
+      {
+        "name": "平原",
+        "lat": 37.16,
+        "lng": 116.43
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操克邺城后冒寒北讨袁谭，经清河拔平原，进围勃海治所南皮斩袁谭"
+  },
+  {
+    "eventId": "evt_0816",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "涉县",
+        "lat": 36.56,
+        "lng": 113.67
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操平青冀后旋师邺城，西逾太行涉县山道亲围上党壶关，破走高干"
+  },
+  {
+    "eventId": "evt_0817",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "无终",
+        "lat": 40.04,
+        "lng": 117.4
+      },
+      {
+        "name": "卢龙塞",
+        "lat": 40.42,
+        "lng": 118.35
+      },
+      {
+        "name": "平冈",
+        "lat": 41.05,
+        "lng": 118.85
+      }
+    ],
+    "source": "《三国志·武帝纪》《田畴传》：曹操自上党班师邺城，北出无终用田畴向导堑山堙谷出卢龙塞，经平冈直趋白狼山斩蹋顿（剔除终点白狼山与战后柳城）"
+  },
+  {
+    "eventId": "evt_0818",
+    "baton": "36B",
+    "leadGeneralId": "jiujiang_zhouyu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_gusu",
+    "route": [
+      {
+        "name": "历阳",
+        "lat": 31.72,
+        "lng": 118.36
+      },
+      {
+        "name": "柴桑",
+        "lat": 29.7,
+        "lng": 115.99
+      }
+    ],
+    "source": "《三国志·吴主传》《周瑜传》：周瑜任前部大督随孙权自吴会溯江西进，集结舟师于柴桑后猛扑江夏夏口斩黄祖"
+  },
+  {
+    "eventId": "evt_0819",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xiangyang",
+    "route": [
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      },
+      {
+        "name": "编县",
+        "lat": 31.22,
+        "lng": 112.02
+      }
+    ],
+    "source": "《三国志·武帝纪》《先主传》：曹操至襄阳受刘琮降，简精骑五千自襄阳经宜城、编县一日一夜疾追三百里及刘备于当阳长坂（剔除终点与刘备东奔汉津夏口）"
+  },
+  {
+    "eventId": "evt_0820",
+    "baton": "36B",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": null,
+    "route": [
+      {
+        "name": "江陵",
+        "lat": 30.35,
+        "lng": 112.18
+      },
+      {
+        "name": "巴丘北津",
+        "lat": 29.92,
+        "lng": 112.95
+      }
+    ],
+    "source": "《三国志·武帝纪》《周瑜传》：曹操自当阳进占江陵收荆州水师，顺大江东下经巴丘北津驻营乌林与孙刘联军隔江对峙（剔除周瑜柴桑夏口路线及败退华容道）"
+  },
+  {
+    "eventId": "evt_0821",
+    "baton": "36B",
+    "leadGeneralId": "jiujiang_zhouyu",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_wuchang",
+    "route": [
+      {
+        "name": "乌林",
+        "lat": 29.89,
+        "lng": 113.62
+      },
+      {
+        "name": "孱陵",
+        "lat": 29.95,
+        "lng": 112.35
+      }
+    ],
+    "source": "《三国志·周瑜传》：周瑜自夏口乌林乘胜溯江西上，渡江南岸经孱陵进逼南郡治所江陵合围曹仁（剔除偏西支线夷陵）"
+  },
+  {
+    "eventId": "evt_0822",
+    "baton": "36C",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xuchang",
+    "route": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陕县",
+        "lat": 34.77,
+        "lng": 111.1
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操统大军自许都西经洛阳、渑池与陕县进抵潼关，暗渡蒲阪津大破马超韩遂（剔除终点潼关）"
+  },
+  {
+    "eventId": "evt_0823",
+    "baton": "36C",
+    "leadGeneralId": "shu_liubei",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_jianmenguan",
+    "route": [
+      {
+        "name": "梓潼",
+        "lat": 31.64,
+        "lng": 105.16
+      }
+    ],
+    "source": "《三国志·先主传》《庞统传》：刘备自葭萌返戈南向，袭斩白水关守将杨怀高沛，径过梓潼进占涪城"
+  },
+  {
+    "eventId": "evt_0825",
+    "baton": "36C",
+    "leadGeneralId": "shu_liubei",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "绵竹",
+        "lat": 31.34,
+        "lng": 104.2
+      },
+      {
+        "name": "雒城",
+        "lat": 30.99,
+        "lng": 104.28
+      }
+    ],
+    "source": "《三国志·先主传》：刘备自涪城南下收降绵竹，攻拔张任死守之雒城后合围成都迫降刘璋（剥离多地粘连词）"
+  },
+  {
+    "eventId": "evt_0826",
+    "baton": "36C",
+    "leadGeneralId": "cao_d_caocao",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "陈仓",
+        "lat": 34.36,
+        "lng": 107.24
+      },
+      {
+        "name": "散关",
+        "lat": 34.18,
+        "lng": 106.85
+      },
+      {
+        "name": "河池",
+        "lat": 33.8,
+        "lng": 106.06
+      }
+    ],
+    "source": "《三国志·武帝纪》：曹操自长安西至陈仓，出散关经河池破氐王窦茂，南下攻拔阳平关（剔除终点阳平关与战后南郑）"
+  },
+  {
+    "eventId": "evt_0827",
+    "baton": "36C",
+    "leadGeneralId": "lu_zhangliao",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_hefei",
+    "route": [],
+    "source": "《三国志·张辽传》：孙权十万大军围合肥，守将张辽与李典、乐进就地自合肥城募八百敢死士逆袭破吴（剔除孙权濡须坞进攻路线）"
+  },
+  {
+    "eventId": "evt_0831",
+    "baton": "36C",
+    "leadGeneralId": "shu_liubei",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_jianmenguan",
+    "route": [
+      {
+        "name": "白水关",
+        "lat": 32.51,
+        "lng": 105.51
+      },
+      {
+        "name": "阳平关",
+        "lat": 33.08,
+        "lng": 106.28
+      }
+    ],
+    "source": "《三国志·先主传》《黄忠传》：刘备自剑阁葭萌北出白水关与阳平关，南渡沔水据定军山斩夏侯渊（剔除粘连词与终点南郑）"
+  },
+  {
+    "eventId": "evt_0832",
+    "baton": "36C",
+    "leadGeneralId": "chu_guanyu",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_ying",
+    "route": [
+      {
+        "name": "当阳",
+        "lat": 30.82,
+        "lng": 111.79
+      },
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      }
+    ],
+    "source": "《三国志·关羽传》：关羽留兵守江陵，亲统荆州水陆主力自江陵北经当阳、宜城围攻襄阳樊城，乘汉水暴溢淹擒于禁七军"
+  },
+  {
+    "eventId": "evt_0834",
+    "baton": "36C",
+    "leadGeneralId": "caowei_gen_254",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_xiangyang",
+    "route": [
+      {
+        "name": "筑阳",
+        "lat": 32.27,
+        "lng": 111.65
+      },
+      {
+        "name": "房陵",
+        "lat": 32.05,
+        "lng": 110.74
+      }
+    ],
+    "source": "《三国志·刘封传》《夏侯尚传》：征南将军夏侯尚与徐晃自襄阳溯汉水经筑阳拔房陵，合降将孟达袭破上庸"
+  },
+  {
+    "eventId": "evt_0836",
+    "baton": "37A",
+    "leadGeneralId": "yidou_luxun",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_ying",
+    "route": [
+      {
+        "name": "枝江",
+        "lat": 30.42,
+        "lng": 111.76
+      }
+    ],
+    "source": "《三国志·陆逊传》：大都督陆逊统吴军五万自江陵西溯枝江，退守夷道猇亭待疲火烧刘备连营（剔除原误填之蜀军巫县秭归东下路线）"
+  },
+  {
+    "eventId": "evt_0837",
+    "baton": "37A",
+    "leadGeneralId": "caoren",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_nanyang",
+    "route": [
+      {
+        "name": "襄阳",
+        "lat": 32.01,
+        "lng": 112.12
+      },
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      }
+    ],
+    "source": "《三国志·曹仁传》《朱然传》：大司马曹仁与曹真奉曹丕诏自宛城经襄阳、宜城南压江陵，围攻朱然于中洲"
+  },
+  {
+    "eventId": "evt_0839",
+    "baton": "37A",
+    "leadGeneralId": "huizhou_zhugeliang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_chengdu",
+    "route": [
+      {
+        "name": "武阳",
+        "lat": 30.18,
+        "lng": 103.85
+      },
+      {
+        "name": "安上",
+        "lat": 28.8,
+        "lng": 104.25
+      },
+      {
+        "name": "卑水",
+        "lat": 27.87,
+        "lng": 102.31
+      }
+    ],
+    "source": "《三国志·诸葛亮传》：诸葛亮自成都南征经武阳至安上，由水路入越嶲卑水斩高定，南渡泸水至滇池七擒孟获"
+  },
+  {
+    "eventId": "evt_0840",
+    "baton": "37A",
+    "leadGeneralId": "sima_d_simayi",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_xiangyang",
+    "route": [],
+    "source": "《三国志·明帝纪》；《晋书·宣帝纪》：孙权乘魏文帝丧围攻江夏襄阳防区，司马懿作为守城方就地据守襄阳（剔除吴军武昌石阳进攻路线）"
+  },
+  {
+    "eventId": "evt_0841",
+    "baton": "37A",
+    "leadGeneralId": "sima_d_simayi",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_nanyang",
+    "route": [
+      {
+        "name": "邓县",
+        "lat": 32.15,
+        "lng": 112.08
+      },
+      {
+        "name": "均口",
+        "lat": 32.55,
+        "lng": 110.85
+      }
+    ],
+    "source": "《晋书·宣帝纪》：司马懿驻军宛城，闻孟达谋叛不待奏报，自宛城经邓县、均口倍道八日疾驰上庸新城擒斩孟达"
+  },
+  {
+    "eventId": "evt_0842",
+    "baton": "37A",
+    "leadGeneralId": "bfe_zhanghe",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "郿县",
+        "lat": 34.27,
+        "lng": 107.75
+      },
+      {
+        "name": "汧县",
+        "lat": 34.67,
+        "lng": 106.87
+      },
+      {
+        "name": "陇坻",
+        "lat": 34.88,
+        "lng": 106.55
+      }
+    ],
+    "source": "《三国志·张郃传》：右将军张郃督步骑五万自长安经郿县、汧县西攀陇坻，于略阳街亭断水大破马谡（拆分粘连词）"
+  },
+  {
+    "eventId": "evt_0843",
+    "baton": "37A",
+    "leadGeneralId": "yidou_luxun",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_wuchang",
+    "route": [
+      {
+        "name": "寻阳",
+        "lat": 29.73,
+        "lng": 115.98
+      },
+      {
+        "name": "皖口",
+        "lat": 30.51,
+        "lng": 117.03
+      }
+    ],
+    "source": "《三国志·陆逊传》：孙权拜陆逊为大都督统朱桓、全琮自武昌顺流东下，经寻阳登皖口进驻皖北石亭设伏大破曹休（剔除曹休寿春夹石魏军路线）"
+  },
+  {
+    "eventId": "evt_0844",
+    "baton": "37A",
+    "leadGeneralId": "huizhou_zhugeliang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_hanzhong",
+    "route": [
+      {
+        "name": "阳平关",
+        "lat": 33.09,
+        "lng": 106.15
+      },
+      {
+        "name": "下辨",
+        "lat": 33.74,
+        "lng": 105.65
+      }
+    ],
+    "source": "《三国志·诸葛亮传》：诸葛亮自汉中南郑遣陈式出阳平关攻武都下辨，亲率主力进驻建威逼退郭淮（剔除终点建威）"
+  },
+  {
+    "eventId": "evt_0845",
+    "baton": "37A",
+    "leadGeneralId": "shu_gen_273",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_hanzhong",
+    "route": [
+      {
+        "name": "阳平关",
+        "lat": 33.09,
+        "lng": 106.15
+      },
+      {
+        "name": "武都",
+        "lat": 33.43,
+        "lng": 105.14
+      },
+      {
+        "name": "临洮",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "source": "《三国志·魏延传》：魏延偕吴壹奉诸葛亮命自南郑越阳平关，经武都与陇西羌中绕袭南安阳溪大破郭淮费曜"
+  },
+  {
+    "eventId": "evt_0846",
+    "baton": "37A",
+    "leadGeneralId": "huizhou_zhugeliang",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_hanzhong",
+    "route": [
+      {
+        "name": "阳平关",
+        "lat": 33.09,
+        "lng": 106.15
+      },
+      {
+        "name": "建威",
+        "lat": 33.58,
+        "lng": 105.28
+      },
+      {
+        "name": "祁山",
+        "lat": 34.25,
+        "lng": 105.33
+      }
+    ],
+    "source": "《三国志·诸葛亮传》；《汉晋春秋》：诸葛亮以木牛运粮自南郑出阳平关经建威围祁山，进割上邽麦破司马懿于卤城（剔除终点上邽卤城）"
+  },
+  {
+    "eventId": "evt_0848",
+    "baton": "37A",
+    "leadGeneralId": "guzhu_tianyu",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_macheng",
+    "route": [],
+    "source": "《三国志·田豫传》：鲜卑轲比能围护乌桓校尉田豫于代郡马城，按守城战规制田豫就地固守马城设伏待援（剔除敌军塞北路线）"
+  },
+  {
+    "eventId": "evt_0850",
+    "baton": "37B",
+    "leadGeneralId": "caowei_gen_18",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_beijing",
+    "route": [
+      {
+        "name": "无终",
+        "lat": 39.95,
+        "lng": 117.4
+      },
+      {
+        "name": "孤竹",
+        "lat": 39.89,
+        "lng": 118.89
+      },
+      {
+        "name": "徒河",
+        "lat": 41.12,
+        "lng": 121.14
+      }
+    ],
+    "source": "《三国志·毌丘俭传》：幽州刺史毌丘俭统幽州诸军及鲜卑乌桓自蓟城东出无终、孤竹与徒河，屯辽隧西岸遇雨退师"
+  },
+  {
+    "eventId": "evt_0852",
+    "baton": "37B",
+    "leadGeneralId": "sima_d_simayi",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "蓟城",
+        "lat": 39.9,
+        "lng": 116.41
+      },
+      {
+        "name": "孤竹",
+        "lat": 39.89,
+        "lng": 118.89
+      },
+      {
+        "name": "辽隧",
+        "lat": 41.05,
+        "lng": 122.65
+      }
+    ],
+    "source": "《晋书·宣帝纪》：太尉司马懿统四万军自洛阳经邺城、蓟城与孤竹抵辽隧，声东击西直趋襄平灭公孙渊（拆分粘连词并剔除近郊首山）"
+  },
+  {
+    "eventId": "evt_0855",
+    "baton": "37B",
+    "leadGeneralId": "sima_d_simayi",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_luoyang",
+    "route": [
+      {
+        "name": "许昌",
+        "lat": 34.02,
+        "lng": 113.85
+      },
+      {
+        "name": "汝阴",
+        "lat": 32.9,
+        "lng": 115.81
+      }
+    ],
+    "source": "《三国志·王凌传》；《晋书·宣帝纪》：孙吴四路北伐围芍陂与樊城，洛阳中枢督军南下，经许昌、汝阴驰援淮南芍陂破全琮（修正原指向荆北之错位路线）"
+  },
+  {
+    "eventId": "evt_0856",
+    "baton": "37B",
+    "leadGeneralId": "gaogouli_gen_284",
+    "role": "attacker",
+    "action": "add_route",
+    "from": "city_guoneicheng",
+    "route": [
+      {
+        "name": "泊灼城",
+        "lat": 40.38,
+        "lng": 124.75
+      }
+    ],
+    "source": "《三国志·东夷传·高句丽》：高句丽东川王高忧位居发步骑自国内城循鸭绿江南下经泊灼城，袭破辽东西安平"
+  },
+  {
+    "eventId": "evt_0858",
+    "baton": "37B",
+    "leadGeneralId": "bfe3_76",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "郿县",
+        "lat": 34.27,
+        "lng": 107.75
+      },
+      {
+        "name": "傥谷",
+        "lat": 33.82,
+        "lng": 107.68
+      }
+    ],
+    "source": "《三国志·曹爽传》《王平传》：大将军曹爽偕夏侯玄自长安西经郿县南入秦岭傥谷，顿兵兴势山险隘遭王平费祎击退（拆分粘连词郿县骆谷）"
+  },
+  {
+    "eventId": "evt_0859",
+    "baton": "37B",
+    "leadGeneralId": "caowei_gen_18",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_liaoyang",
+    "route": [
+      {
+        "name": "玄菟",
+        "lat": 41.82,
+        "lng": 123.55
+      },
+      {
+        "name": "高显",
+        "lat": 41.65,
+        "lng": 124.5
+      }
+    ],
+    "source": "《三国志·毌丘俭传》：毌丘俭督步骑万人自辽东襄平北出玄菟、高显，东进沸流水与梁口连破高句丽东川王（剔除终点沸流水）"
+  },
+  {
+    "eventId": "evt_0860",
+    "baton": "37B",
+    "leadGeneralId": "caowei_gen_18",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": null,
+    "route": [
+      {
+        "name": "沸流谷",
+        "lat": 41.22,
+        "lng": 125.78
+      }
+    ],
+    "source": "《三国志·毌丘俭传》：毌丘俭破东川王于沸流水与梁口后，循沸流谷东进攻拔丸都山城（剔除终点丸都山城及偏师王颀沃沮肃慎追击线）"
+  },
+  {
+    "eventId": "evt_0861",
+    "baton": "37B",
+    "leadGeneralId": "caowei_gen_272",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_changan",
+    "route": [
+      {
+        "name": "陈仓",
+        "lat": 34.36,
+        "lng": 107.24
+      },
+      {
+        "name": "天水",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "狄道",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "source": "《三国志·郭淮传》：车骑将军郭淮统雍凉魏军自关中西经陈仓、天水与狄道驰赴枹罕洮西，截击接应叛羌之姜维（剔除蜀军汉中阴平粘连进攻路线及终点）"
+  },
+  {
+    "eventId": "evt_0863",
+    "baton": "37B",
+    "leadGeneralId": "wudu_dengai",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_tianshui",
+    "route": [
+      {
+        "name": "豲道",
+        "lat": 34.8,
+        "lng": 104.9
+      }
+    ],
+    "source": "《三国志·邓艾传》：南安太守邓艾随陈泰自天水西经南安郡治豲道，进围蜀军留守之洮水曲城并依牛头山却姜维（剔除蜀军阴平路线及终点曲城）"
+  },
+  {
+    "eventId": "evt_0854",
+    "baton": "38",
+    "leadGeneralId": "aba_shapuer",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_bageda",
+    "route": [
+      {
+        "name": "萨迈拉",
+        "lat": 34.21,
+        "lng": 43.88
+      }
+    ],
+    "source": "卡西乌斯·狄奥LXXV；塔巴里《历代先知与帝王史》：阿尔达希尔一世与王储沙普尔自泰西封沿底格里斯河北经萨迈拉进围荒漠坚城哈特拉（剔除起点泰西封重复）"
+  },
+  {
+    "eventId": "evt_0857",
+    "baton": "38",
+    "leadGeneralId": "aba_shapuer",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": null,
+    "route": [
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      },
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      }
+    ],
+    "source": "沙普尔一世《卡巴叶·扎尔杜什特铭文》；《奥古斯都史·三戈尔迪安传》26–27：沙普尔一世自哈特拉北取辛加拉与尼西比斯，西进哈布尔河源雷萨伊纳迎战泰姆西修斯（剔除罗马军安条克进攻路线）"
+  },
+  {
+    "eventId": "evt_0875",
+    "baton": "38",
+    "leadGeneralId": "aba_shapuer",
+    "role": "attacker",
+    "action": "fix_dirty_route",
+    "from": "city_bageda",
+    "route": [
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      },
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      }
+    ],
+    "source": "沙普尔一世《卡巴叶·扎尔杜什特铭文》；佐西姆斯I.36：沙普尔一世统萨珊铁骑自泰西封经辛加拉、尼西比斯西侵奥斯若恩，合围卡莱与埃德萨生俘瓦勒良（剔除瓦勒良安条克罗马路线）"
+  },
+  {
+    "eventId": "evt_0876",
+    "baton": "38",
+    "leadGeneralId": "aba_shapuer",
+    "role": "defender",
+    "action": "fix_defender_route",
+    "from": "city_mazaka",
+    "route": [
+      {
+        "name": "马拉蒂亚",
+        "lat": 38.35,
+        "lng": 38.31
+      },
+      {
+        "name": "萨莫萨塔",
+        "lat": 37.58,
+        "lng": 38.48
+      }
+    ],
+    "source": "《奥古斯都史·三十僭主传》15；佐纳拉斯XII.23：沙普尔一世纵掠卡帕多细亚凯撒利亚马扎卡后押战利品经马拉蒂亚、萨莫萨塔东归，抢渡幼发拉底河时遭奥登纳图斯追袭（剔除帕尔米拉攻方路线）"
+  }
+]

@@ -53,9 +53,41 @@ export function ensureDeCampaignSpriteMeta(): Promise<Record<string, DeCampaignS
     return spriteMetaPromise;
 }
 
+/** 24 个中立（player: 0）跨护城河/河道实体桥精灵精确锚点表，常规战斗无需拉取整张 2MB sprites.json */
+export const GAIA_BRIDGE_SPRITE_META: Readonly<Record<string, DeCampaignSpriteMeta>> = {
+    // ── Medieval Cobblestone Arch Bridge (605..610) ──
+    d7aca08e45c2: { w: 260, h: 172, ax: 130, ay: 70, unit: 605, name: 'BGAA' },
+    '525e31115a05': { w: 264, h: 172, ax: 138, ay: 70, unit: 606, name: 'BGAB' },
+    '5f12491a00d3': { w: 244, h: 136, ax: 118, ay: 70, unit: 607, name: 'BGAC' },
+    de9f767564ef: { w: 240, h: 172, ax: 130, ay: 70, unit: 608, name: 'BGBA' },
+    a23ab1014247: { w: 260, h: 172, ax: 146, ay: 70, unit: 609, name: 'BGBB' },
+    e0beda99ad86: { w: 260, h: 136, ax: 146, ay: 70, unit: 610, name: 'BGBC' },
+    // ── Wooden Pile Plank Bridge (904..909) ──
+    bb24b7f339f8: { w: 116, h: 80, ax: 56, ay: 48, unit: 904, name: 'BGAA' },
+    f2ab29bbf740: { w: 108, h: 76, ax: 64, ay: 36, unit: 905, name: 'BGAB' },
+    '7cdbf4c261b7': { w: 108, h: 72, ax: 72, ay: 44, unit: 906, name: 'BGAC' },
+    ec4a8c7f16f1: { w: 104, h: 80, ax: 60, ay: 48, unit: 907, name: 'BGBA' },
+    '698866fc98aa': { w: 108, h: 76, ax: 52, ay: 36, unit: 908, name: 'BGBB' },
+    c35fa5c5657c: { w: 112, h: 72, ax: 44, ay: 44, unit: 909, name: 'BGBC' },
+    // ── Asian Carved-Balustrade Stone Arch Bridge (1204..1209) ──
+    '2cd1eefd4889': { w: 268, h: 192, ax: 134, ay: 90, unit: 1204, name: 'BGCA' },
+    '2d4cdd781bda': { w: 264, h: 188, ax: 138, ay: 86, unit: 1205, name: 'BGCB' },
+    '08c578ead8e0': { w: 252, h: 156, ax: 126, ay: 86, unit: 1206, name: 'BGCC' },
+    '3772e2eaeff2': { w: 252, h: 192, ax: 142, ay: 90, unit: 1207, name: 'BGDA' },
+    '5c6142e06e14': { w: 256, h: 188, ax: 146, ay: 86, unit: 1208, name: 'BGDB' },
+    '8b499e998ec7': { w: 264, h: 156, ax: 146, ay: 86, unit: 1209, name: 'BGDC' },
+    // ── Roman / Mediterranean Brick-Arch Stone Bridge (1550..1555) ──
+    '6fdd352c8209': { w: 276, h: 188, ax: 142, ay: 78, unit: 1550, name: 'BGEA' },
+    '60f2dcbd0c48': { w: 288, h: 196, ax: 142, ay: 86, unit: 1551, name: 'BGEB' },
+    '9180d0ca58d8': { w: 256, h: 148, ax: 110, ay: 86, unit: 1552, name: 'BGEC' },
+    ab0028aa4db2: { w: 260, h: 188, ax: 142, ay: 78, unit: 1553, name: 'BGFA' },
+    '287b98559724': { w: 288, h: 196, ax: 172, ay: 84, unit: 1554, name: 'BGFB' },
+    '586a12c1134b': { w: 276, h: 148, ax: 172, ay: 84, unit: 1555, name: 'BGFC' },
+};
+
 /** 同步读取已缓存的 DE 战役精灵元数据 */
 export function getDeCampaignSpriteMetaSync(key: string): DeCampaignSpriteMeta | undefined {
-    return spriteMetaCache ? spriteMetaCache[key] : undefined;
+    return (spriteMetaCache ? spriteMetaCache[key] : undefined) ?? GAIA_BRIDGE_SPRITE_META[key];
 }
 
 // ── 精灵图片优先级并发池（建筑/城墙/城门/箭塔优先加载，避免几百棵树同时并发占满浏览器连接池） ──

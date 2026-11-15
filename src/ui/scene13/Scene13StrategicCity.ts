@@ -265,138 +265,8 @@ function featherGroundClipPaths(root: HTMLElement, W: number, H: number): void {
     }
 }
 
-/**
- * 🔴 [2026-10-15 主人「大城和中城的城中是有地基贴图的，是否可以用这种地基贴图作为道路，从四个城门向外延申」]
- * 在战术模式大城（rd1.png 青石板）与中城（rd2.png 砖石）的地基 SVG 遮罩上，
- * 沿四座城门中轴线（等轴 i / j 轴，屏幕斜率 ±2:±1）向外延伸四条穿门跨桥的城外官道，并在远端平滑渐隐融入原野。
- */
-function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, cityType: string): void {
-    if (W <= 0 || H <= 0) return;
-    const isBig = cityType === 'big_city';
-    const TW = 96, TH = 48;
-    const innerRX = Math.max(0, (W - 400) / 2);
-    const innerRY = innerRX / 2;
-    const defaultHalf = innerRX / TW;
-    if (defaultHalf < 4) return;
-    const padX = 960, padY = 560;
-    const MW = W + padX * 2, MH = H + padY * 2;
-    const cx = MW / 2, dcy = MH / 2 + TH / 2;
-    const shrink = 0.93, blurMain = TW * 0.5, blurRoad = 30;
-
-    // 优先从 rd1/rd2 地基层的原始 SVG 遮罩提取内圈四角顶点，从而精确兼容矩形/镜像矩形险要 (Li ≠ Lj)
-    let halfI = defaultHalf;
-    let halfJ = defaultHalf;
-    let shiftedDiamondPts: string | null = null;
-    for (const node of Array.from(root.querySelectorAll<HTMLElement>('div'))) {
-        const st = node.getAttribute('style') ?? '';
-        if (!st.includes('SUCAI_TERRAIN/rd') || !st.includes('mask-image')) continue;
-        const mSvg = /data:image\/svg\+xml;utf8,([^"')\s]+)/.exec(st);
-        if (!mSvg) continue;
-        try {
-            const decoded = decodeURIComponent(mSvg[1]);
-            const mPoly = /<polygon\s+points="([^"]+)"/.exec(decoded);
-            if (mPoly) {
-                const pairs = mPoly[1].trim().split(/\s+/).map((p) => p.split(',').map(Number));
-                if (pairs.length === 4 && pairs.every((p) => p.length === 2 && Number.isFinite(p[0]) && Number.isFinite(p[1]))) {
-                    const hi = Math.abs(pairs[1][0] - pairs[0][0]) / (TW * shrink);
-                    const hj = Math.abs(pairs[0][0] - pairs[3][0]) / (TW * shrink);
-                    if (hi >= 3.5 && hj >= 3.5) {
-                        halfI = hi;
-                        halfJ = hj;
-                        shiftedDiamondPts = pairs
-                            .map(([px, py]) => `${(px + padX).toFixed(1)},${(py + padY).toFixed(1)}`)
-                            .join(' ');
-                    }
-                }
-            }
-        } catch {
-            // ignore decode errors and use default square diamond
-        }
-        break;
-    }
-
-    const toPt = (di: number, dj: number): string =>
-        `${(cx + (di - dj) * (TW / 2)).toFixed(1)},${(dcy + (di + dj) * (TH / 2)).toFixed(1)}`;
-
-    // 四个城门方向：[axis, sign, 法向 sx, 法向 sy]
-    const dirs: ReadonlyArray<readonly ['i' | 'j', 1 | -1, 1 | -1, 1 | -1]> = [
-        ['i', 1, 1, 1],    // 右下门 (SE)
-        ['i', -1, -1, -1], // 左上门 (NW)
-        ['j', 1, -1, 1],   // 左下门 (SW)
-        ['j', -1, 1, -1],  // 右上门 (NE)
-    ];
-
-    const defs: string[] = [
-        `<filter id="f" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="${blurMain.toFixed(1)}"/></filter>`,
-        `<filter id="rf" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="${blurRoad.toFixed(1)}"/></filter>`,
-    ];
-    const roadPolys: string[] = [];
-
-    const w0 = isBig ? 2.35 : 2.05;
-    const wBridge = isBig ? 1.52 : 1.32;
-    const wEnd = isBig ? 0.88 : 0.75;
-
-    dirs.forEach(([axis, sign, sx, sy], idx) => {
-        const halfAxis = axis === 'i' ? halfI : halfJ;
-        // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(内城门) → uBridge(跨护城河桥) → uEnd(城外远端渐隐)
-        const u0 = halfAxis * 0.64;
-        const uGate = halfAxis;
-        const uBridge = halfAxis + (isBig ? 5.6 : 4.8);
-        const uEnd = halfAxis + (isBig ? 14.5 : 12.0);
-        const tGate = ((uGate - u0) / (uEnd - u0) * 100).toFixed(1);
-        const tBridge = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
-
-        // 梯度轴严格垂直于等轴城墙边 (sx, 2·sy)，从城门起即逐段柔和衰减，与两侧 30px 高斯羽化共同融入原野地表
-        const gx1 = cx + sx * (96 * u0) / 5, gy1 = dcy + sy * (192 * u0) / 5;
-        const gx2 = cx + sx * (96 * uEnd) / 5, gy2 = dcy + sy * (192 * uEnd) / 5;
-        defs.push(
-            `<linearGradient id="rg${idx}" gradientUnits="userSpaceOnUse" x1="${gx1.toFixed(1)}" y1="${gy1.toFixed(1)}" x2="${gx2.toFixed(1)}" y2="${gy2.toFixed(1)}">` +
-            `<stop offset="0%" stop-opacity="1" stop-color="#ffffff"/>` +
-            `<stop offset="${tGate}%" stop-opacity="0.92" stop-color="#ffffff"/>` +
-            `<stop offset="${tBridge}%" stop-opacity="0.68" stop-color="#e0e0e0"/>` +
-            `<stop offset="72%" stop-opacity="0.34" stop-color="#b0b0b0"/>` +
-            `<stop offset="88%" stop-opacity="0.12" stop-color="#606060"/>` +
-            `<stop offset="100%" stop-opacity="0" stop-color="#000000"/>` +
-            `</linearGradient>`
-        );
-        const pt = (u: number, v: number): string =>
-            axis === 'i' ? toPt(sign * u, v) : toPt(v, sign * u);
-        const polyPts = [
-            pt(u0, -w0),
-            pt(uGate, -wBridge),
-            pt(uBridge, -wBridge),
-            pt(uEnd, -wEnd),
-            pt(uEnd, wEnd),
-            pt(uBridge, wBridge),
-            pt(uGate, wBridge),
-            pt(u0, w0),
-        ].join(' ');
-        roadPolys.push(`<polygon points="${polyPts}" fill="url(#rg${idx})"/>`);
-    });
-
-    const diamondPts = shiftedDiamondPts ?? [
-        `${cx.toFixed(1)},${(dcy - innerRY * shrink).toFixed(1)}`,
-        `${(cx + innerRX * shrink).toFixed(1)},${dcy.toFixed(1)}`,
-        `${cx.toFixed(1)},${(dcy + innerRY * shrink).toFixed(1)}`,
-        `${(cx - innerRX * shrink).toFixed(1)},${dcy.toFixed(1)}`,
-    ].join(' ');
-
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MW.toFixed(0)} ${MH.toFixed(0)}"><defs>${defs.join('')}</defs><g filter="url(#f)"><polygon points="${diamondPts}" fill="white"/></g><g filter="url(#rf)">${roadPolys.join('')}</g></svg>`;
-    const encoded = encodeURIComponent(svg).replace(/[()']/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
-    const maskUrl = `url(data:image/svg+xml;utf8,${encoded})`;
-
-    for (const node of Array.from(root.querySelectorAll<HTMLElement>('div'))) {
-        const st = node.getAttribute('style') ?? '';
-        if (!st.includes('SUCAI_TERRAIN/rd') || !st.includes('mask-image')) continue;
-        node.style.width = `${MW.toFixed(0)}px`;
-        node.style.height = `${MH.toFixed(0)}px`;
-        node.style.maskImage = maskUrl;
-        (node.style as any).webkitMaskImage = maskUrl;
-    }
-}
-
 /** 地基层：同一段 HTML 去掉建筑 / 城墙 / 城门，只留 SUCAI_TERRAIN 贴图与平铺底图（边缘羽化渐变） */
-export function strategicCityGroundElement(c: StrategicCityHtml, cityType?: string | null): HTMLDivElement {
+export function strategicCityGroundElement(c: StrategicCityHtml, _cityType?: string | null): HTMLDivElement {
     const el = document.createElement('div');
     el.style.cssText = 'position:fixed;left:0;top:0;z-index:395;pointer-events:none;transform-origin:0 0;display:none;';
     el.innerHTML = wrapMirror(c, c.html);
@@ -404,9 +274,6 @@ export function strategicCityGroundElement(c: StrategicCityHtml, cityType?: stri
         if (BUILDING_RE.test(im.getAttribute('src') ?? '')) im.remove();
     }
     featherGroundClipPaths(el, c.width, c.height);
-    if (cityType === 'big_city' || cityType === 'medium_city') {
-        extendFourGateRoadsOnGround(el, c.width, c.height, cityType);
-    }
     document.body.appendChild(el);
     return el;
 }
