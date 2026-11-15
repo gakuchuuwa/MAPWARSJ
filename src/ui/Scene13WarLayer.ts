@@ -2875,17 +2875,19 @@ export class Scene13WarLayer {
 
         const oppFamous = this.sideIsFamous[ef];
 
+        const isScript = isScriptPeriod();
+
         // 剧本模式下只修改电脑（viewer === null）且为历史胜方时的六计强度；观众放计与乱斗模式均不受影响
 
-        const isScriptWinnerAi = viewer === null && isScriptPeriod() && this.historicalWinnerSide === f;
+        const isScriptWinnerAi = viewer === null && isScript && this.historicalWinnerSide === f;
 
-        const rawFamousDiffMult = viewer !== null
+        // 历史模式取消名将VS普将倍率差，一律 1.0；乱斗模式保持不变
+
+        const famousDiffMult = (viewer !== null || isScript)
 
             ? 1.0
 
             : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0);
-
-        const famousDiffMult = isScriptWinnerAi ? Math.max(1.0, rawFamousDiffMult) : rawFamousDiffMult;
 
         // 🔴 [2026-11-07 主人定·乱入者VS维序者] 观众积分释放六计两边完全对等（全军有效）
 

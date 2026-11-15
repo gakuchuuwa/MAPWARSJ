@@ -15,7 +15,7 @@ const SRC = '剧本模式/01_事件与故事/战争事件编年史_全二十四�
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
 const OPENING_OUT = 'src/data/chronicle/ChronicleOpening.ts';
 /** 经典战口径：攻守兵力 1–2 万，兵力比 ≤1:2 */
-const TROOPS = 15000;
+const TROOPS = 20000;
 const SEASON: Record<string, 0 | 1 | 2 | 3> = { 春: 0, 夏: 1, 秋: 2, 冬: 3 };
 
 const rawMaster = JSON.parse(readFileSync(SRC, 'utf-8')) as {

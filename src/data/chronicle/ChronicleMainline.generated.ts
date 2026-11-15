@@ -39,11 +39,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 30.194,
             "targetLng": 53.167,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "midi",
             "enemyFactionName": "米底",
             "enemyGeneralId": "midi_astyages",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -97,11 +97,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 39.846,
             "targetLng": 35.333,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ldiya",
             "enemyFactionName": "吕底亚",
             "enemyGeneralId": "ldiya_keluoyisi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -154,11 +154,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 38.48,
             "targetLng": 28.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ldiya",
             "enemyFactionName": "吕底亚",
             "enemyGeneralId": "ldiya_keluoyisi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -212,11 +212,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_geerdiweng",
             "targetLat": 38.48,
             "targetLng": 28.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ldiya",
             "enemyFactionName": "吕底亚",
             "enemyGeneralId": "ldiya_pactyes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -265,10 +265,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 38.67,
             "targetLng": 26.754,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -327,11 +327,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 36.356,
             "targetLng": 29.318,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lycia",
             "enemyFactionName": "吕基亚",
             "enemyGeneralId": "lycia_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -380,11 +380,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_susa",
             "targetLat": 33.18,
             "targetLng": 44.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jialedi",
             "enemyFactionName": "迦勒底",
             "enemyGeneralId": "bfe2_nabonidus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -433,11 +433,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 32.542,
             "targetLng": 44.421,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jialedi",
             "enemyFactionName": "迦勒底",
             "enemyGeneralId": "wuer_boshasha",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -491,11 +491,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 40.28,
             "targetLng": 69.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sijitai",
             "enemyFactionName": "斯基泰",
             "enemyGeneralId": "sijitai_tomyris",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -555,10 +555,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_susa",
             "targetLat": 31.502,
             "targetLng": 34.467,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "feilisidin",
             "enemyFactionName": "非利士",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -611,11 +611,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_susa",
             "targetLat": 29.85,
             "targetLng": 31.25,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiji",
             "enemyFactionName": "埃及",
             "enemyGeneralId": "aiji_psamtik_iii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -658,10 +658,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_susa",
             "targetLat": 24.088,
             "targetLng": 32.899,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kushi",
             "enemyFactionName": "库施",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -720,11 +720,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hamadan",
             "targetLat": 32.542,
             "targetLng": 44.421,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jialedi",
             "enemyFactionName": "迦勒底",
             "enemyGeneralId": "bfe2_nidintu_bel",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -777,11 +777,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 34.8,
             "targetLng": 48.51,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "midi",
             "enemyFactionName": "米底",
             "enemyGeneralId": "midi_phraortes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -830,11 +830,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.1,
             "targetLng": 23.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "paeonia",
             "enemyFactionName": "佩奥尼亚",
             "enemyGeneralId": "paeonia_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -888,10 +888,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_miletus",
             "targetLat": 36.965,
             "targetLng": 25.53,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "naxos",
             "enemyFactionName": "纳克索斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -933,11 +933,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 38.48,
             "targetLng": 28.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
             "enemyGeneralId": "aiaoniya_charopinus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -980,11 +980,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 37.94,
             "targetLng": 27.34,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
             "enemyGeneralId": "aiaoniya_charopinus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1027,11 +1027,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
             "enemyGeneralId": "aiaoniya_dionysius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1073,10 +1073,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1130,10 +1130,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_susa",
             "targetLat": 40.39,
             "targetLng": 24.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "seleisi",
             "enemyFactionName": "色雷斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1197,11 +1197,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_adana",
             "targetLat": 37.98,
             "targetLng": 23.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
             "enemyGeneralId": "gen_miltiades",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1249,11 +1249,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 38.482,
             "targetLng": 22.501,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "bfe2_xerxes_i",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1289,11 +1289,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.98,
             "targetLng": 23.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "bfe2_xerxes_i",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1336,11 +1336,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "bfe2_mardonius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1383,10 +1383,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tiluo",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1441,10 +1441,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1498,10 +1498,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.82,
             "targetLng": 23.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1550,11 +1550,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.903,
             "targetLng": 24.565,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dolopes",
             "enemyFactionName": "多洛佩斯",
             "enemyGeneralId": "dolopes_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1608,10 +1608,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "naxos",
             "enemyFactionName": "纳克索斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1659,10 +1659,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.939,
             "targetLng": 31.172,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1716,11 +1716,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.778,
             "targetLng": 24.709,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "thasos",
             "enemyFactionName": "萨索斯",
             "enemyGeneralId": "thasos_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1762,11 +1762,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.185,
             "targetLng": 21.925,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "messenia",
             "enemyFactionName": "美塞尼亚",
             "enemyGeneralId": "messenia_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1820,11 +1820,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.778,
             "targetLng": 24.709,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "thasos",
             "enemyFactionName": "萨索斯",
             "enemyGeneralId": "thasos_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1867,10 +1867,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1913,10 +1913,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -1964,10 +1964,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.07,
             "targetLng": 22.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2021,10 +2021,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 35.12,
             "targetLng": 33.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2067,10 +2067,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2119,11 +2119,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalcis",
             "enemyFactionName": "卡尔基斯",
             "enemyGeneralId": "chalcis_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2171,10 +2171,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2216,10 +2216,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aiaoniya",
             "enemyFactionName": "爱奥尼亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2260,10 +2260,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anfeibolisi",
             "targetLat": 40.82,
             "targetLng": 23.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "seleisi",
             "enemyFactionName": "色雷斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2311,11 +2311,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_corinth",
             "targetLat": 39.62,
             "targetLng": 19.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "corcyra",
             "enemyFactionName": "科西拉",
             "enemyGeneralId": "corcyra_meiciades",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2368,11 +2368,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_corinth",
             "targetLat": 39.62,
             "targetLng": 19.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "corcyra",
             "enemyFactionName": "科西拉",
             "enemyGeneralId": "corcyra_meiciades",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2425,10 +2425,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2476,10 +2476,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aolinpiya",
             "targetLat": 38.392,
             "targetLng": 21.828,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2533,11 +2533,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 39.104,
             "targetLng": 26.555,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mytilene",
             "enemyFactionName": "米蒂利尼",
             "enemyGeneralId": "mytilene_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2591,11 +2591,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "plataea",
             "enemyFactionName": "普拉提亚",
             "enemyGeneralId": "plataea_eupompides",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2648,10 +2648,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_deerfei",
             "targetLat": 39.16,
             "targetLng": 20.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2699,11 +2699,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.96,
             "targetLng": 21.66,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
             "enemyGeneralId": "gen_brasidas",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2751,10 +2751,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.93,
             "targetLng": 21.665,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2790,10 +2790,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2841,11 +2841,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.82,
             "targetLng": 23.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
             "enemyGeneralId": "gen_brasidas",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2899,10 +2899,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -2951,11 +2951,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.633,
             "targetLng": 23.155,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "epidaurus",
             "enemyFactionName": "埃皮道鲁斯",
             "enemyGeneralId": "epidaurus_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3003,11 +3003,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.618,
             "targetLng": 22.393,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "argos",
             "enemyFactionName": "阿尔戈斯",
             "enemyGeneralId": "argos_thrasyllus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3061,11 +3061,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.745,
             "targetLng": 24.426,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "melos",
             "enemyFactionName": "米洛斯",
             "enemyGeneralId": "melos_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3119,10 +3119,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.07,
             "targetLng": 15.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "syracuse",
             "enemyFactionName": "叙拉古",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3164,10 +3164,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tiluo",
             "targetLat": 37.07,
             "targetLng": 15.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "syracuse",
             "enemyFactionName": "叙拉古",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3203,10 +3203,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tiluo",
             "targetLat": 37.07,
             "targetLng": 15.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "syracuse",
             "enemyFactionName": "叙拉古",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3259,10 +3259,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_miletus",
             "targetLat": 40.332,
             "targetLng": 26.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3310,10 +3310,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.132,
             "targetLng": 28.05,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3367,10 +3367,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3413,10 +3413,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mytilene",
             "targetLat": 39.12,
             "targetLng": 27.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3470,11 +3470,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_rhodes",
             "targetLat": 40.332,
             "targetLng": 26.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
             "enemyGeneralId": "xila_feiluokelisi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3528,10 +3528,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.98,
             "targetLng": 23.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3574,10 +3574,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 37.98,
             "targetLng": 23.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3620,10 +3620,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.639,
             "targetLng": 21.631,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yilisi",
             "enemyFactionName": "埃利斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3687,10 +3687,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sifaerde",
             "targetLat": 32.542,
             "targetLng": 44.421,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3744,10 +3744,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 41,
             "targetLng": 39.73,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3789,10 +3789,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_teluoyi",
             "targetLat": 39.958,
             "targetLng": 26.239,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3841,10 +3841,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_deerfei",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3887,10 +3887,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_rhodes",
             "targetLat": 37.03,
             "targetLng": 27.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3943,10 +3943,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.15,
             "targetLng": 22.99,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -3990,10 +3990,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.933,
             "targetLng": 22.882,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4029,10 +4029,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.98,
             "targetLng": 23.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4081,11 +4081,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.618,
             "targetLng": 22.393,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mantinea",
             "enemyFactionName": "曼丁尼亚",
             "enemyGeneralId": "mantinea_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4139,10 +4139,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4195,10 +4195,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 40.29,
             "targetLng": 23.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4257,10 +4257,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 39.977,
             "targetLng": 23.904,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4309,10 +4309,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4360,11 +4360,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
             "enemyGeneralId": "bfe2_pollis",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4400,10 +4400,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4451,10 +4451,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 38.705,
             "targetLng": 20.935,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4507,10 +4507,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 39.62,
             "targetLng": 19.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4546,11 +4546,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
             "enemyGeneralId": "bfe2_cleombrotus_i",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4586,11 +4586,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sparta",
             "targetLat": 37.07,
             "targetLng": 22.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arcadia",
             "enemyFactionName": "阿卡迪亚同盟",
             "enemyGeneralId": "arcadia_lycomedes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4644,10 +4644,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4695,10 +4695,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 39.417,
             "targetLng": 22.567,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sesali",
             "enemyFactionName": "色萨利",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4747,10 +4747,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4803,11 +4803,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_thebes",
             "targetLat": 37.618,
             "targetLng": 22.393,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lagoniya",
             "enemyFactionName": "斯巴达",
             "enemyGeneralId": "lagoniya_agesilaus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4850,10 +4850,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_peiliang",
             "targetLat": 40.785,
             "targetLng": 21.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maqidun",
             "enemyFactionName": "马其顿",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4889,10 +4889,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.76,
             "targetLng": 22.519,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4940,10 +4940,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 41.015,
             "targetLng": 21.34,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -4979,10 +4979,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_deerfei",
             "targetLat": 38.482,
             "targetLng": 22.501,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5024,11 +5024,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.76,
             "targetLng": 22.519,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "methone",
             "enemyFactionName": "梅托涅",
             "enemyGeneralId": "methone_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5081,11 +5081,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 39.18,
             "targetLng": 22.76,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "phokis",
             "enemyFactionName": "福基斯",
             "enemyGeneralId": "phokis_aonuomakusi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5139,11 +5139,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.82,
             "targetLng": 23.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
             "enemyGeneralId": "chalkidike_outikelatesi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5192,11 +5192,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.29,
             "targetLng": 23.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chalkidike",
             "enemyFactionName": "卡尔基季基同盟",
             "enemyGeneralId": "chalkidike_lasiteniesi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5244,10 +5244,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 41.28,
             "targetLng": 20.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5300,10 +5300,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 42.14,
             "targetLng": 24.74,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "seleisi",
             "enemyFactionName": "色雷斯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5351,11 +5351,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 44.18,
             "targetLng": 28.63,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sijitai",
             "enemyFactionName": "斯基泰",
             "enemyGeneralId": "sijitai_ateas",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5414,11 +5414,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 38.482,
             "targetLng": 22.501,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
             "enemyGeneralId": "bfe2_theagenes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5471,10 +5471,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 42.15,
             "targetLng": 20.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5522,11 +5522,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_teluoyi",
             "targetLat": 38.613,
             "targetLng": 27.426,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "halikanasu_memnon",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5590,11 +5590,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_peiliang",
             "targetLat": 38.32,
             "targetLng": 23.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boootiya",
             "enemyFactionName": "底比斯",
             "enemyGeneralId": "dibisi_phoinix",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5648,11 +5648,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.32,
             "targetLng": 27.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "aqimeinide_aerxitesi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5711,11 +5711,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 37.03,
             "targetLng": 27.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "halikanasu_memnon",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5779,11 +5779,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 36.838,
             "targetLng": 36.165,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "daliushi_iii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5842,11 +5842,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 33.271,
             "targetLng": 35.196,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kanan",
             "enemyFactionName": "推罗",
             "enemyGeneralId": "kanan_azemier",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5900,11 +5900,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 31.502,
             "targetLng": 34.467,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "feilisidin_batisi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -5963,11 +5963,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 36.36,
             "targetLng": 43.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "daliushi_iii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6016,11 +6016,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_babilun",
             "targetLat": 30.608,
             "targetLng": 51.59,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aqimeinide",
             "enemyFactionName": "阿契美尼德",
             "enemyGeneralId": "aqimeinide_aertabazanuosi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6079,11 +6079,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 40.248,
             "targetLng": 69.659,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sijitai",
             "enemyFactionName": "斯基泰",
             "enemyGeneralId": "sijitai_satraces",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6126,11 +6126,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_samaerhan",
             "targetLat": 39.767,
             "targetLng": 64.433,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sogdian",
             "enemyFactionName": "粟特",
             "enemyGeneralId": "sute_spitamenes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6172,11 +6172,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nuotaka",
             "targetLat": 38.21,
             "targetLng": 67.02,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sogdian",
             "enemyFactionName": "粟特",
             "enemyGeneralId": "suogediyana_arimazes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6230,11 +6230,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lanshi",
             "targetLat": 32.647,
             "targetLng": 73.509,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bulu",
             "enemyFactionName": "波罗婆",
             "enemyGeneralId": "gen_bolusi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6288,11 +6288,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 30.198,
             "targetLng": 71.468,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "malli",
             "enemyFactionName": "马利",
             "enemyGeneralId": "malli_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6336,11 +6336,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 33.487,
             "targetLng": 48.356,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kesaiya",
             "enemyFactionName": "科塞亚",
             "enemyGeneralId": "kesaiya_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6383,11 +6383,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_deerfei",
             "targetLat": 38.9,
             "targetLng": 22.433,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
             "enemyGeneralId": "xila_leosthenes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6430,11 +6430,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 39.57,
             "targetLng": 21.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xila",
             "enemyFactionName": "雅典",
             "enemyGeneralId": "xila_antiphilus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6477,11 +6477,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 39.958,
             "targetLng": 26.239,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
             "enemyGeneralId": "bfe_cb_maqidun_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6536,11 +6536,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_adana",
             "targetLat": 31.04,
             "targetLng": 32.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuolemi",
             "enemyFactionName": "托勒密",
             "enemyGeneralId": "tuolemi_tuolemi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6583,11 +6583,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kailaina",
             "targetLat": 38.45,
             "targetLng": 35.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
             "enemyGeneralId": "bfe_cb_maqidun_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6641,11 +6641,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kailaina",
             "targetLat": 32.65,
             "targetLng": 51.66,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
             "enemyGeneralId": "bfe_cb_maqidun_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6681,11 +6681,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kailaina",
             "targetLat": 31.777,
             "targetLng": 51.802,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "macedon_royal",
             "enemyFactionName": "马其顿王军",
             "enemyGeneralId": "bfe_cb_maqidun_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6734,11 +6734,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yalishanda",
             "targetLat": 31.502,
             "targetLng": 34.467,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antigonid",
             "enemyFactionName": "安提柯",
             "enemyGeneralId": "antigonid_demetrius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6774,11 +6774,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_babilun",
             "targetLat": 32.542,
             "targetLng": 44.421,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antigonid",
             "enemyFactionName": "安提柯",
             "enemyGeneralId": "bfe_antigonus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6826,11 +6826,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yalishanda",
             "targetLat": 35.12,
             "targetLng": 33.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antigonid",
             "enemyFactionName": "安提柯",
             "enemyGeneralId": "antigonid_demetrius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6879,11 +6879,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_halikanasu",
             "targetLat": 36.44,
             "targetLng": 28.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "rhodes",
             "enemyFactionName": "罗得",
             "enemyGeneralId": "rhodes_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6932,11 +6932,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lanshi",
             "targetLat": 33.767,
             "targetLng": 72.361,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kongque",
             "enemyFactionName": "孔雀帝国",
             "enemyGeneralId": "kongque_zhantuoluo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -6991,11 +6991,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_handan",
             "targetLat": 38.861,
             "targetLng": 114.769,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhongshan",
             "enemyFactionName": "中山国",
             "enemyGeneralId": "zhongshan_simazhou",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7048,11 +7048,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_handan",
             "targetLat": 40.273,
             "targetLng": 111.14,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "linhu",
             "enemyFactionName": "林胡",
             "enemyGeneralId": "linhu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7106,10 +7106,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_handan",
             "targetLat": 38.13,
             "targetLng": 114.59,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhongshan",
             "enemyFactionName": "中山国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7163,10 +7163,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han",
             "enemyFactionName": "韩国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7202,11 +7202,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han",
             "enemyFactionName": "韩国",
             "enemyGeneralId": "han_baoyuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7255,10 +7255,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.15,
             "targetLng": 112.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wei",
             "enemyFactionName": "魏国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7306,11 +7306,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 36.432,
             "targetLng": 115.955,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qi",
             "enemyFactionName": "田齐",
             "enemyGeneralId": "bfe_chuzi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7369,10 +7369,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 30.35,
             "targetLng": 112.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7420,10 +7420,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.4,
             "targetLng": 113.74,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wei",
             "enemyFactionName": "魏国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7466,11 +7466,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_handan",
             "targetLat": 36.487,
             "targetLng": 113.381,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "bfe3_7",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7518,10 +7518,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.27,
             "targetLng": 112.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han",
             "enemyFactionName": "韩国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7564,11 +7564,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.149,
             "targetLng": 113.008,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
             "enemyGeneralId": "zhao_zhaokuo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7610,10 +7610,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_handan",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7661,11 +7661,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "bfe3_9",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7719,10 +7719,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhou",
             "enemyFactionName": "姬周",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7776,10 +7776,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.81,
             "targetLng": 113.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhou",
             "enemyFactionName": "姬周",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7838,10 +7838,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 37.87,
             "targetLng": 112.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7889,11 +7889,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.615,
             "targetLng": 110.915,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "qin_mengao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7929,10 +7929,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuzhousai",
             "targetLat": 39.998,
             "targetLng": 112.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -7986,10 +7986,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shouxian",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8048,10 +8048,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8087,10 +8087,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8138,11 +8138,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuzhousai",
             "targetLat": 38.13,
             "targetLng": 114.59,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "qin_hengyi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8178,10 +8178,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuzhousai",
             "targetLat": 38.13,
             "targetLng": 114.59,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8230,10 +8230,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.4,
             "targetLng": 113.74,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han",
             "enemyFactionName": "韩国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8288,10 +8288,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8350,10 +8350,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 39.9,
             "targetLng": 116.41,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yan",
             "enemyFactionName": "燕国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8407,10 +8407,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.8,
             "targetLng": 114.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wei",
             "enemyFactionName": "魏国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8463,11 +8463,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 33.88,
             "targetLng": 115.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
             "enemyGeneralId": "bfe3_13",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8521,11 +8521,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 33.65,
             "targetLng": 116.97,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
             "enemyGeneralId": "bfe3_13",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8574,11 +8574,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
             "enemyGeneralId": "bfe3_13",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8637,10 +8637,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 41.27,
             "targetLng": 123.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yan",
             "enemyFactionName": "燕国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8699,10 +8699,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.88,
             "targetLng": 118.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qi",
             "enemyFactionName": "田齐",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8756,11 +8756,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 25.27,
             "targetLng": 110.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiou",
             "enemyFactionName": "西瓯",
             "enemyGeneralId": "bfe3_16",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8814,11 +8814,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fushi",
             "targetLat": 41.195,
             "targetLng": 107.166,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe_touman",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8873,10 +8873,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingqu",
             "targetLat": 23.12,
             "targetLng": 113.26,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiou",
             "enemyFactionName": "西瓯",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8930,10 +8930,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xucheng",
             "targetLat": 33.63,
             "targetLng": 114.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -8969,10 +8969,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhangchu",
             "enemyFactionName": "张楚",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9030,11 +9030,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.201,
             "targetLng": 115.472,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
             "enemyGeneralId": "bfe_xiangliang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9087,11 +9087,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_pengcheng",
             "targetLat": 37.22,
             "targetLng": 115.04,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "bfe3_17",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9139,11 +9139,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 34.28,
             "targetLng": 106.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qin",
             "enemyFactionName": "秦国",
             "enemyGeneralId": "wazhai_zhanghan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9191,11 +9191,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ju",
             "targetLat": 34.27,
             "targetLng": 117.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
             "enemyGeneralId": "han_d_liubang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9243,11 +9243,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_eyu",
             "targetLat": 38.02,
             "targetLng": 114,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao",
             "enemyFactionName": "赵国",
             "enemyGeneralId": "bfe3_18",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9301,10 +9301,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linzi",
             "targetLat": 36.42,
             "targetLng": 119.41,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9347,10 +9347,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huojia",
             "targetLat": 34.81,
             "targetLng": 113.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9398,11 +9398,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linzi",
             "targetLat": 33.328,
             "targetLng": 117.614,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chuguo",
             "enemyFactionName": "楚国",
             "enemyGeneralId": "xichu_xiangyu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9456,10 +9456,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_toumancheng",
             "targetLat": 39.05,
             "targetLng": 112.24,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9507,11 +9507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 40.08,
             "targetLng": 113.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_maodun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9571,11 +9571,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 38.13,
             "targetLng": 114.59,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao_han",
             "enemyFactionName": "赵藩",
             "enemyGeneralId": "zhao_han_gen_43",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9628,11 +9628,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dai_chenxi",
             "enemyFactionName": "代藩",
             "enemyGeneralId": "dai_chenxi_gen_46",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9697,11 +9697,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 40.44,
             "targetLng": 113.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_42",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9755,11 +9755,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 33.65,
             "targetLng": 116.97,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huainan",
             "enemyFactionName": "淮南国",
             "enemyGeneralId": "liu_yingbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9819,11 +9819,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 40.28,
             "targetLng": 116.06,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yan_luwan",
             "enemyFactionName": "汉燕",
             "enemyGeneralId": "yan_luwan_gen_50",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9872,11 +9872,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kalisituosi",
             "targetLat": 38.482,
             "targetLng": 22.501,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_gongheguo",
             "enemyFactionName": "罗马共和国",
             "enemyGeneralId": "luoma_gongheguo_gen_51",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9929,11 +9929,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 38.613,
             "targetLng": 27.426,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_gongheguo",
             "enemyFactionName": "罗马共和国",
             "enemyGeneralId": "bfe_cb_luoma_diguo_5",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -9986,11 +9986,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yifusuo",
             "targetLat": 39.65,
             "targetLng": 31.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jialatai",
             "enemyFactionName": "加拉太",
             "enemyGeneralId": "jialatai_gen_57",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10044,11 +10044,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yifusuo",
             "targetLat": 40.88,
             "targetLng": 26.63,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "seleisi",
             "enemyFactionName": "色雷斯",
             "enemyGeneralId": "seleisi_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10102,11 +10102,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tarraco",
             "targetLat": 39.96,
             "targetLng": -4.83,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arevaci",
             "enemyFactionName": "阿雷瓦西",
             "enemyGeneralId": "arevaci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10149,11 +10149,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zaragoza",
             "targetLat": 41.35,
             "targetLng": -1.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arevaci",
             "enemyFactionName": "阿雷瓦西",
             "enemyGeneralId": "arevaci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10212,11 +10212,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tarraco",
             "targetLat": 41.81,
             "targetLng": -2.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arevaci",
             "enemyFactionName": "阿雷瓦西",
             "enemyGeneralId": "arevaci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10265,11 +10265,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dyrrachium",
             "targetLat": 39.67,
             "targetLng": 22.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maqidun",
             "enemyFactionName": "马其顿",
             "enemyGeneralId": "maqidun_gen_61",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10311,11 +10311,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_prilep",
             "targetLat": 41.5,
             "targetLng": 20.96,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maqidun",
             "enemyFactionName": "马其顿",
             "enemyGeneralId": "maqidun_gen_61",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10379,11 +10379,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 40.365,
             "targetLng": 22.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maqidun",
             "enemyFactionName": "马其顿",
             "enemyGeneralId": "maqidun_gen_61",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10437,11 +10437,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tarraco",
             "targetLat": 41.81,
             "targetLng": -2.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arevaci",
             "enemyFactionName": "阿雷瓦西",
             "enemyGeneralId": "bfe_rhetogenes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10495,11 +10495,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tarraco",
             "targetLat": 41.49,
             "targetLng": -1.37,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "arevaci",
             "enemyFactionName": "阿雷瓦西",
             "enemyGeneralId": "bfe_rhetogenes",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10554,11 +10554,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cordoba",
             "targetLat": 41.76,
             "targetLng": -5.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "vaccaei",
             "enemyFactionName": "瓦凯伊部",
             "enemyGeneralId": "vaccaei_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10602,11 +10602,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cirta",
             "targetLat": 36.45,
             "targetLng": 9.25,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "buni",
             "enemyFactionName": "迦太基",
             "enemyGeneralId": "buni_gen_70",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10650,11 +10650,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cordoba",
             "targetLat": 36.65,
             "targetLng": -5.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luxitaniya",
             "enemyFactionName": "卢西塔尼亚",
             "enemyGeneralId": "luxitaniya_viriathus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10708,11 +10708,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 36.85,
             "targetLng": 10.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "buni",
             "enemyFactionName": "迦太基",
             "enemyGeneralId": "buni_gen_70",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10767,11 +10767,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nisa",
             "targetLat": 34.8,
             "targetLng": 48.51,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sailiugu",
             "enemyFactionName": "塞琉古帝国",
             "enemyGeneralId": "sailiugu_gen_71",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10820,11 +10820,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nisa",
             "targetLat": 32.542,
             "targetLng": 44.421,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sailiugu",
             "enemyFactionName": "塞琉古帝国",
             "enemyGeneralId": "sailiugu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10878,11 +10878,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nisa",
             "targetLat": 32.191,
             "targetLng": 48.258,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sailiugu",
             "enemyFactionName": "塞琉古帝国",
             "enemyGeneralId": "sailiugu_gen_72",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10931,11 +10931,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_juyongguan",
             "targetLat": 47.699,
             "targetLng": 102.632,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -10972,11 +10972,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuzhousai",
             "targetLat": 39.998,
             "targetLng": 112.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11025,11 +11025,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yunzhongcheng",
             "targetLat": 41.195,
             "targetLng": 107.166,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11078,11 +11078,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_toumancheng",
             "targetLat": 47.137,
             "targetLng": 103.035,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yudan_xiongnu",
             "enemyFactionName": "单于太子部",
             "enemyGeneralId": "yudan_taizi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11125,11 +11125,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 41.195,
             "targetLng": 107.166,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11165,11 +11165,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 41.2,
             "targetLng": 111.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_yizhixie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11228,11 +11228,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 38.78,
             "targetLng": 101.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11286,11 +11286,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fangqu",
             "targetLat": 38.93,
             "targetLng": 100.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_hunxiewang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11334,11 +11334,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuzhong",
             "targetLat": 41.4,
             "targetLng": 119.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_yizhixie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11392,11 +11392,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 47.699,
             "targetLng": 102.632,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_yizhixie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11450,11 +11450,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daixian",
             "targetLat": 48.5,
             "targetLng": 109,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11509,11 +11509,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guiyang",
             "targetLat": 23.12,
             "targetLng": 113.26,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nanyue",
             "enemyFactionName": "南越",
             "enemyGeneralId": "nanyue_gen_76",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11568,11 +11568,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kuaiji",
             "targetLat": 26.07,
             "targetLng": 119.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "minyue",
             "enemyFactionName": "闽越",
             "enemyGeneralId": "minyue_gen_80",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11627,11 +11627,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 39.02,
             "targetLng": 125.76,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wiman_joseon",
             "enemyFactionName": "卫满朝鲜",
             "enemyGeneralId": "bfe3_31",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11686,11 +11686,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 40.516,
             "targetLng": 89.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shanshan",
             "enemyFactionName": "鄯善",
             "enemyGeneralId": "shanshan_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11750,11 +11750,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 40.53,
             "targetLng": 72.79,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dayuan",
             "enemyFactionName": "大宛",
             "enemyGeneralId": "dayuan_wugua",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11814,11 +11814,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 41.29,
             "targetLng": 71.667,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dayuan",
             "enemyFactionName": "大宛",
             "enemyGeneralId": "dayuan_wugua",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11867,11 +11867,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiuquan",
             "targetLat": 42.8,
             "targetLng": 93.5,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe3_38",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11920,11 +11920,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_juyansai",
             "targetLat": 45.2,
             "targetLng": 100.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe3_38",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -11978,11 +11978,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linrong",
             "targetLat": 47.92,
             "targetLng": 106.84,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe3_38",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12031,11 +12031,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 46.277,
             "targetLng": 102.802,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_83",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12084,11 +12084,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chigucheng",
             "targetLat": 46.8,
             "targetLng": 91.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12142,11 +12142,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luntai",
             "targetLat": 42.79,
             "targetLng": 88.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chagatai",
             "enemyFactionName": "车师",
             "enemyGeneralId": "chagatai_gen_87",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12206,11 +12206,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ruoqiang",
             "targetLat": 38.41,
             "targetLng": 77.24,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shache",
             "enemyFactionName": "莎车",
             "enemyGeneralId": "shache_gen_89",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12264,11 +12264,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.062,
             "targetLng": 103.766,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianlingqiang",
             "enemyFactionName": "先零",
             "enemyGeneralId": "bfe3_43",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12322,11 +12322,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 37.15,
             "targetLng": 38.782,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_gongheguo",
             "enemyFactionName": "罗马共和国",
             "enemyGeneralId": "bfe_crassus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12385,11 +12385,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_genoa",
             "targetLat": 41.618,
             "targetLng": 0.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_90",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12449,11 +12449,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_brundisium",
             "targetLat": 41.324,
             "targetLng": 19.456,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_90",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12507,11 +12507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 39.295,
             "targetLng": 22.385,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_90",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12570,11 +12570,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 31.198,
             "targetLng": 29.892,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuolemi",
             "enemyFactionName": "托勒密",
             "enemyGeneralId": "tuolemi_gen_92",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12638,11 +12638,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 40.65,
             "targetLng": 35.83,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bosi_puluosi",
             "enemyFactionName": "博斯普鲁斯",
             "enemyGeneralId": "bfe_cb_bendou_d_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12696,11 +12696,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lilybaeum",
             "targetLat": 35.624,
             "targetLng": 11.046,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_96",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12764,11 +12764,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 37.35,
             "targetLng": -5.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_98",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12809,11 +12809,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cordoba",
             "targetLat": 37.88,
             "targetLng": -4.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pompeians",
             "enemyFactionName": "庞培军团",
             "enemyGeneralId": "pompeians_gen_100",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12856,11 +12856,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_verona",
             "targetLat": 44.647,
             "targetLng": 10.925,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_8",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12914,11 +12914,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_brundisium",
             "targetLat": 41.013,
             "targetLng": 24.284,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liberators",
             "enemyFactionName": "共和解放军",
             "enemyGeneralId": "liberators_gen_103",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -12960,11 +12960,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_florence",
             "targetLat": 43.111,
             "targetLng": 12.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_8",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13006,11 +13006,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 36.2,
             "targetLng": 36.16,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_106",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13059,11 +13059,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.319,
             "targetLng": 34.789,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_109",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13107,11 +13107,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 36.389,
             "targetLng": 36.689,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_106",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13165,11 +13165,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 31.77,
             "targetLng": 35.21,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hasmonean",
             "enemyFactionName": "哈斯蒙尼王国",
             "enemyGeneralId": "hasmonean_gen_112",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13229,11 +13229,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 36.4,
             "targetLng": 46.23,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_113",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13298,11 +13298,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luntai",
             "targetLat": 42.886,
             "targetLng": 71.348,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xijue_ganyanshou",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13356,11 +13356,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_brundisium",
             "targetLat": 39.16,
             "targetLng": 20.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antonians",
             "enemyFactionName": "安东尼军团",
             "enemyGeneralId": "antonians_gen_5",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13420,11 +13420,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 31.198,
             "targetLng": 29.892,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antonians",
             "enemyFactionName": "安东尼军团",
             "enemyGeneralId": "antonians_gen_5",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13468,11 +13468,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salonica",
             "targetLat": 43.806,
             "targetLng": 23.524,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bastarnae",
             "enemyFactionName": "巴斯塔奈部",
             "enemyGeneralId": "bastarnae_gen_117",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13521,11 +13521,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nabone",
             "targetLat": 44.83,
             "targetLng": -0.57,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aquitani",
             "enemyFactionName": "阿基坦诸部",
             "enemyGeneralId": "aquitani_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13568,11 +13568,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_verona",
             "targetLat": 45.943,
             "targetLng": 10.273,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "camunni",
             "enemyFactionName": "卡穆尼部",
             "enemyGeneralId": "camunni_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13627,11 +13627,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bordeaux",
             "targetLat": 42.788,
             "targetLng": -4.265,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cantabri",
             "enemyFactionName": "坎塔布里部",
             "enemyGeneralId": "cantabri_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13675,11 +13675,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_teerier",
             "targetLat": 50.93,
             "targetLng": 6.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sicambri",
             "enemyFactionName": "西坎布里部",
             "enemyGeneralId": "sicambri_gen_120",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13732,11 +13732,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_verona",
             "targetLat": 47.503,
             "targetLng": 9.747,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "raeti",
             "enemyFactionName": "雷蒂亚诸部",
             "enemyGeneralId": "raeti_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13772,11 +13772,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gradeci",
             "targetLat": 45.485,
             "targetLng": 16.373,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "pannonii",
             "enemyFactionName": "潘诺尼亚诸部",
             "enemyGeneralId": "pannonii_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13825,11 +13825,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_vetera",
             "targetLat": 53.367,
             "targetLng": 7.206,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cherusci",
             "enemyFactionName": "切鲁西",
             "enemyGeneralId": "cherusci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13873,11 +13873,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_vetera",
             "targetLat": 51.621,
             "targetLng": 7.632,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cherusci",
             "enemyFactionName": "切鲁西",
             "enemyGeneralId": "cherusci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13930,11 +13930,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meiyinci",
             "targetLat": 52.13,
             "targetLng": 11.61,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "marcomanni",
             "enemyFactionName": "马科曼尼",
             "enemyGeneralId": "bfe_maroboduus",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -13977,11 +13977,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_vetera",
             "targetLat": 51.719,
             "targetLng": 8.754,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cherusci",
             "enemyFactionName": "切鲁西",
             "enemyGeneralId": "cherusci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14023,11 +14023,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 44.969,
             "targetLng": 19.61,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
             "enemyGeneralId": "yili_bato",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14071,11 +14071,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 45.288,
             "targetLng": 18.805,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
             "enemyGeneralId": "yili_bato",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14129,11 +14129,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gradeci",
             "targetLat": 43.692,
             "targetLng": 16.483,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yili",
             "enemyFactionName": "伊利里亚",
             "enemyGeneralId": "yili_bato",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14182,11 +14182,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_vetera",
             "targetLat": 52.407,
             "targetLng": 8.13,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cherusci",
             "enemyFactionName": "切鲁西",
             "enemyGeneralId": "bfe_arminius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14235,11 +14235,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_vetera",
             "targetLat": 52.215,
             "targetLng": 9.011,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "cherusci",
             "enemyFactionName": "切鲁西",
             "enemyGeneralId": "bfe_arminius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14281,11 +14281,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ju",
             "targetLat": 35.578,
             "targetLng": 118.832,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dixiang",
             "enemyFactionName": "新国",
             "enemyGeneralId": "dixiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14333,11 +14333,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dangyang",
             "targetLat": 30.662,
             "targetLng": 113.166,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dixiang",
             "enemyFactionName": "新国",
             "enemyGeneralId": "dixiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14386,11 +14386,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ju",
             "targetLat": 35.936,
             "targetLng": 116.471,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dixiang",
             "enemyFactionName": "新国",
             "enemyGeneralId": "dixiang_gen_130",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14439,11 +14439,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yancheng2",
             "targetLat": 33.22,
             "targetLng": 113.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dixiang",
             "enemyFactionName": "新国",
             "enemyGeneralId": "bfe3_56",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14503,11 +14503,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xindu",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wanglang_han",
             "enemyFactionName": "赵汉",
             "enemyGeneralId": "bfe_cb_zhao_3",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14560,11 +14560,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kunyang",
             "targetLat": 36.514,
             "targetLng": 115.304,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tongma",
             "enemyFactionName": "铜马义军",
             "enemyGeneralId": "tongma_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14623,11 +14623,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kunyang",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gengshi",
             "enemyFactionName": "更始",
             "enemyGeneralId": "gengshi_gen_141",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14681,11 +14681,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.41,
             "targetLng": 115.66,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liuyong_liang",
             "enemyFactionName": "睢阳梁国",
             "enemyGeneralId": "liuyong_liang_gen_143",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14733,11 +14733,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.615,
             "targetLng": 110.915,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chimei",
             "enemyFactionName": "赤眉",
             "enemyGeneralId": "chimei_fanchong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14780,11 +14780,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanguguan",
             "targetLat": 34.76,
             "targetLng": 111.76,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chimei",
             "enemyFactionName": "赤眉",
             "enemyGeneralId": "chimei_fanchong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14843,11 +14843,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 39.95,
             "targetLng": 117.4,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yan_pengchong",
             "enemyFactionName": "渔阳军",
             "enemyGeneralId": "yan_pengchong_gen_147",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14907,11 +14907,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 36.88,
             "targetLng": 118.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qi_zhangbu",
             "enemyFactionName": "张齐",
             "enemyGeneralId": "bfe3_58",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -14965,11 +14965,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.03,
             "targetLng": 108.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shuoning",
             "enemyFactionName": "朔宁",
             "enemyGeneralId": "shuoning_gen_148",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15028,11 +15028,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.025,
             "targetLng": 105.908,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shuoning",
             "enemyFactionName": "朔宁",
             "enemyGeneralId": "shuoning_gen_148",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15091,11 +15091,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.721,
             "targetLng": 104.889,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shuoning",
             "enemyFactionName": "朔宁",
             "enemyGeneralId": "shuoning_gen_151",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15144,11 +15144,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 30.7,
             "targetLng": 111.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengjia",
             "enemyFactionName": "成家",
             "enemyGeneralId": "chengjia_gen_154",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15208,11 +15208,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiling",
             "targetLat": 30.57,
             "targetLng": 104.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengjia",
             "enemyFactionName": "成家",
             "enemyGeneralId": "kui_gongsunshu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15261,11 +15261,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lintao",
             "targetLat": 33.429,
             "targetLng": 105.142,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "canlang_qiang",
             "enemyFactionName": "参狼羌",
             "enemyGeneralId": "canlang_qiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15301,11 +15301,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 40.363,
             "targetLng": 113.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_3",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15354,11 +15354,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hepu",
             "targetLat": 21.03,
             "targetLng": 105.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoyue",
             "enemyFactionName": "骆越",
             "enemyGeneralId": "luoyue_zhengce",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15395,11 +15395,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 40.43,
             "targetLng": 113.88,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuhuan",
             "enemyFactionName": "乌桓",
             "enemyGeneralId": "wuhuan_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15447,11 +15447,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 28.227,
             "targetLng": 110.292,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuling",
             "enemyFactionName": "五溪",
             "enemyGeneralId": "wuling_xiangdancheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15493,11 +15493,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuling",
             "targetLat": 29.03,
             "targetLng": 111.69,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuling",
             "enemyFactionName": "五溪",
             "enemyGeneralId": "wuling_xiangdancheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15541,11 +15541,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 42.35,
             "targetLng": 107.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "huyan_peicen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15605,11 +15605,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 29.117,
             "targetLng": 110.467,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuling",
             "enemyFactionName": "五溪",
             "enemyGeneralId": "wuling_xiangdancheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15659,11 +15659,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_erzurum",
             "targetLat": 40.18,
             "targetLng": 44.51,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "armenia_arsacid",
             "enemyFactionName": "阿萨息斯亚美尼亚",
             "enemyGeneralId": "armenia_arsacid_gen_166",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15717,11 +15717,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 38.142,
             "targetLng": 41.002,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "armenia_arsacid",
             "enemyFactionName": "阿萨息斯亚美尼亚",
             "enemyGeneralId": "armenia_arsacid_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15763,11 +15763,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_rhandeia",
             "targetLat": 38.685,
             "targetLng": 39.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_167",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15821,11 +15821,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiuquan",
             "targetLat": 43.6,
             "targetLng": 93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe_huyan_wang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15880,11 +15880,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_balikun",
             "targetLat": 40.516,
             "targetLng": 89.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_3",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15939,11 +15939,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taqian",
             "targetLat": 37.1,
             "targetLng": 79.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_3",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -15985,11 +15985,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 43.989,
             "targetLng": 89.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_4",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16049,11 +16049,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiuquan",
             "targetLat": 42.79,
             "targetLng": 88.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chagatai",
             "enemyFactionName": "车师",
             "enemyGeneralId": "chagatai_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16102,11 +16102,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shule",
             "targetLat": 40.54,
             "targetLng": 81.26,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiuci",
             "enemyFactionName": "龟兹",
             "enemyGeneralId": "qiuci_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16155,11 +16155,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taqian",
             "targetLat": 39.485,
             "targetLng": 76.001,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shule",
             "enemyFactionName": "疏勒",
             "enemyGeneralId": "shule_gen_173",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16201,11 +16201,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taqian",
             "targetLat": 39.582,
             "targetLng": 75.385,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shule",
             "enemyFactionName": "疏勒",
             "enemyGeneralId": "bfe_shulezhong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16253,11 +16253,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taqian",
             "targetLat": 38.41,
             "targetLng": 77.24,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shache",
             "enemyFactionName": "莎车",
             "enemyGeneralId": "shache_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16306,11 +16306,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guanglu",
             "targetLat": 44.974,
             "targetLng": 99.113,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe3_64",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16359,11 +16359,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_juyansai",
             "targetLat": 47.64,
             "targetLng": 88.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "bfe3_64",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16407,11 +16407,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_juyansai",
             "targetLat": 44.12,
             "targetLng": 93.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_177",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16460,11 +16460,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 44.52,
             "targetLng": 101.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_180",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16507,11 +16507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 41.45,
             "targetLng": 109.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_183",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16554,11 +16554,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_eyangling",
             "targetLat": 40.95,
             "targetLng": 110.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_180",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16623,11 +16623,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 45.622,
             "targetLng": 23.309,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "daqiya",
             "enemyFactionName": "达契亚",
             "enemyGeneralId": "daqiya_gen_185",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16682,11 +16682,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_antiejiya",
             "targetLat": 39.95,
             "targetLng": 41.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "armenia_arsacid",
             "enemyFactionName": "阿萨息斯亚美尼亚",
             "enemyGeneralId": "armenia_arsacid_gen_186",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16746,11 +16746,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 33.33,
             "targetLng": 44.37,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ansxi",
             "enemyFactionName": "安息帝国",
             "enemyGeneralId": "ansxi_gen_188",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16799,11 +16799,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 35.589,
             "targetLng": 42.718,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hatra",
             "enemyFactionName": "哈特拉王国",
             "enemyGeneralId": "hatra_gen_189",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16846,11 +16846,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hamiwei",
             "targetLat": 42.825,
             "targetLng": 93.515,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chagatai",
             "enemyFactionName": "车师",
             "enemyGeneralId": "chagatai_gen_190",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16903,11 +16903,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 41.72,
             "targetLng": 82.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_192",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -16962,11 +16962,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gaochangcheng",
             "targetLat": 43.989,
             "targetLng": 89.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chagatai",
             "enemyFactionName": "车师",
             "enemyGeneralId": "chagatai_gen_190",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17015,11 +17015,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gaochangcheng",
             "targetLat": 43.6,
             "targetLng": 93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_shouling_5",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17074,11 +17074,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gaochangcheng",
             "targetLat": 42.06,
             "targetLng": 86.56,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yanqi",
             "enemyFactionName": "焉耆",
             "enemyGeneralId": "bfe_cb_yanqi_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17122,11 +17122,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yunwu",
             "targetLat": 35.37,
             "targetLng": 103.86,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhong_qiang",
             "enemyFactionName": "钟羌",
             "enemyGeneralId": "zhong_qiang_gen_196",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17168,11 +17168,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingju",
             "targetLat": 36.68,
             "targetLng": 103.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shaodang",
             "enemyFactionName": "烧当",
             "enemyGeneralId": "shaodang_gen_197",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17208,11 +17208,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yunwu",
             "targetLat": 36.49,
             "targetLng": 102.37,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shaodang",
             "enemyFactionName": "烧当",
             "enemyGeneralId": "shaodang_gen_197",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17255,11 +17255,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_eyangling",
             "targetLat": 39.75,
             "targetLng": 111.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_199",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17307,11 +17307,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tianshui",
             "targetLat": 35.65,
             "targetLng": 107.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiedong_qiang",
             "enemyFactionName": "且冻羌",
             "enemyGeneralId": "qiedong_qiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17354,11 +17354,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_eyangling",
             "targetLat": 39.42,
             "targetLng": 112.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_199",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17406,11 +17406,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yunwu",
             "targetLat": 35.19,
             "targetLng": 106.05,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shaodang",
             "enemyFactionName": "烧当",
             "enemyGeneralId": "shaodang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17459,11 +17459,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fushi",
             "targetLat": 39.75,
             "targetLng": 111.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongnu",
             "enemyFactionName": "匈奴",
             "enemyGeneralId": "xiongnu_gen_204",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17506,11 +17506,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chilechuan",
             "targetLat": 40.08,
             "targetLng": 113.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17553,11 +17553,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yunwu",
             "targetLat": 35.42,
             "targetLng": 103.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shaodang",
             "enemyFactionName": "烧当",
             "enemyGeneralId": "shaodang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17606,11 +17606,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 35.45,
             "targetLng": 102.25,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shaodang",
             "enemyFactionName": "烧当",
             "enemyGeneralId": "shaodang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17658,11 +17658,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 37.93,
             "targetLng": 102.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianlian_qiang",
             "enemyFactionName": "先零东羌",
             "enemyGeneralId": "xianlian_qiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17711,11 +17711,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 36.01,
             "targetLng": 106.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianlian_qiang",
             "enemyFactionName": "先零东羌",
             "enemyGeneralId": "xianlian_qiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17751,11 +17751,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 35.53,
             "targetLng": 106.68,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianlian_qiang",
             "enemyFactionName": "先零东羌",
             "enemyGeneralId": "xianlian_qiang_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17798,11 +17798,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anding",
             "targetLat": 38.65,
             "targetLng": 107.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_208",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17846,11 +17846,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 41.65,
             "targetLng": 113.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_208",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17904,11 +17904,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.215,
             "targetLng": 113.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baibo",
             "enemyFactionName": "黄巾",
             "enemyGeneralId": "baibo_zhangjue",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -17962,11 +17962,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xinzheng",
             "targetLat": 32.956,
             "targetLng": 112.516,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baibo",
             "enemyFactionName": "黄巾",
             "enemyGeneralId": "baibo_gen_213",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18010,11 +18010,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.36,
             "targetLng": 107.88,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liangzhou",
             "enemyFactionName": "凉州",
             "enemyGeneralId": "liangzhou_gen_215",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18069,11 +18069,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_danhanshan",
             "targetLat": 38.25,
             "targetLng": 106.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
             "enemyGeneralId": "han_d_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18115,11 +18115,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tianshui",
             "targetLat": 34.58,
             "targetLng": 105.73,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liangzhou",
             "enemyFactionName": "凉州",
             "enemyGeneralId": "bfe3_67",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18168,11 +18168,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.36,
             "targetLng": 107.24,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liangzhou",
             "enemyFactionName": "凉州",
             "enemyGeneralId": "bfe3_67",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18220,11 +18220,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 35.95,
             "targetLng": 111.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baibo",
             "enemyFactionName": "黄巾",
             "enemyGeneralId": "baibo_guotai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18267,11 +18267,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.79,
             "targetLng": 113.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "cao_d_caocao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18314,11 +18314,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.18,
             "targetLng": 112.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "ruzhou_sunjian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18371,11 +18371,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 37.02,
             "targetLng": 115.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "bfe3_71",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18434,11 +18434,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanguguan",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lvbu",
             "enemyFactionName": "徐州",
             "enemyGeneralId": "pizhou_lvbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18486,11 +18486,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_puyang",
             "targetLat": 36.05,
             "targetLng": 116.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baibo",
             "enemyFactionName": "黄巾",
             "enemyGeneralId": "baibo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18539,11 +18539,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 35.04,
             "targetLng": 114.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhongjia",
             "enemyFactionName": "仲家",
             "enemyGeneralId": "zhongjia_gen_226",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18603,11 +18603,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiapi",
             "targetLat": 35.76,
             "targetLng": 115.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lvbu",
             "enemyFactionName": "徐州",
             "enemyGeneralId": "pizhou_lvbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18660,11 +18660,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 35.07,
             "targetLng": 115.57,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lvbu",
             "enemyFactionName": "徐州",
             "enemyGeneralId": "pizhou_lvbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18717,11 +18717,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shouxian",
             "targetLat": 31.99,
             "targetLng": 119.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
             "enemyGeneralId": "bfe3_70",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18763,11 +18763,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanyang",
             "targetLat": 32.956,
             "targetLng": 112.516,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiliangjun",
             "enemyFactionName": "西凉军",
             "enemyGeneralId": "xiliangjun_gen_229",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18820,11 +18820,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 33.889,
             "targetLng": 117.878,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lvbu",
             "enemyFactionName": "徐州",
             "enemyGeneralId": "pizhou_lvbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18866,11 +18866,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fanyang",
             "targetLat": 39.15,
             "targetLng": 115.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "bfe3_71",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18918,11 +18918,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qianshan",
             "targetLat": 30.35,
             "targetLng": 114.13,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jingzhou",
             "enemyFactionName": "荆州",
             "enemyGeneralId": "bfe_cb_jingzhou_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -18970,11 +18970,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 35.53,
             "targetLng": 114.68,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "bfe_cb_yuan_shao_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19027,11 +19027,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhaoge",
             "targetLat": 34.75,
             "targetLng": 114.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "cao_d_caocao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19084,11 +19084,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 35.98,
             "targetLng": 115.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "bfe3_71",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19131,11 +19131,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zaoyang",
             "targetLat": 33.16,
             "targetLng": 112.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "bozhou_d_yujin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19189,11 +19189,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 36.32,
             "targetLng": 114.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "yuan_shao_gen_238",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19247,11 +19247,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 38.04,
             "targetLng": 116.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "yuan_shao_gen_241",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19305,11 +19305,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 36.11,
             "targetLng": 113.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_shao",
             "enemyFactionName": "冀州",
             "enemyGeneralId": "yuan_shao_gen_242",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19373,11 +19373,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 41.15,
             "targetLng": 119.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuhuan",
             "enemyFactionName": "乌桓",
             "enemyGeneralId": "wuhuan_tadun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19431,11 +19431,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gusu",
             "targetLat": 30.55,
             "targetLng": 114.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jingzhou",
             "enemyFactionName": "荆州",
             "enemyGeneralId": "bfe_cb_jingzhou_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19484,11 +19484,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiangyang",
             "targetLat": 30.82,
             "targetLng": 111.79,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "shu_liubei",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19537,11 +19537,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 29.885,
             "targetLng": 113.622,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "jiujiang_zhouyu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19595,11 +19595,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 30.35,
             "targetLng": 112.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "caoren",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19658,11 +19658,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 34.608,
             "targetLng": 110.292,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "cangsong_machao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19711,11 +19711,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jianmenguan",
             "targetLat": 31.47,
             "targetLng": 104.74,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
             "enemyGeneralId": "baishui_yanghuai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19769,11 +19769,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chengdu",
             "targetLat": 30.57,
             "targetLng": 104.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_d",
             "enemyFactionName": "刘汉",
             "enemyGeneralId": "han_d_gen_248",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19832,11 +19832,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 33.08,
             "targetLng": 106.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hanning",
             "enemyFactionName": "汉宁",
             "enemyGeneralId": "hanning_gen_250",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19872,11 +19872,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hefei",
             "targetLat": 31.82,
             "targetLng": 117.23,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "wuwu_d_lvmeng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19930,11 +19930,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jianmenguan",
             "targetLat": 33.058,
             "targetLng": 106.666,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "bfe_zhanghe",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -19982,11 +19982,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 32.01,
             "targetLng": 112.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "caoren",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20040,11 +20040,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiangyang",
             "targetLat": 32.22,
             "targetLng": 109.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "shu_gen_255",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20092,11 +20092,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 30.7,
             "targetLng": 111.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "shu_liubei",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20150,11 +20150,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanyang",
             "targetLat": 30.35,
             "targetLng": 112.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "sunwu_d_gen_256",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20213,11 +20213,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chengdu",
             "targetLat": 24.88,
             "targetLng": 102.83,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sou",
             "enemyFactionName": "越嶲夷",
             "enemyGeneralId": "sou_gaodingyuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20259,11 +20259,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiangyang",
             "targetLat": 32.01,
             "targetLng": 112.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "sunwu_d_sunquan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20317,11 +20317,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanyang",
             "targetLat": 32.22,
             "targetLng": 109.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "shu_mengda",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20380,11 +20380,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.015,
             "targetLng": 106.035,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "jingmen_zhaoyun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20433,11 +20433,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 30.76,
             "targetLng": 116.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "huang_d_sunshuao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20491,11 +20491,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 33.429,
             "targetLng": 105.142,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "caowei_gen_272",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20548,11 +20548,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 34.92,
             "targetLng": 104.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "caowei_gen_272",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20611,11 +20611,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 34.335,
             "targetLng": 105.455,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "sima_d_simayi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20657,11 +20657,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_macheng",
             "targetLat": 40.38,
             "targetLng": 113.88,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "bfe3_74",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20715,11 +20715,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 41.05,
             "targetLng": 122.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gongsun_d",
             "enemyFactionName": "辽东",
             "enemyGeneralId": "bfe_cb_gongsun_d_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20784,11 +20784,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 41.27,
             "targetLng": 123.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gongsun_d",
             "enemyFactionName": "辽东",
             "enemyGeneralId": "bfe_cb_gongsun_d_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20842,11 +20842,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 32.32,
             "targetLng": 116.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "sunwu_d_gen_270",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20895,11 +20895,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guoneicheng",
             "targetLat": 40.12,
             "targetLng": 124.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "caowei",
             "enemyFactionName": "曹魏",
             "enemyGeneralId": "caowei_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -20954,11 +20954,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 33.36,
             "targetLng": 107.58,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "yangzhou_wangping",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21007,11 +21007,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 41.268,
             "targetLng": 125.362,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_gen_284",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21061,11 +21061,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 41.155,
             "targetLng": 126.156,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_gen_284",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21119,11 +21119,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.58,
             "targetLng": 103.21,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "qingqiang_jiangwei",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21173,11 +21173,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tianshui",
             "targetLat": 34.82,
             "targetLng": 104.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shu",
             "enemyFactionName": "蜀汉",
             "enemyGeneralId": "qingqiang_jiangwei",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21227,11 +21227,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 35.589,
             "targetLng": 42.718,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hatra",
             "enemyFactionName": "哈特拉王国",
             "enemyGeneralId": "hatra_gen_293",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21285,11 +21285,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dabulishi",
             "targetLat": 36.85,
             "targetLng": 40.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_294",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21343,11 +21343,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 37.15,
             "targetLng": 38.782,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "bfe3_77",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21395,11 +21395,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mazaka",
             "targetLat": 35.95,
             "targetLng": 39.02,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "paermila",
             "enemyFactionName": "帕尔米拉",
             "enemyGeneralId": "paermila_gen_296",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21441,11 +21441,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yadian",
             "targetLat": 37.984,
             "targetLng": 23.728,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goths_migration",
             "enemyFactionName": "哥特人",
             "enemyGeneralId": "goths_migration_gen_297",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21488,11 +21488,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_milan",
             "targetLat": 45.54,
             "targetLng": 10.56,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "alamanni",
             "enemyFactionName": "阿勒曼尼",
             "enemyGeneralId": "alamanni_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21541,11 +21541,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 43.321,
             "targetLng": 21.896,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goths_migration",
             "enemyFactionName": "哥特人",
             "enemyGeneralId": "goths_migration_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21599,11 +21599,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoma",
             "targetLat": 45.185,
             "targetLng": 9.158,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "juthungi",
             "enemyFactionName": "尤图恩吉部",
             "enemyGeneralId": "juthungi_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21662,11 +21662,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 34.732,
             "targetLng": 36.713,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "paermila",
             "enemyFactionName": "帕尔米拉",
             "enemyGeneralId": "paermila_gen_301",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21726,11 +21726,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 31.198,
             "targetLng": 29.892,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "paermila",
             "enemyFactionName": "帕尔米拉",
             "enemyGeneralId": "paermila_gen_302",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21784,11 +21784,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 48.957,
             "targetLng": 4.363,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gallic_empire",
             "enemyFactionName": "高卢帝国",
             "enemyGeneralId": "bfe_cb_gallic_empire_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21842,11 +21842,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 49.75,
             "targetLng": 6.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lugii",
             "enemyFactionName": "卢吉联盟",
             "enemyGeneralId": "lugii_gen_305",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21894,11 +21894,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 48.37,
             "targetLng": 10.89,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "vandali_tribes",
             "enemyFactionName": "汪达尔诸部",
             "enemyGeneralId": "vandali_tribes_gen_306",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -21947,11 +21947,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.52,
             "targetLng": 105.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_307",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22000,11 +22000,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.302,
             "targetLng": 102.898,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_307",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22063,11 +22063,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 37.93,
             "targetLng": 102.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_307",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22131,11 +22131,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chengdu",
             "targetLat": 32.04,
             "targetLng": 118.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunwu_d",
             "enemyFactionName": "孙吴",
             "enemyGeneralId": "sunwu_d_gen_317",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22178,11 +22178,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.03,
             "targetLng": 108.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiwanyian_jun",
             "enemyFactionName": "关中氐羌军",
             "enemyGeneralId": "qiwanyian_jun_gen_320",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22241,11 +22241,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.35,
             "targetLng": 107.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiwanyian_jun",
             "enemyFactionName": "关中氐羌军",
             "enemyGeneralId": "qiwanyian_jun_gen_320",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22293,11 +22293,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 34.935,
             "targetLng": 113.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhaowang_lun",
             "enemyFactionName": "赵王军",
             "enemyGeneralId": "zhaowang_lun_gen_326",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22338,11 +22338,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.65,
             "targetLng": 112.51,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengdu_ying",
             "enemyFactionName": "成都王军",
             "enemyGeneralId": "chengdu_ying_gen_327",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22390,11 +22390,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 35.92,
             "targetLng": 114.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengdu_ying",
             "enemyFactionName": "成都王军",
             "enemyGeneralId": "chengdu_ying_gen_330",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22442,11 +22442,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 37.48,
             "targetLng": 111.09,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_zhao",
             "enemyFactionName": "汉赵",
             "enemyGeneralId": "yao_liuyuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22505,11 +22505,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hejian_yong",
             "enemyFactionName": "河间王军",
             "enemyGeneralId": "hejian_yong_gen_333",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22563,11 +22563,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wudingzhou",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_331",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22621,11 +22621,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linfen",
             "targetLat": 35.09,
             "targetLng": 113.21,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_334",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22673,11 +22673,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 33.765,
             "targetLng": 115.392,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "bfe_wangyan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22731,11 +22731,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linfen",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_simachi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22794,11 +22794,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linfen",
             "targetLat": 35.03,
             "targetLng": 108.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_335",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22852,11 +22852,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lishi",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "bfe_cb_dongjin_4",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22915,11 +22915,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huaiyin",
             "targetLat": 33.88,
             "targetLng": 115.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fanya_jun",
             "enemyFactionName": "谯城坞军",
             "enemyGeneralId": "fanya_jun_gen_337",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -22973,11 +22973,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.088,
             "targetLng": 111.517,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jinzhun_jun",
             "enemyFactionName": "平阳汉军",
             "enemyGeneralId": "jinzhun_jun_gen_338",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23030,11 +23030,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.8,
             "targetLng": 114.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "yuzhou_zuti",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23076,11 +23076,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yongqiu",
             "targetLat": 34.55,
             "targetLng": 114.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "yuzhou_zuti",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23134,11 +23134,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 37.33,
             "targetLng": 117.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_339",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23197,11 +23197,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 36.73,
             "targetLng": 118.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "bfe_cb_dongjin_5",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23256,11 +23256,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhaoge",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_342",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23319,11 +23319,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_zhao",
             "enemyFactionName": "汉赵",
             "enemyGeneralId": "han_zhao_liuyao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23388,11 +23388,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.58,
             "targetLng": 105.73,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "han_zhao",
             "enemyFactionName": "汉赵",
             "enemyGeneralId": "han_zhao_gen_343",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23446,11 +23446,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shilang_jun",
             "enemyFactionName": "河东王军",
             "enemyGeneralId": "shilang_jun_gen_344",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23492,11 +23492,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaoyang",
             "targetLat": 41.57,
             "targetLng": 120.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xianbei",
             "enemyFactionName": "鲜卑",
             "enemyGeneralId": "xianbei_gen_345",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23550,11 +23550,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jicheng",
             "targetLat": 40.25,
             "targetLng": 122.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong_ren",
             "enemyFactionName": "平郭辽东军",
             "enemyGeneralId": "murong_ren_gen_346",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23596,11 +23596,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jicheng",
             "targetLat": 41.58,
             "targetLng": 121.055,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_zhao",
             "enemyFactionName": "石赵",
             "enemyGeneralId": "shizhao_d_shihu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23654,11 +23654,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaoyang",
             "targetLat": 41.155,
             "targetLng": 126.165,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "bfe_cb_gaogouli_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23706,11 +23706,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 38.35,
             "targetLng": 115.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ranwei_d",
             "enemyFactionName": "冉魏",
             "enemyGeneralId": "ranwei_d_ranmin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23769,11 +23769,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 36.73,
             "targetLng": 118.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "duanqi",
             "enemyFactionName": "段齐",
             "enemyGeneralId": "bfe_cb_xianbei_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23833,11 +23833,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 37.07,
             "targetLng": 41.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_349",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23897,11 +23897,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 37.914,
             "targetLng": 40.23,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_350",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -23955,11 +23955,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 36.32,
             "targetLng": 41.86,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24003,11 +24003,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bageda",
             "targetLat": 34.206,
             "targetLng": 43.88,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "gen_julian_apostate",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24051,11 +24051,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_puleisilafu",
             "targetLat": 44.01,
             "targetLng": 28.61,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_351",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24098,11 +24098,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 41.678,
             "targetLng": 26.559,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_352",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24150,11 +24150,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 40.64,
             "targetLng": 22.944,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_gen_353",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24204,11 +24204,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.88,
             "targetLng": 110.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fuliu_jun",
             "enemyFactionName": "蒲坂晋公军",
             "enemyGeneralId": "fuliu_jun_gen_354",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24252,11 +24252,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 35.63,
             "targetLng": 114.52,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "danyang_huanwen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24315,11 +24315,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.32,
             "targetLng": 113.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong",
             "enemyFactionName": "慕容燕",
             "enemyGeneralId": "bfe3_87",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24361,11 +24361,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jianmenguan",
             "targetLat": 32.28,
             "targetLng": 105.53,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fushi",
             "enemyFactionName": "苻秦",
             "enemyGeneralId": "fushi_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24425,11 +24425,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 37.93,
             "targetLng": 102.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qianliang",
             "enemyFactionName": "前凉",
             "enemyGeneralId": "qianliang_gen_357",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24483,11 +24483,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 32.01,
             "targetLng": 112.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_359",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24546,11 +24546,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fushi",
             "enemyFactionName": "苻秦",
             "enemyGeneralId": "bfe3_88",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24604,11 +24604,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fushi",
             "enemyFactionName": "苻秦",
             "enemyGeneralId": "bfe_cb_fushi_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24662,11 +24662,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tongguan",
             "targetLat": 34.27,
             "targetLng": 108.93,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fushi",
             "enemyFactionName": "苻秦",
             "enemyGeneralId": "fushi_gen_361",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24714,11 +24714,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tongguan",
             "targetLat": 36.01,
             "targetLng": 111.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fushi",
             "enemyFactionName": "苻秦",
             "enemyGeneralId": "bfe_cb_fushi_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24754,11 +24754,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_binzhou2",
             "targetLat": 35.18,
             "targetLng": 107.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_qin",
             "enemyFactionName": "姚秦",
             "enemyGeneralId": "beidi_yaochang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24816,11 +24816,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhongshan",
             "targetLat": 35.68,
             "targetLng": 114.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhaiwei",
             "enemyFactionName": "翟魏",
             "enemyGeneralId": "zhaiwei_gen_363",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24874,11 +24874,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhongshan",
             "targetLat": 40.48,
             "targetLng": 112.56,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_tuobagui",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24926,11 +24926,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 39.1,
             "targetLng": 107.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoche",
             "enemyFactionName": "高车",
             "enemyGeneralId": "gaoche_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -24978,11 +24978,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 40.273,
             "targetLng": 111.14,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "helian",
             "enemyFactionName": "赫连夏国",
             "enemyGeneralId": "helian_gen_364",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25041,11 +25041,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 37.87,
             "targetLng": 112.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong",
             "enemyFactionName": "慕容燕",
             "enemyGeneralId": "murong_gen_365",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25093,11 +25093,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 38.22,
             "targetLng": 114.68,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong",
             "enemyFactionName": "慕容燕",
             "enemyGeneralId": "bfe_murongbao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25151,11 +25151,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhoushan",
             "targetLat": 29.987,
             "targetLng": 120.582,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_367",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25208,11 +25208,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 30.52,
             "targetLng": 120.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunen_jun",
             "enemyFactionName": "五斗米道军",
             "enemyGeneralId": "sunen_jun_gen_366",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25265,11 +25265,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 32.065,
             "targetLng": 118.795,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huanchu",
             "enemyFactionName": "桓楚",
             "enemyGeneralId": "huanchu_gen_368",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25328,11 +25328,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 36.51,
             "targetLng": 118.54,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong",
             "enemyFactionName": "慕容燕",
             "enemyGeneralId": "bfe3_90",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25381,11 +25381,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 36.73,
             "targetLng": 118.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "murong",
             "enemyFactionName": "慕容燕",
             "enemyGeneralId": "bfe3_90",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25439,11 +25439,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 29.46,
             "targetLng": 116.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sunen_jun",
             "enemyFactionName": "五斗米道军",
             "enemyGeneralId": "sunen_jun_gen_369",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25502,11 +25502,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 30.35,
             "targetLng": 112.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_370",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25565,11 +25565,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 30.57,
             "targetLng": 104.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiaoshu",
             "enemyFactionName": "谯蜀",
             "enemyGeneralId": "qiaoshu_gen_372",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25628,11 +25628,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 30.28,
             "targetLng": 112.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongjin",
             "enemyFactionName": "司马晋",
             "enemyGeneralId": "dongjin_gen_373",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25691,11 +25691,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_pengcheng",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_qin",
             "enemyFactionName": "姚秦",
             "enemyGeneralId": "bfe_cb_hou_qin_1",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25749,11 +25749,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.54,
             "targetLng": 110.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_qin",
             "enemyFactionName": "姚秦",
             "enemyGeneralId": "bfe_yao_shao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25794,11 +25794,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.175,
             "targetLng": 109.255,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "helian",
             "enemyFactionName": "赫连夏国",
             "enemyGeneralId": "helian_helianbobo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25840,11 +25840,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhaoge",
             "targetLat": 35.57,
             "targetLng": 114.52,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_376",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25886,11 +25886,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hulaoguan",
             "targetLat": 34.81,
             "targetLng": 113.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_376",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25933,11 +25933,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 40.38,
             "targetLng": 111.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "rouran",
             "enemyFactionName": "柔然",
             "enemyGeneralId": "yujiulu_yujiulv",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -25996,11 +25996,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 38.024,
             "targetLng": 109.149,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "helian",
             "enemyFactionName": "赫连夏国",
             "enemyGeneralId": "helian_gen_379",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26053,11 +26053,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.327,
             "targetLng": 107.358,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "helian",
             "enemyFactionName": "赫连夏国",
             "enemyGeneralId": "helian_gen_379",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26111,11 +26111,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 47.137,
             "targetLng": 103.035,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "rouran",
             "enemyFactionName": "柔然",
             "enemyGeneralId": "yujiulu_yujiulv",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26170,11 +26170,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liusong",
             "enemyFactionName": "刘宋",
             "enemyGeneralId": "liusong_gen_381",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26222,11 +26222,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhaoge",
             "targetLat": 36.67,
             "targetLng": 117,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liusong",
             "enemyFactionName": "刘宋",
             "enemyGeneralId": "jinling_tandaoji",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26286,11 +26286,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 41.57,
             "targetLng": 120.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "beiyan",
             "enemyFactionName": "北燕",
             "enemyGeneralId": "beiyan_gen_384",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26350,11 +26350,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 37.93,
             "targetLng": 102.64,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "juqu_d",
             "enemyFactionName": "沮渠凉国",
             "enemyGeneralId": "juqu_d_gen_385",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26408,11 +26408,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 39.74,
             "targetLng": 98.51,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "juqu_d",
             "enemyFactionName": "沮渠凉国",
             "enemyGeneralId": "juqu_d_gen_387",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26460,11 +26460,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.53,
             "targetLng": 109.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaiwu_jun",
             "enemyFactionName": "杏城义军",
             "enemyGeneralId": "gaiwu_jun_gen_388",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26513,11 +26513,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 43.588,
             "targetLng": 104.661,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "rouran",
             "enemyFactionName": "柔然",
             "enemyGeneralId": "rouran_gen_390",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26577,11 +26577,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 32.24,
             "targetLng": 118.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liusong",
             "enemyFactionName": "刘宋",
             "enemyGeneralId": "liusong_gen_391",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26636,11 +26636,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saigede",
             "targetLat": 43.32,
             "targetLng": 21.9,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_gen_392",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26688,11 +26688,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saigede",
             "targetLat": 43.52,
             "targetLng": 24.63,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "bfe3_92",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26746,11 +26746,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 50.36,
             "targetLng": 3.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "salian_franks",
             "enemyFactionName": "萨利安法兰克",
             "enemyGeneralId": "salian_franks_gen_393",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26799,11 +26799,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 49,
             "targetLng": 4.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiongren",
             "enemyFactionName": "匈人",
             "enemyGeneralId": "xiongren_atila",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26858,11 +26858,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saigede",
             "targetLat": 45.77,
             "targetLng": 13.37,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luoma_diguo",
             "enemyFactionName": "罗马帝国",
             "enemyGeneralId": "luoma_diguo_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26905,11 +26905,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saigede",
             "targetLat": 45.12,
             "targetLng": 19.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gepids",
             "enemyFactionName": "革皮德",
             "enemyGeneralId": "gepids_gen_394",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -26968,11 +26968,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ravenna",
             "targetLat": 43.94,
             "targetLng": 4.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xigete",
             "enemyFactionName": "西哥特",
             "enemyGeneralId": "xigete_diaoduolike_ii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27015,11 +27015,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_avignon",
             "targetLat": 44.897,
             "targetLng": 8.865,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ricimer_jun",
             "enemyFactionName": "意大利权臣军",
             "enemyGeneralId": "ricimer_jun_gen_398",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27068,11 +27068,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_soissons",
             "targetLat": 47.903,
             "targetLng": 1.909,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xigete",
             "enemyFactionName": "西哥特",
             "enemyGeneralId": "xigete_fuleidelike",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27115,11 +27115,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_clavenna",
             "targetLat": 45.698,
             "targetLng": 9.677,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ricimer_jun",
             "enemyFactionName": "意大利权臣军",
             "enemyGeneralId": "ricimer_jun_gen_398",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27173,11 +27173,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_feiluzhabade",
             "targetLat": 34.34,
             "targetLng": 62.19,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yada",
             "enemyFactionName": "嚈哒",
             "enemyGeneralId": "yada_ahexiong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27220,11 +27220,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_helate_city",
             "targetLat": 37.616,
             "targetLng": 62.235,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sashan",
             "enemyFactionName": "萨珊",
             "enemyGeneralId": "kalan_suhela",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27267,11 +27267,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wushengguan",
             "targetLat": 31.83,
             "targetLng": 114.01,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_yuanying",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27324,11 +27324,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 32.92,
             "targetLng": 117.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_yuanying",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27370,11 +27370,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuanhu",
             "targetLat": 33.01,
             "targetLng": 114.36,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_403",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27428,11 +27428,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huaiyin",
             "targetLat": 34.529,
             "targetLng": 119.133,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_406",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27474,11 +27474,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shouxian",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_407",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27514,11 +27514,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guyangsai",
             "targetLat": 41.1,
             "targetLng": 110.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shifa_rouran",
             "enemyFactionName": "漠北示发部",
             "enemyGeneralId": "shifa_rouran_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27566,11 +27566,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guyangsai",
             "targetLat": 41.266,
             "targetLng": 111.132,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_410",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27614,11 +27614,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saierwusu",
             "targetLat": 41.303,
             "targetLng": 108.506,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liuzhen",
             "enemyFactionName": "六镇",
             "enemyGeneralId": "liuzhen_gen_409",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27666,11 +27666,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 38.471,
             "targetLng": 115.063,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liuzhen",
             "enemyFactionName": "六镇",
             "enemyGeneralId": "zhao_gerong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27724,11 +27724,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 33.27,
             "targetLng": 116.56,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_412",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27776,11 +27776,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiurongchuan",
             "targetLat": 36.61,
             "targetLng": 114.49,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liuzhen",
             "enemyFactionName": "六镇",
             "enemyGeneralId": "zhao_gerong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27845,11 +27845,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 34.81,
             "targetLng": 113.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "bfe_yangyu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27897,11 +27897,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xindu",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "erzhu",
             "enemyFactionName": "尔朱契胡",
             "enemyGeneralId": "erzhu_erzhuzhao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -27950,11 +27950,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anding",
             "targetLat": 35.19,
             "targetLng": 106.01,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tuoba",
             "enemyFactionName": "拓跋魏",
             "enemyGeneralId": "tuoba_gen_413",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28002,11 +28002,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.54,
             "targetLng": 110.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_gen_414",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28049,11 +28049,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchuanzhen",
             "targetLat": 35.003,
             "targetLng": 109.932,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_gaohuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28111,11 +28111,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_gaohuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28169,11 +28169,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 35.53,
             "targetLng": 110.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuwen",
             "enemyFactionName": "宇文周",
             "enemyGeneralId": "long2_weixiaokuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28221,11 +28221,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 34.27,
             "targetLng": 117.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nan_liang",
             "enemyFactionName": "萧梁",
             "enemyGeneralId": "nan_liang_gen_416",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28274,11 +28274,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_naiman",
             "targetLat": 41.15,
             "targetLng": 114.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "rouran",
             "enemyFactionName": "柔然",
             "enemyGeneralId": "rouran_anagui",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28343,11 +28343,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 30.57,
             "targetLng": 104.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nan_liang",
             "enemyFactionName": "萧梁",
             "enemyGeneralId": "nan_liang_gen_418",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28406,11 +28406,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 30.35,
             "targetLng": 112.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nan_liang",
             "enemyFactionName": "萧梁",
             "enemyGeneralId": "nan_liang_gen_420",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28464,11 +28464,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.53,
             "targetLng": 110.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "jiyuan_huluguang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28522,11 +28522,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nishabuer",
             "targetLat": 39.767,
             "targetLng": 64.433,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yada",
             "enemyFactionName": "嚈哒",
             "enemyGeneralId": "yada_gen_421",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28586,11 +28586,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "jiyuan_huluguang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28639,11 +28639,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiayangdu",
             "targetLat": 35.631,
             "targetLng": 111.474,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "jiyuan_huluguang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28692,11 +28692,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "jiyuan_huluguang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28750,11 +28750,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nan_liang",
             "enemyFactionName": "萧梁",
             "enemyGeneralId": "bfe_wang_lin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28803,11 +28803,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 32.393,
             "targetLng": 119.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28866,11 +28866,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.088,
             "targetLng": 111.517,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_gen_424",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28929,11 +28929,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaoqi_d",
             "enemyFactionName": "高齐",
             "enemyGeneralId": "gaoqi_d_gen_425",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -28987,11 +28987,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.27,
             "targetLng": 117.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chen",
             "enemyFactionName": "陈国",
             "enemyGeneralId": "chen_gen_422",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29045,11 +29045,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chen",
             "enemyFactionName": "陈国",
             "enemyGeneralId": "chen_gen_427",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29108,11 +29108,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiangzhou_jun",
             "enemyFactionName": "相州蜀公军",
             "enemyGeneralId": "xiangzhou_jun_gen_417",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29160,11 +29160,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 41.266,
             "targetLng": 111.132,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_428",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29217,11 +29217,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_baidicheng2",
             "targetLat": 30.7,
             "targetLng": 111.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chen",
             "enemyFactionName": "陈国",
             "enemyGeneralId": "yidou_qixin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29270,11 +29270,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 32.05,
             "targetLng": 118.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chen",
             "enemyFactionName": "陈国",
             "enemyGeneralId": "chen_gen_431",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29332,11 +29332,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 29.987,
             "targetLng": 120.582,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jiangnan_yijun",
             "enemyFactionName": "江南义军",
             "enemyGeneralId": "bfe_gao_zhihui",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29385,11 +29385,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 37.998,
             "targetLng": 106.295,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_432",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29437,11 +29437,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 40.38,
             "targetLng": 111.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_432",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29499,11 +29499,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 37.87,
             "targetLng": 112.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bingzhou_jun",
             "enemyFactionName": "并州汉王军",
             "enemyGeneralId": "bingzhou_jun_gen_434",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29557,11 +29557,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 36.761,
             "targetLng": 99.742,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xihai_d",
             "enemyFactionName": "吐谷浑",
             "enemyGeneralId": "xihai_d_fuyun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29621,11 +29621,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fanyang",
             "targetLat": 41.27,
             "targetLng": 123.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29674,11 +29674,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 39.62,
             "targetLng": 125.66,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_yizhiwende",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29721,11 +29721,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yangxuangan_jun",
             "enemyFactionName": "黎阳楚公军",
             "enemyGeneralId": "yangxuangan_jun_gen_436",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29773,11 +29773,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dengzhou",
             "targetLat": 39.105,
             "targetLng": 121.785,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_gen_437",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29819,11 +29819,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yanmenguan",
             "targetLat": 39.19,
             "targetLng": 112.87,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_438",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29877,11 +29877,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_puyang",
             "targetLat": 34.81,
             "targetLng": 113.06,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sui",
             "enemyFactionName": "隋国",
             "enemyGeneralId": "sui_gen_440",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29934,11 +29934,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 36.57,
             "targetLng": 111.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sui",
             "enemyFactionName": "隋国",
             "enemyGeneralId": "huo_songlaosheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -29991,11 +29991,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.2,
             "targetLng": 107.79,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xue_qin",
             "enemyFactionName": "薛秦",
             "enemyGeneralId": "xue_qin_gen_442",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30037,11 +30037,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaocheng",
             "targetLat": 36.43,
             "targetLng": 115.96,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "douxia",
             "enemyFactionName": "夏",
             "enemyGeneralId": "bfe_dou_jiande",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30089,11 +30089,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 35.63,
             "targetLng": 111.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dingyang",
             "enemyFactionName": "定杨",
             "enemyGeneralId": "dingyang_gen_444",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30147,11 +30147,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hulaoguan",
             "targetLat": 34.81,
             "targetLng": 113.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "douxia",
             "enemyFactionName": "夏",
             "enemyGeneralId": "bfe_dou_jiande",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30204,11 +30204,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_baidicheng2",
             "targetLat": 30.35,
             "targetLng": 112.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liang_shuofang",
             "enemyFactionName": "鸣凤",
             "enemyGeneralId": "gen_xiao_xian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30261,11 +30261,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 36.71,
             "targetLng": 114.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "handong",
             "enemyFactionName": "汉东",
             "enemyGeneralId": "handong_liuheita",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30323,11 +30323,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 36.63,
             "targetLng": 115.4,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "handong",
             "enemyFactionName": "汉东",
             "enemyGeneralId": "handong_liuheita",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30386,11 +30386,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaisang",
             "targetLat": 32.05,
             "targetLng": 118.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fusong",
             "enemyFactionName": "辅宋",
             "enemyGeneralId": "fusong_gen_446",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30450,11 +30450,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 38.02,
             "targetLng": 109.15,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liangshidu",
             "enemyFactionName": "永隆",
             "enemyGeneralId": "kang_liangshidou",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30507,11 +30507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 39.91,
             "targetLng": 111.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_xielikehan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30565,11 +30565,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.76,
             "targetLng": 99.74,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xihai_d",
             "enemyFactionName": "吐谷浑",
             "enemyGeneralId": "xihai_d_fuyun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30611,11 +30611,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_songzhou",
             "targetLat": 32.79,
             "targetLng": 103.63,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_songzanganbu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30675,11 +30675,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 42.85,
             "targetLng": 89.53,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaochang",
             "enemyFactionName": "麴氏高昌",
             "enemyGeneralId": "bfe_quzhisheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30728,11 +30728,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gaochangcheng",
             "targetLat": 42.06,
             "targetLng": 86.56,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yanqi",
             "enemyFactionName": "焉耆",
             "enemyGeneralId": "yanqi_longtuqizhi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30787,11 +30787,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 40.8,
             "targetLng": 122.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_yangwanchun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30840,11 +30840,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 47.6,
             "targetLng": 101.23,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xueyantuo",
             "enemyFactionName": "薛延陀",
             "enemyGeneralId": "xueyantuo_gen_448",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30893,11 +30893,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shengle",
             "targetLat": 47.64,
             "targetLng": 88.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_450",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30951,11 +30951,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 43.92,
             "targetLng": 81.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "duolu",
             "enemyFactionName": "咄陆",
             "enemyGeneralId": "duolu_ashinahelu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -30998,11 +30998,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 43.1,
             "targetLng": 89.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huihu",
             "enemyFactionName": "回鹘",
             "enemyGeneralId": "huihu_gen_451",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31044,11 +31044,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yutian2",
             "targetLat": 37.11,
             "targetLng": 79.92,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "gar_lunqinling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31097,11 +31097,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.38,
             "targetLng": 99.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "gar_lunqinling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31156,11 +31156,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wendeng",
             "targetLat": 36.28,
             "targetLng": 126.91,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baiji",
             "enemyFactionName": "百济",
             "enemyGeneralId": "baiji_jiebo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31196,11 +31196,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sabi",
             "targetLat": 36,
             "targetLng": 126.73,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yamato",
             "enemyFactionName": "大和",
             "enemyGeneralId": "yamato_gen_453",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31254,11 +31254,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaoyang",
             "targetLat": 41.89,
             "targetLng": 123.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_gen_454",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31312,11 +31312,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 39.02,
             "targetLng": 125.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaogouli",
             "enemyFactionName": "高句丽",
             "enemyGeneralId": "gaogouli_gen_455",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31364,11 +31364,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 38.9,
             "targetLng": 125.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xinluo",
             "enemyFactionName": "新罗",
             "enemyGeneralId": "xinluo_gen_456",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31410,11 +31410,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kaesong",
             "targetLat": 38.03,
             "targetLng": 127.06,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xinluo",
             "enemyFactionName": "新罗",
             "enemyGeneralId": "xinluo_gen_458",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31462,11 +31462,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dengzhou",
             "targetLat": 36.02,
             "targetLng": 126.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xinluo",
             "enemyFactionName": "新罗",
             "enemyGeneralId": "xinluo_gen_459",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31515,11 +31515,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.68,
             "targetLng": 100.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "gar_lunqinling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31567,11 +31567,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 40.85,
             "targetLng": 111.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_460",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31619,11 +31619,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiurongchuan",
             "targetLat": 40.4,
             "targetLng": 112.1,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "xijue_ashina_funian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31671,11 +31671,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 40.09,
             "targetLng": 113.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "pugu_ashinaguduolu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31724,11 +31724,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 42.45,
             "targetLng": 77.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "gar_lunqinling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31777,11 +31777,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 38.08,
             "targetLng": 106.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_462",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31835,11 +31835,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 36.95,
             "targetLng": 100.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_464",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31888,11 +31888,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fanyang",
             "targetLat": 39.88,
             "targetLng": 118.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qidan_tang",
             "enemyFactionName": "契丹松漠部",
             "enemyGeneralId": "qidan_tang_gen_465",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31945,11 +31945,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaoyang",
             "targetLat": 42.35,
             "targetLng": 125.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bohai",
             "enemyFactionName": "渤海",
             "enemyGeneralId": "bohai_dazuorong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -31986,11 +31986,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuwei",
             "targetLat": 37.55,
             "targetLng": 102.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_466",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32033,11 +32033,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingzhou",
             "targetLat": 37.52,
             "targetLng": 105.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_gen_462",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32080,11 +32080,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lintao",
             "targetLat": 35.12,
             "targetLng": 104.22,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_469",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32132,11 +32132,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 35.58,
             "targetLng": 100.75,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32185,11 +32185,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhangye",
             "targetLat": 38.25,
             "targetLng": 100.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_xinuoluo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32244,11 +32244,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_merv",
             "targetLat": 37.224,
             "targetLng": 67.278,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tirmidh_musa",
             "enemyFactionName": "怛蜜割据军",
             "enemyGeneralId": "tirmidh_musa_gen_473",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32302,11 +32302,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_merv",
             "targetLat": 39.775,
             "targetLng": 64.416,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bukhara_sogd",
             "enemyFactionName": "布哈拉国",
             "enemyGeneralId": "bukhara_sogd_gen_475",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32366,11 +32366,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_merv",
             "targetLat": 38.53,
             "targetLng": 68.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shuman_guo",
             "enemyFactionName": "舒曼国",
             "enemyGeneralId": "shuman_guo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32425,11 +32425,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_otuken",
             "targetLat": 44,
             "targetLng": 89.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "tang_gen_477",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32489,11 +32489,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 40.52,
             "targetLng": 70.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fergana_aleda",
             "enemyFactionName": "拔汗那国",
             "enemyGeneralId": "fergana_aleda_gen_479",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32547,11 +32547,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_suiye",
             "targetLat": 40.28,
             "targetLng": 69.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "womaya",
             "enemyFactionName": "倭马亚",
             "enemyGeneralId": "womaya_muslim",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32595,11 +32595,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jinchangcheng",
             "targetLat": 39.85,
             "targetLng": 98.5,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_480",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32648,11 +32648,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.56,
             "targetLng": 101.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32701,11 +32701,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 40.42,
             "targetLng": 118.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qidan_tang",
             "enemyFactionName": "契丹松漠部",
             "enemyGeneralId": "qidan_tang_gen_482",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32753,11 +32753,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yanmenguan",
             "targetLat": 40.15,
             "targetLng": 113.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qidan_tang",
             "enemyFactionName": "契丹松漠部",
             "enemyGeneralId": "qidan_tang_gen_484",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32806,11 +32806,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingzhou",
             "targetLat": 36.85,
             "targetLng": 100.4,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32859,11 +32859,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 35.45,
             "targetLng": 100.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32912,11 +32912,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingzhou",
             "targetLat": 42.5,
             "targetLng": 109.5,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujue",
             "enemyFactionName": "突厥",
             "enemyGeneralId": "tujue_abo_dagan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -32960,11 +32960,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.04,
             "targetLng": 101.43,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33013,11 +33013,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.56,
             "targetLng": 101.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_486",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33065,11 +33065,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fanyang",
             "targetLat": 41.2,
             "targetLng": 114.6,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huihu",
             "enemyFactionName": "回鹘",
             "enemyGeneralId": "huihu_gen_488",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33123,11 +33123,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_merv",
             "targetLat": 39.298,
             "targetLng": 66.938,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujishi",
             "enemyFactionName": "突骑施",
             "enemyGeneralId": "tujishi_sulukehan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33170,11 +33170,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 44,
             "targetLng": 89.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujishi",
             "enemyFactionName": "突骑施",
             "enemyGeneralId": "tujishi_sulukehan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33223,11 +33223,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 42.6,
             "targetLng": 78.1,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujishi",
             "enemyFactionName": "突骑施",
             "enemyGeneralId": "tujishi_sulukehan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33271,11 +33271,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lanshi",
             "targetLat": 35.92,
             "targetLng": 64.78,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujishi",
             "enemyFactionName": "突骑施",
             "enemyGeneralId": "tujishi_sulukehan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33330,11 +33330,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bieshibali",
             "targetLat": 42.84,
             "targetLng": 75.3,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tujishi",
             "enemyFactionName": "突骑施",
             "enemyGeneralId": "tujishi_tuhuoxian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33394,11 +33394,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 36.89,
             "targetLng": 73.71,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiaobolu",
             "enemyFactionName": "勃律",
             "enemyGeneralId": "nandou_sushili",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33447,11 +33447,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 42.52,
             "targetLng": 72.24,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "abasi",
             "enemyFactionName": "阿拔斯哈里发国",
             "enemyGeneralId": "abasi_gen_491",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33511,11 +33511,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 35.92,
             "targetLng": 74.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xiaobolu",
             "enemyFactionName": "勃律",
             "enemyGeneralId": "xiaobolu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33570,11 +33570,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fanyang",
             "targetLat": 38.14,
             "targetLng": 114.57,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "zhongshan_yangaoqing",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33628,11 +33628,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.58,
             "targetLng": 110.68,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "gaoliang_geshuhan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33674,11 +33674,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 37.78,
             "targetLng": 112.52,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_yan",
             "enemyFactionName": "大燕",
             "enemyGeneralId": "zhuozhou_shisiming",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33731,11 +33731,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qishan",
             "targetLat": 34.15,
             "targetLng": 108.88,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_yan",
             "enemyFactionName": "大燕",
             "enemyGeneralId": "zhuozhou_anshouzhong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33789,11 +33789,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.38,
             "targetLng": 115.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "liang_d_zhangxun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33847,11 +33847,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 36.12,
             "targetLng": 114.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_yan",
             "enemyFactionName": "大燕",
             "enemyGeneralId": "zhuozhou_shisiming",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33904,11 +33904,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiayangdu",
             "targetLat": 34.72,
             "targetLng": 112.48,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_yan",
             "enemyFactionName": "大燕",
             "enemyGeneralId": "gen_shi_chaoyi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33951,11 +33951,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.53,
             "targetLng": 108.84,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_493",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -33997,11 +33997,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingzhou",
             "targetLat": 38.08,
             "targetLng": 106.28,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_494",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34044,11 +34044,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anding",
             "targetLat": 35.06,
             "targetLng": 108.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_494",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34090,11 +34090,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anyang",
             "targetLat": 36.098,
             "targetLng": 114.385,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tianxiong",
             "enemyFactionName": "魏博",
             "enemyGeneralId": "tianxiong_tianchengsi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34137,11 +34137,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_binzhou2",
             "targetLat": 35.512,
             "targetLng": 107.038,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "yangtong_chisongdezan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34184,11 +34184,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zizhou_d",
             "targetLat": 31.682,
             "targetLng": 103.852,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "yangtong_chisongdezan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34241,11 +34241,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shangdang",
             "targetLat": 36.705,
             "targetLng": 114.492,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tianxiong",
             "enemyFactionName": "魏博",
             "enemyGeneralId": "tianxiong_gen_497",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34287,11 +34287,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fengtian",
             "targetLat": 34.528,
             "targetLng": 108.242,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_qin",
             "enemyFactionName": "大秦",
             "enemyGeneralId": "tang_zhuci",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34350,11 +34350,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shayuan",
             "targetLat": 34.295,
             "targetLng": 108.982,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "da_qin",
             "enemyFactionName": "大秦",
             "enemyGeneralId": "tang_zhuci",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34413,11 +34413,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 34.882,
             "targetLng": 110.298,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lihuaiguang_jun",
             "enemyFactionName": "朔方河中军",
             "enemyGeneralId": "lihuaiguang_jun_gen_498",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34460,11 +34460,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qishan",
             "targetLat": 34.643,
             "targetLng": 107.132,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_499",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34506,11 +34506,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 40.142,
             "targetLng": 94.662,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_500",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34565,11 +34565,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dali_city",
             "targetLat": 27.262,
             "targetLng": 99.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_gen_503",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34624,11 +34624,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meiyinci",
             "targetLat": 51.458,
             "targetLng": 8.854,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "old_saxons",
             "enemyFactionName": "古撒克逊",
             "enemyGeneralId": "old_saxons_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34688,11 +34688,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_geneva",
             "targetLat": 45.185,
             "targetLng": 9.155,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lunbadi",
             "enemyFactionName": "伦巴第",
             "enemyGeneralId": "lunbadi_desiderius",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34745,11 +34745,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yachen",
             "targetLat": 45.786,
             "targetLng": 12.245,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "friuli",
             "enemyFactionName": "弗留利公国",
             "enemyGeneralId": "friuli_gen_504",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34798,11 +34798,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meiyinci",
             "targetLat": 52.279,
             "targetLng": 8.047,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "old_saxons",
             "enemyFactionName": "古撒克逊",
             "enemyGeneralId": "old_saxons_gen_505",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34862,11 +34862,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kelong",
             "targetLat": 54.053,
             "targetLng": 13.772,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "veleti",
             "enemyFactionName": "维莱蒂联盟",
             "enemyGeneralId": "veleti_gen_506",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34921,11 +34921,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_leigensibao",
             "targetLat": 48.395,
             "targetLng": 15.698,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "awaer",
             "enemyFactionName": "阿瓦尔",
             "enemyGeneralId": "awaer_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -34985,11 +34985,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_verona",
             "targetLat": 46.368,
             "targetLng": 19.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "awaer",
             "enemyFactionName": "阿瓦尔",
             "enemyGeneralId": "awaer_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35044,11 +35044,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_toulouse",
             "targetLat": 41.385,
             "targetLng": 2.173,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_womaya",
             "enemyFactionName": "后倭马亚",
             "enemyGeneralId": "hou_womaya_gen_509",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35108,11 +35108,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yachen",
             "targetLat": 50.365,
             "targetLng": 13.792,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bohemia_duchy",
             "enemyFactionName": "波希米亚诸部",
             "enemyGeneralId": "bohemia_duchy_gen_511",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35165,11 +35165,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ravenna",
             "targetLat": 45.372,
             "targetLng": 12.338,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelite",
             "enemyFactionName": "威尼斯共和国",
             "enemyGeneralId": "kelite_gen_513",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35211,11 +35211,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sofia",
             "targetLat": 42.697,
             "targetLng": 23.322,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baojialiya",
             "enemyFactionName": "保加利亚第一帝国",
             "enemyGeneralId": "gen_krum",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35268,11 +35268,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 42.992,
             "targetLng": 26.648,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baojialiya",
             "enemyFactionName": "保加利亚第一帝国",
             "enemyGeneralId": "gen_krum",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35315,11 +35315,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.432,
             "targetLng": 27.093,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baojialiya",
             "enemyFactionName": "保加利亚第一帝国",
             "enemyGeneralId": "baojialiya_gen_515",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35374,11 +35374,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_patan",
             "targetLat": 27.055,
             "targetLng": 79.914,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boluo",
             "enemyFactionName": "波罗帝国",
             "enemyGeneralId": "varendra_devapala",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35428,11 +35428,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 33.485,
             "targetLng": 114.082,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huaixi",
             "enemyFactionName": "淮西",
             "enemyGeneralId": "bfe_wu_yuanji",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35486,11 +35486,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiangyang",
             "targetLat": 33.006,
             "targetLng": 114.361,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huaixi",
             "enemyFactionName": "淮西",
             "enemyGeneralId": "bfe_wu_yuanji",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35544,11 +35544,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daming",
             "targetLat": 35.918,
             "targetLng": 116.295,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ziqing",
             "enemyFactionName": "淄青军",
             "enemyGeneralId": "ziqing_gen_518",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35590,11 +35590,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luze",
             "targetLat": 38.005,
             "targetLng": 115.552,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengde",
             "enemyFactionName": "成德军",
             "enemyGeneralId": "chengde_gen_519",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35648,11 +35648,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaocheng",
             "targetLat": 38.302,
             "targetLng": 116.831,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "henghai",
             "enemyFactionName": "横海军",
             "enemyGeneralId": "tang_litongjie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35707,11 +35707,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wubusabo",
             "targetLat": 47.428,
             "targetLng": 102.658,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huihu",
             "enemyFactionName": "回鹘",
             "enemyGeneralId": "huihu_wusa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35754,11 +35754,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 40.915,
             "targetLng": 112.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wujie_huihu",
             "enemyFactionName": "南迁回鹘",
             "enemyGeneralId": "wujie_huihu_gen_523",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35813,11 +35813,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_quwo",
             "targetLat": 36.195,
             "targetLng": 113.112,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao_yi",
             "enemyFactionName": "昭义军",
             "enemyGeneralId": "zhao_yi_gen_524",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35853,11 +35853,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingtang",
             "targetLat": 36.485,
             "targetLng": 102.425,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luomen_tubo",
             "enemyFactionName": "洛门吐蕃军",
             "enemyGeneralId": "duomi_lunkongre",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35899,11 +35899,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 40.142,
             "targetLng": 94.662,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luomen_tubo",
             "enemyFactionName": "洛门吐蕃军",
             "enemyGeneralId": "luomen_tubo_gen_526",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -35952,11 +35952,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_binzhou2",
             "targetLat": 36.008,
             "targetLng": 106.282,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36010,11 +36010,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 42.825,
             "targetLng": 93.515,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36062,11 +36062,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_anding",
             "targetLat": 35.012,
             "targetLng": 104.635,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luomen_tubo",
             "enemyFactionName": "洛门吐蕃军",
             "enemyGeneralId": "duomi_lunkongre",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36131,11 +36131,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dunhuang",
             "targetLat": 37.928,
             "targetLng": 102.638,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tubo",
             "enemyFactionName": "吐蕃",
             "enemyGeneralId": "tubo_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36195,11 +36195,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yifusuo",
             "targetLat": 39.371,
             "targetLng": 38.114,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "paulicians",
             "enemyFactionName": "保罗派公社",
             "enemyGeneralId": "paulicians_gen_529",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36248,11 +36248,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yifusuo",
             "targetLat": 40.385,
             "targetLng": 35.812,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "malatya",
             "enemyFactionName": "马拉蒂亚埃米尔国",
             "enemyGeneralId": "malatya_gen_530",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36296,11 +36296,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gebenhagen",
             "targetLat": 52.414,
             "targetLng": 0.746,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "east_anglia",
             "enemyFactionName": "东盎格利亚王国",
             "enemyGeneralId": "east_anglia_gen_532",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36354,11 +36354,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_norwich",
             "targetLat": 53.961,
             "targetLng": -1.082,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "northumbria",
             "enemyFactionName": "诺森布里亚",
             "enemyGeneralId": "northumbria_gen_533",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36401,11 +36401,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 51.538,
             "targetLng": -1.242,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "danmai",
             "enemyFactionName": "丹麦",
             "enemyGeneralId": "danmai_gen_534",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36449,11 +36449,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 51.278,
             "targetLng": -2.105,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "danmai",
             "enemyFactionName": "丹麦",
             "enemyGeneralId": "danmai_guthrum",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36506,11 +36506,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bruges",
             "targetLat": 50.075,
             "targetLng": 1.612,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "falanji",
             "enemyFactionName": "法兰克",
             "enemyGeneralId": "falanji_shouling_2",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36565,11 +36565,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoyang",
             "targetLat": 34.605,
             "targetLng": 110.275,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "tang_qikerang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36623,11 +36623,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 34.502,
             "targetLng": 109.512,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huangwang",
             "enemyFactionName": "大齐",
             "enemyGeneralId": "huangwang_huangchao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36681,11 +36681,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 34.725,
             "targetLng": 114.015,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huangwang",
             "enemyFactionName": "大齐",
             "enemyGeneralId": "huangwang_huangchao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36727,11 +36727,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.798,
             "targetLng": 114.308,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "dang_d_zhuwen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36780,11 +36780,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 36.735,
             "targetLng": 111.758,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "tang_gen_537",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36844,11 +36844,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 39.905,
             "targetLng": 116.395,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lulong",
             "enemyFactionName": "卢龙军",
             "enemyGeneralId": "lulong_gen_538",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36901,11 +36901,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 33.595,
             "targetLng": 118.962,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yangwu",
             "enemyFactionName": "杨吴",
             "enemyGeneralId": "yang_zhou_yangxingmi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36947,11 +36947,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingchi",
             "targetLat": 38.303,
             "targetLng": 116.832,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "cangzhou_liurengong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -36993,11 +36993,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 37.868,
             "targetLng": 112.548,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "hou_liang_gen_540",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37051,11 +37051,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 34.522,
             "targetLng": 107.391,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "yaozhou_limaozhen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37114,11 +37114,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 36.815,
             "targetLng": 118.425,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "lai_wangshifan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37177,11 +37177,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 38.305,
             "targetLng": 116.835,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "cangzhou_liurengong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37235,11 +37235,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 36.152,
             "targetLng": 113.095,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "hou_liang_gen_541",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37293,11 +37293,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shayuan",
             "targetLat": 36.052,
             "targetLng": 107.882,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "yaozhou_limaozhen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37345,11 +37345,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 37.402,
             "targetLng": 114.685,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "liang_d_wangjingren",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37402,11 +37402,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 37.682,
             "targetLng": 116.271,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shatuo",
             "enemyFactionName": "沙陀",
             "enemyGeneralId": "shatuo_gen_542",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37465,11 +37465,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 39.904,
             "targetLng": 116.408,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tang",
             "enemyFactionName": "李唐",
             "enemyGeneralId": "cangzhou_liurengong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37522,11 +37522,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 36.265,
             "targetLng": 115.225,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "hou_liang_gen_543",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37574,11 +37574,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daming",
             "targetLat": 35.758,
             "targetLng": 115.165,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "hou_liang_gen_544",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37621,11 +37621,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhending",
             "targetLat": 38.525,
             "targetLng": 114.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_yelvabaoji",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37680,11 +37680,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daming",
             "targetLat": 35.722,
             "targetLng": 116.485,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_liang",
             "enemyFactionName": "朱梁",
             "enemyGeneralId": "dizhou_wangyanzhang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37738,11 +37738,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linhuang",
             "targetLat": 47.428,
             "targetLng": 102.658,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zubu",
             "enemyFactionName": "阻卜",
             "enemyGeneralId": "zubu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37797,11 +37797,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linhuang",
             "targetLat": 44.045,
             "targetLng": 129.195,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bohai",
             "enemyFactionName": "渤海",
             "enemyGeneralId": "bohai_dayinzhuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37855,11 +37855,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linhuang",
             "targetLat": 38.622,
             "targetLng": 114.705,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_tang",
             "enemyFactionName": "后唐",
             "enemyGeneralId": "hou_tang_gen_545",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37901,11 +37901,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhongshan",
             "targetLat": 38.513,
             "targetLng": 114.99,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_tang",
             "enemyFactionName": "后唐",
             "enemyGeneralId": "hou_tang_gen_545",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -37949,11 +37949,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_magedebao",
             "targetLat": 51.35,
             "targetLng": 11.99,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mazhaer",
             "enemyFactionName": "匈牙利",
             "enemyGeneralId": "bfe_bulcsu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38002,11 +38002,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_magedebao",
             "targetLat": 48.27,
             "targetLng": 10.89,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mazhaer",
             "enemyFactionName": "匈牙利",
             "enemyGeneralId": "bfe_bulcsu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38048,11 +38048,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_taiyuan",
             "targetLat": 37.852,
             "targetLng": 112.551,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_tang",
             "enemyFactionName": "后唐",
             "enemyGeneralId": "hou_tang_gen_548",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38111,11 +38111,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 38.141,
             "targetLng": 114.569,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chengde",
             "enemyFactionName": "成德军",
             "enemyGeneralId": "chengde_gen_550",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38169,11 +38169,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_linhuang",
             "targetLat": 35.763,
             "targetLng": 115.026,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_jin",
             "enemyFactionName": "石晋",
             "enemyGeneralId": "hou_jin_gen_551",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38221,11 +38221,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 38.742,
             "targetLng": 115.385,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_jin",
             "enemyFactionName": "石晋",
             "enemyGeneralId": "hou_jin_gen_29",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38273,11 +38273,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 38.106,
             "targetLng": 114.615,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_jin",
             "enemyFactionName": "石晋",
             "enemyGeneralId": "hou_jin_gen_549",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38331,11 +38331,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.828,
             "targetLng": 110.298,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_han",
             "enemyFactionName": "后汉",
             "enemyGeneralId": "houhan_lishouzhen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38384,11 +38384,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daming",
             "targetLat": 34.865,
             "targetLng": 114.312,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_han",
             "enemyFactionName": "后汉",
             "enemyGeneralId": "hou_han_gen_552",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38442,11 +38442,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 35.553,
             "targetLng": 116.828,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_han",
             "enemyFactionName": "后汉",
             "enemyGeneralId": "hou_han_gen_553",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38499,11 +38499,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 35.692,
             "targetLng": 112.905,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_han",
             "enemyFactionName": "后汉",
             "enemyGeneralId": "xin_liuchong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38552,11 +38552,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shouxian",
             "targetLat": 32.332,
             "targetLng": 118.238,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nantang",
             "enemyFactionName": "南唐",
             "enemyGeneralId": "chuzhou_d_huangfuhui",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38610,11 +38610,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 32.59,
             "targetLng": 116.8,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nantang",
             "enemyFactionName": "南唐",
             "enemyGeneralId": "bfe_liurenshan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38672,11 +38672,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 32.272,
             "targetLng": 119.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nantang",
             "enemyFactionName": "南唐",
             "enemyGeneralId": "nantang_gen_554",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38730,11 +38730,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 35.491,
             "targetLng": 112.852,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhao_yi",
             "enemyFactionName": "昭义军",
             "enemyGeneralId": "zhao_yi_gen_555",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38793,11 +38793,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 29.045,
             "targetLng": 111.691,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "wuping",
             "enemyFactionName": "武平军",
             "enemyGeneralId": "wuping_gen_557",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38850,11 +38850,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 31.045,
             "targetLng": 109.528,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_shu",
             "enemyFactionName": "后蜀",
             "enemyGeneralId": "hou_shu_gen_559",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38919,11 +38919,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 32.203,
             "targetLng": 105.558,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_shu",
             "enemyFactionName": "后蜀",
             "enemyGeneralId": "hou_shu_gen_561",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -38977,11 +38977,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jianmenguan",
             "targetLat": 30.57,
             "targetLng": 104.07,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xingguo_jun",
             "enemyFactionName": "蜀地兴国军",
             "enemyGeneralId": "xingguo_jun_gen_563",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39036,11 +39036,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 44.117,
             "targetLng": 27.26,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luosi",
             "enemyFactionName": "罗斯",
             "enemyGeneralId": "xiadunhe_sviatoslav",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39104,11 +39104,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingqu",
             "targetLat": 23.168,
             "targetLng": 113.272,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nanhan",
             "enemyFactionName": "南汉",
             "enemyGeneralId": "nanhan_gen_565",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39162,11 +39162,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ying",
             "targetLat": 31.662,
             "targetLng": 118.458,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nantang",
             "enemyFactionName": "南唐",
             "enemyGeneralId": "nantang_gen_566",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39215,11 +39215,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiuzi",
             "targetLat": 32.05,
             "targetLng": 118.77,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nantang",
             "enemyFactionName": "南唐",
             "enemyGeneralId": "nantang_gen_567",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39278,11 +39278,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 37.792,
             "targetLng": 112.485,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hou_han",
             "enemyFactionName": "后汉",
             "enemyGeneralId": "hou_han_gen_568",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39345,11 +39345,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 39.942,
             "targetLng": 116.348,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "yel_yelvxiuge",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39391,11 +39391,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yanmenguan",
             "targetLat": 39.193,
             "targetLng": 112.868,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_xiaoduli",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39443,11 +39443,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fushi",
             "targetLat": 38.082,
             "targetLng": 108.815,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "xiazhou_lijiqian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39495,11 +39495,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_baoding",
             "targetLat": 39.352,
             "targetLng": 115.808,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "yel_yelvxiuge",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39542,11 +39542,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yanmenguan",
             "targetLat": 39.182,
             "targetLng": 112.435,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "bfe_xiaotalin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39589,11 +39589,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhending",
             "targetLat": 38.582,
             "targetLng": 114.965,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "yel_yelvxiuge",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39647,11 +39647,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 39.618,
             "targetLng": 125.664,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goryeo",
             "enemyFactionName": "高丽",
             "enemyGeneralId": "goryeo_gen_571",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39700,11 +39700,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 39.125,
             "targetLng": 111.062,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "zhe_d_zheyuqing",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39758,11 +39758,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 39.018,
             "targetLng": 115.512,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "changshan_yangyanzhao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39816,11 +39816,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jingbianbao",
             "targetLat": 38.068,
             "targetLng": 106.295,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_peiji",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39868,11 +39868,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingtang",
             "targetLat": 37.928,
             "targetLng": 102.638,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "xiazhou_lijiqian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39931,11 +39931,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 35.702,
             "targetLng": 115.015,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_lijilong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -39978,11 +39978,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 39.812,
             "targetLng": 124.895,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goryeo",
             "enemyFactionName": "高丽",
             "enemyGeneralId": "goryeo_gen_573",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40025,11 +40025,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 40.115,
             "targetLng": 124.598,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goryeo",
             "enemyFactionName": "高丽",
             "enemyGeneralId": "goryeo_jianghanzan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40077,11 +40077,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_pyongyang",
             "targetLat": 39.981,
             "targetLng": 125.253,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goryeo",
             "enemyFactionName": "高丽",
             "enemyGeneralId": "goryeo_jianghanzan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40135,11 +40135,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tanjiawuer",
             "targetLat": -2.991,
             "targetLng": 104.756,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sanfoqi",
             "enemyFactionName": "三佛齐",
             "enemyGeneralId": "gen_sangrama_vijayottungavarman",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40182,11 +40182,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhangye",
             "targetLat": 38.934,
             "targetLng": 100.452,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "dangxiang_liyuanhao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40240,11 +40240,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 36.822,
             "targetLng": 108.768,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "zhai_han_diqing",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40287,11 +40287,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 36.685,
             "targetLng": 109.328,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "bfe_liuping",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40339,11 +40339,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_keyimen",
             "targetLat": 35.618,
             "targetLng": 106.115,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_renfu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40391,11 +40391,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 36.185,
             "targetLng": 106.095,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_575",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40438,11 +40438,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 35.542,
             "targetLng": 106.685,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_576",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40491,11 +40491,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 39.365,
             "targetLng": 110.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_gen_577",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40531,11 +40531,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 38.652,
             "targetLng": 105.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_gen_578",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40578,11 +40578,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yongzhou",
             "targetLat": 22.815,
             "targetLng": 108.322,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nongzhigao",
             "enemyFactionName": "大南国",
             "enemyGeneralId": "nong2_nongzhigao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40636,11 +40636,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingqu",
             "targetLat": 22.956,
             "targetLng": 108.645,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nongzhigao",
             "enemyFactionName": "大南国",
             "enemyGeneralId": "nong2_nongzhigao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40689,11 +40689,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nishabuer",
             "targetLat": 36.544,
             "targetLng": 61.158,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jiazini",
             "enemyFactionName": "伽色尼",
             "enemyGeneralId": "jiazini_gen_580",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40737,11 +40737,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhande",
             "targetLat": 37.392,
             "targetLng": 61.348,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jiazini",
             "enemyFactionName": "伽色尼",
             "enemyGeneralId": "jiazini_masud",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40796,11 +40796,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_leiyi",
             "targetLat": 32.654,
             "targetLng": 51.668,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kakuyids",
             "enemyFactionName": "卡库伊德埃米尔国",
             "enemyGeneralId": "kakuyids_gen_581",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40854,11 +40854,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_rahba",
             "targetLat": 33.332,
             "targetLng": 44.385,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "abasi",
             "enemyFactionName": "阿拔斯哈里发国",
             "enemyGeneralId": "abasi_gen_583",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40912,11 +40912,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nishabuer",
             "targetLat": 35.593,
             "targetLng": 51.434,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinaer_jun",
             "enemyFactionName": "哈马丹叛军",
             "enemyGeneralId": "yinaer_jun_gen_584",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -40960,11 +40960,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meierfei",
             "targetLat": 41.738,
             "targetLng": 15.275,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jiaohuangguo",
             "enemyFactionName": "教皇国",
             "enemyGeneralId": "luoma_diguo_leo_ix",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41018,11 +41018,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meierfei",
             "targetLat": 38.111,
             "targetLng": 15.647,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41075,11 +41075,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_meierfei",
             "targetLat": 38.194,
             "targetLng": 15.554,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kalbids",
             "enemyFactionName": "卡尔比德",
             "enemyGeneralId": "kalbids_ibnhawwas",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41127,11 +41127,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_messina",
             "targetLat": 37.812,
             "targetLng": 14.502,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zirids",
             "enemyFactionName": "齐里埃米尔国",
             "enemyGeneralId": "zirids_gen_585",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41180,11 +41180,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_rouen",
             "targetLat": 49.112,
             "targetLng": -0.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "brionne",
             "enemyFactionName": "布里奥讷伯国",
             "enemyGeneralId": "brionne_gen_586",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41233,11 +41233,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_buyiersi",
             "targetLat": 52.056,
             "targetLng": -2.716,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinggelan",
             "enemyFactionName": "英格兰",
             "enemyGeneralId": "yinggelan_gen_588",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41286,11 +41286,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_boergong",
             "targetLat": 56.662,
             "targetLng": 12.835,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "danmai",
             "enemyFactionName": "丹麦",
             "enemyGeneralId": "danmai_gen_589",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41333,11 +41333,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saint_valery",
             "targetLat": 50.912,
             "targetLng": 0.487,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinggelan",
             "enemyFactionName": "英格兰",
             "enemyGeneralId": "bfe_harold_godwinson",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41391,11 +41391,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lundun",
             "targetLat": 53.958,
             "targetLng": -1.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinggelan",
             "enemyFactionName": "英格兰",
             "enemyGeneralId": "yinggelan_gen_590",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41455,11 +41455,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_leiyi",
             "targetLat": 40.507,
             "targetLng": 43.572,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41508,11 +41508,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tushpa",
             "targetLat": 39.748,
             "targetLng": 37.015,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_gen_593",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41566,11 +41566,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_alepo",
             "targetLat": 39.145,
             "targetLng": 42.539,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_gen_594",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41614,11 +41614,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qishan",
             "targetLat": 35.012,
             "targetLng": 104.635,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gusiluo",
             "enemyFactionName": "唃厮啰",
             "enemyGeneralId": "gusiluo_gen_595",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41677,11 +41677,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qishan",
             "targetLat": 35.601,
             "targetLng": 103.21,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gusiluo",
             "enemyFactionName": "唃厮啰",
             "enemyGeneralId": "tubo_muzheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41729,11 +41729,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qishan",
             "targetLat": 35.482,
             "targetLng": 103.568,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gusiluo",
             "enemyFactionName": "唃厮啰",
             "enemyGeneralId": "tubo_muzheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41787,11 +41787,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fangqu",
             "targetLat": 38.068,
             "targetLng": 106.295,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "dangxiang_gen_596",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41833,11 +41833,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yinzhou",
             "targetLat": 37.882,
             "targetLng": 109.915,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "dangxiang_gen_597",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41891,11 +41891,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fuhan",
             "targetLat": 36.488,
             "targetLng": 102.375,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gusiluo",
             "enemyFactionName": "唃厮啰",
             "enemyGeneralId": "gusiluo_gen_599",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41938,11 +41938,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ledou",
             "targetLat": 36.84,
             "targetLng": 101.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "dangxiang_gen_601",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -41985,11 +41985,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hamhung",
             "targetLat": 39.918,
             "targetLng": 127.536,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "goryeo",
             "enemyFactionName": "高丽",
             "enemyGeneralId": "woju_yinguan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42037,11 +42037,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huining",
             "targetLat": 45.45,
             "targetLng": 124.62,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_gen_603",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42084,11 +42084,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huining",
             "targetLat": 45.12,
             "targetLng": 126.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_tianzuodi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42131,11 +42131,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hangzhou",
             "targetLat": 30.25,
             "targetLng": 120.16,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "fangla",
             "enemyFactionName": "圣公",
             "enemyGeneralId": "fangla_fangla",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42183,11 +42183,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huaiyin",
             "targetLat": 34.56,
             "targetLng": 119.16,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "songjiang_jun",
             "enemyFactionName": "梁山义军",
             "enemyGeneralId": "songjiang_jun_gen_606",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42231,11 +42231,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 39.553,
             "targetLng": 113.19,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liao_d",
             "enemyFactionName": "大辽",
             "enemyGeneralId": "liao_d_tianzuodi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42289,11 +42289,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_datong",
             "targetLat": 37.87,
             "targetLng": 112.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_wangbing",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42352,11 +42352,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huining",
             "targetLat": 34.8,
             "targetLng": 114.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_605",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42404,11 +42404,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hailing",
             "targetLat": 32.21,
             "targetLng": 119.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42451,11 +42451,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_binzhou2",
             "targetLat": 34.75,
             "targetLng": 109.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "yizhou_wanyanloushi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42497,11 +42497,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dasanguan",
             "targetLat": 34.33,
             "targetLng": 107.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42544,11 +42544,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_ziwu",
             "targetLat": 33.05,
             "targetLng": 108.16,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_607",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42590,11 +42590,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huixian",
             "targetLat": 33.68,
             "targetLng": 106.08,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42653,11 +42653,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 32.01,
             "targetLng": 112.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liu_qi",
             "enemyFactionName": "刘齐",
             "enemyGeneralId": "liu_qi_gen_608",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42710,11 +42710,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 29.15,
             "targetLng": 112.65,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhongxiang",
             "enemyFactionName": "鼎州",
             "enemyGeneralId": "zhongxiang_gen_609",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42756,11 +42756,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shunchang",
             "targetLat": 32.9,
             "targetLng": 115.81,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42808,11 +42808,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 33.58,
             "targetLng": 114.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42860,11 +42860,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yancheng2",
             "targetLat": 34.02,
             "targetLng": 113.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "jurchen_wanyanzongbi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42918,11 +42918,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gusu",
             "targetLat": 35.912,
             "targetLng": 120.176,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_612",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -42965,11 +42965,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 31.668,
             "targetLng": 118.455,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_613",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43018,11 +43018,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_licheng",
             "targetLat": 35.415,
             "targetLng": 116.587,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_614",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43075,11 +43075,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shouxian",
             "targetLat": 33.646,
             "targetLng": 116.964,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_615",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43122,11 +43122,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yalishanda",
             "targetLat": 31.2,
             "targetLng": 29.918,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "yelusalengwg_amalric",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43174,11 +43174,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 35.215,
             "targetLng": 36.762,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antiaokegongguo",
             "enemyFactionName": "赞吉",
             "enemyGeneralId": "antiaokegongguo_gen_616",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43238,11 +43238,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aogesibao",
             "targetLat": 44.897,
             "targetLng": 8.865,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lombard_league",
             "enemyFactionName": "伦巴第联盟",
             "enemyGeneralId": "lombard_league_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43296,11 +43296,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aogesibao",
             "targetLat": 45.363,
             "targetLng": 9.687,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lombard_league",
             "enemyFactionName": "伦巴第联盟",
             "enemyGeneralId": "lombard_league_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43343,11 +43343,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_clavenna",
             "targetLat": 45.595,
             "targetLng": 8.906,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lombard_league",
             "enemyFactionName": "伦巴第联盟",
             "enemyGeneralId": "lombard_league_gen_617",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43401,11 +43401,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 38.1,
             "targetLng": 30.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luomu",
             "enemyFactionName": "罗姆",
             "enemyGeneralId": "luomu_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43458,11 +43458,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mengfeisi",
             "targetLat": 31.86,
             "targetLng": 34.918,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "gen_baodewen_iv",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43505,11 +43505,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_emesa",
             "targetLat": 35.135,
             "targetLng": 36.755,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "yelusalengwg_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43552,11 +43552,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 33.361,
             "targetLng": 35.588,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "gen_baodewen_iv",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43610,11 +43610,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mengfeisi",
             "targetLat": 32.596,
             "targetLng": 35.522,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "gen_baodewen_iv",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43657,11 +43657,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 32.801,
             "targetLng": 35.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "saipulusi",
             "enemyFactionName": "塞浦路斯",
             "enemyGeneralId": "saipulusi_juyi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43720,11 +43720,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 35.524,
             "targetLng": 35.792,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antioch_principality",
             "enemyFactionName": "安条克公国",
             "enemyGeneralId": "antioch_principality_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43777,11 +43777,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 32.195,
             "targetLng": 34.807,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinggelan",
             "enemyFactionName": "英格兰",
             "enemyGeneralId": "yinggelan_lionheart",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43835,11 +43835,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiaseni",
             "targetLat": 29.74,
             "targetLng": 76.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhelouqi",
             "enemyFactionName": "乔汉",
             "enemyGeneralId": "zhelouqi_puliteweilajie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43883,11 +43883,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qudiaoalan",
             "targetLat": 48.62,
             "targetLng": 110.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhadalan",
             "enemyFactionName": "扎答兰",
             "enemyGeneralId": "zhadalan_zhamuhe",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43930,11 +43930,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qudiaoalan",
             "targetLat": 49.35,
             "targetLng": 114.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tatar",
             "enemyFactionName": "塔塔尔",
             "enemyGeneralId": "tatar_mieguzhen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -43988,11 +43988,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qudiaoalan",
             "targetLat": 50.12,
             "targetLng": 119.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhadalan",
             "enemyFactionName": "扎答兰",
             "enemyGeneralId": "zhadalan_zhamuhe",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44041,11 +44041,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_julunbo",
             "targetLat": 47.72,
             "targetLng": 108.35,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kereyid",
             "enemyFactionName": "克烈",
             "enemyGeneralId": "kereyid_wanghan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44099,11 +44099,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qudiaoalan",
             "targetLat": 40.91,
             "targetLng": 114.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_wanyanchengyu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44157,11 +44157,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xinghe",
             "targetLat": 39.895,
             "targetLng": 116.355,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_621",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44221,11 +44221,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kobdo",
             "targetLat": 42.852,
             "targetLng": 68.303,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huarazim",
             "enemyFactionName": "花剌子模",
             "enemyGeneralId": "dayuzi_yinalechihei",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44285,11 +44285,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_turkestan",
             "targetLat": 39.767,
             "targetLng": 64.433,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "huarazim",
             "enemyFactionName": "花剌子模",
             "enemyGeneralId": "huarazim_mohemo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44338,11 +44338,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dabulishi",
             "targetLat": 41.42,
             "targetLng": 45.18,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gelujiya",
             "enemyFactionName": "格鲁吉亚",
             "enemyGeneralId": "gelujiya_ivane",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44396,11 +44396,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_daerban",
             "targetLat": 47.25,
             "targetLng": 37.5,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luosi",
             "enemyFactionName": "罗斯",
             "enemyGeneralId": "bfe_mstislav_kiev",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44449,11 +44449,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dabulishi",
             "targetLat": 40.112,
             "targetLng": 44.73,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gelujiya",
             "enemyFactionName": "格鲁吉亚",
             "enemyGeneralId": "gelujiya_ivane",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44507,11 +44507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhangye",
             "targetLat": 38.095,
             "targetLng": 106.335,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "weiming_weiminglinggong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44560,11 +44560,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qudiaoalan",
             "targetLat": 38.487,
             "targetLng": 106.232,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dangxiang",
             "enemyFactionName": "大夏",
             "enemyGeneralId": "dangxiang_gen_622",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44600,11 +44600,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhedi",
             "targetLat": 35.53,
             "targetLng": 108.05,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "xiqin_wanyanchenheshang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44646,11 +44646,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zaoyang",
             "targetLat": 32.125,
             "targetLng": 112.752,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_wanyaneke",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44714,11 +44714,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 34.12,
             "targetLng": 113.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_wanyanheda",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44767,11 +44767,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xuchang",
             "targetLat": 34.8,
             "targetLng": 114.31,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_gen_624",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44825,11 +44825,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_xiangyang",
             "targetLat": 33.005,
             "targetLng": 114.358,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dajin",
             "enemyFactionName": "大金",
             "enemyGeneralId": "dajin_wanyan_zhongde",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44882,11 +44882,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhaoge",
             "targetLat": 34.62,
             "targetLng": 112.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_626",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44945,11 +44945,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 32.01,
             "targetLng": 112.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "menggu_d",
             "enemyFactionName": "蒙古",
             "enemyGeneralId": "bfe_youxian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -44993,11 +44993,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_niani",
             "targetLat": 12.565,
             "targetLng": -7.855,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "suosuo",
             "enemyFactionName": "索索",
             "enemyGeneralId": "gen_sumanguru",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45047,11 +45047,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_palenque",
             "targetLat": 20.45,
             "targetLng": -89.2,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yicha",
             "enemyFactionName": "伊察",
             "enemyGeneralId": "yicha_gen_737",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45105,11 +45105,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mengfeisi",
             "targetLat": 31.608,
             "targetLng": 34.546,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yelusalengwg",
             "enemyFactionName": "耶路撒冷王国",
             "enemyGeneralId": "yelusalengwg_gen_627",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45151,11 +45151,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mansoura",
             "targetLat": 31.041,
             "targetLng": 31.378,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_628",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45199,11 +45199,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mengfeisi",
             "targetLat": 30.8,
             "targetLng": 31.99,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ayoubu",
             "enemyFactionName": "阿尤布",
             "enemyGeneralId": "ayoubu_gen_629",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45263,11 +45263,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nishabuer",
             "targetLat": 36.445,
             "targetLng": 50.586,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nizari",
             "enemyFactionName": "木剌夷国",
             "enemyGeneralId": "nizari_gen_631",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45327,11 +45327,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hamadan",
             "targetLat": 33.348,
             "targetLng": 44.335,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "abasi",
             "enemyFactionName": "阿拔斯哈里发国",
             "enemyGeneralId": "abasi_mustasim",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45384,11 +45384,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mengfeisi",
             "targetLat": 32.552,
             "targetLng": 35.356,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yilihanguo_d",
             "enemyFactionName": "伊利汗国",
             "enemyGeneralId": "yilihanguo_kitbuqa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45448,11 +45448,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_malagai",
             "targetLat": 42.053,
             "targetLng": 48.276,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jinzhang",
             "enemyFactionName": "金帐",
             "enemyGeneralId": "jinzhang_nogai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45507,11 +45507,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 36.202,
             "targetLng": 36.16,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "antioch_principality",
             "enemyFactionName": "安条克公国",
             "enemyGeneralId": "antioch_principality_gen_632",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45559,11 +45559,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 32.361,
             "targetLng": 34.995,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yinggelan",
             "enemyFactionName": "英格兰",
             "enemyGeneralId": "gen_edward_longshanks",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45623,11 +45623,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lintao",
             "targetLat": 25.695,
             "targetLng": 100.165,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dali",
             "enemyFactionName": "大理",
             "enemyGeneralId": "dali_gen_633",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45687,11 +45687,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hanzhong",
             "targetLat": 30.005,
             "targetLng": 106.312,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "hezhou_wangjian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45756,11 +45756,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shangdu",
             "targetLat": 30.546,
             "targetLng": 114.305,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_634",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45809,11 +45809,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shangdu",
             "targetLat": 45.3,
             "targetLng": 113.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "helin_hanting",
             "enemyFactionName": "和林汗庭",
             "enemyGeneralId": "helin_hanting_gen_635",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45873,11 +45873,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 32.015,
             "targetLng": 112.14,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "xiangzhou_lvwenhuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45930,11 +45930,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wuchang",
             "targetLat": 30.945,
             "targetLng": 117.812,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "song_gen_634",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -45977,11 +45977,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 32.24,
             "targetLng": 119.482,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "luoping_zhangshijie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46035,11 +46035,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_panyu",
             "targetLat": 22.183,
             "targetLng": 113.063,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "song",
             "enemyFactionName": "赵宋",
             "enemyGeneralId": "luoping_zhangshijie",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46088,11 +46088,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shangdu",
             "targetLat": 43.85,
             "targetLng": 120.55,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dongdao_zongwang",
             "enemyFactionName": "辽东宗王军",
             "enemyGeneralId": "dongdao_zongwang_gen_639",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46141,11 +46141,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kalasan",
             "targetLat": -7.559,
             "targetLng": 112.381,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_d",
             "enemyFactionName": "大元",
             "enemyGeneralId": "yuan_d_gen_738",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46194,11 +46194,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kulun",
             "targetLat": 47.198,
             "targetLng": 102.825,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ogedei",
             "enemyFactionName": "窝阔台汗国",
             "enemyGeneralId": "ogedei_gen_640",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46241,11 +46241,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_juyongguan",
             "targetLat": 40.289,
             "targetLng": 116.074,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shangdu_jun",
             "enemyFactionName": "上都军",
             "enemyGeneralId": "shangdu_wangchan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46294,11 +46294,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lundun",
             "targetLat": 51.309,
             "targetLng": 3.387,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_642",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46341,11 +46341,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kanpeier",
             "targetLat": 48.578,
             "targetLng": -3.828,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bulietani",
             "enemyFactionName": "布列塔尼",
             "enemyGeneralId": "bulietani_gen_643",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46393,11 +46393,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bordeaux",
             "targetLat": 45.209,
             "targetLng": 0.896,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_646",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46451,11 +46451,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 50.257,
             "targetLng": 1.898,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_647",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46514,11 +46514,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 50.958,
             "targetLng": 1.853,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_648",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46561,11 +46561,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bordeaux",
             "targetLat": 46.048,
             "targetLng": 0.145,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_649",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46618,11 +46618,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bordeaux",
             "targetLat": 46.533,
             "targetLng": 0.404,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_john_ii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46676,11 +46676,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 48.117,
             "targetLng": -1.678,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_651",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46729,11 +46729,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beauvais",
             "targetLat": 48.96,
             "targetLng": 2.878,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_653",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46776,11 +46776,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shunchang",
             "targetLat": 32.89,
             "targetLng": 115.815,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hansong",
             "enemyFactionName": "韩宋",
             "enemyGeneralId": "hansong_gen_654",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46840,11 +46840,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 34.261,
             "targetLng": 117.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xuzhou_hongjin",
             "enemyFactionName": "徐州红巾军",
             "enemyGeneralId": "xuzhou_hongjin_gen_656",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46903,11 +46903,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_merkit",
             "targetLat": 32.782,
             "targetLng": 119.442,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhangshicheng",
             "enemyFactionName": "大周",
             "enemyGeneralId": "zhangshicheng_zhangshicheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -46960,11 +46960,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingliuguan",
             "targetLat": 31.662,
             "targetLng": 118.468,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_d",
             "enemyFactionName": "大元",
             "enemyGeneralId": "yuan_d_manzihaiya",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47005,11 +47005,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 32.083,
             "targetLng": 118.732,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xushouhui",
             "enemyFactionName": "天完",
             "enemyGeneralId": "gen_chen_youliang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47051,11 +47051,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hongzhou",
             "targetLat": 28.683,
             "targetLng": 115.89,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xushouhui",
             "enemyFactionName": "天完",
             "enemyGeneralId": "gen_chen_youliang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47108,11 +47108,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 29.183,
             "targetLng": 116.1,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xushouhui",
             "enemyFactionName": "天完",
             "enemyGeneralId": "gen_chen_youliang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47171,11 +47171,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 31.304,
             "targetLng": 120.619,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhangshicheng",
             "enemyFactionName": "大周",
             "enemyGeneralId": "zhangshicheng_zhangshicheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47240,11 +47240,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 39.904,
             "targetLng": 116.407,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_d",
             "enemyFactionName": "大元",
             "enemyGeneralId": "yuan_d_gen_657",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47293,11 +47293,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yanmenguan",
             "targetLat": 37.87,
             "targetLng": 112.549,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "chizhou_changyuchun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47341,11 +47341,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_karakorum",
             "targetLat": 47.908,
             "targetLng": 106.883,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "xuan_xuda",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47389,11 +47389,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mosike",
             "targetLat": 54.696,
             "targetLng": 39.462,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jinzhang",
             "enemyFactionName": "金帐",
             "enemyGeneralId": "jinzhang_gen_658",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47441,11 +47441,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_mosike",
             "targetLat": 53.619,
             "targetLng": 38.67,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jinzhang",
             "enemyFactionName": "金帐",
             "enemyGeneralId": "gen_mamai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47505,11 +47505,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_salai",
             "targetLat": 55.752,
             "targetLng": 37.618,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "eluosi_diguo",
             "enemyFactionName": "俄罗斯帝国",
             "enemyGeneralId": "eluosi_diguo_gen_659",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47573,11 +47573,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanjing",
             "targetLat": 25.525,
             "targetLng": 103.812,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_d",
             "enemyFactionName": "大元",
             "enemyGeneralId": "yuan_d_gen_660",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47636,11 +47636,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 47.8,
             "targetLng": 117.7,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yuan_d",
             "enemyFactionName": "大元",
             "enemyGeneralId": "gen_toghus_temur",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47683,11 +47683,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 39.13,
             "targetLng": 116.03,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jianwen",
             "enemyFactionName": "建文",
             "enemyGeneralId": "gen_li_jinglong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47746,11 +47746,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 36.456,
             "targetLng": 115.985,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jianwen",
             "enemyFactionName": "建文",
             "enemyGeneralId": "jianwen_gen_661",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47803,11 +47803,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 33.543,
             "targetLng": 117.558,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jianwen",
             "enemyFactionName": "建文",
             "enemyGeneralId": "jianwen_gen_662",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47861,11 +47861,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yangzhou",
             "targetLat": 32.092,
             "targetLng": 118.745,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jianwen",
             "enemyFactionName": "建文",
             "enemyGeneralId": "gen_li_jinglong",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47920,11 +47920,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhennanguan",
             "targetLat": 21.235,
             "targetLng": 105.452,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dayu_ho",
             "enemyFactionName": "大虞国",
             "enemyGeneralId": "dayu_ho_gen_664",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -47978,11 +47978,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 48.065,
             "targetLng": 113.52,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dada_ming",
             "enemyFactionName": "鞑靼",
             "enemyGeneralId": "dada_ming_gen_666",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48036,11 +48036,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 48.62,
             "targetLng": 110.85,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dada_ming",
             "enemyFactionName": "鞑靼",
             "enemyGeneralId": "dada_ming_gen_666",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48094,11 +48094,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 47.69,
             "targetLng": 107.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "oirat_ming",
             "enemyFactionName": "卫拉特",
             "enemyGeneralId": "wala_mahamu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48152,11 +48152,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 49.18,
             "targetLng": 117.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dada_ming",
             "enemyFactionName": "鞑靼",
             "enemyGeneralId": "bfe_alutai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48200,11 +48200,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yachen",
             "targetLat": 50.722,
             "targetLng": 5.466,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bogendigongguo",
             "enemyFactionName": "勃艮第公国",
             "enemyGeneralId": "gen_john_fearless",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48252,11 +48252,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huasha",
             "targetLat": 53.486,
             "targetLng": 20.125,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tiaodun_qishi",
             "enemyFactionName": "条顿骑士团",
             "enemyGeneralId": "gen_ulrich_jungingen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48310,11 +48310,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_harfleur",
             "targetLat": 50.464,
             "targetLng": 2.142,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gen_boucicaut",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48369,11 +48369,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 49.186,
             "targetLng": -0.363,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_668",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48427,11 +48427,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_winchester",
             "targetLat": 49.443,
             "targetLng": 1.099,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_gen_669",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48473,11 +48473,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bulage",
             "targetLat": 50.089,
             "targetLng": 14.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bafaliya",
             "enemyFactionName": "巴伐利亚",
             "enemyGeneralId": "bfe_sigismund",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48520,11 +48520,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bulage",
             "targetLat": 49.948,
             "targetLng": 15.268,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bafaliya",
             "enemyFactionName": "巴伐利亚",
             "enemyGeneralId": "bfe_sigismund",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48567,11 +48567,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tabor",
             "targetLat": 50.025,
             "targetLng": 14.938,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "boximiya",
             "enemyFactionName": "波西米亚",
             "enemyGeneralId": "boximiya_gen_670",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48614,11 +48614,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cusco",
             "targetLat": -13.516,
             "targetLng": -71.979,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "chanka",
             "enemyFactionName": "昌卡",
             "enemyGeneralId": "bfe_chanca_chief",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48683,11 +48683,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tuodongcheng",
             "targetLat": 24.013,
             "targetLng": 97.852,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luchuan",
             "enemyFactionName": "麓川",
             "enemyGeneralId": "luchuan_sirenfa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48741,11 +48741,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tengyuecheng",
             "targetLat": 24.85,
             "targetLng": 96.82,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "luchuan",
             "enemyFactionName": "麓川",
             "enemyGeneralId": "luchuan_gen_671",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48799,11 +48799,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saiyinsanda",
             "targetLat": 40.376,
             "targetLng": 115.608,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "gen_wangzhen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48862,11 +48862,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saiyinsanda",
             "targetLat": 39.949,
             "targetLng": 116.38,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "yi_yuqian",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48903,11 +48903,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_huneiduolala",
             "targetLat": 45.552,
             "targetLng": 22.758,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_672",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -48961,11 +48961,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 43.321,
             "targetLng": 21.895,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_673",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49023,11 +49023,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 43.217,
             "targetLng": 27.882,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_674",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49076,11 +49076,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 42.633,
             "targetLng": 21.117,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_674",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49134,11 +49134,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 41.018,
             "targetLng": 28.94,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "gen_constantine_xi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49198,11 +49198,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 44.823,
             "targetLng": 20.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mazhaer",
             "enemyFactionName": "匈牙利",
             "enemyGeneralId": "xiongyati_yannuoshi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49262,11 +49262,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 37.89,
             "targetLng": 22.87,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "baizanting",
             "enemyFactionName": "拜占庭",
             "enemyGeneralId": "baizanting_thomas",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49315,11 +49315,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 44.925,
             "targetLng": 25.456,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "walajiyia",
             "enemyFactionName": "瓦拉几亚",
             "enemyGeneralId": "gen_vlad_impaler",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49379,11 +49379,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 44.533,
             "targetLng": 16.776,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bosiniya",
             "enemyFactionName": "波斯尼亚",
             "enemyGeneralId": "bosiniya_gen_675",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49442,11 +49442,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.509,
             "targetLng": 19.794,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lezhe",
             "enemyFactionName": "莱什同盟",
             "enemyGeneralId": "lezhe_gen_676",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49506,11 +49506,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 38.463,
             "targetLng": 23.591,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelite",
             "enemyFactionName": "威尼斯共和国",
             "enemyGeneralId": "kelite_gen_677",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49564,11 +49564,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_sofia",
             "targetLat": 46.633,
             "targetLng": 27.733,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "moerdaweiya",
             "enemyFactionName": "摩尔达维亚",
             "enemyGeneralId": "gen_stephen_great",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49628,11 +49628,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 42.046,
             "targetLng": 19.493,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelite",
             "enemyFactionName": "威尼斯共和国",
             "enemyGeneralId": "kelite_gen_678",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49680,11 +49680,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_belgrade",
             "targetLat": 45.925,
             "targetLng": 23.344,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mazhaer",
             "enemyFactionName": "匈牙利",
             "enemyGeneralId": "bfe_kinizsi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49733,11 +49733,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dabulishi",
             "targetLat": 39.85,
             "targetLng": 47.05,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tiemuer",
             "enemyFactionName": "帖木儿帝国",
             "enemyGeneralId": "tiemuer_gen_680",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49786,11 +49786,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lier",
             "targetLat": 48.613,
             "targetLng": 2.272,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gen_louis_xi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49844,11 +49844,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bulusaier",
             "targetLat": 50.645,
             "targetLng": 5.573,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "liege",
             "enemyFactionName": "列日公社",
             "enemyGeneralId": "liege_gen_681",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49902,11 +49902,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lier",
             "targetLat": 49.43,
             "targetLng": 2.082,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gaolu",
             "enemyFactionName": "法兰西",
             "enemyGeneralId": "gaolu_jeannehachette",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -49959,11 +49959,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dijon",
             "targetLat": 47.577,
             "targetLng": 6.762,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ruishi",
             "enemyFactionName": "瑞士",
             "enemyGeneralId": "ruishi_gen_682",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50011,11 +50011,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_geneva",
             "targetLat": 46.929,
             "targetLng": 7.117,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ruishi",
             "enemyFactionName": "瑞士",
             "enemyGeneralId": "ruishi_gen_684",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50068,11 +50068,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dijon",
             "targetLat": 48.684,
             "targetLng": 6.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "lorraine",
             "enemyFactionName": "洛林公国",
             "enemyGeneralId": "lorraine_gen_685",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50116,11 +50116,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yulin",
             "targetLat": 38.52,
             "targetLng": 108.95,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dada_ming",
             "enemyFactionName": "鞑靼",
             "enemyGeneralId": "gen_beg_arslan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50169,11 +50169,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kerulen",
             "targetLat": 43.385,
             "targetLng": 116.823,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yongxiebu",
             "enemyFactionName": "永谢布部",
             "enemyGeneralId": "yongxiebu_gen_133",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50222,11 +50222,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kerulen",
             "targetLat": 47.137,
             "targetLng": 103.035,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "oirat_ming",
             "enemyFactionName": "卫拉特",
             "enemyGeneralId": "oirat_ming_gen_686",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50275,11 +50275,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yingchang",
             "targetLat": 39.811,
             "targetLng": 109.959,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "yongxiebu",
             "enemyFactionName": "永谢布部",
             "enemyGeneralId": "bfe_yibula",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50328,11 +50328,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_erzurum",
             "targetLat": 39.553,
             "targetLng": 44.98,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aq_qoyunlu",
             "enemyFactionName": "白羊土库曼",
             "enemyGeneralId": "aq_qoyunlu_gen_687",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50386,11 +50386,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nishabuer",
             "targetLat": 37.664,
             "targetLng": 62.185,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "an",
             "enemyFactionName": "乌兹别克",
             "enemyGeneralId": "an_xibanni",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50439,11 +50439,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dabulishi",
             "targetLat": 39.089,
             "targetLng": 44.322,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_selim",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50502,11 +50502,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 36.541,
             "targetLng": 37.272,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mamuluke",
             "enemyFactionName": "马穆鲁克",
             "enemyGeneralId": "mamuluke_gen_688",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50565,11 +50565,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_damasikusi",
             "targetLat": 30.082,
             "targetLng": 31.296,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mamuluke",
             "enemyFactionName": "马穆鲁克",
             "enemyGeneralId": "mamuluke_gen_689",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50624,11 +50624,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guoa",
             "targetLat": 2.193,
             "targetLng": 102.249,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "malacca",
             "enemyFactionName": "满剌加",
             "enemyGeneralId": "malacca_gen_739",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50687,11 +50687,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 45.358,
             "targetLng": 9.324,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "milan_duchy",
             "enemyFactionName": "米兰公国",
             "enemyGeneralId": "gen_maximilian_sforza",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50739,11 +50739,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_milan",
             "targetLat": 45.63,
             "targetLng": 8.39,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "habusibao",
             "enemyFactionName": "哈布斯堡",
             "enemyGeneralId": "habusibao_gen_690",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50802,11 +50802,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lyon",
             "targetLat": 45.199,
             "targetLng": 9.158,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "habusibao",
             "enemyFactionName": "哈布斯堡",
             "enemyGeneralId": "habusibao_gen_692",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50850,11 +50850,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tenochtitlan",
             "targetLat": 19.7,
             "targetLng": -98.756,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aztec",
             "enemyFactionName": "阿兹特克",
             "enemyGeneralId": "aztec_gen_740",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50913,11 +50913,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_veracruz",
             "targetLat": 19.435,
             "targetLng": -99.131,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "aztec",
             "enemyFactionName": "阿兹特克",
             "enemyGeneralId": "gen_cuauhtemoc",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -50966,11 +50966,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guayaquil",
             "targetLat": -7.157,
             "targetLng": -78.517,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "inca",
             "enemyFactionName": "印加",
             "enemyGeneralId": "gen_atahualpa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51007,11 +51007,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_suojiamosuo",
             "targetLat": 5.785,
             "targetLng": -73.082,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xibanya",
             "enemyFactionName": "西班牙",
             "enemyGeneralId": "xibanya_gen_741",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51071,11 +51071,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 36.445,
             "targetLng": 28.227,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maerta_qishi",
             "enemyFactionName": "圣约翰",
             "enemyGeneralId": "maerta_qishi_gen_693",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51129,11 +51129,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 45.941,
             "targetLng": 18.647,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mazhaer",
             "enemyFactionName": "匈牙利",
             "enemyGeneralId": "gen_lajos_ii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51192,11 +51192,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 48.208,
             "targetLng": 16.373,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "habusibao",
             "enemyFactionName": "哈布斯堡",
             "enemyGeneralId": "habusibao_gen_694",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51244,11 +51244,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_suceava",
             "targetLat": 48.698,
             "targetLng": 25.171,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bolan",
             "enemyFactionName": "波兰",
             "enemyGeneralId": "bolan_gen_696",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51291,11 +51291,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jiataji",
             "targetLat": 36.806,
             "targetLng": 10.301,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelimiya",
             "enemyFactionName": "热那亚共和国",
             "enemyGeneralId": "gen_andrea_doria",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51349,11 +51349,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 38.959,
             "targetLng": 20.752,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelimiya",
             "enemyFactionName": "热那亚共和国",
             "enemyGeneralId": "gen_andrea_doria",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51413,11 +51413,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_aidiernei",
             "targetLat": 47.496,
             "targetLng": 19.04,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "habusibao",
             "enemyFactionName": "哈布斯堡",
             "enemyGeneralId": "habusibao_gen_697",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51471,11 +51471,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_gaofu",
             "targetLat": 29.391,
             "targetLng": 76.969,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "deli",
             "enemyFactionName": "德里苏丹国",
             "enemyGeneralId": "gen_ibrahim_lodi",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51523,11 +51523,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_laheer",
             "targetLat": 29.395,
             "targetLng": 76.972,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sur",
             "enemyFactionName": "苏尔帝国",
             "enemyGeneralId": "gen_hemu",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51571,11 +51571,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kelipuli",
             "targetLat": -37.792,
             "targetLng": -73.332,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xibanya",
             "enemyFactionName": "西班牙",
             "enemyGeneralId": "gen_valdivia",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51630,11 +51630,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_saovicente",
             "targetLat": -22.92,
             "targetLng": -43.172,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tamoyue",
             "enemyFactionName": "塔莫约",
             "enemyGeneralId": "tamoyue_gen_742",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51683,11 +51683,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingyuan_zj",
             "targetLat": 29.742,
             "targetLng": 122.126,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "haikou",
             "enemyFactionName": "海贼倭寇",
             "enemyGeneralId": "haikou_gen_698",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51730,11 +51730,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingyuan_zj",
             "targetLat": 30.892,
             "targetLng": 120.72,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "haikou",
             "enemyFactionName": "海贼倭寇",
             "enemyGeneralId": "bfe_xu_hai",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51782,11 +51782,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingyuan_zj",
             "targetLat": 28.858,
             "targetLng": 121.139,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "haikou",
             "enemyFactionName": "海贼倭寇",
             "enemyGeneralId": "haikou_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51840,11 +51840,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fuzhou",
             "targetLat": 25.228,
             "targetLng": 119.342,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "haikou",
             "enemyFactionName": "海贼倭寇",
             "enemyGeneralId": "haikou_shouling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51880,11 +51880,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yoshida",
             "targetLat": 34.296,
             "targetLng": 132.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ouchi",
             "enemyFactionName": "大内",
             "enemyGeneralId": "bfe_sue_harutaka",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51920,11 +51920,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_atsuta",
             "targetLat": 35.059,
             "targetLng": 136.981,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "imagawa",
             "enemyFactionName": "今川家",
             "enemyGeneralId": "jinchuan_jinchuanyiyuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -51972,11 +51972,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tsutsujigasaki",
             "targetLat": 36.578,
             "targetLng": 138.179,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "uesugi",
             "enemyFactionName": "上杉家",
             "enemyGeneralId": "echigo_shangshanqianxin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52019,11 +52019,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kyoto",
             "targetLat": 35.416,
             "targetLng": 136.322,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "asai",
             "enemyFactionName": "浅井家",
             "enemyGeneralId": "asai_gen_699",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52081,11 +52081,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tsutsujigasaki",
             "targetLat": 34.778,
             "targetLng": 137.705,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tokugawa",
             "enemyFactionName": "德川家",
             "enemyGeneralId": "edo_dechuanjiakang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52133,11 +52133,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kyoto",
             "targetLat": 34.922,
             "targetLng": 137.558,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "takeda",
             "enemyFactionName": "武田家",
             "enemyGeneralId": "takeda_gen_700",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52180,11 +52180,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kitanosho",
             "targetLat": 36.486,
             "targetLng": 136.535,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "uesugi",
             "enemyFactionName": "上杉家",
             "enemyGeneralId": "echigo_shangshanqianxin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52226,11 +52226,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kyoto",
             "targetLat": 35.01,
             "targetLng": 135.768,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "akechi",
             "enemyFactionName": "明智家",
             "enemyGeneralId": "gen_akechi_mitsuhide",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52283,11 +52283,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_himeji",
             "targetLat": 34.907,
             "targetLng": 135.691,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "akechi",
             "enemyFactionName": "明智家",
             "enemyGeneralId": "gen_akechi_mitsuhide",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52335,11 +52335,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_osaka",
             "targetLat": 35.171,
             "targetLng": 137.064,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "tokugawa",
             "enemyFactionName": "德川家",
             "enemyGeneralId": "edo_dechuanjiakang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52398,11 +52398,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kyoto",
             "targetLat": 35.251,
             "targetLng": 139.154,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "hojo",
             "enemyFactionName": "北条家",
             "enemyGeneralId": "hojo_gen_702",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52445,11 +52445,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hetuala",
             "targetLat": 41.785,
             "targetLng": 124.682,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nikan_wailan",
             "enemyFactionName": "图伦尼堪部",
             "enemyGeneralId": "haixi_nvzhen_gen_703",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52497,11 +52497,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_suncheon_k",
             "targetLat": 34.783,
             "targetLng": 128.481,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "toyotomi",
             "enemyFactionName": "丰臣家",
             "enemyGeneralId": "toyotomi_gen_704",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52556,11 +52556,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yulin",
             "targetLat": 38.487,
             "targetLng": 106.231,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bobai_jun",
             "enemyFactionName": "宁夏镇变军",
             "enemyGeneralId": "bobai_jun_gen_705",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52620,11 +52620,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liaoyang",
             "targetLat": 39.019,
             "targetLng": 125.754,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "toyotomi",
             "enemyFactionName": "丰臣家",
             "enemyGeneralId": "toyotomi_gen_706",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52667,11 +52667,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_suncheon_k",
             "targetLat": 34.568,
             "targetLng": 126.303,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "toyotomi",
             "enemyFactionName": "丰臣家",
             "enemyGeneralId": "bfe_todo_takakage",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52719,11 +52719,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jindo",
             "targetLat": 34.945,
             "targetLng": 127.876,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shimazu",
             "enemyFactionName": "岛津家",
             "enemyGeneralId": "shimazu_gen_707",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52776,11 +52776,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_edo",
             "targetLat": 35.368,
             "targetLng": 136.465,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "toyotomi",
             "enemyFactionName": "丰臣家",
             "enemyGeneralId": "gen_ishida_mitsunari",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52828,11 +52828,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kyoto",
             "targetLat": 34.654,
             "targetLng": 135.516,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "sanada",
             "enemyFactionName": "真田家",
             "enemyGeneralId": "sanada_d_zhentianxingcun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52876,11 +52876,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_hetuala",
             "targetLat": 41.894,
             "targetLng": 124.236,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "gen_yang_hao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -52939,11 +52939,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shenyang",
             "targetLat": 40.618,
             "targetLng": 120.733,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "zu_d_yuanchonghuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53008,11 +53008,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shenyang",
             "targetLat": 39.893,
             "targetLng": 116.442,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "zu_d_yuanchonghuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53065,11 +53065,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shenyang",
             "targetLat": 41.008,
             "targetLng": 121.125,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "gen_hong_chengchou",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53128,11 +53128,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_nanyang",
             "targetLat": 34.544,
             "targetLng": 110.246,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "sunqin_sunchuanting",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53202,11 +53202,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changan",
             "targetLat": 39.916,
             "targetLng": 116.397,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "ming_d_gen_708",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53266,11 +53266,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 40.009,
             "targetLng": 119.754,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "manzhou_d",
             "enemyFactionName": "大清",
             "enemyGeneralId": "manzhou_d_duoergun",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53329,11 +53329,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bianliang",
             "targetLat": 32.394,
             "targetLng": 119.413,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "ming_d",
             "enemyFactionName": "大明",
             "enemyGeneralId": "suzhou_d_shikefa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53375,11 +53375,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_lingqu",
             "targetLat": 25.274,
             "targetLng": 110.29,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "longwu",
             "enemyFactionName": "隆武",
             "enemyGeneralId": "guizhou_lidingguo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53443,11 +53443,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 26.893,
             "targetLng": 112.572,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "longwu",
             "enemyFactionName": "隆武",
             "enemyGeneralId": "guizhou_lidingguo",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53501,11 +53501,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhangzhou",
             "targetLat": 23.002,
             "targetLng": 120.161,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "nidelan",
             "enemyFactionName": "尼德兰",
             "enemyGeneralId": "bfe_coyett",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53549,11 +53549,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhapoluore",
             "targetLat": 48.625,
             "targetLng": 33.726,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bolan",
             "enemyFactionName": "波兰",
             "enemyGeneralId": "bfe_potocki",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53596,11 +53596,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_cherkasy",
             "targetLat": 49.436,
             "targetLng": 31.17,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bolan",
             "enemyFactionName": "波兰",
             "enemyGeneralId": "bolan_gen_135",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53654,11 +53654,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_jifu",
             "targetLat": 49.695,
             "targetLng": 25.134,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bolan",
             "enemyFactionName": "波兰",
             "enemyGeneralId": "bolan_gen_138",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53711,11 +53711,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhapoluore",
             "targetLat": 50.35,
             "targetLng": 25.12,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "bolan",
             "enemyFactionName": "波兰",
             "enemyGeneralId": "bolan_gen_138",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53763,11 +53763,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_weiyeena",
             "targetLat": 46.945,
             "targetLng": 16.274,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_713",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53821,11 +53821,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liweifu",
             "targetLat": 48.522,
             "targetLng": 26.498,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_714",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53879,11 +53879,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kelakefu",
             "targetLat": 48.277,
             "targetLng": 16.336,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "gen_kara_mustafa",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53931,11 +53931,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_budapeisi",
             "targetLat": 45.852,
             "targetLng": 18.409,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_717",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -53989,11 +53989,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_budapeisi",
             "targetLat": 44.823,
             "targetLng": 20.45,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_720",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54041,11 +54041,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_budapeisi",
             "targetLat": 45.141,
             "targetLng": 20.258,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "osman_gen_722",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54093,11 +54093,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_budapeisi",
             "targetLat": 45.932,
             "targetLng": 20.091,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "osman",
             "enemyFactionName": "奥斯曼帝国",
             "enemyGeneralId": "bfe_mustafa_ii",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54140,11 +54140,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_liweifu",
             "targetLat": 49.275,
             "targetLng": 25.134,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "kelimiya_han",
             "enemyFactionName": "克里米亚汗国",
             "enemyGeneralId": "kelimiya_han_gen_723",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54193,11 +54193,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_geergang",
             "targetLat": 26.182,
             "targetLng": 91.674,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "mowoer",
             "enemyFactionName": "莫卧儿帝国",
             "enemyGeneralId": "mowoer_ramsingh",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54257,11 +54257,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_bukui",
             "targetLat": 53.385,
             "targetLng": 124.09,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "eluosi_diguo",
             "enemyFactionName": "俄罗斯帝国",
             "enemyGeneralId": "eluosi_diguo_gen_725",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54315,11 +54315,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_beijing",
             "targetLat": 42.585,
             "targetLng": 117.131,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "oirat_ming_gaerdan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54373,11 +54373,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_guihua",
             "targetLat": 47.768,
             "targetLng": 107.502,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "oirat_ming_gaerdan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54442,11 +54442,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_yili",
             "targetLat": 29.655,
             "targetLng": 91.117,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "khoshut",
             "enemyFactionName": "和硕特",
             "enemyGeneralId": "khoshut_lhasang",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54510,11 +54510,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chengdu",
             "targetLat": 29.836,
             "targetLng": 91.728,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "bfe_tsering_dondub",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54568,11 +54568,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_qingtang",
             "targetLat": 36.812,
             "targetLng": 95.925,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "khoshut",
             "enemyFactionName": "和硕特",
             "enemyGeneralId": "gen_lobsang_danjin",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54616,11 +54616,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kobdo",
             "targetLat": 48.625,
             "targetLng": 88.295,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "dzungar_galedanceling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54669,11 +54669,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_zhabuhanjuntai",
             "targetLat": 47.201,
             "targetLng": 102.843,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "bfe_xiaoceling",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54727,11 +54727,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kobdo",
             "targetLat": 43.165,
             "targetLng": 80.32,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "zhunge",
             "enemyFactionName": "准噶尔",
             "enemyGeneralId": "zhunge_gen_727",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54784,11 +54784,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kungang",
             "targetLat": 38.412,
             "targetLng": 77.248,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "khoja",
             "enemyFactionName": "和卓",
             "enemyGeneralId": "khoja_gen_728",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54842,11 +54842,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_kandaha",
             "targetLat": 29.391,
             "targetLng": 76.968,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "taimier",
             "enemyFactionName": "马拉塔",
             "enemyGeneralId": "gen_sadashivrao",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54906,11 +54906,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_shwebo",
             "targetLat": 17.335,
             "targetLng": 96.481,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "restored_hanthawaddy",
             "enemyFactionName": "复兴汉达瓦底",
             "enemyGeneralId": "gen_binnya_dala",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -54968,11 +54968,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chanthaburi",
             "targetLat": 14.369,
             "targetLng": 100.568,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "konbaung",
             "enemyFactionName": "贡榜",
             "enemyGeneralId": "konbaung_gen_729",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55021,11 +55021,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tengyuecheng",
             "targetLat": 22.615,
             "targetLng": 97.432,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "konbaung",
             "enemyFactionName": "贡榜",
             "enemyGeneralId": "gen_maha_thiha_thura",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55079,11 +55079,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_tengyuecheng",
             "targetLat": 24.132,
             "targetLng": 97.208,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "konbaung",
             "enemyFactionName": "贡榜",
             "enemyGeneralId": "gen_maha_thiha_thura",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55137,11 +55137,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chalijin",
             "targetLat": 46.215,
             "targetLng": 75.42,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "eluosi_diguo",
             "enemyFactionName": "俄罗斯帝国",
             "enemyGeneralId": "eluosi_diguo_gen_730",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55201,11 +55201,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chengdu",
             "targetLat": 31.462,
             "targetLng": 102.054,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "jinchuan_g",
             "enemyFactionName": "金川",
             "enemyGeneralId": "bfe_sonom",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55265,11 +55265,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_fuzhou",
             "targetLat": 23.48,
             "targetLng": 120.449,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "shuntian",
             "enemyFactionName": "顺天军",
             "enemyGeneralId": "shuntian_linshuangwen",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55329,11 +55329,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_luoxie",
             "targetLat": 27.912,
             "targetLng": 85.362,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "gurkha",
             "enemyFactionName": "廓喀",
             "enemyGeneralId": "gurkha_baduersaye",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55375,11 +55375,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_dibilisi",
             "targetLat": 41.67,
             "targetLng": 44.822,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "qiajia",
             "enemyFactionName": "恺加",
             "enemyGeneralId": "bfe_agha_mohammad",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55422,11 +55422,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_honolulu",
             "targetLat": 21.366,
             "targetLng": -157.793,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "maoyi",
             "enemyFactionName": "茂宜王国",
             "enemyGeneralId": "maoyi_gen_743",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55485,11 +55485,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_giadinh",
             "targetLat": 16.467,
             "targetLng": 107.579,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "xishan",
             "enemyFactionName": "西山",
             "enemyGeneralId": "yuenan_ruanguangzuan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55544,11 +55544,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_laheer",
             "targetLat": 30.198,
             "targetLng": 71.472,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dulan_d",
             "enemyFactionName": "杜兰尼",
             "enemyGeneralId": "dulan_muzaffarkhan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55606,11 +55606,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_laheer",
             "targetLat": 34.015,
             "targetLng": 71.998,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "dulan_d",
             "enemyFactionName": "杜兰尼",
             "enemyGeneralId": "dulan_azimuhan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55653,11 +55653,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_laheer",
             "targetLat": 31.181,
             "targetLng": 74.856,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "buliedian",
             "enemyFactionName": "大不列颠王国",
             "enemyGeneralId": "buliedian_gen_731",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55717,11 +55717,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changsha",
             "targetLat": 30.545,
             "targetLng": 114.305,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "manzhou_d",
             "enemyFactionName": "大清",
             "enemyGeneralId": "manzhou_d_gen_733",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55764,11 +55764,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wancheng",
             "targetLat": 29.742,
             "targetLng": 116.218,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "manzhou_d",
             "enemyFactionName": "大清",
             "enemyGeneralId": "gen_zengguofan",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55811,11 +55811,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_wancheng",
             "targetLat": 31.615,
             "targetLng": 117.232,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "manzhou_d",
             "enemyFactionName": "大清",
             "enemyGeneralId": "manzhou_d_gen_735",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55869,11 +55869,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_chaisang",
             "targetLat": 30.508,
             "targetLng": 117.045,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "taiping",
             "enemyFactionName": "太平",
             "enemyGeneralId": "taiping_gen_736",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     },
@@ -55933,11 +55933,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "chronicleFrom": "city_changsha",
             "targetLat": 32.061,
             "targetLng": 118.818,
-            "myTroops": 15000,
+            "myTroops": 20000,
             "enemyFactionId": "taiping",
             "enemyFactionName": "太平",
             "enemyGeneralId": "gen_li_xiucheng",
-            "enemyTroops": 15000,
+            "enemyTroops": 20000,
             "introLines": []
         }
     }

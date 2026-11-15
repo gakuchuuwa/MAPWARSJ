@@ -164,6 +164,50 @@ const BIRD_FORMATION_TOLERANCE_PX = 26;
 const BIRD_CATCHUP_SPEED_MULT = 1.6;
 
 /**
+ * 检测到折返趋势时，在垂直于当前逃跑方向的两个 90° 侧向（±90°）中，
+ * 选择前方士兵更远、更远离战场中心且不立即撞边的一侧。
+ */
+function pickSideEscapeDir(
+    dx: number,
+    dy: number,
+    x: number,
+    y: number,
+    worldCX: number,
+    worldCY: number,
+    men: WarMan[],
+    X0: number,
+    X1: number,
+    Y0: number,
+    Y1: number,
+): { dx: number; dy: number } {
+    const cands = [
+        { dx: -dy, dy: dx },
+        { dx: dy, dy: -dx },
+    ];
+    const PROBE_DIST = 220;
+    let best = cands[0];
+    let bestScore = -Infinity;
+    for (const c of cands) {
+        const px = x + c.dx * PROBE_DIST;
+        const py = y + c.dy * PROBE_DIST;
+        const inBounds = px >= X0 && px <= X1 && py >= Y0 && py <= Y1;
+        let minManD = Infinity;
+        for (const m of men) {
+            if (m.hp <= 0) continue;
+            const d = Math.hypot(m.x - px, m.y - py);
+            if (d < minManD) minManD = d;
+        }
+        const distFromCenter = Math.hypot(px - worldCX, py - worldCY);
+        const score = (inBounds ? 0 : -1000) + Math.min(600, minManD) * 2 + distFromCenter * 0.25;
+        if (score > bestScore) {
+            bestScore = score;
+            best = c;
+        }
+    }
+    return best;
+}
+
+/**
  * 动物生态更新（2026-10-13 按 DE 数据驱动）：
  *  · 所有陆地动物见到人就朝锁定的反方向奔逃脱离，停下后原地吃草/小幅踱步；
  *  · 飞鸟：fly 巡航 ⇄ hover 展翅滑翔交替，空中持续移动不停滞。
@@ -293,6 +337,13 @@ export function stepTacticalAnimals(
             let d = Math.hypot(dx, dy) || 1;
             dx /= d;
             dy /= d;
+            // 若新逃跑方向与上次逃跑方向几乎相反（夹角 > 120°），说明在两军间折返：改为向更空旷一侧偏转 90° 横向脱离
+            const prevLen = Math.hypot(an.fleeDX, an.fleeDY);
+            if (prevLen > 0.5 && (dx * an.fleeDX + dy * an.fleeDY) / prevLen < -0.5) {
+                const side = pickSideEscapeDir(dx, dy, an.x, an.y, worldCX, worldCY, men, X0, X1, Y0, Y1);
+                dx = side.dx;
+                dy = side.dy;
+            }
             an.vx = dx * fleeSpd;
             an.vy = dy * fleeSpd;
             an.fleeDX = dx;
