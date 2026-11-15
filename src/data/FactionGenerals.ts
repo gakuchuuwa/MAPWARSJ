@@ -155,7 +155,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人定「B」无文字时代传说人物入将] 霍图·玛图阿：拉帕努伊（复活节岛）口述史载首位最高阿里伊国王；史源转述、传说成分；普将；立绘留空
         // 莫莫（约1100–1170，Tuʻi Tonga Momo，图伊汤加帝国第10代国王，组建远洋双体战舟舰队将汤加海上霸权扩至萨摩亚与斐济）→ 穆阿（MALAY）
         // 卡美哈梅哈（1758–1819，Kamehameha I，夏威夷王国开国国王，率军在努阿努悬崖之战征服瓦胡岛统一夏威夷群岛）→ 火奴鲁鲁（MALAY）
-        { generalId: 'bolinixiya_kameihameiha', factionId: 'xiaweiyi', cityId: 'city_honolulu', generalName: '卡美哈梅哈', portrait: '/assets/MALAY/bolinixiya_kameihameiha.png', eliteName: '夏威夷勇士', eliteTier: 4 },
+        { generalId: 'bolinixiya_kameihameiha', factionId: 'xiaweiyi', cityId: 'city_lahaina', generalName: '卡美哈梅哈', portrait: '/assets/MALAY/bolinixiya_kameihameiha.png', eliteName: '夏威夷勇士', eliteTier: 4 },
     ],
 
     latin_empire: [
@@ -5745,7 +5745,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人令「有知名度高的将领先加」] 阿尔瓦公爵（1507–1582，西属尼德兰总督 1567–1573，驻布鲁塞尔）；势力 西班牙；据点 布鲁塞尔（BURGUNDIANS，西属尼德兰总督府）；名将；精锐「尼德兰枪兵」T2；立绘留空
         { generalId: 'xibanya_aerwa', factionId: 'xibanya', cityId: 'city_bulusaier', generalName: '阿尔瓦公爵', portrait: '/assets/BURGUNDIANS/xibanya_aerwa.png', eliteName: '佛兰德方阵', eliteTier: 2 },   // 🔴 [2026-10-25] 西班牙势力指针＝三级海外军团（西班牙征服），欧洲本土须手写二级军团长：布鲁塞尔＝BURGUNDIANS×帝国
 
-        { generalId: 'xibanya_pisaluo', cityId: 'city_lima', generalName: '皮萨罗', portrait: '/assets/SPANISH/xibanya_pisaluo.png' , legionName: '帝国时代西班牙征服军团', eliteName: '秘鲁远征重骑', eliteTier: 2 },
+        { generalId: 'xibanya_pisaluo', cityId: 'city_tumbes', generalName: '皮萨罗', portrait: '/assets/SPANISH/xibanya_pisaluo.png' , legionName: '帝国时代西班牙征服军团', eliteName: '秘鲁远征重骑', eliteTier: 2 },
 
         // 🔴 [2026-10-20 经典战规则] 瓦尔迪维亚＝智利征服者（1553 图卡佩尔被劳塔罗击杀）→ 利马（SPANISH）；帝国时代西班牙方阵军团；立绘留空
 

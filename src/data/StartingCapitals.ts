@@ -908,7 +908,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'buhala': 'city_jizhake',   // 布哈拉埃米尔国（曼吉特，1785–1920）
   'biluzhi': 'city_kuida',   // 俾路支·林德部落联盟（1480–1533）
   'bonape': 'city_nanmadol',   // 波纳佩·绍德勒王朝（南马都尔，约1200–1628）
-  'xiaweiyi': 'city_honolulu',   // 夏威夷王国（1795–1893）
+  'xiaweiyi': 'city_lahaina',   // 夏威夷王国（1795–1893）
   'yidali_hre': 'city_milan',   // 意大利王国（神圣罗马，962–1801）
   'buliedian': 'city_lundun',
   'zhao_han': 'city_zhending',

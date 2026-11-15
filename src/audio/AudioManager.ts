@@ -2669,15 +2669,7 @@ const PAUSED_BGM_FOLDERS = new Set<string>([
 
 
 
-    'manqing',
-
-
-
-
-
-
-
-]);
+    'manqing']);
 
 
 
@@ -3549,16 +3541,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    //    DE 主题曲统一 `de_{分支}`；4 定制分支 TIBET/WESTERN 复用已有曲、GREECE/XIANBEI 新下载。
-
-
-
-
-
-
-
-    de_AFRICA: 1.135,  // -22.1 LUFS · DE 主题曲
-
+    //    DE 主题曲统一 `de_{分支}`；4 定制分支 TIBET/WESTERN 复用已有曲、GREECE/XIANBEI 新下载。
 
 
 
@@ -3589,88 +3572,21 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_BASHU: 1.012,  // -21.1 LUFS · DE 主题曲
+    de_BASHU: 1.012,  // -21.1 LUFS · DE 主题曲
 
 
 
 
 
 
+    de_BULGARIANS: 1.122,  // -22.0 LUFS · DE 主题曲
 
-    de_BENGALIS: 0.447,  // -14.0 LUFS · DE 主题曲
 
 
 
 
 
-
-
-    de_BERBER: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BOHEMIANS: 0.582,  // -16.3 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BRITONS: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BULGARIANS: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BURGUNDIANS: 0.556,  // -15.9 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BURMESE: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_BYZANTINE: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_CELTS: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_CENTRAL: 1.122,  // -22.0 LUFS · DE 主题曲
-
+    de_BYZANTINE: 1.135,  // -22.1 LUFS · DE 主题曲
 
 
 
@@ -3685,104 +3601,21 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_CUMAN: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_CUMAN: 1.122,  // -22.0 LUFS · DE 主题曲
 
 
 
 
 
 
+    de_GOTHS: 1.175,  // -22.4 LUFS · DE 主题曲
 
-    de_DANES: 0.398,  // -13.0 LUFS · DE 主题曲
 
 
 
 
 
-
-
-    de_ETHIOPIANS: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_FRANKS: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_GEORGIANS: 0.624,  // -16.9 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_GERMANIC: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_GOTHS: 1.175,  // -22.4 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_GURJARAS: 0.716,  // -18.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_HUNS: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_INCA: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_INDIA: 0.550,  // -15.8 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_JAPAN: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_JIANGNAN: 0.624,  // -16.9 LUFS · DE 主题曲
-
+    de_INCA: 1.135,  // -22.1 LUFS · DE 主题曲
 
 
 
@@ -3797,24 +3630,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_KHMER: 1.148,  // -22.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_KOREA: 1.148,  // -22.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_LATIN: 1.122,  // -22.0 LUFS · DE 主题曲
-
+    de_KHMER: 1.148,  // -22.2 LUFS · DE 主题曲
 
 
 
@@ -3829,96 +3645,28 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_MACEDONIAN: 0.442,  // -13.9 LUFS · DE 主题曲
+    de_MACEDONIAN: 0.442,  // -13.9 LUFS · DE 主题曲
 
 
 
 
 
 
+    de_MALAY: 1.135,  // -22.1 LUFS · DE 主题曲
 
-    de_MAGYAR: 1.122,  // -22.0 LUFS · DE 主题曲
 
 
 
 
 
+    de_MUGHAL: 1.122,  // -22.0 LUFS · DE 主题曲
 
 
-    de_MALAY: 1.135,  // -22.1 LUFS · DE 主题曲
 
 
 
 
-
-
-
-    de_MAPUCHE: 0.343,  // -11.7 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_MAYANS: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_MONGOL: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_MUGHAL: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_MUISCA: 0.501,  // -15.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_NORTHEAST: 0.457,  // -14.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_ORIE: 1.122,  // -22.0 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_PERSIAN: 0.668,  // -17.5 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_POLES: 1.349,  // -23.6 LUFS · DE 主题曲
-
+    de_PERSIAN: 0.668,  // -17.5 LUFS · DE 主题曲
 
 
 
@@ -3957,24 +3705,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_SAXONS: 0.363,  // -12.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_SICILIANS: 0.479,  // -14.6 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_SLAVIC: 1.122,  // -22.0 LUFS · DE 主题曲
-
+    de_SAXONS: 0.363,  // -12.2 LUFS · DE 主题曲
 
 
 
@@ -3997,40 +3728,14 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    de_THRACIAN: 0.543,  // -15.7 LUFS · DE 主题曲
+    de_THRACIAN: 0.543,  // -15.7 LUFS · DE 主题曲
 
 
 
 
 
 
-
-    de_TUPI: 0.457,  // -14.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_TURKS: 1.135,  // -22.1 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_VARANGIANS: 0.407,  // -13.2 LUFS · DE 主题曲
-
-
-
-
-
-
-
-    de_VIETNAMESE: 1.122,  // -22.0 LUFS · DE 主题曲
-
+    de_VARANGIANS: 0.407,  // -13.2 LUFS · DE 主题曲
 
 
 
@@ -4614,7 +4319,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
 
 
-    roma_a: 0.684,  // -17.7 LUFS
+    // 🔴 [2026-11-15 主人令] roma_a（古罗马里拉琴）触发 YouTube 版权主张「Ode to Ancient Rome - Michael Levy」，已连同 .aud 文件删除。
 
 
 
@@ -5413,15 +5118,7 @@ const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
 
 
 
-    'hes_a_pirate', 'age_of_kings', 'ezios_family',
-
-
-
-
-
-
-
-]);
+    'hes_a_pirate', 'age_of_kings', 'ezios_family']);
 
 
 
@@ -5493,7 +5190,7 @@ function resolveAvailableBgmFolder(folder: string): string {
 
 
 
- * 🔴 [2026-10-20 主人定「每个文化至少 2 首」] 每池最低 **2 首**（原 2026-10-18「每个文化至少 3 首」旧标准作废）。
+ * 🔴 [2026-11-15 主人定「每个文化最低 3 首」+ 大文化圈融合] 每池最低 **3 首**；保留各文化专属代表曲，同时按大文化圈/音乐风格融合共享战斗曲与 CC0 无版权曲，全库各池扩充至 4–6 首。
 
 
 
@@ -5517,672 +5214,114 @@ function resolveAvailableBgmFolder(folder: string): string {
 
 
 
+/**
+ * 🔴 [2026-11-16 主人定「17 套通用文化曲池 + 全量覆盖」]
+ * 游戏保留 67 个文化分支，音乐上按风格归并为 17 套通用曲池（每池 6–18 首，≥60 秒，0 跨池重复）；
+ * 原有 188 首可用曲目（除 PAUSED_BGM_FOLDERS 暂停曲外）100% 全部合入对应池中，一首不漏。
+ */
+const POOL_CHINA: string[] = ['CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'shadow_assassin', 'de_WEI', 'wuzhou', 'zhaosong', 'de_BASHU', 'BASHU', 'bashu_a', 'NORTHEAST', 'xianqin', 'JIANGNAN', 'LINGNAN'];
+const POOL_HEXI_TIBET_WESTERN: string[] = ['de_KHITAN', 'HEXI', 'khitan_a', 'STEPPE', 'CC_DESERT_PLAINS', 'TIBET', 'tibet_b', 'CC_MYSTICAL_EAST', 'CC_DESERT_CARAVAN', 'WESTERN', 'western_a', 'western_b'];
+const POOL_JAPAN_KOREA: string[] = ['JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo', 'KOREA', 'korea_a', 'CC_PREPARE_SWORDS', 'CC_ASIAN_ORIENTAL'];
+const POOL_STEPPE: string[] = ['xianbei_a', 'XIANBEI', 'xianbei_b', 'huns_a', 'huns_b', 'CC_THOR_VICTORY', 'de_CUMAN', 'cuman_a', 'CENTRAL_ASIA', 'de_CENTRAL_ASIA', 'central_asia_a'];
+const POOL_PERSIAN: string[] = ['de_PERSIAN', 'de_SASANIAN', 'sasanian_a', 'sasanian_b', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'];
+const POOL_WEST_ASIA: string[] = ['holy_land_battle', 'desert_war', 'ottoman_drums', 'turks_a', 'turks_b', 'berber_a', 'berber_b'];
+const POOL_GREECE: string[] = ['GREECE', 'fallen_army', 'de_ATHENIANS', 'athenians_a', 'athenians_b', 'CC_ROCKY_CLIFFS', 'de_SPARTANS', 'spartans_a', 'spartans_b', 'de_MACEDONIAN', 'macedonian_a', 'macedonian_b'];
+const POOL_ROMA_LATIN: string[] = ['de_ROMA', 'roma_b', 'CC_CALL_TO_WAR', 'CC_WAR_THEME', 'LATIN', 'ezios_family', 'latin_a', 'sicilians_a', 'sicilians_b'];
+const POOL_BYZANTINE_CAUCASUS: string[] = ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b', 'CC_FINAL_BATTLE', 'de_ARMENIANS', 'armenians_a', 'georgians_a', 'georgians_b'];
+const POOL_IBERIA: string[] = ['de_SPANISH', 'spanish_a', 'spanish_b', 'CC_QAZI_BATTLE', 'CC_HOPE_BATTLE', 'de_PORTUGUESE', 'portuguese_a', 'portuguese_b'];
+const POOL_WEST_EUROPE: string[] = ['franks_a', 'franks_b', 'CC_MEDIEVAL_BATTLE', 'britons_b', 'burgundians_a', 'burgundians_b', 'drakkar_drums', 'germanic_a', 'CC_BATTLE_THEME', 'de_GOTHS', 'goths_a', 'goths_b', 'de_SAXONS', 'saxons_a', 'saxons_b', 'celts_a', 'celts_b', 'CC_GREYARMS_CELTIC'];
+const POOL_NORDIC: string[] = ['de_VIKINGS', 'viking_war_drums', 'vikings_a', 'CC_TO_BATTLE', 'furious_march', 'danes_a', 'danes_b', 'de_VARANGIANS', 'varangians_a', 'varangians_b', 'CC_FIRE_DRAGON'];
+const POOL_EAST_EUROPE: string[] = ['SLAVIC', 'slavic_a', 'CC_EYE_OF_STORM', 'poles_a', 'poles_b', 'bohemians_a', 'CC_KNIGHTS_CHALLENGE', 'de_LITHUANIANS', 'lithuanians_a', 'magyar_a', 'magyar_b', 'de_BULGARIANS', 'bulgarians_a', 'bulgarians_b', 'bulgarian_war', 'de_THRACIAN', 'gaida_echoes', 'thraco_dacian'];
+const POOL_INDIA: string[] = ['INDIA', 'india_a', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST', 'de_PURU', 'puru_b', 'bengalis_a', 'bengalis_b', 'gurjaras_a', 'de_MUGHAL', 'mughal_a', 'mughal_b'];
+const POOL_SEAS: string[] = ['pugan', 'burmese_a', 'CC_MILLION_ELEPHANTS', 'de_KHMER', 'khmer_a', 'khmer_b', 'de_MALAY', 'malay_b', 'CC_EPIC_JUNGLE', 'vietnamese_b'];
+const POOL_AFRICA: string[] = ['AFRICA', 'africa_a', 'CC_TRIBAL_DRUMS', 'CC_KRAKATOA_DRUMS', 'ethiopians_a', 'ethiopians_b'];
+const POOL_AMERICA: string[] = ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans', 'mayans_b', 'de_INCA', 'ANDE', 'inca_a', 'mapuche_a', 'mapuche_b', 'muisca_a', 'muisca_b', 'tupi_b'];
+
 const BGM_POOL_MAP: Record<string, string[]> = {
-
-
-
-
-
-
-
-    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a', 'CC_TRIBAL_DRUMS', 'CC_KRAKATOA_DRUMS'],
-
-
-
-
-
-
-
-    AMERICA: ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans'],
-
-
-
-
-
-
-
-    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b 已连同 .aud 文件删除，
-
-
-
-
-
-
-
-    //    本文化池由 3 首降为 2 首（de_ARMENIANS 主题曲 + armenians_a）。
-
-
-
-
-
-
-
-    ARMENIANS: ['de_ARMENIANS', 'armenians_a', 'CC_DESERT_CARAVAN'],
-
-
-
-
-
-
-
-    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
-
-
-
-
-
-
-
-    BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
-
-
-
-
-
-
-
-    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b', 'CC_INDIAN_TENSE', 'CC_MYSTICAL_EAST'],
-
-
-
-
-
-
-
-    BERBER: ['de_BERBER', 'berber_a', 'berber_b', 'CC_DARBUKA_CHASE', 'CC_DESERT_CARAVAN'],
-
-
-
-
-
-
-
-    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a', 'CC_KNIGHTS_CHALLENGE', 'CC_BATTLE_THEME'],
-
-
-
-
-
-
-
-    BRITONS: ['de_BRITONS', 'britons_b', 'CC_MEDIEVAL_BATTLE', 'CC_HOPE_BATTLE'],
-
-
-
-
-
-
-
-    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b', 'CC_EYE_OF_STORM'],
-
-
-
-
-
-
-
-    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b', 'CC_MEDIEVAL_BATTLE'],
-
-
-
-
-
-
-
-    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
-
-
-
-
-
-
-
-    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b', 'CC_FINAL_BATTLE'],
-
-
-
-
-
-
-
-    CELTS: ['de_CELTS', 'celts_a', 'celts_b', 'CC_FIRE_DRAGON', 'CC_GREYARMS_CELTIC'],
-
-
-
-
-
-
-
-    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'shadow_assassin'],
-
-
-
-
-
-
-
-    CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
-
-
-
-
-
-
-
-    CUMAN: ['de_CUMAN', 'cuman_a', 'CC_DESERT_PLAINS', 'CC_DARBUKA_CHASE'],
-
-
-
-
-
-
-
-    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b', 'CC_TO_BATTLE'],
-
-
-
-
-
-
-
-    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b', 'CC_TRIBAL_DRUMS', 'CC_DESERT_CARAVAN'],
-
-
-
-
-
-
-
-    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b', 'CC_MEDIEVAL_BATTLE', 'CC_KNIGHTS_CHALLENGE'],
-
-
-
-
-
-
-
-    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b', 'CC_DESERT_CARAVAN'],
-
-
-
-
-
-
-
-    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a', 'CC_KNIGHTS_CHALLENGE', 'CC_BATTLE_THEME'],
-
-
-
-
-
-
-
-    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b', 'CC_TO_BATTLE', 'CC_FIRE_DRAGON'],
-
-
-
-
-
-
-
-    // 🔴 [2026-11-02 主人令「删除希腊布祖基琴 Hasapika [greece_a]」]
-
-
-
-
-
-
-
-    //    greece_a 已连同 .aud 文件删除，GREECE 池由 3 首降为 2 首（GREECE + fallen_army）。
-
-
-
-
-
-
-
-    GREECE: ['GREECE', 'fallen_army', 'CC_WAR_THEME', 'CC_CALL_TO_WAR'],
-
-
-
-
-
-
-
-    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
-
-
-
-
-
-
-
-    //    gurjaras_b 已连同 .aud 文件删除，本文化池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a）。
-
-
-
-
-
-
-
-    GURJARAS: ['de_GURJARAS', 'gurjaras_a', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
-
-
-
-
-
-
-
-    HUNS: ['de_HUNS', 'huns_a', 'huns_b', 'CC_DESERT_PLAINS', 'CC_THOR_VICTORY'],
-
-
-
-
-
-
-
-    INCA: ['de_INCA', 'ANDE', 'inca_a'],
-
-
-
-
-
-
-
-    INDIA: ['de_INDIA', 'INDIA', 'india_a', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
-
-
-
-
-
-
-
-    JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
-
-
-
-
-
-
-
-    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN', 'CC_ASIAN_ORIENTAL', 'CC_PREPARE_SWORDS'],
-
-
-
-
-
-
-
-    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN', 'CC_ASIAN_ORIENTAL', 'CC_PREPARE_SWORDS'],
-
-
-
-
-
-
-
-    HEXI: ['de_KHITAN', 'HEXI', 'khitan_a'],   // 河西；曲目文件名沿用 DE 契丹素材
-
-
-
-
-
-
-
-    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
-
-
-
-
-
-
-
-    KOREA: ['de_KOREA', 'KOREA', 'korea_a', 'CC_PREPARE_SWORDS', 'CC_ASIAN_ORIENTAL'],
-
-
-
-
-
-
-
-    LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],
-
-
-
-
-
-
-
-    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（Skudučiai）已连同 .aud 文件删除，
-
-
-
-
-
-
-
-    //    本文化池由 3 首降为 2 首（de_LITHUANIANS 主题曲 + lithuanians_a）。
-
-
-
-
-
-
-
-    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a', 'CC_THOR_VICTORY'],
-
-
-
-
-
-
-
-    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
-
-
-
-
-
-
-
-    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b', 'CC_GREYARMS_CELTIC'],
-
-
-
-
-
-
-
-    // 🔴 [2026-11-02 主人令] malay_a（马来加美兰 Joget）已连同 .aud 文件删除。
-
-
-
-
-
-
-
-    MALAY: ['de_MALAY', 'malay_b', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
-
-
-
-
-
-
-
-    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b', 'CC_TRIBAL_DRUMS'],
-
-
-
-
-
-
-
-    MAYANS: ['de_MAYANS', 'mayans_b', 'CC_EPIC_JUNGLE', 'CC_TRIBAL_DRUMS'],
-
-
-
-
-
-
-
-    // 🔴 [2026-11-10 主人令「蒙古马头琴 葫芦丝 [mongol_a]，删除这个曲子，不像战斗曲」] 本文化池由 3 首降为 2 首（de_MONGOL 主题曲 + STEPPE）。
-    MONGOL: ['de_MONGOL', 'STEPPE', 'CC_DESERT_PLAINS', 'CC_PREPARE_SWORDS'],
-
-
-
-
-
-
-
-    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b', 'CC_RELICS_OF_PAST'],
-
-
-
-
-
-
-
-    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b', 'CC_EPIC_JUNGLE'],
-
-
-
-
-
-
-
-    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin', 'CC_PREPARE_SWORDS'],
-
-
-
-
-
-
-
-    ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
-
-
-
-
-
-
-
-    // 🔴 [2026-11-15 主人令] persian_b 已删除（触发 YouTube 版权主张「Nuzdeh - Roja Heneka」），本文化池保留 3 首。
-    PERSIAN: ['de_PERSIAN', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
-
-
-
-
-
-
-
-    POLES: ['de_POLES', 'poles_a', 'poles_b', 'CC_EYE_OF_STORM'],
-
-
-
-
-
-
-
-    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b', 'CC_QAZI_BATTLE'],
-
-
-
-
-
-
-
-    PURU: ['de_PURU', 'puru_b', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
-
-
-
-
-
-
-
-    ROMA: ['de_ROMA', 'roma_a', 'roma_b', 'CC_FINAL_BATTLE', 'CC_CALL_TO_WAR'],
-
-
-
-
-
-
-
-    SASANIAN: ['de_SASANIAN', 'sasanian_a', 'sasanian_b'],
-
-
-
-
-
-
-
-    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b', 'CC_HOPE_BATTLE', 'CC_TO_BATTLE'],
-
-
-
-
-
-
-
-    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b', 'CC_QAZI_BATTLE'],
-
-
-
-
-
-
-
-    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a', 'CC_EYE_OF_STORM', 'CC_BATTLE_THEME'],
-
-
-
-
-
-
-
-    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b', 'CC_QAZI_BATTLE'],
-
-
-
-
-
-
-
-    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
-
-
-
-
-
-
-
-    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war', 'CC_CALL_TO_WAR'],
-
-
-
-
-
-
-
-    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已连同 .aud 文件删除，
-
-
-
-
-
-
-
-    //    本文化池保留 2 首（TIBET 千年的祈祷 + tibet_b 藏传法铃·钹·号角）。
-
-
-
-
-
-
-
-    TIBET: ['TIBET', 'tibet_b', 'CC_MYSTICAL_EAST'],
-
-
-
-
-
-
-
-    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话」] tupi_a 已删，
-
-
-
-
-
-
-
-    //    本文化池由 3 首降为 2 首（de_TUPI 主题曲 + tupi_b 图皮瓜拉尼器乐）。
-
-
-
-
-
-
-
-    TUPI: ['de_TUPI', 'tupi_b', 'CC_EPIC_JUNGLE', 'CC_TRIBAL_DRUMS'],
-
-
-
-
-
-
-
-    TURKS: ['de_TURKS', 'turks_a', 'turks_b', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
-
-
-
-
-
-
-
-    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b', 'CC_FIRE_DRAGON'],
-
-
-
-
-
-
-
-    // 🔴 [2026-10-18 主人令] vietnamese_a（越南独弦琴 Dan Bau）已连同 .aud 文件删除，
-
-
-
-
-
-
-
-    //    本文化池由 3 首降为 2 首（de_VIETNAMESE 主题曲 + vietnamese_b）。
-
-
-
-
-
-
-
-    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b', 'CC_MILLION_ELEPHANTS', 'CC_ASIAN_ORIENTAL'],
-
-
-
-
-
-
-
-    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a', 'CC_TO_BATTLE', 'CC_THOR_VICTORY'],
-
-
-
-
-
-
-
-    WEI: ['de_WEI', 'wuzhou', 'zhaosong'],
-
-
-
-
-
-
-
-    WESTERN: ['WESTERN', 'western_a', 'western_b', 'CC_FINAL_BATTLE', 'CC_HOPE_BATTLE', 'CC_QAZI_BATTLE'],
-
-
-
-
-
-
-
-    XIANBEI: ['XIANBEI', 'xianbei_a', 'xianbei_b'],
-
-
-
-
-
-
-
+    // 1. 中华池（中原 + 江南 + 湖广）
+    CENTRAL: POOL_CHINA,
+    WEI: POOL_CHINA,
+    BASHU: POOL_CHINA,
+    NORTHEAST: POOL_CHINA,
+    JIANGNAN: POOL_CHINA,
+    HUGUANG: POOL_CHINA,
+    // 2. 河西吐蕃西域池（河西 + 青藏 + 西域）
+    HEXI: POOL_HEXI_TIBET_WESTERN,
+    TIBET: POOL_HEXI_TIBET_WESTERN,
+    WESTERN: POOL_HEXI_TIBET_WESTERN,
+    // 4. 日韩池
+    JAPAN: POOL_JAPAN_KOREA,
+    KOREA: POOL_JAPAN_KOREA,
+    // 5. 草原游牧池
+    MONGOL: POOL_STEPPE,
+    XIANBEI: POOL_STEPPE,
+    HUNS: POOL_STEPPE,
+    CUMAN: POOL_STEPPE,
+    CENTRAL_ASIA: POOL_STEPPE,
+    // 6. 波斯萨珊池
+    PERSIAN: POOL_PERSIAN,
+    SASANIAN: POOL_PERSIAN,
+    // 7. 西亚北非池
+    ORIE: POOL_WEST_ASIA,
+    TURKS: POOL_WEST_ASIA,
+    BERBER: POOL_WEST_ASIA,
+    // 8. 古希腊池
+    GREECE: POOL_GREECE,
+    ATHENIANS: POOL_GREECE,
+    SPARTANS: POOL_GREECE,
+    MACEDONIAN: POOL_GREECE,
+    // 9. 罗马拉丁池
+    ROMA: POOL_ROMA_LATIN,
+    LATIN: POOL_ROMA_LATIN,
+    SICILIANS: POOL_ROMA_LATIN,
+    // 10. 拜占庭高加索池
+    BYZANTINE: POOL_BYZANTINE_CAUCASUS,
+    ARMENIANS: POOL_BYZANTINE_CAUCASUS,
+    GEORGIANS: POOL_BYZANTINE_CAUCASUS,
+    // 11. 伊比利亚池
+    SPANISH: POOL_IBERIA,
+    PORTUGUESE: POOL_IBERIA,
+    // 12. 西欧骑士池
+    FRANKS: POOL_WEST_EUROPE,
+    BRITONS: POOL_WEST_EUROPE,
+    BURGUNDIANS: POOL_WEST_EUROPE,
+    GERMANIC: POOL_WEST_EUROPE,
+    GOTHS: POOL_WEST_EUROPE,
+    SAXONS: POOL_WEST_EUROPE,
+    CELTS: POOL_WEST_EUROPE,
+    // 13. 北欧维京池
+    VIKINGS: POOL_NORDIC,
+    DANES: POOL_NORDIC,
+    VARANGIANS: POOL_NORDIC,
+    // 14. 东欧巴尔干池
+    SLAVIC: POOL_EAST_EUROPE,
+    POLES: POOL_EAST_EUROPE,
+    BOHEMIANS: POOL_EAST_EUROPE,
+    LITHUANIANS: POOL_EAST_EUROPE,
+    MAGYAR: POOL_EAST_EUROPE,
+    BULGARIANS: POOL_EAST_EUROPE,
+    THRACIAN: POOL_EAST_EUROPE,
+    // 15. 南亚印度池
+    INDIA: POOL_INDIA,
+    PURU: POOL_INDIA,
+    BENGALIS: POOL_INDIA,
+    GURJARAS: POOL_INDIA,
+    MUGHAL: POOL_INDIA,
+    // 16. 东南亚池
+    BURMESE: POOL_SEAS,
+    KHMER: POOL_SEAS,
+    MALAY: POOL_SEAS,
+    VIETNAMESE: POOL_SEAS,
+    // 17. 非洲池
+    AFRICA: POOL_AFRICA,
+    ETHIOPIANS: POOL_AFRICA,
+    // 18. 美洲池
+    AMERICA: POOL_AMERICA,
+    MAYANS: POOL_AMERICA,
+    INCA: POOL_AMERICA,
+    MAPUCHE: POOL_AMERICA,
+    MUISCA: POOL_AMERICA,
+    TUPI: POOL_AMERICA,
 };
 
 
@@ -6287,48 +5426,11 @@ function isEligibleBgmFolder(folder: string): boolean {
     return dur === undefined || dur >= MIN_ROTATION_BGM_SEC;
 }
 
-const BGM_MACRO_GROUPS: readonly (readonly string[])[] = [
-    ['CENTRAL', 'WEI', 'JIANGNAN', 'HUGUANG', 'BASHU', 'LINGNAN', 'NORTHEAST', 'HEXI', 'DIANQIAN', 'TIBET'],
-    ['JAPAN'],
-    ['KOREA'],
-    ['MONGOL', 'HUNS', 'XIANBEI', 'KHITAN', 'CUMAN', 'STEPPE'],
-    ['GREECE', 'ATHENIANS', 'SPARTANS', 'MACEDONIAN', 'THRACIAN', 'ROMA', 'LATIN', 'ARMENIANS', 'GEORGIANS'],
-    ['WESTERN', 'FRANKS', 'BRITONS', 'GERMANIC', 'GOTHS', 'CELTS', 'BURGUNDIANS', 'SICILIANS', 'SPANISH', 'PORTUGUESE', 'VIKINGS', 'DANES', 'SAXONS'],
-    ['SLAVIC', 'POLES', 'BOHEMIANS', 'LITHUANIANS', 'BULGARIANS', 'MAGYAR', 'BYZANTINE', 'VARANGIANS'],
-    ['WEST_ASIA', 'ORIE', 'PERSIAN', 'SASANIAN', 'TURKS', 'MUGHAL', 'CENTRAL_ASIA', 'BERBER'],
-    ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'],
-    ['SEAS', 'BURMESE', 'KHMER', 'MALAY', 'JAVANESE', 'SIAMESE', 'CHAMPA', 'MON', 'VIETNAMESE'],
-    ['AFRICA', 'ETHIOPIANS'],
-    ['AMERICA', 'MAYANS', 'INCA', 'ANDE', 'MAPUCHE', 'MUISCA', 'TUPI'],
-];
-
-const BRANCH_TO_MACRO_GROUP = new Map<string, readonly string[]>();
-for (const grp of BGM_MACRO_GROUPS) {
-    for (const c of grp) BRANCH_TO_MACRO_GROUP.set(c, grp);
-}
-
 function branchPool(branch: string | null): string[] {
     if (!branch) return [];
     const raw = (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f) && !PAUSED_BGM_FOLDERS.has(f));
     const longOnly = raw.filter(isEligibleBgmFolder);
     return longOnly.length > 0 ? longOnly : raw;
-}
-
-function macroPoolForBranch(branch: string | null): string[] {
-    if (!branch) return [];
-    const grp = BRANCH_TO_MACRO_GROUP.get(branch);
-    if (!grp) return branchPool(branch);
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const c of grp) {
-        for (const f of BGM_POOL_MAP[c] ?? []) {
-            if (!seen.has(f) && isEligibleBgmFolder(f)) {
-                seen.add(f);
-                out.push(f);
-            }
-        }
-    }
-    return out;
 }
 
 
@@ -6798,10 +5900,7 @@ export class AudioManager {
     /** 当前跟随军团文化分支的曲池（67 分支 → 专属曲目列表；池内轮播）*/
     private currentBgmPool: string[] = [];
 
-    /** 当前文化所属大文化圈共享曲池（二级随机池，防止小池曲目太少时单曲循环）*/
-    private currentMacroPool: string[] = [];
-
-    /** 最近播放过的曲目历史（最多 5 首），大小池混播时避免短期连播重复 */
+    /** 最近播放过的曲目历史（最多 5 首），洗牌轮播时避免短期连播重复 */
     private recentBgmFolders: string[] = [];
 
 
@@ -7671,15 +6770,7 @@ export class AudioManager {
 
 
 
-            'weather_wind_loop',
-
-
-
-
-
-
-
-        ];
+            'weather_wind_loop'];
 
 
 
@@ -12099,10 +11190,8 @@ export class AudioManager {
 
 
         const prevPool = this.currentBgmPool;
-        const prevMacroPool = this.currentMacroPool;
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
-        this.currentMacroPool = macroPoolForBranch(branch);
         if (this.tacticalBgmPool.length > 0) return;
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
 
@@ -12115,7 +11204,7 @@ export class AudioManager {
         // 玩家离开势力（由文化曲池切回无势力全局随机）：立即换一首其他文化的曲子，避免耳朵一直听旧势力的曲子
         if (prevPool.length > 0 && this.currentBgmPool.length === 0) {
             let nextFolder = this.nextRotationFolder(this.currentBgmFolder);
-            for (let tries = 0; tries < 24 && (prevPool.includes(nextFolder) || prevMacroPool.includes(nextFolder)); tries++) {
+            for (let tries = 0; tries < 24 && prevPool.includes(nextFolder); tries++) {
                 nextFolder = this.nextRotationFolder(this.currentBgmFolder);
             }
             this.playBgmFolder(nextFolder);
@@ -12387,8 +11476,7 @@ export class AudioManager {
             'skill_dizhan',
             'skill_hunzhan',
             'skill_bingzhan',
-            'skill_baizhan',
-        ];
+            'skill_baizhan'];
         for (const sk of skillKeys) {
             const def = SOUND_DEFINITIONS[sk];
             if (def && !this.getAudioElement(sk, def)) {
@@ -12405,7 +11493,6 @@ export class AudioManager {
         const branch = resolveBranch(cultureRegion);
         const pool = branchPool(branch);
         this.tacticalBgmPool = pool;
-        this.currentMacroPool = macroPoolForBranch(branch);
         this.bgmShuffleQueue = [];
 
 
@@ -13278,7 +12365,7 @@ export class AudioManager {
 
 
 
-                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder, true));
+                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder));
 
 
 
@@ -13480,28 +12567,9 @@ export class AudioManager {
 
     /**
      * 洗牌袋取下一首 BGM folder：
-     * - 刚换势力/入场（allowMacroMix=false）：优先从当前文化专属小池定调；
-     * - 自然接力/切歌（allowMacroMix=true）：小池 ≤3 首时 40% 小池 + 60% 大文化圈共享池（小池仅 1 首且正在放则必切大池），
-     *   小池 ≥4 首时 70% 小池 + 30% 大池；同时避开最近 5 首历史。
+     * - 只按当前文化专属曲池 `BGM_POOL_MAP` 洗牌轮播（各池已融合至 ≥4 首），避开最近 5 首历史。
      */
-    private nextRotationFolder(exclude: string, allowMacroMix = false): string {
-        const primaryPool = this.tacticalBgmPool.length > 0 ? this.tacticalBgmPool : this.currentBgmPool;
-        if (allowMacroMix && primaryPool.length > 0 && this.currentMacroPool.length > primaryPool.length) {
-            const mustSwitchMacro = primaryPool.length === 1 && primaryPool[0] === exclude;
-            const macroProb = primaryPool.length <= 3 ? 0.60 : 0.30;
-            if (mustSwitchMacro || Math.random() < macroProb) {
-                const candidates = this.currentMacroPool.filter((f) => f !== exclude && !this.recentBgmFolders.includes(f));
-                const poolPick = candidates.length > 0
-                    ? candidates
-                    : this.currentMacroPool.filter((f) => f !== exclude);
-                if (poolPick.length > 0) {
-                    const chosen = poolPick[Math.floor(Math.random() * poolPick.length)];
-                    this.recordRecentBgm(chosen);
-                    return chosen;
-                }
-            }
-        }
-
+    private nextRotationFolder(exclude: string): string {
         if (this.bgmShuffleQueue.length === 0) {
             this.bgmShuffleQueue = this.shuffledBgmFolders();
         }

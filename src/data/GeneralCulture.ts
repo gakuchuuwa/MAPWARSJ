@@ -538,7 +538,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bolinixiya_baomalei': 'MALAY',   // 波利尼西亚｜波马雷｜据点 大溪地
     'bolinixiya_huotumatua': 'MALAY',   // 拉帕努伊｜霍图玛图阿｜据点 复活节岛
     'bolinixiya_isokelekel': 'MALAY',   // 波纳佩｜伊索克勒克尔｜据点 南马都尔
-    'bolinixiya_kameihameiha': 'MALAY',   // 夏威夷王国｜卡美哈梅哈｜据点 火奴鲁鲁
+    'bolinixiya_kameihameiha': 'MALAY',   // 夏威夷王国｜卡美哈梅哈｜据点 拉海纳
     'bolinixiya_momo': 'MALAY',   // 汤加帝国｜莫莫｜据点 穆阿
     'boluo_damoboluo': 'BENGALIS',   // 波罗帝国｜达磨波罗｜据点 高达城
     'boluo_vijaya': 'INDIA',   // 僧伽罗｜毗阇耶｜据点 阿努拉德
@@ -2627,7 +2627,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibanya_jufre': 'SPANISH',   // 西班牙｜胡弗雷｜据点 门多萨
     'xibanya_menacho': 'SPANISH',   // 西班牙｜梅纳乔｜据点 巴达霍斯
     'xibanya_orellana': 'SPANISH',   // 西班牙｜弗朗西斯科｜据点 瓜亚基尔
-    'xibanya_pisaluo': 'SPANISH',   // 西班牙｜皮萨罗｜据点 利马
+    'xibanya_pisaluo': 'SPANISH',   // 西班牙｜皮萨罗｜据点 通贝斯
     'xibanya_sarmiento': 'SPANISH',   // 西班牙｜萨米恩托｜据点 菲利普王城
     'xibo_d_tubote': 'NORTHEAST',   // 锡伯｜图伯特｜据点 固尔札
     'xibolai_dawei': 'ORIE',   // 以色列｜大卫｜据点 耶路撒冷

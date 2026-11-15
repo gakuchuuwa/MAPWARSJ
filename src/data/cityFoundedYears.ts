@@ -36,7 +36,7 @@
  */
 export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_tumebamba: 1470,  // 约1470年印加图帕克·尤潘基征服卡尼亚里后营建北方重镇
-    city_tumbes: 1000,  // 约1000年通贝斯谷土坯聚落（通皮斯文化），约1470年入印加
+    city_tumbes: 1532,  // 1532年皮萨罗登陆通贝斯（照利马1535先例，按西班牙据点起算）
     city_lahaina: 1000, // 约1000年波利尼西亚人定居毛伊（与火奴鲁鲁同估）
     city_pattani: 1390,  // 14世纪末北大年自狼牙脩故地迁立
     city_copan: -150,  // 玛雅前古典晚期聚落始于约前150年；426年开创古典期王都
