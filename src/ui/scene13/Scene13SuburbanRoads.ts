@@ -78,7 +78,10 @@ export interface RoadPavingStyle {
     primaryUrl: string;
     secondaryUrl: string;
     maskUrl: string;
+    blendUrl: string;
+    dirtMaskUrl: string;
     winterFrost: number;
+    aridSandTint: number;
     baseBrokenness: number;
 }
 
@@ -205,7 +208,10 @@ export function resolveRoadPavingStyle(opts: {
             primaryUrl: '',
             secondaryUrl: '',
             maskUrl: '',
+            blendUrl: '',
+            dirtMaskUrl: '',
             winterFrost: 0,
+            aridSandTint: 0,
             baseBrokenness: 1,
         };
     }
@@ -214,24 +220,58 @@ export function resolveRoadPavingStyle(opts: {
         || opts.deStyle === 'MESO' || opts.deStyle === 'ANDE'
         || /^(JIANGNAN|HUGUANG|BASHU|LINGNAN|VIETNAMESE|KHMER|MALAY|CHAMPA|JAVANESE|SIAMESE|MON|BENGALIS|DIANQIAN)$/.test(opts.cultStyle);
 
-    if (opts.isSnow || opts.isArid || opts.cityType === 'stockade' || opts.cityType === 'pass') {
+    // 城寨（古典夯土/木栅）：以夯土路基为主，仅门前零星散落 DE 78 Road, Gravel 碎石
+    if (opts.cityType === 'stockade') {
         return {
             mode: 'gravel',
-            primaryUrl: (opts.isSnow || opts.cityType === 'stockade') ? '/SUCAI_TERRAIN/rd5.png' : '/SUCAI_TERRAIN/rd1.png',
+            primaryUrl: '/SUCAI_TERRAIN/rd5.png',
             secondaryUrl: '/SUCAI_TERRAIN/rd5.png',
             maskUrl: '/SUCAI_TERRAIN/masks/road_gravel.png',
+            blendUrl: '/SUCAI_TERRAIN/blends/roadland.png',
+            dirtMaskUrl: '/SUCAI_TERRAIN/masks/dirt.png',
             winterFrost: opts.isSnow ? 0.24 : 0,
-            baseBrokenness: opts.cityType === 'stockade' ? 0.56 : opts.cityType === 'pass' ? 0.28 : 0.24,
+            aridSandTint: opts.isArid ? 0.34 : 0,
+            baseBrokenness: 0.62,
+        };
+    }
+    // 干旱荒漠/中东（如巴比伦，对齐 DE dcam0_4 / eecam3_6）：禁用冷灰欧式 rd1，采用 25 Road, Broken + 78 Road, Gravel 暖沙风化石块嵌土
+    if (opts.isArid) {
+        return {
+            mode: 'gravel',
+            primaryUrl: '/SUCAI_TERRAIN/rd2.png',
+            secondaryUrl: '/SUCAI_TERRAIN/rd5.png',
+            maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
+            blendUrl: '/SUCAI_TERRAIN/blends/roadland.png',
+            dirtMaskUrl: '/SUCAI_TERRAIN/masks/dirt.png',
+            winterFrost: 0,
+            aridSandTint: 0.34,
+            baseBrokenness: opts.cityType === 'big_city' ? 0.34 : 0.42,
+        };
+    }
+    if (opts.isSnow || opts.cityType === 'pass') {
+        return {
+            mode: 'gravel',
+            primaryUrl: '/SUCAI_TERRAIN/rd2.png',
+            secondaryUrl: '/SUCAI_TERRAIN/rd5.png',
+            maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
+            blendUrl: '/SUCAI_TERRAIN/blends/roadland.png',
+            dirtMaskUrl: '/SUCAI_TERRAIN/masks/dirt.png',
+            winterFrost: opts.isSnow ? 0.26 : 0,
+            aridSandTint: 0,
+            baseBrokenness: opts.isSnow ? 0.34 : 0.28,
         };
     }
     if (isLushSubtropical) {
         return {
             mode: 'mossy',
-            primaryUrl: '/SUCAI_TERRAIN/rd1.png',
+            primaryUrl: '/SUCAI_TERRAIN/rd2.png',
             secondaryUrl: '/SUCAI_TERRAIN/sr2.png',
             maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
+            blendUrl: '/SUCAI_TERRAIN/blends/roadland.png',
+            dirtMaskUrl: '/SUCAI_TERRAIN/masks/dirt.png',
             winterFrost: 0,
-            baseBrokenness: opts.cityType === 'small_city' ? 0.30 : (opts.cityType === 'medium_city' ? 0.20 : 0.14),
+            aridSandTint: 0,
+            baseBrokenness: opts.cityType === 'small_city' ? 0.32 : (opts.cityType === 'medium_city' ? 0.24 : 0.18),
         };
     }
     return {
@@ -239,8 +279,11 @@ export function resolveRoadPavingStyle(opts: {
         primaryUrl: '/SUCAI_TERRAIN/rd1.png',
         secondaryUrl: '/SUCAI_TERRAIN/rd2.png',
         maskUrl: '/SUCAI_TERRAIN/masks/road_broken.png',
+        blendUrl: '/SUCAI_TERRAIN/blends/roadland.png',
+        dirtMaskUrl: '/SUCAI_TERRAIN/masks/dirt.png',
         winterFrost: 0,
-        baseBrokenness: opts.cityType === 'big_city' ? 0.10 : (opts.cityType === 'medium_city' ? 0.18 : 0.28),
+        aridSandTint: 0,
+        baseBrokenness: opts.cityType === 'big_city' ? 0.16 : (opts.cityType === 'medium_city' ? 0.22 : 0.30),
     };
 }
 
@@ -843,7 +886,29 @@ interface SegRecord {
     maxDrawY: number;
 }
 
-/** 将整张战场的城郊石路离线烘焙为 192×96 屏幕分块（与山坡 terrainLiftAt 严丝合缝且零接缝） */
+interface RoadTileCell {
+    weight: number;
+    brk: number;
+    u: number;
+    fade: number;
+}
+
+function packIsoKey(gi: number, gj: number): number {
+    return (((gi + 32768) & 0xffff) << 16) | ((gj + 32768) & 0xffff);
+}
+
+function tileHash01(gi: number, gj: number): number {
+    let h = Math.imul(gi, 0x9e3779b1) ^ Math.imul(gj, 0x85ebca77) ^ 0x27d4eb2d;
+    h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+    h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/**
+ * 按 AoE2 DE 96×48 菱形格 + blends/roadland.png + 1:1 masks/road_broken.png + masks/dirt.png 双层侵蚀管线，
+ * 将城门官道碎石簇离线烘焙为 192×96 屏幕分块（与山坡 terrainLiftAt 严丝合缝且零硬边）。
+ * 乡间支路（branch）仅在底层刻出夯土小径，只在与官道分叉口（u<=0.12）保留 1 格碎石过渡。
+ */
 export async function bakeSuburbanRoadChunks(
     curves: readonly RoadCurve[],
     style: RoadPavingStyle,
@@ -854,27 +919,34 @@ export async function bakeSuburbanRoadChunks(
         return [];
     }
 
-    const [priTile, secTile, mskTile] = await Promise.all([
+    const [priTile, secTile, mskTile, blendTile, dirtTile] = await Promise.all([
         loadTilePixels(style.primaryUrl),
         loadTilePixels(style.secondaryUrl),
         loadTilePixels(style.maskUrl),
+        loadTilePixels(style.blendUrl),
+        loadTilePixels(style.dirtMaskUrl),
     ]);
     if (!isStillValid() || !priTile || !secTile || !mskTile) return [];
 
-    // 整理有效绘制线段，计算精确屏幕绘制包围盒
+    // 整理参与铺石的线段：主干官道（trunk, u<=0.88）与支路分叉口（branch, u<=0.12），其余乡道纯走 WebGL 夯土路基
     const segs: SegRecord[] = [];
     for (const cv of curves) {
+        const isBranch = cv.kind === 'branch';
+        const maxU = isBranch ? 0.12 : 0.88;
         const pts = cv.points;
         for (let i = 0; i < pts.length - 1; i++) {
             const a = pts[i], b = pts[i + 1];
             if (a.overMoat && b.overMoat) continue;
+            if (a.u > maxU) continue;
             const ax = a.x, ayG = a.y * 2;
             const bx = b.x, byG = b.y * 2;
             const vx = bx - ax, vy = byG - ayG;
-            const maxHW = Math.max(a.halfW, b.halfW) + 18;
+            const maxHW = Math.max(a.halfW, b.halfW) + 56;
             const liftA = elevationLiftAt(a.x, a.y);
             const liftB = elevationLiftAt(b.x, b.y);
-            const padY = Math.ceil(maxHW * 0.5) + 42;
+            const padY = Math.ceil(maxHW * 0.5) + 56;
+            const fadeStart = isBranch ? 0.04 : 0.62;
+            const fadeSpan = Math.max(0.06, maxU - fadeStart);
             segs.push({
                 ax, ayG, bx, byG, vx, vy,
                 len2: vx * vx + vy * vy || 1,
@@ -883,8 +955,8 @@ export async function bakeSuburbanRoadChunks(
                 maxHW,
                 brkA: a.brokenness,
                 brkB: b.brokenness,
-                fadeA: a.u > 0.82 ? Math.max(0, 1 - (a.u - 0.82) / 0.18) : 1,
-                fadeB: b.u > 0.82 ? Math.max(0, 1 - (b.u - 0.82) / 0.18) : 1,
+                fadeA: a.u > fadeStart ? Math.max(0, 1 - (a.u - fadeStart) / fadeSpan) : 1,
+                fadeB: b.u > fadeStart ? Math.max(0, 1 - (b.u - fadeStart) / fadeSpan) : 1,
                 minDrawX: Math.min(a.x, b.x) - maxHW,
                 maxDrawX: Math.max(a.x, b.x) + maxHW,
                 minDrawY: Math.min(a.y - liftA, b.y - liftB) - padY,
@@ -893,6 +965,57 @@ export async function bakeSuburbanRoadChunks(
         }
     }
     if (segs.length === 0) return [];
+
+    // 1. 将官道投射到 DE 96×48 等距菱形格网 (gi, gj)，生成遵循 DE (25,6)/(6,25) 间断铺石规律的离散路格表
+    const tileMap = new Map<number, RoadTileCell>();
+    for (const s of segs) {
+        const minX = Math.min(s.ax, s.bx) - s.maxHW;
+        const maxX = Math.max(s.ax, s.bx) + s.maxHW;
+        const minYG = Math.min(s.ayG, s.byG) - s.maxHW;
+        const maxYG = Math.max(s.ayG, s.byG) + s.maxHW;
+        const giMin = Math.floor((minX + minYG) / 96) - 1;
+        const giMax = Math.ceil((maxX + maxYG) / 96) + 1;
+        const gjMin = Math.floor((minYG - maxX) / 96) - 1;
+        const gjMax = Math.ceil((maxYG - minX) / 96) + 1;
+
+        for (let gj = gjMin; gj <= gjMax; gj++) {
+            for (let gi = giMin; gi <= giMax; gi++) {
+                // 等距菱形格 (gi, gj) 中心在地平面 (wx, wyG) 下的精确坐标
+                const cx = (gi - gj) * 48;
+                const cyG = (gi + gj + 1) * 48;
+                const t = Math.max(0, Math.min(1, ((cx - s.ax) * s.vx + (cyG - s.ayG) * s.vy) / s.len2));
+                const px = s.ax + s.vx * t;
+                const py = s.ayG + s.vy * t;
+                const d = Math.hypot(cx - px, cyG - py);
+                const hw = s.halfWA + (s.halfWB - s.halfWA) * t;
+                if (d > hw * 1.02) continue;
+
+                const fade = s.fadeA + (s.fadeB - s.fadeA) * t;
+                if (fade <= 0.02) continue;
+                const brk = s.brkA + (s.brkB - s.brkA) * t;
+                const uApprox = Math.max(0, Math.min(1, (brk - style.baseBrokenness) / 0.48));
+                const hTile = tileHash01(gi, gj);
+
+                // 对齐 DE 战役地图（dcam0_4 / fcam1_4）：门前桥头连续满铺，中后段路肩格交错退缩并间断露出纯土格
+                let tileW = 1.0;
+                if (uApprox >= 0.52) {
+                    const dropProb = (uApprox - 0.46) * 1.38 + (d > hw * 0.56 ? 0.28 : 0);
+                    if (hTile < dropProb) continue;
+                    tileW = 0.68 + 0.24 * (1 - uApprox);
+                } else if (uApprox >= 0.18) {
+                    if (d > hw * 0.62 && hTile < 0.42) continue;
+                    tileW = 0.84 + 0.16 * (1 - uApprox);
+                }
+
+                const key = packIsoKey(gi, gj);
+                const prev = tileMap.get(key);
+                if (!prev || tileW * fade > prev.weight * prev.fade) {
+                    tileMap.set(key, { weight: tileW, brk, u: uApprox, fade });
+                }
+            }
+        }
+    }
+    if (tileMap.size === 0) return [];
 
     // 将线段挂入相交的 192×96 分块桶
     const chunkMap = new Map<string, { gx: number; gy: number; list: SegRecord[] }>();
@@ -917,33 +1040,83 @@ export async function bakeSuburbanRoadChunks(
     const priData = priTile.data;
     const secData = secTile.data;
     const mskData = mskTile.data;
+    const blendData = blendTile ? blendTile.data : null;
+    const dirtData = dirtTile ? dirtTile.data : null;
     const frost = style.winterFrost;
+    const sandTint = style.aridSandTint;
+    const isCobbleMode = style.mode === 'cobble';
     const chunks: SuburbanRoadChunk[] = [];
     const blockSize = 4;
 
-    const queryLocalDist = (
-        localSegs: readonly SegRecord[],
+    // DE groundLayer 等距格边界 SHAPE_W=0.367 双线性平滑采样
+    const sampleIsoTileField = (
         wx: number,
         wyG: number,
-    ): { dist: number; halfW: number; brk: number; fade: number } => {
-        let bestD = Infinity;
-        let bestHW = 0;
-        let bestBrk = 0;
-        let bestFade = 0;
-        for (let i = 0; i < localSegs.length; i++) {
-            const s = localSegs[i];
-            const t = Math.max(0, Math.min(1, ((wx - s.ax) * s.vx + (wyG - s.ayG) * s.vy) / s.len2));
-            const px = s.ax + s.vx * t;
-            const py = s.ayG + s.vy * t;
-            const d = Math.hypot(wx - px, wyG - py);
-            if (d < bestD) {
-                bestD = d;
-                bestHW = s.halfWA + (s.halfWB - s.halfWA) * t;
-                bestBrk = s.brkA + (s.brkB - s.brkA) * t;
-                bestFade = s.fadeA + (s.fadeB - s.fadeA) * t;
-            }
+    ): { env: number; brk: number; u: number; fade: number } => {
+        const gU = (wx + wyG) / 96 - 0.5;
+        const gV = (wyG - wx) / 96 - 0.5;
+        const i0 = Math.floor(gU);
+        const j0 = Math.floor(gV);
+        const c00 = tileMap.get(packIsoKey(i0, j0));
+        const c10 = tileMap.get(packIsoKey(i0 + 1, j0));
+        const c01 = tileMap.get(packIsoKey(i0, j0 + 1));
+        const c11 = tileMap.get(packIsoKey(i0 + 1, j0 + 1));
+        if (!c00 && !c10 && !c01 && !c11) {
+            return { env: 0, brk: 0, u: 0, fade: 0 };
         }
-        return { dist: bestD, halfW: bestHW, brk: bestBrk, fade: bestFade };
+        const fu = gU - i0;
+        const fv = gV - j0;
+        const tU = Math.max(0, Math.min(1, (fu - 0.133) / 0.734));
+        const tV = Math.max(0, Math.min(1, (fv - 0.133) / 0.734));
+        const su = tU * tU * (3 - 2 * tU);
+        const sv = tV * tV * (3 - 2 * tV);
+
+        const w00 = (1 - su) * (1 - sv);
+        const w10 = su * (1 - sv);
+        const w01 = (1 - su) * sv;
+        const w11 = su * sv;
+
+        let env = 0;
+        let brkSum = 0;
+        let uSum = 0;
+        let fadeSum = 0;
+        let wActive = 0;
+        if (c00) {
+            env += c00.weight * w00;
+            brkSum += c00.brk * w00;
+            uSum += c00.u * w00;
+            fadeSum += c00.fade * w00;
+            wActive += w00;
+        }
+        if (c10) {
+            env += c10.weight * w10;
+            brkSum += c10.brk * w10;
+            uSum += c10.u * w10;
+            fadeSum += c10.fade * w10;
+            wActive += w10;
+        }
+        if (c01) {
+            env += c01.weight * w01;
+            brkSum += c01.brk * w01;
+            uSum += c01.u * w01;
+            fadeSum += c01.fade * w01;
+            wActive += w01;
+        }
+        if (c11) {
+            env += c11.weight * w11;
+            brkSum += c11.brk * w11;
+            uSum += c11.u * w11;
+            fadeSum += c11.fade * w11;
+            wActive += w11;
+        }
+        if (wActive <= 0.001) return { env: 0, brk: 0, u: 0, fade: 0 };
+        const invW = 1 / wActive;
+        return {
+            env,
+            brk: brkSum * invW,
+            u: uSum * invW,
+            fade: fadeSum * invW,
+        };
     };
 
     for (const bucket of chunkMap.values()) {
@@ -959,17 +1132,15 @@ export async function bakeSuburbanRoadChunks(
         const imgData = ctx.createImageData(CHUNK_W, CHUNK_H);
         const out = imgData.data;
         let hasAnyPixel = false;
-        const localSegs = bucket.list;
 
         for (let by = 0; by < CHUNK_H; by += blockSize) {
             for (let bx = 0; bx < CHUNK_W; bx += blockSize) {
                 const cX = x0 + bx + 2;
                 const cYDraw = y0 + by + 2;
-                // 块中心 2 步不动点求世界 Y，误差 <0.2px
                 const yBlk1 = cYDraw + elevationLiftAt(cX, cYDraw);
                 const yBlk = cYDraw + elevationLiftAt(cX, yBlk1);
-                const blkRes = queryLocalDist(localSegs, cX, yBlk * 2);
-                if (blkRes.dist > blkRes.halfW + 18 || blkRes.fade <= 0.02) continue;
+                const blkSample = sampleIsoTileField(cX, yBlk * 2);
+                if (blkSample.env <= 0.01 || blkSample.fade <= 0.02) continue;
 
                 const yEnd = Math.min(CHUNK_H, by + blockSize);
                 const xEnd = Math.min(CHUNK_W, bx + blockSize);
@@ -980,32 +1151,46 @@ export async function bakeSuburbanRoadChunks(
                         const worldX = x0 + px;
                         const yApprox = drawY + elevationLiftAt(worldX, yBlk);
                         const worldY = drawY + elevationLiftAt(worldX, yApprox);
-                        const hit = queryLocalDist(localSegs, worldX, worldY * 2);
-                        if (hit.dist > hit.halfW + 10 || hit.fade <= 0.02) continue;
+                        const hit = sampleIsoTileField(worldX, worldY * 2);
+                        if (hit.env <= 0.03 || hit.fade <= 0.02) continue;
 
-                        const wob = 0.13 * Math.sin(worldX * 0.029 + worldY * 0.043)
-                            + 0.07 * Math.sin(worldX * 0.067 - worldY * 0.051);
-                        const effHalfW = Math.max(12, hit.halfW * (1 + wob));
-                        const rNorm = hit.dist / effHalfW;
-                        if (rNorm >= 1.05) continue;
-
-                        const tx = (Math.round(worldX) | 0) & 511;
-                        const ty = (Math.round(worldY) | 0) & 511;
+                        // 🔴 严格 1:1 零偏移对齐：rd1/rd2/sr2/rd5 与 masks/road_broken、blends/roadland 同享 (tx, ty) 坐标！
+                        //    绝不加随机 UV 偏移，确保蒙版白区 100% 落在完整鹅卵石块上，黑区精准抠除 rd2 烤死橙泥底色。
+                        const iwx = Math.round(worldX) | 0;
+                        const iwy = Math.round(worldY) | 0;
+                        const tx = iwx & 511;
+                        const ty = iwy & 511;
                         const tidx = (ty * 512 + tx) * 4;
-                        // 蒙版偏移与微转相，避开长路段重复感
-                        const mx = (Math.round(worldX + 137) | 0) & 511;
-                        const my = (Math.round(worldY + 293) | 0) & 511;
-                        const midx = (my * 512 + mx) * 4;
 
-                        // DE 蒙版：white(1)=完整石块，black(0)=凹陷泥缺口
-                        const maskVal = mskData[midx] / 255;
-                        const shoulder = Math.max(0, (rNorm - 0.58) / 0.42);
-                        const coreErode = Math.max(0, (hit.brk - 0.26) * 0.68);
-                        const threshold = shoulder * 0.68 + coreErode * 0.52;
-                        const stoneScore = maskVal - threshold;
+                        const maskVal = mskData[tidx] / 255;
+                        const blendVal = blendData ? (blendData[tidx] / 255) : maskVal;
+
+                        // 仅温带石板路紧贴城门桥头的核心格允许完整石板连片；其余全段在 maskVal<0.18 泥缝处 100% 透明露出 WebGL 真实泥沙底图
+                        const intactCore = (isCobbleMode && hit.u < 0.16 && hit.env > 0.78 && hit.brk < 0.24)
+                            ? Math.min(1, (0.16 - hit.u) * 8) * Math.min(1, (hit.env - 0.78) * 4.5)
+                            : 0;
+                        if (intactCore <= 0.01 && maskVal < 0.18) continue;
+
+                        // DE layer=6 Dirt 泥土覆层双尺度蒙版（masks/dirt.png），模拟沙土自然掩埋部分石板簇
+                        let dirtPatch = 0.42;
+                        if (dirtData) {
+                            const d2x = ((iwx >> 1) + 173) & 511;
+                            const d2y = ((iwy >> 1) + 281) & 511;
+                            const d2idx = (d2y * 512 + d2x) * 4;
+                            dirtPatch = (dirtData[tidx] * 0.55 + dirtData[d2idx] * 0.45) / 255;
+                        }
+
+                        const effMask = intactCore > 0 ? (maskVal + (1 - maskVal) * intactCore * 0.84) : maskVal;
+                        const stoneHeight = effMask * (0.74 + 0.26 * blendVal);
+                        const borderCut = Math.max(0, (0.86 - hit.env) / 0.86);
+                        const dirtCut = Math.max(0, hit.brk - 0.16) * Math.max(0, dirtPatch - 0.30) * 1.05;
+                        const threshold = 0.20 + borderCut * 0.76 + dirtCut * 0.52;
+                        const stoneScore = stoneHeight - threshold;
                         if (stoneScore <= 0) continue;
 
-                        const a = Math.min(1, stoneScore * 4.5) * hit.fade * 0.96;
+                        const mortarFeather = Math.min(1, stoneScore * 5.0);
+                        const maxOpacity = sandTint > 0 ? 0.86 : 0.94;
+                        const a = mortarFeather * hit.fade * maxOpacity;
                         if (a <= 0.03) continue;
 
                         const brkMix = Math.max(0, Math.min(1, hit.brk));
@@ -1014,11 +1199,21 @@ export async function bakeSuburbanRoadChunks(
                         let g = priData[tidx + 1] * invMix + secData[tidx + 1] * brkMix;
                         let b = priData[tidx + 2] * invMix + secData[tidx + 2] * brkMix;
 
+                        if (sandTint > 0) {
+                            r = r * (1 - sandTint) + 196 * sandTint;
+                            g = g * (1 - sandTint) + 168 * sandTint;
+                            b = b * (1 - sandTint) + 126 * sandTint;
+                        }
                         if (frost > 0) {
                             r = r * (1 - frost) + 216 * frost;
                             g = g * (1 - frost) + 224 * frost;
                             b = b * (1 - frost) + 230 * frost;
                         }
+                        // 石块灰缝边缘微压暗 8%，增强石块嵌入泥土的立体感
+                        const rimShade = 0.92 + 0.08 * mortarFeather;
+                        r *= rimShade;
+                        g *= rimShade;
+                        b *= rimShade;
 
                         const oIdx = (py * CHUNK_W + px) * 4;
                         out[oIdx] = r;

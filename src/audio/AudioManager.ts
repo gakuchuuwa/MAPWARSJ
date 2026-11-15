@@ -2019,7 +2019,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
 
 
 
-    monk_cast: sounds('battle', ['monk_cast_1', 'monk_cast_2', 'monk_cast_3'], 0.55, 600),
+    monk_cast: sounds('battle', ['monk_cast_1', 'monk_cast_2', 'monk_cast_3'], 0.55, 2600),
 
 
 
@@ -12049,141 +12049,36 @@ export class AudioManager {
 
 
 
+        const prevPool = this.currentBgmPool;
         const branch = resolveBranch(cultureRegion);
-
-
-
-
-
-
-
         this.currentBgmPool = branchPool(branch);
-
-
-
-
-
-
-
         if (this.tacticalBgmPool.length > 0) return;
-
-
-
-
-
-
-
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
 
-
-
-
-
-
-
         // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
-
-
-
-
-
-
-
         if (this.manualBgmFolder) {
-
-
-
-
-
-
-
             this.playBgmFolder(this.manualBgmFolder);
-
-
-
-
-
-
-
             return;
-
-
-
-
-
-
-
         }
 
-
-
-
-
-
+        // 玩家离开势力（由文化曲池切回无势力全局随机）：立即换一首其他文化的曲子，避免耳朵一直听旧势力的曲子
+        if (prevPool.length > 0 && this.currentBgmPool.length === 0) {
+            let nextFolder = this.nextRotationFolder(this.currentBgmFolder);
+            for (let tries = 0; tries < 24 && prevPool.includes(nextFolder); tries++) {
+                nextFolder = this.nextRotationFolder(this.currentBgmFolder);
+            }
+            this.playBgmFolder(nextFolder);
+            return;
+        }
 
         if (
-
-
-
-
-
-
-
             this.currentBgmPool.length > 0 &&
-
-
-
-
-
-
-
             this.currentBgmFolder !== '' &&
-
-
-
-
-
-
-
             !this.currentBgmPool.includes(this.currentBgmFolder)
-
-
-
-
-
-
-
         ) {
-
-
-
-
-
-
-
             this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
-
-
-
-
-
-
-
             return;
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
 
         this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
 

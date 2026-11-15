@@ -293,18 +293,6 @@ export function stepTacticalAnimals(
             let d = Math.hypot(dx, dy) || 1;
             dx /= d;
             dy /= d;
-            // 若正前方是水域或护城河，预先挑选偏转角避水奔逃
-            if (!an.aquatic && isLandBlocked) {
-                const baseAng = Math.atan2(dy, dx);
-                for (const off of [0, 0.45, -0.45, 0.9, -0.9, 1.35, -1.35, 1.8, -1.8]) {
-                    const ca = Math.cos(baseAng + off), sa = Math.sin(baseAng + off);
-                    if (!isLandBlocked(an.x + ca * 90, an.y + sa * 90)) {
-                        dx = ca;
-                        dy = sa;
-                        break;
-                    }
-                }
-            }
             an.vx = dx * fleeSpd;
             an.vy = dy * fleeSpd;
             an.fleeDX = dx;
@@ -410,28 +398,14 @@ export function stepTacticalAnimals(
                 an.idleTimer = 2 + Math.random() * 3;
                 want = 'idle';
             }
-        } else if (!an.aquatic && isLandBlocked && isLandBlocked(an.x, an.y) && !isLandBlocked(prevX, prevY)) {
-            // 陆生动物与牛车/马车：下一步若踏进江河/大海/护城河，退回岸上并沿河岸转向奔逃
+        } else if (!fleeing && !an.aquatic && isLandBlocked && isLandBlocked(an.x, an.y) && !isLandBlocked(prevX, prevY)) {
+            // 平时踱步时：陆生动物不踏进江河/大海/护城河；逃跑期间不受任何墙、护城河等阻挡，直穿脱离
             an.x = prevX;
             an.y = prevY;
-            if (fleeing) {
-                const base = Math.atan2(an.fleeDY, an.fleeDX);
-                const tries = [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.2, -2.2, Math.PI];
-                for (const t of tries) {
-                    const a = base + t;
-                    const nx = Math.cos(a), ny = Math.sin(a);
-                    if (!isLandBlocked(an.x + nx * 60, an.y + ny * 60)) {
-                        an.fleeDX = nx; an.fleeDY = ny;
-                        an.dir = dir8(nx, ny);
-                        break;
-                    }
-                }
-            } else {
-                an.wanderX = an.x;
-                an.wanderY = an.y;
-                an.idleTimer = 2 + Math.random() * 3;
-                want = 'idle';
-            }
+            an.wanderX = an.x;
+            an.wanderY = an.y;
+            an.idleTimer = 2 + Math.random() * 3;
+            want = 'idle';
         }
         an.sprite.x = an.x;
         an.sprite.y = an.y;

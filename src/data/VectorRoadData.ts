@@ -23,33 +23,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "特洛伊-格拉尼库斯",
-                type: "road",
-                id: "road_city_teluoyi_city_gelanikusi_1790100000000",
-                startConnection: "city_teluoyi",
-                endConnection: "city_gelanikusi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [26.2389, 39.9575],
-                    [26.388296, 40.072482],
-                    [26.398161, 40.084516],
-                    [26.417026, 40.131452],
-                    [26.617435, 40.261428],
-                    [26.735989, 40.351946],
-                    [26.78982, 40.367014],
-                    [26.864045, 40.366786],
-                    [26.974315, 40.357674],
-                    [27.053616, 40.340676],
-                    [27.077953, 40.332124],
-                    [27.28, 40.32],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "宇都宫城-江户",
                 type: "road",
                 id: "road_city_utsunomiya_city_edo_1780126728451",
@@ -46494,28 +46467,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "克拉佐美奈-以弗所",
-                type: "road",
-                id: "road_city_kelazuomeinai_city_yifusuo_1788854756202",
-                startConnection: "city_kelazuomeinai",
-                endConnection: "city_yifusuo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [26.77, 38.36],
-                    [26.977273, 38.369317],
-                    [27.083693, 38.371848],
-                    [27.180529, 38.351594],
-                    [27.228416, 38.263655],
-                    [27.298044, 38.175873],
-                    [27.34, 37.94],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卡里斯托斯-雅典",
                 type: "road",
                 id: "road_city_kalisituosi_city_yadian_1788854883086",
@@ -50377,68 +50328,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [27.386888, 37.720972],
                     [27.367008, 37.668121],
                     [27.2783, 37.5303],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "佩尔加蒙-克拉佐美奈",
-                type: "road",
-                id: "road_city_peierjiameng_city_kelazuomeinai_1790246935529",
-                startConnection: "city_peierjiameng",
-                endConnection: "city_kelazuomeinai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [27.18, 39.12],
-                    [27.052927, 39.004314],
-                    [27.04885, 38.969803],
-                    [27.060038, 38.92002],
-                    [27.047928, 38.869374],
-                    [26.98866, 38.831614],
-                    [26.977215, 38.754589],
-                    [27.057577, 38.680818],
-                    [27.075905, 38.649767],
-                    [27.077714, 38.623615],
-                    [27.074307, 38.610589],
-                    [27.047706, 38.568256],
-                    [27.042981, 38.523997],
-                    [27.08147, 38.495557],
-                    [27.141141, 38.422174],
-                    [27.130828, 38.368482],
-                    [26.977273, 38.369317],
-                    [26.77, 38.36],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "斯法尔德-以弗所",
-                type: "road",
-                id: "road_city_sifaerde_city_yifusuo_1790246951229",
-                startConnection: "city_sifaerde",
-                endConnection: "city_yifusuo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.03, 38.48],
-                    [27.816337, 38.498977],
-                    [27.659276, 38.498306],
-                    [27.540944, 38.46421],
-                    [27.353608, 38.464939],
-                    [27.236618, 38.444143],
-                    [27.21721, 38.444953],
-                    [27.141141, 38.422174],
-                    [27.130828, 38.368482],
-                    [27.138067, 38.317206],
-                    [27.190813, 38.270538],
-                    [27.22785, 38.259396],
-                    [27.298044, 38.175873],
-                    [27.34, 37.94],
                 ]
             }
         },
@@ -81265,6 +81154,206 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [20.668777, 44.896656],
                     [20.634307, 44.871192],
                     [20.45, 44.78],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-格拉尼库斯",
+                type: "road",
+                id: "road_city_teluoyi_city_gelanikusi_1794727258249",
+                startConnection: "city_teluoyi",
+                endConnection: "city_gelanikusi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.2389, 39.9575],
+                    [26.259292, 39.803204],
+                    [26.31291, 39.794956],
+                    [26.329407, 39.79908],
+                    [26.411896, 39.774334],
+                    [26.465513, 39.778458],
+                    [26.506758, 39.790831],
+                    [26.535629, 39.794956],
+                    [26.605744, 39.819702],
+                    [26.646988, 39.844449],
+                    [26.66761, 39.881568],
+                    [26.783094, 39.947559],
+                    [26.832587, 39.980555],
+                    [26.88208, 40.001177],
+                    [26.894453, 40.025923],
+                    [26.993439, 40.01355],
+                    [27.034133, 40.045395],
+                    [27.087606, 40.057667],
+                    [27.142832, 40.112017],
+                    [27.170007, 40.133055],
+                    [27.180526, 40.135685],
+                    [27.199812, 40.185651],
+                    [27.28, 40.32],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-羊河",
+                type: "road",
+                id: "road_city_teluoyi_city_yanghe_1794727270061",
+                startConnection: "city_teluoyi",
+                endConnection: "city_yanghe"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.2389, 39.9575],
+                    [26.318464, 40.009311],
+                    [26.388296, 40.072482],
+                    [26.398161, 40.084516],
+                    [26.417026, 40.131452],
+                    [26.429545, 40.139701],
+                    [26.515006, 40.145532],
+                    [26.6, 40.332],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "羊河-格拉尼库斯",
+                type: "road",
+                id: "road_city_yanghe_city_gelanikusi_1794727277601",
+                startConnection: "city_yanghe",
+                endConnection: "city_gelanikusi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.6, 40.332],
+                    [26.864045, 40.366786],
+                    [26.974315, 40.357674],
+                    [27.053616, 40.340676],
+                    [27.077953, 40.332124],
+                    [27.28, 40.32],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "以弗所-克拉佐美奈",
+                type: "road",
+                id: "road_city_yifusuo_city_kelazuomeinai_1794727445763",
+                startConnection: "city_yifusuo",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.34, 37.94],
+                    [27.298044, 38.175873],
+                    [27.245864, 38.233152],
+                    [27.190813, 38.270538],
+                    [27.173342, 38.278804],
+                    [27.133196, 38.33326],
+                    [27.119972, 38.367141],
+                    [26.977273, 38.369317],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "克拉佐美奈-佩尔加蒙",
+                type: "road",
+                id: "road_city_kelazuomeinai_city_peierjiameng_1794727458244",
+                startConnection: "city_kelazuomeinai",
+                endConnection: "city_peierjiameng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.77, 38.36],
+                    [27.083693, 38.371848],
+                    [27.132531, 38.386712],
+                    [27.147062, 38.436944],
+                    [27.116534, 38.476271],
+                    [27.067444, 38.503446],
+                    [27.039155, 38.531703],
+                    [27.075771, 38.61469],
+                    [27.078857, 38.632675],
+                    [27.068439, 38.665576],
+                    [27.057577, 38.680818],
+                    [26.977215, 38.754589],
+                    [26.962374, 38.778331],
+                    [26.979192, 38.825308],
+                    [27.029529, 38.854189],
+                    [27.055278, 38.880574],
+                    [27.048751, 38.986965],
+                    [27.18, 39.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩尔加蒙-斯法尔德",
+                type: "road",
+                id: "road_city_peierjiameng_city_sifaerde_1794727472875",
+                startConnection: "city_peierjiameng",
+                endConnection: "city_sifaerde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.18, 39.12],
+                    [27.366179, 39.115173],
+                    [27.406652, 39.126869],
+                    [27.511339, 39.178519],
+                    [27.547221, 39.192519],
+                    [27.587175, 39.200832],
+                    [27.627221, 39.182001],
+                    [27.630278, 39.171822],
+                    [27.680009, 39.10259],
+                    [27.743681, 39.043941],
+                    [27.772376, 39.008286],
+                    [27.849004, 38.881362],
+                    [27.900969, 38.822712],
+                    [27.933292, 38.733565],
+                    [27.939301, 38.699666],
+                    [27.932732, 38.671911],
+                    [27.91445, 38.659981],
+                    [27.916294, 38.619328],
+                    [27.927301, 38.609977],
+                    [28.03, 38.48],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "克拉佐美奈-斯法尔德",
+                type: "road",
+                id: "road_city_kelazuomeinai_city_sifaerde_1794727506484",
+                startConnection: "city_kelazuomeinai",
+                endConnection: "city_sifaerde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.77, 38.36],
+                    [27.083693, 38.371848],
+                    [27.132531, 38.386712],
+                    [27.205911916090614, 38.40540949671696],
+                    [27.227348, 38.434885],
+                    [27.328139, 38.463335],
+                    [27.495583, 38.457134],
+                    [27.540944, 38.46421],
+                    [27.633428, 38.494491],
+                    [27.790133, 38.496924],
+                    [28.03, 38.48],
                 ]
             }
         },

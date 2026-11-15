@@ -196,6 +196,8 @@ function getSixSmallSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanva
     return cv;
 }
 
+const SIX_BIG_ICON_BASE_R = 162;
+
 function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElement | null {
     const cacheKey = `${six}_${paid ? 1 : 0}`;
     const existing = sixBadgeCache.get(cacheKey);
@@ -750,7 +752,7 @@ function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         ctx.save();
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, cx, cy - 36 - e * 12 * scale, 108 * scale * pulse);
+        drawStamp(ctx, badge, cx, cy - 36 - e * 12 * scale, SIX_BIG_ICON_BASE_R * scale * pulse);
         ctx.restore();
     }
 }
@@ -826,7 +828,7 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
         ctx.save();
         const dropOffset = (1 - easeOut(Math.min(1, p * 3.2))) * 32 * scale;
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, cx, cy - 48 * scale - dropOffset, 108 * scale);
+        drawStamp(ctx, badge, cx, cy - 48 * scale - dropOffset, SIX_BIG_ICON_BASE_R * scale);
         ctx.restore();
     }
 }
@@ -886,7 +888,7 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         const slamDrop = (1 - easeOut(Math.min(1, p * 3.5))) * 32 * scale;
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, x, y - 76 * scale - slamDrop, 108 * scale * pulse);
+        drawStamp(ctx, badge, x, y - 76 * scale - slamDrop, SIX_BIG_ICON_BASE_R * scale * pulse);
         ctx.restore();
     }
 }
@@ -931,7 +933,7 @@ function drawPanic(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number,
         ctx.translate(x, y - 30 * scale);
         ctx.rotate(p * TAU * 1.15);
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, 0, 0, 108 * scale);
+        drawStamp(ctx, badge, 0, 0, SIX_BIG_ICON_BASE_R * scale);
         ctx.restore();
     }
 }
@@ -959,7 +961,7 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
     }
     const sideSign = Math.cos(v.angle) >= 0 ? -1 : 1;
     const edgeSpan = Math.min(85, Math.max(28, sideSign < 0 ? -minDx : maxDx));
-    const iconX = x + sideSign * (edgeSpan + 116 * scale);
+    const iconX = x + sideSign * (edgeSpan + 148 * scale);
     const iconY = y - 18 * scale;
 
     ctx.save();
@@ -1024,7 +1026,7 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
         ctx.save();
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, iconX, iconY - 12 * scale, 108 * scale * pulse);
+        drawStamp(ctx, badge, iconX, iconY - 12 * scale, SIX_BIG_ICON_BASE_R * scale * pulse);
         ctx.restore();
     }
 }
@@ -1179,13 +1181,13 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         }
         const sideSign = fromLeft ? -1 : 1;
         const edgeSpan = Math.min(85, Math.max(28, sideSign < 0 ? -minDx : maxDx));
-        const iconX = cx + sideSign * (edgeSpan + 116 * scale);
+        const iconX = cx + sideSign * (edgeSpan + 148 * scale);
         const iconY = cy - 32 * scale;
 
         const iconAlpha = p < 0.72 ? 1 : (1 - p) / 0.28;
         const dropOffset = (1 - easeOut(Math.min(1, p * 3.8))) * 36;
         const mainPulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        const drawR = 108 * scale * mainPulse;
+        const drawR = SIX_BIG_ICON_BASE_R * scale * mainPulse;
         const drawY = iconY - dropOffset * 0.6;
 
         ctx.save();

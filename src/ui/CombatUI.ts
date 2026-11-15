@@ -7387,6 +7387,9 @@ export class CombatUI {
             rememberFacing(finalUrl);
             const staged = side ? this.portraitBindStaging.find((b) => b.side === side) : undefined;
             const adjustKey = staged?.destPath || finalUrl;
+            const nextSrc = this.portraitPickerCatalogRev
+                ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
+                : finalUrl;
             let loaded = false;
             const onLoad = () => {
                 if (loaded) return;
@@ -7396,7 +7399,13 @@ export class CombatUI {
                 applyFacing();
                 const curStaged = side ? this.portraitBindStaging.find((b) => b.side === side) : undefined;
                 applyPortraitAdjustToElement(img, curStaged?.destPath || finalUrl, this.correctorData);
+                img.style.visibility = '';
             };
+            const curAttrSrc = img.getAttribute('src');
+            if (curAttrSrc === nextSrc && img.complete && img.naturalWidth > 0) {
+                onLoad();
+                return;
+            }
             img.onload = onLoad;
             if (!isRetry) {
                 img.onerror = () => {
@@ -7414,21 +7423,19 @@ export class CombatUI {
                     }) || BATTLE_PORTRAIT_FALLBACK;
                     if (!portraitUrlsEqual(alt, finalUrl)) {
                         setSrc(alt, true);
+                    } else {
+                        img.style.visibility = '';
                     }
                 };
             } else {
                 img.onerror = null;
             }
-            // 切换立绘先清空旧图：img.src 是异步加载，不清空会残留上一场人物（新图 onload 才替换）
+            // 切换立绘先清空旧图并隐藏，待新图解码且朝向/校准应用完毕再显影，消除闪烁
+            img.style.visibility = 'hidden';
             img.removeAttribute('src');
-            img.src = this.portraitPickerCatalogRev
-                ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
-                : finalUrl;
+            img.src = nextSrc;
             if (img.complete && img.naturalWidth > 0) {
                 onLoad();
-            } else {
-                applyFacing();
-                applyPortraitAdjustToElement(img, adjustKey, this.correctorData);
             }
         };
 

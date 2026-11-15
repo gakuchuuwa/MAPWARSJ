@@ -7658,7 +7658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/ATHENIANS/gen_aristides.png": {
-            "scale": 0.94,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -4
         },
@@ -11351,6 +11351,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 22,
             "offsetY": 4
+        },
+        "/assets/GREECE/lagoniya_leotychidas.png": {
+            "scale": 1.24,
+            "offsetX": 15,
+            "offsetY": -6
+        },
+        "/assets/TURKS/aqimeinide_artaphernes_younger.png": {
+            "scale": 1.18,
+            "offsetX": 13,
+            "offsetY": -3
+        },
+        "/assets/ATHENIANS/xila_cimon.png": {
+            "scale": 1.2,
+            "offsetX": 30,
+            "offsetY": 0
+        },
+        "/assets/GREECE/thasos_shouling.png": {
+            "scale": 1.18,
+            "offsetX": 4,
+            "offsetY": -6
+        },
+        "/assets/SPARTANS/lagoniya_archidamus_ii.png": {
+            "scale": 1.14,
+            "offsetX": 22,
+            "offsetY": -25
+        },
+        "/assets/SPARTANS/messenia_shouling.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/ATHENIANS/xila_pericles.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/GREECE/boootiya_pagondas.png": {
+            "scale": 1.1,
+            "offsetX": 3,
+            "offsetY": 0
+        },
+        "/assets/ATHENIANS/xila_myronides.png": {
+            "scale": 1.22,
+            "offsetX": 12,
+            "offsetY": 6
         }
     },
     "folderGuides": {

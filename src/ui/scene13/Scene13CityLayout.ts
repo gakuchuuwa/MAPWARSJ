@@ -2501,7 +2501,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     if (activeRoadCurves.length > 0) {
         const clearRoadTreesAt = (rxPt: number, ryPt: number, radPx: number): void => {
             this.decorSprites = this.decorSprites.filter((sp) => {
-                if ((sp as any).cityOutskirts || (sp as any).cityInterior || (sp as any).moatBridge || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
+                if ((sp as any).cityInterior || (sp as any).moatBridge || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
                 if (!TREE_FILTER_RE.test(sp.asset)) return true;
                 if (Math.hypot(sp.x - rxPt, (sp.y - ryPt) * 1.6) < radPx) {
                     gl.clearForestAt(sp.x, sp.y, W, H, 1.8);
