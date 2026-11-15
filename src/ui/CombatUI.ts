@@ -6345,7 +6345,8 @@ export class CombatUI {
         // [2026-08-11 13 v2] 13 出兵口互攻期间引擎被冻结（unit.troops 不动），
         // 血槽数字必须改接演出的实时兵力，否则「屏幕上人一直在死、数字纹丝不动」。
         // 只覆盖 current，不动 max —— 血条的三阶段标尺算法（开局居中是铁律）不受影响。
-        const liveWar = (window as any).game?.scene13War?.getLiveTroops?.();
+        // 🔴 [2026-11-16] 海战场面同理：引擎冻结，血槽接海战的实时船力折算兵力
+        const liveWar = (window as any).game?.scene13War?.getLiveTroops?.() ?? (window as any).game?.navalWar?.getLiveTroops?.();
         if (liveWar) {
             attCurrent = liveWar.attacker;
             defCurrent = liveWar.defender;
@@ -6354,7 +6355,7 @@ export class CombatUI {
         }
 
         // [13 布局] 跟随战术模式开关（幂等，进出各执行一次）
-        this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true);
+        this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true || (window as any).game?.navalWar?.isActive?.() === true);
 
         // [军事科技与军团/精锐] 只在 13 战斗模式且非剧本模式下显示（🔴 [2026-10-03 主人令] 剧本模式不用显示科技，双方军团名称与精锐番号也不用留，这一行都隐藏）
         if (this.leftTechBox && this.rightTechBox) {
@@ -6452,7 +6453,7 @@ export class CombatUI {
         //    ✅「开局标尺永远居中」的铁律不破：开战一兵未损 → progress=0 → 仍是第一幕居中，
         //       差距完全靠打出来，和引擎战斗的三幕节奏语义一致。
         if (liveWar) {
-            const live0 = (window as any).game?.scene13War?.getInitialTroops?.();
+            const live0 = (window as any).game?.scene13War?.getInitialTroops?.() ?? (window as any).game?.navalWar?.getInitialTroops?.();
             if (live0 && live0.total > 0) {
                 const attSpent = live0.attacker > 0 ? 1 - liveWar.attacker / live0.attacker : 1;
                 const defSpent = live0.defender > 0 ? 1 - liveWar.defender / live0.defender : 1;

@@ -77,6 +77,7 @@ export class BattleSceneLayer {
     public beginLingerAfterDefeat(delayMs: number = GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS): void {
         const game = (window as any).game;
         game?.scene13War?.beginLinger?.();
+        game?.navalWar?.beginLinger?.();   // [2026-11-16] 海战场面残局同样停留
         if (!this.active) return;
         if (this.lingerUntil > 0) return;
         this.lingerUntil = performance.now() + Math.max(0, delayMs);
@@ -134,6 +135,7 @@ export class BattleSceneLayer {
         this.followUnitId = null;
         // [2026-08-11 13 v2] 自愈/外部终结路径：演出层一并停（正常结束走 onRegionalBattleEnd 停）
         (window as any).game?.scene13War?.stop?.('场景自愈退出');
+        (window as any).game?.navalWar?.stop?.();   // [2026-11-16] 海战场面一并收掉
         // 🔴 [2026-08-12 修永久冻结] 退场必须把引擎的冻结还回去。
         //   scene13Frozen 原本**只有 forceScene13Result 一条清除路径**（演出判负才走），
         //   而这里是「演出没判负就退场」的路 —— 跟拍目标一换，自愈判据

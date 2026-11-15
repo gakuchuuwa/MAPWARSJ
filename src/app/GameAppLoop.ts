@@ -454,6 +454,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
                 // [2026-08-11 13 v2] 后台心跳同样驱动出兵口互攻演出（否则切后台演出停摆，
                 // 胜负推不出、场景不退出——与「战术层后台死锁」同族问题）
                 app.scene13War?.tick(sceneDelta);
+                app.navalWar?.tick(sceneDelta);   // [2026-11-16] 海战场面（舰队对舰队）同样推进
                 // 🔴 [2026-09-23 修「战术结束后，无法退回到战略模式」] 场景生命周期（残局待命到期 → exit 回战略地图）
                 //    原先只在 rAF 主循环里跑；窗口被遮挡 / 最小化 / 切走时只剩这条心跳，
                 //    战斗打完了却永远没人调 battleScene.tick → 停在最后一帧、暂停不解除。实测手动补一次 tick 即正常退出。
@@ -630,6 +631,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             }
             // [2026-08-11 13 v2] 出兵口互攻演出推进（引擎已冻结，胜负由演出判负写回）
             app.scene13War?.tick(sceneDelta);
+            app.navalWar?.tick(sceneDelta);   // [2026-11-16] 海战场面（舰队对舰队）同样推进
             perfMonitor.endTimer('combat');
         }
 

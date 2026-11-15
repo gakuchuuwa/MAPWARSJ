@@ -19,6 +19,8 @@ import { getFirstBattleBackground } from '../../data/GeneralFirstBattleBackgroun
 import { getClassicBattleById } from '../../data/GeneralFirstBattles';
 import { getChronicleEventByBattleId } from '../../data/chronicle/ChronicleDirector';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
+import { getCultureNavalShip } from '../../types/NavalShipTiers';
+import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
  * 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团（跟拍军团将领编队）——禁止改成跟战场中点/中心点。 */
@@ -116,7 +118,7 @@ function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene
     // 🔴 [2026-11-10 主人令「兵力上一万，+有武将，必须进入战术模式」]
     //    攻城战守方兵力必须 ≥ 10000（未满 1 万的残城/空虚城不进战术模式），攻方 ≥ minTroops；且双方有真武将即必进（不因精锐冷却或转丸破军拦截）
     if (attTroops < minTroops || defTroops < (isSiege ? 10000 : minTroops)) return false;
-    if (attackers.every(unitIsNaval) && defenders.every(unitIsNaval)) return false;
+    // 🔴 [2026-11-16 主人定] 舰队对舰队不再拦在门外：开战入口按 isNavalFleetBattle 分流进海战场面
     return bothSidesHaveRealGenerals(attackers, defenders);
 }
 
@@ -212,6 +214,62 @@ function resolveScene13HistoricalWinner(
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
  * 演出判负 → onDecision 回调写回引擎。
  */
+/** 舰队对舰队（双方全在海上、没有城池）＝ 海战场面；有城池的仍按水军攻城进战术模式 */
+function isNavalFleetBattle(attackers: { getEntity?(): any; unitType?: string }[], defenders: { getEntity?(): any; unitType?: string }[]): boolean {
+    const all = [...attackers, ...defenders];
+    return attackers.length > 0 && defenders.length > 0
+        && all.every(unitIsNaval) && !all.some(unitIsFortress);
+}
+
+type NavalSideUnit = { factionId: string | null; troops: number; generalId?: string | null; name?: string; getEntity?(): any };
+
+/** 舰队用的船：与战略地图上画的同一条（锁定船型 → 军团 / 势力 / 文化） */
+function fleetShipKey(u: NavalSideUnit): string {
+    const e = u.getEntity?.();
+    return e?.navalShipAssetLock ?? getCultureNavalShip(e?.cultureRegion ?? null, u.factionId ?? e?.factionId ?? null);
+}
+
+/**
+ * 🔴 [2026-11-16 主人定「按这个方向做」] 舰队对舰队的海战进海战场面（NavalWarLayer）：
+ *   10 船对 10 船自动打，判出胜负后与战术模式走同一条写回路（onDecision → forceScene13Result）。
+ */
+function startNavalWar(
+    app: GameApp,
+    attacker: NavalSideUnit,
+    defender: NavalSideUnit,
+    onDecision: (winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void,
+    seed: string,
+    followedOnDefenderSide: boolean,
+    title: string | null,
+    historicalWinner: 'attacker' | 'defender' | 'draw' | null,
+): void {
+    const side = (u: NavalSideUnit) => {
+        const gName = u.generalId ? getGeneralRecordByGeneralId(u.generalId)?.generalName ?? null : null;
+        const e = u.getEntity?.();
+        const fName = u.factionId ? app.cityManager.getFactionName(u.factionId) : '';
+        return {
+            factionId: u.factionId ?? e?.factionId ?? '',
+            troops: Math.max(1, u.troops ?? 0),
+            shipKey: fleetShipKey(u),
+            name: gName ?? u.name ?? e?.name ?? (fName || '舰队'),
+            generalName: gName,
+        };
+    };
+    app.navalWar.onDecision = (winner, survivors) => {
+        (app as any).live?.onTacticalBattleDecision?.(winner);
+        onDecision(winner, survivors);
+    };
+    app.navalWar.start({
+        attacker: side(attacker),
+        defender: side(defender),
+        seed,
+        followedOnDefenderSide,
+        favored: historicalWinner === 'attacker' || historicalWinner === 'defender' ? historicalWinner : null,
+        title,
+    });
+    gameLog('battle', `⛵ [NavalWar] 海战场面启动: ${attacker.factionId} vs ${defender.factionId}`);
+}
+
 function startScene13War(
     app: GameApp,
     attacker: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any; getPosition?(): any },
@@ -489,6 +547,29 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
+        // 🔴 [2026-11-16 主人定] 舰队对舰队 → 海战场面（门槛：双方真武将 + 兵力够，或剧本/经典战），不进战术模式
+        const navalFleet = isNavalFleetBattle([battle.attacker], [battle.defender]);
+        if (navalFleet) {
+            const navalEligible = isQuickBattleUnit(battle.attacker) || isQuickBattleUnit(battle.defender)
+                || (tacticalModeOn(app) && (isBattlefieldEvent || (bothSidesHaveRealGenerals([battle.attacker], [battle.defender]) && bigEnough)));
+            if (navalEligible && !battle.scene13Frozen) {
+                const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
+                const t = battleSceneTarget(centerUnit);
+                battle.scene13Frozen = true;
+                app.battleScene?.setFrozenBattle(battle);
+                startNavalWar(app, battle.attacker as any, battle.defender as any, (winner, sv) => {
+                    const scripted = battle.getScriptedWinner();
+                    const finalWinner = scripted ?? winner;
+                    battle.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
+                },
+                    `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
+                    battle.defender.id === followedId,
+                    (battle as any).title ?? (battle as any).customTitle ?? null,
+                    resolveScene13HistoricalWinner([battle.attacker], [battle.defender], battle.getScriptedWinner()));
+                app.battleScene?.enter(t.id);
+            }
+            return;
+        }
         const eligible = isQuickBattleUnit(battle.attacker) || isQuickBattleUnit(battle.defender)
             // 🔴 [2026-11-13 主人令] 剧本战不再要求双方实名武将（原规则为乱斗经典战所设，已删）
             || (tacticalModeOn(app)
@@ -634,7 +715,23 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     ?? defenders.find((u) => !!u.generalId)?.generalId
                     ?? defEntity?.getEntity?.()?._firstBattleDefenderGeneralId
                     ?? defEntity?.getEntity?.()?._siegeGarrisonGeneralId;
-                if (att && def) {
+                if (att && def && isNavalFleetBattle(attackers, defenders)) {
+                    // 🔴 [2026-11-16 主人定] 舰队对舰队 → 海战场面（双方兵力含援军合计）
+                    startNavalWar(
+                        app,
+                        { factionId: att.factionId, troops: attTroops, generalId: att.generalId, name: att.name, getEntity: () => att.getEntity?.() },
+                        { factionId: def.factionId, troops: defTroops, generalId: defGeneralId, name: def.name, getEntity: () => def.getEntity?.() },
+                        (winner, sv) => {
+                            const scripted = battleField.getScriptedWinner();
+                            const finalWinner = scripted ?? winner;
+                            battleField.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
+                        },
+                        `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
+                        defenders.some((u) => u.id === followedId),
+                        title ?? null,
+                        resolveScene13HistoricalWinner(attackers, defenders, battleField.getScriptedWinner()),
+                    );
+                } else if (att && def) {
                     startScene13War(
                         app,
                         { factionId: att.factionId, troops: attTroops, generalId: att.generalId, unitType: att.unitType, getEntity: () => att.getEntity?.(), getPosition: () => att.getPosition() },

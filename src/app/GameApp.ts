@@ -42,6 +42,7 @@ import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { BattleSceneLayer } from '../ui/BattleSceneLayer'; // [2026-08-09] 独立战斗场景（空壳）
 import { Scene13WarLayer } from '../ui/Scene13WarLayer'; // [2026-08-11 13 v2] 出兵口互攻演出层
+import { NavalWarLayer } from '../naval/NavalWarLayer'; // [2026-11-16] 舰队对舰队的海战场面
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { WorldMiniMap } from '../ui/WorldMiniMap';
 import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
@@ -158,6 +159,8 @@ export class GameApp {
     public battleScene!: BattleSceneLayer; // [2026-08-09] 独立战斗场景（空壳）：上层画布 + 下层冻结地图背景
     /** [2026-08-11 13 v2] 出兵口互攻演出层（替代旧剧本法编队演出，只画精灵） */
     public scene13War!: Scene13WarLayer;
+    /** 🔴 [2026-11-16 主人定] 舰队对舰队的海战场面（10 船对 10 船，自动打） */
+    public navalWar!: NavalWarLayer;
     private gameTimeHUD!: GameTimeHUD;
     private worldMiniMap: WorldMiniMap | null = null;
     public brawlFeedPanel!: BrawlFeedPanel; // 军情播报经 window.game 调用
@@ -512,6 +515,8 @@ export class GameApp {
             // [2026-08-11 13 v2] 出兵口互攻演出层：全屏 canvas 叠在地图上（透明背景，冻结地图透出）
             this.scene13War = new Scene13WarLayer();
             this.scene13War.attach();
+            this.navalWar = new NavalWarLayer();
+            this.navalWar.attach();
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();

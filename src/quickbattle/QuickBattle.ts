@@ -67,6 +67,23 @@ interface GeneralItem {
 }
 
 type BattleKind = 'siege' | 'field';
+/** 面板上的战斗类型：多一个「海战」（舰队对舰队，引擎里仍是野战，只是双方都在海上 → 进海战场面） */
+type PanelKind = 'random' | BattleKind | 'naval';
+
+/**
+ * 🔴 [2026-11-16 主人定海战场面] 即时战斗「海战」的开阔海面（都选离岸够远的水域，双方舰队摆在东西两侧）。
+ * 名字只作地点说明，不是剧本：随机抽一处开打。
+ */
+const QUICK_NAVAL_SPOTS: { label: string; lat: number; lng: number }[] = [
+    { label: '萨罗尼克湾海面', lat: 37.75, lng: 23.45 },
+    { label: '伊奥尼亚海面', lat: 38.6, lng: 20.2 },
+    { label: '关门海峡外海', lat: 33.85, lng: 130.5 },
+    { label: '朝鲜海峡海面', lat: 34.3, lng: 128.9 },
+    { label: '台湾海峡海面', lat: 23.9, lng: 119.0 },
+    { label: '第勒尼安海面', lat: 40.0, lng: 12.5 },
+    { label: '黎凡特外海', lat: 34.0, lng: 34.0 },
+    { label: '北海海面', lat: 55.5, lng: 3.5 },
+];
 type PanelMode = 'classic' | 'random';
 type ClassicKindFilter = 'all' | FirstBattleKind;
 
@@ -316,6 +333,8 @@ interface LastBattleSpec {
     classic?: ClassicBattleEntry;
     cityId?: string;
     fieldSpot?: { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string };
+    /** 海战：双方舰队都在海上 */
+    naval?: boolean;
 }
 
 /** 盖住战略地图的深色底：即时战斗里只看得到选人面板和战术画面 */
@@ -381,7 +400,7 @@ class QuickBattle {
     private defGeneral!: SearchSelect;
     private citySel!: SearchSelect;
     private regionSel!: SearchSelect;
-    private kind: 'random' | BattleKind = 'random';
+    private kind: PanelKind = 'random';
     private active: ActiveBattle | null = null;
     private lastBattleSpec: LastBattleSpec | null = null;
     private lastClassicKey: string | null = null;
@@ -758,7 +777,7 @@ class QuickBattle {
         midTitle.textContent = '🗺 战场设定';
         const kindRow = document.createElement('div');
         kindRow.className = 'qb-kind';
-        const kinds: [typeof this.kind, string][] = [['random', '随机'], ['siege', '攻城战'], ['field', '野战']];
+        const kinds: [typeof this.kind, string][] = [['random', '随机'], ['siege', '攻城战'], ['field', '野战'], ['naval', '海战']];
         for (const [k, label] of kinds) {
             const b = document.createElement('button');
             b.type = 'button';
@@ -869,8 +888,8 @@ class QuickBattle {
     private syncKind(): void {
         this.panel.querySelectorAll<HTMLButtonElement>('.qb-kind button')
             .forEach((b) => b.classList.toggle('qb-on', b.dataset.kind === this.kind));
-        this.citySel.root.style.display = this.kind === 'field' ? 'none' : '';
-        this.regionSel.root.style.display = this.kind === 'siege' ? 'none' : '';
+        this.citySel.root.style.display = this.kind === 'field' || this.kind === 'naval' ? 'none' : '';
+        this.regionSel.root.style.display = this.kind === 'siege' || this.kind === 'naval' ? 'none' : '';
     }
 
     private classicOptions(filter: ClassicKindFilter): Opt[] {
@@ -1040,10 +1059,10 @@ class QuickBattle {
             false,
         );
 
-        const kindText = this.kind === 'siege' ? '攻城战' : this.kind === 'field' ? '野战' : '随机（攻城战 / 野战）';
+        const kindText = this.kind === 'siege' ? '攻城战' : this.kind === 'field' ? '野战' : this.kind === 'naval' ? '海战（舰队对舰队）' : '随机（攻城战 / 野战）';
         const cityObj = this.citySel.get() ? this.app.cityManager.getCity(this.citySel.get()!) : undefined;
         const regKey = this.regionSel.get() as RegionType | null;
-        const placeStr = this.kind === 'siege'
+        const placeStr = this.kind === 'naval' ? '随机开阔海面' : this.kind === 'siege'
             ? (cityObj ? `${cityObj.name}（${formatCoord(cityObj.latitude, cityObj.longitude)}）` : '随机据点')
             : this.kind === 'field'
                 ? (regKey ? `${CULTURE_NAMES[regKey] ?? regKey}（区域野战）` : '随机地域野外战场')
@@ -1220,7 +1239,7 @@ class QuickBattle {
                 this.refreshPreview();
             } else {
                 this.mode = 'random';
-                this.kind = spec.kind;
+                this.kind = spec.naval ? 'naval' : spec.kind;
                 this.syncKind();
                 this.attFaction.set(spec.att.factionId, true);
                 this.defFaction.set(spec.def.factionId, true);
@@ -1245,7 +1264,7 @@ class QuickBattle {
                 if (!targetCity) throw new Error('找不到上一局的据点');
                 this.startSiege({ ...spec.att }, { ...spec.def }, targetCity, spec.classic);
             } else {
-                this.startField({ ...spec.att }, { ...spec.def }, spec.classic, spec.fieldSpot);
+                this.startField({ ...spec.att }, { ...spec.def }, spec.classic, spec.fieldSpot, spec.naval === true);
             }
 
             if (switchedOn) {
@@ -1311,7 +1330,8 @@ class QuickBattle {
     /** 启动一场自由 / 随机战斗 */
     private launchRandomInner(): void {
         const cm = this.app.cityManager;
-        const kind: BattleKind = this.kind === 'random' ? (Math.random() < 0.5 ? 'siege' : 'field') : this.kind;
+        const naval = this.kind === 'naval';
+        const kind: BattleKind = this.kind === 'random' ? (Math.random() < 0.5 ? 'siege' : 'field') : this.kind === 'naval' ? 'field' : this.kind;
 
         const attFac = this.attFaction.get();
         const defFac = this.defFaction.get();
@@ -1368,6 +1388,7 @@ class QuickBattle {
         this.clearWorldLegions();
         const switchedOn = this.forceTacticalOn();
         if (kind === 'siege') this.startSiege(att, def, city!);
+        else if (naval) this.startField(att, def, undefined, this.pickNavalSpot(), true);
         else this.startField(att, def);
         if (switchedOn) {
             console.info('[即时战斗] 调试面板的「战术模式」开关原来是关的，本页已临时打开（不改存档设置）');
@@ -1457,6 +1478,8 @@ class QuickBattle {
         def: Side,
         classic?: ClassicBattleEntry,
         fixedSpot?: { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string },
+        /** 海战：双方舰队都放在海上（→ 海战场面） */
+        naval = false,
     ): void {
         const regionKey = (this.regionSel.get() as RegionType | null) ?? null;
         const spot = fixedSpot ?? (classic
@@ -1468,6 +1491,14 @@ class QuickBattle {
         const defender = this.raiseLegion(def, spot.def, fallbackCityId);
         const at = attacker as Army & Record<string, unknown>;
         const dt = defender as Army & Record<string, unknown>;
+        if (naval) {
+            attacker.isOnSea = true;
+            defender.isOnSea = true;
+            for (const u of [attacker, defender]) {
+                const r = u.getRenderer();
+                if (r) r.isOnSea = true;
+            }
+        }
         at.isFirstBattleHero = true;
         at.firstBattleRole = 'attacker';
         at.forceFirstBattleField = true;            // 靠近据点也打野战，不转攻城
@@ -1492,6 +1523,7 @@ class QuickBattle {
             def: { ...def },
             classic,
             fieldSpot: spot,
+            naval,
         };
         this.syncReplayButton();
 
@@ -1504,7 +1536,7 @@ class QuickBattle {
         this.focus(attacker, spot.att);
         this.app.timeSystem.setPaused(false);
         const defPos = defender.getPosition();
-        attacker.moveAlongPath([{ lat: defPos.lat, lng: defPos.lng, sea: false }]);
+        attacker.moveAlongPath([{ lat: defPos.lat, lng: defPos.lng, sea: naval }]);
         this.announce();
     }
 
@@ -1559,6 +1591,19 @@ class QuickBattle {
     }
 
     /** 野战战场：该地域随机一座据点附近的陆地；攻方在西、守方在东（战术画面左右） */
+    /** 海战：随机一处开阔海面，东西两侧各放一支舰队（两点都须是水） */
+    private pickNavalSpot(): { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string } {
+        const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
+        const pool = [...QUICK_NAVAL_SPOTS].sort(() => Math.random() - 0.5);
+        for (const sp of pool) {
+            const a = { lat: sp.lat, lng: sp.lng - 0.03 };
+            const b = { lat: sp.lat, lng: sp.lng + 0.03 };
+            if (!isLand(a) && !isLand(b)) return { att: a, def: b, label: sp.label };
+        }
+        const sp = pool[0];
+        return { att: { lat: sp.lat, lng: sp.lng - 0.03 }, def: { lat: sp.lat, lng: sp.lng + 0.03 }, label: sp.label };
+    }
+
     private pickFieldSpot(region: RegionType | null): { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string } | null {
         const cities = this.app.cityManager.getCities();
         const pool = region ? cities.filter((c) => getCityRegion(c) === region) : cities;

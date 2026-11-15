@@ -1,0 +1,752 @@
+/**
+ * 海战场面 · 模拟层（纯逻辑，不碰 DOM / 画布，离线可验算：tools/naval-sim-check.mts）
+ *
+ * 🔴 [2026-11-16 主人定「按这个方向做」] 舰队对舰队的海战单独进海战场面：
+ *   · 每方 10 艘 ＝ 九格三排（前排 3 / 中排 3 / 后排 3）＋ 主将旗舰 1；
+ *   · 船型取该舰队在战略地图上用的那条船（军团绑定 → 势力 → 文化），武器照 NavalShipTiers.getNavalWeapons；
+ *   · 打法按帝国时代 DE 的船：弓箭（所有船）、火炮、投石、喷火（点燃）、撞角（冲撞后接舷）；
+ *   · 胜负变数都要在画面上看得见：风向（顺风快、上风射得远、火往下风烧，中途可能转风）、
+ *     火势蔓延、接舷夺船（打赢换旗）、旗舰被击沉或被夺即全军溃散、逐舰沉没。
+ *
+ * 坐标：世界平面 = 屏幕平面（与战略地图海战同一规矩），x 向右、y 向下；航向用屏幕数学角（弧度）。
+ */
+
+import { getNavalWeapons, type NavalWeapon } from '../types/NavalShipTiers';
+
+export type NavalSide = 'attacker' | 'defender';
+export type NavalRole = 'front' | 'main' | 'back' | 'flag';
+export type NavalShipState = 'alive' | 'sinking' | 'sunk' | 'fled';
+
+export const NAVAL_WORLD_W = 2800;
+export const NAVAL_WORLD_H = 1600;
+/** 船体碰撞半径（世界单位） */
+const SHIP_R = 52;
+const FLAG_R = 62;
+/** 基础航速（世界单位/秒），与战略地图海战均速 72px/s 同一量级 */
+const BASE_SPEED = 62;
+/** 回转率上限（弧度/秒）：船没有原地拧头，只能划弧 */
+const TURN_RATE = 0.62;
+/** 全场时限（秒）：到点按剩余船力判胜负 */
+export const NAVAL_TIME_LIMIT = 300;
+/** 旗舰倒下 / 船数见底后溃散多久收场 */
+const ROUT_END_DELAY = 22;
+
+interface WeaponSpec {
+    range: number;
+    minRange: number;
+    cooldown: number;
+    damage: number;
+    crewDamage: number;
+    accuracy: number;
+    /** 投射物飞行速度（世界单位/秒） */
+    speed: number;
+    /** 抛物线拱高（相对距离） */
+    arc: number;
+    splash: number;
+    igniteChance: number;
+}
+
+const WEAPON_SPECS: Record<Exclude<NavalWeapon, 'ram'>, WeaponSpec> = {
+    arrow: { range: 300, minRange: 0, cooldown: 1.9, damage: 3.4, crewDamage: 2.2, accuracy: 0.82, speed: 520, arc: 0.18, splash: 0, igniteChance: 0.03 },
+    cannon: { range: 430, minRange: 60, cooldown: 4.2, damage: 10.5, crewDamage: 3.5, accuracy: 0.68, speed: 760, arc: 0.05, splash: 0, igniteChance: 0.06 },
+    trebuchet: { range: 540, minRange: 150, cooldown: 6.2, damage: 15, crewDamage: 4, accuracy: 0.52, speed: 330, arc: 0.42, splash: 70, igniteChance: 0.02 },
+    greekfire: { range: 165, minRange: 0, cooldown: 2.3, damage: 4, crewDamage: 2.5, accuracy: 0.9, speed: 300, arc: 0.08, splash: 0, igniteChance: 0.75 },
+};
+
+export interface NavalShip {
+    id: number;
+    side: NavalSide;
+    /** 开战时属于哪方（被夺的船 side 会变） */
+    origSide: NavalSide;
+    role: NavalRole;
+    shipKey: string;
+    /** 画船用的势力（染色）：夺船后换成夺船方 */
+    factionId: string;
+    x: number;
+    y: number;
+    heading: number;
+    speed: number;
+    radius: number;
+    hp: number;
+    maxHp: number;
+    crew: number;
+    maxCrew: number;
+    weapons: NavalWeapon[];
+    cooldowns: Partial<Record<NavalWeapon, number>>;
+    targetId: number | null;
+    state: NavalShipState;
+    /** 进入 sinking 的时刻（秒） */
+    sinkAt: number;
+    /** 剩余燃烧秒数（0 = 没着火） */
+    burnT: number;
+    boardingWith: number | null;
+    /** 接舷冷却：刚打完一场接舷的船要缓一阵 */
+    boardCd: number;
+    ramCd: number;
+    /** 被夺过（换过旗） */
+    captured: boolean;
+    routing: boolean;
+    /** 最近一次开火时刻（画攻击帧） */
+    lastFireAt: number;
+    /** 最近一次中弹时刻（画受击闪） */
+    lastHitAt: number;
+    /** 绕敌方向：+1 顺时针 / −1 逆时针（每船固定，船队自然散开成弧） */
+    orbitSign: number;
+    /** 航迹（画尾浪） */
+    trail: { x: number; y: number }[];
+    trailAcc: number;
+}
+
+export interface NavalProjectile {
+    kind: Exclude<NavalWeapon, 'ram'>;
+    side: NavalSide;
+    x0: number; y0: number;
+    x1: number; y1: number;
+    t: number;
+    dur: number;
+    arc: number;
+    targetId: number;
+    hit: boolean;
+    damage: number;
+    crewDamage: number;
+    splash: number;
+    ignite: boolean;
+}
+
+export type NavalEvent =
+    | { type: 'fire'; weapon: Exclude<NavalWeapon, 'ram'>; side: NavalSide; x: number; y: number; shipId: number }
+    | { type: 'impact'; weapon: Exclude<NavalWeapon, 'ram'>; hit: boolean; x: number; y: number }
+    | { type: 'ignite'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean }
+    | { type: 'ram'; side: NavalSide; x: number; y: number }
+    | { type: 'boardStart'; side: NavalSide; x: number; y: number; a: number; b: number }
+    | { type: 'capture'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean }
+    | { type: 'sink'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean; explode: boolean }
+    | { type: 'windShift'; windward: NavalSide | null }
+    | { type: 'rout'; side: NavalSide; reason: 'flag' | 'losses' }
+    | { type: 'phase'; phase: NavalPhase };
+
+export type NavalPhase = 'approach' | 'exchange' | 'melee' | 'rout';
+
+export interface NavalFleetInit {
+    factionId: string;
+    troops: number;
+    shipKey: string;
+    /** 旗舰船型（缺省同 shipKey） */
+    flagShipKey?: string;
+}
+
+export interface NavalSimInit {
+    attacker: NavalFleetInit;
+    defender: NavalFleetInit;
+    seed: string;
+    /** 史实胜方（剧本 / 经典战）：演出向它倾斜，免得画面打赢、结算翻盘 */
+    favored?: NavalSide | null;
+    /** 每方船数（含旗舰），缺省 10 */
+    shipsPerSide?: number;
+}
+
+export interface NavalResult {
+    winner: NavalSide;
+    /** 胜方剩余船力占开战时的比例（0..1），用来折算战后兵力 */
+    winnerStrength: number;
+    loserStrength: number;
+}
+
+/** mulberry32：同一个种子同一场仗，可复现 */
+function makeRng(seed: string): () => number {
+    let h = 1779033703 ^ seed.length;
+    for (let i = 0; i < seed.length; i++) {
+        h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+        h = (h << 13) | (h >>> 19);
+    }
+    let a = h >>> 0;
+    return () => {
+        a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function angDiff(a: number, b: number): number {
+    let d = a - b;
+    while (d > Math.PI) d -= Math.PI * 2;
+    while (d < -Math.PI) d += Math.PI * 2;
+    return d;
+}
+
+/** 风向（风往哪吹，屏幕数学角）→ 中文风名（风从哪来） */
+export function windName(windAng: number): string {
+    // 风从 windAng+π 方向来；屏幕上方 = 北
+    const from = windAng + Math.PI;
+    const deg = ((Math.atan2(Math.cos(from), -Math.sin(from)) * 180 / Math.PI) + 360) % 360; // 北=0 顺时针
+    const names = ['北风', '东北风', '东风', '东南风', '南风', '西南风', '西风', '西北风'];
+    return names[Math.round(deg / 45) % 8];
+}
+
+export class NavalBattleSim {
+    public readonly ships: NavalShip[] = [];
+    public readonly projectiles: NavalProjectile[] = [];
+    public time = 0;
+    /** 风往哪吹（屏幕数学角） */
+    public windAng: number;
+    public windStrength: number;
+    public phase: NavalPhase = 'approach';
+    public routSide: NavalSide | null = null;
+    public routAt = 0;
+    public result: NavalResult | null = null;
+    private events: NavalEvent[] = [];
+    private readonly rng: () => number;
+    private windShiftAt: number;
+    private windShifted = false;
+    private lastDt = 0;
+    private order: number[] = [];
+    private readonly initHp: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
+    private readonly initCount: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+
+    constructor(init: NavalSimInit) {
+        this.rng = makeRng(init.seed || 'naval');
+        const r = this.rng;
+        // 风：大致横吹战场（双方都有机会抢上风），偏一点随机
+        this.windAng = (r() < 0.5 ? -Math.PI / 2 : Math.PI / 2) + (r() - 0.5) * 1.6;
+        this.windStrength = 0.55 + r() * 0.45;
+        this.windShiftAt = 38 + r() * 45;
+        if (r() < 0.4) this.windShiftAt = Infinity;   // 六成场次中途转风
+
+        // 兵力 → 船体 / 火力乘区：总战力 ∝ 兵力比（hp × dmg 各取平方根）
+        const ta = Math.max(1, init.attacker.troops);
+        const td = Math.max(1, init.defender.troops);
+        const avg = (ta + td) / 2;
+        const clamp = (v: number) => Math.max(0.45, Math.min(2.0, v));
+        this.mult = {
+            attacker: { hp: clamp(Math.sqrt(ta / avg)), dmg: clamp(Math.sqrt(ta / avg)) },
+            defender: { hp: clamp(Math.sqrt(td / avg)), dmg: clamp(Math.sqrt(td / avg)) },
+        };
+        if (init.favored === 'attacker' || init.favored === 'defender') {
+            this.mult[init.favored].hp *= 1.35;
+            this.mult[init.favored].dmg *= 1.45;
+        }
+        const n = Math.max(4, Math.min(10, init.shipsPerSide ?? 10));
+        this.spawnFleet('attacker', init.attacker, n);
+        this.spawnFleet('defender', init.defender, n);
+        this.order = this.ships.map((_, i) => i);
+    }
+
+    private spawnFleet(side: NavalSide, fleet: NavalFleetInit, n: number): void {
+        const dirX = side === 'attacker' ? 1 : -1;
+        const baseX = side === 'attacker' ? 560 : NAVAL_WORLD_W - 560;
+        const cy = NAVAL_WORLD_H / 2;
+        const m = this.mult[side];
+        // 九格三排：前排最靠近敌方，后排其后，旗舰居中压阵
+        const rows: { role: NavalRole; dx: number }[] = [
+            { role: 'front', dx: 170 },
+            { role: 'main', dx: 0 },
+            { role: 'back', dx: -170 },
+        ];
+        const escorts = n - 1;
+        const perRow = [0, 0, 0];
+        for (let i = 0; i < escorts; i++) perRow[i % 3]++;
+        let id = this.ships.length;
+        const heading = side === 'attacker' ? 0 : Math.PI;
+        const mk = (role: NavalRole, x: number, y: number, key: string): void => {
+            const isFlag = role === 'flag';
+            const hp = (isFlag ? 260 : 170) * m.hp;
+            const crew = (isFlag ? 140 : 100) * m.hp;
+            this.ships.push({
+                id: id++, side, origSide: side, role, shipKey: key, factionId: fleet.factionId,
+                x, y, heading, speed: BASE_SPEED * 0.6, radius: isFlag ? FLAG_R : SHIP_R,
+                hp, maxHp: hp, crew, maxCrew: crew,
+                weapons: getNavalWeapons(key, fleet.factionId),
+                cooldowns: {},
+                targetId: null, state: 'alive', sinkAt: 0, burnT: 0, boardingWith: null, boardCd: 0, ramCd: 0,
+                captured: false, routing: false, lastFireAt: -9, lastHitAt: -9,
+                orbitSign: this.rng() < 0.5 ? 1 : -1,
+                trail: [], trailAcc: 0,
+            });
+        };
+        rows.forEach((row, ri) => {
+            const cnt = perRow[ri];
+            for (let k = 0; k < cnt; k++) {
+                const off = (k - (cnt - 1) / 2) * 230;
+                mk(row.role, baseX + row.dx * dirX + (this.rng() - 0.5) * 30, cy + off + (this.rng() - 0.5) * 40, fleet.shipKey);
+            }
+        });
+        mk('flag', baseX - 300 * dirX, cy, fleet.flagShipKey ?? fleet.shipKey);
+        // 开局错开冷却，别全队同一帧齐射
+        for (const s of this.ships) if (s.side === side) {
+            for (const w of s.weapons) if (w !== 'ram') s.cooldowns[w] = this.rng() * WEAPON_SPECS[w].cooldown;
+        }
+        let hpSum = 0;
+        for (const s of this.ships) if (s.side === side) hpSum += s.maxHp;
+        this.initHp[side] = hpSum;
+        this.initCount[side] = n;
+    }
+
+    /** 取走本帧事件（画面层播特效 / 音效 / 播报） */
+    public drainEvents(): NavalEvent[] {
+        const e = this.events;
+        this.events = [];
+        return e;
+    }
+
+    public getShip(id: number | null): NavalShip | undefined {
+        return id === null ? undefined : this.ships[id];
+    }
+
+    public isActive(s: NavalShip): boolean {
+        return s.state === 'alive';
+    }
+
+    public countAlive(side: NavalSide): number {
+        let c = 0;
+        for (const s of this.ships) if (s.side === side && s.state === 'alive') c++;
+        return c;
+    }
+
+    public flagship(side: NavalSide): NavalShip | undefined {
+        return this.ships.find((s) => s.role === 'flag' && s.origSide === side);
+    }
+
+    /** 上风方：风从它那边吹向对方 */
+    public windwardSide(): NavalSide | null {
+        const ca = this.centroid('attacker');
+        const cd = this.centroid('defender');
+        if (!ca || !cd) return null;
+        const wx = Math.cos(this.windAng), wy = Math.sin(this.windAng);
+        const d = (cd.x - ca.x) * wx + (cd.y - ca.y) * wy;   // >0：风从攻方吹向守方
+        const len = Math.hypot(cd.x - ca.x, cd.y - ca.y) || 1;
+        if (Math.abs(d / len) < 0.25) return null;
+        return d > 0 ? 'attacker' : 'defender';
+    }
+
+    public centroid(side: NavalSide): { x: number; y: number } | null {
+        let x = 0, y = 0, c = 0;
+        for (const s of this.ships) if (s.side === side && s.state === 'alive') { x += s.x; y += s.y; c++; }
+        return c ? { x: x / c, y: y / c } : null;
+    }
+
+    public step(dt: number): void {
+        if (this.result) return;
+        dt = Math.min(dt, 0.1);
+        this.lastDt = dt;
+        this.time += dt;
+        this.updateWind();
+        const windward = this.windwardSide();
+        // 每帧打乱结算顺序：固定先攻后守会让先动的一方占便宜（同兵同船实测攻方多赢一成多）
+        const order = this.order;
+        for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(this.rng() * (i + 1));
+            const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+        }
+        for (const idx of order) {
+            const s = this.ships[idx];
+            if (s.state === 'sinking') {
+                if (this.time - s.sinkAt > 6) s.state = 'sunk';
+                continue;
+            }
+            if (s.state !== 'alive') continue;
+            this.updateBurn(s, dt, windward);
+            if (s.state !== 'alive') continue;
+            if (s.boardingWith !== null) {
+                this.updateBoarding(s, dt);
+                continue;
+            }
+            this.pickTarget(s);
+            this.steer(s, dt);
+            this.fireWeapons(s, dt, windward);
+            if (s.ramCd > 0) s.ramCd -= dt;
+            if (s.boardCd > 0) s.boardCd -= dt;
+        }
+        this.resolveContacts();
+        this.updateProjectiles(dt);
+        this.updatePhase();
+        this.checkEnd();
+    }
+
+    private updateWind(): void {
+        if (this.windShifted || this.time < this.windShiftAt) return;
+        this.windShifted = true;
+        this.windAng += (this.rng() < 0.5 ? 1 : -1) * (1.7 + this.rng() * 1.1);
+        this.events.push({ type: 'windShift', windward: this.windwardSide() });
+    }
+
+    private updateBurn(s: NavalShip, dt: number, windward: NavalSide | null): void {
+        if (s.burnT <= 0) return;
+        s.burnT -= dt;
+        this.damage(s, 1.7 * dt, 0.7 * dt, null);
+        if (s.state !== 'alive') return;
+        // 火往下风烧：下风的邻船更容易被引燃（火烧连营）
+        const wx = Math.cos(this.windAng), wy = Math.sin(this.windAng);
+        for (const o of this.ships) {
+            if (o === s || o.state !== 'alive' || o.burnT > 0) continue;
+            const dx = o.x - s.x, dy = o.y - s.y;
+            const d = Math.hypot(dx, dy);
+            if (d > 150) continue;
+            const downwind = (dx * wx + dy * wy) / (d || 1);
+            const p = (0.09 + Math.max(0, downwind) * 0.22 * this.windStrength) * (1 - d / 150) * dt;
+            if (this.rng() < p) this.ignite(o);
+        }
+        void windward;
+    }
+
+    private ignite(s: NavalShip): void {
+        if (s.state !== 'alive') return;
+        const fresh = s.burnT <= 0;
+        s.burnT = Math.max(s.burnT, 9 + this.rng() * 7);
+        if (fresh) this.events.push({ type: 'ignite', side: s.side, x: s.x, y: s.y, shipId: s.id, isFlag: s.role === 'flag' });
+    }
+
+    private pickTarget(s: NavalShip): void {
+        const cur = this.getShip(s.targetId);
+        if (cur && cur.state === 'alive' && cur.side !== s.side && this.rng() > 0.01) {
+            // 正在打的目标太远了才换
+            if (Math.hypot(cur.x - s.x, cur.y - s.y) < 700) return;
+        }
+        let best: NavalShip | null = null;
+        let bestScore = Infinity;
+        for (const o of this.ships) {
+            if (o.side === s.side || o.state !== 'alive') continue;
+            let d = Math.hypot(o.x - s.x, o.y - s.y);
+            // 前排找最近的扑上去；后排盯着敌旗舰与带火的船（集火）
+            if (s.role === 'back' && o.role === 'flag') d *= 0.8;
+            if (o.routing) d *= 1.15;
+            if (o.burnT > 0) d *= 0.9;
+            if (d < bestScore) { bestScore = d; best = o; }
+        }
+        s.targetId = best ? best.id : null;
+    }
+
+    private maxRange(s: NavalShip): number {
+        let r = 0;
+        for (const w of s.weapons) if (w !== 'ram') r = Math.max(r, WEAPON_SPECS[w].range);
+        return r || 200;
+    }
+
+    private isMelee(s: NavalShip): boolean {
+        if (s.routing) return false;
+        return s.role === 'front' || (s.weapons.includes('ram') && s.role === 'main');
+    }
+
+    private steer(s: NavalShip, dt: number): void {
+        const t = this.getShip(s.targetId);
+        let desired = s.heading;
+        let throttle = 1;
+        if (s.routing) {
+            // 溃逃：背离敌军中心，冲向最近的场边
+            const enemy = this.centroid(s.side === 'attacker' ? 'defender' : 'attacker');
+            if (enemy) desired = Math.atan2(s.y - enemy.y, s.x - enemy.x);
+            throttle = 1.15;
+        } else if (t) {
+            const dx = t.x - s.x, dy = t.y - s.y;
+            const d = Math.hypot(dx, dy);
+            const toT = Math.atan2(dy, dx);
+            if (this.isMelee(s)) {
+                desired = toT;
+            } else {
+                const pref = this.maxRange(s) * (s.role === 'back' || s.role === 'flag' ? 0.85 : 0.7);
+                const tangent = toT + s.orbitSign * Math.PI / 2;
+                if (d > pref * 1.15) desired = toT + s.orbitSign * 0.25;
+                else if (d < pref * 0.75) desired = toT + Math.PI - s.orbitSign * 0.7;
+                else desired = tangent;   // 进入射程：横过船身绕着打（舷侧对敌）
+                // 旗舰：护航还多时压在后面
+                if (s.role === 'flag' && this.countAlive(s.side) > 5 && d < pref) throttle = 0.6;
+            }
+        } else {
+            throttle = 0.3;
+        }
+        // 避碰：别和友船叠在一起；不是自己目标的敌船也绕开
+        let ax = Math.cos(desired), ay = Math.sin(desired);
+        for (const o of this.ships) {
+            if (o === s || o.state !== 'alive') continue;
+            if (o.id === s.targetId && this.isMelee(s)) continue;
+            const dx = s.x - o.x, dy = s.y - o.y;
+            const d = Math.hypot(dx, dy);
+            const lim = (s.radius + o.radius) * 1.9;
+            if (d < lim && d > 0.01) {
+                const w = (1 - d / lim) * 1.6;
+                ax += (dx / d) * w;
+                ay += (dy / d) * w;
+            }
+        }
+        // 场界：往中间拐（溃逃船除外，它们就是要出场）
+        if (!s.routing) {
+            const m = 180;
+            if (s.x < m) ax += (m - s.x) / m * 2;
+            if (s.x > NAVAL_WORLD_W - m) ax -= (s.x - (NAVAL_WORLD_W - m)) / m * 2;
+            if (s.y < m) ay += (m - s.y) / m * 2;
+            if (s.y > NAVAL_WORLD_H - m) ay -= (s.y - (NAVAL_WORLD_H - m)) / m * 2;
+        }
+        desired = Math.atan2(ay, ax);
+        const diff = angDiff(desired, s.heading);
+        const turn = TURN_RATE * (s.role === 'flag' ? 0.8 : 1) * dt;
+        s.heading += Math.max(-turn, Math.min(turn, diff));
+        // 顺风快、顶风慢；急转弯降速
+        const windMul = 1 + 0.24 * this.windStrength * Math.cos(s.heading - this.windAng);
+        const turnMul = 1 - Math.min(0.45, Math.abs(diff) / Math.PI * 0.6);
+        const roleMul = s.role === 'front' ? 1.12 : s.role === 'flag' ? 0.88 : 1;
+        const target = BASE_SPEED * windMul * turnMul * roleMul * throttle;
+        s.speed += (target - s.speed) * Math.min(1, dt * 0.8);
+        s.x += Math.cos(s.heading) * s.speed * dt;
+        s.y += Math.sin(s.heading) * s.speed * dt;
+        s.trailAcc += s.speed * dt;
+        if (s.trailAcc > 14) {
+            s.trailAcc = 0;
+            s.trail.push({ x: s.x, y: s.y });
+            if (s.trail.length > 26) s.trail.shift();
+        }
+        if (s.routing && (s.x < -120 || s.x > NAVAL_WORLD_W + 120 || s.y < -120 || s.y > NAVAL_WORLD_H + 120)) {
+            s.state = 'fled';
+        }
+    }
+
+    private fireWeapons(s: NavalShip, dt: number, windward: NavalSide | null): void {
+        const t = this.getShip(s.targetId);
+        for (const w of s.weapons) {
+            if (w === 'ram') continue;
+            const spec = WEAPON_SPECS[w];
+            const cd = (s.cooldowns[w] ?? 0) - dt;
+            s.cooldowns[w] = cd;
+            if (cd > 0 || !t) continue;
+            const rangeMul = windward === s.side ? 1.12 : 1;
+            // 射程内任挑一条敌船（优先当前目标）
+            let tgt: NavalShip | null = null;
+            const dT = Math.hypot(t.x - s.x, t.y - s.y);
+            if (dT <= spec.range * rangeMul && dT >= spec.minRange) tgt = t;
+            else {
+                let bd = Infinity;
+                for (const o of this.ships) {
+                    if (o.side === s.side || o.state !== 'alive') continue;
+                    const d = Math.hypot(o.x - s.x, o.y - s.y);
+                    if (d <= spec.range * rangeMul && d >= spec.minRange && d < bd) { bd = d; tgt = o; }
+                }
+            }
+            if (!tgt) continue;
+            s.cooldowns[w] = spec.cooldown * (0.85 + this.rng() * 0.3) * (s.crew / s.maxCrew < 0.35 ? 1.6 : 1);
+            s.lastFireAt = this.time;
+            const d = Math.hypot(tgt.x - s.x, tgt.y - s.y);
+            const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1);
+            const hit = this.rng() < acc;
+            // 落点：命中落在船上，打空落在船边水里
+            const ang = this.rng() * Math.PI * 2;
+            const miss = hit ? 0 : 50 + this.rng() * 70;
+            const lead = tgt.speed * (d / spec.speed) * 0.8;
+            const x1 = tgt.x + Math.cos(tgt.heading) * lead + Math.cos(ang) * miss;
+            const y1 = tgt.y + Math.sin(tgt.heading) * lead + Math.sin(ang) * miss;
+            const m = this.mult[s.side].dmg;
+            const igniteBoost = w === 'arrow' && windward === s.side ? 2 : 1;
+            this.projectiles.push({
+                kind: w, side: s.side, x0: s.x, y0: s.y, x1, y1, t: 0, dur: Math.max(0.15, d / spec.speed),
+                arc: spec.arc, targetId: tgt.id, hit,
+                damage: spec.damage * m, crewDamage: spec.crewDamage * m, splash: spec.splash,
+                ignite: this.rng() < spec.igniteChance * igniteBoost,
+            });
+            this.events.push({ type: 'fire', weapon: w, side: s.side, x: s.x, y: s.y, shipId: s.id });
+        }
+    }
+
+    private updateProjectiles(dt: number): void {
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+            const p = this.projectiles[i];
+            p.t += dt;
+            if (p.t < p.dur) continue;
+            this.projectiles.splice(i, 1);
+            const tgt = this.getShip(p.targetId);
+            let landedHit = false;
+            if (p.hit && tgt && tgt.state === 'alive') {
+                // 命中的炮弹跟着船走（飞行中船动了，按船当前位置算）
+                if (Math.hypot(tgt.x - p.x1, tgt.y - p.y1) < 160) {
+                    landedHit = true;
+                    this.damage(tgt, p.damage, p.crewDamage, p.side);
+                    if (p.ignite) this.ignite(tgt);
+                }
+            }
+            if (p.splash > 0) {
+                for (const o of this.ships) {
+                    if (o === tgt || o.state !== 'alive' || o.side === p.side) continue;
+                    const d = Math.hypot(o.x - p.x1, o.y - p.y1);
+                    if (d < p.splash + o.radius) { this.damage(o, p.damage * 0.4, p.crewDamage * 0.4, p.side); landedHit = true; }
+                }
+            }
+            this.events.push({ type: 'impact', weapon: p.kind, hit: landedHit, x: p.x1, y: p.y1 });
+        }
+    }
+
+    private damage(s: NavalShip, hp: number, crew: number, _from: NavalSide | null): void {
+        if (s.state !== 'alive') return;
+        s.hp -= hp;
+        s.crew = Math.max(0, s.crew - crew);
+        s.lastHitAt = this.time;
+        if (s.hp <= 0) this.sink(s);
+    }
+
+    private sink(s: NavalShip): void {
+        if (s.state !== 'alive') return;
+        s.hp = 0;
+        s.state = 'sinking';
+        s.sinkAt = this.time;
+        const partner = this.getShip(s.boardingWith);
+        if (partner) partner.boardingWith = null;
+        s.boardingWith = null;
+        const explode = s.burnT > 0 && (s.weapons.includes('cannon') || s.weapons.includes('greekfire') || this.rng() < 0.3);
+        this.events.push({ type: 'sink', side: s.side, x: s.x, y: s.y, shipId: s.id, isFlag: s.role === 'flag', explode });
+        if (s.role === 'flag') this.startRout(s.origSide, 'flag');
+    }
+
+    /** 撞角冲撞 / 贴舷接舷 */
+    private resolveContacts(): void {
+        const list = this.ships;
+        for (let i = 0; i < list.length; i++) {
+            const a = list[i];
+            if (a.state !== 'alive') continue;
+            for (let j = i + 1; j < list.length; j++) {
+                const b = list[j];
+                if (b.state !== 'alive') continue;
+                const dx = b.x - a.x, dy = b.y - a.y;
+                const d = Math.hypot(dx, dy) || 0.01;
+                const min = (a.radius + b.radius) * 0.95;
+                if (d >= min) continue;
+                // 推开（不叠船）
+                const push = (min - d) / 2;
+                if (a.boardingWith === null) { a.x -= dx / d * push; a.y -= dy / d * push; }
+                if (b.boardingWith === null) { b.x += dx / d * push; b.y += dy / d * push; }
+                if (a.side === b.side) continue;
+                if (a.boardingWith !== null || b.boardingWith !== null) continue;
+                // 撞角：船头对准对方才算撞上
+                for (const [att, def] of [[a, b], [b, a]] as const) {
+                    if (!att.weapons.includes('ram') || att.ramCd > 0) continue;
+                    const toDef = Math.atan2(def.y - att.y, def.x - att.x);
+                    if (Math.abs(angDiff(toDef, att.heading)) > 0.7) continue;
+                    att.ramCd = 5;
+                    const sp = Math.min(1.3, att.speed / BASE_SPEED);
+                    this.events.push({ type: 'ram', side: att.side, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+                    this.damage(def, 17 * sp * this.mult[att.side].dmg, 6, att.side);
+                }
+                if (a.state !== 'alive' || b.state !== 'alive') continue;
+                // 接舷：贴上了的前排船（或撞角船）抛钩跳帮
+                const wants = (this.isMelee(a) || this.isMelee(b)) && a.boardCd <= 0 && b.boardCd <= 0;
+                if (wants && this.rng() < 0.9 * this.lastDt) {
+                    a.boardingWith = b.id;
+                    b.boardingWith = a.id;
+                    a.speed = b.speed = 0;
+                    this.events.push({ type: 'boardStart', side: this.isMelee(a) ? a.side : b.side, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, a: a.id, b: b.id });
+                }
+            }
+        }
+    }
+
+    private updateBoarding(s: NavalShip, dt: number): void {
+        const o = this.getShip(s.boardingWith);
+        if (!o || o.state !== 'alive' || o.boardingWith !== s.id) { s.boardingWith = null; return; }
+        if (s.id > o.id) return;   // 一对只算一次
+        // 两船并排漂（慢慢一起转）
+        s.speed = o.speed = 0;
+        const ms = this.mult[s.side].dmg, mo = this.mult[o.side].dmg;
+        const lossS = (o.crew * 0.045 * mo * (0.6 + this.rng() * 0.8) + 0.6) * dt;
+        const lossO = (s.crew * 0.045 * ms * (0.6 + this.rng() * 0.8) + 0.6) * dt;
+        s.crew = Math.max(0, s.crew - lossS);
+        o.crew = Math.max(0, o.crew - lossO);
+        s.lastHitAt = o.lastHitAt = this.time;
+        const sOut = s.crew <= s.maxCrew * 0.08;
+        const oOut = o.crew <= o.maxCrew * 0.08;
+        if (!sOut && !oOut) return;
+        const [win, lose] = sOut && !oOut ? [o, s] : !sOut && oOut ? [s, o] : (s.crew >= o.crew ? [s, o] : [o, s]);
+        win.boardingWith = null;
+        lose.boardingWith = null;
+        win.boardCd = 10;
+        lose.boardCd = 10;
+        // 打光了船上的人：船还完好就夺下来换旗，否则败兵点火弃船
+        const captureP = lose.role === 'flag' ? 0.7 : 0.4;
+        if (lose.hp > lose.maxHp * 0.35 && this.rng() < captureP) this.capture(lose, win);
+        else { this.ignite(lose); this.damage(lose, lose.maxHp * 0.3, 0, win.side); }
+    }
+
+    private capture(ship: NavalShip, by: NavalShip): void {
+        const wasFlag = ship.role === 'flag';
+        const fromSide = ship.side;
+        const moved = Math.max(8, by.crew * 0.3);
+        by.crew -= moved;
+        ship.crew = moved;
+        ship.side = by.side;
+        ship.factionId = by.factionId;
+        ship.captured = true;
+        ship.burnT = 0;
+        ship.targetId = null;
+        ship.routing = this.routSide === by.side;
+        // 夺来的船降为普通战船（旗舰被夺 = 敌方帅旗落地）
+        if (wasFlag) ship.role = 'main';
+        this.events.push({ type: 'capture', side: by.side, x: ship.x, y: ship.y, shipId: ship.id, isFlag: wasFlag });
+        if (wasFlag) this.startRout(fromSide, 'flag');
+    }
+
+    private startRout(side: NavalSide, reason: 'flag' | 'losses'): void {
+        if (this.routSide) return;
+        this.routSide = side;
+        this.routAt = this.time;
+        for (const s of this.ships) if (s.side === side && s.state === 'alive') {
+            s.routing = true;
+            s.targetId = null;
+        }
+        this.events.push({ type: 'rout', side, reason });
+    }
+
+    private updatePhase(): void {
+        let next: NavalPhase = this.phase;
+        if (this.routSide) next = 'rout';
+        else if (this.ships.some((s) => s.boardingWith !== null) || this.minGap() < 140) next = 'melee';
+        else if (this.phase === 'approach' && this.projectiles.length > 0) next = 'exchange';
+        if (next !== this.phase && !(this.phase === 'melee' && next === 'exchange')) {
+            this.phase = next;
+            this.events.push({ type: 'phase', phase: next });
+        }
+        // 船数见底也溃散：只剩两成且不足 3 艘
+        if (!this.routSide) {
+            for (const side of ['attacker', 'defender'] as const) {
+                const alive = this.countAlive(side);
+                if (alive <= Math.max(2, Math.floor(this.initCount[side] * 0.2))) { this.startRout(side, 'losses'); break; }
+            }
+        }
+    }
+
+    private minGap(): number {
+        let best = Infinity;
+        for (const a of this.ships) {
+            if (a.side !== 'attacker' || a.state !== 'alive') continue;
+            for (const b of this.ships) {
+                if (b.side !== 'defender' || b.state !== 'alive') continue;
+                const d = Math.hypot(a.x - b.x, a.y - b.y) - a.radius - b.radius;
+                if (d < best) best = d;
+            }
+        }
+        return best;
+    }
+
+    private strength(side: NavalSide): number {
+        let hp = 0;
+        for (const s of this.ships) {
+            if (s.side !== side) continue;
+            if (s.state === 'alive') hp += s.hp * (0.5 + 0.5 * s.crew / s.maxCrew);
+            else if (s.state === 'fled') hp += s.hp * 0.5;
+        }
+        return Math.max(0, Math.min(1, hp / (this.initHp[side] || 1)));
+    }
+
+    private checkEnd(): void {
+        const a = this.countAlive('attacker');
+        const d = this.countAlive('defender');
+        let winner: NavalSide | null = null;
+        if (a === 0 && d === 0) winner = this.routSide === 'attacker' ? 'defender' : 'attacker';
+        else if (a === 0) winner = 'defender';
+        else if (d === 0) winner = 'attacker';
+        else if (this.routSide && this.time - this.routAt > ROUT_END_DELAY) winner = this.routSide === 'attacker' ? 'defender' : 'attacker';
+        else if (this.time >= NAVAL_TIME_LIMIT) winner = this.strength('attacker') >= this.strength('defender') ? 'attacker' : 'defender';
+        if (!winner) return;
+        const loser: NavalSide = winner === 'attacker' ? 'defender' : 'attacker';
+        // 溃逃中的败方船算逃掉了：结算前把还在场上的败船收成 fled
+        this.result = {
+            winner,
+            winnerStrength: Math.max(0.05, this.strength(winner)),
+            loserStrength: this.strength(loser),
+        };
+    }
+}
