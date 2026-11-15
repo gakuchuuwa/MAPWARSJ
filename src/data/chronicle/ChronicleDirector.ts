@@ -117,6 +117,10 @@ export function getChronicleBattleById(battleId: string | null | undefined): Gen
     return (battleId && BY_BATTLE_ID.get(battleId)?.battle) || null;
 }
 
+export function getChronicleEventByBattleId(battleId: string | null | undefined): ChronicleMainlineEvent | null {
+    return (battleId && BY_BATTLE_ID.get(battleId)) || null;
+}
+
 /** 编年史之战的两段播报（非编年史之战返回 null）；战略段＝衔接播报＋本场战略播报 */
 export function getChronicleBriefing(battleId: string | null | undefined): { strategic: string[]; tactical: string[] } | null {
     const ev = battleId ? BY_BATTLE_ID.get(battleId) : undefined;

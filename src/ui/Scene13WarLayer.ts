@@ -1518,6 +1518,22 @@ export class Scene13WarLayer {
 
         }
 
+        // 历史事件战败方在战术模式中不集气、不释放武将技（平局及未标注胜负的战斗双方照常；观众放计走 castViewerSkill，不受影响）
+
+        if (init.historicalWinner === 'attacker') {
+
+            this.skillRatePerSec[1] = 0;
+
+            this.skillRateMult[1] = 0;
+
+        } else if (init.historicalWinner === 'defender') {
+
+            this.skillRatePerSec[0] = 0;
+
+            this.skillRateMult[0] = 0;
+
+        }
+
     }
 
 
@@ -1645,6 +1661,8 @@ export class Scene13WarLayer {
     public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
 
         const f: 0 | 1 = (sideOrF === 0 || sideOrF === 'attacker') ? 0 : 1;
+
+        if (this.skillRatePerSec[f] <= 0) return;
 
         this.queuedSkill[f] = this.queuedSkill[f] === six ? null : six;
 
@@ -1826,9 +1844,9 @@ export class Scene13WarLayer {
 
             return {
 
-                // 小队模式没有武将，不显示武将技栏
+                // 小队模式或历史事件战败方（不集气、不放武将技）不显示武将技栏；观众放计不走此槽，不受影响
 
-                hasGeneral: !this.skirmish,
+                hasGeneral: !this.skirmish && this.skillRatePerSec[f] > 0,
 
                 generalId: this.sideGeneralId[f],
 

@@ -17,6 +17,7 @@ import {
 import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
 import { getFirstBattleBackground } from '../../data/GeneralFirstBattleBackgrounds';
 import { getClassicBattleById } from '../../data/GeneralFirstBattles';
+import { getChronicleEventByBattleId } from '../../data/chronicle/ChronicleDirector';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
@@ -170,6 +171,43 @@ function resolveHistoricalBattleBriefing(title?: string | null, explicit?: strin
 }
 
 /**
+ * 解析本场战术模式的历史事件胜方阵营（'attacker' | 'defender' | 'draw' | null）：
+ * - 编年史战事：读取事件标注的 `winner`（按随行主将实际所在攻守侧对齐）；
+ * - 历史剧本战（HISTORICAL_EVENT_SCRIPT）：读取 `getScriptedWinner()`；
+ * - 乱斗及未标注历史胜负的普通战事返回 null（双方武将照常集气放技）。
+ */
+function resolveScene13HistoricalWinner(
+    attUnits: { generalId?: string | null; getEntity?(): any }[],
+    defUnits: { generalId?: string | null; getEntity?(): any }[],
+    scriptedWinner?: 'attacker' | 'defender' | null,
+): 'attacker' | 'defender' | 'draw' | null {
+    const isClassicHero = (u: { getEntity?(): any }) => {
+        const ent = u?.getEntity?.();
+        return !!(ent && !ent.__quickBattleRandom && (ent.isFirstBattleHero === true || !!ent.classicBattleGeneralId));
+    };
+    const attHero = attUnits.find(isClassicHero);
+    const defHero = defUnits.find(isClassicHero);
+    const hero = attHero ?? defHero;
+    const heroEnt = hero?.getEntity?.();
+    const battleId = (heroEnt?.classicBattleId as string | undefined)
+        ?? (heroEnt?.classicBattleGeneralId as string | undefined)
+        ?? hero?.generalId
+        ?? null;
+    const chronEv = getChronicleEventByBattleId(battleId);
+    if (chronEv?.winner) {
+        if (chronEv.winner === 'draw') return 'draw';
+        const heroSide: 'attacker' | 'defender' | null = attHero ? 'attacker' : defHero ? 'defender' : null;
+        if (heroSide && chronEv.battle) {
+            const leadRole: 'attacker' | 'defender' = chronEv.battle.role ?? 'attacker';
+            const heroWon = chronEv.winner === leadRole;
+            return heroWon ? heroSide : (heroSide === 'attacker' ? 'defender' : 'attacker');
+        }
+        return chronEv.winner;
+    }
+    return scriptedWinner ?? null;
+}
+
+/**
  * [2026-08-11 13 v2] 启动出兵口互攻演出（Scene13WarLayer）。
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
  * 演出判负 → onDecision 回调写回引擎。
@@ -191,6 +229,8 @@ function startScene13War(
     title?: string | null,
     /** 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放） */
     battleBriefing?: string | null,
+    /** 历史事件胜方阵营：战术模式中历史战败方不释放武将技，观众仍可放计改变战局 */
+    historicalWinner?: 'attacker' | 'defender' | 'draw' | null,
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。

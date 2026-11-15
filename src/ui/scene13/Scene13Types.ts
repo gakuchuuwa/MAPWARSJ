@@ -586,6 +586,8 @@ export interface Scene13WarInit {
     attackerBonus?: number;
     /** 🔴 [2026-11-09] 经典战（名将军团 isFirstBattleHero 参战）——只给探针分类统计用 */
     classicBattle?: boolean;
+    /** 历史事件胜方阵营（'attacker' | 'defender' | 'draw'）：战术模式中历史失败方不释放武将技，平局与未标注战斗双方照常，观众放计不受影响 */
+    historicalWinner?: 'attacker' | 'defender' | 'draw' | null;
     defenderBonus?: number;
     /** 战场中心坐标（由 GameAppCombatHooks 传入；P2 地形 biome 判定用） */
     centerLat?: number;
