@@ -4933,6 +4933,21 @@ const BGM_REGION_GAIN: Record<string, number> = {
     CC_QAZI_BATTLE: 0.394,        // -12.9 LUFS
     CC_BATTLE_THEME: 0.355,       // -12.0 LUFS
     CC_ROCKY_CLIFFS: 0.759,       // -18.6 LUFS
+    CC_PREPARE_SWORDS: 0.473,     // -14.5 LUFS
+    CC_MILLION_ELEPHANTS: 0.309,  // -10.8 LUFS
+    CC_ASIAN_ORIENTAL: 1.109,     // -21.9 LUFS
+    CC_INDIAN_TENSE: 0.447,       // -14.0 LUFS
+    CC_RELICS_OF_PAST: 2.065,     // -27.3 LUFS
+    CC_MYSTICAL_EAST: 1.365,      // -23.7 LUFS
+    CC_DARBUKA_CHASE: 1.274,      // -23.1 LUFS
+    CC_DESERT_CARAVAN: 3.090,     // -30.8 LUFS
+    CC_ARABIAN_HYOSHI: 0.750,     // -18.5 LUFS
+    CC_DESERT_PLAINS: 4.786,      // -34.6 LUFS
+    CC_EPIC_JUNGLE: 0.537,        // -15.6 LUFS
+    CC_TRIBAL_DRUMS: 0.380,       // -12.6 LUFS
+    CC_KRAKATOA_DRUMS: 0.556,     // -15.9 LUFS
+    CC_THOR_VICTORY: 0.269,       // -9.6 LUFS
+    CC_GREYARMS_CELTIC: 3.273,    // -31.3 LUFS
 
 };
 
@@ -5510,7 +5525,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a'],
+    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a', 'CC_TRIBAL_DRUMS', 'CC_KRAKATOA_DRUMS'],
 
 
 
@@ -5542,7 +5557,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    ARMENIANS: ['de_ARMENIANS', 'armenians_a'],
+    ARMENIANS: ['de_ARMENIANS', 'armenians_a', 'CC_DESERT_CARAVAN'],
 
 
 
@@ -5566,7 +5581,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
+    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b', 'CC_INDIAN_TENSE', 'CC_MYSTICAL_EAST'],
 
 
 
@@ -5574,7 +5589,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
+    BERBER: ['de_BERBER', 'berber_a', 'berber_b', 'CC_DARBUKA_CHASE', 'CC_DESERT_CARAVAN'],
 
 
 
@@ -5614,7 +5629,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],
+    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
 
 
 
@@ -5630,7 +5645,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    CELTS: ['de_CELTS', 'celts_a', 'celts_b', 'CC_FIRE_DRAGON'],
+    CELTS: ['de_CELTS', 'celts_a', 'celts_b', 'CC_FIRE_DRAGON', 'CC_GREYARMS_CELTIC'],
 
 
 
@@ -5654,7 +5669,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    CUMAN: ['de_CUMAN', 'cuman_a'],
+    CUMAN: ['de_CUMAN', 'cuman_a', 'CC_DESERT_PLAINS', 'CC_DARBUKA_CHASE'],
 
 
 
@@ -5670,7 +5685,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b'],
+    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b', 'CC_TRIBAL_DRUMS', 'CC_DESERT_CARAVAN'],
 
 
 
@@ -5686,7 +5701,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b'],
+    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b', 'CC_DESERT_CARAVAN'],
 
 
 
@@ -5750,7 +5765,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    GURJARAS: ['de_GURJARAS', 'gurjaras_a'],
+    GURJARAS: ['de_GURJARAS', 'gurjaras_a', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
 
 
 
@@ -5758,7 +5773,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
+    HUNS: ['de_HUNS', 'huns_a', 'huns_b', 'CC_DESERT_PLAINS', 'CC_THOR_VICTORY'],
 
 
 
@@ -5774,7 +5789,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    INDIA: ['de_INDIA', 'INDIA', 'india_a'],
+    INDIA: ['de_INDIA', 'INDIA', 'india_a', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
 
 
 
@@ -5790,7 +5805,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN', 'CC_ASIAN_ORIENTAL', 'CC_PREPARE_SWORDS'],
 
 
 
@@ -5798,7 +5813,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN', 'CC_ASIAN_ORIENTAL', 'CC_PREPARE_SWORDS'],
 
 
 
@@ -5814,7 +5829,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
+    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
 
 
 
@@ -5822,7 +5837,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
+    KOREA: ['de_KOREA', 'KOREA', 'korea_a', 'CC_PREPARE_SWORDS', 'CC_ASIAN_ORIENTAL'],
 
 
 
@@ -5854,7 +5869,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a'],
+    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a', 'CC_THOR_VICTORY'],
 
 
 
@@ -5870,7 +5885,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
+    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b', 'CC_GREYARMS_CELTIC'],
 
 
 
@@ -5886,7 +5901,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MALAY: ['de_MALAY', 'malay_b'],
+    MALAY: ['de_MALAY', 'malay_b', 'CC_MILLION_ELEPHANTS', 'CC_KRAKATOA_DRUMS'],
 
 
 
@@ -5894,7 +5909,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
+    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b', 'CC_TRIBAL_DRUMS'],
 
 
 
@@ -5902,7 +5917,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MAYANS: ['de_MAYANS', 'mayans_b'],
+    MAYANS: ['de_MAYANS', 'mayans_b', 'CC_EPIC_JUNGLE', 'CC_TRIBAL_DRUMS'],
 
 
 
@@ -5911,7 +5926,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
     // 🔴 [2026-11-10 主人令「蒙古马头琴 葫芦丝 [mongol_a]，删除这个曲子，不像战斗曲」] 本文化池由 3 首降为 2 首（de_MONGOL 主题曲 + STEPPE）。
-    MONGOL: ['de_MONGOL', 'STEPPE'],
+    MONGOL: ['de_MONGOL', 'STEPPE', 'CC_DESERT_PLAINS', 'CC_PREPARE_SWORDS'],
 
 
 
@@ -5919,7 +5934,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
+    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b', 'CC_RELICS_OF_PAST'],
 
 
 
@@ -5927,7 +5942,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
+    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b', 'CC_EPIC_JUNGLE'],
 
 
 
@@ -5935,7 +5950,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin'],
+    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin', 'CC_PREPARE_SWORDS'],
 
 
 
@@ -5951,7 +5966,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    PERSIAN: ['de_PERSIAN', 'persian_b'],
+    PERSIAN: ['de_PERSIAN', 'persian_b', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
 
 
 
@@ -5975,7 +5990,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    PURU: ['de_PURU', 'puru_b'],
+    PURU: ['de_PURU', 'puru_b', 'CC_INDIAN_TENSE', 'CC_RELICS_OF_PAST'],
 
 
 
@@ -6063,7 +6078,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    TIBET: ['TIBET', 'tibet_b'],
+    TIBET: ['TIBET', 'tibet_b', 'CC_MYSTICAL_EAST'],
 
 
 
@@ -6087,7 +6102,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    TUPI: ['de_TUPI', 'tupi_b'],
+    TUPI: ['de_TUPI', 'tupi_b', 'CC_EPIC_JUNGLE', 'CC_TRIBAL_DRUMS'],
 
 
 
@@ -6095,7 +6110,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
+    TURKS: ['de_TURKS', 'turks_a', 'turks_b', 'CC_DARBUKA_CHASE', 'CC_ARABIAN_HYOSHI'],
 
 
 
@@ -6127,7 +6142,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b'],
+    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b', 'CC_MILLION_ELEPHANTS', 'CC_ASIAN_ORIENTAL'],
 
 
 
@@ -6135,7 +6150,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a', 'CC_TO_BATTLE'],
+    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a', 'CC_TO_BATTLE', 'CC_THOR_VICTORY'],
 
 
 
