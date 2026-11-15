@@ -14,7 +14,7 @@ import { CITIES_V2 } from '../../src/data/cities_v2';
 const SRC = '剧本模式/01_事件与故事/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json';
 const OUT = 'src/data/chronicle/ChronicleMainline.generated.ts';
 const OPENING_OUT = 'src/data/chronicle/ChronicleOpening.ts';
-/** 经典战口径：攻守兵力 1–2 万，兵力比 ≤1:2 */
+/** 默认兜底兵力（未填 troops 时按 20000，双方 1:1 对等） */
 const TROOPS = 20000;
 const SEASON: Record<string, 0 | 1 | 2 | 3> = { 春: 0, 夏: 1, 秋: 2, 冬: 3 };
 
@@ -92,6 +92,7 @@ for (const s of CHRONICLE_SCRIPT) {
         if (isSiege && !s.city) errors.push(`${s.eventId} 攻城战缺被攻据点`);
         for (const c of [s.city?.cityId]) if (c && !cityIds.has(c)) errors.push(`${s.eventId} 据点 ${c} 不在库`);
         for (const f of [s.city?.before, s.city?.after]) if (f && !factionName.has(f)) errors.push(`${s.eventId} 归属势力 ${f} 不在库`);
+        const troops = s.troops ?? TROOPS;
         ev.winner = s.winner;
         ev.battle = {
             generalId: s.leadGeneralId,
@@ -107,11 +108,11 @@ for (const s of CHRONICLE_SCRIPT) {
             chronicleFrom: from,
             targetLat: lat,
             targetLng: lng,
-            myTroops: TROOPS,
+            myTroops: troops,
             enemyFactionId: s.enemyFactionId ?? '',
             enemyFactionName: factionName.get(s.enemyFactionId ?? '') ?? '',
             ...(s.enemyGeneralId ? { enemyGeneralId: s.enemyGeneralId } : {}),
-            enemyTroops: TROOPS,
+            enemyTroops: troops,
             introLines: [],
         };
     }

@@ -27,7 +27,7 @@ import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { BATTLEFIELDS, battlefieldMergedCityId } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldMergedCityId, battlefieldSamePointCityId, updateBattlefieldCoords } from '../data/Battlefields';
 
 /**
  * 🔴 [2026-09-24 主人定「要给战场连路…让战场和据点一致」]
@@ -762,6 +762,29 @@ export class VectorRoadEditor implements IEditor {
         row2.appendChild(prevProblemBtn);
         row2.appendChild(nextProblemBtn);
 
+        // [2026-11-15] 移动战场据点 + 吸附白线开关
+        const moveBfBtn = this.createButton('📍 移动战场:关', '#546e7a', () => {
+            this.moveBattlefieldMode = !this.moveBattlefieldMode;
+            moveBfBtn.textContent = this.moveBattlefieldMode ? '📍 移动战场:开' : '📍 移动战场:关';
+            moveBfBtn.style.background = this.moveBattlefieldMode ? '#e65100' : '#546e7a';
+            this.renderBattlefieldMarkers();
+            this.setStatus(this.moveBattlefieldMode
+                ? '📍 已开启「移动战场」：直接拖动 ⚔ 战场标点，松手自动保存坐标'
+                : '📍 已关闭「移动战场」（恢复点击 ⚔ 选点画路）');
+        });
+        moveBfBtn.title = '开启后可直接拖动 ⚔ 战场标点改位置（松手自动保存回 Battlefields.ts）';
+        const snapBfBtn = this.createButton('🧲 吸白线:开', '#00838f', () => {
+            this.snapBattlefieldToWhiteLine = !this.snapBattlefieldToWhiteLine;
+            snapBfBtn.textContent = this.snapBattlefieldToWhiteLine ? '🧲 吸白线:开' : '🧲 吸白线:关';
+            snapBfBtn.style.background = this.snapBattlefieldToWhiteLine ? '#00838f' : '#607d8b';
+            this.setStatus(this.snapBattlefieldToWhiteLine
+                ? '🧲 移动战场时距陆路白线 ≤35km 自动吸附落线'
+                : '🧲 已关闭白线吸附，可拖至任意坐标');
+        });
+        snapBfBtn.title = '拖动战场松手时，若距 NE 陆路白线 ≤35km 自动落到白线上';
+        row2.appendChild(moveBfBtn);
+        row2.appendChild(snapBfBtn);
+
         this.panel.appendChild(row0);
         // 海路面板的宿主：SeaRouteEditor.createPanel 会把自己挂进来（见它的 setHost）
         this.seaHost = document.createElement('div');
@@ -855,9 +878,11 @@ export class VectorRoadEditor implements IEditor {
         this.flashTimer = window.setTimeout(tick, 250);
     }
 
-    // ===== 战场标记（编辑器专用；与据点一样可点选作起点/终点）=====
+    // ===== 战场标记（编辑器专用；与据点一样可点选作起点/终点，开启移动模式可拖拽）=====
     private bfLayer: L.LayerGroup | null = null;
     private bfHooked = false;
+    private moveBattlefieldMode = false;
+    private snapBattlefieldToWhiteLine = true;
 
     /** 各战场连着几条路（陆路；海路不会连到战场） */
     private battlefieldRoadCounts(): Map<string, number> {
@@ -873,6 +898,7 @@ export class VectorRoadEditor implements IEditor {
      * 🔴 [2026-09-24 主人「让战场和据点一致，这样我就可以轻松给战场选择线路了」]
      * 编辑器开着时把**全部**战场画成 ⚔ 标记（不看剧本年份，与游戏里的战场图层互不影响）：
      * 已连路 = 紫色，未连路 = 红色虚线圈；点击与点据点一样，依次选作起点 / 终点。
+     * 开启 moveBattlefieldMode 时改为可拖拽句柄，松手可自动吸附 NE 陆路白线并保存回 Battlefields.ts。
      */
     private renderBattlefieldMarkers(): void {
         if (this.bfLayer) { this.map.removeLayer(this.bfLayer); this.bfLayer = null; }
@@ -887,7 +913,7 @@ export class VectorRoadEditor implements IEditor {
         for (const bf of BATTLEFIELDS) {
             // 🔴 [2026-09-25] 离据点 ≤ BATTLEFIELD_MERGE_KM 的战场「归为一点」：绿色，点它 = 点那座城
             const mergedCity = findEndpoint(battlefieldMergedCityId(bf.id));
-            if (mergedCity) {
+            if (mergedCity && !this.moveBattlefieldMode) {
                 const mm = L.circleMarker([bf.lat, bf.lng], {
                     pane: PANE, radius: 9, color: '#2e7d32', weight: 3, fillColor: '#81c784', fillOpacity: 0.85,
                 });
@@ -901,6 +927,24 @@ export class VectorRoadEditor implements IEditor {
             }
             const n = counts.get(bf.id) ?? 0;
             const linked = n > 0;
+            if (this.moveBattlefieldMode) {
+                const border = linked ? '#7c4dff' : '#ff1744';
+                const fill = linked ? '#b388ff' : '#ff80ab';
+                const icon = L.divIcon({
+                    className: 'bf-drag-handle',
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 9],
+                    html: `<div style="width:18px;height:18px;border-radius:50%;background:${fill};border:3px solid ${border};box-shadow:0 0 0 2px rgba(255,255,255,0.85);cursor:grab;box-sizing:border-box;"></div>`,
+                });
+                const dm = L.marker([bf.lat, bf.lng], { pane: PANE, draggable: true, icon });
+                dm.bindTooltip(`✥ ${bf.name}${linked ? ` · ${n} 条路` : ' · 拖动移动'}`, { permanent: true, direction: 'right', offset: [10, 0] });
+                dm.on('dragend', () => {
+                    const pos = dm.getLatLng();
+                    void this.handleBattlefieldDragEnd(bf.id, bf.name, pos.lat, pos.lng);
+                });
+                group.addLayer(dm);
+                continue;
+            }
             const m = L.circleMarker([bf.lat, bf.lng], {
                 pane: PANE,
                 radius: 9,
@@ -920,6 +964,107 @@ export class VectorRoadEditor implements IEditor {
         }
         group.addTo(this.map);
         this.bfLayer = group;
+    }
+
+    /** 拖动战场标点结束：可选吸附到最近陆路白线，更新内存与相连道路端点并保存回 Battlefields.ts */
+    private async handleBattlefieldDragEnd(bfId: string, bfName: string, rawLat: number, rawLng: number): Promise<void> {
+        let lat = rawLat;
+        let lng = rawLng;
+        let snapped = false;
+
+        if (this.snapBattlefieldToWhiteLine && this.geoNodes.length > 0) {
+            const nearest = this.findKNearestGeoNodes(rawLat, rawLng, 1);
+            if (nearest.length > 0 && nearest[0].dist <= 0.32) {   // ~35km 内自动落到白线节点
+                const node = this.geoNodes[nearest[0].id];
+                if (node) {
+                    lat = node.lat;
+                    lng = node.lng;
+                    snapped = true;
+                }
+            }
+        }
+        lat = Number(lat.toFixed(4));
+        lng = Number(lng.toFixed(4));
+
+        updateBattlefieldCoords(bfId, lat, lng);
+        if (this.startCityId === bfId && this.startMarker) this.startMarker.setLatLng([lat, lng]);
+        if (this.endCityId === bfId && this.endMarker) this.endMarker.setLatLng([lat, lng]);
+
+        // 若该战场已有相连的橙色道路，按新坐标重算整条路径并重绘（仅改首尾顶点会让中间段继续绕去旧位置）
+        let updatedRoads = 0;
+        let reroutedRoads = 0;
+        for (const f of VECTOR_ROAD_DATA.features) {
+            const coords = f?.geometry?.coordinates;
+            if (!Array.isArray(coords) || coords.length < 2) continue;
+            const isStart = f.properties?.startConnection === bfId;
+            const isEnd = f.properties?.endConnection === bfId;
+            if (!isStart && !isEnd) continue;
+
+            const roadId = f.properties?.id;
+            let rerouted = false;
+            if (this.geoGraphBuilt && this.geoNodes.length > 0 && f.properties?.startConnection && f.properties?.endConnection) {
+                const startEp = findEndpoint(f.properties.startConnection);
+                const endEp = findEndpoint(f.properties.endConnection);
+                if (startEp && endEp) {
+                    const candidates = this.buildRouteCandidates(startEp, endEp, roadId);
+                    let best: RouteCandidate | null = null;
+                    let bestCost = Infinity;
+                    for (const c of candidates) {
+                        if (c.isManualStraightLine) continue;
+                        const cost = this.effectiveCandidateCost(c);
+                        if (cost < bestCost) { bestCost = cost; best = c; }
+                    }
+                    if (!best) best = candidates.find(c => c.mode === 'straight') ?? candidates[0] ?? null;
+                    const nextCoords = best ? this.applyCandidateGeometry(best, startEp, endEp) : null;
+                    if (nextCoords && nextCoords.length >= 2) {
+                        f.geometry.coordinates = nextCoords;
+                        const props = f.properties as { hasSeaLeg?: boolean };
+                        if (best?.mode === 'sea_land') props.hasSeaLeg = true;
+                        else delete props.hasSeaLeg;
+                        rerouted = true;
+                        reroutedRoads++;
+                    }
+                }
+            }
+            if (!rerouted) {
+                if (isStart) coords[0] = [lng, lat];
+                if (isEnd) coords[coords.length - 1] = [lng, lat];
+            }
+
+            updatedRoads++;
+            if (roadId) {
+                roadRegistry.updateVectorRoadCoordinates(roadId, f.geometry.coordinates as [number, number][]);
+                this.renderRoad(roadId);
+                if (this.selectedRoadId === roadId) {
+                    this.pathCandidates = [];
+                    this.currentCandidateIdx = 0;
+                    this.showControlPoints(roadId);
+                }
+            }
+        }
+        if (updatedRoads > 0) this.invalidateSnapBboxCache();
+
+        this.renderBattlefieldMarkers();
+        const sameCityId = battlefieldSamePointCityId(bfId);
+        const sameCityNote = sameCityId ? ` · ⚠️ 已进入据点 ${sameCityId} 50km 内` : '';
+        const roadNote = updatedRoads > 0
+            ? (reroutedRoads > 0
+                ? ` · 已重算 ${reroutedRoads} 条连线（请点 💾 保存道路）`
+                : ` · 已同步 ${updatedRoads} 条连线端点（请点 💾 保存道路）`)
+            : '';
+
+        try {
+            const res = await fetch('/api/save-battlefield-pos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: bfId, lat, lng }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+            this.setStatus(`✅ 已保存 ⚔${bfName} → (${lat}, ${lng})${snapped ? ' · 🧲已吸附白线' : ''}${sameCityNote}${roadNote}`);
+        } catch (err: any) {
+            this.setStatus(`❌ 保存 ⚔${bfName} 坐标失败: ${err?.message ?? err}`);
+        }
     }
 
     /** [2026-05-30] 面板最小化状态 (true = 只显示状态栏) */

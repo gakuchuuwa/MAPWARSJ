@@ -906,8 +906,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_aotaiyatai',
         name: '奥塔里亚泰战役',
-        lat: 42.15,
-        lng: 20.75,
+        lat: 42.2174,
+        lng: 20.722,
         scriptYear: -337,
         note: '编年史 evt_0221 巴尔干征讨奥塔里亚泰王普莱乌里亚斯之战（前337，马其顿 vs 伊利里亚）。距最近据点斯科普里 58.88km。不画路。',
     },
@@ -1172,8 +1172,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_qinghaihu_yuhai',
         name: '青海湖破吐蕃会战',
-        lat: 36.85,
-        lng: 100.4,
+        lat: 36.9862,
+        lng: 100.6144,
         scriptYear: 742,
         note: '编年史 evt_1376 青海湖破吐蕃会战（742，唐 vs 吐蕃）。距最近据点伏俟城 59.4km。不画路。',
     },
@@ -1308,8 +1308,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_ximutunaoer',
         name: '昔木土脑儿之战',
-        lat: 45.3,
-        lng: 113.85,
+        lat: 46.6737,
+        lng: 113.302,
         scriptYear: 1261,
         note: '编年史 evt_1922 昔木土脑儿争位战（1261，忽必烈 vs 阿里不哥）。距最近据点阔亦田 232.26km。不画路。',
     },
@@ -1545,6 +1545,16 @@ export function battlefieldMergedCityId(bfId: string): string | null {
 export const BATTLEFIELD_SAME_POINT_KM = 50;
 
 const samePointCityCache = new Map<string, string | null>();
+/** 更新战场坐标并清理距离缓存（供道路编辑器移动战场使用） */
+export function updateBattlefieldCoords(id: string, lat: number, lng: number): boolean {
+    const bf = getBattlefield(id);
+    if (!bf) return false;
+    bf.lat = lat;
+    bf.lng = lng;
+    mergedCityCache.delete(id);
+    samePointCityCache.delete(id);
+    return true;
+}
 /** 这个战场是否在 50 km 内与某座据点属于同一个点（返回据点 id；>50 km 返回 null） */
 export function battlefieldSamePointCityId(bfId: string): string | null {
     if (samePointCityCache.has(bfId)) return samePointCityCache.get(bfId)!;

@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const gen=JSON.parse(fs.readFileSync('C:\\MAPWARSJ\\tools\\chronicle\\audit\\mainline_parsed.json','utf8'));
+const DELIV='C:\\MAPWARSJ\\剧本模式\\99_GG任务与交付';
+const t=[1,2,3].flatMap(i=>JSON.parse(fs.readFileSync(DELIV+'\\GG交付_主线史实兵力_第'+i+'批_2026-11-15.json','utf8')));
+const m=new Map(t.map(x=>[x.eventId,x]));
+const cap=gen.filter(e=>e.battle.myTroops===20000);
+const unk=cap.filter(e=>/史未明载|史无明载|未载精确|史未详/.test(m.get(e.id).historicalTroops||''));
+console.log('封顶20000:',cap.length,' 其中史未明载式估算:',unk.length);
+const noNum=unk.filter(e=>!/[0-9]/.test(m.get(e.id).historicalTroops||''));
+console.log('史未明载且说明无数字:',noNum.length);
+noNum.slice(0,30).forEach(e=>console.log(e.id,e.title,e.year,m.get(e.id).historicalTroops.slice(0,60)));
