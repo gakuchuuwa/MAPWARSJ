@@ -11396,6 +11396,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 12,
             "offsetY": 6
+        },
+        "/assets/ATHENIANS/xila_tolmides.png": {
+            "scale": 1,
+            "offsetX": 4,
+            "offsetY": 0
         }
     },
     "folderGuides": {

@@ -4920,11 +4920,19 @@ const BGM_REGION_GAIN: Record<string, number> = {
 
     tupi_b: 0.668,  // -17.5 LUFS
 
-
-
-
-
-
+    // 2026-11-15 新增 OpenGameArt CC0 无版权战斗曲（YouTube 直播安全）
+    CC_FINAL_BATTLE: 0.437,       // -13.8 LUFS
+    CC_HOPE_BATTLE: 0.279,        // -9.9 LUFS
+    CC_WAR_THEME: 0.355,          // -12.0 LUFS
+    CC_MEDIEVAL_BATTLE: 0.422,    // -13.5 LUFS
+    CC_KNIGHTS_CHALLENGE: 0.412,  // -13.3 LUFS
+    CC_CALL_TO_WAR: 0.394,        // -12.9 LUFS
+    CC_TO_BATTLE: 0.452,          // -14.1 LUFS
+    CC_EYE_OF_STORM: 1.135,       // -22.1 LUFS
+    CC_FIRE_DRAGON: 0.380,        // -12.6 LUFS
+    CC_QAZI_BATTLE: 0.394,        // -12.9 LUFS
+    CC_BATTLE_THEME: 0.355,       // -12.0 LUFS
+    CC_ROCKY_CLIFFS: 0.759,       // -18.6 LUFS
 
 };
 
@@ -5542,7 +5550,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b'],
+    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
 
 
 
@@ -5574,7 +5582,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a'],
+    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a', 'CC_KNIGHTS_CHALLENGE', 'CC_BATTLE_THEME'],
 
 
 
@@ -5582,7 +5590,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BRITONS: ['de_BRITONS', 'britons_b'],
+    BRITONS: ['de_BRITONS', 'britons_b', 'CC_MEDIEVAL_BATTLE', 'CC_HOPE_BATTLE'],
 
 
 
@@ -5590,7 +5598,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
+    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b', 'CC_EYE_OF_STORM'],
 
 
 
@@ -5598,7 +5606,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],
+    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b', 'CC_MEDIEVAL_BATTLE'],
 
 
 
@@ -5614,7 +5622,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b'],
+    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b', 'CC_FINAL_BATTLE'],
 
 
 
@@ -5622,7 +5630,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
+    CELTS: ['de_CELTS', 'celts_a', 'celts_b', 'CC_FIRE_DRAGON'],
 
 
 
@@ -5654,7 +5662,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],
+    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b', 'CC_TO_BATTLE'],
 
 
 
@@ -5670,7 +5678,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b'],
+    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b', 'CC_MEDIEVAL_BATTLE', 'CC_KNIGHTS_CHALLENGE'],
 
 
 
@@ -5686,7 +5694,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a'],
+    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a', 'CC_KNIGHTS_CHALLENGE', 'CC_BATTLE_THEME'],
 
 
 
@@ -5694,7 +5702,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b'],
+    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b', 'CC_TO_BATTLE', 'CC_FIRE_DRAGON'],
 
 
 
@@ -5718,7 +5726,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    GREECE: ['GREECE', 'fallen_army'],
+    GREECE: ['GREECE', 'fallen_army', 'CC_WAR_THEME', 'CC_CALL_TO_WAR'],
 
 
 
@@ -5854,7 +5862,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
+    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
 
 
 
@@ -5951,7 +5959,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    POLES: ['de_POLES', 'poles_a', 'poles_b'],
+    POLES: ['de_POLES', 'poles_a', 'poles_b', 'CC_EYE_OF_STORM'],
 
 
 
@@ -5959,7 +5967,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
+    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b', 'CC_QAZI_BATTLE'],
 
 
 
@@ -5975,7 +5983,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    ROMA: ['de_ROMA', 'roma_a', 'roma_b'],
+    ROMA: ['de_ROMA', 'roma_a', 'roma_b', 'CC_FINAL_BATTLE', 'CC_CALL_TO_WAR'],
 
 
 
@@ -5991,7 +5999,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b'],
+    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b', 'CC_HOPE_BATTLE', 'CC_TO_BATTLE'],
 
 
 
@@ -5999,7 +6007,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b'],
+    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b', 'CC_QAZI_BATTLE'],
 
 
 
@@ -6007,7 +6015,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a'],
+    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a', 'CC_EYE_OF_STORM', 'CC_BATTLE_THEME'],
 
 
 
@@ -6015,7 +6023,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b'],
+    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b', 'CC_QAZI_BATTLE'],
 
 
 
@@ -6023,7 +6031,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b'],
+    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b', 'CC_WAR_THEME', 'CC_ROCKY_CLIFFS'],
 
 
 
@@ -6031,7 +6039,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
+    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war', 'CC_CALL_TO_WAR'],
 
 
 
@@ -6095,7 +6103,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
+    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b', 'CC_FIRE_DRAGON'],
 
 
 
@@ -6127,7 +6135,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a'],
+    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a', 'CC_TO_BATTLE'],
 
 
 
@@ -6143,7 +6151,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
 
 
 
-    WESTERN: ['WESTERN', 'western_a', 'western_b'],
+    WESTERN: ['WESTERN', 'western_a', 'western_b', 'CC_FINAL_BATTLE', 'CC_HOPE_BATTLE', 'CC_QAZI_BATTLE'],
 
 
 
@@ -6255,30 +6263,56 @@ function resolveBranch(region: string | null | undefined): string | null {
 
 
 
+const MIN_ROTATION_BGM_SEC = 60;
+
+function isEligibleBgmFolder(folder: string): boolean {
+    if (!AVAILABLE_BGM_FOLDERS.has(folder) || PAUSED_BGM_FOLDERS.has(folder)) return false;
+    const dur = BGM_DURATIONS[folder];
+    return dur === undefined || dur >= MIN_ROTATION_BGM_SEC;
+}
+
+const BGM_MACRO_GROUPS: readonly (readonly string[])[] = [
+    ['CENTRAL', 'WEI', 'JIANGNAN', 'HUGUANG', 'BASHU', 'LINGNAN', 'NORTHEAST', 'HEXI', 'DIANQIAN', 'TIBET'],
+    ['JAPAN'],
+    ['KOREA'],
+    ['MONGOL', 'HUNS', 'XIANBEI', 'KHITAN', 'CUMAN', 'STEPPE'],
+    ['GREECE', 'ATHENIANS', 'SPARTANS', 'MACEDONIAN', 'THRACIAN', 'ROMA', 'LATIN', 'ARMENIANS', 'GEORGIANS'],
+    ['WESTERN', 'FRANKS', 'BRITONS', 'GERMANIC', 'GOTHS', 'CELTS', 'BURGUNDIANS', 'SICILIANS', 'SPANISH', 'PORTUGUESE', 'VIKINGS', 'DANES', 'SAXONS'],
+    ['SLAVIC', 'POLES', 'BOHEMIANS', 'LITHUANIANS', 'BULGARIANS', 'MAGYAR', 'BYZANTINE', 'VARANGIANS'],
+    ['WEST_ASIA', 'ORIE', 'PERSIAN', 'SASANIAN', 'TURKS', 'MUGHAL', 'CENTRAL_ASIA', 'BERBER'],
+    ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'],
+    ['SEAS', 'BURMESE', 'KHMER', 'MALAY', 'JAVANESE', 'SIAMESE', 'CHAMPA', 'MON', 'VIETNAMESE'],
+    ['AFRICA', 'ETHIOPIANS'],
+    ['AMERICA', 'MAYANS', 'INCA', 'ANDE', 'MAPUCHE', 'MUISCA', 'TUPI'],
+];
+
+const BRANCH_TO_MACRO_GROUP = new Map<string, readonly string[]>();
+for (const grp of BGM_MACRO_GROUPS) {
+    for (const c of grp) BRANCH_TO_MACRO_GROUP.set(c, grp);
+}
+
 function branchPool(branch: string | null): string[] {
-
-
-
-
-
-
-
     if (!branch) return [];
+    const raw = (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f) && !PAUSED_BGM_FOLDERS.has(f));
+    const longOnly = raw.filter(isEligibleBgmFolder);
+    return longOnly.length > 0 ? longOnly : raw;
+}
 
-
-
-
-
-
-
-    return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
-
-
-
-
-
-
-
+function macroPoolForBranch(branch: string | null): string[] {
+    if (!branch) return [];
+    const grp = BRANCH_TO_MACRO_GROUP.get(branch);
+    if (!grp) return branchPool(branch);
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const c of grp) {
+        for (const f of BGM_POOL_MAP[c] ?? []) {
+            if (!seen.has(f) && isEligibleBgmFolder(f)) {
+                seen.add(f);
+                out.push(f);
+            }
+        }
+    }
+    return out;
 }
 
 
@@ -6745,15 +6779,14 @@ export class AudioManager {
 
 
 
-    /** 当前跟随军团文化分支的曲池（62+4 分支 → 曲目列表；池内轮播）*/
-
-
-
-
-
-
-
+    /** 当前跟随军团文化分支的曲池（67 分支 → 专属曲目列表；池内轮播）*/
     private currentBgmPool: string[] = [];
+
+    /** 当前文化所属大文化圈共享曲池（二级随机池，防止小池曲目太少时单曲循环）*/
+    private currentMacroPool: string[] = [];
+
+    /** 最近播放过的曲目历史（最多 5 首），大小池混播时避免短期连播重复 */
+    private recentBgmFolders: string[] = [];
 
 
 
@@ -12050,8 +12083,10 @@ export class AudioManager {
 
 
         const prevPool = this.currentBgmPool;
+        const prevMacroPool = this.currentMacroPool;
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
+        this.currentMacroPool = macroPoolForBranch(branch);
         if (this.tacticalBgmPool.length > 0) return;
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
 
@@ -12064,7 +12099,7 @@ export class AudioManager {
         // 玩家离开势力（由文化曲池切回无势力全局随机）：立即换一首其他文化的曲子，避免耳朵一直听旧势力的曲子
         if (prevPool.length > 0 && this.currentBgmPool.length === 0) {
             let nextFolder = this.nextRotationFolder(this.currentBgmFolder);
-            for (let tries = 0; tries < 24 && prevPool.includes(nextFolder); tries++) {
+            for (let tries = 0; tries < 24 && (prevPool.includes(nextFolder) || prevMacroPool.includes(nextFolder)); tries++) {
                 nextFolder = this.nextRotationFolder(this.currentBgmFolder);
             }
             this.playBgmFolder(nextFolder);
@@ -12352,29 +12387,9 @@ export class AudioManager {
 
 
         const branch = resolveBranch(cultureRegion);
-
-
-
-
-
-
-
         const pool = branchPool(branch);
-
-
-
-
-
-
-
         this.tacticalBgmPool = pool;
-
-
-
-
-
-
-
+        this.currentMacroPool = macroPoolForBranch(branch);
         this.bgmShuffleQueue = [];
 
 
@@ -13247,7 +13262,7 @@ export class AudioManager {
 
 
 
-                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder));
+                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder, true));
 
 
 
@@ -13447,86 +13462,51 @@ export class AudioManager {
 
 
 
-    private nextRotationFolder(exclude: string): string {
-
-
-
-
-
-
+    /**
+     * 洗牌袋取下一首 BGM folder：
+     * - 刚换势力/入场（allowMacroMix=false）：优先从当前文化专属小池定调；
+     * - 自然接力/切歌（allowMacroMix=true）：小池 ≤3 首时 40% 小池 + 60% 大文化圈共享池（小池仅 1 首且正在放则必切大池），
+     *   小池 ≥4 首时 70% 小池 + 30% 大池；同时避开最近 5 首历史。
+     */
+    private nextRotationFolder(exclude: string, allowMacroMix = false): string {
+        const primaryPool = this.tacticalBgmPool.length > 0 ? this.tacticalBgmPool : this.currentBgmPool;
+        if (allowMacroMix && primaryPool.length > 0 && this.currentMacroPool.length > primaryPool.length) {
+            const mustSwitchMacro = primaryPool.length === 1 && primaryPool[0] === exclude;
+            const macroProb = primaryPool.length <= 3 ? 0.60 : 0.30;
+            if (mustSwitchMacro || Math.random() < macroProb) {
+                const candidates = this.currentMacroPool.filter((f) => f !== exclude && !this.recentBgmFolders.includes(f));
+                const poolPick = candidates.length > 0
+                    ? candidates
+                    : this.currentMacroPool.filter((f) => f !== exclude);
+                if (poolPick.length > 0) {
+                    const chosen = poolPick[Math.floor(Math.random() * poolPick.length)];
+                    this.recordRecentBgm(chosen);
+                    return chosen;
+                }
+            }
+        }
 
         if (this.bgmShuffleQueue.length === 0) {
-
-
-
-
-
-
-
             this.bgmShuffleQueue = this.shuffledBgmFolders();
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
         let next = this.bgmShuffleQueue.shift()!;
-
-
-
-
-
-
-
-        if (next === exclude && this.bgmShuffleQueue.length > 0) {
-
-
-
-
-
-
-
+        let guard = this.bgmShuffleQueue.length;
+        while ((next === exclude || this.recentBgmFolders.includes(next)) && guard > 0) {
             this.bgmShuffleQueue.push(next);
-
-
-
-
-
-
-
             next = this.bgmShuffleQueue.shift()!;
-
-
-
-
-
-
-
+            guard--;
         }
-
-
-
-
-
-
-
+        this.recordRecentBgm(next);
         return next;
+    }
 
-
-
-
-
-
-
+    private recordRecentBgm(folder: string): void {
+        if (!folder) return;
+        this.recentBgmFolders = this.recentBgmFolders.filter((f) => f !== folder);
+        this.recentBgmFolders.push(folder);
+        if (this.recentBgmFolders.length > 5) {
+            this.recentBgmFolders.shift();
+        }
     }
 
 
@@ -13663,7 +13643,8 @@ export class AudioManager {
 
 
 
-        const arr = pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
+        const longArr = pool.filter((folder) => isEligibleBgmFolder(folder));
+        const arr = longArr.length > 0 ? longArr : pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
 
 
 
