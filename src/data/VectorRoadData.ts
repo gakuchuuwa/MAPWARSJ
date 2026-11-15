@@ -79693,31 +79693,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阿尔贝拉-⚔高加米拉",
-                type: "road",
-                id: "road_city_aerbeila_bf_gaojiamila_1794651079043",
-                startConnection: "city_aerbeila",
-                endConnection: "bf_gaojiamila"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [44.01, 36.19],
-                    [43.775713, 36.235579],
-                    [43.759216, 36.252077],
-                    [43.693225, 36.260326],
-                    [43.614861, 36.297446],
-                    [43.573617, 36.30157],
-                    [43.507626, 36.30157],
-                    [43.429262, 36.330441],
-                    [43.40864, 36.342814],
-                    [43.444, 36.56],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "巴陵-鼎口寨",
                 type: "road",
                 id: "road_city_baling_city_dingkou_1794651136694",
@@ -81354,6 +81329,27 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [27.633428, 38.494491],
                     [27.790133, 38.496924],
                     [28.03, 38.48],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿尔贝拉-⚔高加米拉",
+                type: "road",
+                id: "road_city_aerbeila_bf_gaojiamila_1794734431795",
+                startConnection: "city_aerbeila",
+                endConnection: "bf_gaojiamila"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [44.01, 36.19],
+                    [43.775713, 36.235579],
+                    [43.759216, 36.252077],
+                    [43.693225, 36.260326],
+                    [43.614861, 36.297446],
+                    [43.444, 36.56],
                 ]
             }
         },

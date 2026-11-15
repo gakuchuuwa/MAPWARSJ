@@ -4,7 +4,7 @@ import type { ChronicleMainlineEvent } from './ChronicleTypes';
 export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     {
         "id": "evt_0001",
-        "baton": 1,
+        "baton": "1",
         "year": -550,
         "season": 2,
         "title": "帕萨尔加德之战",
@@ -49,7 +49,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0005",
-        "baton": 1,
+        "baton": "1",
         "year": -547,
         "season": 2,
         "title": "普特里亚之战",
@@ -79,9 +79,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "普特里亚",
             "routeVia": [
                 {
+                    "name": "埃克巴坦那",
+                    "lat": 34.8,
+                    "lng": 48.51
+                },
+                {
                     "name": "阿尔贝拉",
                     "lat": 36.19,
                     "lng": 44.01
+                },
+                {
+                    "name": "马扎卡",
+                    "lat": 38.72,
+                    "lng": 35.48
                 }
             ],
             "chronicleFrom": "city_bosibolisi",
@@ -97,7 +107,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0006",
-        "baton": 1,
+        "baton": "1",
         "year": -547,
         "season": 3,
         "title": "提姆布拉会战与撒狄破城",
@@ -129,6 +139,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "ldiya",
                 "after": "aqimeinide"
             },
+            "routeVia": [
+                {
+                    "name": "安居拉",
+                    "lat": 39.94,
+                    "lng": 32.86
+                },
+                {
+                    "name": "戈尔迪乌姆",
+                    "lat": 39.65,
+                    "lng": 31.99
+                }
+            ],
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 38.48,
             "targetLng": 28.03,
@@ -142,7 +164,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0007",
-        "baton": 1,
+        "baton": "1",
         "year": -546,
         "season": 1,
         "title": "撒狄平叛与普里埃内攻城战",
@@ -175,7 +197,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "ldiya",
                 "after": "aqimeinide"
             },
-            "chronicleFrom": "city_sifaerde",
+            "routeVia": [
+                {
+                    "name": "凯莱奈",
+                    "lat": 38.07,
+                    "lng": 30.17
+                },
+                {
+                    "name": "科洛赛",
+                    "lat": 37.79,
+                    "lng": 29.26
+                }
+            ],
+            "chronicleFrom": "city_geerdiweng",
             "targetLat": 38.48,
             "targetLng": 28.03,
             "myTroops": 15000,
@@ -188,7 +222,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0008",
-        "baton": 1,
+        "baton": "1",
         "year": -545,
         "season": 1,
         "title": "福西亚筑山攻城战",
@@ -221,6 +255,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aiaoniya",
                 "after": "aqimeinide"
             },
+            "routeVia": [
+                {
+                    "name": "马格尼西亚",
+                    "lat": 38.61,
+                    "lng": 27.43
+                }
+            ],
             "chronicleFrom": "city_sifaerde",
             "targetLat": 38.67,
             "targetLng": 26.754,
@@ -233,7 +274,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0009",
-        "baton": 1,
+        "baton": "1",
         "year": -544,
         "season": 0,
         "title": "克桑托斯卫城决死战",
@@ -266,6 +307,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lycia",
                 "after": "aqimeinide"
             },
+            "routeVia": [
+                {
+                    "name": "以弗所",
+                    "lat": 37.94,
+                    "lng": 27.34
+                },
+                {
+                    "name": "哈利卡纳苏斯",
+                    "lat": 37.03,
+                    "lng": 27.43
+                },
+                {
+                    "name": "考诺斯",
+                    "lat": 36.83,
+                    "lng": 28.62
+                }
+            ],
             "chronicleFrom": "city_sifaerde",
             "targetLat": 36.356,
             "targetLng": 29.318,
@@ -279,7 +337,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0013",
-        "baton": 1,
+        "baton": "1",
         "year": -539,
         "season": 2,
         "title": "俄庇斯河岸会战",
@@ -319,7 +377,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 44.9
                 }
             ],
-            "chronicleFrom": "city_bosibolisi",
+            "chronicleFrom": "city_susa",
             "targetLat": 33.18,
             "targetLng": 44.7,
             "myTroops": 15000,
@@ -332,7 +390,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0014",
-        "baton": 1,
+        "baton": "1",
         "year": -539,
         "season": 3,
         "title": "巴比伦导河夺城战",
@@ -385,7 +443,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0021",
-        "baton": 1,
+        "baton": "1",
         "year": -530,
         "season": 1,
         "title": "药杀水马萨革泰决战",
@@ -413,6 +471,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "药杀水北岸草原",
+            "routeVia": [
+                {
+                    "name": "埃克巴坦那",
+                    "lat": 34.8,
+                    "lng": 48.51
+                },
+                {
+                    "name": "巴克特拉",
+                    "lat": 36.71,
+                    "lng": 67.08
+                },
+                {
+                    "name": "马拉坎达",
+                    "lat": 39.65,
+                    "lng": 66.97
+                }
+            ],
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 40.28,
             "targetLng": 69.62,
@@ -426,7 +501,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0025",
-        "baton": 2,
+        "baton": "2",
         "year": -526,
         "season": 2,
         "title": "加沙要塞攻坚战",
@@ -460,6 +535,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "feilisidin",
                 "after": "aqimeinide"
             },
+            "routeVia": [
+                {
+                    "name": "巴比伦",
+                    "lat": 32.54,
+                    "lng": 44.42
+                },
+                {
+                    "name": "大马士革",
+                    "lat": 33.51,
+                    "lng": 36.29
+                },
+                {
+                    "name": "阿卡",
+                    "lat": 32.92,
+                    "lng": 35.07
+                }
+            ],
             "chronicleFrom": "city_susa",
             "targetLat": 31.502,
             "targetLng": 34.467,
@@ -472,7 +564,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0026",
-        "baton": 2,
+        "baton": "2",
         "year": -525,
         "season": 0,
         "title": "佩卢西姆决战与孟菲斯破城",
@@ -506,6 +598,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "拉菲亚",
+                    "lat": 31.29,
+                    "lng": 34.24
+                },
+                {
                     "name": "佩卢西姆",
                     "lat": 31.04,
                     "lng": 32.54
@@ -524,7 +621,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0028",
-        "baton": 2,
+        "baton": "2",
         "year": -524,
         "season": 1,
         "title": "尼罗河上游远征库施之战",
@@ -570,7 +667,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0031",
-        "baton": 3,
+        "baton": "3",
         "year": -522,
         "season": 3,
         "title": "扎扎纳会战与首克巴比伦",
@@ -605,7 +702,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "底格里斯河",
+                    "name": "贝希斯敦",
+                    "lat": 34.39,
+                    "lng": 47.44
+                },
+                {
+                    "name": "呼勒万",
+                    "lat": 34.35,
+                    "lng": 45.9
+                },
+                {
+                    "name": "底格里斯津",
                     "lat": 33.35,
                     "lng": 44.4
                 }
@@ -623,7 +730,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0032",
-        "baton": 3,
+        "baton": "3",
         "year": -521,
         "season": 1,
         "title": "昆杜鲁什平定米底决战",
@@ -655,6 +762,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "midi",
                 "after": "aqimeinide"
             },
+            "routeVia": [
+                {
+                    "name": "呼勒万",
+                    "lat": 34.35,
+                    "lng": 45.9
+                },
+                {
+                    "name": "坎加瓦尔",
+                    "lat": 34.5,
+                    "lng": 47.96
+                }
+            ],
             "chronicleFrom": "city_bosibolisi",
             "targetLat": 34.8,
             "targetLng": 48.51,
@@ -668,7 +787,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0041",
-        "baton": 3,
+        "baton": "3",
         "year": -512,
         "season": 1,
         "title": "斯特鲁马河征服佩奥尼亚之战",
@@ -701,9 +820,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "佩林索斯",
                     "lat": 40.98,
                     "lng": 27.96
+                },
+                {
+                    "name": "阿布德拉",
+                    "lat": 40.93,
+                    "lng": 24.97
                 }
             ],
-            "chronicleFrom": "city_teluoyi",
+            "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.1,
             "targetLng": 23.55,
             "myTroops": 15000,
@@ -716,7 +840,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0056",
-        "baton": 3,
+        "baton": "3",
         "year": -499,
         "season": 1,
         "title": "纳克索斯围城战",
@@ -751,6 +875,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.14
+                },
+                {
                     "name": "考卡萨",
                     "lat": 38.21,
                     "lng": 25.93
@@ -768,7 +897,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0058",
-        "baton": 3,
+        "baton": "3",
         "year": -498,
         "season": 1,
         "title": "撒狄奇袭战",
@@ -814,7 +943,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0059",
-        "baton": 3,
+        "baton": "3",
         "year": -498,
         "season": 2,
         "title": "以弗所之战",
@@ -841,6 +970,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "以弗所城外平原",
+            "routeVia": [
+                {
+                    "name": "特摩卢斯山",
+                    "lat": 38.33,
+                    "lng": 27.72
+                }
+            ],
             "chronicleFrom": "city_sifaerde",
             "targetLat": 37.94,
             "targetLng": 27.34,
@@ -854,7 +990,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0066",
-        "baton": 3,
+        "baton": "3",
         "year": -494,
         "season": 2,
         "title": "拉德海战",
@@ -881,6 +1017,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "米利都港外拉德岛海域",
+            "routeVia": [
+                {
+                    "name": "米卡列角",
+                    "lat": 37.68,
+                    "lng": 27.02
+                }
+            ],
             "chronicleFrom": "city_sifaerde",
             "targetLat": 37.53,
             "targetLng": 27.278,
@@ -894,7 +1037,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0067",
-        "baton": 3,
+        "baton": "3",
         "year": -494,
         "season": 3,
         "title": "米利都攻城战",
@@ -939,7 +1082,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0070",
-        "baton": 3,
+        "baton": "3",
         "year": -492,
         "season": 1,
         "title": "马尔多尼乌斯色雷斯远征战",
@@ -969,14 +1112,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "马其顿东境与阿索斯海角",
             "routeVia": [
                 {
-                    "name": "奇里乞亚",
-                    "lat": 36.95,
-                    "lng": 35.2
+                    "name": "塔尔苏斯",
+                    "lat": 36.92,
+                    "lng": 34.9
                 },
                 {
-                    "name": "伊奥尼亚",
-                    "lat": 37.94,
-                    "lng": 27.34
+                    "name": "米利都",
+                    "lat": 37.53,
+                    "lng": 27.28
                 },
                 {
                     "name": "赫勒斯滂",
@@ -996,7 +1139,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
     },
     {
         "id": "evt_0072",
-        "baton": 3,
+        "baton": "3",
         "year": -490,
         "season": 2,
         "title": "马拉松之战",
@@ -1183,6 +1326,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "维奥蒂亚南境普拉提亚原野",
+            "routeVia": [
+                {
+                    "name": "埃莱夫西斯",
+                    "lat": 38.04,
+                    "lng": 23.54
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -1230,7 +1380,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 26.94
                 }
             ],
-            "chronicleFrom": "city_chimarros",
+            "chronicleFrom": "city_tiluo",
             "targetLat": 37.53,
             "targetLng": 27.278,
             "myTroops": 15000,
@@ -1276,6 +1426,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "lagoniya"
             },
+            "routeVia": [
+                {
+                    "name": "塞浦路斯",
+                    "lat": 35.12,
+                    "lng": 33.94
+                },
+                {
+                    "name": "赫勒斯滂",
+                    "lat": 40.23,
+                    "lng": 26.4
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
@@ -1321,6 +1483,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "斯基亚索斯",
+                    "lat": 39.16,
+                    "lng": 23.49
+                },
+                {
+                    "name": "阿索斯",
+                    "lat": 40.16,
+                    "lng": 24.33
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.82,
             "targetLng": 23.85,
@@ -1366,6 +1540,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dolopes",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "莱姆诺斯",
+                    "lat": 39.88,
+                    "lng": 25.06
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.903,
             "targetLng": 24.565,
@@ -1412,6 +1593,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "naxos",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "安德罗斯",
+                    "lat": 37.83,
+                    "lng": 24.93
+                },
+                {
+                    "name": "提洛",
+                    "lat": 37.4,
+                    "lng": 25.27
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
@@ -1503,6 +1696,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "北爱琴海萨索斯岛海域",
+            "routeVia": [
+                {
+                    "name": "罗得",
+                    "lat": 36.44,
+                    "lng": 28.22
+                },
+                {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.14
+                },
+                {
+                    "name": "莱姆诺斯",
+                    "lat": 39.88,
+                    "lng": 25.06
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.778,
             "targetLng": 24.709,
@@ -1595,6 +1805,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "thasos",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "优卑亚",
+                    "lat": 38.65,
+                    "lng": 23.85
+                },
+                {
+                    "name": "莱姆诺斯",
+                    "lat": 39.88,
+                    "lng": 25.06
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.778,
             "targetLng": 24.709,
@@ -1635,6 +1857,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "维奥蒂亚东南塔纳格拉原野",
+            "routeVia": [
+                {
+                    "name": "帕尔奈斯山口",
+                    "lat": 38.17,
+                    "lng": 23.72
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -1674,6 +1903,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阿索波斯河谷奥诺菲塔",
+            "routeVia": [
+                {
+                    "name": "基泰龙山隘",
+                    "lat": 38.18,
+                    "lng": 23.32
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -1713,6 +1949,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "拉科尼亚海湾吉雄军港",
+            "routeVia": [
+                {
+                    "name": "埃伊纳",
+                    "lat": 37.75,
+                    "lng": 23.43
+                },
+                {
+                    "name": "马利亚角",
+                    "lat": 36.44,
+                    "lng": 23.2
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.07,
             "targetLng": 22.42,
@@ -1753,6 +2001,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "塞浦路斯东岸萨拉米斯海域",
+            "routeVia": [
+                {
+                    "name": "提洛",
+                    "lat": 37.4,
+                    "lng": 25.27
+                },
+                {
+                    "name": "罗得",
+                    "lat": 36.44,
+                    "lng": 28.22
+                },
+                {
+                    "name": "帕福斯",
+                    "lat": 34.76,
+                    "lng": 32.41
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 35.12,
             "targetLng": 33.94,
@@ -1792,6 +2057,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "科帕伊斯湖西岸科罗尼亚",
+            "routeVia": [
+                {
+                    "name": "喀罗尼亚",
+                    "lat": 38.5,
+                    "lng": 22.84
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -1837,6 +2109,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalcis",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "奥罗波斯",
+                    "lat": 38.3,
+                    "lng": 23.75
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -1877,6 +2156,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "特拉吉亚岛海面至萨摩斯主城",
+            "routeVia": [
+                {
+                    "name": "安德罗斯",
+                    "lat": 37.83,
+                    "lng": 24.93
+                },
+                {
+                    "name": "伊卡里亚",
+                    "lat": 37.6,
+                    "lng": 26.15
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
@@ -2005,6 +2296,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科孚岛南端琉喀墨海域",
+            "routeVia": [
+                {
+                    "name": "莱夫卡斯",
+                    "lat": 38.83,
+                    "lng": 20.71
+                },
+                {
+                    "name": "阿克兴",
+                    "lat": 38.95,
+                    "lng": 20.77
+                }
+            ],
             "chronicleFrom": "city_corinth",
             "targetLat": 39.62,
             "targetLng": 19.92,
@@ -2045,6 +2348,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科孚东南叙博塔群岛水道",
+            "routeVia": [
+                {
+                    "name": "帕特雷",
+                    "lat": 38.25,
+                    "lng": 21.73
+                },
+                {
+                    "name": "莱夫卡斯",
+                    "lat": 38.83,
+                    "lng": 20.71
+                },
+                {
+                    "name": "凯梅里翁",
+                    "lat": 39.35,
+                    "lng": 20.29
+                }
+            ],
             "chronicleFrom": "city_corinth",
             "targetLat": 39.62,
             "targetLng": 19.92,
@@ -2085,6 +2405,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "帕勒涅地峡波提狄亚城北",
+            "routeVia": [
+                {
+                    "name": "哈尔基斯",
+                    "lat": 38.46,
+                    "lng": 23.6
+                },
+                {
+                    "name": "皮德纳",
+                    "lat": 40.37,
+                    "lng": 22.58
+                },
+                {
+                    "name": "韦里亚",
+                    "lat": 40.52,
+                    "lng": 22.2
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
@@ -2124,6 +2461,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科林斯湾口诺帕克都外海",
+            "routeVia": [
+                {
+                    "name": "基利尼",
+                    "lat": 37.94,
+                    "lng": 21.14
+                },
+                {
+                    "name": "帕特雷",
+                    "lat": 38.25,
+                    "lng": 21.73
+                }
+            ],
             "chronicleFrom": "city_aolinpiya",
             "targetLat": 38.392,
             "targetLng": 21.828,
@@ -2169,6 +2518,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "mytilene",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "苏尼翁角",
+                    "lat": 37.65,
+                    "lng": 24.02
+                },
+                {
+                    "name": "斯基罗斯南海",
+                    "lat": 38.65,
+                    "lng": 25.1
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 39.104,
             "targetLng": 26.555,
@@ -2215,6 +2576,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "plataea",
                 "after": "boootiya"
             },
+            "routeVia": [
+                {
+                    "name": "科林斯地峡",
+                    "lat": 37.93,
+                    "lng": 22.99
+                },
+                {
+                    "name": "墨伽拉",
+                    "lat": 38,
+                    "lng": 23.34
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -2255,6 +2628,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "安布拉基亚湾奥尔派山岗",
+            "routeVia": [
+                {
+                    "name": "诺帕克都",
+                    "lat": 38.39,
+                    "lng": 21.83
+                },
+                {
+                    "name": "阿格里尼翁",
+                    "lat": 38.62,
+                    "lng": 21.41
+                },
+                {
+                    "name": "安菲洛基亚",
+                    "lat": 38.93,
+                    "lng": 21.18
+                }
+            ],
             "chronicleFrom": "city_deerfei",
             "targetLat": 39.16,
             "targetLng": 20.98,
@@ -2294,6 +2684,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "美塞尼亚西岸派洛斯海岬",
+            "routeVia": [
+                {
+                    "name": "马利亚角",
+                    "lat": 36.44,
+                    "lng": 23.2
+                },
+                {
+                    "name": "泰纳龙角",
+                    "lat": 36.39,
+                    "lng": 22.48
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.96,
             "targetLng": 21.66,
@@ -2334,6 +2736,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "派洛斯湾口斯法克特里亚岛",
+            "routeVia": [
+                {
+                    "name": "马利亚角",
+                    "lat": 36.44,
+                    "lng": 23.2
+                },
+                {
+                    "name": "泰纳龙角",
+                    "lat": 36.39,
+                    "lng": 22.48
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.93,
             "targetLng": 21.665,
@@ -2414,6 +2828,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "斯特里蒙河东岸安菲波利斯",
             "routeVia": [
                 {
+                    "name": "斯基罗斯",
+                    "lat": 38.9,
+                    "lng": 24.56
+                },
+                {
                     "name": "托罗尼",
                     "lat": 39.98,
                     "lng": 23.89
@@ -2465,6 +2884,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lagoniya",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "哈尔基斯",
+                    "lat": 38.46,
+                    "lng": 23.6
+                },
+                {
+                    "name": "门德",
+                    "lat": 39.98,
+                    "lng": 23.38
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
@@ -2510,6 +2941,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "epidaurus",
                 "after": "epidaurus"
             },
+            "routeVia": [
+                {
+                    "name": "埃伊纳",
+                    "lat": 37.75,
+                    "lng": 23.43
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.633,
             "targetLng": 23.155,
@@ -2550,6 +2988,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阿卡迪亚曼丁尼亚平原",
+            "routeVia": [
+                {
+                    "name": "奥瑞斯提翁",
+                    "lat": 37.39,
+                    "lng": 22.27
+                },
+                {
+                    "name": "泰格亚",
+                    "lat": 37.46,
+                    "lng": 22.42
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 37.618,
             "targetLng": 22.393,
@@ -2596,6 +3046,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "melos",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "苏尼翁角",
+                    "lat": 37.65,
+                    "lng": 24.02
+                },
+                {
+                    "name": "基斯诺斯",
+                    "lat": 37.39,
+                    "lng": 24.42
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.745,
             "targetLng": 24.426,
@@ -2777,6 +3239,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "赫勒斯滂海峡阿比多斯水域",
+            "routeVia": [
+                {
+                    "name": "萨摩斯",
+                    "lat": 37.69,
+                    "lng": 26.94
+                },
+                {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.14
+                },
+                {
+                    "name": "莱斯博斯",
+                    "lat": 39.11,
+                    "lng": 26.55
+                }
+            ],
             "chronicleFrom": "city_miletus",
             "targetLat": 40.332,
             "targetLng": 26.6,
@@ -2816,6 +3295,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "普罗滂提斯海库梓库斯湾",
+            "routeVia": [
+                {
+                    "name": "帕里翁",
+                    "lat": 40.42,
+                    "lng": 27.07
+                },
+                {
+                    "name": "普罗孔内苏斯",
+                    "lat": 40.62,
+                    "lng": 27.61
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.132,
             "targetLng": 28.05,
@@ -2861,6 +3352,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lagoniya",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "普罗孔尼苏斯",
+                    "lat": 40.62,
+                    "lng": 27.62
+                },
+                {
+                    "name": "塞利姆布里亚",
+                    "lat": 41.07,
+                    "lng": 28.25
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 41.01,
             "targetLng": 28.97,
@@ -2900,6 +3403,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "莱斯博斯东南阿吉努萨伊海域",
+            "routeVia": [
+                {
+                    "name": "马利亚海岬",
+                    "lat": 39.01,
+                    "lng": 26.72
+                }
+            ],
             "chronicleFrom": "city_mytilene",
             "targetLat": 39.12,
             "targetLng": 27.18,
@@ -2942,9 +3452,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "赫勒斯滂海峡羊河口滩头",
             "routeVia": [
                 {
-                    "name": "兰普萨库斯",
-                    "lat": 40.35,
-                    "lng": 26.69
+                    "name": "以弗所",
+                    "lat": 37.94,
+                    "lng": 27.34
+                },
+                {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.14
+                },
+                {
+                    "name": "阿比多斯",
+                    "lat": 40.2,
+                    "lng": 26.41
                 }
             ],
             "chronicleFrom": "city_rhodes",
@@ -2993,6 +3513,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xila",
                 "after": "lagoniya"
             },
+            "routeVia": [
+                {
+                    "name": "莱斯博斯",
+                    "lat": 39.11,
+                    "lng": 26.55
+                },
+                {
+                    "name": "埃伊纳",
+                    "lat": 37.75,
+                    "lng": 23.43
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 37.98,
             "targetLng": 23.72,
@@ -3032,6 +3564,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "比雷埃夫斯港穆尼基亚山",
+            "routeVia": [
+                {
+                    "name": "菲莱堡",
+                    "lat": 38.14,
+                    "lng": 23.64
+                }
+            ],
             "chronicleFrom": "city_thebes",
             "targetLat": 37.98,
             "targetLng": 23.72,
@@ -3071,6 +3610,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伯罗奔尼撒西岸伊利斯河谷",
+            "routeVia": [
+                {
+                    "name": "梅格洛玻利斯谷",
+                    "lat": 37.4,
+                    "lng": 22.13
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 37.639,
             "targetLng": 21.631,
@@ -3131,6 +3677,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "伊苏斯",
                     "lat": 36.84,
                     "lng": 36.2
+                },
+                {
+                    "name": "塔普萨库斯",
+                    "lat": 35.85,
+                    "lng": 38.95
                 }
             ],
             "chronicleFrom": "city_sifaerde",
@@ -3173,6 +3724,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "亚美尼亚高原至特拉佩祖斯山隘",
+            "routeVia": [
+                {
+                    "name": "大扎卜河",
+                    "lat": 35.99,
+                    "lng": 43.35
+                },
+                {
+                    "name": "肯特里特斯河",
+                    "lat": 37.85,
+                    "lng": 41.8
+                },
+                {
+                    "name": "金姆尼亚斯",
+                    "lat": 40.25,
+                    "lng": 40.25
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 41,
             "targetLng": 39.73,
@@ -3263,6 +3831,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boootiya",
                 "after": "boootiya"
             },
+            "routeVia": [
+                {
+                    "name": "奥尔霍迈诺斯",
+                    "lat": 38.49,
+                    "lng": 22.98
+                }
+            ],
             "chronicleFrom": "city_deerfei",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -3302,6 +3877,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡里亚西南端克尼多斯外海",
+            "routeVia": [
+                {
+                    "name": "洛里马",
+                    "lat": 36.56,
+                    "lng": 28.02
+                }
+            ],
             "chronicleFrom": "city_rhodes",
             "targetLat": 37.03,
             "targetLng": 27.43,
@@ -3341,6 +3923,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "拉科尼亚南海外基西拉岛",
+            "routeVia": [
+                {
+                    "name": "科斯",
+                    "lat": 36.89,
+                    "lng": 27.29
+                },
+                {
+                    "name": "米洛斯",
+                    "lat": 36.74,
+                    "lng": 24.43
+                },
+                {
+                    "name": "费拉",
+                    "lat": 37.03,
+                    "lng": 22.11
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.15,
             "targetLng": 22.99,
@@ -3381,6 +3980,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科林斯西港勒卡乌姆平原",
+            "routeVia": [
+                {
+                    "name": "墨伽拉",
+                    "lat": 38,
+                    "lng": 23.34
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.933,
             "targetLng": 22.882,
@@ -3465,6 +4071,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "mantinea",
                 "after": "lagoniya"
             },
+            "routeVia": [
+                {
+                    "name": "泰格亚",
+                    "lat": 37.46,
+                    "lng": 22.42
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 37.618,
             "targetLng": 22.393,
@@ -3511,6 +4124,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boootiya",
                 "after": "lagoniya"
             },
+            "routeVia": [
+                {
+                    "name": "特吉亚",
+                    "lat": 37.46,
+                    "lng": 22.42
+                },
+                {
+                    "name": "科林斯",
+                    "lat": 37.91,
+                    "lng": 22.88
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -3550,6 +4175,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡尔基季基奥林索斯城外",
+            "routeVia": [
+                {
+                    "name": "底比斯",
+                    "lat": 38.32,
+                    "lng": 23.31
+                },
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                },
+                {
+                    "name": "佩拉",
+                    "lat": 40.76,
+                    "lng": 22.52
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 40.29,
             "targetLng": 23.35,
@@ -3595,6 +4237,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalkidike",
                 "after": "lagoniya"
             },
+            "routeVia": [
+                {
+                    "name": "温泉关",
+                    "lat": 38.8,
+                    "lng": 22.54
+                },
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                },
+                {
+                    "name": "奥林索斯",
+                    "lat": 40.29,
+                    "lng": 23.35
+                }
+            ],
             "chronicleFrom": "city_sparta",
             "targetLat": 39.977,
             "targetLng": 23.904,
@@ -3640,7 +4299,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lagoniya",
                 "after": "boootiya"
             },
-            "chronicleFrom": "city_thebes",
+            "routeVia": [
+                {
+                    "name": "帕尔奈斯山",
+                    "lat": 38.17,
+                    "lng": 23.72
+                }
+            ],
+            "chronicleFrom": "city_yadian",
             "targetLat": 38.32,
             "targetLng": 23.31,
             "myTroops": 15000,
@@ -3679,6 +4345,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "爱琴海纳克索斯海峡",
+            "routeVia": [
+                {
+                    "name": "苏尼翁角",
+                    "lat": 37.65,
+                    "lng": 24.02
+                },
+                {
+                    "name": "凯阿岛",
+                    "lat": 37.62,
+                    "lng": 24.33
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 36.965,
             "targetLng": 25.53,
@@ -3758,6 +4436,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "伊奥尼亚海阿卡纳尼亚阿吕齐亚外海",
+            "routeVia": [
+                {
+                    "name": "马利亚角",
+                    "lat": 36.44,
+                    "lng": 23.2
+                },
+                {
+                    "name": "凯法利尼亚",
+                    "lat": 38.18,
+                    "lng": 20.49
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 38.705,
             "targetLng": 20.935,
@@ -3797,6 +4487,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "科孚岛滩头及北侧外海",
+            "routeVia": [
+                {
+                    "name": "马利亚角",
+                    "lat": 36.44,
+                    "lng": 23.2
+                },
+                {
+                    "name": "皮洛斯",
+                    "lat": 36.91,
+                    "lng": 21.7
+                },
+                {
+                    "name": "凯法利尼亚",
+                    "lat": 38.18,
+                    "lng": 20.49
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 39.62,
             "targetLng": 19.92,
@@ -3922,6 +4629,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "安德罗斯",
+                    "lat": 37.83,
+                    "lng": 24.93
+                },
+                {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.14
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.53,
             "targetLng": 27.278,
@@ -3961,6 +4680,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利库诺斯克法莱丘陵",
+            "routeVia": [
+                {
+                    "name": "温泉关",
+                    "lat": 38.8,
+                    "lng": 22.54
+                },
+                {
+                    "name": "法尔萨卢斯",
+                    "lat": 39.29,
+                    "lng": 22.38
+                }
+            ],
             "chronicleFrom": "city_thebes",
             "targetLat": 39.417,
             "targetLng": 22.567,
@@ -4006,6 +4737,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalkidike",
                 "after": "xila"
             },
+            "routeVia": [
+                {
+                    "name": "斯基亚索斯",
+                    "lat": 39.16,
+                    "lng": 23.49
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 40.29,
             "targetLng": 23.35,
@@ -4045,6 +4783,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阿卡迪亚曼丁尼亚平原",
+            "routeVia": [
+                {
+                    "name": "科林斯地峡",
+                    "lat": 37.93,
+                    "lng": 22.99
+                },
+                {
+                    "name": "涅墨亚",
+                    "lat": 37.81,
+                    "lng": 22.71
+                },
+                {
+                    "name": "泰格亚",
+                    "lat": 37.46,
+                    "lng": 22.42
+                }
+            ],
             "chronicleFrom": "city_thebes",
             "targetLat": 37.618,
             "targetLng": 22.393,
@@ -4085,6 +4840,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "上马其顿利恩库斯盆地",
+            "routeVia": [
+                {
+                    "name": "奥赫里德",
+                    "lat": 41.12,
+                    "lng": 20.8
+                }
+            ],
             "chronicleFrom": "city_peiliang",
             "targetLat": 40.785,
             "targetLng": 21.43,
@@ -4163,6 +4925,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "上马其顿埃里贡河谷平原",
+            "routeVia": [
+                {
+                    "name": "埃泽萨",
+                    "lat": 40.8,
+                    "lng": 22.05
+                },
+                {
+                    "name": "利克尼斯托斯",
+                    "lat": 40.9,
+                    "lng": 21.55
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 41.015,
             "targetLng": 21.34,
@@ -4287,6 +5061,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利帕加塞湾畔番红花原野",
+            "routeVia": [
+                {
+                    "name": "迪翁",
+                    "lat": 40.17,
+                    "lng": 22.49
+                },
+                {
+                    "name": "坦佩谷",
+                    "lat": 39.88,
+                    "lng": 22.57
+                },
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 39.18,
             "targetLng": 22.76,
@@ -4333,6 +5124,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalkidike",
                 "after": "maqidun"
             },
+            "routeVia": [
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                },
+                {
+                    "name": "塞尔迈",
+                    "lat": 40.64,
+                    "lng": 22.94
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 40.82,
             "targetLng": 23.85,
@@ -4379,6 +5182,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chalkidike",
                 "after": "maqidun"
             },
+            "routeVia": [
+                {
+                    "name": "迈格多尼亚",
+                    "lat": 40.63,
+                    "lng": 23.47
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 40.29,
             "targetLng": 23.35,
@@ -4419,6 +5229,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊利里亚南部阿尔迪亚伊山地",
+            "routeVia": [
+                {
+                    "name": "佩拉",
+                    "lat": 40.76,
+                    "lng": 22.52
+                },
+                {
+                    "name": "利克尼都斯",
+                    "lat": 41.12,
+                    "lng": 20.8
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 41.28,
             "targetLng": 20.18,
@@ -4458,6 +5280,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色雷斯赫布鲁斯河谷至菲利波波利斯",
+            "routeVia": [
+                {
+                    "name": "佩拉",
+                    "lat": 40.76,
+                    "lng": 22.52
+                },
+                {
+                    "name": "安菲波利斯",
+                    "lat": 40.82,
+                    "lng": 23.85
+                },
+                {
+                    "name": "腓立比",
+                    "lat": 41.01,
+                    "lng": 24.28
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 42.14,
             "targetLng": 24.74,
@@ -4497,6 +5336,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "多瑙河下游南岸多布罗加草原",
+            "routeVia": [
+                {
+                    "name": "卡比莱",
+                    "lat": 42.55,
+                    "lng": 26.48
+                },
+                {
+                    "name": "奥德苏斯",
+                    "lat": 43.21,
+                    "lng": 27.91
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 44.18,
             "targetLng": 28.63,
@@ -4538,6 +5389,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "维奥蒂亚喀罗尼亚平原",
+            "routeVia": [
+                {
+                    "name": "海姆斯山口",
+                    "lat": 42.77,
+                    "lng": 25.32
+                },
+                {
+                    "name": "佩拉",
+                    "lat": 40.76,
+                    "lng": 22.52
+                },
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                },
+                {
+                    "name": "埃拉特亚",
+                    "lat": 38.63,
+                    "lng": 22.77
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 38.482,
             "targetLng": 22.501,
@@ -4578,6 +5451,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊利里亚东北部奥塔里亚泰山谷",
+            "routeVia": [
+                {
+                    "name": "科林斯",
+                    "lat": 37.91,
+                    "lng": 22.88
+                },
+                {
+                    "name": "佩拉",
+                    "lat": 40.76,
+                    "lng": 22.52
+                },
+                {
+                    "name": "斯库皮",
+                    "lat": 42,
+                    "lng": 21.43
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 42.15,
             "targetLng": 20.75,
@@ -4617,6 +5507,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "吕底亚西境马格尼西亚城郊",
+            "routeVia": [
+                {
+                    "name": "阿比多斯",
+                    "lat": 40.2,
+                    "lng": 26.41
+                },
+                {
+                    "name": "佩尔加蒙",
+                    "lat": 39.12,
+                    "lng": 27.18
+                }
+            ],
             "chronicleFrom": "city_teluoyi",
             "targetLat": 38.613,
             "targetLng": 27.426,
@@ -4663,6 +5565,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boootiya",
                 "after": "maqidun"
             },
+            "routeVia": [
+                {
+                    "name": "埃奥尔达亚",
+                    "lat": 40.51,
+                    "lng": 21.68
+                },
+                {
+                    "name": "佩林纳",
+                    "lat": 39.57,
+                    "lng": 21.93
+                },
+                {
+                    "name": "温泉关",
+                    "lat": 38.8,
+                    "lng": 22.54
+                },
+                {
+                    "name": "翁凯斯托斯",
+                    "lat": 38.36,
+                    "lng": 23.14
+                }
+            ],
             "chronicleFrom": "city_peiliang",
             "targetLat": 38.32,
             "targetLng": 23.31,
@@ -4827,6 +5751,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "奇里乞亚海湾伊苏斯皮纳罗斯河原",
             "routeVia": [
                 {
+                    "name": "克桑托斯",
+                    "lat": 36.36,
+                    "lng": 29.32
+                },
+                {
+                    "name": "佩尔格",
+                    "lat": 36.96,
+                    "lng": 30.85
+                },
+                {
                     "name": "戈尔迪乌姆",
                     "lat": 39.65,
                     "lng": 31.99
@@ -4951,6 +5885,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aqimeinide",
                 "after": "maqidun"
             },
+            "routeVia": [
+                {
+                    "name": "阿卡",
+                    "lat": 32.92,
+                    "lng": 35.07
+                },
+                {
+                    "name": "约帕",
+                    "lat": 32.05,
+                    "lng": 34.75
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 31.502,
             "targetLng": 34.467,
@@ -4994,9 +5940,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "亚述底格里斯河东岸高加米拉平原",
             "routeVia": [
                 {
+                    "name": "孟菲斯",
+                    "lat": 29.85,
+                    "lng": 31.25
+                },
+                {
                     "name": "推罗",
                     "lat": 33.27,
                     "lng": 35.2
+                },
+                {
+                    "name": "塔普萨库斯",
+                    "lat": 35.85,
+                    "lng": 38.95
+                },
+                {
+                    "name": "尼西比斯",
+                    "lat": 37.07,
+                    "lng": 41.22
                 }
             ],
             "chronicleFrom": "city_salonica",
@@ -5042,17 +6003,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "扎格罗斯山脉波斯门险隘",
             "routeVia": [
                 {
-                    "name": "巴比伦",
-                    "lat": 32.54,
-                    "lng": 44.42
-                },
-                {
                     "name": "苏萨",
                     "lat": 32.19,
                     "lng": 48.25
+                },
+                {
+                    "name": "乌克西亚山隘",
+                    "lat": 31.55,
+                    "lng": 49.85
                 }
             ],
-            "chronicleFrom": "city_salonica",
+            "chronicleFrom": "city_babilun",
             "targetLat": 30.608,
             "targetLng": 51.59,
             "myTroops": 15000,
@@ -5093,6 +6054,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "中亚药杀水渡口与北岸草原",
+            "routeVia": [
+                {
+                    "name": "埃克巴坦那",
+                    "lat": 34.8,
+                    "lng": 48.51
+                },
+                {
+                    "name": "里海门",
+                    "lat": 35.22,
+                    "lng": 52.34
+                },
+                {
+                    "name": "巴克特拉",
+                    "lat": 36.71,
+                    "lng": 67.08
+                },
+                {
+                    "name": "马拉坎达",
+                    "lat": 39.65,
+                    "lng": 66.97
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 40.248,
             "targetLng": 69.659,
@@ -5133,7 +6116,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "索格狄亚那西境加拜荒原",
-            "chronicleFrom": "city_bukhara",
+            "routeVia": [
+                {
+                    "name": "泽拉夫尚河谷",
+                    "lat": 39.9,
+                    "lng": 65.8
+                }
+            ],
+            "chronicleFrom": "city_samaerhan",
             "targetLat": 39.767,
             "targetLng": 64.433,
             "myTroops": 15000,
@@ -5222,12 +6212,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "旁遮普希达斯皮斯河东岸泥原",
             "routeVia": [
                 {
+                    "name": "高加索亚历山大城",
+                    "lat": 34.99,
+                    "lng": 69.31
+                },
+                {
+                    "name": "普什卡拉瓦蒂",
+                    "lat": 34.17,
+                    "lng": 71.74
+                },
+                {
                     "name": "塔克西拉",
                     "lat": 33.75,
                     "lng": 72.82
                 }
             ],
-            "chronicleFrom": "city_salonica",
+            "chronicleFrom": "city_lanshi",
             "targetLat": 32.647,
             "targetLng": 73.509,
             "myTroops": 15000,
@@ -5273,6 +6273,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "malli",
                 "after": "maqidun"
             },
+            "routeVia": [
+                {
+                    "name": "桑伽拉",
+                    "lat": 31.62,
+                    "lng": 74.87
+                },
+                {
+                    "name": "阿凯西涅斯河口",
+                    "lat": 30.58,
+                    "lng": 71.82
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 30.198,
             "targetLng": 71.468,
@@ -5314,7 +6326,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "扎格罗斯山脉科赛亚险谷",
-            "chronicleFrom": "city_salonica",
+            "routeVia": [
+                {
+                    "name": "苏萨",
+                    "lat": 32.19,
+                    "lng": 48.25
+                }
+            ],
+            "chronicleFrom": "city_bageda",
             "targetLat": 33.487,
             "targetLng": 48.356,
             "myTroops": 15000,
@@ -5401,6 +6420,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色萨利中南部克兰农平原",
+            "routeVia": [
+                {
+                    "name": "法尔萨卢斯",
+                    "lat": 39.29,
+                    "lng": 22.38
+                }
+            ],
             "chronicleFrom": "city_salonica",
             "targetLat": 39.57,
             "targetLng": 21.93,
@@ -5441,7 +6467,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "小亚细亚西北赫勒斯滂近海原野",
-            "chronicleFrom": "city_teluoyi",
+            "routeVia": [
+                {
+                    "name": "塞斯托斯",
+                    "lat": 40.23,
+                    "lng": 26.4
+                }
+            ],
+            "chronicleFrom": "city_salonica",
             "targetLat": 39.958,
             "targetLng": 26.239,
             "myTroops": 15000,
@@ -5488,6 +6521,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tuolemi",
                 "after": "tuolemi"
             },
+            "routeVia": [
+                {
+                    "name": "大马士革",
+                    "lat": 33.51,
+                    "lng": 36.29
+                },
+                {
+                    "name": "加沙",
+                    "lat": 31.5,
+                    "lng": 34.47
+                }
+            ],
             "chronicleFrom": "city_adana",
             "targetLat": 31.04,
             "targetLng": 32.55,
@@ -5528,6 +6573,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡帕多细亚奥尔基尼亚",
+            "routeVia": [
+                {
+                    "name": "伊科尼乌姆",
+                    "lat": 37.87,
+                    "lng": 32.48
+                }
+            ],
             "chronicleFrom": "city_kailaina",
             "targetLat": 38.45,
             "targetLng": 35.15,
@@ -5569,6 +6621,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "伊朗高原帕莱塔西奈",
+            "routeVia": [
+                {
+                    "name": "尼西比斯",
+                    "lat": 37.07,
+                    "lng": 41.22
+                },
+                {
+                    "name": "苏萨",
+                    "lat": 32.19,
+                    "lng": 48.25
+                },
+                {
+                    "name": "埃克巴坦那",
+                    "lat": 34.8,
+                    "lng": 48.51
+                }
+            ],
             "chronicleFrom": "city_kailaina",
             "targetLat": 32.65,
             "targetLng": 51.66,
@@ -5650,6 +6719,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "巴勒斯坦南门户加沙城郊",
+            "routeVia": [
+                {
+                    "name": "佩卢西姆",
+                    "lat": 31.04,
+                    "lng": 32.55
+                },
+                {
+                    "name": "拉菲亚",
+                    "lat": 31.29,
+                    "lng": 34.24
+                }
+            ],
             "chronicleFrom": "city_yalishanda",
             "targetLat": 31.502,
             "targetLng": 34.467,
@@ -5730,6 +6811,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "塞浦路斯东岸萨拉米斯外海",
+            "routeVia": [
+                {
+                    "name": "帕福斯",
+                    "lat": 34.76,
+                    "lng": 32.41
+                },
+                {
+                    "name": "基提翁",
+                    "lat": 34.92,
+                    "lng": 33.62
+                }
+            ],
             "chronicleFrom": "city_yalishanda",
             "targetLat": 35.12,
             "targetLng": 33.94,
@@ -5776,6 +6869,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "rhodes",
                 "after": "rhodes"
             },
+            "routeVia": [
+                {
+                    "name": "洛里马",
+                    "lat": 36.56,
+                    "lng": 28.02
+                }
+            ],
             "chronicleFrom": "city_halikanasu",
             "targetLat": 36.44,
             "targetLng": 28.22,
@@ -5817,6 +6917,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "印度河上游犍陀罗东渡口",
+            "routeVia": [
+                {
+                    "name": "高加索亚历山大城",
+                    "lat": 34.99,
+                    "lng": 69.31
+                },
+                {
+                    "name": "普什卡拉瓦蒂",
+                    "lat": 34.17,
+                    "lng": 71.74
+                }
+            ],
             "chronicleFrom": "city_lanshi",
             "targetLat": 33.767,
             "targetLng": 72.361,
@@ -5864,6 +6976,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhongshan",
                 "after": "zhao"
             },
+            "routeVia": [
+                {
+                    "name": "房子",
+                    "lat": 37.65,
+                    "lng": 114.43
+                },
+                {
+                    "name": "曲阳",
+                    "lat": 38.52,
+                    "lng": 114.68
+                }
+            ],
             "chronicleFrom": "city_handan",
             "targetLat": 38.861,
             "targetLng": 114.769,
@@ -5904,6 +7028,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "阴山南麓与河套东缘云中原野",
+            "routeVia": [
+                {
+                    "name": "代郡",
+                    "lat": 39.84,
+                    "lng": 114.41
+                },
+                {
+                    "name": "句注塞",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
+                    "name": "善无",
+                    "lat": 40,
+                    "lng": 112.42
+                }
+            ],
             "chronicleFrom": "city_handan",
             "targetLat": 40.273,
             "targetLng": 111.14,
@@ -5950,6 +7091,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhongshan",
                 "after": "zhao"
             },
+            "routeVia": [
+                {
+                    "name": "善无",
+                    "lat": 40,
+                    "lng": 112.42
+                },
+                {
+                    "name": "井陉",
+                    "lat": 38.04,
+                    "lng": 114.14
+                }
+            ],
             "chronicleFrom": "city_handan",
             "targetLat": 38.13,
             "targetLng": 114.59,
@@ -5995,6 +7148,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "宜阳",
+                    "lat": 34.51,
+                    "lng": 112.18
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
@@ -6080,6 +7245,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "wei",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "平阴",
+                    "lat": 34.83,
+                    "lng": 112.38
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 35.15,
             "targetLng": 112.3,
@@ -6119,6 +7291,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东济水西岸平原",
+            "routeVia": [
+                {
+                    "name": "河间",
+                    "lat": 38.44,
+                    "lng": 116.09
+                },
+                {
+                    "name": "清河",
+                    "lat": 37.05,
+                    "lng": 115.68
+                }
+            ],
             "chronicleFrom": "city_beijing",
             "targetLat": 36.432,
             "targetLng": 115.955,
@@ -6167,7 +7351,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "鄢",
+                    "name": "武关",
+                    "lat": 33.74,
+                    "lng": 110.32
+                },
+                {
+                    "name": "邓城",
+                    "lat": 32.06,
+                    "lng": 112.14
+                },
+                {
+                    "name": "鄢城",
                     "lat": 31.72,
                     "lng": 112.26
                 }
@@ -6211,6 +7405,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "新郑北郊韩国重镇华阳",
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.4,
             "targetLng": 113.74,
@@ -6250,6 +7456,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "太行山腹地险塞阏与",
+            "routeVia": [
+                {
+                    "name": "武安",
+                    "lat": 36.69,
+                    "lng": 114.05
+                }
+            ],
             "chronicleFrom": "city_handan",
             "targetLat": 36.487,
             "targetLng": 113.381,
@@ -6290,6 +7503,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行山南麓南阳与羊肠坂陉道",
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "野王",
+                    "lat": 35.09,
+                    "lng": 112.95
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 35.27,
             "targetLng": 112.93,
@@ -6329,6 +7554,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "上党长平丹水河谷",
+            "routeVia": [
+                {
+                    "name": "高平关",
+                    "lat": 35.8,
+                    "lng": 112.92
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 36.149,
             "targetLng": 113.008,
@@ -6414,6 +7646,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "赵都邯郸城外",
+            "routeVia": [
+                {
+                    "name": "酸枣",
+                    "lat": 35.1,
+                    "lng": 114.22
+                },
+                {
+                    "name": "邺城",
+                    "lat": 36.32,
+                    "lng": 114.42
+                }
+            ],
             "chronicleFrom": "city_bianliang",
             "targetLat": 36.61,
             "targetLng": 114.49,
@@ -6460,6 +7704,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhou",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "阳城",
+                    "lat": 34.45,
+                    "lng": 113.03
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.62,
             "targetLng": 112.45,
@@ -6505,6 +7761,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhou",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "宜阳",
+                    "lat": 34.51,
+                    "lng": 112.18
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.81,
             "targetLng": 113.17,
@@ -6550,6 +7818,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "野王",
+                    "lat": 35.09,
+                    "lng": 112.95
+                },
+                {
+                    "name": "长子",
+                    "lat": 36.12,
+                    "lng": 112.88
+                },
+                {
+                    "name": "榆次",
+                    "lat": 37.68,
+                    "lng": 112.73
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 37.87,
             "targetLng": 112.55,
@@ -6589,6 +7874,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "黄河以南陕华河外至函谷关",
+            "routeVia": [
+                {
+                    "name": "荥阳",
+                    "lat": 34.79,
+                    "lng": 113.38
+                },
+                {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                }
+            ],
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.615,
             "targetLng": 110.915,
@@ -6669,6 +7966,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "咸阳东翼临潼蕞城",
+            "routeVia": [
+                {
+                    "name": "陈城",
+                    "lat": 33.63,
+                    "lng": 114.7
+                },
+                {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                },
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                }
+            ],
             "chronicleFrom": "city_shouxian",
             "targetLat": 34.27,
             "targetLng": 108.93,
@@ -6714,6 +8028,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "zhao",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "河内",
+                    "lat": 35.09,
+                    "lng": 112.95
+                },
+                {
+                    "name": "山阳",
+                    "lat": 35.24,
+                    "lng": 113.24
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 36.1,
             "targetLng": 114.39,
@@ -6792,6 +8123,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行东麓宜安与肥累",
+            "routeVia": [
+                {
+                    "name": "雁门关",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
+                    "name": "孟县",
+                    "lat": 38.09,
+                    "lng": 113.41
+                }
+            ],
             "chronicleFrom": "city_wuzhousai",
             "targetLat": 38.13,
             "targetLng": 114.59,
@@ -6877,7 +8220,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han",
                 "after": "qin"
             },
-            "chronicleFrom": "city_nanyang",
+            "routeVia": [
+                {
+                    "name": "颍阳",
+                    "lat": 34.12,
+                    "lng": 113.06
+                }
+            ],
+            "chronicleFrom": "city_luoyang",
             "targetLat": 34.4,
             "targetLng": 113.74,
             "myTroops": 15000,
@@ -6924,6 +8274,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "qin"
             },
             "routeVia": [
+                {
+                    "name": "晋阳",
+                    "lat": 37.87,
+                    "lng": 112.55
+                },
                 {
                     "name": "井陉",
                     "lat": 38.04,
@@ -6975,6 +8330,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yan",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "中山",
+                    "lat": 38.47,
+                    "lng": 115.06
+                },
+                {
+                    "name": "高阳",
+                    "lat": 38.69,
+                    "lng": 115.78
+                },
+                {
+                    "name": "易水",
+                    "lat": 39.28,
+                    "lng": 115.68
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 39.9,
             "targetLng": 116.41,
@@ -7020,6 +8392,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "wei",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "荥阳",
+                    "lat": 34.79,
+                    "lng": 113.38
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.8,
             "targetLng": 114.31,
@@ -7059,6 +8443,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "淮北重镇城父",
+            "routeVia": [
+                {
+                    "name": "武关",
+                    "lat": 33.74,
+                    "lng": 110.32
+                },
+                {
+                    "name": "平舆",
+                    "lat": 32.98,
+                    "lng": 114.63
+                },
+                {
+                    "name": "鄢郢",
+                    "lat": 31.72,
+                    "lng": 112.26
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 33.88,
             "targetLng": 115.77,
@@ -7100,6 +8501,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "淮北平舆至蕲南原野",
+            "routeVia": [
+                {
+                    "name": "武关",
+                    "lat": 33.74,
+                    "lng": 110.32
+                },
+                {
+                    "name": "陈城",
+                    "lat": 33.63,
+                    "lng": 114.7
+                },
+                {
+                    "name": "平舆",
+                    "lat": 32.98,
+                    "lng": 114.63
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 33.65,
             "targetLng": 116.97,
@@ -7146,6 +8564,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "chuguo",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "涡口",
+                    "lat": 33.15,
+                    "lng": 116.8
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 32.59,
             "targetLng": 116.8,
@@ -7192,6 +8617,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yan",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "无终",
+                    "lat": 39.95,
+                    "lng": 117.4
+                },
+                {
+                    "name": "临渝关",
+                    "lat": 40,
+                    "lng": 119.75
+                },
+                {
+                    "name": "徒河",
+                    "lat": 41.12,
+                    "lng": 121.14
+                }
+            ],
             "chronicleFrom": "city_beijing",
             "targetLat": 41.27,
             "targetLng": 123.17,
@@ -7237,6 +8679,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "qi",
                 "after": "qin"
             },
+            "routeVia": [
+                {
+                    "name": "无终",
+                    "lat": 39.95,
+                    "lng": 117.4
+                },
+                {
+                    "name": "平原津",
+                    "lat": 37.16,
+                    "lng": 116.43
+                },
+                {
+                    "name": "历下",
+                    "lat": 36.67,
+                    "lng": 117.02
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 36.88,
             "targetLng": 118.43,
@@ -7277,7 +8736,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "岭南越城岭与桂北山林",
-            "chronicleFrom": "city_changan",
+            "routeVia": [
+                {
+                    "name": "巴陵",
+                    "lat": 29.37,
+                    "lng": 113.09
+                },
+                {
+                    "name": "临湘",
+                    "lat": 28.2,
+                    "lng": 112.97
+                },
+                {
+                    "name": "泉陵",
+                    "lat": 26.23,
+                    "lng": 111.59
+                }
+            ],
+            "chronicleFrom": "city_ying",
             "targetLat": 25.27,
             "targetLng": 110.29,
             "myTroops": 15000,
@@ -7318,6 +8794,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河套河南地至阴山高阙",
+            "routeVia": [
+                {
+                    "name": "榆中",
+                    "lat": 35.85,
+                    "lng": 104.11
+                },
+                {
+                    "name": "富平",
+                    "lat": 38.05,
+                    "lng": 106.25
+                },
+                {
+                    "name": "朔方",
+                    "lat": 40.3,
+                    "lng": 107
+                }
+            ],
             "chronicleFrom": "city_fushi",
             "targetLat": 41.195,
             "targetLng": 107.166,
@@ -7365,7 +8858,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xiou",
                 "after": "qin"
             },
-            "chronicleFrom": "city_longchuan",
+            "routeVia": [
+                {
+                    "name": "苍梧",
+                    "lat": 23.48,
+                    "lng": 111.3
+                },
+                {
+                    "name": "四会",
+                    "lat": 23.35,
+                    "lng": 112.68
+                }
+            ],
+            "chronicleFrom": "city_lingqu",
             "targetLat": 23.12,
             "targetLng": 113.26,
             "myTroops": 15000,
@@ -7410,7 +8915,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "qin",
                 "after": "zhangchu"
             },
-            "chronicleFrom": "city_huaiyang",
+            "routeVia": [
+                {
+                    "name": "谯县",
+                    "lat": 33.88,
+                    "lng": 115.77
+                },
+                {
+                    "name": "苦县",
+                    "lat": 33.88,
+                    "lng": 115.42
+                }
+            ],
+            "chronicleFrom": "city_xucheng",
             "targetLat": 33.63,
             "targetLng": 114.7,
             "myTroops": 15000,
@@ -7488,6 +9005,28 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东定陶城下",
+            "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
+                },
+                {
+                    "name": "陈县",
+                    "lat": 33.63,
+                    "lng": 114.7
+                },
+                {
+                    "name": "濮阳",
+                    "lat": 35.76,
+                    "lng": 115.03
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 35.201,
             "targetLng": 115.472,
@@ -7528,6 +9067,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河北巨鹿城外与漳水",
+            "routeVia": [
+                {
+                    "name": "安阳",
+                    "lat": 34.92,
+                    "lng": 116.03
+                },
+                {
+                    "name": "汤阴",
+                    "lat": 35.92,
+                    "lng": 114.35
+                },
+                {
+                    "name": "漳水津",
+                    "lat": 36.75,
+                    "lng": 114.85
+                }
+            ],
             "chronicleFrom": "city_pengcheng",
             "targetLat": 37.22,
             "targetLng": 115.04,
@@ -7568,6 +9124,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "秦岭北口陈仓与关中好畤",
+            "routeVia": [
+                {
+                    "name": "沔阳",
+                    "lat": 33.15,
+                    "lng": 106.67
+                },
+                {
+                    "name": "河池",
+                    "lat": 33.85,
+                    "lng": 106.25
+                }
+            ],
             "chronicleFrom": "city_hanzhong",
             "targetLat": 34.28,
             "targetLng": 106.95,
@@ -7610,19 +9178,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "西楚都城彭城与睢水",
             "routeVia": [
                 {
-                    "name": "鲁",
+                    "name": "鲁县",
                     "lat": 35.6,
                     "lng": 116.99
                 },
                 {
                     "name": "胡陵",
-                    "lat": 34.9,
-                    "lng": 116.7
-                },
-                {
-                    "name": "萧",
-                    "lat": 34.19,
-                    "lng": 116.95
+                    "lat": 34.78,
+                    "lng": 116.65
                 }
             ],
             "chronicleFrom": "city_ju",
@@ -7665,6 +9228,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "太行井陉口与绵蔓水",
+            "routeVia": [
+                {
+                    "name": "武安",
+                    "lat": 36.69,
+                    "lng": 114.05
+                },
+                {
+                    "name": "沙河",
+                    "lat": 36.99,
+                    "lng": 114.3
+                }
+            ],
             "chronicleFrom": "city_eyu",
             "targetLat": 38.02,
             "targetLng": 114,
@@ -7706,6 +9281,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "山东高密潍水河岸",
+            "routeVia": [
+                {
+                    "name": "修武",
+                    "lat": 35.26,
+                    "lng": 113.43
+                },
+                {
+                    "name": "平原津",
+                    "lat": 37.16,
+                    "lng": 116.43
+                },
+                {
+                    "name": "临淄",
+                    "lat": 36.88,
+                    "lng": 118.43
+                }
+            ],
             "chronicleFrom": "city_linzi",
             "targetLat": 36.42,
             "targetLng": 119.41,
@@ -7745,6 +9337,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河南荥阳西成皋关与汜水",
+            "routeVia": [
+                {
+                    "name": "武陟津",
+                    "lat": 35.02,
+                    "lng": 113.4
+                }
+            ],
             "chronicleFrom": "city_huojia",
             "targetLat": 34.81,
             "targetLng": 113.17,
@@ -7784,6 +9383,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "安徽灵璧垓下至乌江",
+            "routeVia": [
+                {
+                    "name": "泰山南麓",
+                    "lat": 35.8,
+                    "lng": 117.15
+                },
+                {
+                    "name": "彭城",
+                    "lat": 34.27,
+                    "lng": 117.18
+                }
+            ],
             "chronicleFrom": "city_linzi",
             "targetLat": 33.328,
             "targetLng": 117.614,
@@ -7830,6 +9441,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han_d",
                 "after": "xiongnu"
             },
+            "routeVia": [
+                {
+                    "name": "云中",
+                    "lat": 40.27,
+                    "lng": 111.14
+                },
+                {
+                    "name": "善无",
+                    "lat": 40,
+                    "lng": 112.42
+                }
+            ],
             "chronicleFrom": "city_toumancheng",
             "targetLat": 39.05,
             "targetLng": 112.24,
@@ -7869,6 +9492,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "山西大同东北平城白登山",
+            "routeVia": [
+                {
+                    "name": "广武",
+                    "lat": 39.13,
+                    "lng": 112.83
+                },
+                {
+                    "name": "马邑",
+                    "lat": 39.38,
+                    "lng": 112.43
+                }
+            ],
             "chronicleFrom": "city_taiyuan",
             "targetLat": 40.08,
             "targetLng": 113.3,
@@ -7918,9 +9553,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
+                    "name": "马邑",
+                    "lat": 39.38,
+                    "lng": 112.43
+                },
+                {
+                    "name": "晋阳",
+                    "lat": 37.87,
+                    "lng": 112.55
+                },
+                {
+                    "name": "井陉",
+                    "lat": 38.04,
+                    "lng": 114.14
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -7970,14 +9615,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "邯郸",
-                    "lat": 36.61,
-                    "lng": 114.49
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
                 },
                 {
-                    "name": "曲逆",
-                    "lat": 38.84,
-                    "lng": 115.13
+                    "name": "邺城",
+                    "lat": 36.32,
+                    "lng": 114.42
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -8029,14 +9674,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "马邑",
-                    "lat": 39.38,
-                    "lng": 112.43
+                    "name": "蒲反",
+                    "lat": 34.82,
+                    "lng": 110.35
+                },
+                {
+                    "name": "晋阳",
+                    "lat": 37.87,
+                    "lng": 112.55
                 },
                 {
                     "name": "楼烦",
                     "lat": 38.67,
                     "lng": 111.78
+                },
+                {
+                    "name": "马邑",
+                    "lat": 39.38,
+                    "lng": 112.43
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -8085,6 +9740,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "huainan",
                 "after": "han_d"
             },
+            "routeVia": [
+                {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                },
+                {
+                    "name": "睢阳",
+                    "lat": 34.41,
+                    "lng": 115.66
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 33.65,
             "targetLng": 116.97,
@@ -8134,14 +9801,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                },
+                {
+                    "name": "邯郸",
+                    "lat": 36.61,
+                    "lng": 114.49
+                },
+                {
                     "name": "蓟城",
                     "lat": 39.9,
                     "lng": 116.41
-                },
-                {
-                    "name": "上兰",
-                    "lat": 40.38,
-                    "lng": 115.8
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -8187,27 +9859,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "中希腊温泉关隘口",
             "routeVia": [
                 {
-                    "name": "阿波罗尼亚",
-                    "lat": 40.72,
-                    "lng": 19.47
+                    "name": "底比斯",
+                    "lat": 38.32,
+                    "lng": 23.31
                 },
                 {
-                    "name": "拉里萨",
-                    "lat": 39.64,
-                    "lng": 22.42
-                },
-                {
-                    "name": "法尔萨卢斯",
-                    "lat": 39.29,
-                    "lng": 22.38
-                },
-                {
-                    "name": "拉米亚",
-                    "lat": 38.9,
-                    "lng": 22.43
+                    "name": "埃拉特亚",
+                    "lat": 38.63,
+                    "lng": 22.77
                 }
             ],
-            "chronicleFrom": "city_antiejiya",
+            "chronicleFrom": "city_kalisituosi",
             "targetLat": 38.482,
             "targetLng": 22.501,
             "myTroops": 15000,
@@ -8252,6 +9914,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "sailiugu",
                 "after": "pajiama"
             },
+            "routeVia": [
+                {
+                    "name": "哈尔基斯",
+                    "lat": 38.46,
+                    "lng": 23.6
+                },
+                {
+                    "name": "以弗所",
+                    "lat": 37.94,
+                    "lng": 27.34
+                }
+            ],
             "chronicleFrom": "city_antiejiya",
             "targetLat": 38.613,
             "targetLng": 27.426,
@@ -8298,11 +9972,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "pajiama"
             },
             "routeVia": [
-                {
-                    "name": "马格尼西亚",
-                    "lat": 37.85,
-                    "lng": 27.53
-                },
                 {
                     "name": "阿帕米亚",
                     "lat": 38.07,
@@ -8362,7 +10031,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 30.17
                 },
                 {
-                    "name": "赫勒斯滂海峡",
+                    "name": "阿比多斯",
                     "lat": 40.2,
                     "lng": 26.41
                 },
@@ -8370,11 +10039,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "利西马其亚",
                     "lat": 40.55,
                     "lng": 26.75
-                },
-                {
-                    "name": "库普塞拉",
-                    "lat": 40.92,
-                    "lng": 26.38
                 }
             ],
             "chronicleFrom": "city_yifusuo",
@@ -8423,6 +10087,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "luoma_diguo",
                 "after": "luoma_diguo"
             },
+            "routeVia": [
+                {
+                    "name": "伊莱尔达",
+                    "lat": 41.62,
+                    "lng": 0.62
+                },
+                {
+                    "name": "孔特雷比亚",
+                    "lat": 41.15,
+                    "lng": -1.03
+                }
+            ],
             "chronicleFrom": "city_tarraco",
             "targetLat": 39.96,
             "targetLng": -4.83,
@@ -8463,6 +10139,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "近西班牙曼利亚努斯山隘",
+            "routeVia": [
+                {
+                    "name": "孔特雷比亚",
+                    "lat": 41.15,
+                    "lng": -1.03
+                }
+            ],
             "chronicleFrom": "city_zaragoza",
             "targetLat": 41.35,
             "targetLng": -1.64,
@@ -8579,7 +10262,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 21.69
                 }
             ],
-            "chronicleFrom": "city_pelina",
+            "chronicleFrom": "city_dyrrachium",
             "targetLat": 39.67,
             "targetLng": 22.43,
             "myTroops": 15000,
@@ -8673,19 +10356,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "布林迪西",
+                    "lat": 40.63,
+                    "lng": 17.94
+                },
+                {
+                    "name": "德尔斐",
+                    "lat": 38.48,
+                    "lng": 22.5
+                },
+                {
                     "name": "赫拉克利乌姆",
                     "lat": 40,
                     "lng": 22.59
                 },
                 {
-                    "name": "皮提翁山道",
+                    "name": "皮提翁",
                     "lat": 40.06,
                     "lng": 22.22
-                },
-                {
-                    "name": "迪翁",
-                    "lat": 40.17,
-                    "lng": 22.49
                 }
             ],
             "chronicleFrom": "city_luoma",
@@ -8741,9 +10429,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": -1.56
                 },
                 {
-                    "name": "阿克苏尼乌姆",
-                    "lat": 41.52,
-                    "lng": -2.28
+                    "name": "奥基利斯",
+                    "lat": 41.13,
+                    "lng": -2.43
                 }
             ],
             "chronicleFrom": "city_tarraco",
@@ -8794,9 +10482,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "奥基利斯",
-                    "lat": 41.13,
-                    "lng": -2.43
+                    "name": "伊莱尔达",
+                    "lat": 41.62,
+                    "lng": 0.62
+                },
+                {
+                    "name": "塞尔萨",
+                    "lat": 41.37,
+                    "lng": -0.42
                 }
             ],
             "chronicleFrom": "city_tarraco",
@@ -8848,14 +10541,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "塔古斯河",
+                    "name": "塔古斯津",
                     "lat": 39.96,
                     "lng": -4.83
-                },
-                {
-                    "name": "杜罗河",
-                    "lat": 41.51,
-                    "lng": -5.49
                 },
                 {
                     "name": "考卡",
@@ -8863,7 +10551,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": -4.52
                 }
             ],
-            "chronicleFrom": "city_tarraco",
+            "chronicleFrom": "city_cordoba",
             "targetLat": 41.76,
             "targetLng": -5.18,
             "myTroops": 15000,
@@ -8904,6 +10592,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "北非突尼斯西北奥罗斯科帕丘陵",
+            "routeVia": [
+                {
+                    "name": "锡卡",
+                    "lat": 36.18,
+                    "lng": 8.71
+                }
+            ],
             "chronicleFrom": "city_cirta",
             "targetLat": 36.45,
             "targetLng": 9.25,
@@ -8947,12 +10642,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "远西班牙南部特里博拉峡谷",
             "routeVia": [
                 {
-                    "name": "图尔德塔尼亚",
-                    "lat": 37.39,
+                    "name": "伊利帕",
+                    "lat": 37.52,
                     "lng": -5.98
                 }
             ],
-            "chronicleFrom": "city_luoma",
+            "chronicleFrom": "city_cordoba",
             "targetLat": 36.65,
             "targetLng": -5.15,
             "myTroops": 15000,
@@ -9000,14 +10695,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "利利拜乌姆",
+                    "lat": 37.8,
+                    "lng": 12.43
+                },
+                {
                     "name": "乌提卡",
                     "lat": 37.06,
                     "lng": 10.06
-                },
-                {
-                    "name": "墨伽拉城区",
-                    "lat": 36.87,
-                    "lng": 10.32
                 }
             ],
             "chronicleFrom": "city_luoma",
@@ -9057,6 +10752,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "sailiugu",
                 "after": "ansxi"
             },
+            "routeVia": [
+                {
+                    "name": "赫卡托姆皮洛斯",
+                    "lat": 36.15,
+                    "lng": 54.38
+                },
+                {
+                    "name": "雷伊",
+                    "lat": 35.59,
+                    "lng": 51.44
+                }
+            ],
             "chronicleFrom": "city_nisa",
             "targetLat": 34.8,
             "targetLng": 48.51,
@@ -9105,12 +10812,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "塞琉西亚",
-                    "lat": 33.09,
-                    "lng": 44.52
+                    "name": "呼勒万",
+                    "lat": 34.46,
+                    "lng": 45.86
                 }
             ],
-            "chronicleFrom": "city_hamadan",
+            "chronicleFrom": "city_nisa",
             "targetLat": 32.542,
             "targetLng": 44.421,
             "myTroops": 15000,
@@ -9158,17 +10865,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "安提俄基亚",
-                    "lat": 36.2,
-                    "lng": 36.16
+                    "name": "赫卡托姆皮洛斯",
+                    "lat": 36.15,
+                    "lng": 54.38
                 },
                 {
-                    "name": "美索不达米亚",
-                    "lat": 33.09,
-                    "lng": 44.52
+                    "name": "埃克巴坦那",
+                    "lat": 34.8,
+                    "lng": 48.51
                 }
             ],
-            "chronicleFrom": "city_babilun",
+            "chronicleFrom": "city_nisa",
             "targetLat": 32.191,
             "targetLng": 48.258,
             "myTroops": 15000,
@@ -9212,8 +10919,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "routeVia": [
                 {
                     "name": "上谷",
-                    "lat": 40.37,
-                    "lng": 115.63
+                    "lat": 40.38,
+                    "lng": 115.8
+                },
+                {
+                    "name": "兴和塞",
+                    "lat": 41.25,
+                    "lng": 113.85
                 }
             ],
             "chronicleFrom": "city_juyongguan",
@@ -9305,14 +11017,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "高阙",
-                    "lat": 41.2,
-                    "lng": 107.17
-                },
-                {
-                    "name": "陇西",
-                    "lat": 35.42,
-                    "lng": 103.85
+                    "name": "五原",
+                    "lat": 40.75,
+                    "lng": 108.65
                 }
             ],
             "chronicleFrom": "city_yunzhongcheng",
@@ -9361,6 +11068,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xiongnu",
                 "after": "xiongnu"
             },
+            "routeVia": [
+                {
+                    "name": "涿邪山",
+                    "lat": 44.52,
+                    "lng": 101.45
+                }
+            ],
             "chronicleFrom": "city_toumancheng",
             "targetLat": 47.137,
             "targetLng": 103.035,
@@ -9403,12 +11117,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "高阙塞北右贤王牙帐",
             "routeVia": [
                 {
-                    "name": "朔方",
-                    "lat": 40.3,
-                    "lng": 107
+                    "name": "鸡鹿塞",
+                    "lat": 41.25,
+                    "lng": 108.85
                 }
             ],
-            "chronicleFrom": "city_gaoque",
+            "chronicleFrom": "city_chilechuan",
             "targetLat": 41.195,
             "targetLng": 107.166,
             "myTroops": 15000,
@@ -9496,22 +11210,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "陇西",
+                    "lat": 35,
+                    "lng": 104.63
+                },
+                {
                     "name": "乌戾山",
-                    "lat": 36.06,
-                    "lng": 103.77
+                    "lat": 36.45,
+                    "lng": 103.5
                 },
                 {
-                    "name": "焉支山",
-                    "lat": 38.78,
-                    "lng": 101.08
-                },
-                {
-                    "name": "皋兰山",
-                    "lat": 36.02,
-                    "lng": 103.84
+                    "name": "姑臧",
+                    "lat": 37.93,
+                    "lng": 102.64
                 }
             ],
-            "chronicleFrom": "city_lintao",
+            "chronicleFrom": "city_changan",
             "targetLat": 38.78,
             "targetLng": 101.08,
             "myTroops": 15000,
@@ -9559,14 +11273,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "钧耆水",
-                    "lat": 39.8,
-                    "lng": 99.8
+                    "name": "灵州津",
+                    "lat": 38.05,
+                    "lng": 106.25
                 },
                 {
                     "name": "居延泽",
-                    "lat": 42.25,
-                    "lng": 101.15
+                    "lat": 41.89,
+                    "lng": 101.04
                 }
             ],
             "chronicleFrom": "city_fangqu",
@@ -9610,6 +11324,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "右北平与定襄长城边塞",
+            "routeVia": [
+                {
+                    "name": "卢龙塞",
+                    "lat": 40.42,
+                    "lng": 118.35
+                }
+            ],
             "chronicleFrom": "city_wuzhong",
             "targetLat": 41.4,
             "targetLng": 119.64,
@@ -9658,9 +11379,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "大漠",
-                    "lat": 44.14,
-                    "lng": 103.7
+                    "name": "二连盐池",
+                    "lat": 43.65,
+                    "lng": 111.98
+                },
+                {
+                    "name": "涿邪北漠",
+                    "lat": 45.5,
+                    "lng": 106.5
                 }
             ],
             "chronicleFrom": "city_shengle",
@@ -9706,6 +11432,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北狼居胥山至瀚海",
             "routeVia": [
                 {
+                    "name": "平舒",
+                    "lat": 40.32,
+                    "lng": 114.25
+                },
+                {
                     "name": "离侯山",
                     "lat": 44.82,
                     "lng": 106.8
@@ -9714,16 +11445,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "弓闾河",
                     "lat": 47.26,
                     "lng": 110.72
-                },
-                {
-                    "name": "狼居胥山",
-                    "lat": 47.69,
-                    "lng": 108.53
-                },
-                {
-                    "name": "姑衍山",
-                    "lat": 48.62,
-                    "lng": 110.65
                 }
             ],
             "chronicleFrom": "city_daixian",
@@ -9780,12 +11501,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 112.73
                 },
                 {
-                    "name": "横浦关",
-                    "lat": 25.4,
-                    "lng": 114.3
-                },
-                {
-                    "name": "寻狭",
+                    "name": "浈阳峡",
                     "lat": 24.18,
                     "lng": 113.42
                 }
@@ -9844,14 +11560,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 121.43
                 },
                 {
-                    "name": "武林",
-                    "lat": 28.75,
-                    "lng": 117.65
-                },
-                {
-                    "name": "梅岭",
-                    "lat": 27.76,
-                    "lng": 117.96
+                    "name": "东瓯海口",
+                    "lat": 28,
+                    "lng": 120.7
                 }
             ],
             "chronicleFrom": "city_kuaiji",
@@ -9903,19 +11614,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "浿水",
-                    "lat": 39.67,
-                    "lng": 125.5
+                    "name": "西安平",
+                    "lat": 40.15,
+                    "lng": 124.36
                 },
                 {
-                    "name": "｜水路:齐地",
-                    "lat": 37.75,
-                    "lng": 120.75
-                },
-                {
-                    "name": "洌口",
-                    "lat": 38.73,
-                    "lng": 125.4
+                    "name": "萨水",
+                    "lat": 39.62,
+                    "lng": 125.55
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -9974,7 +11680,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 {
                     "name": "盐泽",
                     "lat": 40.5,
-                    "lng": 90.5
+                    "lng": 91.2
                 }
             ],
             "chronicleFrom": "city_dunhuang",
@@ -10026,9 +11732,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "盐水",
+                    "name": "盐泽",
                     "lat": 40.5,
                     "lng": 90.5
+                },
+                {
+                    "name": "轮台",
+                    "lat": 41.77,
+                    "lng": 84.25
+                },
+                {
+                    "name": "疏勒",
+                    "lat": 39.48,
+                    "lng": 76
                 }
             ],
             "chronicleFrom": "city_dunhuang",
@@ -10085,6 +11801,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 84.25
                 },
                 {
+                    "name": "龟兹",
+                    "lat": 41.72,
+                    "lng": 82.93
+                },
+                {
                     "name": "郁成",
                     "lat": 40.53,
                     "lng": 72.79
@@ -10133,9 +11854,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "东天山巴里坤右贤王庭",
             "routeVia": [
                 {
-                    "name": "酒泉",
-                    "lat": 39.74,
-                    "lng": 98.51
+                    "name": "玉门塞",
+                    "lat": 40.35,
+                    "lng": 96.8
+                },
+                {
+                    "name": "伊吾",
+                    "lat": 42.3,
+                    "lng": 94.5
                 }
             ],
             "chronicleFrom": "city_jiuquan",
@@ -10181,19 +11907,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "居延北境浚稽山至鞮汗山",
             "routeVia": [
                 {
-                    "name": "浚稽山",
-                    "lat": 45.2,
-                    "lng": 100.8
+                    "name": "居延泽",
+                    "lat": 42.35,
+                    "lng": 101.15
                 },
                 {
-                    "name": "龙城故道",
-                    "lat": 44.5,
-                    "lng": 101
-                },
-                {
-                    "name": "鞮汗山",
-                    "lat": 42.8,
-                    "lng": 101.1
+                    "name": "涿邪西麓",
+                    "lat": 44.1,
+                    "lng": 100.95
                 }
             ],
             "chronicleFrom": "city_juyansai",
@@ -10237,6 +11958,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漠北余吾水南岸草原",
+            "routeVia": [
+                {
+                    "name": "鸡鹿塞",
+                    "lat": 41.25,
+                    "lng": 106.95
+                },
+                {
+                    "name": "受降城",
+                    "lat": 42.1,
+                    "lng": 107.1
+                },
+                {
+                    "name": "涿邪东漠",
+                    "lat": 45.2,
+                    "lng": 106.9
+                }
+            ],
             "chronicleFrom": "city_linrong",
             "targetLat": 47.92,
             "targetLng": 106.84,
@@ -10280,14 +12018,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北郅居水与燕然山谷",
             "routeVia": [
                 {
-                    "name": "夫羊句山",
-                    "lat": 42.5,
-                    "lng": 107.5
+                    "name": "高阙",
+                    "lat": 41.2,
+                    "lng": 107.17
                 },
                 {
-                    "name": "郅居水",
-                    "lat": 46.8,
-                    "lng": 103.5
+                    "name": "夫羊句山",
+                    "lat": 43.2,
+                    "lng": 105.5
                 }
             ],
             "chronicleFrom": "city_chilechuan",
@@ -10331,6 +12069,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "天山北麓匈奴右谷蠡王庭",
+            "routeVia": [
+                {
+                    "name": "伊列水",
+                    "lat": 43.9,
+                    "lng": 81.3
+                },
+                {
+                    "name": "乌贪訾离",
+                    "lat": 44.15,
+                    "lng": 86.85
+                }
+            ],
             "chronicleFrom": "city_chigucheng",
             "targetLat": 46.8,
             "targetLng": 91.8,
@@ -10384,9 +12134,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 86.15
                 },
                 {
-                    "name": "交河城",
-                    "lat": 42.95,
-                    "lng": 89.06
+                    "name": "焉耆",
+                    "lat": 42.06,
+                    "lng": 86.56
                 }
             ],
             "chronicleFrom": "city_luntai",
@@ -10443,6 +12193,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 88.16
                 },
                 {
+                    "name": "且末",
+                    "lat": 38.14,
+                    "lng": 85.53
+                },
+                {
                     "name": "于阗",
                     "lat": 37.1,
                     "lng": 79.92
@@ -10496,19 +12251,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "金城",
-                    "lat": 36.06,
-                    "lng": 103.77
+                    "name": "天水",
+                    "lat": 34.58,
+                    "lng": 105.73
                 },
                 {
-                    "name": "四望峡",
-                    "lat": 36.33,
-                    "lng": 102.98
-                },
-                {
-                    "name": "浩亹",
-                    "lat": 36.35,
-                    "lng": 102.85
+                    "name": "狄道",
+                    "lat": 35.37,
+                    "lng": 103.86
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -10557,7 +12307,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "luoma_diguo",
                 "after": "ansxi"
             },
-            "chronicleFrom": "city_hamadan",
+            "routeVia": [
+                {
+                    "name": "辛加拉",
+                    "lat": 36.32,
+                    "lng": 41.86
+                },
+                {
+                    "name": "尼西比斯",
+                    "lat": 37.07,
+                    "lng": 41.22
+                }
+            ],
+            "chronicleFrom": "city_bageda",
             "targetLat": 37.15,
             "targetLng": 38.782,
             "myTroops": 15000,
@@ -10615,12 +12377,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 3
                 },
                 {
-                    "name": "比利牛斯山口",
+                    "name": "比利牛斯隘",
                     "lat": 42.46,
                     "lng": 2.86
                 }
             ],
-            "chronicleFrom": "city_nabone",
+            "chronicleFrom": "city_genoa",
             "targetLat": 41.618,
             "targetLng": 0.62,
             "myTroops": 15000,
@@ -10732,27 +12494,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 19.47
                 },
                 {
+                    "name": "埃吉尼乌姆",
+                    "lat": 39.71,
+                    "lng": 21.63
+                },
+                {
                     "name": "贡菲",
                     "lat": 39.46,
                     "lng": 21.69
-                },
-                {
-                    "name": "梅特罗波利斯",
-                    "lat": 39.34,
-                    "lng": 21.84
-                },
-                {
-                    "name": "｜守方:坎达维亚大道",
-                    "lat": 41.12,
-                    "lng": 20.08
-                },
-                {
-                    "name": "拉里萨",
-                    "lat": 39.64,
-                    "lng": 22.42
                 }
             ],
-            "chronicleFrom": "city_dyrrachium",
+            "chronicleFrom": "city_luoma",
             "targetLat": 39.295,
             "targetLng": 22.385,
             "myTroops": 15000,
@@ -10798,6 +12550,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tuolemi",
                 "after": "tuolemi"
             },
+            "routeVia": [
+                {
+                    "name": "阿比多斯",
+                    "lat": 40.2,
+                    "lng": 26.41
+                },
+                {
+                    "name": "以弗所",
+                    "lat": 37.94,
+                    "lng": 27.34
+                },
+                {
+                    "name": "罗得",
+                    "lat": 36.44,
+                    "lng": 28.22
+                }
+            ],
             "chronicleFrom": "city_luoma",
             "targetLat": 31.198,
             "targetLng": 29.892,
@@ -10851,7 +12620,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 35.07
                 },
                 {
-                    "name": "安提俄基亚",
+                    "name": "安条克",
                     "lat": 36.2,
                     "lng": 36.16
                 },
@@ -10864,14 +12633,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "马扎卡",
                     "lat": 38.72,
                     "lng": 35.48
-                },
-                {
-                    "name": "科马纳",
-                    "lat": 40.38,
-                    "lng": 36.63
                 }
             ],
-            "chronicleFrom": "city_yalishanda",
+            "chronicleFrom": "city_luoma",
             "targetLat": 40.65,
             "targetLng": 35.83,
             "myTroops": 15000,
@@ -10927,11 +12691,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "鲁斯皮纳",
                     "lat": 35.76,
                     "lng": 10.82
-                },
-                {
-                    "name": "乌齐塔",
-                    "lat": 35.69,
-                    "lng": 10.8
                 }
             ],
             "chronicleFrom": "city_lilybaeum",
@@ -10982,6 +12741,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "马西利亚",
+                    "lat": 43.3,
+                    "lng": 5.37
+                },
+                {
+                    "name": "塔拉科",
+                    "lat": 41.12,
+                    "lng": 1.25
+                },
+                {
                     "name": "萨贡托",
                     "lat": 39.68,
                     "lng": -0.28
@@ -10990,16 +12759,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "奥布尔科",
                     "lat": 37.88,
                     "lng": -4.19
-                },
-                {
-                    "name": "乌利亚",
-                    "lat": 37.65,
-                    "lng": -4.69
-                },
-                {
-                    "name": "阿特瓜",
-                    "lat": 37.75,
-                    "lng": -4.59
                 }
             ],
             "chronicleFrom": "city_luoma",
@@ -11142,24 +12901,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 19.46
                 },
                 {
+                    "name": "利克尼都斯",
+                    "lat": 41.12,
+                    "lng": 20.8
+                },
+                {
                     "name": "安菲波利斯",
                     "lat": 40.82,
                     "lng": 23.85
-                },
-                {
-                    "name": "｜守方:撒狄",
-                    "lat": 38.49,
-                    "lng": 28.04
-                },
-                {
-                    "name": "阿比多斯",
-                    "lat": 40.2,
-                    "lng": 26.41
-                },
-                {
-                    "name": "塞斯托斯",
-                    "lat": 40.23,
-                    "lng": 26.42
                 }
             ],
             "chronicleFrom": "city_brundisium",
@@ -11295,6 +13044,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "托罗斯山脉奇里乞亚山门",
+            "routeVia": [
+                {
+                    "name": "以弗所",
+                    "lat": 37.94,
+                    "lng": 27.34
+                },
+                {
+                    "name": "伊科尼乌姆",
+                    "lat": 37.87,
+                    "lng": 32.48
+                }
+            ],
             "chronicleFrom": "city_yadian",
             "targetLat": 37.319,
             "targetLng": 34.789,
@@ -11338,9 +13099,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "北叙利亚金达鲁斯山营垒",
             "routeVia": [
                 {
-                    "name": "泽乌格马",
-                    "lat": 37.06,
-                    "lng": 37.87
+                    "name": "阿马努斯山隘",
+                    "lat": 36.92,
+                    "lng": 36.56
                 }
             ],
             "chronicleFrom": "city_antiejiya",
@@ -11391,9 +13152,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "腓尼基海岸",
-                    "lat": 33.89,
-                    "lng": 35.5
+                    "name": "推罗",
+                    "lat": 33.27,
+                    "lng": 35.2
                 },
                 {
                     "name": "撒马利亚",
@@ -11460,9 +13221,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 41.27
                 },
                 {
-                    "name": "阿拉克斯河",
-                    "lat": 39,
-                    "lng": 45.5
+                    "name": "阿尔塔克萨塔",
+                    "lat": 39.89,
+                    "lng": 44.58
                 }
             ],
             "chronicleFrom": "city_antiejiya",
@@ -11526,22 +13287,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 {
                     "name": "阗池",
                     "lat": 42.45,
-                    "lng": 77.2
+                    "lng": 76.2
                 },
                 {
-                    "name": "｜南道:疏勒",
-                    "lat": 39.49,
-                    "lng": 76
-                },
-                {
-                    "name": "葱岭",
-                    "lat": 39.8,
-                    "lng": 73.8
-                },
-                {
-                    "name": "大宛",
-                    "lat": 41.29,
-                    "lng": 71.67
+                    "name": "碎叶川",
+                    "lat": 42.85,
+                    "lng": 74.6
                 }
             ],
             "chronicleFrom": "city_luntai",
@@ -11597,14 +13348,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 19.92
                 },
                 {
-                    "name": "梅托涅",
-                    "lat": 36.82,
-                    "lng": 21.7
-                },
-                {
-                    "name": "帕特雷",
-                    "lat": 38.25,
-                    "lng": 21.73
+                    "name": "托里涅",
+                    "lat": 39.5,
+                    "lng": 20.26
                 }
             ],
             "chronicleFrom": "city_brundisium",
@@ -11656,19 +13402,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "阿卡",
+                    "lat": 32.92,
+                    "lng": 35.07
+                },
+                {
+                    "name": "加沙",
+                    "lat": 31.5,
+                    "lng": 34.47
+                },
+                {
                     "name": "佩卢西姆",
                     "lat": 31.04,
                     "lng": 32.54
-                },
-                {
-                    "name": "｜西路加卢斯:昔兰尼",
-                    "lat": 32.82,
-                    "lng": 21.86
-                },
-                {
-                    "name": "帕莱托尼乌姆",
-                    "lat": 31.35,
-                    "lng": 27.24
                 }
             ],
             "chronicleFrom": "city_antiejiya",
@@ -11714,14 +13460,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "多瑙河南岸默西亚基亚布鲁斯河",
             "routeVia": [
                 {
-                    "name": "色雷斯",
-                    "lat": 42.15,
-                    "lng": 24.75
-                },
-                {
-                    "name": "海姆斯山脉",
-                    "lat": 42.78,
-                    "lng": 24.9
+                    "name": "塞尔迪卡",
+                    "lat": 42.7,
+                    "lng": 23.32
                 }
             ],
             "chronicleFrom": "city_salonica",
@@ -11772,9 +13513,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿塔克斯河谷",
-                    "lat": 43.21,
-                    "lng": 2.35
+                    "name": "托洛萨",
+                    "lat": 43.6,
+                    "lng": 1.44
                 }
             ],
             "chronicleFrom": "city_nabone",
@@ -11817,6 +13558,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "中阿尔卑斯南麓卡莫尼卡河谷",
+            "routeVia": [
+                {
+                    "name": "布里克西亚",
+                    "lat": 45.54,
+                    "lng": 10.22
+                }
+            ],
             "chronicleFrom": "city_verona",
             "targetLat": 45.943,
             "targetLng": 10.273,
@@ -11864,6 +13612,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "cantabri",
                 "after": "luoma_diguo"
             },
+            "routeVia": [
+                {
+                    "name": "庞帕埃洛",
+                    "lat": 42.81,
+                    "lng": -1.64
+                },
+                {
+                    "name": "塞吉萨马",
+                    "lat": 42.49,
+                    "lng": -4.01
+                }
+            ],
             "chronicleFrom": "city_bordeaux",
             "targetLat": 42.788,
             "targetLng": -4.265,
@@ -11905,6 +13665,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "莱茵河下游西岸原野",
+            "routeVia": [
+                {
+                    "name": "波恩",
+                    "lat": 50.73,
+                    "lng": 7.1
+                }
+            ],
             "chronicleFrom": "city_teerier",
             "targetLat": 50.93,
             "targetLng": 6.95,
@@ -11947,19 +13714,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "雷蒂亚与博登湖畔",
             "routeVia": [
                 {
-                    "name": "南路:特里登图姆",
+                    "name": "特里登图姆",
                     "lat": 46.07,
                     "lng": 11.12
                 },
                 {
-                    "name": "伊萨尔库斯河谷",
-                    "lat": 46.67,
-                    "lng": 11.16
+                    "name": "庞斯德鲁西",
+                    "lat": 46.5,
+                    "lng": 11.35
                 },
                 {
-                    "name": "博登湖",
-                    "lat": 47.6,
-                    "lng": 9.4
+                    "name": "布雷诺隘",
+                    "lat": 47,
+                    "lng": 11.51
                 }
             ],
             "chronicleFrom": "city_verona",
@@ -12045,9 +13812,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "莱茵河口与埃姆斯河湾",
             "routeVia": [
                 {
-                    "name": "德鲁苏斯运河",
-                    "lat": 51.98,
-                    "lng": 5.91
+                    "name": "奈梅亨",
+                    "lat": 51.84,
+                    "lng": 5.86
                 },
                 {
                     "name": "弗莱沃湖",
@@ -12097,11 +13864,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "利珀河畔阿尔巴洛山隘",
             "routeVia": [
-                {
-                    "name": "利珀河",
-                    "lat": 51.66,
-                    "lng": 7.35
-                },
                 {
                     "name": "威悉河",
                     "lat": 51.78,
@@ -12155,13 +13917,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "卡蒂领地",
-                    "lat": 51.1,
-                    "lng": 9.4
+                    "name": "赫德尔恩海姆",
+                    "lat": 50.15,
+                    "lng": 8.64
                 },
                 {
-                    "name": "威悉河",
-                    "lat": 51.55,
+                    "name": "威悉津",
+                    "lat": 51.42,
                     "lng": 9.65
                 }
             ],
@@ -12205,6 +13967,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "利珀河与威悉河间原野",
+            "routeVia": [
+                {
+                    "name": "阿利索",
+                    "lat": 51.67,
+                    "lng": 8.34
+                }
+            ],
             "chronicleFrom": "city_vetera",
             "targetLat": 51.719,
             "targetLng": 8.754,
@@ -12294,9 +14063,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "萨瓦河谷沃尔凯亚沼泽",
             "routeVia": [
                 {
-                    "name": "守方终抵锡斯基亚",
-                    "lat": 45.48,
-                    "lng": 16.37
+                    "name": "巴西亚奈",
+                    "lat": 44.98,
+                    "lng": 19.35
                 }
             ],
             "chronicleFrom": "city_belgrade",
@@ -12350,6 +14119,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "锡斯基亚",
                     "lat": 45.48,
                     "lng": 16.37
+                },
+                {
+                    "name": "萨洛纳",
+                    "lat": 43.54,
+                    "lng": 16.48
                 }
             ],
             "chronicleFrom": "city_gradeci",
@@ -12395,12 +14169,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "条顿堡森林卡尔克里泽隘道",
             "routeVia": [
                 {
-                    "name": "威悉河夏营",
-                    "lat": 52.23,
+                    "name": "阿利索",
+                    "lat": 51.67,
+                    "lng": 8.34
+                },
+                {
+                    "name": "威悉河",
+                    "lat": 52.29,
                     "lng": 8.92
                 }
             ],
-            "chronicleFrom": "city_kelong",
+            "chronicleFrom": "city_vetera",
             "targetLat": 52.407,
             "targetLng": 8.13,
             "myTroops": 15000,
@@ -12443,19 +14222,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "威悉河东岸伊迪斯塔维索平原",
             "routeVia": [
                 {
-                    "name": "巴塔维岛",
-                    "lat": 51.9,
+                    "name": "弗莱沃湖",
+                    "lat": 52.6,
                     "lng": 5.4
                 },
                 {
-                    "name": "德鲁苏斯运河",
-                    "lat": 51.98,
-                    "lng": 5.91
-                },
-                {
-                    "name": "埃姆斯河口",
-                    "lat": 53.37,
-                    "lng": 7.21
+                    "name": "埃姆斯河",
+                    "lat": 53.15,
+                    "lng": 7.3
                 }
             ],
             "chronicleFrom": "city_vetera",
@@ -12504,13 +14278,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dixiang",
                 "after": "chimei"
             },
-            "routeVia": [
-                {
-                    "name": "泰山",
-                    "lat": 36.25,
-                    "lng": 117.1
-                }
-            ],
             "chronicleFrom": "city_ju",
             "targetLat": 35.578,
             "targetLng": 118.832,
@@ -12560,25 +14327,10 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 {
                     "name": "绿林山",
                     "lat": 31.05,
-                    "lng": 113
-                },
-                {
-                    "name": "云杜",
-                    "lat": 30.66,
-                    "lng": 113.17
-                },
-                {
-                    "name": "竟陵",
-                    "lat": 30.65,
-                    "lng": 113.16
-                },
-                {
-                    "name": "安陆",
-                    "lat": 31.26,
-                    "lng": 113.69
+                    "lng": 112.98
                 }
             ],
-            "chronicleFrom": "city_jingling",
+            "chronicleFrom": "city_dangyang",
             "targetLat": 30.662,
             "targetLng": 113.166,
             "myTroops": 15000,
@@ -12626,14 +14378,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "守方:长安",
-                    "lat": 34.27,
-                    "lng": 108.93
-                },
-                {
-                    "name": "无盐",
-                    "lat": 35.94,
-                    "lng": 116.47
+                    "name": "泰山",
+                    "lat": 36.19,
+                    "lng": 117.13
                 }
             ],
             "chronicleFrom": "city_ju",
@@ -12684,34 +14431,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "攻方:昆阳",
-                    "lat": 33.22,
-                    "lng": 113.22
-                },
-                {
                     "name": "定陵",
                     "lat": 33.52,
                     "lng": 113.78
-                },
-                {
-                    "name": "郾城",
-                    "lat": 33.58,
-                    "lng": 114.03
-                },
-                {
-                    "name": "昆阳｜守方:长安",
-                    "lat": 34.27,
-                    "lng": 108.93
-                },
-                {
-                    "name": "洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
-                },
-                {
-                    "name": "颍阳",
-                    "lat": 34.12,
-                    "lng": 113.06
                 }
             ],
             "chronicleFrom": "city_yancheng2",
@@ -12774,7 +14496,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 },
                 {
                     "name": "广阿",
-                    "lat": 37.19,
+                    "lat": 37.02,
                     "lng": 114.73
                 }
             ],
@@ -12820,17 +14542,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "清河清阳至魏郡馆陶",
             "routeVia": [
                 {
+                    "name": "巨鹿",
+                    "lat": 37.22,
+                    "lng": 115.04
+                },
+                {
                     "name": "鄡县",
-                    "lat": 38.03,
+                    "lat": 37.85,
                     "lng": 115.2
                 },
                 {
-                    "name": "清阳",
-                    "lat": 37.05,
-                    "lng": 115.48
+                    "name": "南宫",
+                    "lat": 37.36,
+                    "lng": 115.39
                 }
             ],
-            "chronicleFrom": "city_handan",
+            "chronicleFrom": "city_kunyang",
             "targetLat": 36.514,
             "targetLng": 115.304,
             "myTroops": 15000,
@@ -12878,17 +14605,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "鄗南",
+                    "lat": 37.48,
+                    "lng": 114.7
+                },
+                {
                     "name": "怀县",
                     "lat": 35.1,
                     "lng": 113.4
                 },
                 {
-                    "name": "孟津",
-                    "lat": 34.83,
-                    "lng": 112.44
+                    "name": "河阳津",
+                    "lat": 34.86,
+                    "lng": 112.58
                 }
             ],
-            "chronicleFrom": "city_huojia",
+            "chronicleFrom": "city_kunyang",
             "targetLat": 34.62,
             "targetLng": 112.45,
             "myTroops": 15000,
@@ -12944,16 +14676,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "襄邑",
                     "lat": 34.43,
                     "lng": 115.07
-                },
-                {
-                    "name": "睢阳",
-                    "lat": 34.41,
-                    "lng": 115.66
-                },
-                {
-                    "name": "虞县",
-                    "lat": 34.57,
-                    "lng": 115.93
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -12998,17 +14720,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "弘农郡湖县原野",
             "routeVia": [
                 {
-                    "name": "长安",
-                    "lat": 34.27,
-                    "lng": 108.93
+                    "name": "宜阳",
+                    "lat": 34.51,
+                    "lng": 112.18
                 },
                 {
-                    "name": "华阴",
-                    "lat": 34.57,
-                    "lng": 110.09
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
                 }
             ],
-            "chronicleFrom": "city_tongguan",
+            "chronicleFrom": "city_luoyang",
             "targetLat": 34.615,
             "targetLng": 110.915,
             "myTroops": 15000,
@@ -13050,27 +14772,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "弘农渑池崤底至宜阳",
             "routeVia": [
                 {
-                    "name": "湖县",
-                    "lat": 34.62,
-                    "lng": 110.92
-                },
-                {
-                    "name": "崤底",
-                    "lat": 34.58,
-                    "lng": 111.45
-                },
-                {
-                    "name": "渑池",
-                    "lat": 34.76,
-                    "lng": 111.76
-                },
-                {
-                    "name": "宜阳",
-                    "lat": 34.51,
-                    "lng": 112.18
+                    "name": "回溪",
+                    "lat": 34.55,
+                    "lng": 111.28
                 }
             ],
-            "chronicleFrom": "city_luoyang",
+            "chronicleFrom": "city_hanguguan",
             "targetLat": 34.76,
             "targetLng": 111.76,
             "myTroops": 15000,
@@ -13118,29 +14825,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "邺城",
+                    "lat": 36.32,
+                    "lng": 114.42
+                },
+                {
+                    "name": "信都",
+                    "lat": 37.55,
+                    "lng": 115.57
+                },
+                {
                     "name": "良乡",
                     "lat": 39.73,
                     "lng": 116.14
-                },
-                {
-                    "name": "涿郡",
-                    "lat": 39.49,
-                    "lng": 115.97
-                },
-                {
-                    "name": "阳乡",
-                    "lat": 39.62,
-                    "lng": 116.38
-                },
-                {
-                    "name": "雍奴",
-                    "lat": 39.42,
-                    "lng": 117.02
-                },
-                {
-                    "name": "泉州",
-                    "lat": 39.53,
-                    "lng": 117.2
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -13205,21 +14902,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "巨里",
                     "lat": 36.73,
                     "lng": 117.65
-                },
-                {
-                    "name": "西安",
-                    "lat": 36.93,
-                    "lng": 118.23
-                },
-                {
-                    "name": "临淄",
-                    "lat": 36.88,
-                    "lng": 118.43
-                },
-                {
-                    "name": "剧县",
-                    "lat": 36.7,
-                    "lng": 118.83
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -13270,14 +14952,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "汧县",
-                    "lat": 34.67,
-                    "lng": 106.87
+                    "name": "咸阳",
+                    "lat": 34.35,
+                    "lng": 108.71
                 },
                 {
-                    "name": "陇坻",
-                    "lat": 34.88,
-                    "lng": 106.55
+                    "name": "云阳",
+                    "lat": 34.65,
+                    "lng": 108.55
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -13391,14 +15073,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "高平第一城",
+                    "name": "安定",
+                    "lat": 35.33,
+                    "lng": 107.36
+                },
+                {
+                    "name": "高平",
                     "lat": 36,
                     "lng": 106.28
                 },
                 {
-                    "name": "襄武",
-                    "lat": 34.72,
-                    "lng": 104.62
+                    "name": "略阳",
+                    "lat": 35.03,
+                    "lng": 105.91
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -13449,24 +15136,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "夷陵",
-                    "lat": 30.7,
-                    "lng": 111.28
-                },
-                {
-                    "name": "荆门山",
-                    "lat": 30.53,
-                    "lng": 111.4
-                },
-                {
-                    "name": "巫县江关",
-                    "lat": 31.05,
-                    "lng": 109.6
-                },
-                {
-                    "name": "江州",
-                    "lat": 29.56,
-                    "lng": 106.55
+                    "name": "枝江",
+                    "lat": 30.42,
+                    "lng": 111.76
                 }
             ],
             "chronicleFrom": "city_ying",
@@ -13523,14 +15195,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 109.47
                 },
                 {
+                    "name": "江州",
+                    "lat": 29.56,
+                    "lng": 106.55
+                },
+                {
                     "name": "武阳",
                     "lat": 30.18,
                     "lng": 103.85
-                },
-                {
-                    "name": "广都",
-                    "lat": 30.5,
-                    "lng": 104.05
                 }
             ],
             "chronicleFrom": "city_yiling",
@@ -13579,6 +15251,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "canlang_qiang",
                 "after": "han_d"
             },
+            "routeVia": [
+                {
+                    "name": "西县",
+                    "lat": 34.3,
+                    "lng": 105.25
+                }
+            ],
             "chronicleFrom": "city_lintao",
             "targetLat": 33.429,
             "targetLng": 105.142,
@@ -13667,19 +15346,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "古森河口",
-                    "lat": 21,
-                    "lng": 107.3
-                },
-                {
-                    "name": "浪泊",
-                    "lat": 21.05,
-                    "lng": 105.84
-                },
-                {
-                    "name": "禁溪",
-                    "lat": 21.18,
-                    "lng": 105.55
+                    "name": "白藤江口",
+                    "lat": 20.92,
+                    "lng": 106.78
                 }
             ],
             "chronicleFrom": "city_hepu",
@@ -13764,6 +15433,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "defender",
             "targetName": "沅水上游武溪峡谷",
             "routeVia": [
+                {
+                    "name": "孱陵",
+                    "lat": 29.95,
+                    "lng": 112.35
+                },
                 {
                     "name": "临沅",
                     "lat": 29.03,
@@ -13859,9 +15533,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠南阴山北原",
             "routeVia": [
                 {
-                    "name": "五原塞",
-                    "lat": 40.65,
-                    "lng": 109.8
+                    "name": "鸡鹿塞",
+                    "lat": 41.25,
+                    "lng": 108.85
                 }
             ],
             "chronicleFrom": "city_chilechuan",
@@ -13913,14 +15587,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "宛城",
+                    "lat": 32.96,
+                    "lng": 112.52
+                },
+                {
+                    "name": "襄阳",
+                    "lat": 32.01,
+                    "lng": 112.12
+                },
+                {
                     "name": "临沅",
                     "lat": 29.03,
                     "lng": 111.69
-                },
-                {
-                    "name": "下隽道",
-                    "lat": 29.2,
-                    "lng": 111.2
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -13972,14 +15651,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿拉克斯河谷",
+                    "name": "阿拉克斯河",
                     "lat": 40.02,
-                    "lng": 43.8
-                },
-                {
-                    "name": "阿尔塔克萨塔",
-                    "lat": 39.89,
-                    "lng": 44.58
+                    "lng": 43.3
                 }
             ],
             "chronicleFrom": "city_erzurum",
@@ -14030,17 +15704,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿尔塔克萨塔",
-                    "lat": 39.89,
-                    "lng": 44.58
+                    "name": "巴格雷万德",
+                    "lat": 39.65,
+                    "lng": 43.15
                 },
                 {
-                    "name": "陶鲁斯山道",
-                    "lat": 38.65,
-                    "lng": 42.2
+                    "name": "塔龙",
+                    "lat": 38.73,
+                    "lng": 41.5
                 }
             ],
-            "chronicleFrom": "city_ailiwen",
+            "chronicleFrom": "city_antiejiya",
             "targetLat": 38.142,
             "targetLng": 41.002,
             "myTroops": 15000,
@@ -14086,18 +15760,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "luoma_diguo",
                 "after": "armenia_arsacid"
             },
-            "routeVia": [
-                {
-                    "name": "尼西比斯",
-                    "lat": 37.07,
-                    "lng": 41.22
-                },
-                {
-                    "name": "陶鲁斯山隘",
-                    "lat": 38.35,
-                    "lng": 40.2
-                }
-            ],
             "chronicleFrom": "city_rhandeia",
             "targetLat": 38.685,
             "targetLng": 39.93,
@@ -14146,19 +15808,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "酒泉塞",
-                    "lat": 39.74,
-                    "lng": 98.51
+                    "name": "玉门关",
+                    "lat": 40.35,
+                    "lng": 93.86
                 },
                 {
-                    "name": "蒲类海",
-                    "lat": 43.6,
-                    "lng": 93
-                },
-                {
-                    "name": "伊吾卢",
-                    "lat": 42.83,
-                    "lng": 93.52
+                    "name": "白山",
+                    "lat": 42.15,
+                    "lng": 94.8
                 }
             ],
             "chronicleFrom": "city_jiuquan",
@@ -14208,6 +15865,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "shanshan",
                 "after": "shanshan"
             },
+            "routeVia": [
+                {
+                    "name": "伊吾",
+                    "lat": 42.8,
+                    "lng": 93.5
+                },
+                {
+                    "name": "白龙堆",
+                    "lat": 40.8,
+                    "lng": 91.5
+                }
+            ],
             "chronicleFrom": "city_balikun",
             "targetLat": 40.516,
             "targetLng": 89.92,
@@ -14255,7 +15924,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuchi",
                 "after": "yuchi"
             },
-            "chronicleFrom": "city_loulan",
+            "routeVia": [
+                {
+                    "name": "且末",
+                    "lat": 38.14,
+                    "lng": 85.53
+                },
+                {
+                    "name": "精绝",
+                    "lat": 37.9,
+                    "lng": 82.8
+                }
+            ],
+            "chronicleFrom": "city_taqian",
             "targetLat": 37.1,
             "targetLng": 79.92,
             "myTroops": 15000,
@@ -14350,29 +16031,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "酒泉",
-                    "lat": 39.74,
-                    "lng": 98.51
+                    "name": "敦煌",
+                    "lat": 40.14,
+                    "lng": 94.66
+                },
+                {
+                    "name": "伊吾",
+                    "lat": 42.83,
+                    "lng": 93.52
                 },
                 {
                     "name": "柳中",
                     "lat": 42.73,
                     "lng": 89.78
-                },
-                {
-                    "name": "交河城",
-                    "lat": 42.95,
-                    "lng": 89.06
-                },
-                {
-                    "name": "车师疏勒城",
-                    "lat": 43.99,
-                    "lng": 89.58
-                },
-                {
-                    "name": "玉门关",
-                    "lat": 40.35,
-                    "lng": 93.86
                 }
             ],
             "chronicleFrom": "city_jiuquan",
@@ -14421,6 +16092,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "qiuci",
                 "after": "qiuci"
             },
+            "routeVia": [
+                {
+                    "name": "巴楚津",
+                    "lat": 39.78,
+                    "lng": 78.55
+                }
+            ],
             "chronicleFrom": "city_shule",
             "targetLat": 40.54,
             "targetLng": 81.26,
@@ -14467,7 +16145,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "shule",
                 "after": "shule"
             },
-            "chronicleFrom": "city_shule",
+            "routeVia": [
+                {
+                    "name": "巴楚津",
+                    "lat": 39.78,
+                    "lng": 78.55
+                }
+            ],
+            "chronicleFrom": "city_taqian",
             "targetLat": 39.485,
             "targetLng": 76.001,
             "myTroops": 15000,
@@ -14513,7 +16198,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "shule",
                 "after": "shule"
             },
-            "chronicleFrom": "city_shule",
+            "chronicleFrom": "city_taqian",
             "targetLat": 39.582,
             "targetLng": 75.385,
             "myTroops": 15000,
@@ -14558,7 +16243,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "shache",
                 "after": "shache"
             },
-            "chronicleFrom": "city_shule",
+            "routeVia": [
+                {
+                    "name": "蒲犁东口",
+                    "lat": 38.9,
+                    "lng": 76.25
+                }
+            ],
+            "chronicleFrom": "city_taqian",
             "targetLat": 38.41,
             "targetLng": 77.24,
             "myTroops": 15000,
@@ -14602,23 +16294,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "routeVia": [
                 {
                     "name": "鸡鹿塞",
-                    "lat": 40.75,
+                    "lat": 42.3,
                     "lng": 106.95
                 },
                 {
                     "name": "涿邪山",
                     "lat": 44.52,
                     "lng": 101.45
-                },
-                {
-                    "name": "稽落山",
-                    "lat": 44.97,
-                    "lng": 99.11
-                },
-                {
-                    "name": "燕然山",
-                    "lat": 46,
-                    "lng": 101.5
                 }
             ],
             "chronicleFrom": "city_guanglu",
@@ -14662,6 +16344,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "西北塞外金微山王庭",
+            "routeVia": [
+                {
+                    "name": "蒲类海",
+                    "lat": 43.6,
+                    "lng": 93
+                },
+                {
+                    "name": "乌孙北塞",
+                    "lat": 45.8,
+                    "lng": 90.2
+                }
+            ],
             "chronicleFrom": "city_juyansai",
             "targetLat": 47.64,
             "targetLng": 88.29,
@@ -14705,9 +16399,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "蒲类海北塞荒原",
             "routeVia": [
                 {
-                    "name": "蒲类海",
-                    "lat": 43.6,
-                    "lng": 93
+                    "name": "白山北麓",
+                    "lat": 42.95,
+                    "lng": 95.8
                 }
             ],
             "chronicleFrom": "city_juyansai",
@@ -14753,9 +16447,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠南塞外涿邪山",
             "routeVia": [
                 {
-                    "name": "朔方塞",
-                    "lat": 40.75,
-                    "lng": 108.65
+                    "name": "鸡鹿塞",
+                    "lat": 41.25,
+                    "lng": 108.85
+                },
+                {
+                    "name": "受降故城",
+                    "lat": 42.3,
+                    "lng": 106.5
                 }
             ],
             "chronicleFrom": "city_chilechuan",
@@ -14847,9 +16546,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "美稷塞北荒原",
             "routeVia": [
                 {
-                    "name": "美稷",
-                    "lat": 39.86,
-                    "lng": 111.23
+                    "name": "云中",
+                    "lat": 40.27,
+                    "lng": 111.14
                 }
             ],
             "chronicleFrom": "city_eyangling",
@@ -14901,14 +16600,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "德罗贝塔跨多瑙河石桥",
+                    "name": "安科纳",
+                    "lat": 43.62,
+                    "lng": 13.52
+                },
+                {
+                    "name": "西尔米乌姆",
+                    "lat": 44.97,
+                    "lng": 19.61
+                },
+                {
+                    "name": "德罗贝塔",
                     "lat": 44.62,
                     "lng": 22.67
                 },
                 {
-                    "name": "铁门关隘",
+                    "name": "塔派",
                     "lat": 45.51,
-                    "lng": 22.78
+                    "lng": 22.5
                 }
             ],
             "chronicleFrom": "city_luoma",
@@ -15024,27 +16733,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 41.22
                 },
                 {
-                    "name": "阿迪亚波纳",
-                    "lat": 36.19,
-                    "lng": 44.01
+                    "name": "辛加拉",
+                    "lat": 36.32,
+                    "lng": 41.86
                 },
                 {
                     "name": "巴比伦",
                     "lat": 32.54,
                     "lng": 44.42
-                },
-                {
-                    "name": "塞琉西亚",
-                    "lat": 33.09,
-                    "lng": 44.52
-                },
-                {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
                 }
             ],
-            "chronicleFrom": "city_antiejiya",
+            "chronicleFrom": "city_luoma",
             "targetLat": 33.33,
             "targetLng": 44.37,
             "myTroops": 15000,
@@ -15092,12 +16791,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
+                    "name": "萨迈拉",
+                    "lat": 34.21,
+                    "lng": 43.88
                 }
             ],
-            "chronicleFrom": "city_bageda",
+            "chronicleFrom": "city_luoma",
             "targetLat": 35.589,
             "targetLng": 42.718,
             "myTroops": 15000,
@@ -15186,9 +16885,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "龟兹北山伊尔王谷",
             "routeVia": [
                 {
-                    "name": "柳中",
-                    "lat": 42.73,
-                    "lng": 89.78
+                    "name": "玉门关",
+                    "lat": 40.35,
+                    "lng": 93.86
                 },
                 {
                     "name": "楼兰",
@@ -15196,17 +16895,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 89.92
                 },
                 {
-                    "name": "龟兹",
-                    "lat": 41.72,
-                    "lng": 82.93
-                },
-                {
-                    "name": "伊尔王谷",
-                    "lat": 41.95,
-                    "lng": 82.9
+                    "name": "焉耆",
+                    "lat": 42.06,
+                    "lng": 86.56
                 }
             ],
-            "chronicleFrom": "city_yiluolucheng",
+            "chronicleFrom": "city_dunhuang",
             "targetLat": 41.72,
             "targetLng": 82.93,
             "myTroops": 15000,
@@ -15255,14 +16949,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "焉耆",
+                    "lat": 42.06,
+                    "lng": 86.56
+                },
+                {
                     "name": "柳中",
                     "lat": 42.73,
                     "lng": 89.78
-                },
-                {
-                    "name": "东天山道",
-                    "lat": 43.35,
-                    "lng": 89.65
                 }
             ],
             "chronicleFrom": "city_gaochangcheng",
@@ -15308,14 +17002,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "蒲类海西岸戈壁牧原",
             "routeVia": [
                 {
-                    "name": "柳中",
-                    "lat": 42.73,
-                    "lng": 89.78
+                    "name": "金满",
+                    "lat": 44,
+                    "lng": 89.18
                 },
                 {
-                    "name": "蒲类海西",
-                    "lat": 43.6,
-                    "lng": 92.8
+                    "name": "东且弥",
+                    "lat": 43.85,
+                    "lng": 90.8
                 }
             ],
             "chronicleFrom": "city_gaochangcheng",
@@ -15372,12 +17066,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 89.78
                 },
                 {
-                    "name": "爵离关",
-                    "lat": 41.82,
-                    "lng": 86.18
+                    "name": "危须",
+                    "lat": 42.26,
+                    "lng": 87.28
                 }
             ],
-            "chronicleFrom": "city_dunhuang",
+            "chronicleFrom": "city_gaochangcheng",
             "targetLat": 42.06,
             "targetLng": 86.56,
             "myTroops": 15000,
@@ -15418,6 +17112,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "陇西郡临洮闾吾谷",
+            "routeVia": [
+                {
+                    "name": "枹罕",
+                    "lat": 35.58,
+                    "lng": 103.21
+                }
+            ],
             "chronicleFrom": "city_yunwu",
             "targetLat": 35.37,
             "targetLng": 103.86,
@@ -15504,13 +17205,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "金城湟中河谷",
-            "routeVia": [
-                {
-                    "name": "允吾",
-                    "lat": 36.43,
-                    "lng": 102.83
-                }
-            ],
             "chronicleFrom": "city_yunwu",
             "targetLat": 36.49,
             "targetLng": 102.37,
@@ -15598,6 +17292,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "北地郡射姑山险谷",
+            "routeVia": [
+                {
+                    "name": "汧源",
+                    "lat": 34.89,
+                    "lng": 106.86
+                },
+                {
+                    "name": "泾阳",
+                    "lat": 35.42,
+                    "lng": 106.95
+                }
+            ],
             "chronicleFrom": "city_tianshui",
             "targetLat": 35.65,
             "targetLng": 107.62,
@@ -15638,6 +17344,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "雁门郡马邑塞外原野",
+            "routeVia": [
+                {
+                    "name": "善无",
+                    "lat": 40,
+                    "lng": 112.42
+                }
+            ],
             "chronicleFrom": "city_eyangling",
             "targetLat": 39.42,
             "targetLng": 112.43,
@@ -15678,6 +17391,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "安定与北地交界阿阳山谷",
+            "routeVia": [
+                {
+                    "name": "金城",
+                    "lat": 36.06,
+                    "lng": 103.77
+                },
+                {
+                    "name": "会宁",
+                    "lat": 35.69,
+                    "lng": 105.05
+                }
+            ],
             "chronicleFrom": "city_yunwu",
             "targetLat": 35.19,
             "targetLng": 106.05,
@@ -15721,17 +17446,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "西河美稷外围长城要冲",
             "routeVia": [
                 {
-                    "name": "美稷",
-                    "lat": 39.86,
-                    "lng": 111.23
+                    "name": "奢延",
+                    "lat": 37.57,
+                    "lng": 108.86
                 },
                 {
-                    "name": "上郡龟兹县",
+                    "name": "龟兹塞",
                     "lat": 38.45,
                     "lng": 110.15
                 }
             ],
-            "chronicleFrom": "city_chilechuan",
+            "chronicleFrom": "city_fushi",
             "targetLat": 39.75,
             "targetLng": 111.15,
             "myTroops": 15000,
@@ -15771,7 +17496,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "并州北塞与美稷荒原",
-            "chronicleFrom": "city_eyangling",
+            "routeVia": [
+                {
+                    "name": "云中",
+                    "lat": 40.27,
+                    "lng": 111.14
+                }
+            ],
+            "chronicleFrom": "city_chilechuan",
             "targetLat": 40.08,
             "targetLng": 113.3,
             "myTroops": 15000,
@@ -15813,14 +17545,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "陇西塞外罗亭山谷",
             "routeVia": [
                 {
-                    "name": "罗亭谷",
-                    "lat": 35.42,
-                    "lng": 103.35
-                },
-                {
-                    "name": "积石河",
-                    "lat": 35.58,
-                    "lng": 102.78
+                    "name": "金城津",
+                    "lat": 36.06,
+                    "lng": 103.77
                 }
             ],
             "chronicleFrom": "city_yunwu",
@@ -15867,21 +17594,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "routeVia": [
                 {
                     "name": "允吾",
-                    "lat": 36.43,
-                    "lng": 102.83
+                    "lat": 36.3,
+                    "lng": 102.9
                 },
                 {
-                    "name": "积石山",
-                    "lat": 35.45,
-                    "lng": 102.25
-                },
-                {
-                    "name": "白石河源",
-                    "lat": 35.3,
-                    "lng": 101.8
+                    "name": "廓州津",
+                    "lat": 36.05,
+                    "lng": 102.5
                 }
             ],
-            "chronicleFrom": "city_yunwu",
+            "chronicleFrom": "city_wuwei",
             "targetLat": 35.45,
             "targetLng": 102.25,
             "myTroops": 15000,
@@ -15923,12 +17645,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "武威郡鸾鸟原野",
             "routeVia": [
                 {
-                    "name": "鸾鸟",
-                    "lat": 37.75,
-                    "lng": 102.85
+                    "name": "令居",
+                    "lat": 36.73,
+                    "lng": 103.26
+                },
+                {
+                    "name": "苍松",
+                    "lat": 37.22,
+                    "lng": 102.95
                 }
             ],
-            "chronicleFrom": "city_yunwu",
+            "chronicleFrom": "city_wuwei",
             "targetLat": 37.93,
             "targetLng": 102.64,
             "myTroops": 15000,
@@ -15971,12 +17698,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "安定郡高平逢义山",
             "routeVia": [
                 {
-                    "name": "彭阳",
-                    "lat": 35.68,
-                    "lng": 107.2
+                    "name": "靖远津",
+                    "lat": 36.56,
+                    "lng": 104.68
+                },
+                {
+                    "name": "海原",
+                    "lat": 36.56,
+                    "lng": 105.65
                 }
             ],
-            "chronicleFrom": "city_anding",
+            "chronicleFrom": "city_wuwei",
             "targetLat": 36.01,
             "targetLng": 106.28,
             "myTroops": 15000,
@@ -16016,24 +17748,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "安定泾阳凡亭山至射虎谷",
-            "routeVia": [
-                {
-                    "name": "凡亭山",
-                    "lat": 35.53,
-                    "lng": 106.68
-                },
-                {
-                    "name": "射虎谷",
-                    "lat": 35.48,
-                    "lng": 106.52
-                },
-                {
-                    "name": "汉阳西县",
-                    "lat": 34.38,
-                    "lng": 105.35
-                }
-            ],
-            "chronicleFrom": "city_xiaoguan",
+            "chronicleFrom": "city_wuwei",
             "targetLat": 35.53,
             "targetLng": 106.68,
             "myTroops": 15000,
@@ -16073,6 +17788,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "北地郡塞外河套南缘",
+            "routeVia": [
+                {
+                    "name": "灵州",
+                    "lat": 38.05,
+                    "lng": 106.25
+                }
+            ],
             "chronicleFrom": "city_anding",
             "targetLat": 38.65,
             "targetLng": 107.85,
@@ -16169,24 +17891,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "长社",
-                    "lat": 34.22,
-                    "lng": 113.82
+                    "name": "轩辕关",
+                    "lat": 34.5,
+                    "lng": 112.92
                 },
                 {
-                    "name": "东郡仓亭",
-                    "lat": 35.98,
-                    "lng": 115.65
-                },
-                {
-                    "name": "广宗",
-                    "lat": 37,
-                    "lng": 115.35
-                },
-                {
-                    "name": "下曲阳",
-                    "lat": 37.52,
-                    "lng": 114.95
+                    "name": "阳翟",
+                    "lat": 34.21,
+                    "lng": 113.47
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -16237,14 +17949,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "长社",
-                    "lat": 34.22,
-                    "lng": 113.82
+                    "name": "叶县",
+                    "lat": 33.62,
+                    "lng": 113.35
                 },
                 {
-                    "name": "西鄂精山",
-                    "lat": 33.15,
-                    "lng": 112.48
+                    "name": "鲁阳",
+                    "lat": 33.74,
+                    "lng": 112.9
                 }
             ],
             "chronicleFrom": "city_xinzheng",
@@ -16290,14 +18002,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "右扶风美阳渭北原野",
             "routeVia": [
                 {
-                    "name": "美阳",
-                    "lat": 34.36,
-                    "lng": 107.88
-                },
-                {
-                    "name": "榆中",
-                    "lat": 35.85,
-                    "lng": 104.11
+                    "name": "槐里",
+                    "lat": 34.29,
+                    "lng": 108.45
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -16347,6 +18054,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han_d",
                 "after": "han_d"
             },
+            "routeVia": [
+                {
+                    "name": "云中",
+                    "lat": 40.27,
+                    "lng": 111.14
+                },
+                {
+                    "name": "富平",
+                    "lat": 38.85,
+                    "lng": 107.8
+                }
+            ],
             "chronicleFrom": "city_danhanshan",
             "targetLat": 38.25,
             "targetLng": 106.32,
@@ -16439,6 +18158,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "han_d",
                 "after": "han_d"
             },
+            "routeVia": [
+                {
+                    "name": "郿县",
+                    "lat": 34.27,
+                    "lng": 107.75
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.36,
             "targetLng": 107.24,
@@ -16486,7 +18212,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 111.18
                 },
                 {
-                    "name": "河东安邑",
+                    "name": "安邑",
                     "lat": 35.14,
                     "lng": 110.99
                 }
@@ -16533,9 +18259,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南尹荥阳汴水原野",
             "routeVia": [
                 {
-                    "name": "酸枣",
-                    "lat": 35.15,
-                    "lng": 114.2
+                    "name": "成皋",
+                    "lat": 34.81,
+                    "lng": 113.1
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -16580,29 +18306,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南尹梁县阳人聚",
             "routeVia": [
                 {
-                    "name": "鲁阳",
-                    "lat": 33.74,
-                    "lng": 112.9
-                },
-                {
-                    "name": "梁东",
-                    "lat": 34.15,
-                    "lng": 112.88
-                },
-                {
-                    "name": "阳人聚",
-                    "lat": 34.18,
-                    "lng": 112.82
-                },
-                {
-                    "name": "大谷关",
-                    "lat": 34.45,
-                    "lng": 112.6
-                },
-                {
-                    "name": "洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
+                    "name": "广成泽",
+                    "lat": 34.3,
+                    "lng": 112.68
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -16645,6 +18351,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "巨鹿郡广宗南界桥清河岸",
+            "routeVia": [
+                {
+                    "name": "河间",
+                    "lat": 38.44,
+                    "lng": 116.09
+                },
+                {
+                    "name": "武垣",
+                    "lat": 38.28,
+                    "lng": 116.05
+                },
+                {
+                    "name": "信都",
+                    "lat": 37.55,
+                    "lng": 115.57
+                }
+            ],
             "chronicleFrom": "city_beijing",
             "targetLat": 37.02,
             "targetLng": 115.32,
@@ -16693,14 +18416,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "陕县",
-                    "lat": 34.77,
-                    "lng": 111.1
+                    "name": "华阴",
+                    "lat": 34.57,
+                    "lng": 110.09
                 },
                 {
-                    "name": "蓝田",
-                    "lat": 34.15,
-                    "lng": 109.32
+                    "name": "郑县",
+                    "lat": 34.5,
+                    "lng": 109.77
+                },
+                {
+                    "name": "霸陵",
+                    "lat": 34.28,
+                    "lng": 109.18
                 }
             ],
             "chronicleFrom": "city_hanguguan",
@@ -16745,14 +18473,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "东平寿张至济北原野",
             "routeVia": [
                 {
-                    "name": "寿张",
-                    "lat": 35.9,
-                    "lng": 116.12
+                    "name": "范县",
+                    "lat": 35.88,
+                    "lng": 115.52
                 },
                 {
-                    "name": "济北",
-                    "lat": 36.25,
-                    "lng": 116.45
+                    "name": "东阿",
+                    "lat": 36.15,
+                    "lng": 116.12
                 }
             ],
             "chronicleFrom": "city_puyang",
@@ -16806,34 +18534,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "白马",
                     "lat": 35.53,
                     "lng": 114.68
-                },
-                {
-                    "name": "封丘",
-                    "lat": 35.04,
-                    "lng": 114.42
-                },
-                {
-                    "name": "匡亭",
-                    "lat": 35.08,
-                    "lng": 114.58
-                },
-                {
-                    "name": "襄邑",
-                    "lat": 34.43,
-                    "lng": 115.07
-                },
-                {
-                    "name": "宁陵",
-                    "lat": 34.45,
-                    "lng": 115.32
-                },
-                {
-                    "name": "寿春",
-                    "lat": 32.58,
-                    "lng": 116.78
                 }
             ],
-            "chronicleFrom": "city_dingtao",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 35.04,
             "targetLng": 114.42,
             "myTroops": 15000,
@@ -16882,9 +18585,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "郯城",
-                    "lat": 34.61,
-                    "lng": 118.35
+                    "name": "彭城",
+                    "lat": 34.27,
+                    "lng": 117.18
+                },
+                {
+                    "name": "亢父",
+                    "lat": 35.42,
+                    "lng": 116.58
                 },
                 {
                     "name": "鄄城",
@@ -16892,7 +18600,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 115.51
                 }
             ],
-            "chronicleFrom": "city_pengcheng",
+            "chronicleFrom": "city_xiapi",
             "targetLat": 35.76,
             "targetLng": 115.03,
             "myTroops": 15000,
@@ -16939,17 +18647,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "巨野",
-                    "lat": 35.39,
-                    "lng": 116.09
+                    "name": "鄄城",
+                    "lat": 35.56,
+                    "lng": 115.51
                 },
                 {
-                    "name": "东缗",
-                    "lat": 35.07,
-                    "lng": 116.31
+                    "name": "乘氏",
+                    "lat": 35.24,
+                    "lng": 115.48
                 }
             ],
-            "chronicleFrom": "city_dingtao",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 35.07,
             "targetLng": 115.57,
             "myTroops": 15000,
@@ -16996,19 +18704,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "历阳",
-                    "lat": 31.72,
-                    "lng": 118.36
-                },
-                {
-                    "name": "牛渚",
-                    "lat": 31.68,
-                    "lng": 118.45
-                },
-                {
-                    "name": "神亭岭",
+                    "name": "阜陵",
                     "lat": 31.95,
-                    "lng": 119.52
+                    "lng": 118.02
+                },
+                {
+                    "name": "横江",
+                    "lat": 31.65,
+                    "lng": 118.48
                 }
             ],
             "chronicleFrom": "city_shouxian",
@@ -17104,8 +18807,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "睢阳",
+                    "lat": 34.41,
+                    "lng": 115.66
+                },
+                {
                     "name": "彭城",
-                    "lat": 34.26,
+                    "lat": 34.27,
                     "lng": 117.18
                 }
             ],
@@ -17200,6 +18908,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "寻阳",
                     "lat": 29.73,
                     "lng": 115.98
+                },
+                {
+                    "name": "樊口",
+                    "lat": 30.4,
+                    "lng": 114.88
                 }
             ],
             "chronicleFrom": "city_qianshan",
@@ -17244,19 +18957,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "东郡白马城至延津河南岸",
             "routeVia": [
                 {
-                    "name": "黎阳",
-                    "lat": 35.67,
-                    "lng": 114.55
+                    "name": "酸枣",
+                    "lat": 35.1,
+                    "lng": 114.22
                 },
                 {
-                    "name": "官渡",
-                    "lat": 34.75,
-                    "lng": 114.08
-                },
-                {
-                    "name": "延津",
-                    "lat": 35.15,
-                    "lng": 114.2
+                    "name": "韦城",
+                    "lat": 35.36,
+                    "lng": 114.52
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -17301,14 +19009,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南尹中牟官渡至酸枣乌巢",
             "routeVia": [
                 {
-                    "name": "官渡",
-                    "lat": 34.75,
-                    "lng": 114.08
+                    "name": "黎阳",
+                    "lat": 35.67,
+                    "lng": 114.55
                 },
                 {
-                    "name": "乌巢",
-                    "lat": 35.06,
-                    "lng": 114.38
+                    "name": "延津",
+                    "lat": 35.15,
+                    "lng": 114.2
+                },
+                {
+                    "name": "阳武",
+                    "lat": 35.05,
+                    "lng": 114.05
                 }
             ],
             "chronicleFrom": "city_zhaoge",
@@ -17351,6 +19064,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "东郡平丘仓亭河津",
+            "routeVia": [
+                {
+                    "name": "中牟",
+                    "lat": 34.72,
+                    "lng": 114.02
+                },
+                {
+                    "name": "酸枣",
+                    "lat": 35.1,
+                    "lng": 114.22
+                },
+                {
+                    "name": "白马",
+                    "lat": 35.58,
+                    "lng": 114.85
+                }
+            ],
             "chronicleFrom": "city_xuchang",
             "targetLat": 35.98,
             "targetLng": 115.65,
@@ -17398,7 +19128,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 112.36
                 }
             ],
-            "chronicleFrom": "city_nanyang",
+            "chronicleFrom": "city_zaoyang",
             "targetLat": 33.16,
             "targetLng": 112.78,
             "myTroops": 15000,
@@ -17451,17 +19181,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.55
                 },
                 {
-                    "name": "邯郸",
-                    "lat": 36.61,
-                    "lng": 114.49
-                },
-                {
-                    "name": "滏水",
-                    "lat": 36.42,
-                    "lng": 114.45
+                    "name": "内黄",
+                    "lat": 35.95,
+                    "lng": 114.9
                 }
             ],
-            "chronicleFrom": "city_zhaoge",
+            "chronicleFrom": "city_bianliang",
             "targetLat": 36.32,
             "targetLng": 114.42,
             "myTroops": 15000,
@@ -17509,9 +19234,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "邺城",
-                    "lat": 36.32,
-                    "lng": 114.42
+                    "name": "清河",
+                    "lat": 37.05,
+                    "lng": 115.68
                 },
                 {
                     "name": "平原",
@@ -17519,7 +19244,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 116.43
                 }
             ],
-            "chronicleFrom": "city_anyang",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 38.04,
             "targetLng": 116.7,
             "myTroops": 15000,
@@ -17572,12 +19297,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.42
                 },
                 {
-                    "name": "太行陉",
-                    "lat": 35.22,
-                    "lng": 112.92
+                    "name": "涉县",
+                    "lat": 36.56,
+                    "lng": 113.67
                 }
             ],
-            "chronicleFrom": "city_anyang",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 36.11,
             "targetLng": 113.2,
             "myTroops": 15000,
@@ -17640,27 +19365,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 118.35
                 },
                 {
-                    "name": "白檀",
-                    "lat": 40.98,
-                    "lng": 117.65
-                },
-                {
                     "name": "平冈",
                     "lat": 41.05,
                     "lng": 118.85
-                },
-                {
-                    "name": "白狼山",
-                    "lat": 41.15,
-                    "lng": 119.72
-                },
-                {
-                    "name": "柳城",
-                    "lat": 41.28,
-                    "lng": 120.42
                 }
             ],
-            "chronicleFrom": "city_anyang",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 41.15,
             "targetLng": 119.72,
             "myTroops": 15000,
@@ -17707,6 +19417,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "sunwu_d"
             },
             "routeVia": [
+                {
+                    "name": "历阳",
+                    "lat": 31.72,
+                    "lng": 118.36
+                },
                 {
                     "name": "柴桑",
                     "lat": 29.7,
@@ -17756,19 +19471,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "南郡当阳长坂坡与长坂桥",
             "routeVia": [
                 {
-                    "name": "当阳长坂",
-                    "lat": 30.82,
-                    "lng": 111.79
+                    "name": "宜城",
+                    "lat": 31.71,
+                    "lng": 112.26
                 },
                 {
-                    "name": "汉津",
-                    "lat": 30.58,
-                    "lng": 112.58
-                },
-                {
-                    "name": "夏口",
-                    "lat": 30.55,
-                    "lng": 114.28
+                    "name": "编县",
+                    "lat": 31.22,
+                    "lng": 112.02
                 }
             ],
             "chronicleFrom": "city_xiangyang",
@@ -17814,27 +19524,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "江夏赤壁与长江北岸乌林水营",
             "routeVia": [
                 {
-                    "name": "柴桑",
-                    "lat": 29.7,
-                    "lng": 115.99
+                    "name": "江陵",
+                    "lat": 30.35,
+                    "lng": 112.18
                 },
                 {
-                    "name": "夏口",
-                    "lat": 30.55,
-                    "lng": 114.28
-                },
-                {
-                    "name": "赤壁乌林",
-                    "lat": 29.89,
-                    "lng": 113.62
-                },
-                {
-                    "name": "华容道",
-                    "lat": 29.95,
-                    "lng": 112.9
+                    "name": "巴丘北津",
+                    "lat": 29.92,
+                    "lng": 112.95
                 }
             ],
-            "chronicleFrom": "city_ying",
+            "chronicleFrom": "city_xuchang",
             "targetLat": 29.885,
             "targetLng": 113.622,
             "myTroops": 15000,
@@ -17887,9 +19587,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 113.62
                 },
                 {
-                    "name": "夷陵",
-                    "lat": 30.7,
-                    "lng": 111.28
+                    "name": "孱陵",
+                    "lat": 29.95,
+                    "lng": 112.35
                 }
             ],
             "chronicleFrom": "city_wuchang",
@@ -17945,19 +19645,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 112.45
                 },
                 {
-                    "name": "潼关",
-                    "lat": 34.61,
-                    "lng": 110.29
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
                 },
                 {
-                    "name": "蒲阪津",
-                    "lat": 34.82,
-                    "lng": 110.27
-                },
-                {
-                    "name": "渭南",
-                    "lat": 34.52,
-                    "lng": 109.95
+                    "name": "陕县",
+                    "lat": 34.77,
+                    "lng": 111.1
                 }
             ],
             "chronicleFrom": "city_xuchang",
@@ -18008,14 +19703,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "葭萌",
-                    "lat": 32.33,
-                    "lng": 105.71
-                },
-                {
-                    "name": "白水关",
-                    "lat": 32.51,
-                    "lng": 105.51
+                    "name": "梓潼",
+                    "lat": 31.64,
+                    "lng": 105.16
                 }
             ],
             "chronicleFrom": "city_jianmenguan",
@@ -18071,12 +19761,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 104.2
                 },
                 {
-                    "name": "雒城雁桥",
+                    "name": "雒城",
                     "lat": 30.99,
                     "lng": 104.28
                 }
             ],
-            "chronicleFrom": "city_mianyang",
+            "chronicleFrom": "city_chengdu",
             "targetLat": 30.57,
             "targetLng": 104.07,
             "myTroops": 15000,
@@ -18129,24 +19819,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 107.24
                 },
                 {
-                    "name": "大散关",
-                    "lat": 34.26,
-                    "lng": 106.95
+                    "name": "散关",
+                    "lat": 34.18,
+                    "lng": 106.85
                 },
                 {
                     "name": "河池",
-                    "lat": 33.85,
-                    "lng": 105.98
-                },
-                {
-                    "name": "阳平关",
-                    "lat": 33.08,
-                    "lng": 106.28
-                },
-                {
-                    "name": "南郑",
-                    "lat": 33.07,
-                    "lng": 107.02
+                    "lat": 33.8,
+                    "lng": 106.06
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -18189,13 +19869,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "庐江合肥城外与肥水逍遥津",
-            "routeVia": [
-                {
-                    "name": "濡须坞",
-                    "lat": 31.52,
-                    "lng": 117.92
-                }
-            ],
             "chronicleFrom": "city_hefei",
             "targetLat": 31.82,
             "targetLng": 117.23,
@@ -18244,24 +19917,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "葭萌",
-                    "lat": 32.33,
-                    "lng": 105.71
+                    "name": "白水关",
+                    "lat": 32.51,
+                    "lng": 105.51
                 },
                 {
                     "name": "阳平关",
                     "lat": 33.08,
                     "lng": 106.28
-                },
-                {
-                    "name": "沔阳定军山",
-                    "lat": 33.06,
-                    "lng": 106.67
-                },
-                {
-                    "name": "南郑",
-                    "lat": 33.07,
-                    "lng": 107.02
                 }
             ],
             "chronicleFrom": "city_jianmenguan",
@@ -18304,6 +19967,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "襄阳樊城汉水至南郡江陵",
+            "routeVia": [
+                {
+                    "name": "当阳",
+                    "lat": 30.82,
+                    "lng": 111.79
+                },
+                {
+                    "name": "宜城",
+                    "lat": 31.71,
+                    "lng": 112.26
+                }
+            ],
             "chronicleFrom": "city_ying",
             "targetLat": 32.01,
             "targetLng": 112.12,
@@ -18351,6 +20026,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "caowei"
             },
             "routeVia": [
+                {
+                    "name": "筑阳",
+                    "lat": 32.27,
+                    "lng": 111.65
+                },
                 {
                     "name": "房陵",
                     "lat": 32.05,
@@ -18404,24 +20084,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "巫县",
-                    "lat": 31.07,
-                    "lng": 109.88
-                },
-                {
-                    "name": "秭归",
-                    "lat": 30.83,
-                    "lng": 110.97
-                },
-                {
-                    "name": "夷陵",
-                    "lat": 30.7,
-                    "lng": 111.28
-                },
-                {
-                    "name": "猇亭",
-                    "lat": 30.55,
-                    "lng": 111.42
+                    "name": "枝江",
+                    "lat": 30.42,
+                    "lng": 111.76
                 }
             ],
             "chronicleFrom": "city_ying",
@@ -18475,6 +20140,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "襄阳",
                     "lat": 32.01,
                     "lng": 112.12
+                },
+                {
+                    "name": "宜城",
+                    "lat": 31.71,
+                    "lng": 112.26
                 }
             ],
             "chronicleFrom": "city_nanyang",
@@ -18525,12 +20195,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "武阳",
+                    "lat": 30.18,
+                    "lng": 103.85
+                },
+                {
                     "name": "安上",
                     "lat": 28.8,
                     "lng": 104.25
                 },
                 {
-                    "name": "越嶲卑水",
+                    "name": "卑水",
                     "lat": 27.87,
                     "lng": 102.31
                 }
@@ -18581,18 +20256,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "caowei",
                 "after": "caowei"
             },
-            "routeVia": [
-                {
-                    "name": "武昌",
-                    "lat": 30.53,
-                    "lng": 114.32
-                },
-                {
-                    "name": "石阳",
-                    "lat": 31.25,
-                    "lng": 113.92
-                }
-            ],
             "chronicleFrom": "city_xiangyang",
             "targetLat": 32.01,
             "targetLng": 112.12,
@@ -18641,9 +20304,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "西城",
-                    "lat": 32.69,
-                    "lng": 109.03
+                    "name": "邓县",
+                    "lat": 32.15,
+                    "lng": 112.08
+                },
+                {
+                    "name": "均口",
+                    "lat": 32.55,
+                    "lng": 110.85
                 }
             ],
             "chronicleFrom": "city_nanyang",
@@ -18699,9 +20367,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 107.75
                 },
                 {
-                    "name": "番须陇坻",
-                    "lat": 34.92,
-                    "lng": 106.32
+                    "name": "汧县",
+                    "lat": 34.67,
+                    "lng": 106.87
+                },
+                {
+                    "name": "陇坻",
+                    "lat": 34.88,
+                    "lng": 106.55
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -18747,14 +20420,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "庐江郡皖城北石亭夹道",
             "routeVia": [
                 {
-                    "name": "寿春",
-                    "lat": 32.59,
-                    "lng": 116.8
+                    "name": "寻阳",
+                    "lat": 29.73,
+                    "lng": 115.98
                 },
                 {
-                    "name": "夹石",
-                    "lat": 30.92,
-                    "lng": 116.78
+                    "name": "皖口",
+                    "lat": 30.51,
+                    "lng": 117.03
                 }
             ],
             "chronicleFrom": "city_wuchang",
@@ -18810,9 +20483,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 106.15
                 },
                 {
-                    "name": "建威",
-                    "lat": 33.58,
-                    "lng": 105.28
+                    "name": "下辨",
+                    "lat": 33.74,
+                    "lng": 105.65
                 }
             ],
             "chronicleFrom": "city_hanzhong",
@@ -18857,9 +20530,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "陇西南安阳溪河谷",
             "routeVia": [
                 {
+                    "name": "阳平关",
+                    "lat": 33.09,
+                    "lng": 106.15
+                },
+                {
                     "name": "武都",
                     "lat": 33.43,
                     "lng": 105.14
+                },
+                {
+                    "name": "临洮",
+                    "lat": 35.37,
+                    "lng": 103.86
                 }
             ],
             "chronicleFrom": "city_hanzhong",
@@ -18910,19 +20593,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "阳平关",
+                    "lat": 33.09,
+                    "lng": 106.15
+                },
+                {
+                    "name": "建威",
+                    "lat": 33.58,
+                    "lng": 105.28
+                },
+                {
                     "name": "祁山",
                     "lat": 34.25,
                     "lng": 105.33
-                },
-                {
-                    "name": "上邽",
-                    "lat": 34.58,
-                    "lng": 105.73
-                },
-                {
-                    "name": "卤城",
-                    "lat": 34.34,
-                    "lng": 105.46
                 }
             ],
             "chronicleFrom": "city_hanzhong",
@@ -18971,13 +20654,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "caowei",
                 "after": "caowei"
             },
-            "routeVia": [
-                {
-                    "name": "塞北陉北",
-                    "lat": 40.95,
-                    "lng": 114.2
-                }
-            ],
             "chronicleFrom": "city_macheng",
             "targetLat": 40.38,
             "targetLng": 113.88,
@@ -19021,17 +20697,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "辽东郡辽隧辽水西岸",
             "routeVia": [
                 {
-                    "name": "蓟城",
-                    "lat": 39.9,
-                    "lng": 116.35
+                    "name": "无终",
+                    "lat": 39.95,
+                    "lng": 117.4
                 },
                 {
-                    "name": "右北平",
-                    "lat": 40.05,
-                    "lng": 118.85
+                    "name": "孤竹",
+                    "lat": 39.89,
+                    "lng": 118.89
+                },
+                {
+                    "name": "徒河",
+                    "lat": 41.12,
+                    "lng": 121.14
                 }
             ],
-            "chronicleFrom": "city_gubeikou",
+            "chronicleFrom": "city_beijing",
             "targetLat": 41.05,
             "targetLng": 122.65,
             "myTroops": 15000,
@@ -19080,7 +20761,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "孤竹辽西",
+                    "name": "邺城",
+                    "lat": 36.32,
+                    "lng": 114.42
+                },
+                {
+                    "name": "蓟城",
+                    "lat": 39.9,
+                    "lng": 116.41
+                },
+                {
+                    "name": "孤竹",
                     "lat": 39.89,
                     "lng": 118.89
                 },
@@ -19088,11 +20779,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "辽隧",
                     "lat": 41.05,
                     "lng": 122.65
-                },
-                {
-                    "name": "首山",
-                    "lat": 41.19,
-                    "lng": 123.08
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -19143,19 +20829,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "邓县",
-                    "lat": 32.15,
-                    "lng": 112.08
+                    "name": "许昌",
+                    "lat": 34.02,
+                    "lng": 113.85
                 },
                 {
-                    "name": "樊城",
-                    "lat": 32.04,
-                    "lng": 112.14
-                },
-                {
-                    "name": "三州口",
-                    "lat": 31.52,
-                    "lng": 112.55
+                    "name": "汝阴",
+                    "lat": 32.9,
+                    "lng": 115.81
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -19204,6 +20885,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "caowei",
                 "after": "caowei"
             },
+            "routeVia": [
+                {
+                    "name": "泊灼城",
+                    "lat": 40.38,
+                    "lng": 124.75
+                }
+            ],
             "chronicleFrom": "city_guoneicheng",
             "targetLat": 40.12,
             "targetLng": 124.38,
@@ -19253,9 +20941,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "郿县骆谷",
-                    "lat": 34.12,
-                    "lng": 107.82
+                    "name": "郿县",
+                    "lat": 34.27,
+                    "lng": 107.75
+                },
+                {
+                    "name": "傥谷",
+                    "lat": 33.82,
+                    "lng": 107.68
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -19306,9 +20999,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 123.55
                 },
                 {
-                    "name": "沸流水",
-                    "lat": 41.35,
-                    "lng": 125.18
+                    "name": "高显",
+                    "lat": 41.65,
+                    "lng": 124.5
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -19360,24 +21053,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "玄菟",
-                    "lat": 41.82,
-                    "lng": 123.55
-                },
-                {
-                    "name": "丸都山城",
-                    "lat": 41.16,
-                    "lng": 126.16
-                },
-                {
-                    "name": "南沃沮",
-                    "lat": 40.05,
-                    "lng": 127.55
-                },
-                {
-                    "name": "肃慎南界",
-                    "lat": 42.95,
-                    "lng": 130.35
+                    "name": "沸流谷",
+                    "lat": 41.22,
+                    "lng": 125.78
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -19423,24 +21101,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "陇西郡枹罕与洮西为翅",
             "routeVia": [
                 {
-                    "name": "汉中阴平",
-                    "lat": 32.42,
-                    "lng": 104.92
+                    "name": "陈仓",
+                    "lat": 34.36,
+                    "lng": 107.24
                 },
                 {
-                    "name": "枹罕",
-                    "lat": 35.58,
-                    "lng": 103.21
+                    "name": "天水",
+                    "lat": 34.58,
+                    "lng": 105.73
                 },
                 {
-                    "name": "为翅",
-                    "lat": 35.12,
-                    "lng": 103.85
-                },
-                {
-                    "name": "河关",
-                    "lat": 35.48,
-                    "lng": 102.95
+                    "name": "狄道",
+                    "lat": 35.37,
+                    "lng": 103.86
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -19492,14 +21165,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阴平",
-                    "lat": 32.42,
-                    "lng": 104.92
-                },
-                {
-                    "name": "曲城",
-                    "lat": 34.45,
-                    "lng": 104.18
+                    "name": "豲道",
+                    "lat": 34.8,
+                    "lng": 104.9
                 }
             ],
             "chronicleFrom": "city_tianshui",
@@ -19551,9 +21219,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
+                    "name": "萨迈拉",
+                    "lat": 34.21,
+                    "lng": 43.88
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -19604,19 +21272,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "安条克",
-                    "lat": 36.2,
-                    "lng": 36.16
-                },
-                {
-                    "name": "卡莱",
-                    "lat": 36.87,
-                    "lng": 39.03
-                },
-                {
-                    "name": "雷萨伊纳",
-                    "lat": 36.85,
-                    "lng": 40.07
+                    "name": "辛加拉",
+                    "lat": 36.32,
+                    "lng": 41.86
                 },
                 {
                     "name": "尼西比斯",
@@ -19624,7 +21282,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 41.22
                 }
             ],
-            "chronicleFrom": "city_bageda",
+            "chronicleFrom": "city_dabulishi",
             "targetLat": 36.85,
             "targetLng": 40.07,
             "myTroops": 15000,
@@ -19672,19 +21330,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "安条克",
-                    "lat": 36.2,
-                    "lng": 36.16
+                    "name": "辛加拉",
+                    "lat": 36.32,
+                    "lng": 41.86
                 },
                 {
-                    "name": "萨莫萨塔",
-                    "lat": 37.58,
-                    "lng": 38.48
-                },
-                {
-                    "name": "卡莱",
-                    "lat": 36.87,
-                    "lng": 39.03
+                    "name": "尼西比斯",
+                    "lat": 37.07,
+                    "lng": 41.22
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -19729,12 +21382,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "幼发拉底河中游渡津",
             "routeVia": [
                 {
-                    "name": "帕尔米拉",
-                    "lat": 34.55,
-                    "lng": 38.27
+                    "name": "马拉蒂亚",
+                    "lat": 38.35,
+                    "lng": 38.31
+                },
+                {
+                    "name": "萨莫萨塔",
+                    "lat": 37.58,
+                    "lng": 38.48
                 }
             ],
-            "chronicleFrom": "city_antiejiya",
+            "chronicleFrom": "city_mazaka",
             "targetLat": 35.95,
             "targetLng": 39.02,
             "myTroops": 15000,
@@ -19820,6 +21478,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "北意大利加尔达湖西岸山地",
+            "routeVia": [
+                {
+                    "name": "布里克西亚",
+                    "lat": 45.54,
+                    "lng": 10.21
+                }
+            ],
             "chronicleFrom": "city_milan",
             "targetLat": 45.54,
             "targetLng": 10.56,
@@ -19863,14 +21528,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "上莫伊西亚摩拉瓦河谷奈苏斯",
             "routeVia": [
                 {
-                    "name": "帖撒罗尼迦",
-                    "lat": 40.64,
-                    "lng": 22.94
+                    "name": "阿奎莱亚",
+                    "lat": 45.77,
+                    "lng": 13.37
                 },
                 {
-                    "name": "多伊兰",
-                    "lat": 41.18,
-                    "lng": 22.72
+                    "name": "西尔米乌姆",
+                    "lat": 44.97,
+                    "lng": 19.61
                 }
             ],
             "chronicleFrom": "city_luoma",
@@ -19916,17 +21581,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "意大利梅陶罗河法诺至帕维亚原野",
             "routeVia": [
                 {
+                    "name": "法诺",
+                    "lat": 43.84,
+                    "lng": 13.02
+                },
+                {
+                    "name": "博诺尼亚",
+                    "lat": 44.49,
+                    "lng": 11.34
+                },
+                {
                     "name": "普拉森提亚",
                     "lat": 45.05,
                     "lng": 9.69
-                },
-                {
-                    "name": "法诺梅陶罗河",
-                    "lat": 43.84,
-                    "lng": 13.02
                 }
             ],
-            "chronicleFrom": "city_milan",
+            "chronicleFrom": "city_luoma",
             "targetLat": 45.185,
             "targetLng": 9.158,
             "myTroops": 15000,
@@ -19974,24 +21644,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "安卡拉",
+                    "name": "安基拉",
                     "lat": 39.93,
                     "lng": 32.86
                 },
                 {
-                    "name": "安条克伊姆迈",
-                    "lat": 36.23,
-                    "lng": 36.48
+                    "name": "塔尔苏斯",
+                    "lat": 36.92,
+                    "lng": 34.9
                 },
                 {
-                    "name": "埃梅萨",
-                    "lat": 34.73,
-                    "lng": 36.71
-                },
-                {
-                    "name": "帕尔米拉",
-                    "lat": 34.55,
-                    "lng": 38.27
+                    "name": "安条克",
+                    "lat": 36.2,
+                    "lng": 36.16
                 }
             ],
             "chronicleFrom": "city_junshitandingbao",
@@ -20051,6 +21716,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "帕尔米拉",
                     "lat": 34.55,
                     "lng": 38.27
+                },
+                {
+                    "name": "佩卢西姆",
+                    "lat": 31.04,
+                    "lng": 32.54
                 }
             ],
             "chronicleFrom": "city_aidiernei",
@@ -20101,14 +21771,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "马恩河沙隆",
-                    "lat": 48.96,
-                    "lng": 4.36
+                    "name": "奥古斯托杜努姆",
+                    "lat": 46.95,
+                    "lng": 4.3
                 },
                 {
-                    "name": "兰斯",
-                    "lat": 49.26,
-                    "lng": 4.03
+                    "name": "特鲁瓦",
+                    "lat": 48.3,
+                    "lng": 4.07
                 }
             ],
             "chronicleFrom": "city_lyon",
@@ -20159,14 +21829,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "特里尔摩泽尔河",
-                    "lat": 49.75,
-                    "lng": 6.64
+                    "name": "卢克索维乌姆",
+                    "lat": 47.82,
+                    "lng": 6.38
                 },
                 {
-                    "name": "内卡河谷",
-                    "lat": 49.15,
-                    "lng": 9.22
+                    "name": "梅蒂奥马特里奇",
+                    "lat": 49.12,
+                    "lng": 6.18
                 }
             ],
             "chronicleFrom": "city_lyon",
@@ -20209,7 +21879,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "雷蒂亚行省莱希河两岸",
-            "chronicleFrom": "city_milan",
+            "routeVia": [
+                {
+                    "name": "内卡津",
+                    "lat": 49.15,
+                    "lng": 9.22
+                },
+                {
+                    "name": "奥古斯塔",
+                    "lat": 48.37,
+                    "lng": 10.6
+                }
+            ],
+            "chronicleFrom": "city_lyon",
             "targetLat": 48.37,
             "targetLng": 10.89,
             "myTroops": 15000,
@@ -20252,7 +21934,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "高平川北万斛堆沙梁",
             "routeVia": [
                 {
-                    "name": "泾州高平",
+                    "name": "泾阳",
+                    "lat": 34.53,
+                    "lng": 108.84
+                },
+                {
+                    "name": "高平",
                     "lat": 36,
                     "lng": 106.28
                 }
@@ -20300,14 +21987,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "金城与武威塞外草滩",
             "routeVia": [
                 {
-                    "name": "金城允吾",
-                    "lat": 36.3,
-                    "lng": 102.9
+                    "name": "天水",
+                    "lat": 34.58,
+                    "lng": 105.73
                 },
                 {
-                    "name": "武威塞外",
-                    "lat": 37.65,
-                    "lng": 102.8
+                    "name": "狄道",
+                    "lat": 35.37,
+                    "lng": 103.86
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -20363,6 +22050,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 108.93
                 },
                 {
+                    "name": "勇士城",
+                    "lat": 35.88,
+                    "lng": 104.12
+                },
+                {
                     "name": "温水",
                     "lat": 36.75,
                     "lng": 103.52
@@ -20416,14 +22108,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "白帝巫峡",
+                    "name": "白帝",
                     "lat": 31.04,
                     "lng": 109.57
                 },
                 {
-                    "name": "西陵夷陵",
+                    "name": "西陵",
                     "lat": 30.7,
                     "lng": 111.28
+                },
+                {
+                    "name": "江陵",
+                    "lat": 30.35,
+                    "lng": 112.18
                 },
                 {
                     "name": "武昌",
@@ -20471,6 +22168,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "新平郡东南梁山六陌山谷",
+            "routeVia": [
+                {
+                    "name": "好畤",
+                    "lat": 34.52,
+                    "lng": 108.22
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 35.03,
             "targetLng": 108.08,
@@ -20518,6 +22222,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "dongjin"
             },
             "routeVia": [
+                {
+                    "name": "函谷关",
+                    "lat": 34.62,
+                    "lng": 110.92
+                },
+                {
+                    "name": "长安",
+                    "lat": 34.27,
+                    "lng": 108.93
+                },
                 {
                     "name": "槐里",
                     "lat": 34.29,
@@ -20571,14 +22285,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.18
                 },
                 {
-                    "name": "温县黄桥",
-                    "lat": 34.94,
-                    "lng": 113.08
-                },
-                {
-                    "name": "孟津洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
+                    "name": "怀县",
+                    "lat": 35.1,
+                    "lng": 113.4
                 }
             ],
             "chronicleFrom": "city_anyang",
@@ -20666,6 +22375,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "司州魏郡荡阴",
+            "routeVia": [
+                {
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
+                },
+                {
+                    "name": "朝歌",
+                    "lat": 35.6,
+                    "lng": 114.18
+                }
+            ],
             "chronicleFrom": "city_luoyang",
             "targetLat": 35.92,
             "targetLng": 114.35,
@@ -20771,9 +22492,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 110.92
                 },
                 {
+                    "name": "弘农",
+                    "lat": 34.62,
+                    "lng": 110.68
+                },
+                {
                     "name": "霸水",
                     "lat": 34.28,
-                    "lng": 109.06
+                    "lng": 109.15
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -20824,7 +22550,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "茌平马牧",
+                    "name": "茌平",
                     "lat": 36.58,
                     "lng": 116.25
                 },
@@ -20882,9 +22608,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "武德",
-                    "lat": 35.12,
-                    "lng": 113.38
+                    "name": "上党",
+                    "lat": 36.15,
+                    "lng": 113.01
+                },
+                {
+                    "name": "泫氏",
+                    "lat": 35.8,
+                    "lng": 112.92
                 }
             ],
             "chronicleFrom": "city_linfen",
@@ -20929,12 +22660,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "豫州梁国苦县宁平城",
             "routeVia": [
                 {
-                    "name": "项县",
-                    "lat": 33.26,
-                    "lng": 114.88
+                    "name": "酸枣",
+                    "lat": 35.1,
+                    "lng": 114.22
+                },
+                {
+                    "name": "陈留",
+                    "lat": 34.65,
+                    "lng": 114.52
                 }
             ],
-            "chronicleFrom": "city_xuchang",
+            "chronicleFrom": "city_xingtai",
             "targetLat": 33.765,
             "targetLng": 115.392,
             "myTroops": 15000,
@@ -20982,9 +22718,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "洛水",
-                    "lat": 34.65,
-                    "lng": 112.48
+                    "name": "河东",
+                    "lat": 35.15,
+                    "lng": 110.98
+                },
+                {
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
                 }
             ],
             "chronicleFrom": "city_linfen",
@@ -21035,14 +22776,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "河东蒲坂",
+                    "name": "蒲坂",
                     "lat": 34.88,
                     "lng": 110.32
                 },
                 {
-                    "name": "冯翊",
-                    "lat": 34.8,
-                    "lng": 109.94
+                    "name": "临晋",
+                    "lat": 34.85,
+                    "lng": 110.05
+                },
+                {
+                    "name": "频阳",
+                    "lat": 34.95,
+                    "lng": 109.25
                 }
             ],
             "chronicleFrom": "city_linfen",
@@ -21093,17 +22839,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "北地",
-                    "lat": 35.03,
-                    "lng": 108.95
+                    "name": "富平",
+                    "lat": 34.92,
+                    "lng": 109.18
                 },
                 {
-                    "name": "泾阳渭北",
+                    "name": "泾阳",
                     "lat": 34.53,
                     "lng": 108.84
                 }
             ],
-            "chronicleFrom": "city_jinsuoguan",
+            "chronicleFrom": "city_lishi",
             "targetLat": 34.27,
             "targetLng": 108.93,
             "myTroops": 15000,
@@ -21151,14 +22897,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "京口",
-                    "lat": 32.2,
-                    "lng": 119.45
+                    "name": "泗口",
+                    "lat": 33.62,
+                    "lng": 118.92
                 },
                 {
-                    "name": "淮阴",
-                    "lat": 33.5,
-                    "lng": 119.13
+                    "name": "下邳",
+                    "lat": 34,
+                    "lng": 117.95
+                },
+                {
+                    "name": "彭城",
+                    "lat": 34.27,
+                    "lng": 117.18
                 }
             ],
             "chronicleFrom": "city_huaiyin",
@@ -21209,12 +22960,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "上党",
-                    "lat": 36.15,
-                    "lng": 113.01
+                    "name": "蒲坂",
+                    "lat": 34.88,
+                    "lng": 110.32
+                },
+                {
+                    "name": "绛邑",
+                    "lat": 35.62,
+                    "lng": 111.35
                 }
             ],
-            "chronicleFrom": "city_xingtai",
+            "chronicleFrom": "city_changan",
             "targetLat": 36.088,
             "targetLng": 111.517,
             "myTroops": 15000,
@@ -21259,6 +23015,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "hou_zhao",
                 "after": "hou_zhao"
             },
+            "routeVia": [
+                {
+                    "name": "邺城",
+                    "lat": 36.1,
+                    "lng": 114.39
+                },
+                {
+                    "name": "黎阳",
+                    "lat": 35.68,
+                    "lng": 114.55
+                }
+            ],
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.8,
             "targetLng": 114.31,
@@ -21351,6 +23119,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dongjin",
                 "after": "hou_zhao"
             },
+            "routeVia": [
+                {
+                    "name": "清河",
+                    "lat": 37.05,
+                    "lng": 115.48
+                },
+                {
+                    "name": "平原",
+                    "lat": 37.16,
+                    "lng": 116.43
+                }
+            ],
             "chronicleFrom": "city_xingtai",
             "targetLat": 37.33,
             "targetLng": 117.55,
@@ -21402,6 +23182,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "平原",
                     "lat": 37.16,
                     "lng": 116.43
+                },
+                {
+                    "name": "高唐",
+                    "lat": 36.86,
+                    "lng": 116.23
+                },
+                {
+                    "name": "般阳",
+                    "lat": 36.82,
+                    "lng": 117.85
                 }
             ],
             "chronicleFrom": "city_xingtai",
@@ -21453,14 +23243,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "寿春",
-                    "lat": 32.59,
-                    "lng": 116.8
+                    "name": "陈留",
+                    "lat": 34.65,
+                    "lng": 114.52
                 },
                 {
-                    "name": "逡遒",
-                    "lat": 31.88,
-                    "lng": 117.75
+                    "name": "谯城",
+                    "lat": 33.88,
+                    "lng": 115.77
                 }
             ],
             "chronicleFrom": "city_zhaoge",
@@ -21511,9 +23301,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "成皋孟津",
-                    "lat": 34.82,
-                    "lng": 112.78
+                    "name": "邺城",
+                    "lat": 36.1,
+                    "lng": 114.39
+                },
+                {
+                    "name": "河内",
+                    "lat": 35.1,
+                    "lng": 113.38
+                },
+                {
+                    "name": "成皋",
+                    "lat": 34.81,
+                    "lng": 113.1
                 }
             ],
             "chronicleFrom": "city_xingtai",
@@ -21565,14 +23365,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "潼关长安",
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                },
+                {
+                    "name": "潼关",
+                    "lat": 34.54,
+                    "lng": 110.29
+                },
+                {
+                    "name": "长安",
                     "lat": 34.27,
                     "lng": 108.93
                 },
                 {
-                    "name": "义渠",
-                    "lat": 35.58,
-                    "lng": 107.85
+                    "name": "汧城",
+                    "lat": 34.67,
+                    "lng": 106.87
                 }
             ],
             "chronicleFrom": "city_xingtai",
@@ -21621,6 +23431,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "hou_zhao",
                 "after": "hou_zhao"
             },
+            "routeVia": [
+                {
+                    "name": "邺城",
+                    "lat": 36.1,
+                    "lng": 114.39
+                },
+                {
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
+                }
+            ],
             "chronicleFrom": "city_xingtai",
             "targetLat": 34.62,
             "targetLng": 112.45,
@@ -21667,13 +23489,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "murong",
                 "after": "murong"
             },
-            "routeVia": [
-                {
-                    "name": "令支",
-                    "lat": 39.89,
-                    "lng": 118.89
-                }
-            ],
             "chronicleFrom": "city_chaoyang",
             "targetLat": 41.57,
             "targetLng": 120.45,
@@ -21722,9 +23537,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "渤海冰道",
-                    "lat": 40.75,
-                    "lng": 121.55
+                    "name": "徒河",
+                    "lat": 41.12,
+                    "lng": 121.15
+                },
+                {
+                    "name": "沓氏",
+                    "lat": 39.85,
+                    "lng": 121.65
                 }
             ],
             "chronicleFrom": "city_jicheng",
@@ -21821,7 +23641,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "南道木底",
+                    "name": "襄平",
+                    "lat": 41.27,
+                    "lng": 123.17
+                },
+                {
+                    "name": "木底",
                     "lat": 41.32,
                     "lng": 124.85
                 }
@@ -21868,17 +23693,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "冀州中山魏昌廉台",
             "routeVia": [
                 {
-                    "name": "邺城",
-                    "lat": 36.1,
-                    "lng": 114.39
+                    "name": "涿县",
+                    "lat": 39.48,
+                    "lng": 115.98
                 },
                 {
-                    "name": "常山安喜",
-                    "lat": 38.47,
-                    "lng": 115.06
+                    "name": "中山",
+                    "lat": 38.68,
+                    "lng": 115.12
                 }
             ],
-            "chronicleFrom": "city_zhongshan",
+            "chronicleFrom": "city_beijing",
             "targetLat": 38.35,
             "targetLng": 115.18,
             "myTroops": 15000,
@@ -21926,9 +23751,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "碻磝济水",
+                    "name": "馆陶",
+                    "lat": 36.53,
+                    "lng": 115.28
+                },
+                {
+                    "name": "碻磝",
                     "lat": 36.52,
                     "lng": 116.25
+                },
+                {
+                    "name": "历城",
+                    "lat": 36.67,
+                    "lng": 117
                 }
             ],
             "chronicleFrom": "city_anyang",
@@ -21980,9 +23815,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
+                    "name": "萨马拉",
+                    "lat": 34.21,
+                    "lng": 43.88
+                },
+                {
+                    "name": "哈特拉",
+                    "lat": 35.59,
+                    "lng": 42.72
+                },
+                {
+                    "name": "辛加拉",
+                    "lat": 36.32,
+                    "lng": 41.86
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -22034,14 +23879,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
+                    "name": "阿萨巴德",
+                    "lat": 35.47,
+                    "lng": 44.39
                 },
                 {
-                    "name": "尼西比斯外围",
-                    "lat": 37.07,
-                    "lng": 41.22
+                    "name": "尼尼微",
+                    "lat": 36.36,
+                    "lng": 43.15
+                },
+                {
+                    "name": "贝扎布德",
+                    "lat": 37.33,
+                    "lng": 42.18
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -22092,9 +23942,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "底格里斯河岸",
-                    "lat": 36.35,
-                    "lng": 43.15
+                    "name": "萨马拉",
+                    "lat": 34.21,
+                    "lng": 43.88
+                },
+                {
+                    "name": "哈特拉",
+                    "lat": 35.59,
+                    "lng": 42.72
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -22140,19 +23995,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "美索不达米亚底格里斯河东岸萨马拉",
             "routeVia": [
                 {
-                    "name": "安条克",
-                    "lat": 36.2,
-                    "lng": 36.16
-                },
-                {
-                    "name": "卡利尼库姆",
-                    "lat": 35.95,
-                    "lng": 39.02
-                },
-                {
-                    "name": "泰西封",
-                    "lat": 33.09,
-                    "lng": 44.58
+                    "name": "俄庇斯",
+                    "lat": 33.75,
+                    "lng": 44.18
                 }
             ],
             "chronicleFrom": "city_bageda",
@@ -22203,7 +24048,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 27.58
                 }
             ],
-            "chronicleFrom": "city_aidiernei",
+            "chronicleFrom": "city_puleisilafu",
             "targetLat": 44.01,
             "targetLng": 28.61,
             "myTroops": 15000,
@@ -22245,9 +24090,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "色雷斯阿德里安堡北郊",
             "routeVia": [
                 {
-                    "name": "君士坦丁堡",
-                    "lat": 41.01,
-                    "lng": 28.97
+                    "name": "卡比莱",
+                    "lat": 42.53,
+                    "lng": 26.55
                 }
             ],
             "chronicleFrom": "city_aidiernei",
@@ -22290,6 +24135,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "马其顿帖撒罗尼迦近郊",
+            "routeVia": [
+                {
+                    "name": "腓立比",
+                    "lat": 41.01,
+                    "lng": 24.28
+                },
+                {
+                    "name": "安菲波利斯",
+                    "lat": 40.82,
+                    "lng": 23.85
+                }
+            ],
             "chronicleFrom": "city_aidiernei",
             "targetLat": 40.64,
             "targetLng": 22.944,
@@ -22337,6 +24194,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "fushi",
                 "after": "fushi"
             },
+            "routeVia": [
+                {
+                    "name": "华阴",
+                    "lat": 34.56,
+                    "lng": 110.09
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 34.88,
             "targetLng": 110.32,
@@ -22380,24 +24244,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "司州汲郡枋头至豫州襄邑",
             "routeVia": [
                 {
-                    "name": "姑孰",
-                    "lat": 31.55,
-                    "lng": 118.47
-                },
-                {
-                    "name": "金乡巨野",
-                    "lat": 35.07,
-                    "lng": 116.31
-                },
-                {
-                    "name": "枋头",
-                    "lat": 35.63,
-                    "lng": 114.52
-                },
-                {
-                    "name": "襄邑",
-                    "lat": 34.43,
-                    "lng": 115.15
+                    "name": "内黄",
+                    "lat": 35.95,
+                    "lng": 114.9
                 }
             ],
             "chronicleFrom": "city_anyang",
@@ -22453,24 +24302,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 110.32
                 },
                 {
-                    "name": "壶关",
-                    "lat": 36.12,
-                    "lng": 113.2
+                    "name": "安邑",
+                    "lat": 35.15,
+                    "lng": 110.98
                 },
                 {
-                    "name": "晋阳",
-                    "lat": 37.87,
-                    "lng": 112.55
-                },
-                {
-                    "name": "潞川",
-                    "lat": 36.32,
-                    "lng": 113.22
-                },
-                {
-                    "name": "邺城",
-                    "lat": 36.1,
-                    "lng": 114.39
+                    "name": "高平",
+                    "lat": 35.8,
+                    "lng": 112.92
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -22519,28 +24358,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dongjin",
                 "after": "fushi"
             },
-            "routeVia": [
-                {
-                    "name": "南郑",
-                    "lat": 33.07,
-                    "lng": 107.02
-                },
-                {
-                    "name": "青谷剑阁",
-                    "lat": 32.28,
-                    "lng": 105.53
-                },
-                {
-                    "name": "阴平绵竹",
-                    "lat": 31.34,
-                    "lng": 104.2
-                },
-                {
-                    "name": "成都",
-                    "lat": 30.57,
-                    "lng": 104.07
-                }
-            ],
             "chronicleFrom": "city_jianmenguan",
             "targetLat": 32.28,
             "targetLng": 105.53,
@@ -22590,9 +24407,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "枹罕石城津",
-                    "lat": 35.85,
-                    "lng": 103.32
+                    "name": "天水",
+                    "lat": 34.58,
+                    "lng": 105.73
+                },
+                {
+                    "name": "枹罕",
+                    "lat": 35.58,
+                    "lng": 103.21
                 },
                 {
                     "name": "洪池",
@@ -22648,7 +24470,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "洛阳宛城",
+                    "name": "鲁阳",
+                    "lat": 33.74,
+                    "lng": 112.88
+                },
+                {
+                    "name": "宛城",
                     "lat": 32.99,
                     "lng": 112.53
                 }
@@ -22701,17 +24528,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "长安",
-                    "lat": 34.27,
-                    "lng": 108.93
+                    "name": "三阿",
+                    "lat": 33.05,
+                    "lng": 119.12
                 },
                 {
-                    "name": "项城",
-                    "lat": 33.26,
-                    "lng": 114.88
+                    "name": "钟离",
+                    "lat": 32.92,
+                    "lng": 117.38
+                },
+                {
+                    "name": "洛涧",
+                    "lat": 32.68,
+                    "lng": 117.12
                 }
             ],
-            "chronicleFrom": "city_huaiyin",
+            "chronicleFrom": "city_yangzhou",
             "targetLat": 32.59,
             "targetLng": 116.8,
             "myTroops": 15000,
@@ -22759,14 +24591,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "荥阳",
-                    "lat": 34.79,
-                    "lng": 113.39
+                    "name": "滑台",
+                    "lat": 35.6,
+                    "lng": 114.18
                 },
                 {
-                    "name": "馆陶",
-                    "lat": 36.53,
-                    "lng": 115.28
+                    "name": "枋头",
+                    "lat": 35.72,
+                    "lng": 114.32
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -22817,19 +24649,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿房",
-                    "lat": 34.26,
-                    "lng": 108.81
+                    "name": "华阴",
+                    "lat": 34.56,
+                    "lng": 110.09
                 },
                 {
-                    "name": "长安",
-                    "lat": 34.27,
-                    "lng": 108.93
-                },
-                {
-                    "name": "五将山",
-                    "lat": 34.68,
-                    "lng": 107.98
+                    "name": "骊山",
+                    "lat": 34.36,
+                    "lng": 109.22
                 }
             ],
             "chronicleFrom": "city_tongguan",
@@ -22874,19 +24701,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "并州太原襄陵",
             "routeVia": [
                 {
-                    "name": "闻喜河东",
+                    "name": "蒲坂",
+                    "lat": 34.88,
+                    "lng": 110.32
+                },
+                {
+                    "name": "闻喜",
                     "lat": 35.36,
                     "lng": 111.22
-                },
-                {
-                    "name": "襄陵",
-                    "lat": 36.01,
-                    "lng": 111.42
-                },
-                {
-                    "name": "长子",
-                    "lat": 36.15,
-                    "lng": 113.01
                 }
             ],
             "chronicleFrom": "city_tongguan",
@@ -22929,13 +24751,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "雍州安定新平大界营",
-            "routeVia": [
-                {
-                    "name": "安定",
-                    "lat": 35.54,
-                    "lng": 107.85
-                }
-            ],
             "chronicleFrom": "city_binzhou2",
             "targetLat": 35.18,
             "targetLng": 107.92,
@@ -22983,9 +24798,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "黎阳津",
-                    "lat": 35.68,
-                    "lng": 114.55
+                    "name": "信都",
+                    "lat": 37.73,
+                    "lng": 115.69
+                },
+                {
+                    "name": "馆陶",
+                    "lat": 36.53,
+                    "lng": 115.28
+                },
+                {
+                    "name": "内黄",
+                    "lat": 35.95,
+                    "lng": 114.9
                 }
             ],
             "chronicleFrom": "city_zhongshan",
@@ -23031,9 +24856,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "朔方盛乐东参合陂",
             "routeVia": [
                 {
-                    "name": "五原黄河岸",
-                    "lat": 40.15,
-                    "lng": 110.95
+                    "name": "井陉",
+                    "lat": 38.03,
+                    "lng": 114.14
+                },
+                {
+                    "name": "晋阳",
+                    "lat": 37.87,
+                    "lng": 112.55
+                },
+                {
+                    "name": "五原",
+                    "lat": 40.25,
+                    "lng": 110.85
                 }
             ],
             "chronicleFrom": "city_zhongshan",
@@ -23078,9 +24913,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "朔方贺兰山至鹿浑海",
             "routeVia": [
                 {
-                    "name": "阴山",
+                    "name": "君子津",
+                    "lat": 40.27,
+                    "lng": 111.14
+                },
+                {
+                    "name": "五原",
                     "lat": 40.8,
-                    "lng": 109.5
+                    "lng": 109.1
                 }
             ],
             "chronicleFrom": "city_shengle",
@@ -23130,14 +24970,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "铁岐山",
-                    "lat": 40.27,
-                    "lng": 111.14
-                },
-                {
-                    "name": "五原金津",
-                    "lat": 40.15,
-                    "lng": 110.95
+                    "name": "白道",
+                    "lat": 40.82,
+                    "lng": 111.65
                 }
             ],
             "chronicleFrom": "city_shengle",
@@ -23196,6 +25031,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "雁门",
                     "lat": 39.19,
                     "lng": 112.87
+                },
+                {
+                    "name": "孟县",
+                    "lat": 38.09,
+                    "lng": 113.38
                 }
             ],
             "chronicleFrom": "city_shengle",
@@ -23240,12 +25080,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "冀州常山滹沱河北岸柏肆",
             "routeVia": [
                 {
-                    "name": "中山",
-                    "lat": 38.47,
-                    "lng": 115.06
+                    "name": "孟县",
+                    "lat": 38.09,
+                    "lng": 113.41
+                },
+                {
+                    "name": "井陉",
+                    "lat": 38.03,
+                    "lng": 114.14
                 }
             ],
-            "chronicleFrom": "city_zhending",
+            "chronicleFrom": "city_shengle",
             "targetLat": 38.22,
             "targetLng": 114.68,
             "myTroops": 15000,
@@ -23292,6 +25137,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "sunen_jun"
             },
             "routeVia": [
+                {
+                    "name": "浃口",
+                    "lat": 29.96,
+                    "lng": 121.72
+                },
                 {
                     "name": "上虞",
                     "lat": 30.03,
@@ -23343,7 +25193,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dongjin",
                 "after": "dongjin"
             },
-            "chronicleFrom": "city_nanjing",
+            "routeVia": [
+                {
+                    "name": "京口",
+                    "lat": 32.21,
+                    "lng": 119.45
+                },
+                {
+                    "name": "吴县",
+                    "lat": 31.3,
+                    "lng": 120.62
+                }
+            ],
+            "chronicleFrom": "city_yangzhou",
             "targetLat": 30.52,
             "targetLng": 120.94,
             "myTroops": 15000,
@@ -23398,11 +25260,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "江乘",
                     "lat": 32.15,
                     "lng": 118.96
-                },
-                {
-                    "name": "覆舟山",
-                    "lat": 32.07,
-                    "lng": 118.8
                 }
             ],
             "chronicleFrom": "city_yangzhou",
@@ -23453,6 +25310,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "广陵",
+                    "lat": 32.39,
+                    "lng": 119.42
+                },
+                {
                     "name": "下邳",
                     "lat": 34,
                     "lng": 117.95
@@ -23461,11 +25323,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "东莞",
                     "lat": 35.58,
                     "lng": 118.83
-                },
-                {
-                    "name": "大岘山",
-                    "lat": 36.32,
-                    "lng": 118.59
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -23516,12 +25373,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "临朐",
-                    "lat": 36.51,
-                    "lng": 118.54
+                    "name": "巨蔑水",
+                    "lat": 36.68,
+                    "lng": 118.5
                 }
             ],
-            "chronicleFrom": "city_mulingguan",
+            "chronicleFrom": "city_nanjing",
             "targetLat": 36.73,
             "targetLng": 118.45,
             "myTroops": 15000,
@@ -23563,6 +25420,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "江州寻阳彭蠡湖口左里",
             "routeVia": [
+                {
+                    "name": "芜湖",
+                    "lat": 31.33,
+                    "lng": 118.38
+                },
                 {
                     "name": "雷池",
                     "lat": 30.4,
@@ -23627,9 +25489,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 116
                 },
                 {
-                    "name": "豫章口",
-                    "lat": 30.32,
-                    "lng": 112.22
+                    "name": "夏口",
+                    "lat": 30.55,
+                    "lng": 114.3
+                },
+                {
+                    "name": "巴陵",
+                    "lat": 29.37,
+                    "lng": 113.12
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -23685,8 +25552,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 109.57
                 },
                 {
-                    "name": "外水岷江平模",
-                    "lat": 30.15,
+                    "name": "江阳",
+                    "lat": 28.89,
+                    "lng": 105.44
+                },
+                {
+                    "name": "武阳",
+                    "lat": 30.19,
                     "lng": 103.85
                 }
             ],
@@ -23738,9 +25610,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "马头岸赤圻洲",
-                    "lat": 30.28,
-                    "lng": 112.15
+                    "name": "寻阳",
+                    "lat": 29.68,
+                    "lng": 116
+                },
+                {
+                    "name": "夏口",
+                    "lat": 30.55,
+                    "lng": 114.3
+                },
+                {
+                    "name": "监利",
+                    "lat": 29.83,
+                    "lng": 112.9
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -23791,14 +25673,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "成皋虎牢",
-                    "lat": 34.81,
-                    "lng": 113.17
+                    "name": "项城",
+                    "lat": 33.26,
+                    "lng": 114.88
                 },
                 {
-                    "name": "柏谷坞",
-                    "lat": 34.6,
-                    "lng": 112.75
+                    "name": "许昌",
+                    "lat": 34.02,
+                    "lng": 113.85
+                },
+                {
+                    "name": "成皋",
+                    "lat": 34.81,
+                    "lng": 113.1
                 }
             ],
             "chronicleFrom": "city_pengcheng",
@@ -23849,19 +25736,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
+                },
+                {
                     "name": "陕城",
                     "lat": 34.72,
                     "lng": 111.1
-                },
-                {
-                    "name": "潼关",
-                    "lat": 34.54,
-                    "lng": 110.29
-                },
-                {
-                    "name": "渭桥长安",
-                    "lat": 34.27,
-                    "lng": 108.93
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -24041,6 +25923,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "代北云中盛乐原野",
+            "routeVia": [
+                {
+                    "name": "善无",
+                    "lat": 39.98,
+                    "lng": 112.6
+                }
+            ],
             "chronicleFrom": "city_datong",
             "targetLat": 40.38,
             "targetLng": 111.82,
@@ -24089,9 +25978,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "盛乐",
+                    "lat": 40.38,
+                    "lng": 111.82
+                },
+                {
                     "name": "君子津",
                     "lat": 40.27,
                     "lng": 111.14
+                },
+                {
+                    "name": "黑水",
+                    "lat": 38.85,
+                    "lng": 109.6
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -24141,9 +26040,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "上邽",
-                    "lat": 34.58,
-                    "lng": 105.72
+                    "name": "雍城",
+                    "lat": 34.46,
+                    "lng": 107.38
                 },
                 {
                     "name": "平凉",
@@ -24194,19 +26093,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北杭爱山麓栗水",
             "routeVia": [
                 {
+                    "name": "牛川",
+                    "lat": 40.95,
+                    "lng": 112.4
+                },
+                {
                     "name": "黑山",
-                    "lat": 40.85,
+                    "lat": 41.45,
                     "lng": 111.55
                 },
                 {
-                    "name": "栗水",
-                    "lat": 47.14,
-                    "lng": 103.04
-                },
-                {
-                    "name": "涿邪山",
-                    "lat": 43.59,
-                    "lng": 104.66
+                    "name": "鹿浑海",
+                    "lat": 45.2,
+                    "lng": 105.1
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -24258,19 +26157,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "河内",
+                    "lat": 35.1,
+                    "lng": 113.38
+                },
+                {
                     "name": "冶坂津",
                     "lat": 34.85,
                     "lng": 112.58
-                },
-                {
-                    "name": "洛阳金墉",
-                    "lat": 34.62,
-                    "lng": 112.45
-                },
-                {
-                    "name": "虎牢",
-                    "lat": 34.81,
-                    "lng": 113.17
                 }
             ],
             "chronicleFrom": "city_anyang",
@@ -24315,9 +26209,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "兖州东郡滑台至青州历城",
             "routeVia": [
                 {
-                    "name": "滑台",
-                    "lat": 35.57,
-                    "lng": 114.52
+                    "name": "东阿",
+                    "lat": 36.18,
+                    "lng": 116.25
                 },
                 {
                     "name": "碻磝",
@@ -24374,9 +26268,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "上谷",
+                    "lat": 40.37,
+                    "lng": 115.63
+                },
+                {
                     "name": "卢龙塞",
                     "lat": 40.15,
                     "lng": 118.5
+                },
+                {
+                    "name": "白狼",
+                    "lat": 41.05,
+                    "lng": 119.65
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -24427,6 +26331,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "tuoba"
             },
             "routeVia": [
+                {
+                    "name": "君子津",
+                    "lat": 40.27,
+                    "lng": 111.14
+                },
                 {
                     "name": "上郡",
                     "lat": 38.02,
@@ -24486,6 +26395,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "番禾",
+                    "lat": 38.22,
+                    "lng": 101.95
+                },
+                {
                     "name": "张掖",
                     "lat": 38.93,
                     "lng": 100.45
@@ -24536,6 +26450,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tuoba",
                 "after": "gaiwu_jun"
             },
+            "routeVia": [
+                {
+                    "name": "频阳",
+                    "lat": 34.95,
+                    "lng": 109.25
+                }
+            ],
             "chronicleFrom": "city_changan",
             "targetLat": 35.53,
             "targetLng": 109.18,
@@ -24579,9 +26500,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北地弗池至涿邪山",
             "routeVia": [
                 {
-                    "name": "地弗池",
-                    "lat": 43.8,
-                    "lng": 104.2
+                    "name": "善无",
+                    "lat": 39.98,
+                    "lng": 112.6
+                },
+                {
+                    "name": "阴山",
+                    "lat": 41.1,
+                    "lng": 110.8
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -24638,14 +26564,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.45
                 },
                 {
-                    "name": "滑台",
-                    "lat": 35.57,
-                    "lng": 114.52
-                },
-                {
-                    "name": "尉武",
-                    "lat": 33.65,
-                    "lng": 116.96
+                    "name": "彭城",
+                    "lat": 34.27,
+                    "lng": 117.18
                 },
                 {
                     "name": "盱眙",
@@ -24702,9 +26623,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "维米纳基乌姆",
+                    "lat": 44.73,
+                    "lng": 21.22
+                },
+                {
                     "name": "马尔古斯",
                     "lat": 44.68,
-                    "lng": 21.18
+                    "lng": 21.05
                 }
             ],
             "chronicleFrom": "city_saigede",
@@ -24747,6 +26673,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "下默西亚乌图斯河畔",
+            "routeVia": [
+                {
+                    "name": "拉蒂亚里亚",
+                    "lat": 43.82,
+                    "lng": 22.92
+                },
+                {
+                    "name": "奥埃斯库斯",
+                    "lat": 43.71,
+                    "lng": 24.42
+                }
+            ],
             "chronicleFrom": "city_saigede",
             "targetLat": 43.52,
             "targetLng": 24.63,
@@ -24788,6 +26726,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "高卢北部阿图瓦海伦娜镇",
+            "routeVia": [
+                {
+                    "name": "奥古斯托杜努姆",
+                    "lat": 46.95,
+                    "lng": 4.3
+                },
+                {
+                    "name": "卢泰蒂亚",
+                    "lat": 48.85,
+                    "lng": 2.35
+                },
+                {
+                    "name": "阿拉巴特斯",
+                    "lat": 50.29,
+                    "lng": 2.78
+                }
+            ],
             "chronicleFrom": "city_lyon",
             "targetLat": 50.36,
             "targetLng": 3.32,
@@ -24890,9 +26845,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "朱利安阿尔卑斯山隘",
-                    "lat": 45.9,
-                    "lng": 13.85
+                    "name": "锡斯基亚",
+                    "lat": 45.48,
+                    "lng": 16.37
+                },
+                {
+                    "name": "埃莫纳",
+                    "lat": 46.05,
+                    "lng": 14.5
                 }
             ],
             "chronicleFrom": "city_saigede",
@@ -24935,6 +26895,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "潘诺尼亚萨瓦河流域内达奥河",
+            "routeVia": [
+                {
+                    "name": "锡尔米乌姆",
+                    "lat": 44.97,
+                    "lng": 19.61
+                }
+            ],
             "chronicleFrom": "city_saigede",
             "targetLat": 45.12,
             "targetLng": 19.22,
@@ -24983,6 +26950,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "帕维亚",
+                    "lat": 45.18,
+                    "lng": 9.16
+                },
+                {
+                    "name": "都灵",
+                    "lat": 45.07,
+                    "lng": 7.68
+                },
+                {
                     "name": "里昂",
                     "lat": 45.76,
                     "lng": 4.84
@@ -25028,6 +27005,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "北意大利托尔托纳河谷",
+            "routeVia": [
+                {
+                    "name": "热那亚",
+                    "lat": 44.41,
+                    "lng": 8.93
+                }
+            ],
             "chronicleFrom": "city_avignon",
             "targetLat": 44.897,
             "targetLng": 8.865,
@@ -25071,9 +27055,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "卢瓦尔河畔重镇奥尔良",
             "routeVia": [
                 {
-                    "name": "图卢兹",
-                    "lat": 43.6,
-                    "lng": 1.44
+                    "name": "卢泰蒂亚",
+                    "lat": 48.85,
+                    "lng": 2.35
+                },
+                {
+                    "name": "沙特尔",
+                    "lat": 48.45,
+                    "lng": 1.49
                 }
             ],
             "chronicleFrom": "city_soissons",
@@ -25116,6 +27105,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "北意大利贝尔加莫山麓",
+            "routeVia": [
+                {
+                    "name": "科莫",
+                    "lat": 45.81,
+                    "lng": 9.08
+                }
+            ],
             "chronicleFrom": "city_clavenna",
             "targetLat": 45.698,
             "targetLng": 9.677,
@@ -25158,6 +27154,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "呼罗珊东疆赫拉特荒原",
             "routeVia": [
+                {
+                    "name": "伊斯法罕",
+                    "lat": 32.65,
+                    "lng": 51.67
+                },
                 {
                     "name": "戈尔甘",
                     "lat": 36.84,
@@ -25209,6 +27210,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "呼罗珊绿洲门户木鹿郊野",
+            "routeVia": [
+                {
+                    "name": "巴德吉斯",
+                    "lat": 35.15,
+                    "lng": 63.15
+                }
+            ],
             "chronicleFrom": "city_helate_city",
             "targetLat": 37.616,
             "targetLng": 62.235,
@@ -25407,9 +27415,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "淮阴",
-                    "lat": 33.6,
-                    "lng": 119.02
+                    "name": "涟口",
+                    "lat": 33.78,
+                    "lng": 119.26
+                },
+                {
+                    "name": "海西",
+                    "lat": 34.18,
+                    "lng": 119.18
                 }
             ],
             "chronicleFrom": "city_huaiyin",
@@ -25458,18 +27471,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "nan_liang",
                 "after": "tuoba"
             },
-            "routeVia": [
-                {
-                    "name": "寿阳",
-                    "lat": 32.59,
-                    "lng": 116.8
-                },
-                {
-                    "name": "硖石",
-                    "lat": 32.65,
-                    "lng": 116.65
-                }
-            ],
             "chronicleFrom": "city_shouxian",
             "targetLat": 32.59,
             "targetLng": 116.8,
@@ -25557,9 +27558,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "云中",
-                    "lat": 40.38,
-                    "lng": 111.82
+                    "name": "怀朔",
+                    "lat": 41.15,
+                    "lng": 110.35
                 }
             ],
             "chronicleFrom": "city_guyangsai",
@@ -25603,6 +27604,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "黄河河套北岸五原塞下",
+            "routeVia": [
+                {
+                    "name": "黑山",
+                    "lat": 41.45,
+                    "lng": 111.55
+                }
+            ],
             "chronicleFrom": "city_saierwusu",
             "targetLat": 41.303,
             "targetLng": 108.506,
@@ -25643,7 +27651,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "河北平原博野白牛逻",
-            "chronicleFrom": "city_zhongshan",
+            "routeVia": [
+                {
+                    "name": "邺城",
+                    "lat": 36.1,
+                    "lng": 114.39
+                },
+                {
+                    "name": "信都",
+                    "lat": 37.55,
+                    "lng": 115.57
+                }
+            ],
+            "chronicleFrom": "city_luoyang",
             "targetLat": 38.471,
             "targetLng": 115.063,
             "myTroops": 15000,
@@ -25691,14 +27711,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "滁州",
+                    "lat": 32.3,
+                    "lng": 118.31
+                },
+                {
                     "name": "钟离",
                     "lat": 32.92,
                     "lng": 117.38
-                },
-                {
-                    "name": "城父",
-                    "lat": 33.5,
-                    "lng": 115.93
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -25751,11 +27771,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "上党",
                     "lat": 36.19,
                     "lng": 113.11
-                },
-                {
-                    "name": "滏口",
-                    "lat": 36.42,
-                    "lng": 114.28
                 }
             ],
             "chronicleFrom": "city_xiurongchuan",
@@ -25807,6 +27822,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "钟离",
+                    "lat": 32.92,
+                    "lng": 117.38
+                },
+                {
+                    "name": "铚城",
+                    "lat": 33.65,
+                    "lng": 116.78
+                },
+                {
                     "name": "梁国",
                     "lat": 34.38,
                     "lng": 115.62
@@ -25815,16 +27840,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "考城",
                     "lat": 34.82,
                     "lng": 114.83
-                },
-                {
-                    "name": "荥阳虎牢",
-                    "lat": 34.81,
-                    "lng": 113.17
-                },
-                {
-                    "name": "洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -25869,17 +27884,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "相州邺城东北韩陵山麓",
             "routeVia": [
                 {
-                    "name": "晋阳",
-                    "lat": 37.87,
-                    "lng": 112.55
+                    "name": "广阿",
+                    "lat": 37.19,
+                    "lng": 114.73
                 },
                 {
-                    "name": "殷州",
-                    "lat": 37.38,
-                    "lng": 114.7
+                    "name": "隆虑",
+                    "lat": 36.35,
+                    "lng": 113.95
                 }
             ],
-            "chronicleFrom": "city_anyang",
+            "chronicleFrom": "city_xindu",
             "targetLat": 36.1,
             "targetLng": 114.39,
             "myTroops": 15000,
@@ -25930,11 +27945,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "平凉",
                     "lat": 35.54,
                     "lng": 106.67
-                },
-                {
-                    "name": "秦州上邽",
-                    "lat": 34.58,
-                    "lng": 105.72
                 }
             ],
             "chronicleFrom": "city_anding",
@@ -25982,6 +27992,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "渭南",
                     "lat": 34.5,
                     "lng": 109.51
+                },
+                {
+                    "name": "华阴",
+                    "lat": 34.56,
+                    "lng": 110.09
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26026,12 +28041,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "渭水北岸大荔沙苑芦苇滩",
             "routeVia": [
                 {
-                    "name": "蒲坂",
-                    "lat": 34.83,
-                    "lng": 110.3
+                    "name": "华阴",
+                    "lat": 34.56,
+                    "lng": 110.09
                 }
             ],
-            "chronicleFrom": "city_changan",
+            "chronicleFrom": "city_wuchuanzhen",
             "targetLat": 35.003,
             "targetLng": 109.932,
             "myTroops": 15000,
@@ -26078,9 +28093,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "华阴",
+                    "lat": 34.56,
+                    "lng": 110.09
+                },
+                {
                     "name": "潼关",
                     "lat": 34.54,
                     "lng": 110.29
+                },
+                {
+                    "name": "新安",
+                    "lat": 34.72,
+                    "lng": 112.15
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26129,6 +28154,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuwen",
                 "after": "yuwen"
             },
+            "routeVia": [
+                {
+                    "name": "介休",
+                    "lat": 37.03,
+                    "lng": 111.92
+                },
+                {
+                    "name": "平阳",
+                    "lat": 36.09,
+                    "lng": 111.52
+                }
+            ],
             "chronicleFrom": "city_taiyuan",
             "targetLat": 35.53,
             "targetLng": 110.92,
@@ -26170,6 +28207,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "彭城东南泗水寒山堰",
             "routeVia": [
+                {
+                    "name": "东郡",
+                    "lat": 35.76,
+                    "lng": 115.03
+                },
                 {
                     "name": "瑕丘",
                     "lat": 35.55,
@@ -26219,12 +28261,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "张家口怀荒镇北漠南草原",
             "routeVia": [
                 {
-                    "name": "金山",
-                    "lat": 47.64,
-                    "lng": 88.29
+                    "name": "郁督军山",
+                    "lat": 47.6,
+                    "lng": 101.23
+                },
+                {
+                    "name": "赛尔乌苏",
+                    "lat": 44.82,
+                    "lng": 106.8
                 }
             ],
-            "chronicleFrom": "city_saiyinsanda",
+            "chronicleFrom": "city_naiman",
             "targetLat": 41.15,
             "targetLng": 114.7,
             "myTroops": 15000,
@@ -26278,14 +28325,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 106.94
                 },
                 {
+                    "name": "南郑",
+                    "lat": 33.07,
+                    "lng": 107.02
+                },
+                {
                     "name": "剑阁",
                     "lat": 32.2,
                     "lng": 105.56
                 },
                 {
-                    "name": "涪水绵竹",
+                    "name": "涪城",
                     "lat": 31.46,
-                    "lng": 104.2
+                    "lng": 104.74
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26336,9 +28388,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "樊邓",
+                    "name": "武关",
+                    "lat": 33.73,
+                    "lng": 110.35
+                },
+                {
+                    "name": "襄阳",
                     "lat": 32.01,
                     "lng": 112.12
+                },
+                {
+                    "name": "宜城",
+                    "lat": 31.71,
+                    "lng": 112.26
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26387,7 +28449,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuwen",
                 "after": "yuwen"
             },
-            "chronicleFrom": "city_xiayangdu",
+            "routeVia": [
+                {
+                    "name": "蒲坂",
+                    "lat": 34.88,
+                    "lng": 110.32
+                },
+                {
+                    "name": "汾阴",
+                    "lat": 35.3,
+                    "lng": 110.48
+                }
+            ],
+            "chronicleFrom": "city_changan",
             "targetLat": 35.53,
             "targetLng": 110.92,
             "myTroops": 15000,
@@ -26435,17 +28509,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "塔什干",
-                    "lat": 41.31,
-                    "lng": 69.28
+                    "name": "木鹿",
+                    "lat": 37.62,
+                    "lng": 62.23
                 },
                 {
-                    "name": "撒马尔罕",
-                    "lat": 39.65,
-                    "lng": 66.97
+                    "name": "阿姆勒",
+                    "lat": 39.09,
+                    "lng": 63.57
                 }
             ],
-            "chronicleFrom": "city_suiye",
+            "chronicleFrom": "city_nishabuer",
             "targetLat": 39.767,
             "targetLng": 64.433,
             "myTroops": 15000,
@@ -26494,14 +28568,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "晋阳",
-                    "lat": 37.87,
-                    "lng": 112.55
+                    "name": "潼关",
+                    "lat": 34.54,
+                    "lng": 110.29
                 },
                 {
-                    "name": "太行道成皋",
-                    "lat": 34.81,
-                    "lng": 113.17
+                    "name": "陕州",
+                    "lat": 34.72,
+                    "lng": 111.1
+                },
+                {
+                    "name": "新安",
+                    "lat": 34.72,
+                    "lng": 112.15
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26552,14 +28631,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "晋阳",
-                    "lat": 37.87,
-                    "lng": 112.55
-                },
-                {
-                    "name": "临汾",
-                    "lat": 36.09,
-                    "lng": 111.52
+                    "name": "稷山",
+                    "lat": 35.6,
+                    "lng": 110.98
                 }
             ],
             "chronicleFrom": "city_xiayangdu",
@@ -26605,14 +28679,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "崤山南道宜阳与汾州定陇原野",
             "routeVia": [
                 {
-                    "name": "宜阳",
-                    "lat": 34.51,
-                    "lng": 112.18
+                    "name": "潼关",
+                    "lat": 34.54,
+                    "lng": 110.29
                 },
                 {
-                    "name": "定陇",
-                    "lat": 35.3,
-                    "lng": 111.15
+                    "name": "陕州",
+                    "lat": 34.72,
+                    "lng": 111.1
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26666,6 +28740,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "秦郡",
                     "lat": 32.35,
                     "lng": 118.84
+                },
+                {
+                    "name": "肥口",
+                    "lat": 32.48,
+                    "lng": 117.15
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -26714,6 +28793,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "gaoqi_d",
                 "after": "chen"
             },
+            "routeVia": [
+                {
+                    "name": "京口",
+                    "lat": 32.21,
+                    "lng": 119.45
+                }
+            ],
             "chronicleFrom": "city_nanjing",
             "targetLat": 32.393,
             "targetLng": 119.42,
@@ -26762,19 +28848,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "龙门渡",
-                    "lat": 35.55,
-                    "lng": 110.6
+                    "name": "同州",
+                    "lat": 34.8,
+                    "lng": 109.94
                 },
                 {
-                    "name": "平阳",
-                    "lat": 36.09,
-                    "lng": 111.52
+                    "name": "夏阳",
+                    "lat": 35.53,
+                    "lng": 110.52
                 },
                 {
-                    "name": "晋阳",
-                    "lat": 37.87,
-                    "lng": 112.55
+                    "name": "绛州",
+                    "lat": 35.63,
+                    "lng": 111.3
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26825,14 +28911,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "洛阳",
-                    "lat": 34.62,
-                    "lng": 112.45
+                    "name": "晋阳",
+                    "lat": 37.87,
+                    "lng": 112.55
                 },
                 {
-                    "name": "枋头",
-                    "lat": 35.65,
-                    "lng": 114.45
+                    "name": "上党",
+                    "lat": 36.15,
+                    "lng": 113.01
+                },
+                {
+                    "name": "滏口",
+                    "lat": 36.42,
+                    "lng": 114.28
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -26883,14 +28974,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "寿阳",
-                    "lat": 32.59,
-                    "lng": 116.8
+                    "name": "荥阳",
+                    "lat": 34.79,
+                    "lng": 113.39
                 },
                 {
-                    "name": "清口",
-                    "lat": 33.6,
-                    "lng": 118.96
+                    "name": "睢阳",
+                    "lat": 34.41,
+                    "lng": 115.66
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -26941,7 +29032,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "汝南悬瓠",
+                    "name": "许昌",
+                    "lat": 34.02,
+                    "lng": 113.85
+                },
+                {
+                    "name": "悬瓠",
                     "lat": 33.01,
                     "lng": 114.36
                 }
@@ -26994,6 +29090,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "潼关",
+                    "lat": 34.54,
+                    "lng": 110.29
+                },
+                {
                     "name": "河阳",
                     "lat": 34.85,
                     "lng": 112.58
@@ -27001,7 +29102,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 {
                     "name": "怀县",
                     "lat": 35.1,
-                    "lng": 112.95
+                    "lng": 113.4
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -27046,12 +29147,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "阴山北麓白道塞外草原",
             "routeVia": [
                 {
-                    "name": "朔州",
+                    "name": "马邑",
                     "lat": 39.32,
                     "lng": 112.43
+                },
+                {
+                    "name": "云中",
+                    "lat": 40.38,
+                    "lng": 111.82
                 }
             ],
-            "chronicleFrom": "city_wuchuanzhen",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 41.266,
             "targetLng": 111.132,
             "myTroops": 15000,
@@ -27101,6 +29207,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "巫峡",
                     "lat": 31.07,
                     "lng": 109.88
+                },
+                {
+                    "name": "归州",
+                    "lat": 30.98,
+                    "lng": 110.75
                 }
             ],
             "chronicleFrom": "city_baidicheng2",
@@ -27154,11 +29265,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "京口",
                     "lat": 32.21,
                     "lng": 119.45
-                },
-                {
-                    "name": "采石",
-                    "lat": 31.66,
-                    "lng": 118.46
                 }
             ],
             "chronicleFrom": "city_yangzhou",
@@ -27213,6 +29319,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 119.45
                 },
                 {
+                    "name": "吴州",
+                    "lat": 31.3,
+                    "lng": 120.62
+                },
+                {
                     "name": "余杭",
                     "lat": 30.25,
                     "lng": 120.16
@@ -27259,7 +29370,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "河套西南灵州塞外草原",
-            "chronicleFrom": "city_lingzhou",
+            "routeVia": [
+                {
+                    "name": "泾州",
+                    "lat": 35.33,
+                    "lng": 107.36
+                },
+                {
+                    "name": "原州",
+                    "lat": 36,
+                    "lng": 106.28
+                }
+            ],
+            "chronicleFrom": "city_changan",
             "targetLat": 37.998,
             "targetLng": 106.295,
             "myTroops": 15000,
@@ -27301,12 +29424,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "马邑塞北大漠大斤山",
             "routeVia": [
                 {
+                    "name": "雁门",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
                     "name": "马邑",
                     "lat": 39.32,
                     "lng": 112.43
                 }
             ],
-            "chronicleFrom": "city_shengle",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 40.38,
             "targetLng": 111.82,
             "myTroops": 15000,
@@ -27358,14 +29486,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 110.3
                 },
                 {
-                    "name": "霍山峡谷",
-                    "lat": 36.57,
-                    "lng": 111.72
+                    "name": "绛州",
+                    "lat": 35.63,
+                    "lng": 111.3
                 },
                 {
-                    "name": "介休清源",
-                    "lat": 37.45,
-                    "lng": 112.35
+                    "name": "霍邑",
+                    "lat": 36.57,
+                    "lng": 111.72
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -27416,14 +29544,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "浩亹",
+                    "lat": 37.15,
+                    "lng": 101.62
+                },
+                {
                     "name": "西平",
                     "lat": 36.62,
                     "lng": 101.78
-                },
-                {
-                    "name": "浩亹水",
-                    "lat": 37.35,
-                    "lng": 101.62
                 }
             ],
             "chronicleFrom": "city_wuwei",
@@ -27475,14 +29603,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "卢龙",
+                    "lat": 39.89,
+                    "lng": 118.89
+                },
+                {
                     "name": "临渝关",
                     "lat": 40.01,
                     "lng": 119.75
                 },
                 {
-                    "name": "辽水浮桥",
-                    "lat": 41.2,
-                    "lng": 122.85
+                    "name": "柳城",
+                    "lat": 41.57,
+                    "lng": 120.45
                 }
             ],
             "chronicleFrom": "city_fanyang",
@@ -27533,17 +29666,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 124.39
                 },
                 {
-                    "name": "萨水",
-                    "lat": 39.62,
-                    "lng": 125.66
-                },
-                {
-                    "name": "平壤外城",
-                    "lat": 39.02,
-                    "lng": 125.76
+                    "name": "铁山",
+                    "lat": 39.88,
+                    "lng": 124.82
                 }
             ],
-            "chronicleFrom": "city_fanyang",
+            "chronicleFrom": "city_liaoyang",
             "targetLat": 39.62,
             "targetLng": 125.66,
             "myTroops": 15000,
@@ -27635,6 +29763,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "gaogouli",
                 "after": "gaogouli"
             },
+            "routeVia": [
+                {
+                    "name": "乌骨岛",
+                    "lat": 38.35,
+                    "lng": 120.9
+                }
+            ],
             "chronicleFrom": "city_dengzhou",
             "targetLat": 39.105,
             "targetLng": 121.785,
@@ -27734,9 +29869,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.72
                 },
                 {
-                    "name": "汜水",
-                    "lat": 34.81,
-                    "lng": 113.17
+                    "name": "管城",
+                    "lat": 34.75,
+                    "lng": 113.65
                 }
             ],
             "chronicleFrom": "city_puyang",
@@ -27786,14 +29921,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "西河",
+                    "lat": 37.27,
+                    "lng": 111.79
+                },
+                {
                     "name": "雀鼠谷",
                     "lat": 36.95,
                     "lng": 111.83
-                },
-                {
-                    "name": "贾胡堡",
-                    "lat": 36.75,
-                    "lng": 111.75
                 }
             ],
             "chronicleFrom": "city_taiyuan",
@@ -27843,14 +29978,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "高墌浅水原",
-                    "lat": 35.2,
-                    "lng": 107.79
+                    "name": "扶风",
+                    "lat": 34.45,
+                    "lng": 107.88
                 },
                 {
-                    "name": "折墌",
-                    "lat": 35.28,
-                    "lng": 107.58
+                    "name": "泾州",
+                    "lat": 35.33,
+                    "lng": 107.36
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -27941,24 +30076,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "绛州柏壁与介休",
             "routeVia": [
                 {
-                    "name": "龙门冰桥",
+                    "name": "同州",
+                    "lat": 34.8,
+                    "lng": 109.94
+                },
+                {
+                    "name": "龙门",
                     "lat": 35.55,
                     "lng": 110.6
-                },
-                {
-                    "name": "柏壁",
-                    "lat": 35.63,
-                    "lng": 111.3
-                },
-                {
-                    "name": "雀鼠谷",
-                    "lat": 36.95,
-                    "lng": 111.83
-                },
-                {
-                    "name": "介休",
-                    "lat": 37.03,
-                    "lng": 111.92
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -28009,12 +30134,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "板渚",
-                    "lat": 34.88,
-                    "lng": 113.28
+                    "name": "陕州",
+                    "lat": 34.72,
+                    "lng": 111.1
+                },
+                {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
                 }
             ],
-            "chronicleFrom": "city_luoyang",
+            "chronicleFrom": "city_hulaoguan",
             "targetLat": 34.81,
             "targetLng": 113.17,
             "myTroops": 15000,
@@ -28066,9 +30196,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 111.28
                 },
                 {
-                    "name": "清江口",
-                    "lat": 30.4,
-                    "lng": 111.45
+                    "name": "枝江",
+                    "lat": 30.42,
+                    "lng": 111.76
                 }
             ],
             "chronicleFrom": "city_baidicheng2",
@@ -28113,9 +30243,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "洺州洺水南岸",
             "routeVia": [
                 {
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
+                },
+                {
                     "name": "黎阳",
                     "lat": 35.68,
                     "lng": 114.55
+                },
+                {
+                    "name": "相州",
+                    "lat": 36.1,
+                    "lng": 114.39
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -28159,6 +30299,21 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "魏州馆陶",
             "routeVia": [
+                {
+                    "name": "潼关",
+                    "lat": 34.54,
+                    "lng": 110.29
+                },
+                {
+                    "name": "河内",
+                    "lat": 35.1,
+                    "lng": 113.38
+                },
+                {
+                    "name": "相州",
+                    "lat": 36.1,
+                    "lng": 114.39
+                },
                 {
                     "name": "昌乐",
                     "lat": 36.22,
@@ -28218,9 +30373,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 117.04
                 },
                 {
-                    "name": "芜湖博望山",
-                    "lat": 31.52,
-                    "lng": 118.35
+                    "name": "铜陵",
+                    "lat": 30.94,
+                    "lng": 117.81
+                },
+                {
+                    "name": "芜湖",
+                    "lat": 31.33,
+                    "lng": 118.38
                 }
             ],
             "chronicleFrom": "city_chaisang",
@@ -28277,6 +30437,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 107.36
                 },
                 {
+                    "name": "庆州",
+                    "lat": 36,
+                    "lng": 107.88
+                },
+                {
                     "name": "延州",
                     "lat": 36.59,
                     "lng": 109.49
@@ -28324,27 +30489,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "阴山铁山牙帐",
             "routeVia": [
                 {
+                    "name": "雁门",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
                     "name": "马邑",
                     "lat": 39.32,
                     "lng": 112.43
                 },
                 {
-                    "name": "定襄恶阳岭",
-                    "lat": 39.91,
-                    "lng": 111.65
-                },
-                {
-                    "name": "白道",
-                    "lat": 41.27,
-                    "lng": 111.13
-                },
-                {
-                    "name": "阴山铁山",
-                    "lat": 40.8,
-                    "lng": 111.4
+                    "name": "恶阳岭",
+                    "lat": 39.72,
+                    "lng": 112.1
                 }
             ],
-            "chronicleFrom": "city_piantouguan",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 39.91,
             "targetLng": 111.65,
             "myTroops": 15000,
@@ -28392,19 +30552,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "鄯城",
+                    "lat": 36.62,
+                    "lng": 101.78
+                },
+                {
                     "name": "赤水源",
-                    "lat": 36.3,
+                    "lat": 36.38,
                     "lng": 100.8
-                },
-                {
-                    "name": "伏俟城",
-                    "lat": 36.76,
-                    "lng": 99.74
-                },
-                {
-                    "name": "乌海星宿川突沦川",
-                    "lat": 35.95,
-                    "lng": 96.8
                 }
             ],
             "chronicleFrom": "city_ledou",
@@ -28453,13 +30608,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tang",
                 "after": "tang"
             },
-            "routeVia": [
-                {
-                    "name": "逻些",
-                    "lat": 29.65,
-                    "lng": 91.12
-                }
-            ],
             "chronicleFrom": "city_songzhou",
             "targetLat": 32.79,
             "targetLng": 103.63,
@@ -28514,7 +30662,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 93.52
                 },
                 {
-                    "name": "碛口田地城",
+                    "name": "柳谷",
+                    "lat": 42.92,
+                    "lng": 90.35
+                },
+                {
+                    "name": "田地城",
                     "lat": 42.86,
                     "lng": 89.85
                 }
@@ -28567,7 +30720,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "银山道",
+                    "name": "银山碛",
                     "lat": 42.45,
                     "lng": 88.55
                 }
@@ -28624,6 +30777,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "白岩城",
                     "lat": 41.22,
                     "lng": 123.45
+                },
+                {
+                    "name": "盖牟",
+                    "lat": 41.52,
+                    "lng": 123.35
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -28669,7 +30827,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北郁督军山",
             "routeVia": [
                 {
-                    "name": "大漠瀚海",
+                    "name": "白道",
+                    "lat": 41.27,
+                    "lng": 111.13
+                },
+                {
+                    "name": "诺真水",
                     "lat": 44.5,
                     "lng": 106
                 }
@@ -28717,14 +30880,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "阿尔泰山金微山麓",
             "routeVia": [
                 {
-                    "name": "云中",
-                    "lat": 40.08,
-                    "lng": 113.3
-                },
-                {
                     "name": "白道",
                     "lat": 41.27,
                     "lng": 111.13
+                },
+                {
+                    "name": "郁督军山",
+                    "lat": 47.6,
+                    "lng": 101.23
                 }
             ],
             "chronicleFrom": "city_shengle",
@@ -28770,9 +30933,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "伊犁拽咥河荒原",
             "routeVia": [
                 {
-                    "name": "金山北麓",
-                    "lat": 47.64,
-                    "lng": 88.29
+                    "name": "处月",
+                    "lat": 44.2,
+                    "lng": 87.95
+                },
+                {
+                    "name": "咽面州",
+                    "lat": 45.85,
+                    "lng": 85.4
                 },
                 {
                     "name": "双河",
@@ -28820,6 +30988,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "天山南麓旷野",
+            "routeVia": [
+                {
+                    "name": "轮台",
+                    "lat": 43.95,
+                    "lng": 87.6
+                }
+            ],
             "chronicleFrom": "city_bieshibali",
             "targetLat": 43.1,
             "targetLng": 89.2,
@@ -28909,7 +31084,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "青海湖西南大非川",
             "routeVia": [
                 {
-                    "name": "河口赤水",
+                    "name": "赤水",
                     "lat": 36.3,
                     "lng": 100.8
                 },
@@ -28968,14 +31143,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "大谢岛",
+                    "lat": 37.25,
+                    "lng": 125.95
+                },
+                {
                     "name": "德物岛",
                     "lat": 37.05,
                     "lng": 126.1
-                },
-                {
-                    "name": "伎伐浦",
-                    "lat": 36.02,
-                    "lng": 126.7
                 }
             ],
             "chronicleFrom": "city_wendeng",
@@ -29018,13 +31193,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "熊津白江口",
-            "routeVia": [
-                {
-                    "name": "熊津",
-                    "lat": 36.46,
-                    "lng": 127.12
-                }
-            ],
             "chronicleFrom": "city_sabi",
             "targetLat": 36,
             "targetLng": 126.73,
@@ -29073,9 +31241,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "辽水",
-                    "lat": 41.3,
-                    "lng": 122.85
+                    "name": "怀远镇",
+                    "lat": 41.32,
+                    "lng": 122.65
+                },
+                {
+                    "name": "辽东城",
+                    "lat": 41.27,
+                    "lng": 123.17
                 }
             ],
             "chronicleFrom": "city_chaoyang",
@@ -29126,22 +31299,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "扶余城",
-                    "lat": 42.8,
-                    "lng": 124.5
-                },
-                {
-                    "name": "鸭绿栅",
-                    "lat": 40.12,
-                    "lng": 124.39
-                },
-                {
                     "name": "大行城",
                     "lat": 40.05,
                     "lng": 124.55
+                },
+                {
+                    "name": "辱夷城",
+                    "lat": 39.65,
+                    "lng": 125.42
                 }
             ],
-            "chronicleFrom": "city_salhu",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 39.02,
             "targetLng": 125.75,
             "myTroops": 15000,
@@ -29181,7 +31349,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "平壤郊外白水山",
-            "chronicleFrom": "city_pyongyang",
+            "routeVia": [
+                {
+                    "name": "安东府",
+                    "lat": 40.12,
+                    "lng": 124.39
+                },
+                {
+                    "name": "萨水",
+                    "lat": 39.62,
+                    "lng": 125.66
+                }
+            ],
+            "chronicleFrom": "city_liaoyang",
             "targetLat": 38.9,
             "targetLng": 125.95,
             "myTroops": 15000,
@@ -29267,6 +31447,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "锦江入海口伎伐浦",
+            "routeVia": [
+                {
+                    "name": "成山角",
+                    "lat": 37.4,
+                    "lng": 122.7
+                },
+                {
+                    "name": "德物岛",
+                    "lat": 37.05,
+                    "lng": 126.1
+                }
+            ],
             "chronicleFrom": "city_dengzhou",
             "targetLat": 36.02,
             "targetLng": 126.7,
@@ -29313,6 +31505,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "龙支",
                     "lat": 36.18,
                     "lng": 102.52
+                },
+                {
+                    "name": "鄯城",
+                    "lat": 36.62,
+                    "lng": 101.78
                 }
             ],
             "chronicleFrom": "city_ledou",
@@ -29356,6 +31553,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "呼和浩特北境黑山",
             "routeVia": [
+                {
+                    "name": "朔州",
+                    "lat": 39.32,
+                    "lng": 112.43
+                },
                 {
                     "name": "定襄",
                     "lat": 40.38,
@@ -29404,9 +31606,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "朔州北境金牙山",
             "routeVia": [
                 {
-                    "name": "代州陉口",
+                    "name": "代州",
                     "lat": 39.19,
                     "lng": 112.87
+                },
+                {
+                    "name": "善阳",
+                    "lat": 39.32,
+                    "lng": 112.43
                 }
             ],
             "chronicleFrom": "city_xiurongchuan",
@@ -29449,7 +31656,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "云州云中川原野",
-            "chronicleFrom": "city_datong",
+            "routeVia": [
+                {
+                    "name": "雁门",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
+                    "name": "马邑",
+                    "lat": 39.32,
+                    "lng": 112.43
+                }
+            ],
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 40.09,
             "targetLng": 113.3,
             "myTroops": 15000,
@@ -29490,6 +31709,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "伊塞克湖畔寅识迦河",
+            "routeVia": [
+                {
+                    "name": "拨换城",
+                    "lat": 41.17,
+                    "lng": 80.25
+                },
+                {
+                    "name": "勃达岭",
+                    "lat": 41.65,
+                    "lng": 78.45
+                }
+            ],
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 42.45,
             "targetLng": 77.8,
@@ -29531,7 +31762,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "朔方灵州塞垣",
-            "chronicleFrom": "city_lingzhou",
+            "routeVia": [
+                {
+                    "name": "泾州",
+                    "lat": 35.33,
+                    "lng": 107.36
+                },
+                {
+                    "name": "原州",
+                    "lat": 36,
+                    "lng": 106.28
+                }
+            ],
+            "chronicleFrom": "city_changan",
             "targetLat": 38.08,
             "targetLng": 106.28,
             "myTroops": 15000,
@@ -29573,6 +31816,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "青海湖畔冷泉与大岭",
             "routeVia": [
+                {
+                    "name": "长安",
+                    "lat": 34.27,
+                    "lng": 108.93
+                },
+                {
+                    "name": "秦州",
+                    "lat": 34.58,
+                    "lng": 105.73
+                },
                 {
                     "name": "鄯州",
                     "lat": 36.48,
@@ -29625,9 +31878,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "渔阳",
                     "lat": 40.04,
                     "lng": 117.4
+                },
+                {
+                    "name": "石城",
+                    "lat": 39.65,
+                    "lng": 118.18
                 }
             ],
-            "chronicleFrom": "city_feiru",
+            "chronicleFrom": "city_fanyang",
             "targetLat": 39.88,
             "targetLng": 118.78,
             "myTroops": 15000,
@@ -29669,9 +31927,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "辽东东境天门岭",
             "routeVia": [
                 {
-                    "name": "辽水",
-                    "lat": 41.3,
-                    "lng": 122.85
+                    "name": "怀远镇",
+                    "lat": 41.32,
+                    "lng": 122.65
+                },
+                {
+                    "name": "盖牟",
+                    "lat": 41.52,
+                    "lng": 123.35
+                },
+                {
+                    "name": "新城",
+                    "lat": 41.84,
+                    "lng": 124.05
                 }
             ],
             "chronicleFrom": "city_chaoyang",
@@ -29755,6 +32023,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "灵州鸣沙原野",
+            "routeVia": [
+                {
+                    "name": "温池",
+                    "lat": 37.42,
+                    "lng": 106.45
+                }
+            ],
             "chronicleFrom": "city_lingzhou",
             "targetLat": 37.52,
             "targetLng": 105.72,
@@ -29795,6 +32070,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "渭州武街谷与长城堡",
+            "routeVia": [
+                {
+                    "name": "康乐",
+                    "lat": 35.22,
+                    "lng": 103.65
+                }
+            ],
             "chronicleFrom": "city_lintao",
             "targetLat": 35.12,
             "targetLng": 104.22,
@@ -29835,6 +32117,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "青海黄河九曲草场",
+            "routeVia": [
+                {
+                    "name": "廓州",
+                    "lat": 36.05,
+                    "lng": 101.88
+                },
+                {
+                    "name": "浇河",
+                    "lat": 35.73,
+                    "lng": 101.21
+                }
+            ],
             "chronicleFrom": "city_ledou",
             "targetLat": 35.58,
             "targetLng": 100.75,
@@ -29878,14 +32172,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "祁连山大斗拔谷与青海",
             "routeVia": [
                 {
-                    "name": "大斗拔谷",
-                    "lat": 38.25,
-                    "lng": 100.82
+                    "name": "删丹",
+                    "lat": 38.78,
+                    "lng": 101.08
                 },
                 {
-                    "name": "青海冰面",
-                    "lat": 36.85,
-                    "lng": 100.4
+                    "name": "祁连戍",
+                    "lat": 38.18,
+                    "lng": 100.25
                 }
             ],
             "chronicleFrom": "city_zhangye",
@@ -29937,7 +32231,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "巴尔赫蓝氏城",
+                    "name": "塔里干",
+                    "lat": 35.85,
+                    "lng": 64.15
+                },
+                {
+                    "name": "缚喝",
                     "lat": 36.76,
                     "lng": 66.9
                 }
@@ -29990,9 +32289,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿姆河渡",
-                    "lat": 38.95,
-                    "lng": 63.6
+                    "name": "阿姆勒",
+                    "lat": 39.09,
+                    "lng": 63.57
                 },
                 {
                     "name": "派肯德",
@@ -30049,14 +32348,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "怛蜜",
-                    "lat": 37.22,
-                    "lng": 67.28
+                    "name": "纳赫沙布",
+                    "lat": 38.86,
+                    "lng": 65.79
                 },
                 {
                     "name": "铁门关",
                     "lat": 38.22,
                     "lng": 67.02
+                },
+                {
+                    "name": "恰加尼扬",
+                    "lat": 38.28,
+                    "lng": 67.9
                 }
             ],
             "chronicleFrom": "city_merv",
@@ -30106,6 +32410,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tang",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "涿邪山",
+                    "lat": 43.59,
+                    "lng": 104.66
+                },
+                {
+                    "name": "蒲类海",
+                    "lat": 43.65,
+                    "lng": 92.8
+                }
+            ],
             "chronicleFrom": "city_otuken",
             "targetLat": 44,
             "targetLng": 89.2,
@@ -30155,9 +32471,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "拨换城",
+                    "lat": 41.17,
+                    "lng": 80.25
+                },
+                {
                     "name": "疏勒",
                     "lat": 39.47,
                     "lng": 75.99
+                },
+                {
+                    "name": "郁成",
+                    "lat": 40.52,
+                    "lng": 72.8
                 }
             ],
             "chronicleFrom": "city_yiluolucheng",
@@ -30203,9 +32529,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "费尔干纳锡尔河北岸",
             "routeVia": [
                 {
-                    "name": "撒马尔罕",
-                    "lat": 39.65,
-                    "lng": 66.97
+                    "name": "怛罗斯",
+                    "lat": 42.89,
+                    "lng": 71.35
+                },
+                {
+                    "name": "白水城",
+                    "lat": 42.35,
+                    "lng": 69.85
+                },
+                {
+                    "name": "石国",
+                    "lat": 41.31,
+                    "lng": 69.28
                 }
             ],
             "chronicleFrom": "city_suiye",
@@ -30249,7 +32585,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "瓜州城下与祁连渴波谷",
-            "chronicleFrom": "city_jiuquan",
+            "routeVia": [
+                {
+                    "name": "常乐",
+                    "lat": 40.25,
+                    "lng": 96.35
+                }
+            ],
+            "chronicleFrom": "city_jinchangcheng",
             "targetLat": 39.85,
             "targetLng": 98.5,
             "myTroops": 15000,
@@ -30295,6 +32638,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tubo",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "临蕃城",
+                    "lat": 36.55,
+                    "lng": 102.05
+                }
+            ],
             "chronicleFrom": "city_ledou",
             "targetLat": 36.56,
             "targetLng": 101.35,
@@ -30338,9 +32688,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "平州西北都山",
             "routeVia": [
                 {
-                    "name": "平州肥如",
-                    "lat": 39.88,
-                    "lng": 118.78
+                    "name": "渔阳",
+                    "lat": 40.04,
+                    "lng": 117.4
+                },
+                {
+                    "name": "卢龙",
+                    "lat": 39.89,
+                    "lng": 118.89
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -30383,7 +32738,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "代北桑乾河谷",
-            "chronicleFrom": "city_datong",
+            "routeVia": [
+                {
+                    "name": "马邑",
+                    "lat": 39.32,
+                    "lng": 112.43
+                },
+                {
+                    "name": "应州",
+                    "lat": 39.56,
+                    "lng": 113.19
+                }
+            ],
+            "chronicleFrom": "city_yanmenguan",
             "targetLat": 40.15,
             "targetLng": 113.55,
             "myTroops": 15000,
@@ -30424,6 +32791,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "青海湖与渔海原野",
+            "routeVia": [
+                {
+                    "name": "凉州",
+                    "lat": 37.93,
+                    "lng": 102.64
+                },
+                {
+                    "name": "鄯州",
+                    "lat": 36.49,
+                    "lng": 102.37
+                }
+            ],
             "chronicleFrom": "city_lingzhou",
             "targetLat": 36.85,
             "targetLng": 100.4,
@@ -30470,6 +32849,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tubo",
                 "after": "tubo"
             },
+            "routeVia": [
+                {
+                    "name": "廓州",
+                    "lat": 36.05,
+                    "lng": 101.88
+                }
+            ],
             "chronicleFrom": "city_ledou",
             "targetLat": 35.45,
             "targetLng": 100.95,
@@ -30513,8 +32899,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "阴山北境萨河内山",
             "routeVia": [
                 {
+                    "name": "西受降城",
+                    "lat": 40.78,
+                    "lng": 108.45
+                },
+                {
                     "name": "光禄塞",
-                    "lat": 41.1,
+                    "lat": 41.4,
                     "lng": 109.2
                 }
             ],
@@ -30559,6 +32950,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "青海积石军与墨离军",
+            "routeVia": [
+                {
+                    "name": "廓州",
+                    "lat": 36.05,
+                    "lng": 101.88
+                }
+            ],
             "chronicleFrom": "city_ledou",
             "targetLat": 36.04,
             "targetLng": 101.43,
@@ -30605,6 +33003,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tubo",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "临蕃城",
+                    "lat": 36.55,
+                    "lng": 102.05
+                }
+            ],
             "chronicleFrom": "city_ledou",
             "targetLat": 36.56,
             "targetLng": 101.35,
@@ -30645,6 +33050,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "燕北瀚海塞外草原",
+            "routeVia": [
+                {
+                    "name": "妫州",
+                    "lat": 40.38,
+                    "lng": 115.75
+                },
+                {
+                    "name": "武州",
+                    "lat": 40.62,
+                    "lng": 115.18
+                }
+            ],
             "chronicleFrom": "city_fanyang",
             "targetLat": 41.2,
             "targetLng": 114.6,
@@ -30688,14 +33105,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "撒马尔罕南塔赫塔卡拉恰山口",
             "routeVia": [
                 {
-                    "name": "铁门山口",
-                    "lat": 39.3,
-                    "lng": 66.94
+                    "name": "阿姆勒",
+                    "lat": 39.09,
+                    "lng": 63.57
                 },
                 {
-                    "name": "撒马尔罕",
-                    "lat": 39.65,
-                    "lng": 66.97
+                    "name": "纳赫沙布",
+                    "lat": 38.86,
+                    "lng": 65.79
+                },
+                {
+                    "name": "基什",
+                    "lat": 39.05,
+                    "lng": 66.83
                 }
             ],
             "chronicleFrom": "city_merv",
@@ -30788,12 +33210,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "热海伊塞克湖东原",
             "routeVia": [
                 {
-                    "name": "北庭",
-                    "lat": 44,
-                    "lng": 89.2
+                    "name": "轮台",
+                    "lat": 43.95,
+                    "lng": 87.6
                 },
                 {
-                    "name": "伊犁河谷",
+                    "name": "弓月城",
                     "lat": 43.92,
                     "lng": 81.32
                 }
@@ -30841,9 +33263,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "朱兹詹哈里斯坦原野",
             "routeVia": [
                 {
-                    "name": "巴尔赫",
-                    "lat": 36.76,
-                    "lng": 66.9
+                    "name": "希布尔甘",
+                    "lat": 36.66,
+                    "lng": 65.75
                 }
             ],
             "chronicleFrom": "city_lanshi",
@@ -30895,14 +33317,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "北庭",
-                    "lat": 44,
-                    "lng": 89.2
+                    "name": "弓月城",
+                    "lat": 43.92,
+                    "lng": 81.32
                 },
                 {
-                    "name": "真珠河",
+                    "name": "俱兰城",
                     "lat": 42.9,
-                    "lng": 75.5
+                    "lng": 77.2
                 }
             ],
             "chronicleFrom": "city_bieshibali",
@@ -30959,7 +33381,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 75.99
                 },
                 {
-                    "name": "葱岭护密",
+                    "name": "竭盘陀",
+                    "lat": 37.77,
+                    "lng": 75.23
+                },
+                {
+                    "name": "护密",
                     "lat": 37,
                     "lng": 72.6
                 }
@@ -31006,6 +33433,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "怛罗斯河谷阿特拉赫",
             "routeVia": [
+                {
+                    "name": "热海",
+                    "lat": 42.45,
+                    "lng": 77.8
+                },
                 {
                     "name": "碎叶",
                     "lat": 42.84,
@@ -31059,6 +33491,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "xiaobolu",
                 "after": "xiaobolu"
             },
+            "routeVia": [
+                {
+                    "name": "于阗",
+                    "lat": 37.1,
+                    "lng": 79.92
+                },
+                {
+                    "name": "斫句迦",
+                    "lat": 37.88,
+                    "lng": 77.42
+                },
+                {
+                    "name": "竭盘陀",
+                    "lat": 37.77,
+                    "lng": 75.23
+                }
+            ],
             "chronicleFrom": "city_yiluolucheng",
             "targetLat": 35.92,
             "targetLng": 74.31,
@@ -31106,6 +33555,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tang",
                 "after": "da_yan"
             },
+            "routeVia": [
+                {
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
+                },
+                {
+                    "name": "定州",
+                    "lat": 38.51,
+                    "lng": 114.99
+                }
+            ],
             "chronicleFrom": "city_fanyang",
             "targetLat": 38.14,
             "targetLng": 114.57,
@@ -31154,9 +33615,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "潼关",
-                    "lat": 34.54,
-                    "lng": 110.29
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
+                },
+                {
+                    "name": "陕州",
+                    "lat": 34.72,
+                    "lng": 111.1
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -31252,17 +33718,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "凤翔",
-                    "lat": 34.52,
-                    "lng": 107.39
+                    "name": "武功",
+                    "lat": 34.32,
+                    "lng": 108.12
                 },
                 {
-                    "name": "长安南沣水香积寺",
-                    "lat": 34.15,
-                    "lng": 108.88
+                    "name": "鄠县",
+                    "lat": 34.11,
+                    "lng": 108.6
                 }
             ],
-            "chronicleFrom": "city_fengtian",
+            "chronicleFrom": "city_qishan",
             "targetLat": 34.15,
             "targetLng": 108.88,
             "myTroops": 15000,
@@ -31308,6 +33774,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tang",
                 "after": "da_yan"
             },
+            "routeVia": [
+                {
+                    "name": "雍丘",
+                    "lat": 34.55,
+                    "lng": 114.78
+                },
+                {
+                    "name": "宁陵",
+                    "lat": 34.45,
+                    "lng": 115.32
+                }
+            ],
             "chronicleFrom": "city_bianliang",
             "targetLat": 34.38,
             "targetLng": 115.62,
@@ -31356,14 +33834,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "范阳",
-                    "lat": 39.9,
-                    "lng": 116.41
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
                 },
                 {
-                    "name": "魏州",
-                    "lat": 36.27,
-                    "lng": 115.23
+                    "name": "卫州",
+                    "lat": 35.42,
+                    "lng": 114.05
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -31418,14 +33896,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 111.1
                 },
                 {
-                    "name": "洛阳昭觉寺",
-                    "lat": 34.62,
-                    "lng": 112.45
-                },
-                {
-                    "name": "孟州横水",
-                    "lat": 34.9,
-                    "lng": 112.78
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
                 }
             ],
             "chronicleFrom": "city_xiayangdu",
@@ -31470,17 +33943,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "京兆泾阳与灵台白渠",
             "routeVia": [
                 {
-                    "name": "泾阳",
-                    "lat": 34.53,
-                    "lng": 108.84
-                },
-                {
-                    "name": "灵台西原",
-                    "lat": 35.06,
-                    "lng": 107.62
+                    "name": "咸阳",
+                    "lat": 34.33,
+                    "lng": 108.7
                 }
             ],
-            "chronicleFrom": "city_fengtian",
+            "chronicleFrom": "city_changan",
             "targetLat": 34.53,
             "targetLng": 108.84,
             "myTroops": 15000,
@@ -31566,7 +34034,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "灵武塞外与邠州原野",
-            "chronicleFrom": "city_binzhou2",
+            "routeVia": [
+                {
+                    "name": "彭原",
+                    "lat": 35.72,
+                    "lng": 107.65
+                }
+            ],
+            "chronicleFrom": "city_anding",
             "targetLat": 35.06,
             "targetLng": 108.08,
             "myTroops": 15000,
@@ -31652,6 +34127,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "关内道潘原险地",
+            "routeVia": [
+                {
+                    "name": "宜禄",
+                    "lat": 35.25,
+                    "lng": 107.78
+                }
+            ],
             "chronicleFrom": "city_binzhou2",
             "targetLat": 35.512,
             "targetLng": 107.038,
@@ -31694,9 +34176,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "剑南道茂州文川山谷",
             "routeVia": [
                 {
-                    "name": "剑门关",
-                    "lat": 32.2,
-                    "lng": 105.56
+                    "name": "绵州",
+                    "lat": 31.47,
+                    "lng": 104.68
                 }
             ],
             "chronicleFrom": "city_zizhou_d",
@@ -31744,6 +34226,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tang",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "壶关",
+                    "lat": 36.12,
+                    "lng": 113.2
+                },
+                {
+                    "name": "武安",
+                    "lat": 36.69,
+                    "lng": 114.2
+                }
+            ],
             "chronicleFrom": "city_shangdang",
             "targetLat": 36.705,
             "targetLng": 114.492,
@@ -31838,6 +34332,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "同州",
+                    "lat": 34.8,
+                    "lng": 109.94
+                },
+                {
+                    "name": "零口",
+                    "lat": 34.48,
+                    "lng": 109.32
+                },
+                {
                     "name": "东渭桥",
                     "lat": 34.45,
                     "lng": 109.1
@@ -31891,14 +34395,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "平阳",
+                    "lat": 36.09,
+                    "lng": 111.52
+                },
+                {
                     "name": "绛州",
                     "lat": 35.63,
                     "lng": 111.3
                 },
                 {
-                    "name": "陶城长春宫",
-                    "lat": 34.95,
-                    "lng": 110.4
+                    "name": "荣河",
+                    "lat": 35.12,
+                    "lng": 110.45
                 }
             ],
             "chronicleFrom": "city_taiyuan",
@@ -31941,6 +34450,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "关内道陇州汧阳城郊",
+            "routeVia": [
+                {
+                    "name": "陈仓",
+                    "lat": 34.36,
+                    "lng": 107.24
+                }
+            ],
             "chronicleFrom": "city_qishan",
             "targetLat": 34.643,
             "targetLng": 107.132,
@@ -32036,6 +34552,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "邓川",
+                    "lat": 25.96,
+                    "lng": 100.09
+                },
+                {
                     "name": "剑川",
                     "lat": 26.53,
                     "lng": 99.9
@@ -32093,6 +34614,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "沃尔姆斯",
                     "lat": 49.63,
                     "lng": 8.36
+                },
+                {
+                    "name": "弗里茨拉尔",
+                    "lat": 51.13,
+                    "lng": 9.27
                 }
             ],
             "chronicleFrom": "city_meiyinci",
@@ -32144,9 +34670,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "塞尼山口",
+                    "name": "塞尼山",
                     "lat": 45.26,
                     "lng": 6.9
+                },
+                {
+                    "name": "苏萨",
+                    "lat": 45.14,
+                    "lng": 7.05
+                },
+                {
+                    "name": "都灵",
+                    "lat": 45.07,
+                    "lng": 7.68
                 }
             ],
             "chronicleFrom": "city_geneva",
@@ -32191,9 +34727,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "东北意大利皮亚韦河畔",
             "routeVia": [
                 {
-                    "name": "阿尔卑斯山道",
-                    "lat": 46.5,
-                    "lng": 13.5
+                    "name": "沃尔姆斯",
+                    "lat": 49.63,
+                    "lng": 8.36
+                },
+                {
+                    "name": "奥格斯堡",
+                    "lat": 48.37,
+                    "lng": 10.89
+                },
+                {
+                    "name": "特里登图姆",
+                    "lat": 46.07,
+                    "lng": 11.12
                 }
             ],
             "chronicleFrom": "city_yachen",
@@ -32298,9 +34844,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "易北河双桥",
-                    "lat": 52.8,
-                    "lng": 11.95
+                    "name": "帕德博恩",
+                    "lat": 51.72,
+                    "lng": 8.75
+                },
+                {
+                    "name": "马格德堡",
+                    "lat": 52.13,
+                    "lng": 11.61
+                },
+                {
+                    "name": "哈弗尔贝格",
+                    "lat": 52.82,
+                    "lng": 12.07
                 }
             ],
             "chronicleFrom": "city_kelong",
@@ -32352,19 +34908,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "恩斯河",
+                    "name": "帕绍",
+                    "lat": 48.57,
+                    "lng": 13.46
+                },
+                {
+                    "name": "洛尔希",
                     "lat": 48.22,
                     "lng": 14.48
-                },
-                {
-                    "name": "坎普河口",
-                    "lat": 48.4,
-                    "lng": 15.7
-                },
-                {
-                    "name": "拉布河",
-                    "lat": 47.68,
-                    "lng": 17.63
                 }
             ],
             "chronicleFrom": "city_leigensibao",
@@ -32416,9 +34967,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "阿奎莱亚",
+                    "lat": 45.77,
+                    "lng": 13.37
+                },
+                {
                     "name": "奇维达莱",
                     "lat": 46.09,
                     "lng": 13.43
+                },
+                {
+                    "name": "锡斯基亚",
+                    "lat": 45.48,
+                    "lng": 16.37
                 }
             ],
             "chronicleFrom": "city_verona",
@@ -32470,9 +35031,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "比利牛斯山道",
-                    "lat": 42.45,
-                    "lng": 2.85
+                    "name": "纳博讷",
+                    "lat": 43.18,
+                    "lng": 3
+                },
+                {
+                    "name": "赫罗纳",
+                    "lat": 41.98,
+                    "lng": 2.82
                 }
             ],
             "chronicleFrom": "city_toulouse",
@@ -32522,6 +35088,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boximiya",
                 "after": "boximiya"
             },
+            "routeVia": [
+                {
+                    "name": "美因茨",
+                    "lat": 50,
+                    "lng": 8.27
+                },
+                {
+                    "name": "维尔茨堡",
+                    "lat": 49.79,
+                    "lng": 9.95
+                },
+                {
+                    "name": "埃格尔",
+                    "lat": 50.08,
+                    "lng": 12.37
+                }
+            ],
             "chronicleFrom": "city_yachen",
             "targetLat": 50.365,
             "targetLng": 13.792,
@@ -32568,6 +35151,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "kelite"
             },
             "routeVia": [
+                {
+                    "name": "科马基奥",
+                    "lat": 44.69,
+                    "lng": 12.18
+                },
                 {
                     "name": "基奥贾",
                     "lat": 45.22,
@@ -32662,6 +35250,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "巴尔干山脉弗尔比察山口",
             "routeVia": [
                 {
+                    "name": "阿德里安堡",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
+                    "name": "马尔凯莱",
+                    "lat": 42.64,
+                    "lng": 26.89
+                },
+                {
                     "name": "普利斯卡",
                     "lat": 43.39,
                     "lng": 27.13
@@ -32707,6 +35305,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "色雷斯巴巴埃斯基郊野",
+            "routeVia": [
+                {
+                    "name": "阿卡迪奥波利斯",
+                    "lat": 41.4,
+                    "lng": 27.35
+                }
+            ],
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.432,
             "targetLng": 27.093,
@@ -32754,6 +35359,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "boluo",
                 "after": "gurjara"
             },
+            "routeVia": [
+                {
+                    "name": "奇托尔",
+                    "lat": 24.89,
+                    "lng": 74.63
+                },
+                {
+                    "name": "瓜廖尔",
+                    "lat": 26.22,
+                    "lng": 78.18
+                }
+            ],
             "chronicleFrom": "city_patan",
             "targetLat": 27.055,
             "targetLng": 79.914,
@@ -32801,6 +35418,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "huaixi",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "临颍",
+                    "lat": 33.81,
+                    "lng": 113.93
+                }
+            ],
             "chronicleFrom": "city_xuchang",
             "targetLat": 33.485,
             "targetLng": 114.082,
@@ -32857,11 +35481,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "文城栅",
                     "lat": 33.22,
                     "lng": 113.78
-                },
-                {
-                    "name": "张柴村",
-                    "lat": 33.08,
-                    "lng": 114.22
                 }
             ],
             "chronicleFrom": "city_xiangyang",
@@ -32912,19 +35531,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "魏州",
-                    "lat": 36.27,
-                    "lng": 115.23
+                    "name": "莘县",
+                    "lat": 36.24,
+                    "lng": 115.67
                 },
                 {
                     "name": "阳谷",
                     "lat": 36.11,
                     "lng": 115.79
-                },
-                {
-                    "name": "东阿",
-                    "lat": 36.18,
-                    "lng": 116.25
                 }
             ],
             "chronicleFrom": "city_daming",
@@ -33019,6 +35633,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "henghai",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "德州",
+                    "lat": 37.45,
+                    "lng": 116.3
+                },
+                {
+                    "name": "南皮",
+                    "lat": 38.04,
+                    "lng": 116.7
+                }
+            ],
             "chronicleFrom": "city_liaocheng",
             "targetLat": 38.302,
             "targetLng": 116.831,
@@ -33068,9 +35694,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "剑河上游",
-                    "lat": 51.7,
-                    "lng": 94.4
+                    "name": "唐努山",
+                    "lat": 50.8,
+                    "lng": 94.5
+                },
+                {
+                    "name": "色楞格河",
+                    "lat": 49.25,
+                    "lng": 100.8
                 }
             ],
             "chronicleFrom": "city_wubusabo",
@@ -33115,8 +35746,8 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "关内道振武塞北黑山杀胡山",
             "routeVia": [
                 {
-                    "name": "振武城",
-                    "lat": 40.25,
+                    "name": "云中",
+                    "lat": 40.38,
                     "lng": 111.82
                 }
             ],
@@ -33169,14 +35800,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "晋绛",
-                    "lat": 35.63,
-                    "lng": 111.3
+                    "name": "翼城",
+                    "lat": 35.74,
+                    "lng": 111.72
                 },
                 {
-                    "name": "翼城乌岭",
-                    "lat": 35.75,
-                    "lng": 112.05
+                    "name": "端氏",
+                    "lat": 35.65,
+                    "lng": 112.55
                 }
             ],
             "chronicleFrom": "city_quwo",
@@ -33219,7 +35850,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "陇右道鄯州湟水河谷",
-            "chronicleFrom": "city_ledou",
+            "chronicleFrom": "city_qingtang",
             "targetLat": 36.485,
             "targetLng": 102.425,
             "myTroops": 15000,
@@ -33311,6 +35942,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tubo",
                 "after": "tang"
             },
+            "routeVia": [
+                {
+                    "name": "泾州",
+                    "lat": 35.33,
+                    "lng": 107.36
+                }
+            ],
             "chronicleFrom": "city_binzhou2",
             "targetLat": 36.008,
             "targetLng": 106.282,
@@ -33359,9 +35997,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "晋昌",
+                    "lat": 40.53,
+                    "lng": 95.82
+                },
+                {
                     "name": "莫贺延碛",
-                    "lat": 41.5,
-                    "lng": 94.1
+                    "lat": 41.65,
+                    "lng": 94.15
                 }
             ],
             "chronicleFrom": "city_dunhuang",
@@ -33404,7 +36047,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "陇右道渭州襄武城郊",
-            "chronicleFrom": "city_longxi",
+            "routeVia": [
+                {
+                    "name": "陇州",
+                    "lat": 34.89,
+                    "lng": 106.86
+                },
+                {
+                    "name": "秦州",
+                    "lat": 34.58,
+                    "lng": 105.73
+                }
+            ],
+            "chronicleFrom": "city_anding",
             "targetLat": 35.012,
             "targetLng": 104.635,
             "myTroops": 15000,
@@ -33453,9 +36108,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "沙州",
-                    "lat": 40.14,
-                    "lng": 94.66
+                    "name": "酒泉",
+                    "lat": 39.74,
+                    "lng": 98.5
                 },
                 {
                     "name": "甘州",
@@ -33463,12 +36118,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 100.45
                 },
                 {
-                    "name": "番禾昌松",
-                    "lat": 38.1,
-                    "lng": 102.1
+                    "name": "删丹",
+                    "lat": 38.78,
+                    "lng": 101.08
+                },
+                {
+                    "name": "番禾",
+                    "lat": 38.22,
+                    "lng": 101.95
                 }
             ],
-            "chronicleFrom": "city_zhangye",
+            "chronicleFrom": "city_dunhuang",
             "targetLat": 37.928,
             "targetLng": 102.638,
             "myTroops": 15000,
@@ -33515,6 +36175,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "paulicians",
                 "after": "paulicians"
             },
+            "routeVia": [
+                {
+                    "name": "阿莫里乌姆",
+                    "lat": 39.02,
+                    "lng": 31.29
+                },
+                {
+                    "name": "凯撒利亚",
+                    "lat": 38.72,
+                    "lng": 35.48
+                },
+                {
+                    "name": "塞巴斯蒂亚",
+                    "lat": 39.75,
+                    "lng": 37.01
+                }
+            ],
             "chronicleFrom": "city_yifusuo",
             "targetLat": 39.371,
             "targetLng": 38.114,
@@ -33558,17 +36235,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "小亚细亚帕夫拉戈尼亚拉拉卡翁河谷",
             "routeVia": [
                 {
-                    "name": "马拉蒂亚",
-                    "lat": 38.35,
-                    "lng": 38.31
+                    "name": "安基拉",
+                    "lat": 39.93,
+                    "lng": 32.86
                 },
                 {
-                    "name": "阿米苏斯海滨",
-                    "lat": 41.29,
-                    "lng": 36.33
+                    "name": "甘格拉",
+                    "lat": 40.6,
+                    "lng": 33.62
                 }
             ],
-            "chronicleFrom": "city_amaxiya",
+            "chronicleFrom": "city_yifusuo",
             "targetLat": 40.385,
             "targetLng": 35.812,
             "myTroops": 15000,
@@ -33609,6 +36286,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "英格兰东海岸东盎格利亚塞特福德",
+            "routeVia": [
+                {
+                    "name": "里伯",
+                    "lat": 55.33,
+                    "lng": 8.76
+                }
+            ],
             "chronicleFrom": "city_gebenhagen",
             "targetLat": 52.414,
             "targetLng": 0.746,
@@ -33655,6 +36339,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "weijing_york",
                 "after": "weijing_york"
             },
+            "routeVia": [
+                {
+                    "name": "林肯",
+                    "lat": 53.23,
+                    "lng": -0.54
+                },
+                {
+                    "name": "亨伯津",
+                    "lat": 53.7,
+                    "lng": -0.45
+                }
+            ],
             "chronicleFrom": "city_norwich",
             "targetLat": 53.961,
             "targetLng": -1.082,
@@ -33697,9 +36393,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "英格兰伯克郡阿什当白垩山脊",
             "routeVia": [
                 {
-                    "name": "雷丁",
-                    "lat": 51.45,
-                    "lng": -0.97
+                    "name": "贝辛斯托克",
+                    "lat": 51.26,
+                    "lng": -1.09
                 }
             ],
             "chronicleFrom": "city_winchester",
@@ -33745,19 +36441,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "英格兰威尔特郡埃丁顿高地",
             "routeVia": [
                 {
-                    "name": "埃格伯特石",
-                    "lat": 51.12,
-                    "lng": -2.35
-                },
-                {
-                    "name": "埃丁顿",
-                    "lat": 51.28,
-                    "lng": -2.11
-                },
-                {
-                    "name": "奇彭纳姆",
-                    "lat": 51.46,
-                    "lng": -2.12
+                    "name": "索尔兹伯里",
+                    "lat": 51.07,
+                    "lng": -1.79
                 }
             ],
             "chronicleFrom": "city_winchester",
@@ -33800,6 +36486,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "西法兰克皮卡第索库尔昂维默原野",
+            "routeVia": [
+                {
+                    "name": "根特",
+                    "lat": 51.05,
+                    "lng": 3.72
+                },
+                {
+                    "name": "科尔特赖克",
+                    "lat": 50.83,
+                    "lng": 3.26
+                },
+                {
+                    "name": "亚眠",
+                    "lat": 49.89,
+                    "lng": 2.3
+                }
+            ],
             "chronicleFrom": "city_bruges",
             "targetLat": 50.075,
             "targetLng": 1.612,
@@ -33849,19 +36552,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "渑池",
+                    "lat": 34.76,
+                    "lng": 111.76
+                },
+                {
                     "name": "陕州",
                     "lat": 34.72,
                     "lng": 111.1
-                },
-                {
-                    "name": "潼关禁沟",
-                    "lat": 34.61,
-                    "lng": 110.28
-                },
-                {
-                    "name": "长安",
-                    "lat": 34.27,
-                    "lng": 108.93
                 }
             ],
             "chronicleFrom": "city_luoyang",
@@ -33907,27 +36605,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "关内道华州渭南梁田陂",
             "routeVia": [
                 {
+                    "name": "绛州",
+                    "lat": 35.63,
+                    "lng": 111.3
+                },
+                {
                     "name": "河中",
                     "lat": 34.83,
                     "lng": 110.3
                 },
                 {
-                    "name": "同州沙苑",
-                    "lat": 35,
-                    "lng": 109.93
-                },
-                {
-                    "name": "渭南梁田陂",
-                    "lat": 34.5,
-                    "lng": 109.51
-                },
-                {
-                    "name": "长安",
-                    "lat": 34.27,
-                    "lng": 108.93
+                    "name": "同州",
+                    "lat": 34.8,
+                    "lng": 109.94
                 }
             ],
-            "chronicleFrom": "city_shayuan",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 34.502,
             "targetLng": 109.512,
             "myTroops": 15000,
@@ -33969,6 +36662,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "河南道陈州宛丘至中牟王满渡",
             "routeVia": [
+                {
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
+                },
                 {
                     "name": "许州",
                     "lat": 34.02,
@@ -34074,19 +36772,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "潞州长子",
-                    "lat": 36.19,
-                    "lng": 113.11
-                },
-                {
-                    "name": "阴地关霍邑",
-                    "lat": 36.74,
-                    "lng": 111.76
-                },
-                {
-                    "name": "晋州平阳",
-                    "lat": 36.09,
-                    "lng": 111.52
+                    "name": "西河",
+                    "lat": 37.27,
+                    "lng": 111.79
                 }
             ],
             "chronicleFrom": "city_taiyuan",
@@ -34138,14 +36826,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "武州新州",
-                    "lat": 40.38,
-                    "lng": 115.61
+                    "name": "代州",
+                    "lat": 39.19,
+                    "lng": 112.87
                 },
                 {
-                    "name": "居庸关",
-                    "lat": 40.29,
-                    "lng": 116.07
+                    "name": "飞狐",
+                    "lat": 39.52,
+                    "lng": 114.58
+                },
+                {
+                    "name": "妫州",
+                    "lat": 40.38,
+                    "lng": 115.75
                 }
             ],
             "chronicleFrom": "city_taiyuan",
@@ -34190,9 +36883,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "淮南道楚州泗口清口淮水营盘",
             "routeVia": [
                 {
-                    "name": "广陵",
-                    "lat": 32.39,
-                    "lng": 119.42
+                    "name": "亳州",
+                    "lat": 33.88,
+                    "lng": 115.77
+                },
+                {
+                    "name": "宿州",
+                    "lat": 33.63,
+                    "lng": 116.98
+                },
+                {
+                    "name": "泗州",
+                    "lat": 33.52,
+                    "lng": 118.25
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -34335,9 +37038,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "虢县",
-                    "lat": 34.37,
-                    "lng": 107.38
+                    "name": "咸阳",
+                    "lat": 34.33,
+                    "lng": 108.7
+                },
+                {
+                    "name": "武功",
+                    "lat": 34.32,
+                    "lng": 108.12
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -34388,9 +37096,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "曹州",
+                    "lat": 35.24,
+                    "lng": 115.45
+                },
+                {
                     "name": "郓州",
                     "lat": 35.92,
                     "lng": 116.3
+                },
+                {
+                    "name": "历城",
+                    "lat": 36.67,
+                    "lng": 117
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -34441,9 +37159,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "滑州",
+                    "lat": 35.57,
+                    "lng": 114.52
+                },
+                {
                     "name": "魏州",
                     "lat": 36.27,
                     "lng": 115.23
+                },
+                {
+                    "name": "德州",
+                    "lat": 37.45,
+                    "lng": 116.3
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -34494,9 +37222,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "铜鞮乱柳",
-                    "lat": 36.7,
-                    "lng": 112.88
+                    "name": "沁州",
+                    "lat": 36.75,
+                    "lng": 112.68
+                },
+                {
+                    "name": "铜鞮",
+                    "lat": 36.62,
+                    "lng": 112.85
                 }
             ],
             "chronicleFrom": "city_taiyuan",
@@ -34542,7 +37275,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "关内道鄜州坊州至庆州定边原野",
             "routeVia": [
                 {
-                    "name": "坊州鄜州",
+                    "name": "同官",
+                    "lat": 35.09,
+                    "lng": 109.08
+                },
+                {
+                    "name": "坊州",
+                    "lat": 35.58,
+                    "lng": 109.15
+                },
+                {
+                    "name": "鄜州",
                     "lat": 35.99,
                     "lng": 109.38
                 }
@@ -34587,7 +37330,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河北道赵州柏乡南野河平原",
-            "chronicleFrom": "city_zhending",
+            "routeVia": [
+                {
+                    "name": "井陉",
+                    "lat": 38.03,
+                    "lng": 114.14
+                },
+                {
+                    "name": "赵州",
+                    "lat": 37.75,
+                    "lng": 114.77
+                }
+            ],
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 37.402,
             "targetLng": 114.685,
             "myTroops": 15000,
@@ -34627,6 +37382,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "河北道冀州蓨县景城原野",
+            "routeVia": [
+                {
+                    "name": "滑州",
+                    "lat": 35.57,
+                    "lng": 114.52
+                },
+                {
+                    "name": "魏州",
+                    "lat": 36.27,
+                    "lng": 115.23
+                },
+                {
+                    "name": "枣强",
+                    "lat": 37.51,
+                    "lng": 115.72
+                }
+            ],
             "chronicleFrom": "city_bianliang",
             "targetLat": 37.682,
             "targetLng": 116.271,
@@ -34675,6 +37447,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "飞狐",
+                    "lat": 39.52,
+                    "lng": 114.58
+                },
+                {
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
+                },
+                {
                     "name": "涿州",
                     "lat": 39.49,
                     "lng": 115.97
@@ -34722,12 +37504,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北道魏州大名东郊故元城",
             "routeVia": [
                 {
-                    "name": "黎阳滑州",
-                    "lat": 35.57,
-                    "lng": 114.52
+                    "name": "辽州",
+                    "lat": 37.03,
+                    "lng": 113.42
+                },
+                {
+                    "name": "邢州",
+                    "lat": 37.07,
+                    "lng": 114.5
+                },
+                {
+                    "name": "临清",
+                    "lat": 36.84,
+                    "lng": 115.7
                 }
             ],
-            "chronicleFrom": "city_daming",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 36.265,
             "targetLng": 115.225,
             "myTroops": 15000,
@@ -34769,9 +37561,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南道濮州濮阳东郊胡柳陂土山",
             "routeVia": [
                 {
-                    "name": "麻家渡",
-                    "lat": 35.85,
-                    "lng": 115.2
+                    "name": "杨刘",
+                    "lat": 36.23,
+                    "lng": 116.15
+                },
+                {
+                    "name": "郓州",
+                    "lat": 35.92,
+                    "lng": 116.3
                 }
             ],
             "chronicleFrom": "city_daming",
@@ -34816,7 +37613,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北道定州新乐沙河至望都原野",
             "routeVia": [
                 {
-                    "name": "新乐沙河",
+                    "name": "新乐",
                     "lat": 38.37,
                     "lng": 114.69
                 }
@@ -34870,24 +37667,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "杨刘渡",
+                    "name": "杨刘",
                     "lat": 36.23,
                     "lng": 116.15
                 },
                 {
-                    "name": "郓州中都",
-                    "lat": 35.72,
-                    "lng": 116.49
-                },
-                {
-                    "name": "曹州",
-                    "lat": 35.24,
-                    "lng": 115.45
-                },
-                {
-                    "name": "大梁开封",
-                    "lat": 34.8,
-                    "lng": 114.31
+                    "name": "郓州",
+                    "lat": 35.92,
+                    "lng": 116.3
                 }
             ],
             "chronicleFrom": "city_daming",
@@ -34933,9 +37720,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北鄂尔浑河故回鹘窝鲁朵城",
             "routeVia": [
                 {
-                    "name": "阴山青冢",
-                    "lat": 40.75,
-                    "lng": 111.65
+                    "name": "达来诺尔",
+                    "lat": 43.3,
+                    "lng": 116.65
+                },
+                {
+                    "name": "受降城",
+                    "lat": 41.05,
+                    "lng": 110.5
+                },
+                {
+                    "name": "黑山",
+                    "lat": 43.8,
+                    "lng": 106.5
                 }
             ],
             "chronicleFrom": "city_linhuang",
@@ -34987,6 +37784,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "辽阳",
+                    "lat": 41.27,
+                    "lng": 123.17
+                },
+                {
                     "name": "扶余府",
                     "lat": 45.45,
                     "lng": 124.62
@@ -35035,19 +37837,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北道定州曲阳嘉山脚下",
             "routeVia": [
                 {
-                    "name": "定州",
-                    "lat": 38.51,
-                    "lng": 114.99
+                    "name": "古北口",
+                    "lat": 40.69,
+                    "lng": 117.16
                 },
                 {
-                    "name": "曲阳嘉山",
-                    "lat": 38.62,
-                    "lng": 114.71
+                    "name": "幽州",
+                    "lat": 39.9,
+                    "lng": 116.41
                 },
                 {
-                    "name": "唐河",
-                    "lat": 38.58,
-                    "lng": 114.97
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
                 }
             ],
             "chronicleFrom": "city_linhuang",
@@ -35137,6 +37939,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "图林根温斯特鲁特河畔里亚德",
+            "routeVia": [
+                {
+                    "name": "奎德林堡",
+                    "lat": 51.79,
+                    "lng": 11.14
+                }
+            ],
             "chronicleFrom": "city_magedebao",
             "targetLat": 51.35,
             "targetLng": 11.99,
@@ -35179,6 +37988,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "defender",
             "targetName": "巴伐利亚奥格斯堡南莱希河原野",
             "routeVia": [
+                {
+                    "name": "维尔茨堡",
+                    "lat": 49.79,
+                    "lng": 9.95
+                },
                 {
                     "name": "乌尔姆",
                     "lat": 48.4,
@@ -35231,19 +38045,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "hou_jin",
                 "after": "hou_jin"
             },
-            "routeVia": [
-                {
-                    "name": "雁门",
-                    "lat": 39.19,
-                    "lng": 112.87
-                },
-                {
-                    "name": "忻州",
-                    "lat": 38.42,
-                    "lng": 112.73
-                }
-            ],
-            "chronicleFrom": "city_linhuang",
+            "chronicleFrom": "city_taiyuan",
             "targetLat": 37.852,
             "targetLng": 112.551,
             "myTroops": 15000,
@@ -35291,12 +38093,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "滑州",
+                    "lat": 35.57,
+                    "lng": 114.52
+                },
+                {
                     "name": "邺都",
                     "lat": 36.27,
                     "lng": 115.23
                 },
                 {
-                    "name": "宗城破家堤",
+                    "name": "宗城",
                     "lat": 37.05,
                     "lng": 115.32
                 }
@@ -35344,9 +38151,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南濮阳澶州城北戚城",
             "routeVia": [
                 {
-                    "name": "汴梁",
-                    "lat": 34.8,
-                    "lng": 114.31
+                    "name": "幽州",
+                    "lat": 39.9,
+                    "lng": 116.41
+                },
+                {
+                    "name": "贝州",
+                    "lat": 37.05,
+                    "lng": 115.48
+                },
+                {
+                    "name": "博州",
+                    "lat": 36.43,
+                    "lng": 115.96
                 }
             ],
             "chronicleFrom": "city_linhuang",
@@ -35391,14 +38208,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北清苑保定西南阳城白团卫村",
             "routeVia": [
                 {
-                    "name": "定州",
-                    "lat": 38.51,
-                    "lng": 114.99
+                    "name": "涿州",
+                    "lat": 39.49,
+                    "lng": 115.97
                 },
                 {
-                    "name": "泰州满城",
-                    "lat": 38.95,
-                    "lng": 115.32
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -35443,9 +38260,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北正定东南滹沱河中渡桥",
             "routeVia": [
                 {
-                    "name": "魏州",
-                    "lat": 36.27,
-                    "lng": 115.23
+                    "name": "涿州",
+                    "lat": 39.49,
+                    "lng": 115.97
+                },
+                {
+                    "name": "定州",
+                    "lat": 38.51,
+                    "lng": 114.99
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -35496,6 +38318,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
+                },
+                {
                     "name": "陕州",
                     "lat": 34.72,
                     "lng": 111.1
@@ -35544,9 +38371,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南开封西北封丘刘子陂",
             "routeVia": [
                 {
-                    "name": "邺都",
-                    "lat": 36.27,
-                    "lng": 115.23
+                    "name": "澶州",
+                    "lat": 35.76,
+                    "lng": 115.03
                 },
                 {
                     "name": "滑州",
@@ -35605,6 +38432,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "曹州",
                     "lat": 35.24,
                     "lng": 115.45
+                },
+                {
+                    "name": "巨野",
+                    "lat": 35.39,
+                    "lng": 116.09
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -35649,9 +38481,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "山西晋城高平南巴公原",
             "routeVia": [
                 {
-                    "name": "怀州河阳",
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
+                },
+                {
+                    "name": "怀州",
                     "lat": 35.1,
                     "lng": 112.95
+                },
+                {
+                    "name": "泽州",
+                    "lat": 35.49,
+                    "lng": 112.85
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -35702,9 +38544,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "正阳浮桥",
-                    "lat": 32.45,
-                    "lng": 116.53
+                    "name": "定远",
+                    "lat": 32.53,
+                    "lng": 117.68
                 }
             ],
             "chronicleFrom": "city_shouxian",
@@ -35755,7 +38597,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "陈州颍州",
+                    "name": "陈州",
+                    "lat": 33.75,
+                    "lng": 114.65
+                },
+                {
+                    "name": "颍州",
                     "lat": 32.9,
                     "lng": 115.81
                 }
@@ -35807,9 +38654,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "楚州老鹳河",
+                    "name": "泗州",
+                    "lat": 33.52,
+                    "lng": 118.25
+                },
+                {
+                    "name": "楚州",
                     "lat": 33.5,
                     "lng": 119.12
+                },
+                {
+                    "name": "泰州",
+                    "lat": 32.49,
+                    "lng": 119.92
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -35860,19 +38717,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "太行天井关",
-                    "lat": 35.35,
-                    "lng": 112.88
+                    "name": "河阳",
+                    "lat": 34.85,
+                    "lng": 112.58
                 },
                 {
-                    "name": "泽州",
-                    "lat": 35.49,
-                    "lng": 112.85
-                },
-                {
-                    "name": "潞州",
-                    "lat": 36.19,
-                    "lng": 113.11
+                    "name": "怀州",
+                    "lat": 35.08,
+                    "lng": 112.95
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -35933,7 +38785,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 112.18
                 },
                 {
-                    "name": "三江口岳州",
+                    "name": "岳州",
                     "lat": 29.37,
                     "lng": 113.09
                 }
@@ -35985,9 +38837,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "夷陵",
+                    "lat": 30.7,
+                    "lng": 111.28
+                },
+                {
                     "name": "归州",
-                    "lat": 30.83,
-                    "lng": 110.97
+                    "lat": 30.98,
+                    "lng": 110.75
                 }
             ],
             "chronicleFrom": "city_ying",
@@ -36039,24 +38896,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "凤翔",
+                    "lat": 34.36,
+                    "lng": 107.38
+                },
+                {
                     "name": "凤州",
                     "lat": 33.91,
                     "lng": 106.52
                 },
                 {
-                    "name": "兴州利州",
+                    "name": "兴州",
+                    "lat": 33.38,
+                    "lng": 106.15
+                },
+                {
+                    "name": "利州",
                     "lat": 32.43,
                     "lng": 105.82
-                },
-                {
-                    "name": "来苏剑门关",
-                    "lat": 32.2,
-                    "lng": 105.56
-                },
-                {
-                    "name": "魏城成都",
-                    "lat": 30.57,
-                    "lng": 104.07
                 }
             ],
             "chronicleFrom": "city_changan",
@@ -36107,17 +38964,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "绵州",
+                    "lat": 31.47,
+                    "lng": 104.68
+                },
+                {
                     "name": "新繁",
                     "lat": 30.88,
                     "lng": 104.01
-                },
-                {
-                    "name": "灌口",
-                    "lat": 30.99,
-                    "lng": 103.62
                 }
             ],
-            "chronicleFrom": "city_chengdu",
+            "chronicleFrom": "city_jianmenguan",
             "targetLat": 30.57,
             "targetLng": 104.07,
             "myTroops": 15000,
@@ -36165,6 +39022,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "baizanting"
             },
             "routeVia": [
+                {
+                    "name": "阿德里安堡",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
                 {
                     "name": "普雷斯拉夫",
                     "lat": 43.16,
@@ -36224,12 +39086,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 111.55
                 },
                 {
+                    "name": "连州",
+                    "lat": 24.78,
+                    "lng": 112.38
+                },
+                {
                     "name": "韶州",
                     "lat": 24.81,
                     "lng": 113.6
                 },
                 {
-                    "name": "英州清远",
+                    "name": "清远",
                     "lat": 23.7,
                     "lng": 113.03
                 }
@@ -36276,6 +39143,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "安徽马鞍山当涂长江采石矶江面",
             "routeVia": [
+                {
+                    "name": "鄂州",
+                    "lat": 30.53,
+                    "lng": 114.32
+                },
+                {
+                    "name": "江州",
+                    "lat": 29.73,
+                    "lng": 115.98
+                },
                 {
                     "name": "池州",
                     "lat": 30.66,
@@ -36330,9 +39207,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "新林港秦淮",
-                    "lat": 32,
-                    "lng": 118.73
+                    "name": "溧水",
+                    "lat": 31.65,
+                    "lng": 119.02
                 }
             ],
             "chronicleFrom": "city_jiuzi",
@@ -36383,7 +39260,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "怀州泽潞",
+                    "name": "怀州",
+                    "lat": 35.08,
+                    "lng": 112.95
+                },
+                {
+                    "name": "泽州",
+                    "lat": 35.49,
+                    "lng": 112.85
+                },
+                {
+                    "name": "潞州",
                     "lat": 36.19,
                     "lng": 113.11
                 }
@@ -36440,12 +39327,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 114.57
                 },
                 {
-                    "name": "易州涿州",
+                    "name": "定州",
+                    "lat": 38.51,
+                    "lng": 114.99
+                },
+                {
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
+                },
+                {
+                    "name": "涿州",
                     "lat": 39.49,
                     "lng": 115.97
                 }
             ],
-            "chronicleFrom": "city_taiyuan",
+            "chronicleFrom": "city_bianliang",
             "targetLat": 39.942,
             "targetLng": 116.348,
             "myTroops": 15000,
@@ -36531,7 +39428,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "陕西榆林靖边北毛乌素沙漠地斤泽",
-            "chronicleFrom": "city_tongwancheng",
+            "routeVia": [
+                {
+                    "name": "保安",
+                    "lat": 36.82,
+                    "lng": 108.77
+                },
+                {
+                    "name": "靖边",
+                    "lat": 37.57,
+                    "lng": 108.86
+                }
+            ],
+            "chronicleFrom": "city_fushi",
             "targetLat": 38.082,
             "targetLng": 108.815,
             "myTroops": 15000,
@@ -36573,14 +39482,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河北涿州西南拒马河北岸岐沟关",
             "routeVia": [
                 {
+                    "name": "高阳",
+                    "lat": 38.69,
+                    "lng": 115.78
+                },
+                {
                     "name": "雄州",
                     "lat": 39.01,
                     "lng": 116.12
-                },
-                {
-                    "name": "涿州",
-                    "lat": 39.49,
-                    "lng": 115.97
                 }
             ],
             "chronicleFrom": "city_baoding",
@@ -36625,14 +39534,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "山西朔州南狼牙村陈家谷口",
             "routeVia": [
                 {
-                    "name": "代州",
-                    "lat": 39.06,
-                    "lng": 112.96
-                },
-                {
-                    "name": "朔州灰河",
-                    "lat": 39.25,
-                    "lng": 112.43
+                    "name": "寰州",
+                    "lat": 39.48,
+                    "lng": 112.68
                 }
             ],
             "chronicleFrom": "city_yanmenguan",
@@ -36675,7 +39579,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "河北定州城北唐河原野",
-            "chronicleFrom": "city_zhongshan",
+            "routeVia": [
+                {
+                    "name": "新乐",
+                    "lat": 38.37,
+                    "lng": 114.69
+                }
+            ],
+            "chronicleFrom": "city_zhending",
             "targetLat": 38.582,
             "targetLng": 114.965,
             "myTroops": 15000,
@@ -36723,9 +39634,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "蓬山郡",
-                    "lat": 40.1,
-                    "lng": 124.75
+                    "name": "保州",
+                    "lat": 40.12,
+                    "lng": 124.39
+                },
+                {
+                    "name": "博州",
+                    "lat": 39.72,
+                    "lng": 125.45
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -36769,6 +39685,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "陕西榆林府谷北子河汊山谷",
+            "routeVia": [
+                {
+                    "name": "朔州",
+                    "lat": 39.32,
+                    "lng": 112.43
+                },
+                {
+                    "name": "火山军",
+                    "lat": 39.35,
+                    "lng": 111.35
+                }
+            ],
             "chronicleFrom": "city_datong",
             "targetLat": 39.125,
             "targetLng": 111.062,
@@ -36815,6 +39743,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "song"
             },
+            "routeVia": [
+                {
+                    "name": "涿州",
+                    "lat": 39.49,
+                    "lng": 115.97
+                },
+                {
+                    "name": "易州",
+                    "lat": 39.35,
+                    "lng": 115.48
+                }
+            ],
             "chronicleFrom": "city_beijing",
             "targetLat": 39.018,
             "targetLng": 115.512,
@@ -36861,6 +39801,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "dangxiang"
             },
+            "routeVia": [
+                {
+                    "name": "盐州",
+                    "lat": 37.75,
+                    "lng": 107.6
+                },
+                {
+                    "name": "清远军",
+                    "lat": 37.45,
+                    "lng": 106.85
+                }
+            ],
             "chronicleFrom": "city_jingbianbao",
             "targetLat": 38.068,
             "targetLng": 106.295,
@@ -36906,7 +39858,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "liugubu",
                 "after": "liugubu"
             },
-            "chronicleFrom": "city_wuwei",
+            "routeVia": [
+                {
+                    "name": "浩亹",
+                    "lat": 37.15,
+                    "lng": 101.62
+                }
+            ],
+            "chronicleFrom": "city_qingtang",
             "targetLat": 37.928,
             "targetLng": 102.638,
             "myTroops": 15000,
@@ -36959,7 +39918,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 116.09
                 },
                 {
-                    "name": "天雄大名",
+                    "name": "贝州",
+                    "lat": 37.05,
+                    "lng": 115.48
+                },
+                {
+                    "name": "大名",
                     "lat": 36.27,
                     "lng": 115.23
                 }
@@ -37006,14 +39970,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "平安北道宣川西北通州城外三水砦",
             "routeVia": [
                 {
-                    "name": "义州鸭绿江",
+                    "name": "保州",
                     "lat": 40.12,
                     "lng": 124.39
-                },
-                {
-                    "name": "兴化镇",
-                    "lat": 40.12,
-                    "lng": 124.6
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -37058,9 +40017,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "平安北道义州东南兴化镇三桥川",
             "routeVia": [
                 {
-                    "name": "鸭绿江",
-                    "lat": 40.12,
-                    "lng": 124.39
+                    "name": "凤州",
+                    "lat": 40.48,
+                    "lng": 124.08
                 }
             ],
             "chronicleFrom": "city_liaoyang",
@@ -37105,14 +40064,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "平安北道龟城原野东郊盘岭",
             "routeVia": [
                 {
-                    "name": "开京新恩驿",
-                    "lat": 38.15,
-                    "lng": 126.4
+                    "name": "顺州",
+                    "lat": 39.42,
+                    "lng": 125.93
                 },
                 {
-                    "name": "平壤西京",
-                    "lat": 39.02,
-                    "lng": 125.76
+                    "name": "安州",
+                    "lat": 39.62,
+                    "lng": 125.66
                 }
             ],
             "chronicleFrom": "city_pyongyang",
@@ -37156,6 +40115,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "苏门答腊南部穆西河口巨港水域",
+            "routeVia": [
+                {
+                    "name": "尼科巴",
+                    "lat": 7.95,
+                    "lng": 93.55
+                },
+                {
+                    "name": "吉打",
+                    "lat": 5.71,
+                    "lng": 100.43
+                },
+                {
+                    "name": "占卑",
+                    "lat": -1.59,
+                    "lng": 103.61
+                }
+            ],
             "chronicleFrom": "city_tanjiawuer",
             "targetLat": -2.991,
             "targetLng": 104.756,
@@ -37249,6 +40225,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "song"
             },
+            "routeVia": [
+                {
+                    "name": "盐州",
+                    "lat": 37.75,
+                    "lng": 107.6
+                },
+                {
+                    "name": "白豹城",
+                    "lat": 36.95,
+                    "lng": 108.15
+                }
+            ],
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 36.822,
             "targetLng": 108.768,
@@ -37291,9 +40279,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "陕西延安西北安塞三川口山原",
             "routeVia": [
                 {
-                    "name": "金明砦",
-                    "lat": 36.78,
-                    "lng": 109.38
+                    "name": "塞门砦",
+                    "lat": 36.98,
+                    "lng": 109.12
                 }
             ],
             "chronicleFrom": "city_xingqingfu2",
@@ -37338,14 +40326,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "宁夏固原隆德东六盘山麓好水川",
             "routeVia": [
                 {
-                    "name": "镇戎军",
-                    "lat": 36.01,
-                    "lng": 106.28
+                    "name": "韦州",
+                    "lat": 37.28,
+                    "lng": 106.51
                 },
                 {
-                    "name": "怀远城羊牧隆城",
-                    "lat": 35.65,
-                    "lng": 105.98
+                    "name": "天都山",
+                    "lat": 36.45,
+                    "lng": 105.75
                 }
             ],
             "chronicleFrom": "city_keyimen",
@@ -37390,14 +40378,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "宁夏固原西北泾原边塞定川寨",
             "routeVia": [
                 {
-                    "name": "镇戎军",
-                    "lat": 36.01,
-                    "lng": 106.28
+                    "name": "韦州",
+                    "lat": 37.28,
+                    "lng": 106.51
                 },
                 {
-                    "name": "瓦亭寨",
-                    "lat": 35.8,
-                    "lng": 106.22
+                    "name": "天都山",
+                    "lat": 36.45,
+                    "lng": 105.75
                 }
             ],
             "chronicleFrom": "city_xingqingfu2",
@@ -37440,6 +40428,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "甘肃平凉潘原外彭阳西山麓",
+            "routeVia": [
+                {
+                    "name": "镇戎军",
+                    "lat": 36.01,
+                    "lng": 106.28
+                }
+            ],
             "chronicleFrom": "city_xingqingfu2",
             "targetLat": 35.542,
             "targetLng": 106.685,
@@ -37483,9 +40478,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "内蒙古鄂尔多斯黄河河曲得胜寺南壁",
             "routeVia": [
                 {
-                    "name": "西京大同",
-                    "lat": 40.08,
-                    "lng": 113.3
+                    "name": "夏州",
+                    "lat": 38.02,
+                    "lng": 109.15
+                },
+                {
+                    "name": "银州",
+                    "lat": 38.12,
+                    "lng": 109.75
                 }
             ],
             "chronicleFrom": "city_xingqingfu2",
@@ -37623,19 +40623,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "柳州",
+                    "lat": 24.32,
+                    "lng": 109.42
+                },
+                {
                     "name": "宾州",
                     "lat": 23.22,
                     "lng": 108.8
-                },
-                {
-                    "name": "昆仑关归仁铺",
-                    "lat": 22.96,
-                    "lng": 108.65
-                },
-                {
-                    "name": "邕州",
-                    "lat": 22.82,
-                    "lng": 108.32
                 }
             ],
             "chronicleFrom": "city_lingqu",
@@ -37684,7 +40679,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "jiazini",
                 "after": "seljuq"
             },
-            "chronicleFrom": "city_merv",
+            "routeVia": [
+                {
+                    "name": "图斯",
+                    "lat": 36.48,
+                    "lng": 59.52
+                }
+            ],
+            "chronicleFrom": "city_nishabuer",
             "targetLat": 36.544,
             "targetLng": 61.158,
             "myTroops": 15000,
@@ -37727,17 +40729,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "土库曼卡拉库姆沙漠梅尔夫西南丹丹纳坎",
             "routeVia": [
                 {
-                    "name": "赫拉特",
-                    "lat": 34.34,
-                    "lng": 62.19
-                },
-                {
-                    "name": "萨拉赫斯",
-                    "lat": 36.54,
-                    "lng": 61.16
+                    "name": "阿比瓦尔德",
+                    "lat": 37.45,
+                    "lng": 59.58
                 }
             ],
-            "chronicleFrom": "city_salahesi",
+            "chronicleFrom": "city_zhande",
             "targetLat": 37.392,
             "targetLng": 61.348,
             "myTroops": 15000,
@@ -37784,6 +40781,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "kakuyids",
                 "after": "kakuyids"
             },
+            "routeVia": [
+                {
+                    "name": "库姆",
+                    "lat": 34.64,
+                    "lng": 50.88
+                },
+                {
+                    "name": "卡尚",
+                    "lat": 33.98,
+                    "lng": 51.44
+                }
+            ],
             "chronicleFrom": "city_leiyi",
             "targetLat": 32.654,
             "targetLng": 51.668,
@@ -37831,6 +40840,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "basasiri_jun"
             },
             "routeVia": [
+                {
+                    "name": "希特",
+                    "lat": 33.64,
+                    "lng": 42.83
+                },
                 {
                     "name": "安巴尔",
                     "lat": 33.36,
@@ -37880,9 +40894,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "雷伊城外原野",
             "routeVia": [
                 {
-                    "name": "哈马丹",
-                    "lat": 34.8,
-                    "lng": 48.51
+                    "name": "萨卜泽瓦尔",
+                    "lat": 36.21,
+                    "lng": 57.68
+                },
+                {
+                    "name": "达姆甘",
+                    "lat": 36.17,
+                    "lng": 54.35
+                },
+                {
+                    "name": "塞姆南",
+                    "lat": 35.57,
+                    "lng": 53.39
                 }
             ],
             "chronicleFrom": "city_nishabuer",
@@ -37928,14 +40952,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "南意大利阿普利亚福尔托雷河畔奇维塔特",
             "routeVia": [
                 {
-                    "name": "罗马",
-                    "lat": 41.9,
-                    "lng": 12.49
-                },
-                {
-                    "name": "贝内文托",
-                    "lat": 41.13,
-                    "lng": 14.78
+                    "name": "特罗亚",
+                    "lat": 41.36,
+                    "lng": 15.31
                 }
             ],
             "chronicleFrom": "city_meierfei",
@@ -37989,6 +41008,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "科森扎",
                     "lat": 39.3,
                     "lng": 16.25
+                },
+                {
+                    "name": "米莱托",
+                    "lat": 38.61,
+                    "lng": 16.06
                 }
             ],
             "chronicleFrom": "city_meierfei",
@@ -38036,7 +41060,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "kalbids",
                 "after": "xixiliwangguo"
             },
-            "chronicleFrom": "city_messina",
+            "routeVia": [
+                {
+                    "name": "科森扎",
+                    "lat": 39.3,
+                    "lng": 16.25
+                },
+                {
+                    "name": "帕尔米",
+                    "lat": 38.36,
+                    "lng": 15.85
+                }
+            ],
+            "chronicleFrom": "city_meierfei",
             "targetLat": 38.194,
             "targetLng": 15.554,
             "myTroops": 15000,
@@ -38078,9 +41114,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "西西里岛内陆内布罗迪山麓切拉米河谷",
             "routeVia": [
                 {
-                    "name": "特罗伊纳",
-                    "lat": 37.78,
-                    "lng": 14.6
+                    "name": "陶尔米纳",
+                    "lat": 37.85,
+                    "lng": 15.29
+                },
+                {
+                    "name": "兰达佐",
+                    "lat": 37.88,
+                    "lng": 14.95
                 }
             ],
             "chronicleFrom": "city_messina",
@@ -38124,6 +41165,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "诺曼底卡昂东南瓦尔埃斯沙丘平原",
+            "routeVia": [
+                {
+                    "name": "埃夫勒",
+                    "lat": 49.02,
+                    "lng": 1.15
+                },
+                {
+                    "name": "法莱斯",
+                    "lat": 48.89,
+                    "lng": -0.2
+                }
+            ],
             "chronicleFrom": "city_rouen",
             "targetLat": 49.112,
             "targetLng": -0.185,
@@ -38170,6 +41223,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yinggelan",
                 "after": "yinggelan"
             },
+            "routeVia": [
+                {
+                    "name": "拉德诺",
+                    "lat": 52.24,
+                    "lng": -3.04
+                }
+            ],
             "chronicleFrom": "city_buyiersi",
             "targetLat": 52.056,
             "targetLng": -2.716,
@@ -38211,6 +41271,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "卡特加特海峡哈兰海岸尼萨河入海口",
+            "routeVia": [
+                {
+                    "name": "奥斯陆",
+                    "lat": 59.91,
+                    "lng": 10.75
+                },
+                {
+                    "name": "孔艾尔夫",
+                    "lat": 57.87,
+                    "lng": 11.98
+                }
+            ],
             "chronicleFrom": "city_boergong",
             "targetLat": 56.662,
             "targetLng": 12.835,
@@ -38253,9 +41325,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "英格兰东南萨塞克斯黑斯廷斯森拉克山脊",
             "routeVia": [
                 {
-                    "name": "佩文西登陆",
+                    "name": "佩文西",
                     "lat": 50.82,
-                    "lng": 0.34
+                    "lng": 0.28
                 }
             ],
             "chronicleFrom": "city_saint_valery",
@@ -38305,6 +41377,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "yinggelan"
             },
             "routeVia": [
+                {
+                    "name": "斯坦福",
+                    "lat": 52.65,
+                    "lng": -0.48
+                },
                 {
                     "name": "林肯",
                     "lat": 53.23,
@@ -38368,6 +41445,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "纳希切温",
                     "lat": 39.21,
                     "lng": 45.41
+                },
+                {
+                    "name": "德温",
+                    "lat": 40,
+                    "lng": 44.58
                 }
             ],
             "chronicleFrom": "city_leiyi",
@@ -38411,6 +41493,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "中东安纳托利亚克孜勒河上游塞巴斯蒂亚锡瓦斯",
+            "routeVia": [
+                {
+                    "name": "曼齐刻尔特",
+                    "lat": 39.15,
+                    "lng": 42.54
+                },
+                {
+                    "name": "埃尔津詹",
+                    "lat": 39.75,
+                    "lng": 39.5
+                }
+            ],
             "chronicleFrom": "city_tushpa",
             "targetLat": 39.748,
             "targetLng": 37.015,
@@ -38454,19 +41548,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "东安纳托利亚凡湖西北穆拉特河谷曼齐刻尔特",
             "routeVia": [
                 {
-                    "name": "君士坦丁堡",
-                    "lat": 41.01,
-                    "lng": 28.97
+                    "name": "埃德萨",
+                    "lat": 37.16,
+                    "lng": 38.79
                 },
                 {
-                    "name": "塞巴斯蒂亚",
-                    "lat": 39.75,
-                    "lng": 37.02
+                    "name": "阿米达",
+                    "lat": 37.91,
+                    "lng": 40.23
                 },
                 {
-                    "name": "埃尔祖鲁姆",
-                    "lat": 39.9,
-                    "lng": 41.27
+                    "name": "阿赫拉特",
+                    "lat": 38.75,
+                    "lng": 42.49
                 }
             ],
             "chronicleFrom": "city_alepo",
@@ -38565,22 +41659,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "秦州",
+                    "lat": 34.58,
+                    "lng": 105.72
+                },
+                {
                     "name": "通远军",
                     "lat": 35.01,
                     "lng": 104.64
                 },
                 {
-                    "name": "熙州狄道",
-                    "lat": 35.37,
-                    "lng": 103.84
-                },
-                {
-                    "name": "露骨山踏白城",
-                    "lat": 35.25,
-                    "lng": 103.6
+                    "name": "康乐",
+                    "lat": 35.22,
+                    "lng": 103.65
                 }
             ],
-            "chronicleFrom": "city_lintao",
+            "chronicleFrom": "city_qishan",
             "targetLat": 35.601,
             "targetLng": 103.21,
             "myTroops": 15000,
@@ -38622,17 +41716,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "甘肃广河定羌城至临夏河州宁河寨",
             "routeVia": [
                 {
-                    "name": "定羌城",
-                    "lat": 35.48,
-                    "lng": 103.57
+                    "name": "秦州",
+                    "lat": 34.58,
+                    "lng": 105.72
                 },
                 {
-                    "name": "宁河寨河州",
-                    "lat": 35.6,
-                    "lng": 103.21
+                    "name": "通远军",
+                    "lat": 35.01,
+                    "lng": 104.64
                 }
             ],
-            "chronicleFrom": "city_lintao",
+            "chronicleFrom": "city_qishan",
             "targetLat": 35.482,
             "targetLng": 103.568,
             "myTroops": 15000,
@@ -38680,14 +41774,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "清远军",
-                    "lat": 37.35,
-                    "lng": 106.55
+                    "name": "甜水堡",
+                    "lat": 37.15,
+                    "lng": 106.95
                 },
                 {
-                    "name": "旱海磨脐隘",
-                    "lat": 37.78,
-                    "lng": 106.4
+                    "name": "清远军",
+                    "lat": 37.55,
+                    "lng": 106.55
                 }
             ],
             "chronicleFrom": "city_fangqu",
@@ -38736,13 +41830,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "dangxiang"
             },
-            "routeVia": [
-                {
-                    "name": "绥德城",
-                    "lat": 37.5,
-                    "lng": 110.26
-                }
-            ],
             "chronicleFrom": "city_yinzhou",
             "targetLat": 37.882,
             "targetLng": 109.915,
@@ -38791,7 +41878,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "巴金岭",
+                    "name": "积石关",
+                    "lat": 35.85,
+                    "lng": 102.82
+                },
+                {
+                    "name": "邈川",
                     "lat": 36.32,
                     "lng": 102.6
                 }
@@ -38836,7 +41928,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河湟东北统安城外原野",
-            "chronicleFrom": "city_qingtang",
+            "routeVia": [
+                {
+                    "name": "廓州",
+                    "lat": 36.05,
+                    "lng": 101.88
+                }
+            ],
+            "chronicleFrom": "city_ledou",
             "targetLat": 36.84,
             "targetLng": 101.95,
             "myTroops": 15000,
@@ -38883,13 +41982,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dajin",
                 "after": "goryeo"
             },
-            "routeVia": [
-                {
-                    "name": "定州关",
-                    "lat": 39.7,
-                    "lng": 127.42
-                }
-            ],
             "chronicleFrom": "city_hamhung",
             "targetLat": 39.918,
             "targetLng": 127.536,
@@ -38932,9 +42024,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "鸭子河北岸出河店冰原",
             "routeVia": [
                 {
+                    "name": "涞流河",
+                    "lat": 45.42,
+                    "lng": 126.15
+                },
+                {
                     "name": "宁江州",
                     "lat": 45.35,
-                    "lng": 125.95
+                    "lng": 125.55
                 }
             ],
             "chronicleFrom": "city_huining",
@@ -38979,9 +42076,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "松花江东护步达冈丘陵",
             "routeVia": [
                 {
-                    "name": "黄龙府",
-                    "lat": 44.49,
-                    "lng": 125.18
+                    "name": "宾州",
+                    "lat": 44.85,
+                    "lng": 125.75
                 }
             ],
             "chronicleFrom": "city_huining",
@@ -39071,7 +42168,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "淮南海滨海州城外滩涂水道",
-            "chronicleFrom": "city_qucheng",
+            "routeVia": [
+                {
+                    "name": "涟水",
+                    "lat": 33.78,
+                    "lng": 119.26
+                },
+                {
+                    "name": "沭阳",
+                    "lat": 34.12,
+                    "lng": 118.79
+                }
+            ],
+            "chronicleFrom": "city_huaiyin",
             "targetLat": 34.56,
             "targetLng": 119.16,
             "myTroops": 15000,
@@ -39114,14 +42223,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "雁北应州新城东原野",
             "routeVia": [
                 {
-                    "name": "夹山",
-                    "lat": 40.85,
-                    "lng": 111.55
-                },
-                {
-                    "name": "朔州",
-                    "lat": 39.32,
-                    "lng": 112.43
+                    "name": "怀仁",
+                    "lat": 39.83,
+                    "lng": 113.1
                 }
             ],
             "chronicleFrom": "city_datong",
@@ -39172,7 +42276,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "代州忻州",
+                    "name": "代州",
+                    "lat": 39.19,
+                    "lng": 112.87
+                },
+                {
+                    "name": "忻州",
                     "lat": 38.42,
                     "lng": 112.73
                 }
@@ -39225,12 +42334,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "河阳孟津",
+                    "name": "潞州",
+                    "lat": 36.19,
+                    "lng": 113.11
+                },
+                {
+                    "name": "泽州",
+                    "lat": 35.49,
+                    "lng": 112.85
+                },
+                {
+                    "name": "河阳",
                     "lat": 34.85,
                     "lng": 112.58
                 }
             ],
-            "chronicleFrom": "city_taiyuan",
+            "chronicleFrom": "city_huining",
             "targetLat": 34.8,
             "targetLng": 114.31,
             "myTroops": 15000,
@@ -39272,17 +42391,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "镇江东北长江黄天荡水域",
             "routeVia": [
                 {
-                    "name": "临安",
-                    "lat": 30.25,
-                    "lng": 120.16
+                    "name": "通州",
+                    "lat": 32.01,
+                    "lng": 120.86
                 },
                 {
-                    "name": "平江常州",
-                    "lat": 31.78,
-                    "lng": 119.95
+                    "name": "江阴",
+                    "lat": 31.91,
+                    "lng": 120.26
                 }
             ],
-            "chronicleFrom": "city_yangzhou",
+            "chronicleFrom": "city_hailing",
             "targetLat": 32.21,
             "targetLng": 119.35,
             "myTroops": 15000,
@@ -39322,6 +42441,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "关中耀州富平北原",
+            "routeVia": [
+                {
+                    "name": "淳化",
+                    "lat": 34.8,
+                    "lng": 108.58
+                }
+            ],
             "chronicleFrom": "city_binzhou2",
             "targetLat": 34.75,
             "targetLng": 109.18,
@@ -39415,18 +42541,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "song"
             },
-            "routeVia": [
-                {
-                    "name": "商州",
-                    "lat": 33.87,
-                    "lng": 109.94
-                },
-                {
-                    "name": "金州",
-                    "lat": 32.69,
-                    "lng": 109.03
-                }
-            ],
             "chronicleFrom": "city_ziwu",
             "targetLat": 33.05,
             "targetLng": 108.16,
@@ -39521,9 +42635,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "汉阳",
+                    "lat": 30.55,
+                    "lng": 114.02
+                },
+                {
                     "name": "郢州",
                     "lat": 31.19,
                     "lng": 112.58
+                },
+                {
+                    "name": "随州",
+                    "lat": 31.71,
+                    "lng": 113.36
                 }
             ],
             "chronicleFrom": "city_wuchang",
@@ -39573,9 +42697,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "潭州",
-                    "lat": 28.2,
-                    "lng": 112.97
+                    "name": "蒲圻",
+                    "lat": 29.72,
+                    "lng": 113.88
+                },
+                {
+                    "name": "岳州",
+                    "lat": 29.37,
+                    "lng": 113.09
                 }
             ],
             "chronicleFrom": "city_wuchang",
@@ -39666,17 +42795,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "河南郾城北郊旷野",
             "routeVia": [
                 {
-                    "name": "顺昌",
-                    "lat": 32.9,
-                    "lng": 115.81
+                    "name": "信阳",
+                    "lat": 32.13,
+                    "lng": 114.07
                 },
                 {
-                    "name": "汴梁",
-                    "lat": 34.8,
-                    "lng": 114.31
+                    "name": "蔡州",
+                    "lat": 33.01,
+                    "lng": 114.36
                 }
             ],
-            "chronicleFrom": "city_yancheng2",
+            "chronicleFrom": "city_wuchang",
             "targetLat": 33.58,
             "targetLng": 114.03,
             "myTroops": 15000,
@@ -39721,7 +42850,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "song"
             },
-            "chronicleFrom": "city_xuchang",
+            "routeVia": [
+                {
+                    "name": "临颍",
+                    "lat": 33.81,
+                    "lng": 113.93
+                }
+            ],
+            "chronicleFrom": "city_yancheng2",
             "targetLat": 34.02,
             "targetLng": 113.85,
             "myTroops": 15000,
@@ -39764,9 +42900,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "胶州湾外黄海唐岛海域",
             "routeVia": [
                 {
-                    "name": "平江江阴",
+                    "name": "江阴",
                     "lat": 31.91,
                     "lng": 120.26
+                },
+                {
+                    "name": "海州",
+                    "lat": 34.56,
+                    "lng": 119.16
                 },
                 {
                     "name": "石臼岛",
@@ -39816,17 +42957,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "当涂北长江采石矶江面",
             "routeVia": [
                 {
-                    "name": "涡口",
-                    "lat": 32.92,
-                    "lng": 117.18
-                },
-                {
-                    "name": "和州杨林渡",
-                    "lat": 31.72,
-                    "lng": 118.38
+                    "name": "江宁镇",
+                    "lat": 31.86,
+                    "lng": 118.58
                 }
             ],
-            "chronicleFrom": "city_jiuzi",
+            "chronicleFrom": "city_nanjing",
             "targetLat": 31.668,
             "targetLng": 118.455,
             "myTroops": 15000,
@@ -39869,14 +43005,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "山东济州灵山大营",
             "routeVia": [
                 {
-                    "name": "济州灵山",
-                    "lat": 35.42,
-                    "lng": 116.59
+                    "name": "泰安",
+                    "lat": 36.19,
+                    "lng": 117.12
                 },
                 {
-                    "name": "楚州淮安",
-                    "lat": 33.6,
-                    "lng": 119.02
+                    "name": "兖州",
+                    "lat": 35.56,
+                    "lng": 116.83
                 }
             ],
             "chronicleFrom": "city_licheng",
@@ -39924,7 +43060,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "dajin"
             },
-            "chronicleFrom": "city_xucheng",
+            "routeVia": [
+                {
+                    "name": "怀远",
+                    "lat": 32.95,
+                    "lng": 117.2
+                },
+                {
+                    "name": "虹县",
+                    "lat": 33.49,
+                    "lng": 117.88
+                }
+            ],
+            "chronicleFrom": "city_shouxian",
             "targetLat": 33.646,
             "targetLng": 116.964,
             "myTroops": 15000,
@@ -40013,6 +43161,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "叙利亚哈马城北哈马角山地",
             "routeVia": [
                 {
+                    "name": "巴勒贝克",
+                    "lat": 34.01,
+                    "lng": 36.21
+                },
+                {
                     "name": "霍姆斯",
                     "lat": 34.73,
                     "lng": 36.71
@@ -40067,9 +43220,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "布伦纳山口",
-                    "lat": 47,
-                    "lng": 11.51
+                    "name": "因斯布鲁克",
+                    "lat": 47.27,
+                    "lng": 11.4
                 },
                 {
                     "name": "维罗纳",
@@ -40128,6 +43281,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lombard_league",
                 "after": "lombard_league"
             },
+            "routeVia": [
+                {
+                    "name": "特里登图姆",
+                    "lat": 46.07,
+                    "lng": 11.12
+                },
+                {
+                    "name": "布雷西亚",
+                    "lat": 45.54,
+                    "lng": 10.21
+                }
+            ],
             "chronicleFrom": "city_aogesibao",
             "targetLat": 45.363,
             "targetLng": 9.687,
@@ -40175,7 +43340,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 9.08
                 }
             ],
-            "chronicleFrom": "city_milan",
+            "chronicleFrom": "city_clavenna",
             "targetLat": 45.595,
             "targetLng": 8.906,
             "myTroops": 15000,
@@ -40217,6 +43382,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "弗里吉亚齐夫里茨山口密列奥塞法隆",
             "routeVia": [
+                {
+                    "name": "尼凯亚",
+                    "lat": 40.43,
+                    "lng": 29.72
+                },
                 {
                     "name": "多里莱乌姆",
                     "lat": 39.78,
@@ -40270,6 +43440,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "巴勒斯坦拉姆拉东南蒙吉萨丘陵",
             "routeVia": [
                 {
+                    "name": "萨利希耶",
+                    "lat": 30.8,
+                    "lng": 31.99
+                },
+                {
                     "name": "加沙",
                     "lat": 31.5,
                     "lng": 34.47
@@ -40320,6 +43495,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "叙利亚奥龙特斯河畔哈马城郊",
+            "routeVia": [
+                {
+                    "name": "拉斯坦",
+                    "lat": 34.92,
+                    "lng": 36.73
+                }
+            ],
             "chronicleFrom": "city_emesa",
             "targetLat": 35.135,
             "targetLng": 36.755,
@@ -40410,14 +43592,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "加利利太巴列南贝尔沃高地",
             "routeVia": [
                 {
-                    "name": "开罗",
-                    "lat": 30.04,
-                    "lng": 31.24
+                    "name": "艾拉",
+                    "lat": 29.53,
+                    "lng": 35
                 },
                 {
-                    "name": "大马士革南郊",
-                    "lat": 33.35,
-                    "lng": 36.25
+                    "name": "卡拉克",
+                    "lat": 31.18,
+                    "lng": 35.7
+                },
+                {
+                    "name": "布斯拉",
+                    "lat": 32.52,
+                    "lng": 36.48
                 }
             ],
             "chronicleFrom": "city_mengfeisi",
@@ -40462,9 +43649,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "加利利太巴列西哈丁双角火山荒原",
             "routeVia": [
                 {
-                    "name": "萨富里亚泉",
-                    "lat": 32.75,
-                    "lng": 35.28
+                    "name": "阿什塔拉",
+                    "lat": 32.82,
+                    "lng": 36.02
                 }
             ],
             "chronicleFrom": "city_damasikusi",
@@ -40572,17 +43759,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "巴勒斯坦海岸阿苏夫林地平原",
             "routeVia": [
                 {
-                    "name": "阿卡",
-                    "lat": 32.92,
-                    "lng": 35.07
+                    "name": "大马士革",
+                    "lat": 33.51,
+                    "lng": 36.31
                 },
                 {
-                    "name": "海法凯撒利亚",
+                    "name": "谢法阿姆",
+                    "lat": 32.81,
+                    "lng": 35.17
+                },
+                {
+                    "name": "凯撒利亚",
                     "lat": 32.5,
                     "lng": 34.89
                 }
             ],
-            "chronicleFrom": "city_yelusaleng",
+            "chronicleFrom": "city_damasikusi",
             "targetLat": 32.195,
             "targetLng": 34.807,
             "myTroops": 15000,
@@ -40633,6 +43825,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "拉合尔",
                     "lat": 31.58,
                     "lng": 74.33
+                },
+                {
+                    "name": "巴廷达",
+                    "lat": 30.21,
+                    "lng": 74.95
                 }
             ],
             "chronicleFrom": "city_jiaseni",
@@ -40678,19 +43875,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "斡难河上游答兰版朱思草原",
             "routeVia": [
                 {
-                    "name": "不儿罕山桑沽儿河",
-                    "lat": 48.1,
-                    "lng": 108.9
-                },
-                {
-                    "name": "答兰版朱思",
-                    "lat": 48.62,
-                    "lng": 110.45
-                },
-                {
-                    "name": "哲列捏狭口",
-                    "lat": 48.75,
-                    "lng": 110.65
+                    "name": "桑沽儿河",
+                    "lat": 47.95,
+                    "lng": 109.1
                 }
             ],
             "chronicleFrom": "city_qudiaoalan",
@@ -40783,14 +43970,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "呼伦贝尔额尔古纳河支流刊木连河",
             "routeVia": [
                 {
-                    "name": "古连勒古山",
-                    "lat": 48.15,
-                    "lng": 109.2
+                    "name": "巴彦乌兰",
+                    "lat": 47.75,
+                    "lng": 111.5
                 },
                 {
                     "name": "怯绿连河",
                     "lat": 48.12,
                     "lng": 114.5
+                },
+                {
+                    "name": "呼伦泊",
+                    "lat": 48.95,
+                    "lng": 117.4
                 }
             ],
             "chronicleFrom": "city_qudiaoalan",
@@ -40836,9 +44028,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "怯绿连河折折运都山隘口",
             "routeVia": [
                 {
-                    "name": "巴勒渚纳海子",
-                    "lat": 49.25,
-                    "lng": 115.2
+                    "name": "哈勒哈河",
+                    "lat": 47.8,
+                    "lng": 118.45
+                },
+                {
+                    "name": "巴勒渚纳",
+                    "lat": 48.85,
+                    "lng": 114.6
                 }
             ],
             "chronicleFrom": "city_julunbo",
@@ -40889,19 +44086,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 113.52
                 },
                 {
-                    "name": "抚州乌月营",
-                    "lat": 41.25,
-                    "lng": 114.65
+                    "name": "达里泊",
+                    "lat": 43.3,
+                    "lng": 116.65
                 },
                 {
-                    "name": "野狐岭獾儿嘴",
-                    "lat": 40.91,
-                    "lng": 114.72
-                },
-                {
-                    "name": "浍河堡",
-                    "lat": 40.48,
-                    "lng": 115.32
+                    "name": "昌州",
+                    "lat": 41.65,
+                    "lng": 115.25
                 }
             ],
             "chronicleFrom": "city_qudiaoalan",
@@ -40950,6 +44142,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dajin",
                 "after": "menggu_d"
             },
+            "routeVia": [
+                {
+                    "name": "怀来",
+                    "lat": 40.38,
+                    "lng": 115.52
+                },
+                {
+                    "name": "居庸关",
+                    "lat": 40.28,
+                    "lng": 116.06
+                }
+            ],
             "chronicleFrom": "city_xinghe",
             "targetLat": 39.895,
             "targetLng": 116.355,
@@ -40999,7 +44203,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "额敏河叶密立",
+                    "name": "叶密立",
                     "lat": 46.52,
                     "lng": 83.62
                 },
@@ -41007,9 +44211,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "阿力麻里",
                     "lat": 44.22,
                     "lng": 80.52
+                },
+                {
+                    "name": "八剌沙衮",
+                    "lat": 42.75,
+                    "lng": 75.25
                 }
             ],
-            "chronicleFrom": "city_almaliq",
+            "chronicleFrom": "city_kobdo",
             "targetLat": 42.852,
             "targetLng": 68.303,
             "myTroops": 15000,
@@ -41058,9 +44267,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "讹答剌",
-                    "lat": 42.85,
-                    "lng": 68.3
+                    "name": "毡的",
+                    "lat": 44.85,
+                    "lng": 65.5
                 },
                 {
                     "name": "札儿努黑",
@@ -41068,9 +44277,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 65.55
                 },
                 {
-                    "name": "努尔堡",
-                    "lat": 40.56,
-                    "lng": 65.69
+                    "name": "努尔",
+                    "lat": 40.42,
+                    "lng": 65.61
                 }
             ],
             "chronicleFrom": "city_turkestan",
@@ -41116,9 +44325,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "外高加索库拉河支流库南河谷",
             "routeVia": [
                 {
-                    "name": "穆甘草原",
-                    "lat": 39.65,
-                    "lng": 48.35
+                    "name": "阿哈尔",
+                    "lat": 38.48,
+                    "lng": 47.07
+                },
+                {
+                    "name": "巴尔达",
+                    "lat": 40.38,
+                    "lng": 47.12
                 }
             ],
             "chronicleFrom": "city_dabulishi",
@@ -41164,9 +44378,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "亚速海北岸迦尔迦河草原",
             "routeVia": [
                 {
-                    "name": "第聂伯河下渡",
-                    "lat": 47.8,
-                    "lng": 35.15
+                    "name": "塔尔基",
+                    "lat": 42.98,
+                    "lng": 47.5
+                },
+                {
+                    "name": "马贾尔",
+                    "lat": 44.8,
+                    "lng": 44.15
+                },
+                {
+                    "name": "阿速海口",
+                    "lat": 47.1,
+                    "lng": 39.42
                 }
             ],
             "chronicleFrom": "city_daerban",
@@ -41212,9 +44436,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "亚美尼亚高原加尔尼山谷",
             "routeVia": [
                 {
-                    "name": "德温",
-                    "lat": 40,
-                    "lng": 44.58
+                    "name": "马兰德",
+                    "lat": 38.43,
+                    "lng": 45.77
+                },
+                {
+                    "name": "纳希切温",
+                    "lat": 39.21,
+                    "lng": 45.41
                 }
             ],
             "chronicleFrom": "city_dabulishi",
@@ -41265,9 +44494,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "应理凉州",
+                    "name": "凉州",
                     "lat": 37.93,
                     "lng": 102.64
+                },
+                {
+                    "name": "应理",
+                    "lat": 37.51,
+                    "lng": 105.19
                 }
             ],
             "chronicleFrom": "city_zhangye",
@@ -41316,7 +44550,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dangxiang",
                 "after": "menggu_d"
             },
-            "chronicleFrom": "city_lingzhou",
+            "routeVia": [
+                {
+                    "name": "定州营",
+                    "lat": 38.28,
+                    "lng": 106.25
+                }
+            ],
+            "chronicleFrom": "city_qudiaoalan",
             "targetLat": 38.487,
             "targetLng": 106.232,
             "myTroops": 15000,
@@ -41450,9 +44691,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "唐邓光化",
-                    "lat": 32.55,
-                    "lng": 111.75
+                    "name": "洋州",
+                    "lat": 33.22,
+                    "lng": 107.54
+                },
+                {
+                    "name": "金州",
+                    "lat": 32.69,
+                    "lng": 109.03
+                },
+                {
+                    "name": "光化",
+                    "lat": 32.39,
+                    "lng": 111.67
+                },
+                {
+                    "name": "邓州",
+                    "lat": 32.69,
+                    "lng": 112.09
                 }
             ],
             "chronicleFrom": "city_hanzhong",
@@ -41501,6 +44757,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dajin",
                 "after": "menggu_d"
             },
+            "routeVia": [
+                {
+                    "name": "尉氏",
+                    "lat": 34.41,
+                    "lng": 114.19
+                }
+            ],
             "chronicleFrom": "city_xuchang",
             "targetLat": 34.8,
             "targetLng": 114.31,
@@ -41552,6 +44815,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "唐州",
                     "lat": 32.69,
                     "lng": 112.83
+                },
+                {
+                    "name": "确山",
+                    "lat": 32.8,
+                    "lng": 114.02
                 }
             ],
             "chronicleFrom": "city_xiangyang",
@@ -41601,9 +44869,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泗州汴梁",
-                    "lat": 34.8,
-                    "lng": 114.31
+                    "name": "原武",
+                    "lat": 35.06,
+                    "lng": 113.95
+                },
+                {
+                    "name": "孟津",
+                    "lat": 34.83,
+                    "lng": 112.44
                 }
             ],
             "chronicleFrom": "city_zhaoge",
@@ -41654,9 +44927,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "光化樊城",
-                    "lat": 32.04,
-                    "lng": 112.14
+                    "name": "复州",
+                    "lat": 30.65,
+                    "lng": 113.16
+                },
+                {
+                    "name": "郢州",
+                    "lat": 31.19,
+                    "lng": 112.58
+                },
+                {
+                    "name": "宜城",
+                    "lat": 31.71,
+                    "lng": 112.26
                 }
             ],
             "chronicleFrom": "city_wuchang",
@@ -41700,6 +44983,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "西非尼日尔河上游库利科罗基里纳原野",
+            "routeVia": [
+                {
+                    "name": "康加巴",
+                    "lat": 11.93,
+                    "lng": -8.41
+                }
+            ],
             "chronicleFrom": "city_niani",
             "targetLat": 12.565,
             "targetLng": -7.855,
@@ -41747,7 +45037,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yicha",
                 "after": "mayapan"
             },
-            "chronicleFrom": "city_uxmal",
+            "routeVia": [
+                {
+                    "name": "钱波通",
+                    "lat": 19.35,
+                    "lng": -90.72
+                }
+            ],
+            "chronicleFrom": "city_palenque",
             "targetLat": 20.45,
             "targetLng": -89.2,
             "myTroops": 15000,
@@ -41790,14 +45087,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "加沙东北希尔比亚原野",
             "routeVia": [
                 {
-                    "name": "阿卡",
-                    "lat": 32.92,
-                    "lng": 35.07
+                    "name": "萨利希耶",
+                    "lat": 30.8,
+                    "lng": 31.99
                 },
                 {
-                    "name": "阿什凯隆",
-                    "lat": 31.67,
-                    "lng": 34.55
+                    "name": "阿里什",
+                    "lat": 31.13,
+                    "lng": 33.8
+                },
+                {
+                    "name": "拉法",
+                    "lat": 31.29,
+                    "lng": 34.24
                 }
             ],
             "chronicleFrom": "city_mengfeisi",
@@ -41889,14 +45191,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "尼罗河三角洲东缘萨利希耶库拉原野",
             "routeVia": [
                 {
-                    "name": "大马士革",
-                    "lat": 33.51,
-                    "lng": 36.31
-                },
-                {
-                    "name": "加沙",
-                    "lat": 31.5,
-                    "lng": 34.47
+                    "name": "比勒拜斯",
+                    "lat": 30.42,
+                    "lng": 31.56
                 }
             ],
             "chronicleFrom": "city_mengfeisi",
@@ -41948,9 +45245,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "麦门迪兹堡",
-                    "lat": 36.48,
-                    "lng": 50.52
+                    "name": "达姆甘",
+                    "lat": 36.17,
+                    "lng": 54.35
+                },
+                {
+                    "name": "塞姆南",
+                    "lat": 35.57,
+                    "lng": 53.39
+                },
+                {
+                    "name": "雷伊",
+                    "lat": 35.6,
+                    "lng": 51.44
                 }
             ],
             "chronicleFrom": "city_nishabuer",
@@ -42002,9 +45309,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "康加瓦尔",
+                    "lat": 34.5,
+                    "lng": 47.96
+                },
+                {
                     "name": "克尔曼沙赫",
                     "lat": 34.31,
                     "lng": 47.06
+                },
+                {
+                    "name": "呼勒万",
+                    "lat": 34.46,
+                    "lng": 45.86
                 }
             ],
             "chronicleFrom": "city_hamadan",
@@ -42049,12 +45366,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "巴勒斯坦加利利阿音札鲁特泉谷",
             "routeVia": [
                 {
-                    "name": "开罗",
-                    "lat": 30.04,
-                    "lng": 31.24
+                    "name": "萨利希耶",
+                    "lat": 30.8,
+                    "lng": 31.99
                 },
                 {
-                    "name": "加沙阿卡城外",
+                    "name": "加沙",
+                    "lat": 31.5,
+                    "lng": 34.47
+                },
+                {
+                    "name": "阿卡",
                     "lat": 32.92,
                     "lng": 35.07
                 }
@@ -42108,19 +45430,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "大不里士",
+                    "lat": 38.08,
+                    "lng": 46.29
+                },
+                {
+                    "name": "巴尔达",
+                    "lat": 40.38,
+                    "lng": 47.12
+                },
+                {
                     "name": "沙马基",
                     "lat": 40.63,
                     "lng": 48.64
-                },
-                {
-                    "name": "打耳班",
-                    "lat": 42.05,
-                    "lng": 48.28
-                },
-                {
-                    "name": "帖列克河",
-                    "lat": 43.6,
-                    "lng": 46.8
                 }
             ],
             "chronicleFrom": "city_malagai",
@@ -42172,6 +45494,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "霍姆斯",
+                    "lat": 34.73,
+                    "lng": 36.71
+                },
+                {
                     "name": "阿帕梅亚",
                     "lat": 35.42,
                     "lng": 36.4
@@ -42219,12 +45546,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "巴勒斯坦沙仑平原卡昆堡郊",
             "routeVia": [
                 {
-                    "name": "阿卡",
-                    "lat": 32.92,
-                    "lng": 35.07
+                    "name": "太巴列",
+                    "lat": 32.79,
+                    "lng": 35.53
+                },
+                {
+                    "name": "杰宁",
+                    "lat": 32.46,
+                    "lng": 35.3
                 }
             ],
-            "chronicleFrom": "city_qaqun",
+            "chronicleFrom": "city_damasikusi",
             "targetLat": 32.361,
             "targetLng": 34.995,
             "myTroops": 15000,
@@ -42273,14 +45605,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "忒剌大渡河",
+                    "name": "松潘",
+                    "lat": 32.65,
+                    "lng": 103.6
+                },
+                {
+                    "name": "忒剌",
                     "lat": 29.3,
                     "lng": 102.2
                 },
                 {
-                    "name": "金沙江革囊渡",
-                    "lat": 26.88,
-                    "lng": 100
+                    "name": "石门关",
+                    "lat": 26.95,
+                    "lng": 99.95
                 }
             ],
             "chronicleFrom": "city_lintao",
@@ -42332,14 +45669,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "六盘山",
-                    "lat": 35.65,
-                    "lng": 106.2
+                    "name": "利州",
+                    "lat": 32.43,
+                    "lng": 105.82
                 },
                 {
-                    "name": "利州剑门苦竹隘",
-                    "lat": 32.25,
-                    "lng": 105.45
+                    "name": "苦竹隘",
+                    "lat": 32.18,
+                    "lng": 105.42
+                },
+                {
+                    "name": "阆州",
+                    "lat": 31.55,
+                    "lng": 105.97
                 }
             ],
             "chronicleFrom": "city_hanzhong",
@@ -42391,14 +45733,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "彰德",
+                    "lat": 36.1,
+                    "lng": 114.35
+                },
+                {
+                    "name": "汝宁",
+                    "lat": 33.01,
+                    "lng": 114.36
+                },
+                {
                     "name": "大胜关",
                     "lat": 31.82,
                     "lng": 114.05
                 },
                 {
-                    "name": "黄陂阳逻堡",
-                    "lat": 30.65,
-                    "lng": 114.58
+                    "name": "黄陂",
+                    "lat": 30.88,
+                    "lng": 114.38
                 }
             ],
             "chronicleFrom": "city_shangdu",
@@ -42442,6 +45794,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漠南草原昔木土脑儿湖畔",
+            "routeVia": [
+                {
+                    "name": "桓州",
+                    "lat": 42.15,
+                    "lng": 115.45
+                },
+                {
+                    "name": "达里泊",
+                    "lat": 43.55,
+                    "lng": 116.35
+                }
+            ],
             "chronicleFrom": "city_shangdu",
             "targetLat": 45.3,
             "targetLng": 113.85,
@@ -42489,6 +45853,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "song",
                 "after": "yuan_d"
             },
+            "routeVia": [
+                {
+                    "name": "许州",
+                    "lat": 34.02,
+                    "lng": 113.85
+                },
+                {
+                    "name": "南阳",
+                    "lat": 32.99,
+                    "lng": 112.53
+                },
+                {
+                    "name": "新野",
+                    "lat": 32.52,
+                    "lng": 112.36
+                }
+            ],
             "chronicleFrom": "city_bianliang",
             "targetLat": 32.015,
             "targetLng": 112.14,
@@ -42531,7 +45912,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "江南东路池州铜陵丁家洲江面",
             "routeVia": [
                 {
-                    "name": "江州安庆",
+                    "name": "黄州",
+                    "lat": 30.45,
+                    "lng": 114.87
+                },
+                {
+                    "name": "江州",
+                    "lat": 29.73,
+                    "lng": 115.98
+                },
+                {
+                    "name": "安庆",
                     "lat": 30.51,
                     "lng": 117.04
                 }
@@ -42578,9 +45969,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "镇江东侧长江焦山江面",
             "routeVia": [
                 {
-                    "name": "瓜洲",
-                    "lat": 32.25,
-                    "lng": 119.39
+                    "name": "仪真",
+                    "lat": 32.27,
+                    "lng": 119.19
                 }
             ],
             "chronicleFrom": "city_yangzhou",
@@ -42631,14 +46022,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "潮州漳州",
-                    "lat": 23.66,
-                    "lng": 116.62
+                    "name": "东莞",
+                    "lat": 23.04,
+                    "lng": 113.75
                 },
                 {
-                    "name": "广州虎头门",
-                    "lat": 22.8,
-                    "lng": 113.62
+                    "name": "香山",
+                    "lat": 22.52,
+                    "lng": 113.38
                 }
             ],
             "chronicleFrom": "city_panyu",
@@ -42682,6 +46073,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "呼伦贝尔辽河上游撒儿都鲁草原",
+            "routeVia": [
+                {
+                    "name": "应昌",
+                    "lat": 43.39,
+                    "lng": 116.82
+                },
+                {
+                    "name": "全宁",
+                    "lat": 42.95,
+                    "lng": 118.95
+                }
+            ],
             "chronicleFrom": "city_shangdu",
             "targetLat": 43.85,
             "targetLng": 120.55,
@@ -42723,6 +46126,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "东爪哇布兰塔斯河谷特罗武兰林地",
+            "routeVia": [
+                {
+                    "name": "马迪乌恩",
+                    "lat": -7.63,
+                    "lng": 111.52
+                },
+                {
+                    "name": "答哈",
+                    "lat": -7.82,
+                    "lng": 112.01
+                }
+            ],
             "chronicleFrom": "city_kalasan",
             "targetLat": -7.559,
             "targetLng": 112.381,
@@ -42766,17 +46181,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北哈拉和林以西铁坚古山与合剌合塔",
             "routeVia": [
                 {
-                    "name": "叶密立阿力麻里",
-                    "lat": 44.22,
-                    "lng": 80.52
+                    "name": "土拉河",
+                    "lat": 47.75,
+                    "lng": 105.8
                 },
                 {
-                    "name": "阿尔泰山",
-                    "lat": 47.64,
-                    "lng": 88.29
+                    "name": "哈绥河",
+                    "lat": 47.48,
+                    "lng": 103.95
                 }
             ],
-            "chronicleFrom": "city_karakorum",
+            "chronicleFrom": "city_kulun",
             "targetLat": 47.198,
             "targetLng": 102.825,
             "myTroops": 15000,
@@ -42823,13 +46238,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuan_d",
                 "after": "yuan_d"
             },
-            "routeVia": [
-                {
-                    "name": "上都",
-                    "lat": 42.28,
-                    "lng": 115.76
-                }
-            ],
             "chronicleFrom": "city_juyongguan",
             "targetLat": 40.289,
             "targetLng": 116.074,
@@ -42873,9 +46281,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "佛兰德海岸兹温湾斯勒伊斯锚地",
             "routeVia": [
                 {
-                    "name": "奥尔韦尔河口",
-                    "lat": 51.95,
-                    "lng": 1.3
+                    "name": "伊普斯维奇",
+                    "lat": 52.06,
+                    "lng": 1.16
+                },
+                {
+                    "name": "哈里奇",
+                    "lat": 51.94,
+                    "lng": 1.29
                 }
             ],
             "chronicleFrom": "city_lundun",
@@ -42918,6 +46331,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "法国布列塔尼莫尔莱近郊兰默尔林缘",
+            "routeVia": [
+                {
+                    "name": "卡赖",
+                    "lat": 48.28,
+                    "lng": -3.57
+                }
+            ],
             "chronicleFrom": "city_kanpeier",
             "targetLat": 48.578,
             "targetLng": -3.828,
@@ -42963,6 +46383,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "利布尔讷",
                     "lat": 44.91,
                     "lng": -0.24
+                },
+                {
+                    "name": "穆西当",
+                    "lat": 45.03,
+                    "lng": 0.36
                 }
             ],
             "chronicleFrom": "city_bordeaux",
@@ -43008,7 +46433,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "法国北部皮卡第克雷西风车山坡",
             "routeVia": [
                 {
-                    "name": "瑟堡登陆",
+                    "name": "瑟堡",
                     "lat": 49.64,
                     "lng": -1.62
                 },
@@ -43018,9 +46443,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": -0.36
                 },
                 {
-                    "name": "布朗什塔克浅滩",
-                    "lat": 50.15,
-                    "lng": 1.76
+                    "name": "普瓦",
+                    "lat": 49.78,
+                    "lng": 1.98
                 }
             ],
             "chronicleFrom": "city_winchester",
@@ -43074,6 +46499,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "克雷西",
                     "lat": 50.26,
                     "lng": 1.9
+                },
+                {
+                    "name": "蒙特勒伊",
+                    "lat": 50.46,
+                    "lng": 1.76
+                },
+                {
+                    "name": "布洛涅",
+                    "lat": 50.72,
+                    "lng": 1.61
                 }
             ],
             "chronicleFrom": "city_winchester",
@@ -43116,6 +46551,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "法国西部普瓦图吕纳隆热原野",
+            "routeVia": [
+                {
+                    "name": "圣让当热利",
+                    "lat": 45.94,
+                    "lng": -0.52
+                }
+            ],
             "chronicleFrom": "city_bordeaux",
             "targetLat": 46.048,
             "targetLng": 0.145,
@@ -43158,7 +46600,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "法国西部普瓦捷南郊莫佩尔蒂灌木坡",
             "routeVia": [
                 {
-                    "name": "布尔日图尔",
+                    "name": "贝热拉克",
+                    "lat": 44.85,
+                    "lng": 0.48
+                },
+                {
+                    "name": "利摩日",
+                    "lat": 45.83,
+                    "lng": 1.26
+                },
+                {
+                    "name": "图尔",
                     "lat": 47.39,
                     "lng": 0.69
                 }
@@ -43209,7 +46661,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "gaolu",
                 "after": "gaolu"
             },
-            "chronicleFrom": "city_lundun",
+            "routeVia": [
+                {
+                    "name": "瑟堡",
+                    "lat": 49.64,
+                    "lng": -1.62
+                },
+                {
+                    "name": "阿夫朗什",
+                    "lat": 48.69,
+                    "lng": -1.36
+                }
+            ],
+            "chronicleFrom": "city_winchester",
             "targetLat": 48.117,
             "targetLng": -1.678,
             "myTroops": 15000,
@@ -43255,6 +46719,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "gaolu",
                 "after": "gaolu"
             },
+            "routeVia": [
+                {
+                    "name": "桑利斯",
+                    "lat": 49.21,
+                    "lng": 2.59
+                }
+            ],
             "chronicleFrom": "city_beauvais",
             "targetLat": 48.96,
             "targetLng": 2.878,
@@ -43302,23 +46773,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuan_d",
                 "after": "hansong"
             },
-            "routeVia": [
-                {
-                    "name": "颍州白鹿庄",
-                    "lat": 32.89,
-                    "lng": 115.82
-                },
-                {
-                    "name": "罗山上蔡",
-                    "lat": 33.26,
-                    "lng": 114.26
-                },
-                {
-                    "name": "汝宁府",
-                    "lat": 33.01,
-                    "lng": 114.36
-                }
-            ],
             "chronicleFrom": "city_shunchang",
             "targetLat": 32.89,
             "targetLng": 115.815,
@@ -43367,6 +46821,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "yuan_d"
             },
             "routeVia": [
+                {
+                    "name": "河间",
+                    "lat": 38.45,
+                    "lng": 116.09
+                },
+                {
+                    "name": "东昌",
+                    "lat": 36.43,
+                    "lng": 115.96
+                },
                 {
                     "name": "济宁",
                     "lat": 35.42,
@@ -43421,12 +46885,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "扬州",
-                    "lat": 32.39,
-                    "lng": 119.42
+                    "name": "邳州",
+                    "lat": 34.31,
+                    "lng": 117.95
+                },
+                {
+                    "name": "淮安",
+                    "lat": 33.5,
+                    "lng": 119.13
+                },
+                {
+                    "name": "宝应",
+                    "lat": 33.24,
+                    "lng": 119.32
                 }
             ],
-            "chronicleFrom": "city_beijing",
+            "chronicleFrom": "city_merkit",
             "targetLat": 32.782,
             "targetLng": 119.442,
             "myTroops": 15000,
@@ -43473,14 +46947,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "和州针鱼嘴",
-                    "lat": 31.72,
-                    "lng": 118.38
+                    "name": "全椒",
+                    "lat": 32.09,
+                    "lng": 118.27
                 },
                 {
-                    "name": "牛渚采石矶",
-                    "lat": 31.66,
-                    "lng": 118.47
+                    "name": "含山",
+                    "lat": 31.73,
+                    "lng": 118.1
                 }
             ],
             "chronicleFrom": "city_qingliuguan",
@@ -43616,19 +47090,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "江西鄱阳湖康郎山至湖口水域",
             "routeVia": [
                 {
+                    "name": "芜湖",
+                    "lat": 31.33,
+                    "lng": 118.38
+                },
+                {
+                    "name": "安庆",
+                    "lat": 30.51,
+                    "lng": 117.04
+                },
+                {
                     "name": "湖口",
                     "lat": 29.74,
                     "lng": 116.22
-                },
-                {
-                    "name": "康郎山",
-                    "lat": 29.18,
-                    "lng": 116.1
-                },
-                {
-                    "name": "泾江口",
-                    "lat": 29.75,
-                    "lng": 116.2
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -43679,7 +47153,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "湖州嘉兴",
+                    "name": "长兴",
+                    "lat": 31.01,
+                    "lng": 119.91
+                },
+                {
+                    "name": "湖州",
+                    "lat": 30.89,
+                    "lng": 120.09
+                },
+                {
+                    "name": "嘉兴",
                     "lat": 30.75,
                     "lng": 120.75
                 }
@@ -43733,14 +47217,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "临清德州",
+                    "name": "卫辉",
+                    "lat": 35.41,
+                    "lng": 114.06
+                },
+                {
+                    "name": "临清",
+                    "lat": 36.84,
+                    "lng": 115.7
+                },
+                {
+                    "name": "德州",
                     "lat": 37.45,
                     "lng": 116.3
                 },
                 {
-                    "name": "通州",
-                    "lat": 39.91,
-                    "lng": 116.66
+                    "name": "河间",
+                    "lat": 38.45,
+                    "lng": 116.09
                 }
             ],
             "chronicleFrom": "city_bianliang",
@@ -43789,7 +47283,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "yuan_d",
                 "after": "ming_d"
             },
-            "chronicleFrom": "city_karakorum",
+            "routeVia": [
+                {
+                    "name": "忻州",
+                    "lat": 38.42,
+                    "lng": 112.73
+                }
+            ],
+            "chronicleFrom": "city_yanmenguan",
             "targetLat": 37.87,
             "targetLng": 112.549,
             "myTroops": 15000,
@@ -43832,24 +47333,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北土剌河与哈拉和林北原",
             "routeVia": [
                 {
-                    "name": "雁门",
-                    "lat": 39.19,
-                    "lng": 112.87
-                },
-                {
-                    "name": "口温",
-                    "lat": 42.5,
-                    "lng": 112.8
-                },
-                {
-                    "name": "土剌河",
-                    "lat": 47.91,
-                    "lng": 106.88
-                },
-                {
-                    "name": "岭北和林北原",
-                    "lat": 47.3,
-                    "lng": 102.9
+                    "name": "塔米尔河",
+                    "lat": 47.55,
+                    "lng": 104.8
                 }
             ],
             "chronicleFrom": "city_karakorum",
@@ -43945,6 +47431,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "科洛姆纳",
                     "lat": 55.09,
                     "lng": 38.78
+                },
+                {
+                    "name": "洛帕斯尼亚",
+                    "lat": 54.85,
+                    "lng": 37.95
                 }
             ],
             "chronicleFrom": "city_mosike",
@@ -43996,9 +47487,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "保加尔渡伏尔加河",
+                    "name": "保加尔",
                     "lat": 54.98,
                     "lng": 49.05
+                },
+                {
+                    "name": "下诺夫哥罗德",
+                    "lat": 56.32,
+                    "lng": 44
                 },
                 {
                     "name": "谢尔普霍夫",
@@ -44054,24 +47550,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "辰沅",
+                    "name": "常德",
+                    "lat": 29.05,
+                    "lng": 111.69
+                },
+                {
+                    "name": "辰州",
                     "lat": 28.45,
                     "lng": 110.15
+                },
+                {
+                    "name": "贵阳",
+                    "lat": 26.58,
+                    "lng": 106.71
                 },
                 {
                     "name": "普定",
                     "lat": 26.32,
                     "lng": 105.75
-                },
-                {
-                    "name": "曲靖白石江",
-                    "lat": 25.53,
-                    "lng": 103.81
-                },
-                {
-                    "name": "昆明押赤城",
-                    "lat": 25.04,
-                    "lng": 102.71
                 }
             ],
             "chronicleFrom": "city_nanjing",
@@ -44116,6 +47612,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "漠北呼伦贝尔草原捕鱼儿海南岸",
             "routeVia": [
+                {
+                    "name": "古北口",
+                    "lat": 40.69,
+                    "lng": 117.16
+                },
                 {
                     "name": "大宁",
                     "lat": 41.6,
@@ -44227,7 +47728,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "通州临清",
+                    "name": "河间",
+                    "lat": 38.45,
+                    "lng": 116.09
+                },
+                {
+                    "name": "德州",
+                    "lat": 37.45,
+                    "lng": 116.3
+                },
+                {
+                    "name": "临清",
                     "lat": 36.84,
                     "lng": 115.7
                 }
@@ -44274,9 +47785,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "南直隶宿州灵璧县郊",
             "routeVia": [
                 {
-                    "name": "肥河小河",
-                    "lat": 33.72,
-                    "lng": 116.9
+                    "name": "保定",
+                    "lat": 38.87,
+                    "lng": 115.48
+                },
+                {
+                    "name": "大名",
+                    "lat": 36.27,
+                    "lng": 115.23
+                },
+                {
+                    "name": "徐州",
+                    "lat": 34.27,
+                    "lng": 117.18
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -44327,9 +47848,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "瓜洲渡江镇江",
+                    "name": "镇江",
                     "lat": 32.21,
                     "lng": 119.45
+                },
+                {
+                    "name": "龙潭",
+                    "lat": 32.17,
+                    "lng": 119.08
                 }
             ],
             "chronicleFrom": "city_yangzhou",
@@ -44381,14 +47907,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "富良江北岸",
-                    "lat": 21.15,
-                    "lng": 105.6
+                    "name": "芹站",
+                    "lat": 21.55,
+                    "lng": 106.35
                 },
                 {
-                    "name": "多邦城东都昇龙",
-                    "lat": 21.03,
-                    "lng": 105.85
+                    "name": "北江",
+                    "lat": 21.27,
+                    "lng": 106.19
                 }
             ],
             "chronicleFrom": "city_zhennanguan",
@@ -44442,6 +47968,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "开平",
                     "lat": 42.28,
                     "lng": 115.76
+                },
+                {
+                    "name": "达里泊",
+                    "lat": 43.3,
+                    "lng": 116.65
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -44487,12 +48018,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北鄂嫩河斡难河畔",
             "routeVia": [
                 {
-                    "name": "宣府兴和",
-                    "lat": 40.91,
-                    "lng": 114.72
+                    "name": "宣府",
+                    "lat": 40.6,
+                    "lng": 115.05
                 },
                 {
-                    "name": "胪胸河饮马河",
+                    "name": "兴和",
+                    "lat": 41.15,
+                    "lng": 114.7
+                },
+                {
+                    "name": "胪胸河",
                     "lat": 48.07,
                     "lng": 113.52
                 }
@@ -44540,9 +48076,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北土拉河东岸忽兰忽失温山谷",
             "routeVia": [
                 {
-                    "name": "宣府兴和",
-                    "lat": 40.91,
-                    "lng": 114.72
+                    "name": "宣府",
+                    "lat": 40.6,
+                    "lng": 115.05
+                },
+                {
+                    "name": "兴和",
+                    "lat": 41.15,
+                    "lng": 114.7
                 },
                 {
                     "name": "饮马河",
@@ -44593,19 +48134,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "漠北呼伦湖阔滦海至屈裂儿河",
             "routeVia": [
                 {
-                    "name": "宣府开平",
+                    "name": "宣府",
+                    "lat": 40.6,
+                    "lng": 115.05
+                },
+                {
+                    "name": "开平",
                     "lat": 42.28,
                     "lng": 115.76
                 },
                 {
-                    "name": "阔滦海呼伦湖",
-                    "lat": 49.18,
-                    "lng": 117.95
-                },
-                {
-                    "name": "屈裂儿河",
-                    "lat": 46.85,
-                    "lng": 120.5
+                    "name": "应昌",
+                    "lat": 43.39,
+                    "lng": 116.82
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -44650,11 +48191,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "defender",
             "targetName": "低地列日近郊奥泰原野",
             "routeVia": [
-                {
-                    "name": "里尔",
-                    "lat": 50.63,
-                    "lng": 3.06
-                },
                 {
                     "name": "马斯特里赫特",
                     "lat": 50.85,
@@ -44703,14 +48239,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "普鲁士坦能堡格伦瓦尔德原野",
             "routeVia": [
                 {
-                    "name": "切尔温斯克渡维斯瓦河",
+                    "name": "切尔温斯克",
                     "lat": 52.39,
                     "lng": 20.31
                 },
                 {
-                    "name": "吉尔根堡",
-                    "lat": 53.43,
-                    "lng": 20
+                    "name": "利兹巴克",
+                    "lat": 53.26,
+                    "lng": 19.82
                 }
             ],
             "chronicleFrom": "city_huasha",
@@ -44756,19 +48292,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "法兰西阿图瓦阿金库尔林间窄地",
             "routeVia": [
                 {
-                    "name": "索姆河渡口",
-                    "lat": 49.82,
-                    "lng": 2.85
+                    "name": "迪耶普",
+                    "lat": 49.93,
+                    "lng": 1.08
                 },
                 {
-                    "name": "阿金库尔",
-                    "lat": 50.46,
-                    "lng": 2.14
+                    "name": "内勒",
+                    "lat": 49.76,
+                    "lng": 2.91
                 },
                 {
-                    "name": "加来",
-                    "lat": 50.96,
-                    "lng": 1.85
+                    "name": "佩罗讷",
+                    "lat": 49.93,
+                    "lng": 2.94
                 }
             ],
             "chronicleFrom": "city_harfleur",
@@ -44825,9 +48361,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": -1.4
                 },
                 {
-                    "name": "图克河口登陆",
-                    "lat": 49.36,
-                    "lng": 0.08
+                    "name": "翁弗勒尔",
+                    "lat": 49.42,
+                    "lng": 0.23
                 }
             ],
             "chronicleFrom": "city_winchester",
@@ -44878,12 +48414,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "阿让唐",
+                    "lat": 48.74,
+                    "lng": -0.02
+                },
+                {
                     "name": "卢维耶",
                     "lat": 49.21,
                     "lng": 1.17
                 }
             ],
-            "chronicleFrom": "city_caen",
+            "chronicleFrom": "city_winchester",
             "targetLat": 49.443,
             "targetLng": 1.099,
             "myTroops": 15000,
@@ -44969,6 +48510,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "波西米亚银矿重镇库特纳霍拉城西",
+            "routeVia": [
+                {
+                    "name": "捷克布罗德",
+                    "lat": 50.07,
+                    "lng": 14.86
+                }
+            ],
             "chronicleFrom": "city_bulage",
             "targetLat": 49.948,
             "targetLng": 15.268,
@@ -45009,6 +48557,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "波西米亚布拉格以东利帕尼高地",
+            "routeVia": [
+                {
+                    "name": "贝内绍夫",
+                    "lat": 49.78,
+                    "lng": 14.69
+                }
+            ],
             "chronicleFrom": "city_tabor",
             "targetLat": 50.025,
             "targetLng": 14.938,
@@ -45105,14 +48660,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "金齿腾冲",
-                    "lat": 25.02,
-                    "lng": 98.49
+                    "name": "楚雄",
+                    "lat": 25.03,
+                    "lng": 101.55
                 },
                 {
-                    "name": "上江寨",
-                    "lat": 24.8,
-                    "lng": 98.8
+                    "name": "大理",
+                    "lat": 25.7,
+                    "lng": 100.15
+                },
+                {
+                    "name": "永昌",
+                    "lat": 25.11,
+                    "lng": 99.16
+                },
+                {
+                    "name": "腾冲",
+                    "lat": 25.02,
+                    "lng": 98.49
                 }
             ],
             "chronicleFrom": "city_tuodongcheng",
@@ -45163,9 +48728,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "金沙江渡口",
-                    "lat": 25.1,
-                    "lng": 97.15
+                    "name": "南甸",
+                    "lat": 24.68,
+                    "lng": 98.28
+                },
+                {
+                    "name": "孟养",
+                    "lat": 25.25,
+                    "lng": 96.95
                 }
             ],
             "chronicleFrom": "city_tengyuecheng",
@@ -45211,14 +48781,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "北直隶怀来城东土木堡高地",
             "routeVia": [
                 {
+                    "name": "猫儿庄",
+                    "lat": 40.95,
+                    "lng": 113.15
+                },
+                {
                     "name": "大同",
                     "lat": 40.08,
                     "lng": 113.3
                 },
                 {
-                    "name": "宣府鸡鸣山",
-                    "lat": 40.46,
-                    "lng": 115.29
+                    "name": "宣府",
+                    "lat": 40.6,
+                    "lng": 115.05
                 }
             ],
             "chronicleFrom": "city_saiyinsanda",
@@ -45269,14 +48844,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "蔚州",
+                    "lat": 39.84,
+                    "lng": 114.56
+                },
+                {
                     "name": "紫荆关",
                     "lat": 39.42,
                     "lng": 115.17
                 },
                 {
-                    "name": "良乡卢沟桥",
-                    "lat": 39.85,
-                    "lng": 116.21
+                    "name": "涿州",
+                    "lat": 39.49,
+                    "lng": 115.97
                 }
             ],
             "chronicleFrom": "city_saiyinsanda",
@@ -45368,19 +48948,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "斯梅代雷沃",
+                    "lat": 44.66,
+                    "lng": 20.93
+                },
+                {
                     "name": "克鲁舍瓦茨",
                     "lat": 43.58,
                     "lng": 21.33
-                },
-                {
-                    "name": "尼什",
-                    "lat": 43.32,
-                    "lng": 21.9
-                },
-                {
-                    "name": "兹拉蒂察山口",
-                    "lat": 42.72,
-                    "lng": 24.13
                 }
             ],
             "chronicleFrom": "city_belgrade",
@@ -45425,9 +49000,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "保加利亚黑海西岸瓦尔纳湖畔原野",
             "routeVia": [
                 {
+                    "name": "奥尔绍瓦",
+                    "lat": 44.72,
+                    "lng": 22.4
+                },
+                {
+                    "name": "维丁",
+                    "lat": 43.99,
+                    "lng": 22.87
+                },
+                {
                     "name": "尼科波利斯",
                     "lat": 43.7,
                     "lng": 24.9
+                },
+                {
+                    "name": "舒门",
+                    "lat": 43.27,
+                    "lng": 26.93
                 }
             ],
             "chronicleFrom": "city_belgrade",
@@ -45472,6 +49062,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "巴尔干中枢科索沃黑鸟平原",
             "routeVia": [
+                {
+                    "name": "科温",
+                    "lat": 44.75,
+                    "lng": 20.98
+                },
                 {
                     "name": "克鲁舍瓦茨",
                     "lat": 43.58,
@@ -45526,9 +49121,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "鲁米利堡垒",
-                    "lat": 41.08,
-                    "lng": 29.06
+                    "name": "维泽",
+                    "lat": 41.57,
+                    "lng": 27.77
+                },
+                {
+                    "name": "西利夫里",
+                    "lat": 41.07,
+                    "lng": 28.25
                 }
             ],
             "chronicleFrom": "city_aidiernei",
@@ -45580,12 +49180,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "埃迪尔内",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
                     "name": "索非亚",
                     "lat": 42.7,
                     "lng": 23.32
+                },
+                {
+                    "name": "克鲁舍瓦茨",
+                    "lat": 43.58,
+                    "lng": 21.33
                 }
             ],
-            "chronicleFrom": "city_aidiernei",
+            "chronicleFrom": "city_junshitandingbao",
             "targetLat": 44.823,
             "targetLng": 20.45,
             "myTroops": 15000,
@@ -45632,6 +49242,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "baizanting",
                 "after": "osman"
             },
+            "routeVia": [
+                {
+                    "name": "埃迪尔内",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
+                    "name": "塞萨洛尼基",
+                    "lat": 40.64,
+                    "lng": 22.94
+                },
+                {
+                    "name": "拉里萨",
+                    "lat": 39.64,
+                    "lng": 22.42
+                }
+            ],
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 37.89,
             "targetLng": 22.87,
@@ -45675,7 +49302,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "瓦拉几亚都城特尔戈维什泰近郊军营",
             "routeVia": [
                 {
-                    "name": "尼科波利斯渡多瑙河",
+                    "name": "埃迪尔内",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
+                    "name": "尼科波利斯",
                     "lat": 43.7,
                     "lng": 24.9
                 }
@@ -45728,6 +49360,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "after": "osman"
             },
             "routeVia": [
+                {
+                    "name": "斯科普里",
+                    "lat": 42,
+                    "lng": 21.43
+                },
                 {
                     "name": "博博瓦茨",
                     "lat": 44.12,
@@ -45785,6 +49422,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "lezhe",
                 "after": "lezhe"
             },
+            "routeVia": [
+                {
+                    "name": "塞萨洛尼基",
+                    "lat": 40.64,
+                    "lng": 22.94
+                },
+                {
+                    "name": "莫纳斯提尔",
+                    "lat": 41.03,
+                    "lng": 21.33
+                },
+                {
+                    "name": "埃尔巴桑",
+                    "lat": 41.11,
+                    "lng": 20.08
+                }
+            ],
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 41.509,
             "targetLng": 19.794,
@@ -45837,6 +49491,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "加里波利",
                     "lat": 40.41,
                     "lng": 26.67
+                },
+                {
+                    "name": "利姆诺斯",
+                    "lat": 39.92,
+                    "lng": 25.25
+                },
+                {
+                    "name": "斯基罗斯",
+                    "lat": 38.9,
+                    "lng": 24.56
                 }
             ],
             "chronicleFrom": "city_junshitandingbao",
@@ -45882,9 +49546,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "摩尔达维亚巴尔拉德河谷瓦斯卢伊沼泽",
             "routeVia": [
                 {
-                    "name": "多瑙河渡口",
-                    "lat": 43.9,
-                    "lng": 26
+                    "name": "尼科波利斯",
+                    "lat": 43.7,
+                    "lng": 24.9
+                },
+                {
+                    "name": "布泽乌",
+                    "lat": 45.15,
+                    "lng": 26.82
+                },
+                {
+                    "name": "伯尔拉德",
+                    "lat": 46.23,
+                    "lng": 27.67
                 }
             ],
             "chronicleFrom": "city_sofia",
@@ -45934,6 +49608,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "kelite",
                 "after": "kelite"
             },
+            "routeVia": [
+                {
+                    "name": "埃迪尔内",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
+                    "name": "斯科普里",
+                    "lat": 42,
+                    "lng": 21.43
+                },
+                {
+                    "name": "克鲁亚",
+                    "lat": 41.51,
+                    "lng": 19.79
+                }
+            ],
             "chronicleFrom": "city_junshitandingbao",
             "targetLat": 42.046,
             "targetLng": 19.493,
@@ -45974,6 +49665,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "特兰西瓦尼亚穆列什河畔面包原野",
+            "routeVia": [
+                {
+                    "name": "蒂米什瓦拉",
+                    "lat": 45.75,
+                    "lng": 21.23
+                },
+                {
+                    "name": "卢戈日",
+                    "lat": 45.69,
+                    "lng": 21.9
+                }
+            ],
             "chronicleFrom": "city_belgrade",
             "targetLat": 45.925,
             "targetLng": 23.344,
@@ -46017,14 +49720,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "阿塞拜疆穆甘草原卡拉巴赫林地",
             "routeVia": [
                 {
-                    "name": "赫拉特",
-                    "lat": 34.34,
-                    "lng": 62.19
+                    "name": "阿哈尔",
+                    "lat": 38.48,
+                    "lng": 47.07
                 },
                 {
-                    "name": "米亚内",
-                    "lat": 37.42,
-                    "lng": 47.71
+                    "name": "胡达费林",
+                    "lat": 39.15,
+                    "lng": 46.94
                 }
             ],
             "chronicleFrom": "city_dabulishi",
@@ -46068,6 +49771,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "法兰西巴黎南郊蒙特莱里山岗原野",
+            "routeVia": [
+                {
+                    "name": "佩罗讷",
+                    "lat": 49.93,
+                    "lng": 2.94
+                },
+                {
+                    "name": "圣但尼",
+                    "lat": 48.94,
+                    "lng": 2.36
+                }
+            ],
             "chronicleFrom": "city_lier",
             "targetLat": 48.613,
             "targetLng": 2.272,
@@ -46116,14 +49831,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "佩罗讷",
-                    "lat": 49.93,
-                    "lng": 2.94
-                },
-                {
                     "name": "那慕尔",
                     "lat": 50.47,
                     "lng": 4.87
+                },
+                {
+                    "name": "于伊",
+                    "lat": 50.52,
+                    "lng": 5.24
                 }
             ],
             "chronicleFrom": "city_bulusaier",
@@ -46174,9 +49889,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "内勒鲁瓦",
-                    "lat": 49.7,
-                    "lng": 2.79
+                    "name": "阿拉斯",
+                    "lat": 50.29,
+                    "lng": 2.78
+                },
+                {
+                    "name": "内勒",
+                    "lat": 49.76,
+                    "lng": 2.91
                 }
             ],
             "chronicleFrom": "city_lier",
@@ -46226,14 +49946,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "伯尔尼巴塞尔",
-                    "lat": 47.55,
-                    "lng": 7.58
+                    "name": "格雷",
+                    "lat": 47.45,
+                    "lng": 5.59
                 },
                 {
-                    "name": "波朗特吕",
-                    "lat": 47.42,
-                    "lng": 7.08
+                    "name": "沃苏勒",
+                    "lat": 47.62,
+                    "lng": 6.15
                 }
             ],
             "chronicleFrom": "city_dijon",
@@ -46281,6 +50001,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "洛桑",
                     "lat": 46.52,
                     "lng": 6.63
+                },
+                {
+                    "name": "帕耶讷",
+                    "lat": 46.82,
+                    "lng": 6.94
                 }
             ],
             "chronicleFrom": "city_geneva",
@@ -46330,14 +50055,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "巴塞尔",
-                    "lat": 47.55,
-                    "lng": 7.58
+                    "name": "朗格勒",
+                    "lat": 47.86,
+                    "lng": 5.33
                 },
                 {
-                    "name": "圣尼古拉德波尔",
-                    "lat": 48.63,
-                    "lng": 6.3
+                    "name": "讷沙托",
+                    "lat": 48.36,
+                    "lng": 5.7
                 }
             ],
             "chronicleFrom": "city_dijon",
@@ -46381,6 +50106,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "河套鄂尔多斯南境红盐池大营",
+            "routeVia": [
+                {
+                    "name": "白城子",
+                    "lat": 38.45,
+                    "lng": 109.32
+                }
+            ],
             "chronicleFrom": "city_yulin",
             "targetLat": 38.52,
             "targetLng": 108.95,
@@ -46422,6 +50154,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漠南东境应昌外围永谢布牧地",
+            "routeVia": [
+                {
+                    "name": "贝尔湖",
+                    "lat": 47.8,
+                    "lng": 117.7
+                },
+                {
+                    "name": "霍林河",
+                    "lat": 45.55,
+                    "lng": 118.2
+                }
+            ],
             "chronicleFrom": "city_kerulen",
             "targetLat": 43.385,
             "targetLng": 116.823,
@@ -46463,6 +50207,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漠北杭爱山东麓贤义王庭草场",
+            "routeVia": [
+                {
+                    "name": "土拉河",
+                    "lat": 47.75,
+                    "lng": 106.9
+                },
+                {
+                    "name": "哈绥河",
+                    "lat": 47.48,
+                    "lng": 104.5
+                }
+            ],
             "chronicleFrom": "city_kerulen",
             "targetLat": 47.137,
             "targetLng": 103.035,
@@ -46504,6 +50260,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "漠南河套达兰特哩衮原野",
+            "routeVia": [
+                {
+                    "name": "商都",
+                    "lat": 41.56,
+                    "lng": 113.56
+                },
+                {
+                    "name": "归化",
+                    "lat": 40.84,
+                    "lng": 111.68
+                }
+            ],
             "chronicleFrom": "city_yingchang",
             "targetLat": 39.811,
             "targetLng": 109.959,
@@ -46547,19 +50315,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "外高加索纳希切温沙鲁尔平原",
             "routeVia": [
                 {
-                    "name": "埃尔津詹",
-                    "lat": 39.75,
-                    "lng": 39.5
+                    "name": "卡尔斯",
+                    "lat": 40.6,
+                    "lng": 43.1
                 },
                 {
-                    "name": "沙鲁尔平原",
-                    "lat": 39.55,
-                    "lng": 44.98
-                },
-                {
-                    "name": "大不里士",
-                    "lat": 38.08,
-                    "lng": 46.29
+                    "name": "埃里温",
+                    "lat": 40.18,
+                    "lng": 44.51
                 }
             ],
             "chronicleFrom": "city_erzurum",
@@ -46610,6 +50373,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "马什哈德",
+                    "lat": 36.3,
+                    "lng": 59.6
+                },
+                {
                     "name": "萨拉赫斯",
                     "lat": 36.54,
                     "lng": 61.16
@@ -46658,19 +50426,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "西北伊朗与东安纳托利亚交界查尔迪兰平原",
             "routeVia": [
                 {
-                    "name": "伊斯坦布尔",
-                    "lat": 41.01,
-                    "lng": 28.97
+                    "name": "马兰德",
+                    "lat": 38.43,
+                    "lng": 45.77
                 },
                 {
-                    "name": "锡瓦斯",
-                    "lat": 39.75,
-                    "lng": 37.02
-                },
-                {
-                    "name": "埃尔津詹",
-                    "lat": 39.75,
-                    "lng": 39.5
+                    "name": "霍伊",
+                    "lat": 38.55,
+                    "lng": 44.95
                 }
             ],
             "chronicleFrom": "city_dabulishi",
@@ -46726,6 +50489,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 32.49
                 },
                 {
+                    "name": "开塞利",
+                    "lat": 38.72,
+                    "lng": 35.48
+                },
+                {
                     "name": "马拉什",
                     "lat": 37.58,
                     "lng": 36.93
@@ -46779,8 +50547,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "加沙西奈沙漠",
-                    "lat": 31.1,
+                    "name": "拉姆拉",
+                    "lat": 31.93,
+                    "lng": 34.87
+                },
+                {
+                    "name": "加沙",
+                    "lat": 31.5,
+                    "lng": 34.47
+                },
+                {
+                    "name": "阿里什",
+                    "lat": 31.13,
                     "lng": 33.8
                 }
             ],
@@ -46831,6 +50609,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "malacca",
                 "after": "putaoya"
             },
+            "routeVia": [
+                {
+                    "name": "科钦",
+                    "lat": 9.97,
+                    "lng": 76.24
+                },
+                {
+                    "name": "佩迪尔",
+                    "lat": 5.38,
+                    "lng": 95.96
+                }
+            ],
             "chronicleFrom": "city_guoa",
             "targetLat": 2.193,
             "targetLng": 102.249,
@@ -46879,14 +50669,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "阿尔卑斯阿让蒂耶尔山口",
-                    "lat": 44.42,
-                    "lng": 6.9
+                    "name": "格勒诺布尔",
+                    "lat": 45.19,
+                    "lng": 5.72
                 },
                 {
-                    "name": "都灵帕维亚",
-                    "lat": 45.19,
-                    "lng": 9.16
+                    "name": "库内奥",
+                    "lat": 44.39,
+                    "lng": 7.55
+                },
+                {
+                    "name": "诺瓦拉",
+                    "lat": 45.45,
+                    "lng": 8.62
                 }
             ],
             "chronicleFrom": "city_lyon",
@@ -46931,12 +50726,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "北意大利皮埃蒙特塞西亚河畔罗马尼亚诺",
             "routeVia": [
                 {
-                    "name": "米兰诺瓦拉",
+                    "name": "阿比亚泰格拉索",
+                    "lat": 45.4,
+                    "lng": 8.91
+                },
+                {
+                    "name": "诺瓦拉",
                     "lat": 45.45,
                     "lng": 8.62
                 }
             ],
-            "chronicleFrom": "city_turin",
+            "chronicleFrom": "city_milan",
             "targetLat": 45.63,
             "targetLng": 8.39,
             "myTroops": 15000,
@@ -46982,7 +50782,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "habusibao",
                 "after": "habusibao"
             },
-            "chronicleFrom": "city_chambord",
+            "routeVia": [
+                {
+                    "name": "苏萨",
+                    "lat": 45.14,
+                    "lng": 7.05
+                },
+                {
+                    "name": "都灵",
+                    "lat": 45.07,
+                    "lng": 7.69
+                },
+                {
+                    "name": "韦尔切利",
+                    "lat": 45.32,
+                    "lng": 8.42
+                }
+            ],
+            "chronicleFrom": "city_lyon",
             "targetLat": 45.199,
             "targetLng": 9.158,
             "myTroops": 15000,
@@ -47023,6 +50840,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "墨西哥谷地东北部奥图巴平原",
+            "routeVia": [
+                {
+                    "name": "松潘戈",
+                    "lat": 19.8,
+                    "lng": -99.1
+                }
+            ],
             "chronicleFrom": "city_tenochtitlan",
             "targetLat": 19.7,
             "targetLng": -98.756,
@@ -47069,6 +50893,23 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "aztec",
                 "after": "xibanya"
             },
+            "routeVia": [
+                {
+                    "name": "哈拉帕",
+                    "lat": 19.54,
+                    "lng": -96.91
+                },
+                {
+                    "name": "特拉斯卡拉",
+                    "lat": 19.32,
+                    "lng": -98.24
+                },
+                {
+                    "name": "特斯科科",
+                    "lat": 19.51,
+                    "lng": -98.88
+                }
+            ],
             "chronicleFrom": "city_veracruz",
             "targetLat": 19.435,
             "targetLng": -99.131,
@@ -47110,6 +50951,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "秘鲁北安第斯高原卡哈马卡中心石广场",
+            "routeVia": [
+                {
+                    "name": "通贝斯",
+                    "lat": -3.57,
+                    "lng": -80.45
+                },
+                {
+                    "name": "皮乌拉",
+                    "lat": -5.19,
+                    "lng": -80.63
+                }
+            ],
             "chronicleFrom": "city_guayaquil",
             "targetLat": -7.157,
             "targetLng": -78.517,
@@ -47200,6 +51053,16 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "加里波利",
+                    "lat": 40.41,
+                    "lng": 26.67
+                },
+                {
+                    "name": "希俄斯",
+                    "lat": 38.37,
+                    "lng": 26.13
+                },
+                {
                     "name": "马尔马里斯",
                     "lat": 36.85,
                     "lng": 28.27
@@ -47248,12 +51111,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "匈牙利南部多瑙河西岸莫哈奇沼泽平原",
             "routeVia": [
                 {
+                    "name": "埃迪尔内",
+                    "lat": 41.68,
+                    "lng": 26.56
+                },
+                {
                     "name": "贝尔格莱德",
                     "lat": 44.78,
                     "lng": 20.45
                 },
                 {
-                    "name": "奥西耶克德拉瓦河桥",
+                    "name": "奥西耶克",
                     "lat": 45.56,
                     "lng": 18.7
                 }
@@ -47306,9 +51174,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "贝尔格莱德",
+                    "lat": 44.78,
+                    "lng": 20.45
+                },
+                {
                     "name": "布达",
                     "lat": 47.5,
                     "lng": 19.04
+                },
+                {
+                    "name": "杰尔",
+                    "lat": 47.68,
+                    "lng": 17.63
                 }
             ],
             "chronicleFrom": "city_junshitandingbao",
@@ -47351,6 +51229,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "加利西亚德涅斯特河以南奥别尔廷高地",
+            "routeVia": [
+                {
+                    "name": "切尔诺夫策",
+                    "lat": 48.29,
+                    "lng": 25.93
+                },
+                {
+                    "name": "科洛梅亚",
+                    "lat": 48.53,
+                    "lng": 25.04
+                }
+            ],
             "chronicleFrom": "city_suceava",
             "targetLat": 48.698,
             "targetLng": 25.171,
@@ -47441,9 +51331,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "希腊西北部伊奥尼亚海阿克提乌姆普雷韦扎湾",
             "routeVia": [
                 {
-                    "name": "科孚岛",
-                    "lat": 39.62,
-                    "lng": 19.92
+                    "name": "加里波利",
+                    "lat": 40.41,
+                    "lng": 26.67
+                },
+                {
+                    "name": "优卑亚",
+                    "lat": 38.46,
+                    "lng": 23.6
+                },
+                {
+                    "name": "莫东",
+                    "lat": 36.82,
+                    "lng": 21.7
                 }
             ],
             "chronicleFrom": "city_junshitandingbao",
@@ -47495,9 +51395,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "索非亚",
+                    "lat": 42.7,
+                    "lng": 23.32
+                },
+                {
                     "name": "贝尔格莱德",
                     "lat": 44.78,
                     "lng": 20.45
+                },
+                {
+                    "name": "莫哈奇",
+                    "lat": 45.99,
+                    "lng": 18.68
                 }
             ],
             "chronicleFrom": "city_aidiernei",
@@ -47551,6 +51461,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "拉合尔",
                     "lat": 31.58,
                     "lng": 74.33
+                },
+                {
+                    "name": "安巴拉",
+                    "lat": 30.38,
+                    "lng": 76.78
                 }
             ],
             "chronicleFrom": "city_gaofu",
@@ -47593,6 +51508,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "北印度德里以北帕尼帕特古战场平原",
+            "routeVia": [
+                {
+                    "name": "贾兰达尔",
+                    "lat": 31.33,
+                    "lng": 75.58
+                },
+                {
+                    "name": "锡尔欣德",
+                    "lat": 30.64,
+                    "lng": 76.38
+                }
+            ],
             "chronicleFrom": "city_laheer",
             "targetLat": 29.395,
             "targetLng": 76.972,
@@ -47634,7 +51561,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "南美智利中南部海岸山脉图卡佩尔废堡",
-            "chronicleFrom": "city_tucapel",
+            "routeVia": [
+                {
+                    "name": "普伦",
+                    "lat": -38.01,
+                    "lng": -73.08
+                }
+            ],
+            "chronicleFrom": "city_kelipuli",
             "targetLat": -37.792,
             "targetLng": -73.332,
             "myTroops": 15000,
@@ -47681,6 +51615,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "tamoyue",
                 "after": "putaoya"
             },
+            "routeVia": [
+                {
+                    "name": "乌巴图巴",
+                    "lat": -23.43,
+                    "lng": -45.07
+                },
+                {
+                    "name": "安格拉",
+                    "lat": -23.01,
+                    "lng": -44.32
+                }
+            ],
             "chronicleFrom": "city_saovicente",
             "targetLat": -22.92,
             "targetLng": -43.172,
@@ -47729,8 +51675,8 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "宁波定海",
-                    "lat": 29.95,
+                    "name": "定海",
+                    "lat": 29.96,
                     "lng": 121.72
                 }
             ],
@@ -47776,12 +51722,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "浙江嘉兴北境大运河畔王江泾水网",
             "routeVia": [
                 {
-                    "name": "柘林",
-                    "lat": 30.84,
-                    "lng": 121.46
+                    "name": "海盐",
+                    "lat": 30.53,
+                    "lng": 120.94
                 }
             ],
-            "chronicleFrom": "city_jiaxing",
+            "chronicleFrom": "city_qingyuan_zj",
             "targetLat": 30.892,
             "targetLng": 120.72,
             "myTroops": 15000,
@@ -47823,17 +51769,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "浙江台州府新河与花街平野",
             "routeVia": [
                 {
-                    "name": "台州临海",
-                    "lat": 28.85,
-                    "lng": 121.14
+                    "name": "奉化",
+                    "lat": 29.66,
+                    "lng": 121.41
                 },
                 {
-                    "name": "新河花街",
-                    "lat": 28.86,
-                    "lng": 121.35
+                    "name": "宁海",
+                    "lat": 29.29,
+                    "lng": 121.43
                 }
             ],
-            "chronicleFrom": "city_taizhou_zj",
+            "chronicleFrom": "city_qingyuan_zj",
             "targetLat": 28.858,
             "targetLng": 121.139,
             "myTroops": 15000,
@@ -47884,6 +51830,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "福清",
                     "lat": 25.72,
                     "lng": 119.38
+                },
+                {
+                    "name": "兴化",
+                    "lat": 25.43,
+                    "lng": 119.01
                 }
             ],
             "chronicleFrom": "city_fuzhou",
@@ -47926,18 +51877,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "日本安艺国濑户内海严岛宫尾城与塔之冈",
-            "routeVia": [
-                {
-                    "name": "吉田郡山",
-                    "lat": 34.67,
-                    "lng": 132.71
-                },
-                {
-                    "name": "草津地御前",
-                    "lat": 34.35,
-                    "lng": 132.33
-                }
-            ],
             "chronicleFrom": "city_yoshida",
             "targetLat": 34.296,
             "targetLng": 132.32,
@@ -47978,13 +51917,6 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "尾张国桶狭间田乐狭间山谷",
-            "routeVia": [
-                {
-                    "name": "热田神宫善照寺砦",
-                    "lat": 35.08,
-                    "lng": 136.96
-                }
-            ],
             "chronicleFrom": "city_atsuta",
             "targetLat": 35.059,
             "targetLng": 136.981,
@@ -48027,14 +51959,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "信浓国川中岛八幡原平原",
             "routeVia": [
                 {
-                    "name": "春日山",
-                    "lat": 37.16,
-                    "lng": 138.24
+                    "name": "诹访",
+                    "lat": 36.04,
+                    "lng": 138.12
                 },
                 {
-                    "name": "妻女山",
-                    "lat": 36.54,
-                    "lng": 138.15
+                    "name": "深志",
+                    "lat": 36.24,
+                    "lng": 137.97
                 }
             ],
             "chronicleFrom": "city_tsutsujigasaki",
@@ -48079,9 +52011,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "近江国琵琶湖畔姊川河滩",
             "routeVia": [
                 {
-                    "name": "岐阜",
-                    "lat": 35.43,
-                    "lng": 136.78
+                    "name": "佐和山",
+                    "lat": 35.28,
+                    "lng": 136.26
                 }
             ],
             "chronicleFrom": "city_kyoto",
@@ -48131,9 +52063,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "二俣城",
-                    "lat": 34.86,
+                    "name": "高远",
+                    "lat": 35.83,
+                    "lng": 138.06
+                },
+                {
+                    "name": "饭田",
+                    "lat": 35.51,
                     "lng": 137.82
+                },
+                {
+                    "name": "犬居",
+                    "lat": 34.97,
+                    "lng": 137.89
                 }
             ],
             "chronicleFrom": "city_tsutsujigasaki",
@@ -48178,12 +52120,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "三河国长筱城西设乐原连吾川",
             "routeVia": [
                 {
-                    "name": "岐阜冈崎",
+                    "name": "岐阜",
+                    "lat": 35.43,
+                    "lng": 136.78
+                },
+                {
+                    "name": "冈崎",
                     "lat": 34.96,
                     "lng": 137.16
                 }
             ],
-            "chronicleFrom": "city_atsuta",
+            "chronicleFrom": "city_kyoto",
             "targetLat": 34.922,
             "targetLng": 137.558,
             "myTroops": 15000,
@@ -48225,9 +52172,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "加贺国手取川渡口平原",
             "routeVia": [
                 {
-                    "name": "七尾城",
-                    "lat": 37.01,
-                    "lng": 136.98
+                    "name": "大圣寺",
+                    "lat": 36.3,
+                    "lng": 136.31
                 }
             ],
             "chronicleFrom": "city_kitanosho",
@@ -48323,14 +52270,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "备中高松",
-                    "lat": 34.69,
-                    "lng": 133.82
+                    "name": "明石",
+                    "lat": 34.65,
+                    "lng": 134.99
                 },
                 {
-                    "name": "姬路城",
-                    "lat": 34.84,
-                    "lng": 134.69
+                    "name": "尼崎",
+                    "lat": 34.72,
+                    "lng": 135.41
                 }
             ],
             "chronicleFrom": "city_himeji",
@@ -48375,9 +52322,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "尾张国小牧山与长久手丘陵",
             "routeVia": [
                 {
-                    "name": "清洲小牧山",
-                    "lat": 35.29,
-                    "lng": 136.91
+                    "name": "大津",
+                    "lat": 35.01,
+                    "lng": 135.85
+                },
+                {
+                    "name": "犬山",
+                    "lat": 35.38,
+                    "lng": 136.94
                 }
             ],
             "chronicleFrom": "city_osaka",
@@ -48428,14 +52380,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "冈崎",
+                    "lat": 34.96,
+                    "lng": 137.16
+                },
+                {
                     "name": "骏府",
                     "lat": 34.98,
                     "lng": 138.38
                 },
                 {
-                    "name": "箱根山中城",
-                    "lat": 35.15,
-                    "lng": 139
+                    "name": "沼津",
+                    "lat": 35.1,
+                    "lng": 138.86
                 }
             ],
             "chronicleFrom": "city_kyoto",
@@ -48527,14 +52484,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "朝鲜庆尚道统营闲山岛开阔洋面",
             "routeVia": [
                 {
-                    "name": "丽水左水营",
+                    "name": "丽水",
                     "lat": 34.74,
                     "lng": 127.74
                 },
                 {
-                    "name": "见乃梁",
-                    "lat": 34.89,
-                    "lng": 128.48
+                    "name": "南海岛",
+                    "lat": 34.83,
+                    "lng": 127.9
                 }
             ],
             "chronicleFrom": "city_suncheon_k",
@@ -48586,7 +52543,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "榆林灵州",
+                    "name": "定边",
+                    "lat": 37.59,
+                    "lng": 107.6
+                },
+                {
+                    "name": "灵州",
                     "lat": 38.07,
                     "lng": 106.3
                 }
@@ -48640,7 +52602,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "义州渡鸭绿江",
+                    "name": "凤凰城",
+                    "lat": 40.45,
+                    "lng": 124.07
+                },
+                {
+                    "name": "义州",
                     "lat": 40.12,
                     "lng": 124.39
                 },
@@ -48690,7 +52657,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "朝鲜全罗道珍岛与海南郡间鸣梁海峡",
-            "chronicleFrom": "city_jindo",
+            "routeVia": [
+                {
+                    "name": "康津",
+                    "lat": 34.64,
+                    "lng": 126.77
+                }
+            ],
+            "chronicleFrom": "city_suncheon_k",
             "targetLat": 34.568,
             "targetLng": 126.303,
             "myTroops": 15000,
@@ -48735,6 +52709,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "古今岛",
                     "lat": 34.42,
                     "lng": 126.85
+                },
+                {
+                    "name": "兴阳",
+                    "lat": 34.61,
+                    "lng": 127.28
                 }
             ],
             "chronicleFrom": "city_jindo",
@@ -48779,9 +52758,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "美浓国不破郡关原盆地",
             "routeVia": [
                 {
-                    "name": "清洲赤坂",
-                    "lat": 35.39,
-                    "lng": 136.58
+                    "name": "骏府",
+                    "lat": 34.98,
+                    "lng": 138.38
+                },
+                {
+                    "name": "冈崎",
+                    "lat": 34.96,
+                    "lng": 137.16
+                },
+                {
+                    "name": "清洲",
+                    "lat": 35.21,
+                    "lng": 136.84
                 }
             ],
             "chronicleFrom": "city_edo",
@@ -48831,9 +52820,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "河内茶臼山天王寺",
-                    "lat": 34.65,
-                    "lng": 135.52
+                    "name": "枚方",
+                    "lat": 34.81,
+                    "lng": 135.65
                 }
             ],
             "chronicleFrom": "city_kyoto",
@@ -48879,24 +52868,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "辽东浑河畔萨尔浒山与阿布达里冈",
             "routeVia": [
                 {
-                    "name": "抚顺关",
-                    "lat": 41.88,
-                    "lng": 124.08
-                },
-                {
-                    "name": "萨尔浒吉林崖",
-                    "lat": 41.89,
-                    "lng": 124.24
-                },
-                {
-                    "name": "尚间崖",
-                    "lat": 42.02,
-                    "lng": 124.3
-                },
-                {
-                    "name": "富察阿布达里冈",
-                    "lat": 41.65,
-                    "lng": 124.75
+                    "name": "古勒",
+                    "lat": 41.78,
+                    "lng": 124.68
                 }
             ],
             "chronicleFrom": "city_hetuala",
@@ -48947,7 +52921,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "锦州右屯",
+                    "name": "辽河",
+                    "lat": 41.52,
+                    "lng": 122.75
+                },
+                {
+                    "name": "广宁",
+                    "lat": 41.6,
+                    "lng": 121.77
+                },
+                {
+                    "name": "锦州",
                     "lat": 41.12,
                     "lng": 121.15
                 }
@@ -49001,14 +52985,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "宁远",
-                    "lat": 40.62,
-                    "lng": 120.73
+                    "name": "老哈河",
+                    "lat": 41.8,
+                    "lng": 119.5
                 },
                 {
-                    "name": "山海关蓟州",
-                    "lat": 40.05,
-                    "lng": 117.4
+                    "name": "喜峰口",
+                    "lat": 40.4,
+                    "lng": 118.33
+                },
+                {
+                    "name": "遵化",
+                    "lat": 40.19,
+                    "lng": 117.96
+                },
+                {
+                    "name": "三河",
+                    "lat": 39.98,
+                    "lng": 117.07
                 }
             ],
             "chronicleFrom": "city_shenyang",
@@ -49053,7 +53047,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "辽西走廊锦州南侧松山与乳峰山及笔架山",
             "routeVia": [
                 {
-                    "name": "广宁义州",
+                    "name": "辽河",
+                    "lat": 41.52,
+                    "lng": 122.75
+                },
+                {
+                    "name": "广宁",
+                    "lat": 41.6,
+                    "lng": 121.77
+                },
+                {
+                    "name": "义州",
                     "lat": 41.53,
                     "lng": 121.24
                 }
@@ -49106,24 +53110,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "襄城汝州",
+                    "name": "汝州",
                     "lat": 34.17,
                     "lng": 112.84
                 },
                 {
-                    "name": "陕州灵宝",
-                    "lat": 34.58,
-                    "lng": 110.68
+                    "name": "洛阳",
+                    "lat": 34.62,
+                    "lng": 112.45
                 },
                 {
-                    "name": "潼关",
-                    "lat": 34.54,
-                    "lng": 110.25
-                },
-                {
-                    "name": "西安",
-                    "lat": 34.27,
-                    "lng": 108.93
+                    "name": "陕州",
+                    "lat": 34.72,
+                    "lng": 111.1
                 }
             ],
             "chronicleFrom": "city_nanyang",
@@ -49175,7 +53174,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "太原大同宣府",
+                    "name": "蒲州",
+                    "lat": 34.83,
+                    "lng": 110.3
+                },
+                {
+                    "name": "太原",
+                    "lat": 37.87,
+                    "lng": 112.55
+                },
+                {
+                    "name": "大同",
+                    "lat": 40.08,
+                    "lng": 113.3
+                },
+                {
+                    "name": "宣府",
                     "lat": 40.6,
                     "lng": 115.05
                 },
@@ -49234,14 +53248,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "盛京沈阳",
-                    "lat": 41.8,
-                    "lng": 123.44
+                    "name": "通州",
+                    "lat": 39.91,
+                    "lng": 116.66
                 },
                 {
-                    "name": "宁远连山",
-                    "lat": 40.75,
-                    "lng": 120.85
+                    "name": "蓟州",
+                    "lat": 40.05,
+                    "lng": 117.4
+                },
+                {
+                    "name": "永平",
+                    "lat": 39.89,
+                    "lng": 118.89
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -49292,7 +53311,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "归德泗州",
+                    "name": "归德",
+                    "lat": 34.41,
+                    "lng": 115.66
+                },
+                {
+                    "name": "宿州",
+                    "lat": 33.63,
+                    "lng": 116.98
+                },
+                {
+                    "name": "泗州",
                     "lat": 33.01,
                     "lng": 118.54
                 }
@@ -49391,7 +53420,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "长沙湘潭",
+                    "name": "襄阳",
+                    "lat": 32.01,
+                    "lng": 112.12
+                },
+                {
+                    "name": "岳州",
+                    "lat": 29.37,
+                    "lng": 113.09
+                },
+                {
+                    "name": "长沙",
+                    "lat": 28.19,
+                    "lng": 112.97
+                },
+                {
+                    "name": "湘潭",
                     "lat": 27.83,
                     "lng": 112.94
                 }
@@ -49444,7 +53488,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "厦门金门料罗湾",
+                    "name": "料罗湾",
                     "lat": 24.42,
                     "lng": 118.42
                 },
@@ -49454,7 +53498,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "lng": 119.57
                 }
             ],
-            "chronicleFrom": "city_penghu",
+            "chronicleFrom": "city_zhangzhou",
             "targetLat": 23.002,
             "targetLng": 120.161,
             "myTroops": 15000,
@@ -49495,6 +53539,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "第聂伯河西岸黄水河湾",
+            "routeVia": [
+                {
+                    "name": "米基廷角",
+                    "lat": 47.55,
+                    "lng": 34.4
+                }
+            ],
             "chronicleFrom": "city_zhapoluore",
             "targetLat": 48.625,
             "targetLng": 33.726,
@@ -49535,6 +53586,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "attacker",
             "targetName": "罗斯河畔科尔孙白桦林泥沟",
+            "routeVia": [
+                {
+                    "name": "斯米拉",
+                    "lat": 49.22,
+                    "lng": 31.87
+                }
+            ],
             "chronicleFrom": "city_cherkasy",
             "targetLat": 49.436,
             "targetLng": 31.17,
@@ -49578,9 +53636,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "加利西亚斯特雷帕河渡口兹博里夫",
             "routeVia": [
                 {
-                    "name": "卢布林索卡利",
-                    "lat": 50.48,
-                    "lng": 24.28
+                    "name": "白采尔科维",
+                    "lat": 49.8,
+                    "lng": 30.11
+                },
+                {
+                    "name": "赫梅利尼克",
+                    "lat": 49.56,
+                    "lng": 27.96
+                },
+                {
+                    "name": "兹巴拉日",
+                    "lat": 49.67,
+                    "lng": 25.78
                 }
             ],
             "chronicleFrom": "city_jifu",
@@ -49625,9 +53693,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "沃里尼亚斯特里河与普利亚舍夫卡河湿地",
             "routeVia": [
                 {
-                    "name": "索卡利",
-                    "lat": 50.48,
-                    "lng": 24.28
+                    "name": "奇吉林",
+                    "lat": 49.08,
+                    "lng": 32.66
+                },
+                {
+                    "name": "文尼察",
+                    "lat": 49.23,
+                    "lng": 28.47
+                },
+                {
+                    "name": "兹巴拉日",
+                    "lat": 49.67,
+                    "lng": 25.78
                 }
             ],
             "chronicleFrom": "city_zhapoluore",
@@ -49672,9 +53750,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "匈牙利西部拉巴河畔圣哥达修道院河湾",
             "routeVia": [
                 {
-                    "name": "卡尼扎",
-                    "lat": 46.45,
-                    "lng": 16.99
+                    "name": "肖普朗",
+                    "lat": 47.68,
+                    "lng": 16.59
+                },
+                {
+                    "name": "克尔门德",
+                    "lat": 47.01,
+                    "lng": 16.6
                 }
             ],
             "chronicleFrom": "city_weiyeena",
@@ -49723,6 +53806,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "osman",
                 "after": "bolan"
             },
+            "routeVia": [
+                {
+                    "name": "布恰奇",
+                    "lat": 49.06,
+                    "lng": 25.39
+                },
+                {
+                    "name": "卡缅涅茨",
+                    "lat": 48.68,
+                    "lng": 26.58
+                }
+            ],
             "chronicleFrom": "city_liweifu",
             "targetLat": 48.522,
             "targetLng": 26.498,
@@ -49771,7 +53866,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "图尔恩渡多瑙河",
+                    "name": "奥洛穆茨",
+                    "lat": 49.59,
+                    "lng": 17.25
+                },
+                {
+                    "name": "图尔恩",
                     "lat": 48.33,
                     "lng": 16.05
                 }
@@ -49818,9 +53918,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "南匈牙利莫哈奇西南哈尔沙尼山林原野",
             "routeVia": [
                 {
-                    "name": "奥西耶克",
-                    "lat": 45.56,
-                    "lng": 18.7
+                    "name": "白堡",
+                    "lat": 47.19,
+                    "lng": 18.41
+                },
+                {
+                    "name": "锡盖特瓦尔",
+                    "lat": 46.05,
+                    "lng": 17.8
                 }
             ],
             "chronicleFrom": "city_budapeisi",
@@ -49871,6 +53976,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "巴亚",
+                    "lat": 46.18,
+                    "lng": 18.95
+                },
+                {
                     "name": "彼得罗瓦拉丁",
                     "lat": 45.25,
                     "lng": 19.86
@@ -49917,6 +54027,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "attacker",
             "targetName": "伏伊伏丁那多瑙河与蒂萨河交汇斯兰卡曼高地",
             "routeVia": [
+                {
+                    "name": "巴亚",
+                    "lat": 46.18,
+                    "lng": 18.95
+                },
                 {
                     "name": "彼得罗瓦拉丁",
                     "lat": 45.25,
@@ -49965,6 +54080,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "南匈牙利蒂萨河西岸曾塔渡口浮桥阵地",
             "routeVia": [
                 {
+                    "name": "巴亚",
+                    "lat": 46.18,
+                    "lng": 18.95
+                },
+                {
                     "name": "彼得罗瓦拉丁",
                     "lat": 45.25,
                     "lng": 19.86
@@ -50010,6 +54130,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "鲁塞尼亚省波德盖齐科罗佩茨河谷古堡",
+            "routeVia": [
+                {
+                    "name": "布热扎内",
+                    "lat": 49.45,
+                    "lng": 24.94
+                }
+            ],
             "chronicleFrom": "city_liweifu",
             "targetLat": 49.275,
             "targetLng": 25.134,
@@ -50051,6 +54178,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "阿萨姆布拉马普特拉河古瓦哈提萨莱哈特峡江",
+            "routeVia": [
+                {
+                    "name": "卡利亚博尔",
+                    "lat": 26.54,
+                    "lng": 92.93
+                },
+                {
+                    "name": "特兹普尔",
+                    "lat": 26.63,
+                    "lng": 92.8
+                }
+            ],
             "chronicleFrom": "city_geergang",
             "targetLat": 26.182,
             "targetLng": 91.674,
@@ -50100,9 +54239,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "墨尔根",
+                    "lat": 49.18,
+                    "lng": 125.23
+                },
+                {
                     "name": "瑷珲",
                     "lat": 50.25,
                     "lng": 127.48
+                },
+                {
+                    "name": "呼玛尔",
+                    "lat": 51.72,
+                    "lng": 126.65
                 }
             ],
             "chronicleFrom": "city_bukui",
@@ -50148,9 +54297,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "内蒙古克什克腾旗红山嘴乌兰布通河沼山林",
             "routeVia": [
                 {
+                    "name": "密云",
+                    "lat": 40.38,
+                    "lng": 116.84
+                },
+                {
                     "name": "古北口",
                     "lat": 40.69,
                     "lng": 117.16
+                },
+                {
+                    "name": "滦河",
+                    "lat": 41.45,
+                    "lng": 117.55
                 }
             ],
             "chronicleFrom": "city_beijing",
@@ -50196,9 +54355,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "外蒙古肯特山南麓土拉河上游昭莫多林原",
             "routeVia": [
                 {
+                    "name": "四子部落",
+                    "lat": 41.95,
+                    "lng": 111.45
+                },
+                {
                     "name": "翁金河",
                     "lat": 45.8,
                     "lng": 104.2
+                },
+                {
+                    "name": "推河",
+                    "lat": 46.4,
+                    "lng": 105.8
                 }
             ],
             "chronicleFrom": "city_guihua",
@@ -50250,12 +54419,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "阿克苏",
+                    "lat": 41.17,
+                    "lng": 80.26
+                },
+                {
                     "name": "和阗",
                     "lat": 37.11,
                     "lng": 79.92
                 },
                 {
-                    "name": "昆仑腾格里海纳木错",
+                    "name": "克里雅山口",
+                    "lat": 35.8,
+                    "lng": 81.6
+                },
+                {
+                    "name": "腾格里海",
                     "lat": 30.72,
                     "lng": 90.65
                 }
@@ -50308,19 +54487,24 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "成都打箭炉",
+                    "name": "打箭炉",
                     "lat": 30.05,
                     "lng": 101.96
                 },
                 {
-                    "name": "里塘察木多",
+                    "name": "里塘",
+                    "lat": 29.99,
+                    "lng": 100.27
+                },
+                {
+                    "name": "察木多",
                     "lat": 31.14,
                     "lng": 97.17
                 },
                 {
-                    "name": "墨竹工卡拉萨",
-                    "lat": 29.66,
-                    "lng": 91.12
+                    "name": "拉里",
+                    "lat": 30.68,
+                    "lng": 93.25
                 }
             ],
             "chronicleFrom": "city_chengdu",
@@ -50366,9 +54550,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "青海柴达木盆地乌兰木呼儿荒原大帐",
             "routeVia": [
                 {
-                    "name": "日月山青海湖",
-                    "lat": 36.68,
-                    "lng": 100.85
+                    "name": "丹噶尔",
+                    "lat": 36.69,
+                    "lng": 101.25
+                },
+                {
+                    "name": "青海湖",
+                    "lat": 36.85,
+                    "lng": 100.2
+                },
+                {
+                    "name": "布隆吉尔",
+                    "lat": 36.95,
+                    "lng": 98.1
                 }
             ],
             "chronicleFrom": "city_qingtang",
@@ -50412,6 +54606,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "外蒙古阿尔泰山东麓科布多西境和通泊湖谷",
+            "routeVia": [
+                {
+                    "name": "索果克",
+                    "lat": 48.35,
+                    "lng": 89.65
+                }
+            ],
             "chronicleFrom": "city_kobdo",
             "targetLat": 48.625,
             "targetLng": 88.295,
@@ -50454,6 +54655,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "role": "defender",
             "targetName": "漠北杭爱山南麓鄂尔浑河畔额尔德尼召即光显寺山谷",
             "routeVia": [
+                {
+                    "name": "齐老图河",
+                    "lat": 48.1,
+                    "lng": 98.5
+                },
                 {
                     "name": "塔米尔河",
                     "lat": 47.6,
@@ -50503,12 +54709,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "新疆伊犁昭苏西境苏木拜河畔格登山沼泽大营",
             "routeVia": [
                 {
-                    "name": "巴里坤乌鲁木齐",
-                    "lat": 43.82,
-                    "lng": 87.62
+                    "name": "布尔根",
+                    "lat": 46.09,
+                    "lng": 91.53
                 },
                 {
-                    "name": "博罗塔拉伊犁",
+                    "name": "博罗塔拉",
+                    "lat": 44.88,
+                    "lng": 82.07
+                },
+                {
+                    "name": "固尔札",
                     "lat": 43.92,
                     "lng": 81.32
                 }
@@ -50563,6 +54774,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "阿克苏",
                     "lat": 41.17,
                     "lng": 80.26
+                },
+                {
+                    "name": "巴尔楚克",
+                    "lat": 39.78,
+                    "lng": 78.55
                 }
             ],
             "chronicleFrom": "city_kungang",
@@ -50611,6 +54827,11 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                     "name": "喀布尔",
                     "lat": 34.55,
                     "lng": 69.2
+                },
+                {
+                    "name": "白沙瓦",
+                    "lat": 34.01,
+                    "lng": 71.58
                 },
                 {
                     "name": "拉合尔",
@@ -50667,14 +54888,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "大光仰光",
-                    "lat": 16.8,
-                    "lng": 96.15
+                    "name": "阿瓦",
+                    "lat": 21.85,
+                    "lng": 95.98
                 },
                 {
-                    "name": "丁因",
-                    "lat": 16.77,
-                    "lng": 96.25
+                    "name": "卑谬",
+                    "lat": 18.82,
+                    "lng": 95.22
+                },
+                {
+                    "name": "大光",
+                    "lat": 16.8,
+                    "lng": 96.15
                 }
             ],
             "chronicleFrom": "city_shwebo",
@@ -50724,9 +54950,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "吞武里",
-                    "lat": 13.68,
-                    "lng": 100.53
+                    "name": "罗勇",
+                    "lat": 12.68,
+                    "lng": 101.28
+                },
+                {
+                    "name": "春武里",
+                    "lat": 13.36,
+                    "lng": 100.98
+                },
+                {
+                    "name": "北榄",
+                    "lat": 13.6,
+                    "lng": 100.6
                 }
             ],
             "chronicleFrom": "city_chanthaburi",
@@ -50772,14 +55008,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "缅甸掸邦木邦西南蛮结至小猛育山林隘口",
             "routeVia": [
                 {
-                    "name": "宛顶木邦",
-                    "lat": 22.86,
-                    "lng": 97.75
+                    "name": "宛顶",
+                    "lat": 24.08,
+                    "lng": 98.07
                 },
                 {
-                    "name": "天生桥蛮结",
-                    "lat": 22.4,
-                    "lng": 96.8
+                    "name": "木邦",
+                    "lat": 23.02,
+                    "lng": 97.96
                 }
             ],
             "chronicleFrom": "city_tengyuecheng",
@@ -50830,14 +55066,14 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "腾越野牛坝",
-                    "lat": 25.05,
-                    "lng": 97.6
+                    "name": "盏达",
+                    "lat": 24.7,
+                    "lng": 97.92
                 },
                 {
-                    "name": "新街八莫",
-                    "lat": 24.25,
-                    "lng": 97.23
+                    "name": "铜壁关",
+                    "lat": 24.58,
+                    "lng": 97.62
                 }
             ],
             "chronicleFrom": "city_tengyuecheng",
@@ -50883,27 +55119,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "中亚哈萨克荒原琴吉斯山至巴尔喀什湖畔戈壁",
             "routeVia": [
                 {
-                    "name": "乌拉尔河东岸",
-                    "lat": 50.5,
-                    "lng": 51.8
+                    "name": "乌拉尔斯克",
+                    "lat": 51.23,
+                    "lng": 51.37
                 },
                 {
-                    "name": "奥尔斯克山口",
+                    "name": "奥尔斯克",
                     "lat": 51.2,
                     "lng": 58.56
                 },
                 {
-                    "name": "琴吉斯山巴尔喀什湖",
-                    "lat": 46.22,
-                    "lng": 75.42
-                },
-                {
-                    "name": "伊犁",
-                    "lat": 43.92,
-                    "lng": 81.32
+                    "name": "图尔盖",
+                    "lat": 49.63,
+                    "lng": 63.5
                 }
             ],
-            "chronicleFrom": "city_yingsuochuan",
+            "chronicleFrom": "city_chalijin",
             "targetLat": 46.215,
             "targetLng": 75.42,
             "myTroops": 15000,
@@ -50952,14 +55183,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "成都汶川",
+                    "name": "灌县",
+                    "lat": 31,
+                    "lng": 103.62
+                },
+                {
+                    "name": "汶川",
                     "lat": 31.48,
                     "lng": 103.59
                 },
                 {
-                    "name": "美诺勒乌围",
-                    "lat": 31.65,
-                    "lng": 102.08
+                    "name": "美诺",
+                    "lat": 31.5,
+                    "lng": 102.38
                 }
             ],
             "chronicleFrom": "city_chengdu",
@@ -51011,19 +55247,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "泉州崇武鹿仔港",
+                    "name": "兴化",
+                    "lat": 25.43,
+                    "lng": 119.01
+                },
+                {
+                    "name": "崇武",
+                    "lat": 24.88,
+                    "lng": 118.93
+                },
+                {
+                    "name": "鹿仔港",
                     "lat": 24.05,
                     "lng": 120.43
-                },
-                {
-                    "name": "牛稠山诸罗",
-                    "lat": 23.48,
-                    "lng": 120.45
-                },
-                {
-                    "name": "大里杙集集埔",
-                    "lat": 23.83,
-                    "lng": 120.78
                 }
             ],
             "chronicleFrom": "city_fuzhou",
@@ -51075,12 +55311,17 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "拉萨日喀则",
+                    "name": "日喀则",
                     "lat": 29.27,
                     "lng": 88.88
                 },
                 {
-                    "name": "济咙热索桥",
+                    "name": "定日",
+                    "lat": 28.66,
+                    "lng": 87.12
+                },
+                {
+                    "name": "济咙",
                     "lat": 28.4,
                     "lng": 85.32
                 }
@@ -51226,9 +55467,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "归仁施耐海口",
+                    "name": "芽庄",
+                    "lat": 12.24,
+                    "lng": 109.19
+                },
+                {
+                    "name": "施耐",
                     "lat": 13.77,
                     "lng": 109.24
+                },
+                {
+                    "name": "广义",
+                    "lat": 15.12,
+                    "lng": 108.8
                 }
             ],
             "chronicleFrom": "city_giadinh",
@@ -51278,6 +55529,18 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
                 "before": "dulan_d",
                 "after": "xike"
             },
+            "routeVia": [
+                {
+                    "name": "萨希瓦尔",
+                    "lat": 30.67,
+                    "lng": 73.11
+                },
+                {
+                    "name": "图兰巴",
+                    "lat": 30.53,
+                    "lng": 72.24
+                }
+            ],
             "chronicleFrom": "city_laheer",
             "targetLat": 30.198,
             "targetLng": 71.472,
@@ -51325,22 +55588,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "拉合尔阿托克",
-                    "lat": 33.89,
-                    "lng": 72.24
+                    "name": "古杰兰瓦拉",
+                    "lat": 32.16,
+                    "lng": 74.19
                 },
                 {
-                    "name": "喀布尔河瑙谢拉",
-                    "lat": 34.02,
-                    "lng": 72
+                    "name": "杰赫勒姆",
+                    "lat": 32.93,
+                    "lng": 73.73
                 },
                 {
-                    "name": "白沙瓦",
-                    "lat": 34.01,
-                    "lng": 71.58
+                    "name": "阿托克",
+                    "lat": 33.77,
+                    "lng": 72.36
                 }
             ],
-            "chronicleFrom": "city_atuoke",
+            "chronicleFrom": "city_laheer",
             "targetLat": 34.015,
             "targetLng": 71.998,
             "myTroops": 15000,
@@ -51380,6 +55643,13 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "battleType": "field",
             "role": "defender",
             "targetName": "旁遮普萨特莱杰河南岸索布拉昂半圆形桥头棱堡",
+            "routeVia": [
+                {
+                    "name": "卡苏尔",
+                    "lat": 31.12,
+                    "lng": 74.45
+                }
+            ],
             "chronicleFrom": "city_laheer",
             "targetLat": 31.181,
             "targetLng": 74.856,
@@ -51429,24 +55699,19 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
+                    "name": "湘阴",
+                    "lat": 28.69,
+                    "lng": 112.88
+                },
+                {
                     "name": "岳州",
                     "lat": 29.37,
                     "lng": 113.09
                 },
                 {
-                    "name": "汉阳汉口",
-                    "lat": 30.55,
-                    "lng": 114.27
-                },
-                {
-                    "name": "武昌文昌门",
-                    "lat": 30.55,
-                    "lng": 114.31
-                },
-                {
-                    "name": "九江安庆江宁",
-                    "lat": 32.05,
-                    "lng": 118.77
+                    "name": "蒲圻",
+                    "lat": 29.72,
+                    "lng": 113.88
                 }
             ],
             "chronicleFrom": "city_changsha",
@@ -51491,12 +55756,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "江西九江长江段与鄱阳湖入江咽喉湖口石钟山梅家洲",
             "routeVia": [
                 {
-                    "name": "田家镇",
+                    "name": "彭泽",
                     "lat": 29.9,
-                    "lng": 115.42
+                    "lng": 116.55
                 }
             ],
-            "chronicleFrom": "city_chaisang",
+            "chronicleFrom": "city_wancheng",
             "targetLat": 29.742,
             "targetLng": 116.218,
             "myTroops": 15000,
@@ -51538,9 +55803,9 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "targetName": "安徽庐州肥西巢湖西岸三河镇砖垒浓雾圩田",
             "routeVia": [
                 {
-                    "name": "六安庐州",
-                    "lat": 31.86,
-                    "lng": 117.28
+                    "name": "庐江",
+                    "lat": 31.26,
+                    "lng": 117.29
                 }
             ],
             "chronicleFrom": "city_wancheng",
@@ -51591,7 +55856,12 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "宿松太湖",
+                    "name": "宿松",
+                    "lat": 30.15,
+                    "lng": 116.12
+                },
+                {
+                    "name": "太湖",
                     "lat": 30.45,
                     "lng": 116.3
                 }
@@ -51645,12 +55915,22 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             },
             "routeVia": [
                 {
-                    "name": "芜湖雨花台",
-                    "lat": 31.99,
-                    "lng": 118.78
+                    "name": "铜陵",
+                    "lat": 30.94,
+                    "lng": 117.81
+                },
+                {
+                    "name": "芜湖",
+                    "lat": 31.33,
+                    "lng": 118.38
+                },
+                {
+                    "name": "当涂",
+                    "lat": 31.55,
+                    "lng": 118.49
                 }
             ],
-            "chronicleFrom": "city_wancheng",
+            "chronicleFrom": "city_changsha",
             "targetLat": 32.061,
             "targetLng": 118.818,
             "myTroops": 15000,

@@ -5501,7 +5501,7 @@ export class PlayerQuestSystem {
         const hero = this.deps.hero;
         const q = name.trim();
         if (!q) return { ok: false, reason: '请输入武将名' };
-        if (hero.autoPlan === 'script') return { ok: false, reason: '剧本模式按史实推进，乱斗或百年模式可投奔' };
+        if (hero.autoPlan === 'script') return { ok: false, reason: '剧本模式按史实推进，乱斗或历史模式可投奔' };
         if (hero.getHostLegion()?.getIsInCombat()) return { ok: false, reason: '所随军团正在交战，战后再投奔' };
 
         type Hit = { city: City; generalId: string; generalName: string; exact: boolean; ready: boolean };
