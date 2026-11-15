@@ -88,6 +88,7 @@ for (const s of CHRONICLE_SCRIPT) {
         if (!s.enemyFactionId || !factionName.has(s.enemyFactionId)) errors.push(`${s.eventId} 对手势力 ${s.enemyFactionId} 不在库`);
         if (s.enemyGeneralId && !generals.has(s.enemyGeneralId)) errors.push(`${s.eventId} 对手武将 ${s.enemyGeneralId} 不在库`);
         if (!s.winner) errors.push(`${s.eventId} 缺史载胜方`);
+        if (e['胜方阵营'] && s.winner && e['胜方阵营'] !== s.winner) errors.push(`${s.eventId} 胜方阵营不一致：脚本=${s.winner} vs json=${e['胜方阵营']}`);
         if (isSiege && !s.city) errors.push(`${s.eventId} 攻城战缺被攻据点`);
         for (const c of [s.city?.cityId]) if (c && !cityIds.has(c)) errors.push(`${s.eventId} 据点 ${c} 不在库`);
         for (const f of [s.city?.before, s.city?.after]) if (f && !factionName.has(f)) errors.push(`${s.eventId} 归属势力 ${f} 不在库`);

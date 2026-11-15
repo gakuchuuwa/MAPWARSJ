@@ -280,7 +280,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 for (const sp of this.spawns) {
                     if (sp.f === 1 && !sp.commander) {
                         foundations.push({ x: sp.x, y: sp.y, r: 4, dirt: isSiegeMode ? 0.90 : 0 });
-                    } else if (isSiegeMode && !this.skirmish && sp.f === 0 && !sp.commander) {
+                    } else if (isSiegeMode && !this.isSkirmish() && sp.f === 0 && !sp.commander) {
                         foundations.push({ x: sp.x, y: sp.y, r: 2.2, dirt: 0.84 });
                     }
                 }

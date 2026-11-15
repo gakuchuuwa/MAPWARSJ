@@ -1187,7 +1187,7 @@ export const CHRONICLE_SCRIPT: readonly ChronicleScriptEntry[] = [
     B('evt_2071', '90', 'ming_d_zhudi', 'attacker', 'jianwen', 'attacker', { enemyGeneralId: 'gen_li_jinglong', from: 'city_yangzhou', city: at('city_nanjing', 'jianwen', 'ming_d'), route: [p('瓜洲渡江镇江', 32.21, 119.45)] }),
     // ── 第 91A 棒 ──
     B('evt_2077', '91A', 'ming_d_gen_663', 'attacker', 'dayu_ho', 'attacker', { enemyGeneralId: 'dayu_ho_gen_664', from: 'city_zhennanguan', city: at('city_shenglong', 'dayu_ho', 'ming_d'), route: [p('富良江北岸', 21.15, 105.6), p('多邦城东都昇龙', 21.03, 105.85)] }),
-    B('evt_2079', '91A', 'ming_d_gen_665', 'attacker', 'dada_ming', 'attacker', { enemyGeneralId: 'dada_ming_gen_666', from: 'city_beijing', route: [p('宣府', 40.6, 115.05), p('开平', 42.28, 115.76)] }),
+    B('evt_2079', '91A', 'ming_d_gen_665', 'attacker', 'dada_ming', 'defender', { enemyGeneralId: 'dada_ming_gen_666', from: 'city_beijing', route: [p('宣府', 40.6, 115.05), p('开平', 42.28, 115.76)] }),
     B('evt_2080', '91A', 'ming_d_zhudi', 'attacker', 'dada_ming', 'attacker', { enemyGeneralId: 'dada_ming_gen_666', from: 'city_beijing', route: [p('宣府兴和', 40.91, 114.72), p('胪胸河饮马河', 48.07, 113.52)] }),
     B('evt_2085', '91A', 'ming_d_zhudi', 'attacker', 'oirat_ming', 'attacker', { enemyGeneralId: 'wala_mahamu', from: 'city_beijing', route: [p('宣府兴和', 40.91, 114.72), p('饮马河', 48.07, 113.52)] }),
     B('evt_2093', '91A', 'ming_d_zhudi', 'attacker', 'dada_ming', 'attacker', { enemyGeneralId: 'bfe_alutai', from: 'city_beijing', route: [p('宣府开平', 42.28, 115.76), p('阔滦海呼伦湖', 49.18, 117.95), p('屈裂儿河', 46.85, 120.5)] }),

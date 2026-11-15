@@ -121,3 +121,113 @@ export function deriveDeGroundTiles(
     };
     return out;
 }
+
+const SNOW_TILE_RE = /^(sno|sn2|snf|snd|snr|ic2|ic3|ice)/;
+
+export interface MergeDeGroundOptions {
+    isSiege?: boolean;
+    isSnowGround?: boolean;
+    hasSeasonalDryOverride?: boolean;
+}
+
+/**
+ * 在保留气候主草皮、季节调色与攻城踩土（siegeDirtTile）的前提下，
+ * 接回烘焙图 terrain[] / layer[] 中的真实 DE 副地貌槽位（林底腐殖土、碎石/沙滩、干草与野战泥斑）。
+ */
+export function mergeDeBakedGroundSlots(
+    terrain: ArrayLike<number> | null | undefined,
+    layer: ArrayLike<number> | null | undefined,
+    planned: Partial<Scene13GroundTiles> | undefined,
+    opts?: MergeDeGroundOptions,
+): Partial<Scene13GroundTiles> | null {
+    if (!terrain || terrain.length === 0) return planned ? { ...planned } : null;
+    if (!planned?.grass) return deriveDeGroundTiles(terrain, planned);
+    if (opts?.isSnowGround) return { ...planned };
+
+    const count = new Map<number, number>();
+    for (let i = 0; i < terrain.length; i++) {
+        const t = terrain[i];
+        count.set(t, (count.get(t) ?? 0) + 1);
+    }
+    if (layer && layer.length > 0) {
+        for (let i = 0; i < layer.length; i++) {
+            const l = layer[i];
+            if (l >= 0) count.set(l, (count.get(l) ?? 0) + 1);
+        }
+    }
+
+    const land = [...count.entries()]
+        .filter(([t]) => !isWaterId(t))
+        .sort((a, b) => b[1] - a[1]);
+    if (land.length === 0) return { ...planned };
+
+    const isForest = (t: number) => FOREST_RE.test(terrainName(t));
+    const isDirt = (t: number) =>
+        DIRT_RE.test(terrainName(t))
+        || /^(ds|des)/.test((DE_TERRAIN_MANIFEST as any)[t]?.name_2?.replace(/^g_/, '') ?? '');
+    const isDry = (t: number) => DRY_RE.test(terrainName(t));
+
+    const pickNonSnowTile = (pred: (tid: number) => boolean): string | null => {
+        for (const [t] of land) {
+            if (!pred(t)) continue;
+            const tile = tileFromTerrainId(t);
+            if (tile && !SNOW_TILE_RE.test(tile)) return tile;
+        }
+        return null;
+    };
+
+    const dominantBaseTid = land.find(([t]) => !isForest(t))?.[0] ?? land[0][0];
+    const baseGrass = planned.grass;
+    const isSparseDesertBase = /^(pal|des|qs|pal1|ds5|gravel_default|rck)$/.test(baseGrass);
+    const allowedVariations = new Set(groundVariationFor(baseGrass));
+
+    // forest 槽位：非荒漠/砾石底图时采用烘焙森林地形对应底图（如 113→fo2、71→underbrush_leaves、10→for）
+    const bakedForest = isSparseDesertBase
+        ? null
+        : pickNonSnowTile((t) => {
+            if (!isForest(t)) return false;
+            const tile = tileFromTerrainId(t);
+            return !!tile && tile !== baseGrass;
+        });
+    const resolvedForest = bakedForest ?? planned.forest;
+
+    // sand 槽位：区分高山碎石滩（108 gravel_wet）与普通沙滩（2 bch），保留冰原冰岸（ice_beach）
+    const beachCnt = count.get(2) ?? 0;
+    const gravelBeachCnt = count.get(108) ?? 0;
+    let resolvedSand = planned.sand;
+    if (resolvedSand !== 'ice_beach') {
+        if (gravelBeachCnt > beachCnt && gravelBeachCnt > 0) {
+            resolvedSand = 'gravel_wet';
+        } else if (beachCnt > 0) {
+            resolvedSand = tileFromTerrainId(2) ?? planned.sand ?? 'bch';
+        }
+    }
+
+    // dry 槽位：无季节强制覆盖时，仅接纳同色系变体表认可的非主导干草地形
+    const bakedDry = opts?.hasSeasonalDryOverride
+        ? null
+        : pickNonSnowTile((t) => {
+            if (t === dominantBaseTid || !isDry(t)) return false;
+            const tile = tileFromTerrainId(t);
+            return !!tile && tile !== baseGrass && allowedVariations.has(tile);
+        });
+    const resolvedDry = bakedDry ?? planned.dry;
+
+    // dirt 槽位：攻城保留城郊/官道 siegeDirtTile；野战在色差白名单内接入烘焙泥斑
+    const bakedDirt = opts?.isSiege
+        ? null
+        : pickNonSnowTile((t) => {
+            if (t === dominantBaseTid || !isDirt(t)) return false;
+            const tile = tileFromTerrainId(t);
+            return !!tile && tile !== baseGrass && tile !== resolvedDry && allowedVariations.has(tile);
+        });
+    const resolvedDirt = bakedDirt ?? planned.dirt;
+
+    return {
+        ...planned,
+        forest: resolvedForest,
+        sand: resolvedSand,
+        dry: resolvedDry,
+        dirt: resolvedDirt,
+    };
+}

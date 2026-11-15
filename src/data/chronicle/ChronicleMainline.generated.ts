@@ -44423,7 +44423,7 @@ export const CHRONICLE_MAINLINE: readonly ChronicleMainlineEvent[] = [
             "丘福违背朱棣稳扎稳打诏令，仅率轻骑先行渡过胪胸河追击诈败游骑，不顾诸将劝阻孤军深入。鞑靼铁骑乘势四面合围断绝水源，明军列阵苦战力竭溃败，主帅丘福及随行诸位侯伯尽数阵亡，促成朱棣决意亲征漠北。"
         ],
         "source": "《明史·丘福传》",
-        "winner": "attacker",
+        "winner": "defender",
         "battle": {
             "generalId": "ming_d_gen_665",
             "battleId": "chron:evt_2079",
