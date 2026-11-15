@@ -1,7 +1,7 @@
 /**
  * 战争编年史 · 数据契约（2026-11-12）
  *
- * 上游真源：`docs/战争编年史（纯史实重写）/战争编年史_双段播报总表_2026-11-12.xlsx`
+ * 上游真源：`剧本模式/01_事件与故事/战争事件编年史_全二十四卷_前550至1870年_2526场纯史实引擎全库.json`（由 tools/chronicle/import-mainline.mts 导入）
  * 生成器：`tools/chronicle/import.py`（读 xlsx ＋ 游戏库索引 → 本目录 ChronicleSegmentNN.ts）
  * 校验器：`scratch/_chronicle_verify.mts`
  *

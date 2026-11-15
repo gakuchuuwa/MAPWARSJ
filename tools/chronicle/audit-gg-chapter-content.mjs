@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 主线63章交付的内容审计（格式之外）：纪年与季节、断句残留、战略/战术复读。
  * 跑法：node tools/chronicle/audit-gg-chapter-content.mjs 1 2 3
  */

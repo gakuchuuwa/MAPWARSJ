@@ -31,6 +31,7 @@ import { buildSailLayers } from '../data/NavalSails';
 import { getNavalShipChineseName, getNavalShipDrawScale } from '../types/NavalShipTiers';
 import { audioManager } from '../audio/AudioManager';
 import { NavalFxSprites } from '../map/NavalFxSprites';
+import { FX_CFG } from '../ui/scene13/Scene13ProjectilesAndFx';
 import { SubtitleBanner } from '../ui/SubtitleBanner';
 import { navalHiddenUnitIds } from './navalSceneState';
 import {
@@ -98,6 +99,61 @@ const LABEL_STYLE_TROOPS: UnitLabelStyle = { id: 'troops', font: 'bold 12px Aria
 const PROJECTILE_TYPE: Record<'arrow' | 'cannon' | 'trebuchet' | 'greekfire', 'arrow' | 'cannon' | 'stone' | 'fire'> = {
     arrow: 'arrow', cannon: 'cannon', trebuchet: 'stone', greekfire: 'fire',
 };
+
+interface DeFxSprite {
+    img: HTMLImageElement | null;
+    frames: number;
+    fw: number;
+    fh: number;
+    hx: number;
+    hy: number;
+}
+const DE_FX_KEYS = ['FX_FIRE_SMALL', 'FX_FIRE_MEDIUM', 'FX_FIRE_LARGE', 'FX_EXPLOSION', 'FX_PETARD', 'FX_TREBUCHET_SMOKE'] as const;
+const deFxCache = new Map<string, DeFxSprite>();
+
+function getDeFx(key: string): DeFxSprite | null {
+    const hit = deFxCache.get(key);
+    if (hit) return hit.img && hit.fw > 0 ? hit : null;
+    const cfg = FX_CFG[key];
+    if (!cfg) return null;
+    const entry: DeFxSprite = { img: null, frames: 1, fw: 0, fh: 0, hx: 0, hy: 0 };
+    deFxCache.set(key, entry);
+    const base = `/SUCAI_FX/${cfg.path}/`;
+    fetch(`${base}_meta.json`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((m) => {
+            if (!m) return;
+            entry.frames = m.frames ?? 1;
+            entry.fw = m.box_w ?? 0;
+            entry.fh = m.box_h ?? 0;
+            entry.hx = m.anchor_x ?? 0;
+            entry.hy = m.anchor_y ?? 0;
+        })
+        .catch(() => {});
+    const img = new Image();
+    img.onload = () => { entry.img = img; };
+    img.src = `${base}fly_0.png`;
+    return null;
+}
+
+function drawDeFxFrame(
+    ctx: CanvasRenderingContext2D,
+    key: string,
+    x: number,
+    y: number,
+    progress: number,
+    scale: number,
+    alpha = 1,
+): boolean {
+    const fx = getDeFx(key);
+    if (!fx || !fx.img || !fx.fw) return false;
+    const fr = Math.min(fx.frames - 1, Math.max(0, Math.floor(progress * fx.frames)));
+    ctx.save();
+    if (alpha < 1) ctx.globalAlpha = alpha;
+    ctx.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, x - fx.hx * scale, y - fx.hy * scale, fx.fw * scale, fx.fh * scale);
+    ctx.restore();
+    return true;
+}
 
 export class NavalWarLayer {
     /** 判出胜负时回调（必须在 start 前赋值） */
@@ -203,6 +259,7 @@ export class NavalWarLayer {
         LegionPhalanxDrawer.ensureUnitTypeLoading(init.attacker.shipKey);
         LegionPhalanxDrawer.ensureUnitTypeLoading(init.defender.shipKey);
         NavalFxSprites.preload();
+        for (const k of DE_FX_KEYS) getDeFx(k);
         if (this.canvas) this.canvas.style.display = 'block';
         (window as any).game?.combatUI?.applyScene13Layout?.(true);
         const wind = windName(this.sim.windAng);
@@ -338,7 +395,7 @@ export class NavalWarLayer {
             let land = 0, n = 0;
             for (let i = 0; i <= 15; i++) {
                 for (let j = 0; j <= 8; j++) {
-                    const p = this.worldToRefPx(NAVAL_WORLD_W * (0.08 + 0.84 * i / 15), NAVAL_WORLD_H * (0.1 + 0.8 * j / 8), base);
+                    const p = this.worldToRefPx(NAVAL_WORLD_W * (-0.15 + 1.30 * i / 15), NAVAL_WORLD_H * (-0.15 + 1.30 * j / 8), base);
                     if (!seaAt(p)) land++;
                     n++;
                 }
@@ -346,17 +403,17 @@ export class NavalWarLayer {
             return land / n;
         };
         let best = p0, bestScore = Infinity, bestFrac = 1;
-        const rings = [0, 250, 500, 800, 1150, 1600, 2200];
+        const rings = [0, 300, 600, 1000, 1500, 2200, 3000];
         for (const r of rings) {
             const steps = r === 0 ? 1 : 12;
             for (let k = 0; k < steps; k++) {
                 const a = k * Math.PI * 2 / steps;
                 const cand = L.point(p0.x + Math.cos(a) * r, p0.y + Math.sin(a) * r);
                 const f = landFrac(cand);
-                const score = f + r / 5000;
+                const score = f + r / 12000;
                 if (score < bestScore) { bestScore = score; best = cand; bestFrac = f; }
             }
-            if (bestFrac < 0.04) break;   // 已经是开阔水面，不必再往远找
+            if (bestFrac === 0) break;   // 整屏全海域，不必再往远找
         }
         this.centerPx = best;
         this.centerLL = map.unproject(best, NAVAL_SCENE_ZOOM);
@@ -631,10 +688,10 @@ export class NavalWarLayer {
             const p = poses.get(s.id)!;
             const isFlag = s.role === 'flag' && s.state === 'alive';
             if (isFlag) LegionFlagDrawer.drawPole(ctx, { x: p.x, y: p.y }, mapScale, s.factionId || 'panshu');
-            this.drawShip(ctx, s, p, xf.u);
+            this.drawShip(ctx, s, p, xf.u, mapScale);
             if (isFlag) LegionFlagDrawer.drawFlag(ctx, { x: p.x, y: p.y }, 0, mapScale, Date.now(), s.factionId || 'panshu', year);
         }
-        this.drawFx(ctx, toS, xf.u);
+        this.drawFx(ctx, toS, xf.u, mapScale);
         for (const s of order) this.drawShipBadge(ctx, s, poses.get(s.id)!, mapScale);
         // ③ 风向罗盘（右上，屏幕坐标）
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -715,7 +772,7 @@ export class NavalWarLayer {
         ctx.restore();
     }
 
-    private drawShip(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, u: number): void {
+    private drawShip(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, u: number, mapScale: number): void {
         const sim = this.sim!;
         if (p.x < -400 || p.x > window.innerWidth + 400 || p.y < -400 || p.y > window.innerHeight + 400) return;
         const sinkT = s.state === 'sinking' ? sim.time - s.sinkAt : 0;
@@ -802,7 +859,7 @@ export class NavalWarLayer {
             ctx.fill();
             ctx.restore();
         }
-        if (s.burnT > 0 && s.state !== 'sunk') this.drawFire(ctx, s, p.x + jx, p.y + jy + bob + sinkY, u);
+        if (s.burnT > 0 && s.state !== 'sunk') this.drawFire(ctx, s, p.x + jx, p.y + jy + bob + sinkY, u, p.hs, mapScale);
         if (s.state === 'sinking') this.drawBubbles(ctx, p.x, p.y, sinkT, u);
     }
 
@@ -826,50 +883,17 @@ export class NavalWarLayer {
         ctx.restore();
     }
 
-    private drawFire(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number, u: number): void {
-        const sim = this.sim!;
-        const wx = Math.cos(sim.windAng), wy = Math.sin(sim.windAng);
-        ctx.save();
-        // 顺风浓烟
-        for (let i = 0; i < 7; i++) {
-            const k = (this.wallT * 0.48 + i / 7) % 1;
-            const sx = px + wx * k * 145 * u + Math.sin(i * 3.1 + k * 4) * 11 * u;
-            const sy = py - 34 * u - k * 95 * u + wy * k * 48 * u;
-            const sr = (12 + k * 32) * u;
-            const g = ctx.createRadialGradient(sx, sy, 1, sx, sy, sr);
-            g.addColorStop(0, `rgba(45,42,40,${(0.45 * (1 - k)).toFixed(3)})`);
-            g.addColorStop(1, 'rgba(45,42,40,0)');
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-            ctx.fill();
+    private drawFire(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number, u: number, hs: number, _mapScale: number): void {
+        const fireScale = hs * 1.15;
+        // 纯 DE 原版火焰序列帧（FX_FIRE_SMALL / MEDIUM / LARGE，自带焰心与黑烟）
+        const spots: readonly [string, number, number][] = s.role === 'flag'
+            ? [['FX_FIRE_LARGE', 0, 2], ['FX_FIRE_MEDIUM', -24, 6], ['FX_FIRE_MEDIUM', 24, 0], ['FX_FIRE_SMALL', 8, -10]]
+            : [['FX_FIRE_MEDIUM', 0, 2], ['FX_FIRE_SMALL', -18, 6], ['FX_FIRE_SMALL', 18, 0]];
+        for (let i = 0; i < spots.length; i++) {
+            const [key, dx, dy] = spots[i];
+            const phase = ((this.wallT * 0.55 + s.id * 0.17 + i * 0.29) % 1);
+            drawDeFxFrame(ctx, key, px + dx * u, py + dy * u, phase, fireScale, 0.95);
         }
-        // 分层火舌（外层橙红光晕 + 内层金白焰心，随风倾斜）
-        for (let i = 0; i < 8; i++) {
-            const ph = this.wallT * 7.2 + i * 1.7 + s.id;
-            const ox = Math.sin(i * 2.5 + s.id) * 26 * u;
-            const baseY = py - 12 * u + Math.cos(i * 1.9 + s.id) * 6 * u;
-            const h = (26 + Math.abs(Math.sin(ph)) * 28) * u;
-            const tipX = px + ox + wx * 16 * u + Math.sin(ph * 1.4) * 6 * u;
-            const tipY = baseY - h;
-            const w = (8 + 4 * Math.sin(ph * 1.1)) * u;
-            ctx.fillStyle = i % 2 === 0 ? 'rgba(255,95,20,0.78)' : 'rgba(255,145,30,0.82)';
-            ctx.beginPath();
-            ctx.moveTo(px + ox - w, baseY);
-            ctx.quadraticCurveTo(px + ox - w * 0.4, baseY - h * 0.6, tipX, tipY);
-            ctx.quadraticCurveTo(px + ox + w * 0.6, baseY - h * 0.5, px + ox + w, baseY);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = 'rgba(255,240,150,0.88)';
-            ctx.beginPath();
-            ctx.moveTo(px + ox - w * 0.45, baseY);
-            ctx.quadraticCurveTo(px + ox, baseY - h * 0.45, tipX - wx * 4 * u, baseY - h * 0.65);
-            ctx.quadraticCurveTo(px + ox + w * 0.3, baseY - h * 0.35, px + ox + w * 0.45, baseY);
-            ctx.closePath();
-            ctx.fill();
-        }
-        ctx.restore();
     }
 
     private drawBubbles(ctx: CanvasRenderingContext2D, px: number, py: number, t: number, u: number): void {
@@ -896,82 +920,52 @@ export class NavalWarLayer {
         ctx.restore();
     }
 
-    private drawFx(ctx: CanvasRenderingContext2D, toS: (x: number, y: number) => { x: number; y: number }, u: number): void {
+    private drawFx(ctx: CanvasRenderingContext2D, toS: (x: number, y: number) => { x: number; y: number }, u: number, mapScale: number): void {
+        const fxScale = HULL_BASE * mapScale * 0.36;
         for (const f of this.fx) {
             const { x: px, y: py } = toS(f.x, f.y);
             switch (f.k) {
                 case 'spark': {
+                    // 与 Scene13Render 一致的细亮火星轨迹 + 飞溅木屑
                     const k = f.t / 0.8;
                     const fade = 1 - k;
                     ctx.save();
-                    // 命中闪光
-                    if (k < 0.35) {
-                        const fk = 1 - k / 0.35;
-                        const g = ctx.createRadialGradient(px, py - 14 * u, 1, px, py - 14 * u, 28 * u);
-                        g.addColorStop(0, `rgba(255,245,190,${(0.9 * fk).toFixed(3)})`);
-                        g.addColorStop(1, 'rgba(255,160,50,0)');
-                        ctx.fillStyle = g;
-                        ctx.beginPath();
-                        ctx.arc(px, py - 14 * u, 28 * u, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    // 飞溅火星 + 木屑碎片
+                    ctx.lineCap = 'round';
                     const count = f.wood ? 8 : 6;
                     for (let i = 0; i < count; i++) {
                         const a = i * (Math.PI * 2 / count) + f.x * 0.13;
-                        const r = k * (24 + (i % 3) * 12) * u;
+                        const spd = 28 + (i % 3) * 14;
+                        const r = k * spd * u;
                         const sx = px + Math.cos(a) * r;
-                        const sy = py - 12 * u + Math.sin(a) * r * 0.65 - Math.sin(k * Math.PI) * 24 * u;
-                        ctx.save();
-                        ctx.translate(sx, sy);
-                        ctx.rotate(a + k * 5);
+                        const sy = py - 12 * u + Math.sin(a) * r * 0.65 - Math.sin(k * Math.PI) * 20 * u;
                         if (f.wood && i % 2 === 0) {
-                            ctx.fillStyle = `rgba(148,100,52,${fade.toFixed(3)})`;
-                            ctx.fillRect(-4 * u, -1.4 * u, 8 * u, 2.8 * u);
+                            ctx.save();
+                            ctx.translate(sx, sy);
+                            ctx.rotate(a + k * 5);
+                            ctx.fillStyle = `rgba(138,94,48,${fade.toFixed(3)})`;
+                            ctx.fillRect(-3.5 * u, -1.2 * u, 7 * u, 2.4 * u);
+                            ctx.restore();
                         } else {
-                            ctx.fillStyle = `rgba(255,210,105,${fade.toFixed(3)})`;
+                            ctx.strokeStyle = `rgba(255,175,30,${(fade * 0.9).toFixed(3)})`;
+                            ctx.lineWidth = Math.max(1.2, 2.2 * u * fade);
                             ctx.beginPath();
-                            ctx.arc(0, 0, 2.6 * u, 0, Math.PI * 2);
+                            ctx.moveTo(sx, sy);
+                            ctx.lineTo(sx - Math.cos(a) * 6 * u, sy - Math.sin(a) * 4 * u);
+                            ctx.stroke();
+                            ctx.fillStyle = `rgba(255,255,255,${fade.toFixed(3)})`;
+                            ctx.beginPath();
+                            ctx.arc(sx, sy, 1.4 * u * fade, 0, Math.PI * 2);
                             ctx.fill();
                         }
-                        ctx.restore();
                     }
                     ctx.restore();
                     break;
                 }
                 case 'splash': {
+                    // DE 原版落水水花精灵
                     const life = f.big ? 1.15 : 0.75;
-                    const k = f.t / life;
-                    const fade = 1 - k;
-                    const maxR = (f.big ? 58 : 26) * u;
-                    ctx.save();
-                    // 战略海面水花波纹圈（双圈扩散）
-                    ctx.strokeStyle = `rgba(232,248,255,${(0.75 * fade).toFixed(3)})`;
-                    ctx.lineWidth = Math.max(1.2, (f.big ? 3.2 : 2.0) * u * fade);
-                    ctx.beginPath();
-                    ctx.ellipse(px, py, (10 + k * maxR), (4 + k * maxR * 0.42), 0, 0, Math.PI * 2);
-                    ctx.stroke();
-                    if (k > 0.15) {
-                        const k2 = (k - 0.15) / 0.85;
-                        ctx.strokeStyle = `rgba(165,222,238,${(0.5 * (1 - k2)).toFixed(3)})`;
-                        ctx.lineWidth = Math.max(1, 1.8 * u * (1 - k2));
-                        ctx.beginPath();
-                        ctx.ellipse(px, py, (6 + k2 * maxR * 0.7), (2.5 + k2 * maxR * 0.28), 0, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                    // 溅起水珠
-                    const drops = f.big ? 9 : 5;
-                    for (let i = 0; i < drops; i++) {
-                        const a = i * (Math.PI * 2 / drops) + f.y * 0.17;
-                        const r = k * maxR * 0.65;
-                        const dx = px + Math.cos(a) * r;
-                        const dy = py + Math.sin(a) * r * 0.4 - Math.sin(k * Math.PI) * (f.big ? 28 : 14) * u;
-                        ctx.fillStyle = `rgba(238,250,255,${(0.85 * fade).toFixed(3)})`;
-                        ctx.beginPath();
-                        ctx.arc(dx, dy, (f.big ? 2.8 : 1.8) * u * (1 - k * 0.4), 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    ctx.restore();
+                    const k = Math.min(1, f.t / life);
+                    NavalFxSprites.draw(ctx, 'WATER_SPLASH', px, py, k, mapScale * (f.big ? 1.35 : 0.9));
                     break;
                 }
                 case 'greekfire': {
@@ -980,68 +974,37 @@ export class NavalWarLayer {
                     const k = Math.min(1, f.t / total);
                     const head = Math.min(1, f.t / f.dur);
                     const tail = Math.max(0, (f.t - 0.12) / f.dur);
-                    ctx.save();
-                    for (let i = 0; i < 8; i++) {
-                        const s = tail + (head - tail) * (i / 7);
-                        const fx = px + (end.x - px) * s + Math.sin(this.wallT * 24 + i * 2.1) * 5 * u;
-                        const fy = py - 14 * u + (end.y - py) * s - Math.sin(s * Math.PI) * 14 * u;
-                        const r = (5 + Math.sin(i * 0.9 + k * 6) * 3.5) * u * (1 - k * 0.35);
-                        const g = ctx.createRadialGradient(fx, fy, 0.5, fx, fy, Math.max(2, r * 1.8));
-                        g.addColorStop(0, `rgba(255,245,165,${(0.92 * (1 - k * 0.5)).toFixed(3)})`);
-                        g.addColorStop(0.5, `rgba(255,115,25,${(0.75 * (1 - k * 0.5)).toFixed(3)})`);
-                        g.addColorStop(1, 'rgba(255,60,0,0)');
-                        ctx.fillStyle = g;
-                        ctx.beginPath();
-                        ctx.arc(fx, fy, Math.max(2, r * 1.8), 0, Math.PI * 2);
-                        ctx.fill();
+                    for (let i = 0; i < 4; i++) {
+                        const s = tail + (head - tail) * (i / 3);
+                        const fx = px + (end.x - px) * s;
+                        const fy = py - 10 * u + (end.y - py) * s - Math.sin(s * Math.PI) * 12 * u;
+                        drawDeFxFrame(ctx, 'FX_FIRE_SMALL', fx, fy, (k * 1.4 + i * 0.2) % 1, fxScale * 0.75, 1 - k * 0.45);
                     }
-                    ctx.restore();
                     break;
                 }
                 case 'boom': {
                     const life = f.big ? 2.2 : 1.0;
-                    const k = f.t / life;
+                    const k = Math.min(1, f.t / life);
                     const fade = 1 - k;
-                    const R = (f.big ? 115 : 52) * u;
+                    // 与 Scene13 一致的 DE 爆炸 / 烟尘精灵 + 飞溅碎木
+                    if (k < 0.55) {
+                        const ek = k / 0.55;
+                        const key = f.big ? 'FX_PETARD' : 'FX_EXPLOSION';
+                        drawDeFxFrame(ctx, key, px, py - 8 * u, ek, fxScale * (f.big ? 1.15 : 0.78), 0.95);
+                    }
+                    drawDeFxFrame(ctx, 'FX_TREBUCHET_SMOKE', px, py - 12 * u - k * 24 * u, k, fxScale * (f.big ? 1.25 : 0.8), fade * 0.85);
                     ctx.save();
-                    // 海面冲击波环
-                    ctx.strokeStyle = `rgba(230,248,255,${(0.6 * fade).toFixed(3)})`;
-                    ctx.lineWidth = Math.max(1.5, 3.2 * u * fade);
-                    ctx.beginPath();
-                    ctx.ellipse(px, py + 4 * u, R * (0.4 + k * 1.15), R * (0.18 + k * 0.48), 0, 0, Math.PI * 2);
-                    ctx.stroke();
-                    // 爆炸火球渐变
-                    const fr = R * (0.3 + k * 0.75);
-                    const fg = ctx.createRadialGradient(px, py - 18 * u, 2, px, py - 18 * u, fr);
-                    fg.addColorStop(0, `rgba(255,250,200,${(0.95 * fade).toFixed(3)})`);
-                    fg.addColorStop(0.45, `rgba(255,145,40,${(0.8 * fade).toFixed(3)})`);
-                    fg.addColorStop(1, 'rgba(200,55,10,0)');
-                    ctx.fillStyle = fg;
-                    ctx.beginPath();
-                    ctx.arc(px, py - 18 * u, fr, 0, Math.PI * 2);
-                    ctx.fill();
-                    // 翻腾黑烟
-                    const sr = R * (0.42 + k * 0.95);
-                    const sy = py - 34 * u - k * 58 * u;
-                    const sg = ctx.createRadialGradient(px, sy, 2, px, sy, sr);
-                    sg.addColorStop(0, `rgba(55,48,44,${(0.68 * fade).toFixed(3)})`);
-                    sg.addColorStop(1, 'rgba(55,48,44,0)');
-                    ctx.fillStyle = sg;
-                    ctx.beginPath();
-                    ctx.arc(px, sy, sr, 0, Math.PI * 2);
-                    ctx.fill();
-                    // 飞溅木片与火星
-                    const pieces = f.big ? 14 : 8;
+                    const pieces = f.big ? 10 : 6;
                     for (let i = 0; i < pieces; i++) {
                         const a = i * (Math.PI * 2 / pieces) + f.y * 0.11;
-                        const r = k * R * 1.5;
+                        const r = k * (f.big ? 110 : 52) * u * 1.25;
                         const sx = px + Math.cos(a) * r;
-                        const sy2 = py - 14 * u + Math.sin(a) * r * 0.58 - Math.sin(k * Math.PI) * (f.big ? 62 : 38) * u;
+                        const sy2 = py - 14 * u + Math.sin(a) * r * 0.58 - Math.sin(k * Math.PI) * (f.big ? 56 : 32) * u;
                         ctx.save();
                         ctx.translate(sx, sy2);
                         ctx.rotate(a + k * 6);
-                        ctx.fillStyle = i % 3 === 0 ? `rgba(255,205,95,${fade.toFixed(3)})` : `rgba(115,74,38,${fade.toFixed(3)})`;
-                        ctx.fillRect(-3.5 * u, -1.6 * u, 7 * u, 3.2 * u);
+                        ctx.fillStyle = `rgba(115,74,38,${fade.toFixed(3)})`;
+                        ctx.fillRect(-3.5 * u, -1.5 * u, 7 * u, 3 * u);
                         ctx.restore();
                     }
                     ctx.restore();

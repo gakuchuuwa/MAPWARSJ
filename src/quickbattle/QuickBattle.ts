@@ -75,14 +75,14 @@ type PanelKind = 'random' | BattleKind | 'naval';
  * 名字只作地点说明，不是剧本：随机抽一处开打。
  */
 const QUICK_NAVAL_SPOTS: { label: string; lat: number; lng: number }[] = [
-    { label: '萨罗尼克湾海面', lat: 37.75, lng: 23.45 },
-    { label: '伊奥尼亚海面', lat: 38.6, lng: 20.2 },
-    { label: '关门海峡外海', lat: 33.85, lng: 130.5 },
-    { label: '朝鲜海峡海面', lat: 34.3, lng: 128.9 },
-    { label: '台湾海峡海面', lat: 23.9, lng: 119.0 },
-    { label: '第勒尼安海面', lat: 40.0, lng: 12.5 },
-    { label: '黎凡特外海', lat: 34.0, lng: 34.0 },
-    { label: '北海海面', lat: 55.5, lng: 3.5 },
+    { label: '爱奥尼亚深海', lat: 36.2, lng: 18.5 },
+    { label: '西地中海海面', lat: 38.5, lng: 5.5 },
+    { label: '东海开阔海面', lat: 29.5, lng: 125.5 },
+    { label: '南海开阔海面', lat: 15.5, lng: 114.5 },
+    { label: '北海中部海面', lat: 56.2, lng: 3.2 },
+    { label: '比斯开湾外海', lat: 45.5, lng: -5.0 },
+    { label: '阿拉伯海面', lat: 16.0, lng: 64.0 },
+    { label: '日本海中部海面', lat: 39.0, lng: 134.5 },
 ];
 type PanelMode = 'classic' | 'random';
 type ClassicKindFilter = 'all' | FirstBattleKind;
