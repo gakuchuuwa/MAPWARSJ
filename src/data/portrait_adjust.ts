@@ -4679,7 +4679,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/SPARTANS/gen_leonidas.png": {
             "scale": 1.17,
-            "offsetX": 7,
+            "offsetX": 16,
             "offsetY": -2
         },
         "/assets/SLAVIC/lagusa_delagan.png": {
@@ -11318,7 +11318,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/GREECE/aqimeinide_megabates.png": {
-            "scale": 1.2,
+            "scale": 1.18,
             "offsetX": 13,
             "offsetY": 1
         },
@@ -11336,6 +11336,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/GREECE/aiaoniya_dionysius.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/PERSIAN/bfe2_mardonius.png": {
+            "scale": 1.02,
+            "offsetX": 11,
+            "offsetY": 10
+        },
+        "/assets/PERSIAN/bfe2_xerxes_i.png": {
+            "scale": 1.18,
+            "offsetX": 22,
+            "offsetY": 4
         }
     },
     "folderGuides": {

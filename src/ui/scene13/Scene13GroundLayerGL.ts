@@ -172,14 +172,15 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
-// ── REA 逆向：DE overlay_mask + blendomatic 1 格斜坡齿状咬合算子 ──
-// 当 s<=0 或 s>=1 时色块内部 100% 纯净，仅在 1 格宽交界斜坡带 (0 < s < 1)
-// 用原版 512px masks/*.png 按优先级的阈值切分，还原草叶/落叶锯齿咬合、杜绝软喷枪雾化。
+// ── 地面多材质交界平滑渐变算子（平滑渐变为主 + 轻度蒙版肌理过渡，消除生硬切边与512格线） ──
 float deBlendMask(float s, float maskVal, float feather) {
   if (s <= 0.001) return 0.0;
   if (s >= 0.999) return 1.0;
-  float thresh = mix(feather, 1.0 - feather, maskVal);
-  return smoothstep(thresh - feather, thresh + feather, s);
+  float softS = smoothstep(0.0, 1.0, s);
+  float f = max(0.34, feather);
+  float thresh = mix(f, 1.0 - f, maskVal);
+  float masked = smoothstep(thresh - f, thresh + f, softS);
+  return mix(softS, masked, 0.30);
 }
 
 void main() {
@@ -232,20 +233,19 @@ void main() {
   float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3) + uNoiseOff * 0.73);
   float terrainPatch = tn1 * 0.50 + tn2 * 0.32 + tn3 * 0.18;
   
-  // 2. 副地表二层泥斑与城基/官道（以 ~0.42 格连续域扭曲化开格线，按 DE 优先级由草叶蒙版 maskGrass 吃进泥地）
-  //    绝不使用镜像折线（防贯穿全图的直角折线）；删除全图泛灰褐的 wildDirt 雾化层，保底草块纯净度。
+  // 2. 副地表二层泥斑与城基/官道（宽幅连续势场 + 域扭曲平滑渐变过渡）
   vec2 dirtWarp = vec2(n1 * 0.42 + n2 * 0.16, n2 * 0.38 - n1 * 0.14) / uMapSize;
   vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.005, 0.995);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
-  float sDirtAmt = smoothstep(0.18, 0.48, dirtFieldVal);
-  float grassOverDirt = deBlendMask(1.0 - sDirtAmt, maskGrass, 0.095);
-  float dirtPeak = mix(0.84, 0.96, smoothstep(0.54, 0.78, dirtFieldVal));
+  float sDirtAmt = smoothstep(0.06, 0.72, dirtFieldVal);
+  float grassOverDirt = deBlendMask(1.0 - sDirtAmt, maskGrass, 0.36);
+  float dirtPeak = mix(0.72, 0.92, smoothstep(0.45, 0.85, dirtFieldVal));
   float dirtMix = (1.0 - grassOverDirt) * dirtPeak;
   
-  // 3. 副地表一层咬合（1 格紧致过渡 + masks/grass 齿状切分：色块干净、边界呈草叶咬合）
-  float sDryAmt = smoothstep(0.12, 0.28, terrainPatch + uSeasonDryBias * 0.42);
-  float dryEdge = deBlendMask(sDryAmt, maskDry, 0.10);
-  float dryMix  = clamp(dryEdge * 0.90 + max(0.0, uSeasonDryBias - 0.18) * 0.28, 0.0, 1.0);
+  // 3. 副地表一层宽幅柔和渐变过渡
+  float sDryAmt = smoothstep(-0.08, 0.44, terrainPatch + uSeasonDryBias * 0.42);
+  float dryEdge = deBlendMask(sDryAmt, maskDry, 0.38);
+  float dryMix  = clamp(dryEdge * 0.88 + max(0.0, uSeasonDryBias - 0.18) * 0.28, 0.0, 1.0);
   
   // 4. 基底主地形与副地表一层咬合 + 全球气候带四季色彩调制（与战略地图 100% 同步）
   vec3 baseLand = mix(colGrass, colDry, dryMix);
@@ -256,17 +256,17 @@ void main() {
   // 5. 混入副地表二层与道路/城基裸土斑块
   vec3 landCol = mix(baseLand, colDirt, dirtMix);
   
-  // 6. 森林底土与落叶垫底（草地侧草叶吃进林边、泥地侧由落叶 maskForest 咬合泥地）
-  float sForestAmt = smoothstep(0.24, 0.62, fPerturb);
-  float forestOverGrass = 1.0 - deBlendMask(1.0 - sForestAmt, maskGrass, 0.10);
-  float forestOverDirt  = deBlendMask(sForestAmt, maskForest, 0.10);
+  // 6. 森林底土与落叶垫底（宽幅平滑渐变过渡）
+  float sForestAmt = smoothstep(0.12, 0.74, fPerturb);
+  float forestOverGrass = 1.0 - deBlendMask(1.0 - sForestAmt, maskGrass, 0.36);
+  float forestOverDirt  = deBlendMask(sForestAmt, maskForest, 0.36);
   float isForest = mix(forestOverGrass, forestOverDirt, dirtMix) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   vec3 forTinted = mix(colForest, colForest * uSeasonTint, 0.45);
   landCol = mix(landCol, forTinted, isForest);
   
-  // 7. 水际沙滩与退潮湿沙带过渡（水岸线保持圆滑；干沙外缘由草叶蒙版 maskGrass 齿状咬合草地）
-  float sSandAmt = smoothstep(0.22, 0.64, isSandRaw);
-  float grassOverSand = deBlendMask(1.0 - sSandAmt, maskGrass, 0.105);
+  // 7. 水际沙滩与退潮湿沙带平滑渐变过渡
+  float sSandAmt = smoothstep(0.08, 0.76, isSandRaw);
+  float grassOverSand = deBlendMask(1.0 - sSandAmt, maskGrass, 0.38);
   float sandBlend = 1.0 - grassOverSand;
   landCol = mix(landCol, colSand, sandBlend);
   // 退潮湿沙带：近水际沙土受潮汐润泽，颜色加深呈润泽暗黄色
@@ -375,9 +375,9 @@ void main() {
     //    现在 aSlope 是**逐角平滑坡势场**（见 cornerSlope），经顶点插值后是连续渐变，再叠低频噪声让坡脚蜿蜒咬合，
     //    与 DE blendomatic 的边缘观感一致：只有平滑过渡，没有整格色块。
     float slopeField = vSlope + n2 * 0.016 + n1 * 0.010;
-    float slopeFromGeom = smoothstep(0.030, 0.150, slopeField);
-    float isSlopeFace = clamp(max(smoothstep(0.02, 0.11, slopeDiff), slopeFromGeom * 0.88), 0.0, 1.0);
-    float slopeEdge = 1.0 - deBlendMask(1.0 - smoothstep(0.16, 0.64, isSlopeFace), maskGrass, 0.12);
+    float slopeFromGeom = smoothstep(0.030, 0.160, slopeField);
+    float isSlopeFace = clamp(max(smoothstep(0.02, 0.12, slopeDiff), slopeFromGeom * 0.88), 0.0, 1.0);
+    float slopeEdge = 1.0 - deBlendMask(1.0 - smoothstep(0.08, 0.76, isSlopeFace), maskGrass, 0.38);
     // 斜坡面自然透出粗粝边坡土石肌理（泥土与旱草碎石交织），使高地四周坡面拥有坚实立体感
     vec3 slopeEarth = mix(colDirt, colDry, 0.35) * (0.95 + microGrain * 0.07);
     landCol = mix(landCol, slopeEarth, slopeEdge * 0.58);
@@ -1069,8 +1069,8 @@ export class Scene13GroundLayerGL {
 
     const sw = blurGrid2D(blurGrid2D(rawWater, N), N);
     const sb = blurGrid2D(blurGrid2D(rawBeach, N), N);
-    const sf = blurGrid2D(rawForest, N);
-    const sd = blurBevel1Tile(rawDirt, N);
+    const sf = blurGrid2D(blurGrid2D(rawForest, N), N);
+    const sd = blurGrid2D(blurGrid2D(rawDirt, N), N);
     this.smoothWater = sw;
     this.smoothForest = sf;
 
@@ -1644,7 +1644,7 @@ export class Scene13GroundLayerGL {
     if (!c || !px || !this.fieldTex) return;
     const N = this.N;
     const r = radiusCells;
-    const pad = 1.8;
+    const pad = 2.8;
     const x0 = Math.max(0, Math.floor(c.gx - r - pad)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + pad));
     const y0 = Math.max(0, Math.floor(c.gy - r - pad)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + pad));
     for (let y = y0; y <= y1; y++) {
@@ -1652,7 +1652,7 @@ export class Scene13GroundLayerGL {
         const i = y * N + x;
         if (preserveWater && (this.smoothWater[i] >= 0.20 || this.moatCells.has(i))) continue;
         const d = Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy);
-        const t = Math.min(1, Math.max(0, (d - (r - 1)) / 1.5));   // 内圈 0（全清）→ 外缘 1（原样）
+        const t = Math.min(1, Math.max(0, (d - (r - 1.2)) / 2.4));   // 内圈 0（全清）→ 外缘 1（原样）
         if (t < 1) {
           if (!preserveWater) {
             this.smoothWater[i] *= t;
@@ -1663,7 +1663,7 @@ export class Scene13GroundLayerGL {
           px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
         }
         if (trampleStrength > 0 && !this.moatCells.has(i) && this.smoothWater[i] < 0.20) {
-          const td = Math.min(1, Math.max(0, (d - Math.max(0.35, r - 0.85)) / 1.85));
+          const td = Math.min(1, Math.max(0, (d - Math.max(0.25, r - 1.15)) / 2.85));
           if (td < 1) {
             const smoothT = td * td * (3 - 2 * td);
             const dirtByte = Math.round((1 - smoothT) * trampleStrength * 255);
