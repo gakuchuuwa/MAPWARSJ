@@ -159,6 +159,10 @@ export interface WarMan {
     panicTurnT?: number;
     /** 玩家按官职局部释放【混】时的单兵混乱剩余秒数（武将全军【混】仍走阵营级 skillPanicTimer） */
     playerPanicTimer?: number;
+    /** 法术单位单体施法引起的轻量混乱标记（吃较低的易伤倍率，避免与全军混战计混用） */
+    casterPanic?: boolean;
+    /** 英雄法师施法挂上的招降阵营：混乱无血时不死，转为该阵营并满血 */
+    casterConvertF?: 0 | 1;
     /** 【胜】固己防：10秒真实涨血后的生命上限（用于真实涨血封顶与头顶血槽分母） */
     skillMaxHp?: number;
     /** 【胜】固己防：10秒内每秒真实增加的生命值 */

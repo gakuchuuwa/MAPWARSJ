@@ -1471,8 +1471,8 @@ export class Army implements IBattleUnit {
         return newArmy;
     }
 
-    /** 解散：兵力已并入出发城，军团以非战死方式渐隐（无尸体、无覆没播报） */
-    public disband(): void {
+    /** 解散：兵力已并入出发城，军团以非战死方式退出（无尸体、无覆没播报）；silent 为 true 时直接收起不渐隐（入城归建 / 离屏） */
+    public disband(opts?: { silent?: boolean }): void {
         this.wasDisbanded = true;
         this.isDestroyed = true;
         this.isExternalCombat = false;
@@ -1495,7 +1495,11 @@ export class Army implements IBattleUnit {
             this.label = null;
         }
         if (this.renderer) {
-            this.renderer.beginDespawnFade();
+            if (opts?.silent) {
+                this.renderer.destroy();
+            } else {
+                this.renderer.beginDespawnFade();
+            }
             this.renderer = null;
         }
     }

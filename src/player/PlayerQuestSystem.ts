@@ -62,8 +62,6 @@ import { marchTimeRecorder } from '../debug/MarchTimeRecorder';
 
 /** 编年史随行军团「途经据点」判定半径（度，约 9 km；与环游经过据点同口径） */
 const ROUTE_CLAIM_RADIUS_DEG = 0.08;
-/** 🔴 [2026-11-14 主人定] 编年史换人后旧军团班师：一直在画面里时最多走这么久（毫秒）也解散 */
-const CHRONICLE_DEPART_TIMEOUT_MS = 15000;
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
@@ -3234,14 +3232,14 @@ export class PlayerQuestSystem {
     } | null = null;
     /** 编年史会面对话已在此据点弹出（等接任务／告辞）：寻将逻辑不再重复下「前往」，否则对话每拍重建、倒计时永远归零 */
     private chronicleMeetCityId: string | null = null;
-    /** 🔴 [2026-11-14 主人定] 编年史换人后正在班师的旧军团（军团 id → 开拔时刻 ms） */
-    private chronicleDeparting = new Map<string, number>();
+    /** 编年史换人后正在班师的旧军团 id 集合 */
+    private chronicleDeparting = new Set<string>();
 
     /**
-     * 🔴 [2026-11-14 主人定「走出屏幕解散」] 换人后旧军团班师：
-     *   编年史期间 AI 行为树不跑（AIController 剧本期闸），原先设 isRetreatingHome 交给 AI 回城没人执行，军团钉在原地。
-     *   改为这里直接下行军令朝出发据点走，途中免战（不被 ZOC 拉去攻城、不野战、不扣兵、行为树不接管）；
-     *   走出画面即解散（兵力并回出发据点，同势力才并），一直在画面里则走满 CHRONICLE_DEPART_TIMEOUT_MS 或到达也解散。
+     * 换人后旧军团班师：
+     *   编年史期间 AI 行为树不跑（AIController 剧本期闸），这里直接下行军令朝出发据点走，
+     *   途中免战（不被 ZOC 拉去攻城、不野战、不扣兵、行为树不接管）；
+     *   走出画面或抵达出发据点入城时直接收起解散（不渐隐），兵力并回出发据点（同势力才并）。
      */
     private departChronicleHost(host: Army): void {
         host.clearPostBattleRest();
@@ -3253,23 +3251,31 @@ export class PlayerQuestSystem {
         const fromId = roadRegistry.getNearestCityId(pos.lat, pos.lng)
             ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 5.0)
             ?? undefined;
-        if (homeId && homeId !== fromId) this.deps.legionManager.moveLegionToCity(host, homeId, fromId);
+        let marched = false;
+        if (homeId && homeId !== fromId) {
+            marched = this.deps.legionManager.moveLegionToCity(host, homeId, fromId);
+        }
+        if (!marched && homeId) {
+            const home = this.deps.cityManager.getCity(homeId);
+            if (home && Math.hypot(pos.lat - home.latitude, pos.lng - home.longitude) > 0.02) {
+                host.moveAlongPath([{ lat: home.latitude, lng: home.longitude }]);
+            }
+        }
         host.setTargetCity(null);   // 只走路：到了不触发攻城
-        this.chronicleDeparting.set(host.id, performance.now());
-        gameLog('expedition', `[编年史] ${host.name} 班师，朝出发据点开拔（走出画面即解散）`);
+        this.chronicleDeparting.add(host.id);
+        gameLog('expedition', `[编年史] ${host.name} 班师，朝出发据点开拔（入城或出屏解散）`);
     }
 
     private tickChronicleDeparting(): void {
         if (!this.chronicleDeparting.size) return;
-        const now = performance.now();
-        for (const [id, t0] of this.chronicleDeparting) {
+        for (const id of this.chronicleDeparting) {
             const a = this.deps.legionManager.getLegionById(id);
             if (!a || a.isDestroyed) {
                 this.chronicleDeparting.delete(id);
                 continue;
             }
             const onScreen = this.deps.isOnScreen?.(a.getPosition()) ?? false;
-            if (onScreen && !a.isIdle() && now - t0 < CHRONICLE_DEPART_TIMEOUT_MS) continue;
+            if (onScreen && !a.isIdle()) continue;
             this.chronicleDeparting.delete(id);
             const homeId = a.homeCityId ?? a.getSourceCityId?.() ?? null;
             const home = homeId ? this.deps.cityManager.getCity(homeId) : undefined;
@@ -3279,7 +3285,7 @@ export class PlayerQuestSystem {
                 }, { skipCaptureLog: true });
             }
             a.isRetreatingHome = false;
-            a.disband();
+            a.disband({ silent: !onScreen });
             gameLog('expedition', `[编年史] ${a.name} 班师解散${home ? `（出发据点【${home.name}】）` : ''}`);
         }
     }
