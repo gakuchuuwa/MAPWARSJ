@@ -1,0 +1,6742 @@
+[
+  {
+    "seq": 341,
+    "eventId": "evt_0792",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "成皋",
+        "lat": 34.81,
+        "lng": 113.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「河南尹荥阳汴水原野」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；资治通鉴·汉纪五十二"
+  },
+  {
+    "seq": 342,
+    "eventId": "evt_0793",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "广成泽",
+        "lat": 34.3,
+        "lng": 112.68
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「河南尹梁县阳人聚」，行军方向与史料一致",
+    "source": "三国志·吴书·孙破虏传；后汉书·董卓列传"
+  },
+  {
+    "seq": 343,
+    "eventId": "evt_0794",
+    "status": "ok",
+    "fixedFromName": "北京",
+    "fixedFromCityId": "city_beijing",
+    "fixedRoute": [
+      {
+        "name": "河间",
+        "lat": 38.44,
+        "lng": 116.09
+      },
+      {
+        "name": "武垣",
+        "lat": 38.28,
+        "lng": 116.05
+      },
+      {
+        "name": "信都",
+        "lat": 37.55,
+        "lng": 115.57
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「北京」出师进趋「巨鹿郡广宗南界桥清河岸」，行军方向与史料一致",
+    "source": "三国志·魏书·袁绍传；后汉书·公孙瓒列传"
+  },
+  {
+    "seq": 344,
+    "eventId": "evt_0795",
+    "status": "ok",
+    "fixedFromName": "函谷关",
+    "fixedFromCityId": "city_hanguguan",
+    "fixedRoute": [
+      {
+        "name": "华阴",
+        "lat": 34.57,
+        "lng": 110.09
+      },
+      {
+        "name": "郑县",
+        "lat": 34.5,
+        "lng": 109.77
+      },
+      {
+        "name": "霸陵",
+        "lat": 34.28,
+        "lng": 109.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「函谷关」出师进趋「京师长安城垣与平朔门」，行军方向与史料一致",
+    "source": "三国志·魏书·董卓传；后汉书·王允列传"
+  },
+  {
+    "seq": 345,
+    "eventId": "evt_0796",
+    "status": "ok",
+    "fixedFromName": "濮阳",
+    "fixedFromCityId": "city_puyang",
+    "fixedRoute": [
+      {
+        "name": "范县",
+        "lat": 35.88,
+        "lng": 115.52
+      },
+      {
+        "name": "东阿",
+        "lat": 36.15,
+        "lng": 116.12
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「濮阳」出师进趋「东平寿张至济北原野」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；魏书注引"
+  },
+  {
+    "seq": 346,
+    "eventId": "evt_0797",
+    "status": "fixed",
+    "fixedFromName": "东平",
+    "fixedFromCityId": "city_dongping",
+    "fixedRoute": [
+      {
+        "name": "鄄城",
+        "lat": 35.56,
+        "lng": 115.51
+      },
+      {
+        "name": "白马",
+        "lat": 35.53,
+        "lng": 114.68
+      }
+    ],
+    "reason": "同将连战，承接上一场「东平寿张至济北原野」终点，将出发据点由「许昌」修正为上一场终点对应据点「东平」，途经点按续行方向衔接至「陈留封丘至匡亭原野」",
+    "source": "三国志·魏书·武帝纪；资治通鉴·汉纪五十二"
+  },
+  {
+    "seq": 347,
+    "eventId": "evt_0799",
+    "status": "fixed",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "白马",
+        "lat": 35.56,
+        "lng": 114.65
+      }
+    ],
+    "reason": "同将连战，曹操承接上一场陈留封丘至匡亭终点，修正出发据点为开封，北渡白马津直趋东郡濮阳迎战吕布，消除原从下邳经彭城重走造成的5.68倍折返",
+    "source": "三国志·魏书·吕布传；三国志·魏书·武帝纪"
+  },
+  {
+    "seq": 348,
+    "eventId": "evt_0800",
+    "status": "fixed",
+    "fixedFromName": "濮阳",
+    "fixedFromCityId": "city_puyang",
+    "fixedRoute": [
+      {
+        "name": "鄄城",
+        "lat": 35.56,
+        "lng": 115.51
+      },
+      {
+        "name": "乘氏",
+        "lat": 35.24,
+        "lng": 115.48
+      }
+    ],
+    "reason": "同将连战，承接上一场「东郡濮阳城内外」终点，将出发据点由「许昌」修正为上一场终点对应据点「濮阳」，途经点按续行方向衔接至「济阴定陶与巨野城郊」",
+    "source": "三国志·魏书·武帝纪；资治通鉴·汉纪五十三"
+  },
+  {
+    "seq": 349,
+    "eventId": "evt_0801",
+    "status": "ok",
+    "fixedFromName": "寿春",
+    "fixedFromCityId": "city_shouxian",
+    "fixedRoute": [
+      {
+        "name": "阜陵",
+        "lat": 31.95,
+        "lng": 118.02
+      },
+      {
+        "name": "横江",
+        "lat": 31.65,
+        "lng": 118.48
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「寿春」出师进趋「历阳牛渚矶至丹阳曲阿」，行军方向与史料一致",
+    "source": "三国志·吴书·孙破虏讨逆传；资治通鉴·汉纪五十三"
+  },
+  {
+    "seq": 350,
+    "eventId": "evt_0804",
+    "status": "ok",
+    "fixedFromName": "宛城",
+    "fixedFromCityId": "city_nanyang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「宛城」迎战，无城外途经点，衔接正常",
+    "source": "三国志·魏书·武帝纪；三国志·魏书·典韦传"
+  },
+  {
+    "seq": 351,
+    "eventId": "evt_0806",
+    "status": "fixed",
+    "fixedFromName": "宛城",
+    "fixedFromCityId": "city_nanyang",
+    "fixedRoute": [
+      {
+        "name": "睢阳",
+        "lat": 34.41,
+        "lng": 115.66
+      },
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      }
+    ],
+    "reason": "同将连战，承接上一场「南阳郡宛城淯水大营」终点，将出发据点由「许昌」修正为上一场终点对应据点「宛城」，途经点按续行方向衔接至「下邳国治下邳城泗沂交汇处」",
+    "source": "三国志·魏书·吕布传；三国志·魏书·郭嘉传"
+  },
+  {
+    "seq": 352,
+    "eventId": "evt_0807",
+    "status": "ok",
+    "fixedFromName": "范阳",
+    "fixedFromCityId": "city_fanyang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「范阳」迎战，无城外途经点，衔接正常",
+    "source": "三国志·魏书·公孙瓒传；后汉书·公孙瓒列传"
+  },
+  {
+    "seq": 353,
+    "eventId": "evt_0808",
+    "status": "ok",
+    "fixedFromName": "潜山",
+    "fixedFromCityId": "city_qianshan",
+    "fixedRoute": [
+      {
+        "name": "寻阳",
+        "lat": 29.73,
+        "lng": 115.98
+      },
+      {
+        "name": "樊口",
+        "lat": 30.4,
+        "lng": 114.88
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「潜山」出师进趋「江夏郡沙羡长江水寨」，行军方向与史料一致",
+    "source": "三国志·吴书·孙破虏讨逆传；吴录"
+  },
+  {
+    "seq": 354,
+    "eventId": "evt_0809",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "韦城",
+        "lat": 35.36,
+        "lng": 114.52
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「开封」出师进趋「东郡白马城至延津河南岸」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；三国志·蜀书·关羽传"
+  },
+  {
+    "seq": 355,
+    "eventId": "evt_0810",
+    "status": "ok",
+    "fixedFromName": "朝歌",
+    "fixedFromCityId": "city_zhaoge",
+    "fixedRoute": [
+      {
+        "name": "黎阳",
+        "lat": 35.67,
+        "lng": 114.55
+      },
+      {
+        "name": "延津",
+        "lat": 35.15,
+        "lng": 114.2
+      },
+      {
+        "name": "阳武",
+        "lat": 35.05,
+        "lng": 114.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「朝歌」出师进趋「河南尹中牟官渡至酸枣乌巢」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；三国志·魏书·袁绍传"
+  },
+  {
+    "seq": 356,
+    "eventId": "evt_0811",
+    "status": "ok",
+    "fixedFromName": "许昌",
+    "fixedFromCityId": "city_xuchang",
+    "fixedRoute": [
+      {
+        "name": "中牟",
+        "lat": 34.72,
+        "lng": 114.02
+      },
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "白马",
+        "lat": 35.58,
+        "lng": 114.85
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「许昌」出师进趋「东郡平丘仓亭河津」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；三国志·魏书·程昱传"
+  },
+  {
+    "seq": 357,
+    "eventId": "evt_0812",
+    "status": "ok",
+    "fixedFromName": "枣阳",
+    "fixedFromCityId": "city_zaoyang",
+    "fixedRoute": [
+      {
+        "name": "新野",
+        "lat": 32.52,
+        "lng": 112.36
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「枣阳」出师进趋「南阳郡博望坡林隘」，行军方向与史料一致",
+    "source": "三国志·蜀书·先主传；三国志·魏书·李典传"
+  },
+  {
+    "seq": 358,
+    "eventId": "evt_0814",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "黎阳",
+        "lat": 35.67,
+        "lng": 114.55
+      },
+      {
+        "name": "内黄",
+        "lat": 35.95,
+        "lng": 114.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「开封」出师进趋「冀州治所魏郡邺城」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；后汉书·袁绍列传"
+  },
+  {
+    "seq": 359,
+    "eventId": "evt_0815",
+    "status": "fixed",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "清河",
+        "lat": 37.05,
+        "lng": 115.68
+      },
+      {
+        "name": "平原",
+        "lat": 37.16,
+        "lng": 116.43
+      }
+    ],
+    "reason": "同将连战，承接上一场「冀州治所魏郡邺城」终点，将出发据点由「许昌」修正为上一场终点对应据点「安阳」，途经点按续行方向衔接至「勃海郡治南皮城郊」",
+    "source": "三国志·魏书·武帝纪；三国志·魏书·诸夏侯曹传"
+  },
+  {
+    "seq": 360,
+    "eventId": "evt_0816",
+    "status": "fixed",
+    "fixedFromName": "清池",
+    "fixedFromCityId": "city_qingchi",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "涉县",
+        "lat": 36.56,
+        "lng": 113.67
+      }
+    ],
+    "reason": "同将连战，承接上一场「勃海郡治南皮城郊」终点，将出发据点由「许昌」修正为上一场终点对应据点「清池」，途经点按续行方向衔接至「上党郡太行山巅壶关城」",
+    "source": "三国志·魏书·武帝纪；资治通鉴·汉纪五十六"
+  },
+  {
+    "seq": 361,
+    "eventId": "evt_0817",
+    "status": "fixed",
+    "fixedFromName": "长子",
+    "fixedFromCityId": "city_shangdang",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "无终",
+        "lat": 40.04,
+        "lng": 117.4
+      },
+      {
+        "name": "卢龙塞",
+        "lat": 40.42,
+        "lng": 118.35
+      },
+      {
+        "name": "平冈",
+        "lat": 41.05,
+        "lng": 118.85
+      }
+    ],
+    "reason": "同将连战，承接上一场「上党郡太行山巅壶关城」终点，将出发据点由「许昌」修正为上一场终点对应据点「长子」，途经点按续行方向衔接至「辽西柳城西白狼山隘」",
+    "source": "三国志·魏书·张辽传；三国志·魏书·乌丸传"
+  },
+  {
+    "seq": 362,
+    "eventId": "evt_0818",
+    "status": "ok",
+    "fixedFromName": "姑苏",
+    "fixedFromCityId": "city_gusu",
+    "fixedRoute": [
+      {
+        "name": "历阳",
+        "lat": 31.72,
+        "lng": 118.36
+      },
+      {
+        "name": "柴桑",
+        "lat": 29.7,
+        "lng": 115.99
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「姑苏」出师进趋「江夏郡夏口与沔口水寨」，行军方向与史料一致",
+    "source": "三国志·吴书·吴主传；三国志·吴书·甘宁传"
+  },
+  {
+    "seq": 363,
+    "eventId": "evt_0819",
+    "status": "ok",
+    "fixedFromName": "襄阳",
+    "fixedFromCityId": "city_xiangyang",
+    "fixedRoute": [
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      },
+      {
+        "name": "编县",
+        "lat": 31.22,
+        "lng": 112.02
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「襄阳」出师进趋「南郡当阳长坂坡与长坂桥」，行军方向与史料一致",
+    "source": "三国志·蜀书·先主传；三国志·蜀书·张飞赵云传"
+  },
+  {
+    "seq": 364,
+    "eventId": "evt_0820",
+    "status": "fixed",
+    "fixedFromName": "当阳",
+    "fixedFromCityId": "city_dangyang",
+    "fixedRoute": [
+      {
+        "name": "江陵",
+        "lat": 30.35,
+        "lng": 112.18
+      },
+      {
+        "name": "巴丘北津",
+        "lat": 29.92,
+        "lng": 112.95
+      }
+    ],
+    "reason": "同将连战，承接上一场「南郡当阳长坂坡与长坂桥」终点，将出发据点由「许昌」修正为上一场终点对应据点「当阳」，途经点按续行方向衔接至「江夏赤壁与长江北岸乌林水营」",
+    "source": "三国志·吴书·周瑜传；资治通鉴·汉纪五十七"
+  },
+  {
+    "seq": 365,
+    "eventId": "evt_0821",
+    "status": "ok",
+    "fixedFromName": "武昌",
+    "fixedFromCityId": "city_wuchang",
+    "fixedRoute": [
+      {
+        "name": "乌林",
+        "lat": 29.89,
+        "lng": 113.62
+      },
+      {
+        "name": "孱陵",
+        "lat": 29.95,
+        "lng": 112.35
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「武昌」出师进趋「南郡治所江陵城与夷陵」，行军方向与史料一致",
+    "source": "三国志·吴书·周瑜传；三国志·魏书·曹仁传"
+  },
+  {
+    "seq": 366,
+    "eventId": "evt_0822",
+    "status": "ok",
+    "fixedFromName": "许昌",
+    "fixedFromCityId": "city_xuchang",
+    "fixedRoute": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陕县",
+        "lat": 34.77,
+        "lng": 111.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「许昌」出师进趋「弘农潼关与渭水南岸沙原」，行军方向与史料一致",
+    "source": "三国志·魏书·武帝纪；三国志·蜀书·马超传"
+  },
+  {
+    "seq": 367,
+    "eventId": "evt_0823",
+    "status": "ok",
+    "fixedFromName": "剑门关",
+    "fixedFromCityId": "city_jianmenguan",
+    "fixedRoute": [
+      {
+        "name": "梓潼",
+        "lat": 31.64,
+        "lng": 105.16
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「剑门关」出师进趋「广汉白水关至涪城水陆道」，行军方向与史料一致",
+    "source": "三国志·蜀书·先主传；三国志·蜀书·庞统传"
+  },
+  {
+    "seq": 368,
+    "eventId": "evt_0825",
+    "status": "fixed",
+    "fixedFromName": "涪城",
+    "fixedFromCityId": "city_mianyang",
+    "fixedRoute": [
+      {
+        "name": "绵竹",
+        "lat": 31.34,
+        "lng": 104.2
+      }
+    ],
+    "reason": "同将连战，刘备承接上一场广汉涪城终点，将误用战后定都地成都之出发点修正为涪城，南下经绵竹攻克雒城并合围成都，消除起点与终点重合及途经点名称重叠",
+    "source": "三国志·蜀书·先主传；益部耆旧杂记"
+  },
+  {
+    "seq": 369,
+    "eventId": "evt_0826",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "陈仓",
+        "lat": 34.36,
+        "lng": 107.24
+      },
+      {
+        "name": "散关",
+        "lat": 34.18,
+        "lng": 106.85
+      },
+      {
+        "name": "河池",
+        "lat": 33.8,
+        "lng": 106.06
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「汉中郡阳平关横山险寨」，行军方向与史料一致",
+    "source": "三国志·魏书·张鲁传；三国志·魏书·武帝纪"
+  },
+  {
+    "seq": 370,
+    "eventId": "evt_0827",
+    "status": "ok",
+    "fixedFromName": "合肥",
+    "fixedFromCityId": "city_hefei",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「合肥」出师进趋「庐江合肥城外与肥水逍遥津」，行军方向与史料一致",
+    "source": "三国志·魏书·张辽传；三国志·吴书·凌统传"
+  },
+  {
+    "seq": 371,
+    "eventId": "evt_0831",
+    "status": "ok",
+    "fixedFromName": "剑门关",
+    "fixedFromCityId": "city_jianmenguan",
+    "fixedRoute": [
+      {
+        "name": "白水关",
+        "lat": 32.51,
+        "lng": 105.51
+      },
+      {
+        "name": "阳平关",
+        "lat": 33.08,
+        "lng": 106.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「剑门关」出师进趋「汉中郡沔阳南定军山」，行军方向与史料一致",
+    "source": "三国志·蜀书·黄忠传；三国志·魏书·夏侯渊传"
+  },
+  {
+    "seq": 372,
+    "eventId": "evt_0832",
+    "status": "ok",
+    "fixedFromName": "江陵",
+    "fixedFromCityId": "city_ying",
+    "fixedRoute": [
+      {
+        "name": "当阳",
+        "lat": 30.82,
+        "lng": 111.79
+      },
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「江陵」出师进趋「襄阳樊城汉水至南郡江陵」，行军方向与史料一致",
+    "source": "三国志·蜀书·关羽传；三国志·吴书·吕蒙传"
+  },
+  {
+    "seq": 373,
+    "eventId": "evt_0834",
+    "status": "fixed",
+    "fixedFromName": "襄阳",
+    "fixedFromCityId": "city_xiangyang",
+    "fixedRoute": [
+      {
+        "name": "筑阳",
+        "lat": 32.35,
+        "lng": 111.66
+      }
+    ],
+    "reason": "换将首战，夏侯尚自襄阳溯汉水经筑阳进讨房陵与上庸，剔除与终点名称重叠之房陵节点",
+    "source": "三国志·蜀书·刘封传；三国志·魏书·夏侯尚传"
+  },
+  {
+    "seq": 374,
+    "eventId": "evt_0836",
+    "status": "ok",
+    "fixedFromName": "江陵",
+    "fixedFromCityId": "city_ying",
+    "fixedRoute": [
+      {
+        "name": "枝江",
+        "lat": 30.42,
+        "lng": 111.76
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「江陵」出师进趋「宜都夷陵至猇亭绵延山谷」，行军方向与史料一致",
+    "source": "三国志·吴书·陆逊传；资治通鉴·魏纪一"
+  },
+  {
+    "seq": 375,
+    "eventId": "evt_0837",
+    "status": "ok",
+    "fixedFromName": "宛城",
+    "fixedFromCityId": "city_nanyang",
+    "fixedRoute": [
+      {
+        "name": "襄阳",
+        "lat": 32.01,
+        "lng": 112.12
+      },
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「宛城」出师进趋「南郡江陵中洲与濡须口洞口」，行军方向与史料一致",
+    "source": "三国志·吴书·朱然朱桓传；三国志·魏书·文帝纪"
+  },
+  {
+    "seq": 376,
+    "eventId": "evt_0839",
+    "status": "fixed",
+    "fixedFromName": "成都",
+    "fixedFromCityId": "city_chengdu",
+    "fixedRoute": [
+      {
+        "name": "武阳",
+        "lat": 30.18,
+        "lng": 103.85
+      },
+      {
+        "name": "安上",
+        "lat": 28.85,
+        "lng": 104.25
+      }
+    ],
+    "reason": "换将首战，诸葛亮自成都南征经武阳、安上渡泸水进抵卑水与滇池盘江，剔除与终点名称重叠之卑水节点",
+    "source": "三国志·蜀书·诸葛亮传；汉晋春秋"
+  },
+  {
+    "seq": 377,
+    "eventId": "evt_0840",
+    "status": "ok",
+    "fixedFromName": "襄阳",
+    "fixedFromCityId": "city_xiangyang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「襄阳」迎战，无城外途经点，衔接正常",
+    "source": "三国志·魏书·文聘传；晋书·宣帝纪"
+  },
+  {
+    "seq": 378,
+    "eventId": "evt_0841",
+    "status": "fixed",
+    "fixedFromName": "襄阳",
+    "fixedFromCityId": "city_xiangyang",
+    "fixedRoute": [
+      {
+        "name": "邓县",
+        "lat": 32.15,
+        "lng": 112.08
+      },
+      {
+        "name": "均口",
+        "lat": 32.55,
+        "lng": 110.85
+      }
+    ],
+    "reason": "同将连战，承接上一场「江夏石阳城与襄阳外围」终点，将出发据点由「宛城」修正为上一场终点对应据点「襄阳」，途经点按续行方向衔接至「上庸新城郡治房陵西城」",
+    "source": "晋书·宣帝纪；三国志·魏书·明帝纪"
+  },
+  {
+    "seq": 379,
+    "eventId": "evt_0842",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "郿县",
+        "lat": 34.27,
+        "lng": 107.75
+      },
+      {
+        "name": "汧县",
+        "lat": 34.67,
+        "lng": 106.87
+      },
+      {
+        "name": "陇坻",
+        "lat": 34.88,
+        "lng": 106.55
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「天水略阳街亭山与右扶风陈仓」，行军方向与史料一致",
+    "source": "三国志·蜀书·诸葛亮传；三国志·蜀书·马谡传"
+  },
+  {
+    "seq": 380,
+    "eventId": "evt_0843",
+    "status": "ok",
+    "fixedFromName": "武昌",
+    "fixedFromCityId": "city_wuchang",
+    "fixedRoute": [
+      {
+        "name": "寻阳",
+        "lat": 29.73,
+        "lng": 115.98
+      },
+      {
+        "name": "皖口",
+        "lat": 30.51,
+        "lng": 117.03
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「武昌」出师进趋「庐江郡皖城北石亭夹道」，行军方向与史料一致",
+    "source": "三国志·吴书·陆逊周鲂传；三国志·魏书·贾逵传"
+  },
+  {
+    "seq": 381,
+    "eventId": "evt_0844",
+    "status": "ok",
+    "fixedFromName": "南郑",
+    "fixedFromCityId": "city_hanzhong",
+    "fixedRoute": [
+      {
+        "name": "阳平关",
+        "lat": 33.09,
+        "lng": 106.15
+      },
+      {
+        "name": "下辨",
+        "lat": 33.74,
+        "lng": 105.65
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「南郑」出师进趋「武都郡沮水至建威山原」，行军方向与史料一致",
+    "source": "三国志·蜀书·诸葛亮传；资治通鉴·魏纪三"
+  },
+  {
+    "seq": 382,
+    "eventId": "evt_0845",
+    "status": "ok",
+    "fixedFromName": "南郑",
+    "fixedFromCityId": "city_hanzhong",
+    "fixedRoute": [
+      {
+        "name": "阳平关",
+        "lat": 33.09,
+        "lng": 106.15
+      },
+      {
+        "name": "武都",
+        "lat": 33.43,
+        "lng": 105.14
+      },
+      {
+        "name": "临洮",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「南郑」出师进趋「陇西南安阳溪河谷」，行军方向与史料一致",
+    "source": "三国志·蜀书·魏延传；资治通鉴·魏纪三"
+  },
+  {
+    "seq": 383,
+    "eventId": "evt_0846",
+    "status": "fixed",
+    "fixedFromName": "南郑",
+    "fixedFromCityId": "city_hanzhong",
+    "fixedRoute": [
+      {
+        "name": "阳平关",
+        "lat": 33.08,
+        "lng": 106.28
+      },
+      {
+        "name": "建威",
+        "lat": 33.68,
+        "lng": 105.45
+      }
+    ],
+    "reason": "换将首战，诸葛亮自汉中南郑出阳平关、建威进围祁山卤城，剔除距终点过近之祁山节点",
+    "source": "三国志·蜀书·诸葛亮传；汉晋春秋；魏略"
+  },
+  {
+    "seq": 384,
+    "eventId": "evt_0848",
+    "status": "ok",
+    "fixedFromName": "马城",
+    "fixedFromCityId": "city_macheng",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「马城」迎战，无城外途经点，衔接正常",
+    "source": "三国志·魏书·田豫传；三国志·魏书·鲜卑传"
+  },
+  {
+    "seq": 385,
+    "eventId": "evt_0850",
+    "status": "ok",
+    "fixedFromName": "北京",
+    "fixedFromCityId": "city_beijing",
+    "fixedRoute": [
+      {
+        "name": "无终",
+        "lat": 39.95,
+        "lng": 117.4
+      },
+      {
+        "name": "孤竹",
+        "lat": 39.89,
+        "lng": 118.89
+      },
+      {
+        "name": "徒河",
+        "lat": 41.12,
+        "lng": 121.14
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「北京」出师进趋「辽东郡辽隧辽水西岸」，行军方向与史料一致",
+    "source": "三国志·魏书·公孙度传附公孙渊传；三国志·魏书·毌丘俭传"
+  },
+  {
+    "seq": 386,
+    "eventId": "evt_0852",
+    "status": "fixed",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.32,
+        "lng": 114.42
+      },
+      {
+        "name": "蓟城",
+        "lat": 39.9,
+        "lng": 116.41
+      },
+      {
+        "name": "孤竹",
+        "lat": 39.93,
+        "lng": 118.88
+      }
+    ],
+    "reason": "换将首战，司马懿自洛阳经邺城、蓟城、孤竹东出辽东进逼辽隧与襄平，剔除与终点名称重叠之辽隧节点",
+    "source": "晋书·宣帝纪；三国志·魏书·公孙渊传"
+  },
+  {
+    "seq": 387,
+    "eventId": "evt_0855",
+    "status": "fixed",
+    "fixedFromName": "襄平",
+    "fixedFromCityId": "city_liaoyang",
+    "fixedRoute": [
+      {
+        "name": "许昌",
+        "lat": 34.02,
+        "lng": 113.85
+      },
+      {
+        "name": "汝阴",
+        "lat": 32.9,
+        "lng": 115.81
+      }
+    ],
+    "reason": "同将连战，承接上一场「辽东辽隧至都城襄平」终点，将出发据点由「洛阳」修正为上一场终点对应据点「襄平」，途经点按续行方向衔接至「淮南芍陂堤坝与荆北樊城」",
+    "source": "三国志·魏书·王凌传；晋书·宣帝纪；三国志·吴书·吴主传"
+  },
+  {
+    "seq": 388,
+    "eventId": "evt_0856",
+    "status": "ok",
+    "fixedFromName": "国内城",
+    "fixedFromCityId": "city_guoneicheng",
+    "fixedRoute": [
+      {
+        "name": "泊灼城",
+        "lat": 40.38,
+        "lng": 124.75
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「国内城」出师进趋「辽东郡鸭绿江口西安平城」，行军方向与史料一致",
+    "source": "三国志·魏书·高句丽传；三国史记·高句丽本纪"
+  },
+  {
+    "seq": 389,
+    "eventId": "evt_0858",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "郿县",
+        "lat": 34.27,
+        "lng": 107.75
+      },
+      {
+        "name": "傥谷",
+        "lat": 33.82,
+        "lng": 107.68
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「洋县北秦岭骆谷口兴势山」，行军方向与史料一致",
+    "source": "三国志·蜀书·王平费祎传；三国志·魏书·曹爽传"
+  },
+  {
+    "seq": 390,
+    "eventId": "evt_0859",
+    "status": "ok",
+    "fixedFromName": "襄平",
+    "fixedFromCityId": "city_liaoyang",
+    "fixedRoute": [
+      {
+        "name": "玄菟",
+        "lat": 41.82,
+        "lng": 123.55
+      },
+      {
+        "name": "高显",
+        "lat": 41.65,
+        "lng": 124.5
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「襄平」出师进趋「浑江沸流水至鸭绿江梁口」，行军方向与史料一致",
+    "source": "三国志·魏书·毌丘俭传；三国史记·高句丽本纪"
+  },
+  {
+    "seq": 391,
+    "eventId": "evt_0860",
+    "status": "fixed",
+    "fixedFromName": "浑江",
+    "fixedFromCityId": "city_tongjiajiang",
+    "fixedRoute": [
+      {
+        "name": "沸流谷",
+        "lat": 41.22,
+        "lng": 125.78
+      }
+    ],
+    "reason": "同将连战，承接上一场「浑江沸流水至鸭绿江梁口」终点，将出发据点由「襄平」修正为上一场终点对应据点「浑江」，途经点按续行方向衔接至「高句丽王都丸都山城至沃沮东海」",
+    "source": "三国志·魏书·毌丘俭传；集安毌丘俭纪功碑"
+  },
+  {
+    "seq": 392,
+    "eventId": "evt_0861",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "陈仓",
+        "lat": 34.36,
+        "lng": 107.24
+      },
+      {
+        "name": "天水",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "狄道",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「陇西郡枹罕与洮西为翅」，行军方向与史料一致",
+    "source": "三国志·蜀书·姜维传；三国志·魏书·郭淮传"
+  },
+  {
+    "seq": 393,
+    "eventId": "evt_0863",
+    "status": "ok",
+    "fixedFromName": "天水",
+    "fixedFromCityId": "city_tianshui",
+    "fixedRoute": [
+      {
+        "name": "豲道",
+        "lat": 34.8,
+        "lng": 104.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「天水」出师进趋「陇西郡洮水曲城与牛头山」，行军方向与史料一致",
+    "source": "三国志·魏书·陈泰邓艾传；资治通鉴·魏纪七"
+  },
+  {
+    "seq": 394,
+    "eventId": "evt_0854",
+    "status": "ok",
+    "fixedFromName": "巴格达",
+    "fixedFromCityId": "city_bageda",
+    "fixedRoute": [
+      {
+        "name": "萨迈拉",
+        "lat": 34.21,
+        "lng": 43.88
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「巴格达」出师进趋「美索不达米亚荒漠都城哈特拉」，行军方向与史料一致",
+    "source": "科隆摩尼写本；塔巴里·历代先知与帝王史"
+  },
+  {
+    "seq": 395,
+    "eventId": "evt_0857",
+    "status": "fixed",
+    "fixedFromName": "哈特拉",
+    "fixedFromCityId": "city_hatra",
+    "fixedRoute": [
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      },
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      }
+    ],
+    "reason": "同将连战，承接上一场「美索不达米亚荒漠都城哈特拉」终点，将出发据点由「大不里士」修正为上一场终点对应据点「哈特拉」，途经点按续行方向衔接至「美索不达米亚哈布尔河源雷萨伊纳」",
+    "source": "奥古斯都史·三戈尔迪安传；阿米阿努斯·历史·第二十三卷"
+  },
+  {
+    "seq": 396,
+    "eventId": "evt_0875",
+    "status": "fixed",
+    "fixedFromName": "雷萨伊纳",
+    "fixedFromCityId": "city_resaina",
+    "fixedRoute": [],
+    "reason": "同将连战，沙普尔一世承接上一场哈布尔河源雷萨伊纳终点，修正出发据点为雷萨伊纳，直接西进卡莱与埃德萨之间荒原合围瓦勒良，剔除东折辛加拉、尼西比斯造成的4.09倍折返",
+    "source": "沙普尔一世琐罗亚斯德克尔白三语铭文；佐西姆斯·新史"
+  },
+  {
+    "seq": 397,
+    "eventId": "evt_0876",
+    "status": "fixed",
+    "fixedFromName": "埃德萨",
+    "fixedFromCityId": "city_aidesa",
+    "fixedRoute": [],
+    "reason": "同将连战，沙普尔一世承接上一场埃德萨荒原终点，修正出发据点为埃德萨，直接南下幼发拉底河中游渡津，剔除北折马拉蒂亚、萨莫萨塔造成的3.07倍折返",
+    "source": "奥古斯都史·三十僭主传；佐纳拉斯·历史撮要"
+  },
+  {
+    "seq": 398,
+    "eventId": "evt_0881",
+    "status": "ok",
+    "fixedFromName": "雅典",
+    "fixedFromCityId": "city_yadian",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「雅典」迎战，无城外途经点，衔接正常",
+    "source": "德克西普斯·西徐亚战记残篇；奥古斯都史·加里恩努斯传"
+  },
+  {
+    "seq": 399,
+    "eventId": "evt_0882",
+    "status": "ok",
+    "fixedFromName": "米兰",
+    "fixedFromCityId": "city_milan",
+    "fixedRoute": [
+      {
+        "name": "布里克西亚",
+        "lat": 45.54,
+        "lng": 10.21
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「米兰」出师进趋「北意大利加尔达湖西岸山地」，行军方向与史料一致",
+    "source": "奥雷利乌斯·维克托·论诸恺撒；罗马历史概要"
+  },
+  {
+    "seq": 400,
+    "eventId": "evt_0883",
+    "status": "fixed",
+    "fixedFromName": "维罗纳",
+    "fixedFromCityId": "city_verona",
+    "fixedRoute": [
+      {
+        "name": "阿奎莱亚",
+        "lat": 45.77,
+        "lng": 13.37
+      },
+      {
+        "name": "西尔米乌姆",
+        "lat": 44.97,
+        "lng": 19.61
+      }
+    ],
+    "reason": "同将连战，承接上一场「北意大利加尔达湖西岸山地」终点，将出发据点由「罗马」修正为上一场终点对应据点「维罗纳」，途经点按续行方向衔接至「上莫伊西亚摩拉瓦河谷奈苏斯」",
+    "source": "佐西姆斯·新史·第一卷；奥古斯都史·神圣克劳狄传"
+  },
+  {
+    "seq": 401,
+    "eventId": "evt_0885",
+    "status": "fixed",
+    "fixedFromName": "尼什",
+    "fixedFromCityId": "city_nis",
+    "fixedRoute": [
+      {
+        "name": "阿奎莱亚",
+        "lat": 45.77,
+        "lng": 13.37
+      },
+      {
+        "name": "博诺尼亚",
+        "lat": 44.49,
+        "lng": 11.34
+      },
+      {
+        "name": "普拉森提亚",
+        "lat": 45.05,
+        "lng": 9.69
+      }
+    ],
+    "reason": "同将连战，奥勒良承接上一场奈苏斯终点，修正出发据点为尼什，西返意大利经阿奎莱亚、博诺尼亚、普拉森提亚至法诺与帕维亚，剔除与终点名称重叠之法诺节点",
+    "source": "佐西姆斯·新史·第一卷；德克西普斯残篇"
+  },
+  {
+    "seq": 402,
+    "eventId": "evt_0886",
+    "status": "fixed",
+    "fixedFromName": "米兰",
+    "fixedFromCityId": "city_milan",
+    "fixedRoute": [
+      {
+        "name": "西尔米乌姆",
+        "lat": 44.97,
+        "lng": 19.61
+      },
+      {
+        "name": "拜占庭",
+        "lat": 41.01,
+        "lng": 28.97
+      },
+      {
+        "name": "安基拉",
+        "lat": 39.94,
+        "lng": 32.86
+      },
+      {
+        "name": "塔尔苏斯",
+        "lat": 36.92,
+        "lng": 34.9
+      }
+    ],
+    "reason": "同将连战，奥勒良承接上一场北意大利帕维亚终点，修正出发据点为米兰，补齐经巴尔干西尔米乌姆、拜占庭渡海峡并经安基拉、塔尔苏斯进抵安条克与埃梅萨之东征全线，消除首段超2000公里跨跳与终点重名节点",
+    "source": "佐西姆斯·新史·第一卷；奥古斯都史·神圣奥勒良传"
+  },
+  {
+    "seq": 403,
+    "eventId": "evt_0888",
+    "status": "fixed",
+    "fixedFromName": "埃梅萨",
+    "fixedFromCityId": "city_emesa",
+    "fixedRoute": [
+      {
+        "name": "大马士革",
+        "lat": 33.51,
+        "lng": 36.29
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "佩卢西姆",
+        "lat": 31.04,
+        "lng": 32.54
+      }
+    ],
+    "reason": "同将连战，奥勒良承接上一场埃梅萨原野终点，修正出发据点为埃梅萨，平定帕尔米拉后南下经大马士革、加沙、佩卢西姆进平埃及亚历山大港，剔除与终点重名之帕尔米拉及北折安条克节点",
+    "source": "佐西姆斯·新史·第一卷；奥古斯都史·奥勒良传"
+  },
+  {
+    "seq": 404,
+    "eventId": "evt_0889",
+    "status": "fixed",
+    "fixedFromName": "亚历山大",
+    "fixedFromCityId": "city_yalishanda",
+    "fixedRoute": [
+      {
+        "name": "雅典",
+        "lat": 37.98,
+        "lng": 23.72
+      },
+      {
+        "name": "罗马",
+        "lat": 41.9,
+        "lng": 12.5
+      },
+      {
+        "name": "米兰",
+        "lat": 45.46,
+        "lng": 9.19
+      },
+      {
+        "name": "奥古斯托杜努姆",
+        "lat": 46.95,
+        "lng": 4.3
+      }
+    ],
+    "reason": "同将连战，奥勒良承接上一场埃及亚历山大港终点，修正出发据点为亚历山大，补齐西返经雅典、罗马、米兰越阿尔卑斯山入高卢奥古斯托杜努姆至沙隆平原之完整路线，消除首段2797公里跨跳",
+    "source": "欧特罗皮乌斯·罗马史纲·第九卷；奥雷利乌斯·维克托·论诸恺撒"
+  },
+  {
+    "seq": 405,
+    "eventId": "evt_0891",
+    "status": "ok",
+    "fixedFromName": "里昂",
+    "fixedFromCityId": "city_lyon",
+    "fixedRoute": [
+      {
+        "name": "卢克索维乌姆",
+        "lat": 47.82,
+        "lng": 6.38
+      },
+      {
+        "name": "梅蒂奥马特里奇",
+        "lat": 49.12,
+        "lng": 6.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「里昂」出师进趋「高卢摩泽尔河与内卡河谷」，行军方向与史料一致",
+    "source": "奥古斯都史·普罗布斯传；佐西姆斯·新史·第一卷"
+  },
+  {
+    "seq": 406,
+    "eventId": "evt_0892",
+    "status": "fixed",
+    "fixedFromName": "特里尔",
+    "fixedFromCityId": "city_teerier",
+    "fixedRoute": [
+      {
+        "name": "内卡津",
+        "lat": 49.15,
+        "lng": 9.22
+      },
+      {
+        "name": "奥古斯塔",
+        "lat": 48.37,
+        "lng": 10.6
+      }
+    ],
+    "reason": "同将连战，承接上一场「高卢摩泽尔河与内卡河谷」终点，将出发据点由「里昂」修正为上一场终点对应据点「特里尔」，途经点按续行方向衔接至「雷蒂亚行省莱希河两岸」",
+    "source": "佐西姆斯·新史·第一卷"
+  },
+  {
+    "seq": 407,
+    "eventId": "evt_0884",
+    "status": "fixed",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "泾阳",
+        "lat": 34.53,
+        "lng": 108.84
+      }
+    ],
+    "reason": "换将首战，胡烈自长安经泾阳北驰高平川万斛堆迎击秃发树机能，剔除与终点名称重叠之高平节点",
+    "source": "晋书·武帝纪；晋书·秃发乌孤载记；资治通鉴·晋纪一"
+  },
+  {
+    "seq": 408,
+    "eventId": "evt_0890",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "天水",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "狄道",
+        "lat": 35.37,
+        "lng": 103.86
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「金城与武威塞外草滩」，行军方向与史料一致",
+    "source": "晋书·武帝纪；晋书·宣五王传附扶风王骏传"
+  },
+  {
+    "seq": 409,
+    "eventId": "evt_0893",
+    "status": "fixed",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "长安",
+        "lat": 34.27,
+        "lng": 108.93
+      },
+      {
+        "name": "勇士城",
+        "lat": 35.88,
+        "lng": 104.22
+      }
+    ],
+    "reason": "换将首战，马隆自洛阳西进经长安、勇士城渡温水进平武威姑臧，剔除与终点名称重叠之温水节点",
+    "source": "晋书·马隆传；资治通鉴·晋纪二"
+  },
+  {
+    "seq": 410,
+    "eventId": "evt_0894",
+    "status": "fixed",
+    "fixedFromName": "成都",
+    "fixedFromCityId": "city_chengdu",
+    "fixedRoute": [
+      {
+        "name": "白帝",
+        "lat": 31.04,
+        "lng": 109.57
+      },
+      {
+        "name": "江陵",
+        "lat": 30.35,
+        "lng": 112.18
+      },
+      {
+        "name": "武昌",
+        "lat": 30.55,
+        "lng": 114.31
+      }
+    ],
+    "reason": "换将首战，王濬自蜀中顺流东下经白帝、江陵、武昌直捣建业，剔除与终点名称重叠之西陵节点",
+    "source": "晋书·王濬杜预传；三国志·吴书·三嗣主传"
+  },
+  {
+    "seq": 411,
+    "eventId": "evt_0907",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "好畤",
+        "lat": 34.52,
+        "lng": 108.22
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「新平郡东南梁山六陌山谷」，行军方向与史料一致",
+    "source": "晋书·周处传；资治通鉴·晋纪四"
+  },
+  {
+    "seq": 412,
+    "eventId": "evt_0909",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "函谷关",
+        "lat": 34.62,
+        "lng": 110.92
+      },
+      {
+        "name": "长安",
+        "lat": 34.27,
+        "lng": 108.93
+      },
+      {
+        "name": "槐里",
+        "lat": 34.29,
+        "lng": 108.58
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「扶风美阳中亭川坚寨」，行军方向与史料一致",
+    "source": "晋书·孟观传；资治通鉴·晋纪四"
+  },
+  {
+    "seq": 413,
+    "eventId": "evt_0911",
+    "status": "ok",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "朝歌",
+        "lat": 35.6,
+        "lng": 114.18
+      },
+      {
+        "name": "怀县",
+        "lat": 35.1,
+        "lng": 113.4
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安阳」出师进趋「司州温县黄桥」，行军方向与史料一致",
+    "source": "《晋书·成都王颖传》《资治通鉴·卷八十四》"
+  },
+  {
+    "seq": 414,
+    "eventId": "evt_0914",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「司州洛阳建春门河桥」，行军方向与史料一致",
+    "source": "《晋书·陆机传》《资治通鉴·卷八十五》"
+  },
+  {
+    "seq": 415,
+    "eventId": "evt_0916",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "河阳",
+        "lat": 34.85,
+        "lng": 112.58
+      },
+      {
+        "name": "朝歌",
+        "lat": 35.6,
+        "lng": 114.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「司州魏郡荡阴」，行军方向与史料一致",
+    "source": "《晋书·嵇绍传》《资治通鉴·卷八十五》"
+  },
+  {
+    "seq": 416,
+    "eventId": "evt_0917",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "大陵",
+        "lat": 37.42,
+        "lng": 112.02
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「并州西河左国城」，行军方向与史料一致",
+    "source": "《晋书·刘元海载记》《资治通鉴·卷八十五》"
+  },
+  {
+    "seq": 417,
+    "eventId": "evt_0919",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "函谷关",
+        "lat": 34.64,
+        "lng": 110.92
+      },
+      {
+        "name": "弘农",
+        "lat": 34.62,
+        "lng": 110.68
+      },
+      {
+        "name": "霸水",
+        "lat": 34.28,
+        "lng": 109.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「雍州京兆长安」，行军方向与史料一致",
+    "source": "《晋书·河间王颙传》《资治通鉴·卷八十六》"
+  },
+  {
+    "seq": 418,
+    "eventId": "evt_0920",
+    "status": "ok",
+    "fixedFromName": "乐安",
+    "fixedFromCityId": "city_wudingzhou",
+    "fixedRoute": [
+      {
+        "name": "茌平",
+        "lat": 36.58,
+        "lng": 116.25
+      },
+      {
+        "name": "馆陶",
+        "lat": 36.53,
+        "lng": 115.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐安」出师进趋「司州魏郡邺城」，行军方向与史料一致",
+    "source": "《晋书·石勒载记上》《资治通鉴·卷八十六》"
+  },
+  {
+    "seq": 419,
+    "eventId": "evt_0923",
+    "status": "fixed",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "上党",
+        "lat": 36.15,
+        "lng": 113.01
+      },
+      {
+        "name": "泫氏",
+        "lat": 35.8,
+        "lng": 112.92
+      }
+    ],
+    "reason": "同将连战，承接上一场「司州魏郡邺城」终点，将出发据点由「临汾」修正为上一场终点对应据点「安阳」，途经点按续行方向衔接至「司州河内怀城」",
+    "source": "《晋书·石勒载记上》《资治通鉴·卷八十七》"
+  },
+  {
+    "seq": 420,
+    "eventId": "evt_0924",
+    "status": "fixed",
+    "fixedFromName": "虎牢关",
+    "fixedFromCityId": "city_hulaoguan",
+    "fixedRoute": [
+      {
+        "name": "酸枣",
+        "lat": 35.1,
+        "lng": 114.22
+      },
+      {
+        "name": "陈留",
+        "lat": 34.65,
+        "lng": 114.52
+      }
+    ],
+    "reason": "同将连战，承接上一场「司州河内怀城」终点，将出发据点由「邢台」修正为上一场终点对应据点「虎牢关」，途经点按续行方向衔接至「豫州梁国苦县宁平城」",
+    "source": "《晋书·石勒载记上》《资治通鉴·卷八十七》"
+  },
+  {
+    "seq": 421,
+    "eventId": "evt_0925",
+    "status": "ok",
+    "fixedFromName": "临汾",
+    "fixedFromCityId": "city_linfen",
+    "fixedRoute": [
+      {
+        "name": "河东",
+        "lat": 35.15,
+        "lng": 110.98
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「临汾」出师进趋「司州河南洛阳」，行军方向与史料一致",
+    "source": "《晋书·刘聪载记》《资治通鉴·卷八十七》"
+  },
+  {
+    "seq": 422,
+    "eventId": "evt_0929",
+    "status": "fixed",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "蒲坂",
+        "lat": 34.88,
+        "lng": 110.32
+      },
+      {
+        "name": "临晋",
+        "lat": 34.85,
+        "lng": 110.05
+      },
+      {
+        "name": "频阳",
+        "lat": 34.95,
+        "lng": 109.25
+      }
+    ],
+    "reason": "同将连战，承接上一场「司州河南洛阳」终点，将出发据点由「临汾」修正为上一场终点对应据点「洛阳」，途经点按续行方向衔接至「雍州北地泥阳」",
+    "source": "《晋书·孝愍帝纪》《资治通鉴·卷八十九》"
+  },
+  {
+    "seq": 423,
+    "eventId": "evt_0930",
+    "status": "fixed",
+    "fixedFromName": "金锁关",
+    "fixedFromCityId": "city_jinsuoguan",
+    "fixedRoute": [
+      {
+        "name": "富平",
+        "lat": 34.92,
+        "lng": 109.18
+      },
+      {
+        "name": "泾阳",
+        "lat": 34.53,
+        "lng": 108.84
+      }
+    ],
+    "reason": "同将连战，承接上一场「雍州北地泥阳」终点，将出发据点由「离石」修正为上一场终点对应据点「金锁关」，途经点按续行方向衔接至「雍州京兆长安」",
+    "source": "《晋书·孝愍帝纪》《资治通鉴·卷八十九》"
+  },
+  {
+    "seq": 424,
+    "eventId": "evt_0931",
+    "status": "ok",
+    "fixedFromName": "淮安",
+    "fixedFromCityId": "city_huaiyin",
+    "fixedRoute": [
+      {
+        "name": "泗口",
+        "lat": 33.62,
+        "lng": 118.92
+      },
+      {
+        "name": "下邳",
+        "lat": 34,
+        "lng": 117.95
+      },
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「淮安」出师进趋「豫州沛国谯城」，行军方向与史料一致",
+    "source": "《晋书·祖逖传》《资治通鉴·卷九十》"
+  },
+  {
+    "seq": 425,
+    "eventId": "evt_0932",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "蒲坂",
+        "lat": 34.88,
+        "lng": 110.32
+      },
+      {
+        "name": "绛邑",
+        "lat": 35.62,
+        "lng": 111.35
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「司州平阳城」，行军方向与史料一致",
+    "source": "《晋书·刘曜载记》《资治通鉴·卷九十》"
+  },
+  {
+    "seq": 426,
+    "eventId": "evt_0933",
+    "status": "ok",
+    "fixedFromName": "邢台",
+    "fixedFromCityId": "city_xingtai",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.1,
+        "lng": 114.39
+      },
+      {
+        "name": "黎阳",
+        "lat": 35.68,
+        "lng": 114.55
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「邢台」出师进趋「兖州陈留浚仪」，行军方向与史料一致",
+    "source": "《晋书·祖逖传》《资治通鉴·卷九十一》"
+  },
+  {
+    "seq": 427,
+    "eventId": "evt_0934",
+    "status": "ok",
+    "fixedFromName": "雍丘",
+    "fixedFromCityId": "city_yongqiu",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「雍丘」迎战，无城外途经点，衔接正常",
+    "source": "《晋书·祖逖传》《资治通鉴·卷九十一》"
+  },
+  {
+    "seq": 428,
+    "eventId": "evt_0935",
+    "status": "ok",
+    "fixedFromName": "邢台",
+    "fixedFromCityId": "city_xingtai",
+    "fixedRoute": [
+      {
+        "name": "清河",
+        "lat": 37.05,
+        "lng": 115.48
+      },
+      {
+        "name": "平原",
+        "lat": 37.16,
+        "lng": 116.43
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「邢台」出师进趋「冀州乐陵厌次」，行军方向与史料一致",
+    "source": "《晋书·段匹磾传》《资治通鉴·卷九十一》"
+  },
+  {
+    "seq": 429,
+    "eventId": "evt_0937",
+    "status": "fixed",
+    "fixedFromName": "乐安",
+    "fixedFromCityId": "city_wudingzhou",
+    "fixedRoute": [
+      {
+        "name": "般阳",
+        "lat": 36.65,
+        "lng": 117.96
+      }
+    ],
+    "reason": "同将连战，石虎承接上一场乐陵厌次终点，修正出发据点为乐安，东南渡河经般阳进围青州广固，剔除西折平原、高唐造成的3.24倍折返",
+    "source": "《晋书·石勒载记下》《资治通鉴·卷九十二》"
+  },
+  {
+    "seq": 430,
+    "eventId": "evt_0940",
+    "status": "ok",
+    "fixedFromName": "朝歌",
+    "fixedFromCityId": "city_zhaoge",
+    "fixedRoute": [
+      {
+        "name": "陈留",
+        "lat": 34.65,
+        "lng": 114.52
+      },
+      {
+        "name": "谯城",
+        "lat": 33.88,
+        "lng": 115.77
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「朝歌」出师进趋「扬州淮南寿春」，行军方向与史料一致",
+    "source": "《晋书·成帝纪》《资治通鉴·卷九十三》"
+  },
+  {
+    "seq": 431,
+    "eventId": "evt_0943",
+    "status": "ok",
+    "fixedFromName": "邢台",
+    "fixedFromCityId": "city_xingtai",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.1,
+        "lng": 114.39
+      },
+      {
+        "name": "河内",
+        "lat": 35.1,
+        "lng": 113.38
+      },
+      {
+        "name": "成皋",
+        "lat": 34.81,
+        "lng": 113.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「邢台」出师进趋「司州洛阳西阳门」，行军方向与史料一致",
+    "source": "《晋书·石勒载记下》《资治通鉴·卷九十四》"
+  },
+  {
+    "seq": 432,
+    "eventId": "evt_0944",
+    "status": "ok",
+    "fixedFromName": "邢台",
+    "fixedFromCityId": "city_xingtai",
+    "fixedRoute": [
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      },
+      {
+        "name": "潼关",
+        "lat": 34.54,
+        "lng": 110.29
+      },
+      {
+        "name": "长安",
+        "lat": 34.27,
+        "lng": 108.93
+      },
+      {
+        "name": "汧城",
+        "lat": 34.67,
+        "lng": 106.87
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「邢台」出师进趋「秦州陇西上邽」，行军方向与史料一致",
+    "source": "《晋书·刘曜载记》《资治通鉴·卷九十四》"
+  },
+  {
+    "seq": 433,
+    "eventId": "evt_0948",
+    "status": "fixed",
+    "fixedFromName": "天水",
+    "fixedFromCityId": "city_tianshui",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.1,
+        "lng": 114.39
+      },
+      {
+        "name": "河阳",
+        "lat": 34.85,
+        "lng": 112.58
+      }
+    ],
+    "reason": "同将连战，承接上一场「秦州陇西上邽」终点，将出发据点由「邢台」修正为上一场终点对应据点「天水」，途经点按续行方向衔接至「司州河南洛阳」",
+    "source": "《晋书·石季龙载记上》《资治通鉴·卷九十五》"
+  },
+  {
+    "seq": 434,
+    "eventId": "evt_0949",
+    "status": "ok",
+    "fixedFromName": "朝阳",
+    "fixedFromCityId": "city_chaoyang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「朝阳」迎战，无城外途经点，衔接正常",
+    "source": "《晋书·慕容皝载记》《资治通鉴·卷九十五》"
+  },
+  {
+    "seq": 435,
+    "eventId": "evt_0951",
+    "status": "ok",
+    "fixedFromName": "棘城",
+    "fixedFromCityId": "city_jicheng",
+    "fixedRoute": [
+      {
+        "name": "徒河",
+        "lat": 41.12,
+        "lng": 121.15
+      },
+      {
+        "name": "沓氏",
+        "lat": 39.85,
+        "lng": 121.65
+      }
+    ],
+    "reason": "同将连战，自上一场「平州昌黎柳城」续行至「平州辽东平郭」，出发据点与途经点方向连贯无误",
+    "source": "《晋书·慕容皝载记》《资治通鉴·卷九十五》"
+  },
+  {
+    "seq": 436,
+    "eventId": "evt_0953",
+    "status": "fixed",
+    "fixedFromName": "平郭",
+    "fixedFromCityId": "city_pingguo",
+    "fixedRoute": [],
+    "reason": "同将连战，承接上一场「平州辽东平郭」终点，将出发据点由「棘城」修正为上一场终点对应据点「平郭」，途经点按续行方向衔接至「平州昌黎棘城」",
+    "source": "《晋书·慕容皝载记》《资治通鉴·卷九十六》"
+  },
+  {
+    "seq": 437,
+    "eventId": "evt_0957",
+    "status": "ok",
+    "fixedFromName": "朝阳",
+    "fixedFromCityId": "city_chaoyang",
+    "fixedRoute": [
+      {
+        "name": "襄平",
+        "lat": 41.27,
+        "lng": 123.17
+      },
+      {
+        "name": "木底",
+        "lat": 41.32,
+        "lng": 124.85
+      }
+    ],
+    "reason": "同将连战，自上一场「平州昌黎棘城」续行至「高句丽丸都城」，出发据点与途经点方向连贯无误",
+    "source": "《晋书·慕容皝载记》《资治通鉴·卷九十七》"
+  },
+  {
+    "seq": 438,
+    "eventId": "evt_0967",
+    "status": "fixed",
+    "fixedFromName": "北京",
+    "fixedFromCityId": "city_beijing",
+    "fixedRoute": [
+      {
+        "name": "涿县",
+        "lat": 39.48,
+        "lng": 115.97
+      }
+    ],
+    "reason": "换将首战，慕容恪自蓟城南下经涿县进趋中山魏昌廉台，剔除与终点名称重叠之中山节点",
+    "source": "《晋书·慕容儁载记》《资治通鉴·卷九十九》"
+  },
+  {
+    "seq": 439,
+    "eventId": "evt_0970",
+    "status": "fixed",
+    "fixedFromName": "中山",
+    "fixedFromCityId": "city_zhongshan",
+    "fixedRoute": [
+      {
+        "name": "馆陶",
+        "lat": 36.53,
+        "lng": 115.28
+      },
+      {
+        "name": "碻磝",
+        "lat": 36.52,
+        "lng": 116.25
+      },
+      {
+        "name": "历城",
+        "lat": 36.67,
+        "lng": 117
+      }
+    ],
+    "reason": "同将连战，承接上一场「冀州中山魏昌廉台」终点，将出发据点由「安阳」修正为上一场终点对应据点「中山」，途经点按续行方向衔接至「青州齐郡广固」",
+    "source": "《晋书·慕容儁载记》《资治通鉴·卷一百》"
+  },
+  {
+    "seq": 440,
+    "eventId": "evt_0965",
+    "status": "ok",
+    "fixedFromName": "巴格达",
+    "fixedFromCityId": "city_bageda",
+    "fixedRoute": [
+      {
+        "name": "萨马拉",
+        "lat": 34.21,
+        "lng": 43.88
+      },
+      {
+        "name": "哈特拉",
+        "lat": 35.59,
+        "lng": 42.72
+      },
+      {
+        "name": "辛加拉",
+        "lat": 36.32,
+        "lng": 41.86
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「巴格达」出师进趋「美索不达米亚尼西比斯」，行军方向与史料一致",
+    "source": "尤利安《颂词》与狄奥多勒《教会史》"
+  },
+  {
+    "seq": 441,
+    "eventId": "evt_0974",
+    "status": "fixed",
+    "fixedFromName": "尼西比斯",
+    "fixedFromCityId": "city_nixibisi",
+    "fixedRoute": [
+      {
+        "name": "马尔丁",
+        "lat": 37.31,
+        "lng": 40.74
+      }
+    ],
+    "reason": "同将连战，沙普尔二世承接上一场尼西比斯终点，修正出发据点为尼西比斯，北上经马尔丁进围底格里斯河畔阿米达，消除原东南退回阿萨巴德、尼尼微造成的6.29倍折返",
+    "source": "阿米阿努斯·马尔切利努斯《罗马史·卷十九》亲历记"
+  },
+  {
+    "seq": 442,
+    "eventId": "evt_0975",
+    "status": "fixed",
+    "fixedFromName": "阿米达",
+    "fixedFromCityId": "city_amida",
+    "fixedRoute": [
+      {
+        "name": "贝扎布德",
+        "lat": 37.33,
+        "lng": 42.19
+      }
+    ],
+    "reason": "同将连战，沙普尔二世承接上一场阿米达终点，修正出发据点为阿米达，顺底格里斯河南下攻拔贝扎布德与辛加拉要塞，消除原南折萨马拉、哈特拉造成的3.61倍折返",
+    "source": "阿米阿努斯·马尔切利努斯《罗马史·卷二十》"
+  },
+  {
+    "seq": 443,
+    "eventId": "evt_0978",
+    "status": "fixed",
+    "fixedFromName": "辛加拉",
+    "fixedFromCityId": "city_singara",
+    "fixedRoute": [
+      {
+        "name": "俄庇斯",
+        "lat": 33.75,
+        "lng": 44.18
+      }
+    ],
+    "reason": "同将连战，承接上一场「美索不达米亚辛加拉要塞」终点，将出发据点由「巴格达」修正为上一场终点对应据点「辛加拉」，途经点按续行方向衔接至「美索不达米亚底格里斯河东岸萨马拉」",
+    "source": "阿米阿努斯·马尔切利努斯《罗马史·卷二十五》"
+  },
+  {
+    "seq": 444,
+    "eventId": "evt_0992",
+    "status": "ok",
+    "fixedFromName": "普雷斯拉夫",
+    "fixedFromCityId": "city_puleisilafu",
+    "fixedRoute": [
+      {
+        "name": "马尔基亚诺波利斯",
+        "lat": 43.22,
+        "lng": 27.58
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「普雷斯拉夫」出师进趋「小斯基泰阿德萨利克斯柳林」，行军方向与史料一致",
+    "source": "阿米阿努斯·马尔切利努斯《罗马史·卷三十一》"
+  },
+  {
+    "seq": 445,
+    "eventId": "evt_0993",
+    "status": "fixed",
+    "fixedFromName": "瓦尔纳",
+    "fixedFromCityId": "city_waerna",
+    "fixedRoute": [
+      {
+        "name": "卡比莱",
+        "lat": 42.55,
+        "lng": 26.48
+      }
+    ],
+    "reason": "同将连战，弗里蒂根承接上一场小斯基泰柳林终点，将误与终点重合之出发点埃迪尔内修正为瓦尔纳，越巴尔干山经卡比莱南下阿德里安堡，消除起点贴近终点带途经点之异常",
+    "source": "阿米阿努斯·马尔切利努斯《罗马史·卷三十一》"
+  },
+  {
+    "seq": 446,
+    "eventId": "evt_0995",
+    "status": "fixed",
+    "fixedFromName": "埃迪尔内",
+    "fixedFromCityId": "city_aidiernei",
+    "fixedRoute": [
+      {
+        "name": "腓立比",
+        "lat": 41.01,
+        "lng": 24.28
+      },
+      {
+        "name": "安菲波利斯",
+        "lat": 40.82,
+        "lng": 23.85
+      }
+    ],
+    "reason": "同将连战，承接上一场「色雷斯阿德里安堡北郊」终点，补齐显式出发据点「埃迪尔内」，途经点按续行方向顺畅衔接至「马其顿帖撒罗尼迦近郊」",
+    "source": "佐西姆斯《新史·卷四》与约达尼斯《哥特史》"
+  },
+  {
+    "seq": 447,
+    "eventId": "evt_0982",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "华阴",
+        "lat": 34.56,
+        "lng": 110.09
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「司州河东蒲坂」，行军方向与史料一致",
+    "source": "《晋书·苻坚载记上》《资治通鉴·卷一百零一》"
+  },
+  {
+    "seq": 448,
+    "eventId": "evt_0984",
+    "status": "ok",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "内黄",
+        "lat": 35.95,
+        "lng": 114.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安阳」出师进趋「司州汲郡枋头至豫州襄邑」，行军方向与史料一致",
+    "source": "《晋书·慕容垂载记》《资治通鉴·卷一百零二》"
+  },
+  {
+    "seq": 449,
+    "eventId": "evt_0985",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "蒲坂",
+        "lat": 34.88,
+        "lng": 110.32
+      },
+      {
+        "name": "安邑",
+        "lat": 35.15,
+        "lng": 110.98
+      },
+      {
+        "name": "高平",
+        "lat": 35.8,
+        "lng": 112.92
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「并州上党潞川」，行军方向与史料一致",
+    "source": "《晋书·苻坚载记下》《资治通鉴·卷一百零二》"
+  },
+  {
+    "seq": 450,
+    "eventId": "evt_0988",
+    "status": "ok",
+    "fixedFromName": "剑门关",
+    "fixedFromCityId": "city_jianmenguan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「剑门关」迎战，无城外途经点，衔接正常",
+    "source": "《晋书·苻坚载记上》《资治通鉴·卷一百零三》"
+  },
+  {
+    "seq": 451,
+    "eventId": "evt_0991",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "天水",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "枹罕",
+        "lat": 35.58,
+        "lng": 103.21
+      },
+      {
+        "name": "洪池",
+        "lat": 37.45,
+        "lng": 102.85
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「凉州武威姑臧」，行军方向与史料一致",
+    "source": "《晋书·张天锡传》《资治通鉴·卷一百零四》"
+  },
+  {
+    "seq": 452,
+    "eventId": "evt_0994",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "鲁阳",
+        "lat": 33.74,
+        "lng": 112.88
+      },
+      {
+        "name": "宛城",
+        "lat": 32.99,
+        "lng": 112.53
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「荆州襄阳城」，行军方向与史料一致",
+    "source": "《晋书·朱序传》《资治通鉴·卷一百零四》"
+  },
+  {
+    "seq": 453,
+    "eventId": "evt_0998",
+    "status": "ok",
+    "fixedFromName": "广陵",
+    "fixedFromCityId": "city_yangzhou",
+    "fixedRoute": [
+      {
+        "name": "三阿",
+        "lat": 33.05,
+        "lng": 119.12
+      },
+      {
+        "name": "钟离",
+        "lat": 32.92,
+        "lng": 117.38
+      },
+      {
+        "name": "洛涧",
+        "lat": 32.68,
+        "lng": 117.12
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「广陵」出师进趋「扬州淮南寿阳淝水」，行军方向与史料一致",
+    "source": "《晋书·谢玄传》《资治通鉴·卷一百零五》"
+  },
+  {
+    "seq": 454,
+    "eventId": "evt_0999",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "滑台",
+        "lat": 35.6,
+        "lng": 114.18
+      },
+      {
+        "name": "枋头",
+        "lat": 35.72,
+        "lng": 114.32
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「开封」出师进趋「冀州魏郡邺城」，行军方向与史料一致",
+    "source": "《晋书·慕容垂载记》《资治通鉴·卷一百零五》"
+  },
+  {
+    "seq": 455,
+    "eventId": "evt_1000",
+    "status": "ok",
+    "fixedFromName": "潼关",
+    "fixedFromCityId": "city_tongguan",
+    "fixedRoute": [
+      {
+        "name": "华阴",
+        "lat": 34.56,
+        "lng": 110.09
+      },
+      {
+        "name": "骊山",
+        "lat": 34.36,
+        "lng": 109.22
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「潼关」出师进趋「雍州京兆长安」，行军方向与史料一致",
+    "source": "《晋书·苻坚载记下》《资治通鉴·卷一百零六》"
+  },
+  {
+    "seq": 456,
+    "eventId": "evt_1001",
+    "status": "ok",
+    "fixedFromName": "潼关",
+    "fixedFromCityId": "city_tongguan",
+    "fixedRoute": [
+      {
+        "name": "蒲坂",
+        "lat": 34.88,
+        "lng": 110.32
+      },
+      {
+        "name": "闻喜",
+        "lat": 35.36,
+        "lng": 111.22
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「潼关」出师进趋「并州太原襄陵」，行军方向与史料一致",
+    "source": "《晋书·苻丕载记》《资治通鉴·卷一百零六》"
+  },
+  {
+    "seq": 457,
+    "eventId": "evt_1004",
+    "status": "ok",
+    "fixedFromName": "新平",
+    "fixedFromCityId": "city_binzhou2",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「新平」出师进趋「雍州安定新平大界营」，行军方向与史料一致",
+    "source": "《晋书·姚苌载记》《资治通鉴·卷一百零七》"
+  },
+  {
+    "seq": 458,
+    "eventId": "evt_1007",
+    "status": "ok",
+    "fixedFromName": "中山",
+    "fixedFromCityId": "city_zhongshan",
+    "fixedRoute": [
+      {
+        "name": "信都",
+        "lat": 37.73,
+        "lng": 115.69
+      },
+      {
+        "name": "馆陶",
+        "lat": 36.53,
+        "lng": 115.28
+      },
+      {
+        "name": "内黄",
+        "lat": 35.95,
+        "lng": 114.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「中山」出师进趋「司州汲郡黎阳津与滑台」，行军方向与史料一致",
+    "source": "《晋书·慕容垂载记》《资治通鉴·卷一百零八》"
+  },
+  {
+    "seq": 459,
+    "eventId": "evt_1010",
+    "status": "fixed",
+    "fixedFromName": "中山",
+    "fixedFromCityId": "city_zhongshan",
+    "fixedRoute": [
+      {
+        "name": "井陉",
+        "lat": 38.04,
+        "lng": 114.14
+      },
+      {
+        "name": "晋阳",
+        "lat": 37.87,
+        "lng": 112.55
+      },
+      {
+        "name": "雁门",
+        "lat": 39.19,
+        "lng": 112.87
+      }
+    ],
+    "reason": "换将首战，慕容宝自中山出井陉、晋阳、雁门关进抵盛乐东参合陂，剔除远绕河套五原再东返造成的超2.2倍折返",
+    "source": "《魏书·太祖纪》《资治通鉴·卷一百零八》"
+  },
+  {
+    "seq": 460,
+    "eventId": "evt_1005",
+    "status": "ok",
+    "fixedFromName": "盛乐",
+    "fixedFromCityId": "city_shengle",
+    "fixedRoute": [
+      {
+        "name": "君子津",
+        "lat": 40.27,
+        "lng": 111.14
+      },
+      {
+        "name": "五原",
+        "lat": 40.8,
+        "lng": 109.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「盛乐」出师进趋「朔方贺兰山至鹿浑海」，行军方向与史料一致",
+    "source": "《魏书·太祖纪》《资治通鉴·卷一百零七》"
+  },
+  {
+    "seq": 461,
+    "eventId": "evt_1006",
+    "status": "fixed",
+    "fixedFromName": "长泽",
+    "fixedFromCityId": "city_changze",
+    "fixedRoute": [
+      {
+        "name": "白道",
+        "lat": 40.82,
+        "lng": 111.65
+      }
+    ],
+    "reason": "同将连战，承接上一场「朔方贺兰山至鹿浑海」终点，将出发据点由「盛乐」修正为上一场终点对应据点「长泽」，途经点按续行方向衔接至「朔方河套南岸铁岐山」",
+    "source": "《魏书·太祖纪》《资治通鉴·卷一百零七》"
+  },
+  {
+    "seq": 462,
+    "eventId": "evt_1011",
+    "status": "ok",
+    "fixedFromName": "盛乐",
+    "fixedFromCityId": "city_shengle",
+    "fixedRoute": [
+      {
+        "name": "平城",
+        "lat": 40.08,
+        "lng": 113.3
+      },
+      {
+        "name": "雁门",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "孟县",
+        "lat": 38.09,
+        "lng": 113.38
+      }
+    ],
+    "reason": "同将连战，自上一场「朔方河套南岸铁岐山」续行至「并州太原晋阳」，出发据点与途经点方向连贯无误",
+    "source": "《魏书·太祖纪》《资治通鉴·卷一百零八》"
+  },
+  {
+    "seq": 463,
+    "eventId": "evt_1012",
+    "status": "fixed",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "孟县",
+        "lat": 38.09,
+        "lng": 113.41
+      },
+      {
+        "name": "井陉",
+        "lat": 38.03,
+        "lng": 114.14
+      }
+    ],
+    "reason": "同将连战，承接上一场「并州太原晋阳」终点，将出发据点由「盛乐」修正为上一场终点对应据点「晋阳」，途经点按续行方向衔接至「冀州常山滹沱河北岸柏肆」",
+    "source": "《魏书·太祖纪》《资治通鉴·卷一百零九》"
+  },
+  {
+    "seq": 464,
+    "eventId": "evt_1014",
+    "status": "ok",
+    "fixedFromName": "舟山",
+    "fixedFromCityId": "city_zhoushan",
+    "fixedRoute": [
+      {
+        "name": "浃口",
+        "lat": 29.96,
+        "lng": 121.72
+      },
+      {
+        "name": "上虞",
+        "lat": 30.03,
+        "lng": 120.87
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「舟山」出师进趋「扬州会稽山阴」，行军方向与史料一致",
+    "source": "《晋书·孙恩传》《资治通鉴·卷一百一十一》"
+  },
+  {
+    "seq": 465,
+    "eventId": "evt_1016",
+    "status": "ok",
+    "fixedFromName": "广陵",
+    "fixedFromCityId": "city_yangzhou",
+    "fixedRoute": [
+      {
+        "name": "京口",
+        "lat": 32.21,
+        "lng": 119.45
+      },
+      {
+        "name": "吴县",
+        "lat": 31.3,
+        "lng": 120.62
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「广陵」出师进趋「扬州吴郡海盐与会稽句章」，行军方向与史料一致",
+    "source": "《宋书·武帝纪上》《资治通鉴·卷一百一十二》"
+  },
+  {
+    "seq": 466,
+    "eventId": "evt_1019",
+    "status": "fixed",
+    "fixedFromName": "嘉兴",
+    "fixedFromCityId": "city_jiaxing",
+    "fixedRoute": [
+      {
+        "name": "京口",
+        "lat": 32.21,
+        "lng": 119.45
+      },
+      {
+        "name": "江乘",
+        "lat": 32.15,
+        "lng": 118.96
+      }
+    ],
+    "reason": "同将连战，承接上一场「扬州吴郡海盐与会稽句章」终点，将出发据点由「广陵」修正为上一场终点对应据点「嘉兴」，途经点按续行方向衔接至「扬州建康城北覆舟山」",
+    "source": "《宋书·武帝纪上》《资治通鉴·卷一百一十三》"
+  },
+  {
+    "seq": 467,
+    "eventId": "evt_1024",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "广陵",
+        "lat": 32.39,
+        "lng": 119.42
+      },
+      {
+        "name": "下邳",
+        "lat": 34,
+        "lng": 117.95
+      },
+      {
+        "name": "东莞",
+        "lat": 35.58,
+        "lng": 118.83
+      }
+    ],
+    "reason": "同将连战，自上一场「扬州建康城北覆舟山」续行至「青州齐郡大岘山至临朐」，出发据点与途经点方向连贯无误",
+    "source": "《宋书·武帝纪上》《资治通鉴·卷一百一十五》"
+  },
+  {
+    "seq": 468,
+    "eventId": "evt_1025",
+    "status": "fixed",
+    "fixedFromName": "大岘关",
+    "fixedFromCityId": "city_mulingguan",
+    "fixedRoute": [],
+    "reason": "同将连战，刘裕承接上一场临朐大岘山终点，修正出发据点为大岘关，直接北进合围南燕都城广固，剔除25公里微距内冗余节点",
+    "source": "《宋书·武帝纪上》《资治通鉴·卷一百一十五》"
+  },
+  {
+    "seq": 469,
+    "eventId": "evt_1027",
+    "status": "fixed",
+    "fixedFromName": "临淄",
+    "fixedFromCityId": "city_linzi",
+    "fixedRoute": [
+      {
+        "name": "芜湖",
+        "lat": 31.33,
+        "lng": 118.38
+      },
+      {
+        "name": "雷池",
+        "lat": 30.25,
+        "lng": 116.72
+      }
+    ],
+    "reason": "同将连战，刘裕承接上一场青州广固城终点，修正出发据点为临淄，南返建康后溯江西上经芜湖、雷池进抵彭蠡湖口左里决战卢循，剔除与终点名称重叠之寻阳节点",
+    "source": "《宋书·武帝纪上》《资治通鉴·卷一百一十六》"
+  },
+  {
+    "seq": 470,
+    "eventId": "evt_1028",
+    "status": "fixed",
+    "fixedFromName": "柴桑",
+    "fixedFromCityId": "city_chaisang",
+    "fixedRoute": [
+      {
+        "name": "夏口",
+        "lat": 30.55,
+        "lng": 114.27
+      },
+      {
+        "name": "巴陵",
+        "lat": 29.37,
+        "lng": 113.09
+      }
+    ],
+    "reason": "同将连战，刘裕承接上一场寻阳左里终点，修正出发据点为柴桑（寻阳），溯江西上经夏口、巴陵进讨江陵刘毅，剔除与上一场终点重名之寻阳节点",
+    "source": "《宋书·王镇恶传》《资治通鉴·卷一百一十六》"
+  },
+  {
+    "seq": 471,
+    "eventId": "evt_1029",
+    "status": "ok",
+    "fixedFromName": "江陵",
+    "fixedFromCityId": "city_ying",
+    "fixedRoute": [
+      {
+        "name": "白帝",
+        "lat": 31.04,
+        "lng": 109.57
+      },
+      {
+        "name": "江阳",
+        "lat": 28.89,
+        "lng": 105.44
+      },
+      {
+        "name": "武阳",
+        "lat": 30.19,
+        "lng": 103.85
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「江陵」出师进趋「益州岷江平模至成都」，行军方向与史料一致",
+    "source": "《宋书·朱龄石传》《资治通鉴·卷一百一十六》"
+  },
+  {
+    "seq": 472,
+    "eventId": "evt_1031",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "寻阳",
+        "lat": 29.68,
+        "lng": 116
+      },
+      {
+        "name": "夏口",
+        "lat": 30.55,
+        "lng": 114.3
+      },
+      {
+        "name": "监利",
+        "lat": 29.83,
+        "lng": 112.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「荆州江陵赤圻洲马头峭岸」，行军方向与史料一致",
+    "source": "《宋书·武帝纪中》《资治通鉴·卷一百一十七》"
+  },
+  {
+    "seq": 473,
+    "eventId": "evt_1032",
+    "status": "ok",
+    "fixedFromName": "彭城",
+    "fixedFromCityId": "city_pengcheng",
+    "fixedRoute": [
+      {
+        "name": "项城",
+        "lat": 33.26,
+        "lng": 114.88
+      },
+      {
+        "name": "许昌",
+        "lat": 34.02,
+        "lng": 113.85
+      },
+      {
+        "name": "成皋",
+        "lat": 34.81,
+        "lng": 113.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「彭城」出师进趋「司州河南洛阳金墉城」，行军方向与史料一致",
+    "source": "《宋书·檀道济传》《资治通鉴·卷一百一十七》"
+  },
+  {
+    "seq": 474,
+    "eventId": "evt_1033",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陕城",
+        "lat": 34.72,
+        "lng": 111.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「司州弘农潼关至雍州长安」，行军方向与史料一致",
+    "source": "《宋书·武帝纪中》《资治通鉴·卷一百一十八》"
+  },
+  {
+    "seq": 475,
+    "eventId": "evt_1034",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「雍州京兆蓝田青泥原」，行军方向与史料一致",
+    "source": "《晋书·赫连勃勃载记》《宋书·傅弘之传》"
+  },
+  {
+    "seq": 476,
+    "eventId": "evt_1038",
+    "status": "ok",
+    "fixedFromName": "朝歌",
+    "fixedFromCityId": "city_zhaoge",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「朝歌」迎战，无城外途经点，衔接正常",
+    "source": "《魏书·奚斤传》《资治通鉴·卷一百一十九》"
+  },
+  {
+    "seq": 477,
+    "eventId": "evt_1039",
+    "status": "ok",
+    "fixedFromName": "虎牢关",
+    "fixedFromCityId": "city_hulaoguan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「虎牢关」迎战，无城外途经点，衔接正常",
+    "source": "《宋书·索虏传》《资治通鉴·卷一百一十九》"
+  },
+  {
+    "seq": 478,
+    "eventId": "evt_1040",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "善无",
+        "lat": 39.98,
+        "lng": 112.6
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「代北云中盛乐原野」，行军方向与史料一致",
+    "source": "《魏书·世祖纪上》《资治通鉴·卷一百二十》"
+  },
+  {
+    "seq": 479,
+    "eventId": "evt_1043",
+    "status": "fixed",
+    "fixedFromName": "盛乐",
+    "fixedFromCityId": "city_shengle",
+    "fixedRoute": [
+      {
+        "name": "君子津",
+        "lat": 40.27,
+        "lng": 111.14
+      },
+      {
+        "name": "黑水",
+        "lat": 38.65,
+        "lng": 109.7
+      }
+    ],
+    "reason": "同将连战，拓跋焘承接上一场云中盛乐终点，修正出发据点为盛乐，自君子津渡河经黑水奇袭夏都统万城，剔除途经点中与起点重复之盛乐节点",
+    "source": "《魏书·世祖纪上》《资治通鉴·卷一百二十》"
+  },
+  {
+    "seq": 480,
+    "eventId": "evt_1044",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "雍城",
+        "lat": 34.46,
+        "lng": 107.38
+      },
+      {
+        "name": "平凉",
+        "lat": 35.54,
+        "lng": 106.67
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「雍州安定城下」，行军方向与史料一致",
+    "source": "《魏书·安同传附安颉传》《资治通鉴·卷一百二十一》"
+  },
+  {
+    "seq": 481,
+    "eventId": "evt_1045",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "牛川",
+        "lat": 40.95,
+        "lng": 112.4
+      },
+      {
+        "name": "黑山",
+        "lat": 41.45,
+        "lng": 111.55
+      },
+      {
+        "name": "鹿浑海",
+        "lat": 45.2,
+        "lng": 105.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「漠北杭爱山麓栗水」，行军方向与史料一致",
+    "source": "《魏书·蠕蠕传》《资治通鉴·卷一百二十一》"
+  },
+  {
+    "seq": 482,
+    "eventId": "evt_1046",
+    "status": "ok",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "河内",
+        "lat": 35.1,
+        "lng": 113.38
+      },
+      {
+        "name": "冶坂津",
+        "lat": 34.85,
+        "lng": 112.58
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安阳」出师进趋「司州洛阳金墉城与虎牢」，行军方向与史料一致",
+    "source": "《宋书·索虏传》《资治通鉴·卷一百二十一》"
+  },
+  {
+    "seq": 483,
+    "eventId": "evt_1047",
+    "status": "ok",
+    "fixedFromName": "朝歌",
+    "fixedFromCityId": "city_zhaoge",
+    "fixedRoute": [
+      {
+        "name": "东阿",
+        "lat": 36.18,
+        "lng": 116.25
+      },
+      {
+        "name": "碻磝",
+        "lat": 36.48,
+        "lng": 116.25
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「朝歌」出师进趋「兖州东郡滑台至青州历城」，行军方向与史料一致",
+    "source": "《宋书·檀道济传》《资治通鉴·卷一百二十二》"
+  },
+  {
+    "seq": 484,
+    "eventId": "evt_1052",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "上谷",
+        "lat": 40.37,
+        "lng": 115.63
+      },
+      {
+        "name": "卢龙塞",
+        "lat": 40.15,
+        "lng": 118.5
+      },
+      {
+        "name": "白狼",
+        "lat": 41.05,
+        "lng": 119.65
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「营州昌黎龙城和龙」，行军方向与史料一致",
+    "source": "《魏书·冯跋传附冯弘传》《资治通鉴·卷一百二十三》"
+  },
+  {
+    "seq": 485,
+    "eventId": "evt_1055",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "君子津",
+        "lat": 40.27,
+        "lng": 111.14
+      },
+      {
+        "name": "上郡",
+        "lat": 38.02,
+        "lng": 109.15
+      },
+      {
+        "name": "灵州",
+        "lat": 38,
+        "lng": 106.3
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「凉州武威姑臧城」，行军方向与史料一致",
+    "source": "《魏书·世祖纪上》《资治通鉴·卷一百二十三》"
+  },
+  {
+    "seq": 486,
+    "eventId": "evt_1058",
+    "status": "ok",
+    "fixedFromName": "姑臧",
+    "fixedFromCityId": "city_wuwei",
+    "fixedRoute": [
+      {
+        "name": "番禾",
+        "lat": 38.22,
+        "lng": 101.95
+      },
+      {
+        "name": "张掖",
+        "lat": 38.93,
+        "lng": 100.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「姑臧」出师进趋「凉州酒泉城」，行军方向与史料一致",
+    "source": "《魏书·沮渠蒙逊传》《资治通鉴·卷一百二十三》"
+  },
+  {
+    "seq": 487,
+    "eventId": "evt_1062",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "频阳",
+        "lat": 34.95,
+        "lng": 109.25
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「雍州北地杏城」，行军方向与史料一致",
+    "source": "《魏书·世祖纪下》《资治通鉴·卷一百二十四》"
+  },
+  {
+    "seq": 488,
+    "eventId": "evt_1066",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "善无",
+        "lat": 39.98,
+        "lng": 112.6
+      },
+      {
+        "name": "阴山",
+        "lat": 41.1,
+        "lng": 110.8
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「漠北地弗池至涿邪山」，行军方向与史料一致",
+    "source": "《魏书·蠕蠕传》《资治通鉴·卷一百二十五》"
+  },
+  {
+    "seq": 489,
+    "eventId": "evt_1067",
+    "status": "fixed",
+    "fixedFromName": "涿邪山",
+    "fixedFromCityId": "city_luhun",
+    "fixedRoute": [
+      {
+        "name": "枋头",
+        "lat": 35.65,
+        "lng": 114.45
+      },
+      {
+        "name": "彭城",
+        "lat": 34.27,
+        "lng": 117.18
+      },
+      {
+        "name": "盱眙",
+        "lat": 33.01,
+        "lng": 118.54
+      }
+    ],
+    "reason": "同将连战，承接上一场「漠北地弗池至涿邪山」终点，将出发据点由「安阳」修正为上一场终点对应据点「涿邪山」，途经点按续行方向衔接至「兖州滑台至南兖州长江北岸瓜步」",
+    "source": "《宋书·王玄谟传》《资治通鉴·卷一百二十五》"
+  },
+  {
+    "seq": 490,
+    "eventId": "evt_1060",
+    "status": "ok",
+    "fixedFromName": "塞格德",
+    "fixedFromCityId": "city_saigede",
+    "fixedRoute": [
+      {
+        "name": "维米纳基乌姆",
+        "lat": 44.73,
+        "lng": 21.22
+      },
+      {
+        "name": "马尔古斯",
+        "lat": 44.68,
+        "lng": 21.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「塞格德」出师进趋「达契亚地中海行省奈苏斯」，行军方向与史料一致",
+    "source": "普里斯库斯《出使匈人纪》残卷与马塞利努斯《编年史》"
+  },
+  {
+    "seq": 491,
+    "eventId": "evt_1064",
+    "status": "fixed",
+    "fixedFromName": "尼什",
+    "fixedFromCityId": "city_nis",
+    "fixedRoute": [
+      {
+        "name": "拉蒂亚里亚",
+        "lat": 43.82,
+        "lng": 22.92
+      },
+      {
+        "name": "奥埃斯库斯",
+        "lat": 43.71,
+        "lng": 24.42
+      }
+    ],
+    "reason": "同将连战，承接上一场「达契亚地中海行省奈苏斯」终点，将出发据点由「塞格德」修正为上一场终点对应据点「尼什」，途经点按续行方向衔接至「下默西亚乌图斯河畔」",
+    "source": "马塞利努斯《编年史》与约达尼斯《罗马史》"
+  },
+  {
+    "seq": 492,
+    "eventId": "evt_1065",
+    "status": "ok",
+    "fixedFromName": "里昂",
+    "fixedFromCityId": "city_lyon",
+    "fixedRoute": [
+      {
+        "name": "奥古斯托杜努姆",
+        "lat": 46.95,
+        "lng": 4.3
+      },
+      {
+        "name": "卢泰蒂亚",
+        "lat": 48.85,
+        "lng": 2.35
+      },
+      {
+        "name": "阿拉巴特斯",
+        "lat": 50.29,
+        "lng": 2.78
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「里昂」出师进趋「高卢北部阿图瓦海伦娜镇」，行军方向与史料一致",
+    "source": "西多尼乌斯·阿波利纳里斯《墨乔里安颂词》"
+  },
+  {
+    "seq": 493,
+    "eventId": "evt_1070",
+    "status": "fixed",
+    "fixedFromName": "里尔",
+    "fixedFromCityId": "city_lier",
+    "fixedRoute": [
+      {
+        "name": "兰斯",
+        "lat": 49.25,
+        "lng": 4.03
+      }
+    ],
+    "reason": "同将连战，埃提乌斯承接上一场高卢北部阿图瓦终点，修正出发据点为里尔，南下经香槟兰斯进抵沙隆平原迎战阿提拉，消除原绕行奥尔良造成的3.23倍折返",
+    "source": "约达尼斯《哥特史》与伊达提乌斯《编年史》"
+  },
+  {
+    "seq": 494,
+    "eventId": "evt_1071",
+    "status": "ok",
+    "fixedFromName": "塞格德",
+    "fixedFromCityId": "city_saigede",
+    "fixedRoute": [
+      {
+        "name": "锡斯基亚",
+        "lat": 45.48,
+        "lng": 16.37
+      },
+      {
+        "name": "埃莫纳",
+        "lat": 46.05,
+        "lng": 14.5
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「塞格德」出师进趋「北意大利威尼托首府阿奎莱亚」，行军方向与史料一致",
+    "source": "约达尼斯《哥特史》与普罗斯佩《编年史》"
+  },
+  {
+    "seq": 495,
+    "eventId": "evt_1073",
+    "status": "ok",
+    "fixedFromName": "塞格德",
+    "fixedFromCityId": "city_saigede",
+    "fixedRoute": [
+      {
+        "name": "锡尔米乌姆",
+        "lat": 44.97,
+        "lng": 19.61
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「塞格德」出师进趋「潘诺尼亚萨瓦河流域内达奥河」，行军方向与史料一致",
+    "source": "约达尼斯《哥特史·第五十章》"
+  },
+  {
+    "seq": 496,
+    "eventId": "evt_1076",
+    "status": "ok",
+    "fixedFromName": "拉文纳",
+    "fixedFromCityId": "city_ravenna",
+    "fixedRoute": [
+      {
+        "name": "帕维亚",
+        "lat": 45.18,
+        "lng": 9.16
+      },
+      {
+        "name": "都灵",
+        "lat": 45.07,
+        "lng": 7.68
+      },
+      {
+        "name": "里昂",
+        "lat": 45.76,
+        "lng": 4.84
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「拉文纳」出师进趋「高卢南部阿尔勒城郊」，行军方向与史料一致",
+    "source": "普里斯库斯·历史残篇；西多尼乌斯颂词；约达尼斯·哥特史"
+  },
+  {
+    "seq": 497,
+    "eventId": "evt_1079",
+    "status": "ok",
+    "fixedFromName": "阿维尼翁",
+    "fixedFromCityId": "city_avignon",
+    "fixedRoute": [
+      {
+        "name": "热那亚",
+        "lat": 44.41,
+        "lng": 8.93
+      }
+    ],
+    "reason": "同将连战，自上一场「高卢南部阿尔勒城郊」续行至「北意大利托尔托纳河谷」，出发据点与途经点方向连贯无误",
+    "source": "普里斯库斯·历史残篇；约达尼斯·哥特史；马塞利努斯编年史"
+  },
+  {
+    "seq": 498,
+    "eventId": "evt_1081",
+    "status": "ok",
+    "fixedFromName": "苏瓦松",
+    "fixedFromCityId": "city_soissons",
+    "fixedRoute": [
+      {
+        "name": "卢泰蒂亚",
+        "lat": 48.85,
+        "lng": 2.35
+      },
+      {
+        "name": "沙特尔",
+        "lat": 48.45,
+        "lng": 1.49
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「苏瓦松」出师进趋「卢瓦尔河畔重镇奥尔良」，行军方向与史料一致",
+    "source": "伊达提乌斯编年史；马里乌斯编年史；都尔的格雷戈里·法兰克人史"
+  },
+  {
+    "seq": 499,
+    "eventId": "evt_1082",
+    "status": "ok",
+    "fixedFromName": "克拉文纳",
+    "fixedFromCityId": "city_clavenna",
+    "fixedRoute": [
+      {
+        "name": "科莫",
+        "lat": 45.81,
+        "lng": 9.08
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「克拉文纳」出师进趋「北意大利贝尔加莫山麓」，行军方向与史料一致",
+    "source": "约达尼斯·哥特史；马塞利努斯编年史；保罗执事·罗马史"
+  },
+  {
+    "seq": 500,
+    "eventId": "evt_1103",
+    "status": "ok",
+    "fixedFromName": "菲鲁扎巴德",
+    "fixedFromCityId": "city_feiluzhabade",
+    "fixedRoute": [
+      {
+        "name": "伊斯法罕",
+        "lat": 32.65,
+        "lng": 51.67
+      },
+      {
+        "name": "戈尔甘",
+        "lat": 36.84,
+        "lng": 54.43
+      },
+      {
+        "name": "木鹿",
+        "lat": 37.62,
+        "lng": 62.24
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「菲鲁扎巴德」出师进趋「呼罗珊东疆赫拉特荒原」，行军方向与史料一致",
+    "source": "普罗科匹厄斯·波斯战史·第一卷；塔巴里·历代先知与帝王史"
+  },
+  {
+    "seq": 501,
+    "eventId": "evt_1104",
+    "status": "ok",
+    "fixedFromName": "赫拉特",
+    "fixedFromCityId": "city_helate_city",
+    "fixedRoute": [
+      {
+        "name": "巴德吉斯",
+        "lat": 35.15,
+        "lng": 63.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「赫拉特」出师进趋「呼罗珊绿洲门户木鹿郊野」，行军方向与史料一致",
+    "source": "塔巴里·历代先知与帝王史；菲尔多西·列王纪；拉扎尔史记"
+  },
+  {
+    "seq": 502,
+    "eventId": "evt_1123",
+    "status": "ok",
+    "fixedFromName": "武胜关",
+    "fixedFromCityId": "city_wushengguan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「武胜关」迎战，无城外途经点，衔接正常",
+    "source": "魏书·中山王英传；梁书·蔡道恭传；资治通鉴·卷一百四十五"
+  },
+  {
+    "seq": 503,
+    "eventId": "evt_1125",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "合肥",
+        "lat": 31.86,
+        "lng": 117.28
+      },
+      {
+        "name": "阴陵",
+        "lat": 32.78,
+        "lng": 117.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「淮水邵阳洲与钟离城下」，行军方向与史料一致",
+    "source": "梁书·韦睿传；梁书·曹景宗传；资治通鉴·卷一百四十六"
+  },
+  {
+    "seq": 504,
+    "eventId": "evt_1128",
+    "status": "ok",
+    "fixedFromName": "悬瓠",
+    "fixedFromCityId": "city_xuanhu",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「悬瓠」迎战，无城外途经点，衔接正常",
+    "source": "魏书·邢峦传；魏书·奚康生传；资治通鉴·卷一百四十七"
+  },
+  {
+    "seq": 505,
+    "eventId": "evt_1130",
+    "status": "ok",
+    "fixedFromName": "淮安",
+    "fixedFromCityId": "city_huaiyin",
+    "fixedRoute": [
+      {
+        "name": "涟口",
+        "lat": 33.78,
+        "lng": 119.26
+      },
+      {
+        "name": "海西",
+        "lat": 34.18,
+        "lng": 119.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「淮安」出师进趋「黄海之滨青冀治所朐山城」，行军方向与史料一致",
+    "source": "魏书·卢昶传；梁书·马仙琕传；资治通鉴·卷一百四十七"
+  },
+  {
+    "seq": 506,
+    "eventId": "evt_1135",
+    "status": "ok",
+    "fixedFromName": "寿春",
+    "fixedFromCityId": "city_shouxian",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「寿春」迎战，无城外途经点，衔接正常",
+    "source": "梁书·康绚传；魏书·李平传；资治通鉴·卷一百四十八"
+  },
+  {
+    "seq": 507,
+    "eventId": "evt_1139",
+    "status": "ok",
+    "fixedFromName": "固阳塞",
+    "fixedFromCityId": "city_guyangsai",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「固阳塞」出师进趋「怀朔镇北漠南草原」，行军方向与史料一致",
+    "source": "魏书·蠕蠕传；北史·蠕蠕传；资治通鉴·卷一百四十九"
+  },
+  {
+    "seq": 508,
+    "eventId": "evt_1143",
+    "status": "ok",
+    "fixedFromName": "固阳塞",
+    "fixedFromCityId": "city_guyangsai",
+    "fixedRoute": [
+      {
+        "name": "怀朔",
+        "lat": 41.15,
+        "lng": 110.35
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「固阳塞」出师进趋「阴山南口要冲白道原野」，行军方向与史料一致",
+    "source": "魏书·李崇传；资治通鉴·卷一百五十"
+  },
+  {
+    "seq": 509,
+    "eventId": "evt_1144",
+    "status": "ok",
+    "fixedFromName": "赛尔乌苏",
+    "fixedFromCityId": "city_saierwusu",
+    "fixedRoute": [
+      {
+        "name": "黑山",
+        "lat": 41.45,
+        "lng": 111.55
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「赛尔乌苏」出师进趋「黄河河套北岸五原塞下」，行军方向与史料一致",
+    "source": "魏书·蠕蠕传；周书·于谨传；资治通鉴·卷一百五十"
+  },
+  {
+    "seq": 510,
+    "eventId": "evt_1145",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "邺城",
+        "lat": 36.1,
+        "lng": 114.39
+      },
+      {
+        "name": "信都",
+        "lat": 37.55,
+        "lng": 115.57
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「河北平原博野白牛逻」，行军方向与史料一致",
+    "source": "魏书·肃宗纪；魏书·章武王融传；资治通鉴·卷一百五十一"
+  },
+  {
+    "seq": 511,
+    "eventId": "evt_1146",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "滁州",
+        "lat": 32.3,
+        "lng": 118.31
+      },
+      {
+        "name": "钟离",
+        "lat": 32.92,
+        "lng": 117.38
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「淮北涡水要塞涡阳城」，行军方向与史料一致",
+    "source": "梁书·陈庆之传；魏书·肃宗纪；资治通鉴·卷一百五十一"
+  },
+  {
+    "seq": 512,
+    "eventId": "evt_1147",
+    "status": "ok",
+    "fixedFromName": "秀容川",
+    "fixedFromCityId": "city_xiurongchuan",
+    "fixedRoute": [
+      {
+        "name": "晋阳",
+        "lat": 37.87,
+        "lng": 112.55
+      },
+      {
+        "name": "上党",
+        "lat": 36.19,
+        "lng": 113.11
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「秀容川」出师进趋「太行东麓邺城西北滏口山隘」，行军方向与史料一致",
+    "source": "魏书·尔朱荣传；北齐书·神武纪上；资治通鉴·卷一百五十二"
+  },
+  {
+    "seq": 513,
+    "eventId": "evt_1148",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "钟离",
+        "lat": 32.92,
+        "lng": 117.38
+      },
+      {
+        "name": "铚城",
+        "lat": 33.65,
+        "lng": 116.78
+      },
+      {
+        "name": "梁国",
+        "lat": 34.38,
+        "lng": 115.62
+      },
+      {
+        "name": "考城",
+        "lat": 34.82,
+        "lng": 114.83
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「洛阳东翼咽喉荥阳坚城」，行军方向与史料一致",
+    "source": "梁书·陈庆之传；魏书·杨昱传；资治通鉴·卷一百五十三"
+  },
+  {
+    "seq": 514,
+    "eventId": "evt_1151",
+    "status": "ok",
+    "fixedFromName": "信都",
+    "fixedFromCityId": "city_xindu",
+    "fixedRoute": [
+      {
+        "name": "广阿",
+        "lat": 37.19,
+        "lng": 114.73
+      },
+      {
+        "name": "隆虑",
+        "lat": 36.35,
+        "lng": 113.95
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「信都」出师进趋「相州邺城东北韩陵山麓」，行军方向与史料一致",
+    "source": "北齐书·神武纪上；魏书·尔朱兆传；资治通鉴·卷一百五十五"
+  },
+  {
+    "seq": 515,
+    "eventId": "evt_1153",
+    "status": "ok",
+    "fixedFromName": "安定",
+    "fixedFromCityId": "city_anding",
+    "fixedRoute": [
+      {
+        "name": "平凉",
+        "lat": 35.54,
+        "lng": 106.67
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安定」出师进趋「陇山以西略阳水洛城」，行军方向与史料一致",
+    "source": "周书·文帝纪上；魏书·侯莫陈悦传；资治通鉴·卷一百五十六"
+  },
+  {
+    "seq": 516,
+    "eventId": "evt_1156",
+    "status": "fixed",
+    "fixedFromName": "陇城",
+    "fixedFromCityId": "city_longcheng",
+    "fixedRoute": [
+      {
+        "name": "渭南",
+        "lat": 34.5,
+        "lng": 109.51
+      },
+      {
+        "name": "华阴",
+        "lat": 34.56,
+        "lng": 110.09
+      }
+    ],
+    "reason": "同将连战，承接上一场「陇山以西略阳水洛城」终点，将出发据点由「长安」修正为上一场终点对应据点「陇城」，途经点按续行方向衔接至「黄河风陵渡与潼关南侧小关」",
+    "source": "周书·文帝纪下；北齐书·窦泰传；资治通鉴·卷一百五十七"
+  },
+  {
+    "seq": 517,
+    "eventId": "evt_1157",
+    "status": "fixed",
+    "fixedFromName": "潼关",
+    "fixedFromCityId": "city_tongguan",
+    "fixedRoute": [
+      {
+        "name": "华阴",
+        "lat": 34.56,
+        "lng": 110.09
+      }
+    ],
+    "reason": "同将连战，承接上一场「黄河风陵渡与潼关南侧小关」终点，将出发据点由「武川镇」修正为上一场终点对应据点「潼关」，途经点按续行方向衔接至「渭水北岸大荔沙苑芦苇滩」",
+    "source": "周书·文帝纪下；北齐书·神武纪下；资治通鉴·卷一百五十七"
+  },
+  {
+    "seq": 518,
+    "eventId": "evt_1164",
+    "status": "fixed",
+    "fixedFromName": "长宁",
+    "fixedFromCityId": "city_shayuan",
+    "fixedRoute": [
+      {
+        "name": "华阴",
+        "lat": 34.56,
+        "lng": 110.09
+      },
+      {
+        "name": "潼关",
+        "lat": 34.54,
+        "lng": 110.29
+      },
+      {
+        "name": "新安",
+        "lat": 34.72,
+        "lng": 112.15
+      }
+    ],
+    "reason": "同将连战，承接上一场「渭水北岸大荔沙苑芦苇滩」终点，将出发据点由「长安」修正为上一场终点对应据点「长宁」，途经点按续行方向衔接至「洛阳城北邙山高原」",
+    "source": "周书·文帝纪下；北齐书·神武纪下；资治通鉴·卷一百五十八"
+  },
+  {
+    "seq": 519,
+    "eventId": "evt_1167",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "介休",
+        "lat": 37.03,
+        "lng": 111.92
+      },
+      {
+        "name": "平阳",
+        "lat": 36.09,
+        "lng": 111.52
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「河东汾水曲流咽喉玉壁城」，行军方向与史料一致",
+    "source": "周书·韦孝宽传；北齐书·神武纪下；资治通鉴·卷一百五十九"
+  },
+  {
+    "seq": 520,
+    "eventId": "evt_1168",
+    "status": "ok",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [
+      {
+        "name": "东郡",
+        "lat": 35.76,
+        "lng": 115.03
+      },
+      {
+        "name": "瑕丘",
+        "lat": 35.55,
+        "lng": 116.83
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安阳」出师进趋「彭城东南泗水寒山堰」，行军方向与史料一致",
+    "source": "北齐书·慕容绍宗传；梁书·武帝纪下；资治通鉴·卷一百六十"
+  },
+  {
+    "seq": 521,
+    "eventId": "evt_1173",
+    "status": "ok",
+    "fixedFromName": "金微山",
+    "fixedFromCityId": "city_naiman",
+    "fixedRoute": [
+      {
+        "name": "郁督军山",
+        "lat": 47.6,
+        "lng": 101.23
+      },
+      {
+        "name": "赛尔乌苏",
+        "lat": 44.82,
+        "lng": 106.8
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金微山」出师进趋「张家口怀荒镇北漠南草原」，行军方向与史料一致",
+    "source": "周书·突厥传；北史·蠕蠕传；资治通鉴·卷一百六十四"
+  },
+  {
+    "seq": 522,
+    "eventId": "evt_1176",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "散关",
+        "lat": 34.27,
+        "lng": 106.94
+      },
+      {
+        "name": "南郑",
+        "lat": 33.07,
+        "lng": 107.02
+      },
+      {
+        "name": "剑阁",
+        "lat": 32.2,
+        "lng": 105.56
+      },
+      {
+        "name": "涪城",
+        "lat": 31.46,
+        "lng": 104.74
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「川蜀核心重镇益州治所成都」，行军方向与史料一致",
+    "source": "周书·尉迟迥传；梁书·武陵王纪传；资治通鉴·卷一百六十五"
+  },
+  {
+    "seq": 523,
+    "eventId": "evt_1177",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "武关",
+        "lat": 33.73,
+        "lng": 110.35
+      },
+      {
+        "name": "襄阳",
+        "lat": 32.01,
+        "lng": 112.12
+      },
+      {
+        "name": "宜城",
+        "lat": 31.71,
+        "lng": 112.26
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「荆州大江北岸帝都江陵城」，行军方向与史料一致",
+    "source": "周书·于谨传；梁书·元帝纪；资治通鉴·卷一百六十五"
+  },
+  {
+    "seq": 524,
+    "eventId": "evt_1184",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "蒲坂",
+        "lat": 34.88,
+        "lng": 110.32
+      },
+      {
+        "name": "汾阴",
+        "lat": 35.3,
+        "lng": 110.48
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「河东勋州南翼汾川与宜阳防线」，行军方向与史料一致",
+    "source": "周书·韦孝宽传；北齐书·斛律光传；资治通鉴·卷一百六十八"
+  },
+  {
+    "seq": 525,
+    "eventId": "evt_1186",
+    "status": "ok",
+    "fixedFromName": "尼沙布尔",
+    "fixedFromCityId": "city_nishabuer",
+    "fixedRoute": [
+      {
+        "name": "木鹿",
+        "lat": 37.62,
+        "lng": 62.23
+      },
+      {
+        "name": "阿姆勒",
+        "lat": 39.09,
+        "lng": 63.57
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「尼沙布尔」出师进趋「中亚河中绿洲重镇布哈拉原野」，行军方向与史料一致",
+    "source": "塔巴里·历代先知与帝王史；菲尔多西·列王纪；米南德卫士残篇"
+  },
+  {
+    "seq": 526,
+    "eventId": "evt_1187",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "潼关",
+        "lat": 34.54,
+        "lng": 110.29
+      },
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      },
+      {
+        "name": "新安",
+        "lat": 34.72,
+        "lng": 112.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「东都洛阳金墉城与北邙山」，行军方向与史料一致",
+    "source": "北齐书·斛律光传；北齐书·兰陵王长恭传；周书·齐炀王宪传；资治通鉴·卷一百六十九"
+  },
+  {
+    "seq": 527,
+    "eventId": "evt_1193",
+    "status": "ok",
+    "fixedFromName": "龙门",
+    "fixedFromCityId": "city_xiayangdu",
+    "fixedRoute": [
+      {
+        "name": "稷山",
+        "lat": 35.6,
+        "lng": 110.98
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「龙门」出师进趋「河东汾水北岸与太行轵关陉」，行军方向与史料一致",
+    "source": "北齐书·斛律光传；周书·韦孝宽传；资治通鉴·卷一百七十"
+  },
+  {
+    "seq": 528,
+    "eventId": "evt_1194",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "潼关",
+        "lat": 34.54,
+        "lng": 110.29
+      },
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「崤山南道宜阳与汾州定陇原野」，行军方向与史料一致",
+    "source": "北齐书·斛律光传；周书·齐炀王宪传；资治通鉴·卷一百七十"
+  },
+  {
+    "seq": 529,
+    "eventId": "evt_1196",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "秦郡",
+        "lat": 32.35,
+        "lng": 118.84
+      },
+      {
+        "name": "肥口",
+        "lat": 32.48,
+        "lng": 117.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「淮南中枢重镇寿阳城」，行军方向与史料一致",
+    "source": "陈书·吴明彻传；北齐书·王琳传；资治通鉴·卷一百七十一"
+  },
+  {
+    "seq": 530,
+    "eventId": "evt_1197",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "京口",
+        "lat": 32.21,
+        "lng": 119.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「江淮东路重镇广陵城」，行军方向与史料一致",
+    "source": "陈书·宣帝纪；陈书·樊毅传；资治通鉴·卷一百七十一"
+  },
+  {
+    "seq": 531,
+    "eventId": "evt_1199",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "同州",
+        "lat": 34.8,
+        "lng": 109.94
+      },
+      {
+        "name": "夏阳",
+        "lat": 35.53,
+        "lng": 110.52
+      },
+      {
+        "name": "绛州",
+        "lat": 35.63,
+        "lng": 111.3
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「河东晋州平阳城南高梁桥」，行军方向与史料一致",
+    "source": "周书·武帝纪下；北齐书·后主纪；资治通鉴·卷一百七十二"
+  },
+  {
+    "seq": 532,
+    "eventId": "evt_1200",
+    "status": "fixed",
+    "fixedFromName": "临汾",
+    "fixedFromCityId": "city_linfen",
+    "fixedRoute": [
+      {
+        "name": "上党",
+        "lat": 36.19,
+        "lng": 113.11
+      },
+      {
+        "name": "滏口",
+        "lat": 36.42,
+        "lng": 114.08
+      }
+    ],
+    "reason": "同将连战，宇文邕承接上一场晋州平阳终点，修正出发据点为临汾，东越太行经上党、滏口合围北齐帝都邺城，剔除北绕晋阳造成的高绕行率",
+    "source": "周书·武帝纪下；北齐书·后主纪；资治通鉴·卷一百七十三"
+  },
+  {
+    "seq": 533,
+    "eventId": "evt_1201",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "荥阳",
+        "lat": 34.79,
+        "lng": 113.39
+      },
+      {
+        "name": "睢阳",
+        "lat": 34.41,
+        "lng": 115.66
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「彭城东南泗水吕梁至淮口清口」，行军方向与史料一致",
+    "source": "周书·王轨传；陈书·吴明彻传；资治通鉴·卷一百七十三"
+  },
+  {
+    "seq": 534,
+    "eventId": "evt_1202",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "许昌",
+        "lat": 34.02,
+        "lng": 113.85
+      },
+      {
+        "name": "悬瓠",
+        "lat": 33.01,
+        "lng": 114.36
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「淮南重镇寿阳与江北广陵」，行军方向与史料一致",
+    "source": "周书·韦孝宽传；陈书·宣帝纪；资治通鉴·卷一百七十三"
+  },
+  {
+    "seq": 535,
+    "eventId": "evt_1203",
+    "status": "fixed",
+    "fixedFromName": "寿春",
+    "fixedFromCityId": "city_shouxian",
+    "fixedRoute": [
+      {
+        "name": "谯郡",
+        "lat": 33.87,
+        "lng": 115.77
+      },
+      {
+        "name": "汴州",
+        "lat": 34.79,
+        "lng": 114.35
+      },
+      {
+        "name": "汲郡",
+        "lat": 35.4,
+        "lng": 114.05
+      }
+    ],
+    "reason": "同将连战，韦孝宽承接上一场淮南寿阳终点，修正出发据点为寿春，北上经谯郡、汴州、汲郡渡河进讨相州邺城尉迟迥，消除原西折潼关造成的2.40倍折返",
+    "source": "隋书·高祖纪上；周书·尉迟迥传；资治通鉴·卷一百七十四"
+  },
+  {
+    "seq": 536,
+    "eventId": "evt_1206",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "马邑",
+        "lat": 39.32,
+        "lng": 112.43
+      },
+      {
+        "name": "云中",
+        "lat": 40.38,
+        "lng": 111.82
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「阴山北麓白道塞外草原」，行军方向与史料一致",
+    "source": "隋书·卫昭王爽传；隋书·突厥传；资治通鉴·卷一百七十五"
+  },
+  {
+    "seq": 537,
+    "eventId": "evt_1211",
+    "status": "ok",
+    "fixedFromName": "白帝城",
+    "fixedFromCityId": "city_baidicheng2",
+    "fixedRoute": [
+      {
+        "name": "巫峡",
+        "lat": 31.07,
+        "lng": 109.88
+      },
+      {
+        "name": "归州",
+        "lat": 30.98,
+        "lng": 110.75
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「白帝城」出师进趋「长江三峡西陵峡狼尾滩」，行军方向与史料一致",
+    "source": "隋书·杨素传；资治通鉴·卷一百七十六"
+  },
+  {
+    "seq": 538,
+    "eventId": "evt_1212",
+    "status": "ok",
+    "fixedFromName": "广陵",
+    "fixedFromCityId": "city_yangzhou",
+    "fixedRoute": [
+      {
+        "name": "京口",
+        "lat": 32.21,
+        "lng": 119.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「广陵」出师进趋「建康钟山白土岗与台城朱雀门」，行军方向与史料一致",
+    "source": "隋书·高祖纪下；隋书·贺若弼韩擒虎传；陈书·后主纪；资治通鉴·卷一百七十七"
+  },
+  {
+    "seq": 539,
+    "eventId": "evt_1213",
+    "status": "ok",
+    "fixedFromName": "金陵",
+    "fixedFromCityId": "city_nanjing",
+    "fixedRoute": [
+      {
+        "name": "京口",
+        "lat": 32.21,
+        "lng": 119.45
+      },
+      {
+        "name": "吴州",
+        "lat": 31.3,
+        "lng": 120.62
+      },
+      {
+        "name": "余杭",
+        "lat": 30.25,
+        "lng": 120.16
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「金陵」出师进趋「钱塘江口浙江东岸与会稽山城」，行军方向与史料一致",
+    "source": "隋书·杨素传；隋书·来护儿传；资治通鉴·卷一百七十七"
+  },
+  {
+    "seq": 540,
+    "eventId": "evt_1222",
+    "status": "fixed",
+    "fixedFromName": "会稽",
+    "fixedFromCityId": "city_kuaiji",
+    "fixedRoute": [
+      {
+        "name": "泾州",
+        "lat": 35.33,
+        "lng": 107.36
+      },
+      {
+        "name": "原州",
+        "lat": 36,
+        "lng": 106.28
+      }
+    ],
+    "reason": "同将连战，承接上一场「钱塘江口浙江东岸与会稽山城」终点，将出发据点由「长安」修正为上一场终点对应据点「会稽」，途经点按续行方向衔接至「河套西南灵州塞外草原」",
+    "source": "隋书·杨素传；隋书·突厥传；资治通鉴·卷一百七十八"
+  },
+  {
+    "seq": 541,
+    "eventId": "evt_1223",
+    "status": "fixed",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "雁门",
+        "lat": 39.19,
+        "lng": 112.87
+      }
+    ],
+    "reason": "换将首战，史万岁自晋阳北出雁门经马邑塞追击突厥至大斤山，剔除与终点名称重叠之马邑节点",
+    "source": "隋书·史万岁传；隋书·长孙晟传；资治通鉴·卷一百七十九"
+  },
+  {
+    "seq": 542,
+    "eventId": "evt_1227",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "蒲津",
+        "lat": 34.83,
+        "lng": 110.3
+      },
+      {
+        "name": "绛州",
+        "lat": 35.63,
+        "lng": 111.3
+      },
+      {
+        "name": "霍邑",
+        "lat": 36.57,
+        "lng": 111.72
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「山西汾水东岸介休与清源原野」，行军方向与史料一致",
+    "source": "隋书·炀帝纪上；隋书·杨素传；隋书·庶人谅传；资治通鉴·卷一百八十"
+  },
+  {
+    "seq": 543,
+    "eventId": "evt_1232",
+    "status": "ok",
+    "fixedFromName": "姑臧",
+    "fixedFromCityId": "city_wuwei",
+    "fixedRoute": [
+      {
+        "name": "浩亹",
+        "lat": 37.15,
+        "lng": 101.62
+      },
+      {
+        "name": "西平",
+        "lat": 36.62,
+        "lng": 101.78
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「姑臧」出师进趋「青海湖西北覆袁川与仙海草原」，行军方向与史料一致",
+    "source": "隋书·炀帝纪上；隋书·吐谷浑传；资治通鉴·卷一百八十一"
+  },
+  {
+    "seq": 544,
+    "eventId": "evt_1235",
+    "status": "ok",
+    "fixedFromName": "范阳",
+    "fixedFromCityId": "city_fanyang",
+    "fixedRoute": [
+      {
+        "name": "卢龙",
+        "lat": 39.89,
+        "lng": 118.89
+      },
+      {
+        "name": "临渝关",
+        "lat": 40.01,
+        "lng": 119.75
+      },
+      {
+        "name": "柳城",
+        "lat": 41.57,
+        "lng": 120.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「范阳」出师进趋「辽水东岸要塞辽东城」，行军方向与史料一致",
+    "source": "隋书·炀帝纪下；隋书·高丽传；资治通鉴·卷一百八十一"
+  },
+  {
+    "seq": 545,
+    "eventId": "evt_1236",
+    "status": "ok",
+    "fixedFromName": "襄平",
+    "fixedFromCityId": "city_liaoyang",
+    "fixedRoute": [
+      {
+        "name": "鸭绿水",
+        "lat": 40.12,
+        "lng": 124.39
+      },
+      {
+        "name": "铁山",
+        "lat": 39.88,
+        "lng": 124.82
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「襄平」出师进趋「朝鲜半岛北部清川江萨水渡口」，行军方向与史料一致",
+    "source": "隋书·宇文述传；三国史记·乙支文德传；资治通鉴·卷一百八十一"
+  },
+  {
+    "seq": 546,
+    "eventId": "evt_1237",
+    "status": "fixed",
+    "fixedFromName": "息谷",
+    "fixedFromCityId": "city_xicheng",
+    "fixedRoute": [],
+    "reason": "同将连战，承接上一场「朝鲜半岛北部清川江萨水渡口」终点，将出发据点由「洛阳」修正为上一场终点对应据点「息谷」，途经点按续行方向衔接至「黎阳大仓与东都洛阳上春门」",
+    "source": "隋书·杨玄感传；隋书·宇文述传；资治通鉴·卷一百八十二"
+  },
+  {
+    "seq": 547,
+    "eventId": "evt_1240",
+    "status": "ok",
+    "fixedFromName": "蓬莱",
+    "fixedFromCityId": "city_dengzhou",
+    "fixedRoute": [
+      {
+        "name": "乌骨岛",
+        "lat": 38.35,
+        "lng": 120.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「蓬莱」出师进趋「辽东半岛南端海港卑奢城与怀远镇」，行军方向与史料一致",
+    "source": "隋书·炀帝纪下；隋书·来护儿传；资治通鉴·卷一百八十二"
+  },
+  {
+    "seq": 548,
+    "eventId": "evt_1241",
+    "status": "ok",
+    "fixedFromName": "雁门关",
+    "fixedFromCityId": "city_yanmenguan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「雁门关」迎战，无城外途经点，衔接正常",
+    "source": "隋书·炀帝纪；资治通鉴·隋纪七"
+  },
+  {
+    "seq": 549,
+    "eventId": "evt_1243",
+    "status": "ok",
+    "fixedFromName": "濮阳",
+    "fixedFromCityId": "city_puyang",
+    "fixedRoute": [
+      {
+        "name": "瓦岗",
+        "lat": 35.48,
+        "lng": 114.72
+      },
+      {
+        "name": "管城",
+        "lat": 34.75,
+        "lng": 113.65
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「濮阳」出师进趋「巩县兴洛仓」，行军方向与史料一致",
+    "source": "旧唐书·李密传；资治通鉴·隋纪八"
+  },
+  {
+    "seq": 550,
+    "eventId": "evt_1244",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "西河",
+        "lat": 37.27,
+        "lng": 111.79
+      },
+      {
+        "name": "雀鼠谷",
+        "lat": 36.95,
+        "lng": 111.83
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「霍邑城郊」，行军方向与史料一致",
+    "source": "大唐创业起居注；资治通鉴·隋纪八"
+  },
+  {
+    "seq": 551,
+    "eventId": "evt_1245",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "扶风",
+        "lat": 34.45,
+        "lng": 107.88
+      },
+      {
+        "name": "泾州",
+        "lat": 35.33,
+        "lng": 107.36
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「高墌浅水原」，行军方向与史料一致",
+    "source": "旧唐书·太宗本纪；资治通鉴·唐纪二"
+  },
+  {
+    "seq": 552,
+    "eventId": "evt_1246",
+    "status": "ok",
+    "fixedFromName": "聊城",
+    "fixedFromCityId": "city_liaocheng",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「聊城」迎战，无城外途经点，衔接正常",
+    "source": "旧唐书·窦建德传；资治通鉴·唐纪三"
+  },
+  {
+    "seq": 553,
+    "eventId": "evt_1247",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "同州",
+        "lat": 34.8,
+        "lng": 109.94
+      },
+      {
+        "name": "龙门",
+        "lat": 35.55,
+        "lng": 110.6
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「绛州柏壁与介休」，行军方向与史料一致",
+    "source": "旧唐书·刘武周传；资治通鉴·唐纪四"
+  },
+  {
+    "seq": 554,
+    "eventId": "evt_1248",
+    "status": "fixed",
+    "fixedFromName": "曲沃",
+    "fixedFromCityId": "city_quwo",
+    "fixedRoute": [
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      },
+      {
+        "name": "洛阳",
+        "lat": 34.62,
+        "lng": 112.45
+      }
+    ],
+    "reason": "同将连战，李世民承接上一场绛州柏壁终点，将误与终点重合之出发点虎牢关修正为河东曲沃，渡河南下经陕州、洛阳东进据守虎牢关，彻底消除起点贴近终点带途经点之异常",
+    "source": "旧唐书·窦建德传；资治通鉴·唐纪五"
+  },
+  {
+    "seq": 555,
+    "eventId": "evt_1249",
+    "status": "ok",
+    "fixedFromName": "白帝城",
+    "fixedFromCityId": "city_baidicheng2",
+    "fixedRoute": [
+      {
+        "name": "夷陵",
+        "lat": 30.7,
+        "lng": 111.28
+      },
+      {
+        "name": "枝江",
+        "lat": 30.42,
+        "lng": 111.76
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「白帝城」出师进趋「荆州江陵」，行军方向与史料一致",
+    "source": "旧唐书·李靖传；资治通鉴·唐纪五"
+  },
+  {
+    "seq": 556,
+    "eventId": "evt_1250",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "河阳",
+        "lat": 34.85,
+        "lng": 112.58
+      },
+      {
+        "name": "黎阳",
+        "lat": 35.68,
+        "lng": 114.55
+      },
+      {
+        "name": "相州",
+        "lat": 36.1,
+        "lng": 114.39
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「洺州洺水南岸」，行军方向与史料一致",
+    "source": "旧唐书·刘黑闼传；资治通鉴·唐纪五"
+  },
+  {
+    "seq": 557,
+    "eventId": "evt_1251",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "潼关",
+        "lat": 34.54,
+        "lng": 110.29
+      },
+      {
+        "name": "河内",
+        "lat": 35.1,
+        "lng": 113.38
+      },
+      {
+        "name": "相州",
+        "lat": 36.1,
+        "lng": 114.39
+      },
+      {
+        "name": "昌乐",
+        "lat": 36.22,
+        "lng": 115.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「魏州馆陶」，行军方向与史料一致",
+    "source": "旧唐书·隐太子建成传；资治通鉴·唐纪六"
+  },
+  {
+    "seq": 558,
+    "eventId": "evt_1252",
+    "status": "ok",
+    "fixedFromName": "柴桑",
+    "fixedFromCityId": "city_chaisang",
+    "fixedRoute": [
+      {
+        "name": "舒州",
+        "lat": 30.51,
+        "lng": 117.04
+      },
+      {
+        "name": "铜陵",
+        "lat": 30.94,
+        "lng": 117.81
+      },
+      {
+        "name": "芜湖",
+        "lat": 31.33,
+        "lng": 118.38
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「柴桑」出师进趋「博望山与丹阳」，行军方向与史料一致",
+    "source": "旧唐书·辅公祏传；资治通鉴·唐纪六"
+  },
+  {
+    "seq": 559,
+    "eventId": "evt_1256",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "泾州",
+        "lat": 35.33,
+        "lng": 107.36
+      },
+      {
+        "name": "庆州",
+        "lat": 36,
+        "lng": 107.88
+      },
+      {
+        "name": "延州",
+        "lat": 36.59,
+        "lng": 109.49
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「朔方夏州城」，行军方向与史料一致",
+    "source": "旧唐书·梁师都传；资治通鉴·唐纪八"
+  },
+  {
+    "seq": 560,
+    "eventId": "evt_1258",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "雁门",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "马邑",
+        "lat": 39.32,
+        "lng": 112.43
+      },
+      {
+        "name": "恶阳岭",
+        "lat": 39.72,
+        "lng": 112.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「阴山铁山牙帐」，行军方向与史料一致",
+    "source": "旧唐书·李靖传；资治通鉴·唐纪九"
+  },
+  {
+    "seq": 561,
+    "eventId": "evt_1263",
+    "status": "fixed",
+    "fixedFromName": "恶阳岭",
+    "fixedFromCityId": "city_eyangling",
+    "fixedRoute": [
+      {
+        "name": "鄯城",
+        "lat": 36.62,
+        "lng": 101.78
+      },
+      {
+        "name": "赤水源",
+        "lat": 36.38,
+        "lng": 100.8
+      }
+    ],
+    "reason": "同将连战，承接上一场「阴山铁山牙帐」终点，将出发据点由「乐都」修正为上一场终点对应据点「恶阳岭」，途经点按续行方向衔接至「且末西境突沦川」",
+    "source": "旧唐书·吐谷浑传；资治通鉴·唐纪十"
+  },
+  {
+    "seq": 562,
+    "eventId": "evt_1267",
+    "status": "ok",
+    "fixedFromName": "嘉诚",
+    "fixedFromCityId": "city_songzhou",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「嘉诚」迎战，无城外途经点，衔接正常",
+    "source": "旧唐书·吐蕃传；资治通鉴·唐纪十一"
+  },
+  {
+    "seq": 563,
+    "eventId": "evt_1269",
+    "status": "fixed",
+    "fixedFromName": "嘉诚",
+    "fixedFromCityId": "city_songzhou",
+    "fixedRoute": [
+      {
+        "name": "伊吾",
+        "lat": 42.83,
+        "lng": 93.52
+      },
+      {
+        "name": "柳谷",
+        "lat": 42.92,
+        "lng": 90.35
+      },
+      {
+        "name": "田地城",
+        "lat": 42.86,
+        "lng": 89.85
+      }
+    ],
+    "reason": "同将连战，承接上一场「松州嘉诚」终点，将出发据点由「敦煌」修正为上一场终点对应据点「嘉诚」，途经点按续行方向衔接至「吐鲁番高昌都城」",
+    "source": "旧唐书·高昌传；资治通鉴·唐纪十一"
+  },
+  {
+    "seq": 564,
+    "eventId": "evt_1273",
+    "status": "ok",
+    "fixedFromName": "高昌",
+    "fixedFromCityId": "city_gaochangcheng",
+    "fixedRoute": [
+      {
+        "name": "银山碛",
+        "lat": 42.45,
+        "lng": 88.55
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「高昌」出师进趋「焉耆员渠城」，行军方向与史料一致",
+    "source": "旧唐书·郭孝恪传；资治通鉴·唐纪十三"
+  },
+  {
+    "seq": 565,
+    "eventId": "evt_1275",
+    "status": "fixed",
+    "fixedFromName": "襄平",
+    "fixedFromCityId": "city_liaoyang",
+    "fixedRoute": [],
+    "reason": "换将首战，李世民自辽东城（襄平）直接西南进围安市城，剔除向北绕行盖牟造成的2.43倍折返",
+    "source": "资治通鉴·唐纪十四；三国史记·高句丽本纪"
+  },
+  {
+    "seq": 566,
+    "eventId": "evt_1276",
+    "status": "ok",
+    "fixedFromName": "盛乐",
+    "fixedFromCityId": "city_shengle",
+    "fixedRoute": [
+      {
+        "name": "白道",
+        "lat": 41.27,
+        "lng": 111.13
+      },
+      {
+        "name": "诺真水",
+        "lat": 44.5,
+        "lng": 106
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「盛乐」出师进趋「漠北郁督军山」，行军方向与史料一致",
+    "source": "旧唐书·铁勒传；资治通鉴·唐纪十四"
+  },
+  {
+    "seq": 567,
+    "eventId": "evt_1280",
+    "status": "ok",
+    "fixedFromName": "盛乐",
+    "fixedFromCityId": "city_shengle",
+    "fixedRoute": [
+      {
+        "name": "白道",
+        "lat": 41.27,
+        "lng": 111.13
+      },
+      {
+        "name": "郁督军山",
+        "lat": 47.6,
+        "lng": 101.23
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「盛乐」出师进趋「阿尔泰山金微山麓」，行军方向与史料一致",
+    "source": "旧唐书·突厥传上；资治通鉴·唐纪十五"
+  },
+  {
+    "seq": 568,
+    "eventId": "evt_1288",
+    "status": "ok",
+    "fixedFromName": "务涂城",
+    "fixedFromCityId": "city_bieshibali",
+    "fixedRoute": [
+      {
+        "name": "处月",
+        "lat": 44.2,
+        "lng": 87.95
+      },
+      {
+        "name": "咽面州",
+        "lat": 45.85,
+        "lng": 85.4
+      },
+      {
+        "name": "双河",
+        "lat": 44.85,
+        "lng": 82.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「务涂城」出师进趋「伊犁拽咥河荒原」，行军方向与史料一致",
+    "source": "旧唐书·苏定方传；资治通鉴·唐纪十六"
+  },
+  {
+    "seq": 569,
+    "eventId": "evt_1293",
+    "status": "fixed",
+    "fixedFromName": "务涂城",
+    "fixedFromCityId": "city_bieshibali",
+    "fixedRoute": [
+      {
+        "name": "白水涧",
+        "lat": 43.45,
+        "lng": 89.3
+      }
+    ],
+    "reason": "换将首战，薛仁贵自北庭务涂城南越天山白水涧进击铁勒，剔除西折轮台造成的3.08倍折返",
+    "source": "旧唐书·薛仁贵传；资治通鉴·唐纪十六"
+  },
+  {
+    "seq": 570,
+    "eventId": "evt_1296",
+    "status": "ok",
+    "fixedFromName": "于阗",
+    "fixedFromCityId": "city_yutian2",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「于阗」迎战，无城外途经点，衔接正常",
+    "source": "资治通鉴·唐纪十七；新唐书·西域于阗传"
+  },
+  {
+    "seq": 571,
+    "eventId": "evt_1301",
+    "status": "ok",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "赤水",
+        "lat": 36.3,
+        "lng": 100.8
+      },
+      {
+        "name": "乌海",
+        "lat": 35.85,
+        "lng": 99.3
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐都」出师进趋「青海湖西南大非川」，行军方向与史料一致",
+    "source": "旧唐书·薛仁贵传；资治通鉴·唐纪十七"
+  },
+  {
+    "seq": 572,
+    "eventId": "evt_1291",
+    "status": "ok",
+    "fixedFromName": "文登",
+    "fixedFromCityId": "city_wendeng",
+    "fixedRoute": [
+      {
+        "name": "大谢岛",
+        "lat": 37.25,
+        "lng": 125.95
+      },
+      {
+        "name": "德物岛",
+        "lat": 37.05,
+        "lng": 126.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「文登」出师进趋「伎伐浦与泗沘都城」，行军方向与史料一致",
+    "source": "旧唐书·苏定方传；三国史记·百济本纪"
+  },
+  {
+    "seq": 573,
+    "eventId": "evt_1294",
+    "status": "ok",
+    "fixedFromName": "泗沘",
+    "fixedFromCityId": "city_sabi",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「泗沘」出师进趋「熊津白江口」，行军方向与史料一致",
+    "source": "旧唐书·刘仁轨传；日本书纪·天智纪"
+  },
+  {
+    "seq": 574,
+    "eventId": "evt_1298",
+    "status": "ok",
+    "fixedFromName": "朝阳",
+    "fixedFromCityId": "city_chaoyang",
+    "fixedRoute": [
+      {
+        "name": "怀远镇",
+        "lat": 41.32,
+        "lng": 122.65
+      },
+      {
+        "name": "辽东城",
+        "lat": 41.27,
+        "lng": 123.17
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「朝阳」出师进趋「抚顺浑河北岸新城」，行军方向与史料一致",
+    "source": "旧唐书·李勣传；资治通鉴·唐纪十七"
+  },
+  {
+    "seq": 575,
+    "eventId": "evt_1299",
+    "status": "fixed",
+    "fixedFromName": "萨尔浒",
+    "fixedFromCityId": "city_salhu",
+    "fixedRoute": [
+      {
+        "name": "大行城",
+        "lat": 40.05,
+        "lng": 124.55
+      },
+      {
+        "name": "辱夷城",
+        "lat": 39.65,
+        "lng": 125.42
+      }
+    ],
+    "reason": "同将连战，承接上一场「抚顺浑河北岸新城」终点，将出发据点由「晋阳」修正为上一场终点对应据点「萨尔浒」，途经点按续行方向衔接至「大同江畔平壤王都」",
+    "source": "旧唐书·李勣传；三国史记·高句丽本纪"
+  },
+  {
+    "seq": 576,
+    "eventId": "evt_1303",
+    "status": "ok",
+    "fixedFromName": "襄平",
+    "fixedFromCityId": "city_liaoyang",
+    "fixedRoute": [
+      {
+        "name": "安东府",
+        "lat": 40.12,
+        "lng": 124.39
+      },
+      {
+        "name": "萨水",
+        "lat": 39.62,
+        "lng": 125.66
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「襄平」出师进趋「平壤郊外白水山」，行军方向与史料一致",
+    "source": "资治通鉴·唐纪十八；三国史记·新罗本纪"
+  },
+  {
+    "seq": 577,
+    "eventId": "evt_1306",
+    "status": "ok",
+    "fixedFromName": "开城",
+    "fixedFromCityId": "city_kaesong",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「开城」出师进趋「京畿涟川买肖城」，行军方向与史料一致",
+    "source": "资治通鉴·唐纪十八；三国史记·新罗本纪"
+  },
+  {
+    "seq": 578,
+    "eventId": "evt_1307",
+    "status": "ok",
+    "fixedFromName": "蓬莱",
+    "fixedFromCityId": "city_dengzhou",
+    "fixedRoute": [
+      {
+        "name": "成山角",
+        "lat": 37.4,
+        "lng": 122.7
+      },
+      {
+        "name": "德物岛",
+        "lat": 37.05,
+        "lng": 126.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「蓬莱」出师进趋「锦江入海口伎伐浦」，行军方向与史料一致",
+    "source": "三国史记·新罗本纪；资治通鉴·唐纪十八"
+  },
+  {
+    "seq": 579,
+    "eventId": "evt_1309",
+    "status": "fixed",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "鄯城",
+        "lat": 36.62,
+        "lng": 101.78
+      }
+    ],
+    "reason": "换将首战，黑齿常之自湟水乐都经鄯城西进青海湖承风岭，剔除东南向折返之龙支节点",
+    "source": "旧唐书·黑齿常之传；资治通鉴·唐纪十八"
+  },
+  {
+    "seq": 580,
+    "eventId": "evt_1311",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "朔州",
+        "lat": 39.32,
+        "lng": 112.43
+      },
+      {
+        "name": "定襄",
+        "lat": 40.38,
+        "lng": 111.82
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「呼和浩特北境黑山」，行军方向与史料一致",
+    "source": "旧唐书·裴行俭传；资治通鉴·唐纪十八"
+  },
+  {
+    "seq": 581,
+    "eventId": "evt_1314",
+    "status": "fixed",
+    "fixedFromName": "归化城",
+    "fixedFromCityId": "city_guihua",
+    "fixedRoute": [],
+    "reason": "同将连战，裴行俭承接上一场呼和浩特北境黑山终点，修正出发据点为归化城，直接东南进驻朔州北境金牙山诱擒阿史那匐念，消除原南折代州造成的5.57倍折返",
+    "source": "旧唐书·裴行俭传；资治通鉴·唐纪十九"
+  },
+  {
+    "seq": 582,
+    "eventId": "evt_1315",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "雁门",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "马邑",
+        "lat": 39.32,
+        "lng": 112.43
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「云州云中川原野」，行军方向与史料一致",
+    "source": "旧唐书·薛仁贵传；资治通鉴·唐纪十九"
+  },
+  {
+    "seq": 583,
+    "eventId": "evt_1322",
+    "status": "ok",
+    "fixedFromName": "伊逻卢",
+    "fixedFromCityId": "city_yiluolucheng",
+    "fixedRoute": [
+      {
+        "name": "拨换城",
+        "lat": 41.17,
+        "lng": 80.25
+      },
+      {
+        "name": "勃达岭",
+        "lat": 41.65,
+        "lng": 78.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「伊逻卢」出师进趋「伊塞克湖畔寅识迦河」，行军方向与史料一致",
+    "source": "旧唐书·吐蕃传；资治通鉴·唐纪二十"
+  },
+  {
+    "seq": 584,
+    "eventId": "evt_1326",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "泾州",
+        "lat": 35.33,
+        "lng": 107.36
+      },
+      {
+        "name": "原州",
+        "lat": 36,
+        "lng": 106.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「朔方灵州塞垣」，行军方向与史料一致",
+    "source": "旧唐书·突厥传上；资治通鉴·唐纪二十一"
+  },
+  {
+    "seq": 585,
+    "eventId": "evt_1327",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "长安",
+        "lat": 34.27,
+        "lng": 108.93
+      },
+      {
+        "name": "秦州",
+        "lat": 34.58,
+        "lng": 105.73
+      },
+      {
+        "name": "鄯州",
+        "lat": 36.48,
+        "lng": 102.42
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「青海湖畔冷泉与大岭」，行军方向与史料一致",
+    "source": "旧唐书·王孝杰传；资治通鉴·唐纪二十一"
+  },
+  {
+    "seq": 586,
+    "eventId": "evt_1330",
+    "status": "fixed",
+    "fixedFromName": "伏俟城",
+    "fixedFromCityId": "city_fusicheng",
+    "fixedRoute": [
+      {
+        "name": "渔阳",
+        "lat": 40.04,
+        "lng": 117.4
+      },
+      {
+        "name": "石城",
+        "lat": 39.65,
+        "lng": 118.18
+      }
+    ],
+    "reason": "同将连战，承接上一场「青海湖畔冷泉与大岭」终点，将出发据点由「范阳」修正为上一场终点对应据点「伏俟城」，途经点按续行方向衔接至「平州东硖石谷」",
+    "source": "旧唐书·王孝杰传；资治通鉴·唐纪二十二"
+  },
+  {
+    "seq": 587,
+    "eventId": "evt_1331",
+    "status": "ok",
+    "fixedFromName": "朝阳",
+    "fixedFromCityId": "city_chaoyang",
+    "fixedRoute": [
+      {
+        "name": "怀远镇",
+        "lat": 41.32,
+        "lng": 122.65
+      },
+      {
+        "name": "盖牟",
+        "lat": 41.52,
+        "lng": 123.35
+      },
+      {
+        "name": "新城",
+        "lat": 41.84,
+        "lng": 124.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「朝阳」出师进趋「辽东东境天门岭」，行军方向与史料一致",
+    "source": "旧唐书·北狄渤海靺鞨传；资治通鉴·唐纪二十二"
+  },
+  {
+    "seq": 588,
+    "eventId": "evt_1333",
+    "status": "ok",
+    "fixedFromName": "姑臧",
+    "fixedFromCityId": "city_wuwei",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「姑臧」出师进趋「凉州昌松洪源谷」，行军方向与史料一致",
+    "source": "旧唐书·唐休璟传；资治通鉴·唐纪二十二"
+  },
+  {
+    "seq": 589,
+    "eventId": "evt_1339",
+    "status": "ok",
+    "fixedFromName": "回乐",
+    "fixedFromCityId": "city_lingzhou",
+    "fixedRoute": [
+      {
+        "name": "温池",
+        "lat": 37.42,
+        "lng": 106.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「回乐」出师进趋「灵州鸣沙原野」，行军方向与史料一致",
+    "source": "旧唐书·突厥传上；资治通鉴·唐纪二十四"
+  },
+  {
+    "seq": 590,
+    "eventId": "evt_1348",
+    "status": "ok",
+    "fixedFromName": "狄道",
+    "fixedFromCityId": "city_lintao",
+    "fixedRoute": [
+      {
+        "name": "康乐",
+        "lat": 35.22,
+        "lng": 103.65
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「狄道」出师进趋「渭州武街谷与长城堡」，行军方向与史料一致",
+    "source": "旧唐书·王晙传；资治通鉴·唐纪二十六"
+  },
+  {
+    "seq": 591,
+    "eventId": "evt_1352",
+    "status": "ok",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "廓州",
+        "lat": 36.05,
+        "lng": 101.88
+      },
+      {
+        "name": "浇河",
+        "lat": 35.73,
+        "lng": 101.21
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐都」出师进趋「青海黄河九曲草场」，行军方向与史料一致",
+    "source": "旧唐书·郭知运传；册府元龟·帝王部"
+  },
+  {
+    "seq": 592,
+    "eventId": "evt_1360",
+    "status": "fixed",
+    "fixedFromName": "张掖",
+    "fixedFromCityId": "city_zhangye",
+    "fixedRoute": [
+      {
+        "name": "删丹",
+        "lat": 38.78,
+        "lng": 101.08
+      }
+    ],
+    "reason": "换将首战，王君㚟自甘州张掖经删丹南入祁连山大斗拔谷追击吐蕃，剔除东西折返之祁连戍节点",
+    "source": "旧唐书·王君㚟传；资治通鉴·唐纪二十九"
+  },
+  {
+    "seq": 593,
+    "eventId": "evt_1337",
+    "status": "ok",
+    "fixedFromName": "木鹿",
+    "fixedFromCityId": "city_merv",
+    "fixedRoute": [
+      {
+        "name": "塔里干",
+        "lat": 35.85,
+        "lng": 64.15
+      },
+      {
+        "name": "缚喝",
+        "lat": 36.76,
+        "lng": 66.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「木鹿」出师进趋「阿姆河北岸怛蜜要塞」，行军方向与史料一致",
+    "source": "泰伯里·历代先知与帝王史；巴拉祖里·诸国征服史"
+  },
+  {
+    "seq": 594,
+    "eventId": "evt_1342",
+    "status": "ok",
+    "fixedFromName": "木鹿",
+    "fixedFromCityId": "city_merv",
+    "fixedRoute": [
+      {
+        "name": "阿姆勒",
+        "lat": 39.09,
+        "lng": 63.57
+      },
+      {
+        "name": "派肯德",
+        "lat": 39.58,
+        "lng": 64.02
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「木鹿」出师进趋「泽拉夫善河下游布哈拉」，行军方向与史料一致",
+    "source": "泰伯里·历代先知与帝王史；纳尔沙希·布哈拉史"
+  },
+  {
+    "seq": 595,
+    "eventId": "evt_1343",
+    "status": "fixed",
+    "fixedFromName": "布哈拉",
+    "fixedFromCityId": "city_bukhara",
+    "fixedRoute": [
+      {
+        "name": "纳赫沙布",
+        "lat": 38.86,
+        "lng": 65.79
+      },
+      {
+        "name": "铁门关",
+        "lat": 38.22,
+        "lng": 67.02
+      },
+      {
+        "name": "恰加尼扬",
+        "lat": 38.28,
+        "lng": 67.9
+      }
+    ],
+    "reason": "同将连战，承接上一场「泽拉夫善河下游布哈拉」终点，将出发据点由「木鹿」修正为上一场终点对应据点「布哈拉」，途经点按续行方向衔接至「希萨尔山麓舒曼要塞」",
+    "source": "泰伯里·历代先知与帝王史；巴拉祖里·诸国征服史"
+  },
+  {
+    "seq": 596,
+    "eventId": "evt_1347",
+    "status": "fixed",
+    "fixedFromName": "于都斤山",
+    "fixedFromCityId": "city_otuken",
+    "fixedRoute": [
+      {
+        "name": "蒲类海",
+        "lat": 43.6,
+        "lng": 93.0
+      }
+    ],
+    "reason": "换将首战，同俄特勤自漠北于都斤山西南经蒲类海进围北庭都护府，剔除向东南偏折之涿邪山节点",
+    "source": "旧唐书·郭虔瓘传；资治通鉴·唐纪二十六"
+  },
+  {
+    "seq": 597,
+    "eventId": "evt_1349",
+    "status": "ok",
+    "fixedFromName": "伊逻卢",
+    "fixedFromCityId": "city_yiluolucheng",
+    "fixedRoute": [
+      {
+        "name": "拨换城",
+        "lat": 41.17,
+        "lng": 80.25
+      },
+      {
+        "name": "疏勒",
+        "lat": 39.47,
+        "lng": 75.99
+      },
+      {
+        "name": "郁成",
+        "lat": 40.52,
+        "lng": 72.8
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「伊逻卢」出师进趋「费尔干纳盆地连城」，行军方向与史料一致",
+    "source": "资治通鉴·唐纪二十七；新唐书·张孝嵩传"
+  },
+  {
+    "seq": 598,
+    "eventId": "evt_1358",
+    "status": "ok",
+    "fixedFromName": "碎叶",
+    "fixedFromCityId": "city_suiye",
+    "fixedRoute": [
+      {
+        "name": "怛罗斯",
+        "lat": 42.89,
+        "lng": 71.35
+      },
+      {
+        "name": "白水城",
+        "lat": 42.35,
+        "lng": 69.85
+      },
+      {
+        "name": "石国",
+        "lat": 41.31,
+        "lng": 69.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「碎叶」出师进趋「费尔干纳锡尔河北岸」，行军方向与史料一致",
+    "source": "泰伯里·历代先知与帝王史；巴拉祖里·诸国征服史"
+  },
+  {
+    "seq": 599,
+    "eventId": "evt_1362",
+    "status": "ok",
+    "fixedFromName": "晋昌",
+    "fixedFromCityId": "city_jinchangcheng",
+    "fixedRoute": [
+      {
+        "name": "常乐",
+        "lat": 40.25,
+        "lng": 96.35
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋昌」出师进趋「瓜州城下与祁连渴波谷」，行军方向与史料一致",
+    "source": "旧唐书·张守珪传；资治通鉴·唐纪二十九"
+  },
+  {
+    "seq": 600,
+    "eventId": "evt_1363",
+    "status": "ok",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "临蕃城",
+        "lat": 36.55,
+        "lng": 102.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐都」出师进趋「日月山南石堡城」，行军方向与史料一致",
+    "source": "旧唐书·郁林王恪孙祎传；资治通鉴·唐纪二十九"
+  },
+  {
+    "seq": 601,
+    "eventId": "evt_1367",
+    "status": "ok",
+    "fixedFromName": "北京",
+    "fixedFromCityId": "city_beijing",
+    "fixedRoute": [
+      {
+        "name": "渔阳",
+        "lat": 40.04,
+        "lng": 117.4
+      },
+      {
+        "name": "卢龙",
+        "lat": 39.89,
+        "lng": 118.89
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「北京」出师进趋「平州西北都山」，行军方向与史料一致",
+    "source": "旧唐书·北狄契丹传；资治通鉴·唐纪二十九"
+  },
+  {
+    "seq": 602,
+    "eventId": "evt_1372",
+    "status": "ok",
+    "fixedFromName": "雁门关",
+    "fixedFromCityId": "city_yanmenguan",
+    "fixedRoute": [
+      {
+        "name": "马邑",
+        "lat": 39.32,
+        "lng": 112.43
+      },
+      {
+        "name": "应州",
+        "lat": 39.56,
+        "lng": 113.19
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「雁门关」出师进趋「代北桑乾河谷」，行军方向与史料一致",
+    "source": "旧唐书·王忠嗣传；新唐书·王忠嗣传"
+  },
+  {
+    "seq": 603,
+    "eventId": "evt_1376",
+    "status": "fixed",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "凉州",
+        "lat": 37.93,
+        "lng": 102.64
+      },
+      {
+        "name": "鄯州",
+        "lat": 36.49,
+        "lng": 102.37
+      }
+    ],
+    "reason": "同将连战，承接上一场「代北桑乾河谷」终点，将出发据点由「回乐」修正为上一场终点对应据点「大同」，途经点按续行方向衔接至「青海湖与渔海原野」",
+    "source": "旧唐书·王忠嗣传；资治通鉴·唐纪三十一"
+  },
+  {
+    "seq": 604,
+    "eventId": "evt_1377",
+    "status": "ok",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "廓州",
+        "lat": 36.05,
+        "lng": 101.88
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐都」出师进趋「青海贵南西境洪济城」，行军方向与史料一致",
+    "source": "旧唐书·玄宗本纪；资治通鉴·唐纪三十一"
+  },
+  {
+    "seq": 605,
+    "eventId": "evt_1379",
+    "status": "ok",
+    "fixedFromName": "回乐",
+    "fixedFromCityId": "city_lingzhou",
+    "fixedRoute": [
+      {
+        "name": "西受降城",
+        "lat": 40.78,
+        "lng": 108.45
+      },
+      {
+        "name": "光禄塞",
+        "lat": 41.4,
+        "lng": 109.2
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「回乐」出师进趋「阴山北境萨河内山」，行军方向与史料一致",
+    "source": "旧唐书·王忠嗣传；资治通鉴·唐纪三十一"
+  },
+  {
+    "seq": 606,
+    "eventId": "evt_1380",
+    "status": "fixed",
+    "fixedFromName": "光禄城",
+    "fixedFromCityId": "city_guanglu",
+    "fixedRoute": [
+      {
+        "name": "廓州",
+        "lat": 36.05,
+        "lng": 101.88
+      }
+    ],
+    "reason": "同将连战，承接上一场「阴山北境萨河内山」终点，将出发据点由「乐都」修正为上一场终点对应据点「光禄城」，途经点按续行方向衔接至「青海积石军与墨离军」",
+    "source": "旧唐书·王忠嗣传；资治通鉴·唐纪三十一"
+  },
+  {
+    "seq": 607,
+    "eventId": "evt_1383",
+    "status": "ok",
+    "fixedFromName": "乐都",
+    "fixedFromCityId": "city_ledou",
+    "fixedRoute": [
+      {
+        "name": "临蕃城",
+        "lat": 36.55,
+        "lng": 102.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乐都」出师进趋「青海日月山石堡城」，行军方向与史料一致",
+    "source": "旧唐书·哥舒翰传；资治通鉴·唐纪三十二"
+  },
+  {
+    "seq": 608,
+    "eventId": "evt_1386",
+    "status": "ok",
+    "fixedFromName": "范阳",
+    "fixedFromCityId": "city_fanyang",
+    "fixedRoute": [
+      {
+        "name": "妫州",
+        "lat": 40.38,
+        "lng": 115.75
+      },
+      {
+        "name": "武州",
+        "lat": 40.62,
+        "lng": 115.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「范阳」出师进趋「燕北瀚海塞外草原」，行军方向与史料一致",
+    "source": "旧唐书·张孝忠传；资治通鉴·唐纪三十二"
+  },
+  {
+    "seq": 609,
+    "eventId": "evt_1365",
+    "status": "ok",
+    "fixedFromName": "木鹿",
+    "fixedFromCityId": "city_merv",
+    "fixedRoute": [
+      {
+        "name": "阿姆勒",
+        "lat": 39.09,
+        "lng": 63.57
+      },
+      {
+        "name": "纳赫沙布",
+        "lat": 38.86,
+        "lng": 65.79
+      },
+      {
+        "name": "基什",
+        "lat": 39.05,
+        "lng": 66.83
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「木鹿」出师进趋「撒马尔罕南塔赫塔卡拉恰山口」，行军方向与史料一致",
+    "source": "泰伯里·历代先知与帝王史；伊本·阿西尔·全史"
+  },
+  {
+    "seq": 610,
+    "eventId": "evt_1369",
+    "status": "ok",
+    "fixedFromName": "务涂城",
+    "fixedFromCityId": "city_bieshibali",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「务涂城」迎战，无城外途经点，衔接正常",
+    "source": "旧唐书·突厥传下；资治通鉴·唐纪三十"
+  },
+  {
+    "seq": 611,
+    "eventId": "evt_1370",
+    "status": "ok",
+    "fixedFromName": "务涂城",
+    "fixedFromCityId": "city_bieshibali",
+    "fixedRoute": [
+      {
+        "name": "轮台",
+        "lat": 43.95,
+        "lng": 87.6
+      },
+      {
+        "name": "弓月城",
+        "lat": 43.92,
+        "lng": 81.32
+      }
+    ],
+    "reason": "同将连战，自上一场「天山北麓北庭与瀚海军」续行至「热海伊塞克湖东原」，出发据点与途经点方向连贯无误",
+    "source": "旧唐书·突厥传下；资治通鉴·唐纪三十"
+  },
+  {
+    "seq": 612,
+    "eventId": "evt_1371",
+    "status": "ok",
+    "fixedFromName": "蓝氏城",
+    "fixedFromCityId": "city_lanshi",
+    "fixedRoute": [
+      {
+        "name": "希布尔甘",
+        "lat": 36.66,
+        "lng": 65.75
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「蓝氏城」出师进趋「朱兹詹哈里斯坦原野」，行军方向与史料一致",
+    "source": "泰伯里·历代先知与帝王史；伊本·阿西尔·全史"
+  },
+  {
+    "seq": 613,
+    "eventId": "evt_1373",
+    "status": "ok",
+    "fixedFromName": "务涂城",
+    "fixedFromCityId": "city_bieshibali",
+    "fixedRoute": [
+      {
+        "name": "弓月城",
+        "lat": 43.92,
+        "lng": 81.32
+      },
+      {
+        "name": "俱兰城",
+        "lat": 42.9,
+        "lng": 77.2
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「务涂城」出师进趋「碎叶城与贺逻岭」，行军方向与史料一致",
+    "source": "旧唐书·突厥传下；资治通鉴·唐纪三十"
+  },
+  {
+    "seq": 614,
+    "eventId": "evt_1381",
+    "status": "ok",
+    "fixedFromName": "伊逻卢",
+    "fixedFromCityId": "city_yiluolucheng",
+    "fixedRoute": [
+      {
+        "name": "疏勒",
+        "lat": 39.47,
+        "lng": 75.99
+      },
+      {
+        "name": "竭盘陀",
+        "lat": 37.77,
+        "lng": 75.23
+      },
+      {
+        "name": "护密",
+        "lat": 37,
+        "lng": 72.6
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「伊逻卢」出师进趋「帕米尔娑勒川连云堡」，行军方向与史料一致",
+    "source": "旧唐书·高仙芝传；资治通鉴·唐纪三十二"
+  },
+  {
+    "seq": 615,
+    "eventId": "evt_1385",
+    "status": "fixed",
+    "fixedFromName": "连云堡",
+    "fixedFromCityId": "city_lianyun",
+    "fixedRoute": [
+      {
+        "name": "热海",
+        "lat": 42.45,
+        "lng": 77.8
+      },
+      {
+        "name": "碎叶",
+        "lat": 42.84,
+        "lng": 75.3
+      }
+    ],
+    "reason": "同将连战，承接上一场「帕米尔娑勒川连云堡」终点，将出发据点由「伊逻卢」修正为上一场终点对应据点「连云堡」，途经点按续行方向衔接至「怛罗斯河谷阿特拉赫」",
+    "source": "旧唐书·高仙芝传；伊本·阿西尔·全史"
+  },
+  {
+    "seq": 616,
+    "eventId": "evt_1387",
+    "status": "ok",
+    "fixedFromName": "伊逻卢",
+    "fixedFromCityId": "city_yiluolucheng",
+    "fixedRoute": [
+      {
+        "name": "于阗",
+        "lat": 37.1,
+        "lng": 79.92
+      },
+      {
+        "name": "斫句迦",
+        "lat": 37.88,
+        "lng": 77.42
+      },
+      {
+        "name": "竭盘陀",
+        "lat": 37.77,
+        "lng": 75.23
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「伊逻卢」出师进趋「克什米尔北境菩萨劳城」，行军方向与史料一致",
+    "source": "旧唐书·封常清传；旧唐书·段秀实传"
+  },
+  {
+    "seq": 617,
+    "eventId": "evt_1390",
+    "status": "ok",
+    "fixedFromName": "范阳",
+    "fixedFromCityId": "city_fanyang",
+    "fixedRoute": [
+      {
+        "name": "易州",
+        "lat": 39.35,
+        "lng": 115.48
+      },
+      {
+        "name": "定州",
+        "lat": 38.51,
+        "lng": 114.99
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「范阳」出师进趋「河北常山郡城」，行军方向与史料一致",
+    "source": "旧唐书·忠义颜杲卿传；资治通鉴·唐纪三十四"
+  },
+  {
+    "seq": 618,
+    "eventId": "evt_1391",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「潼关东原灵宝西原」，行军方向与史料一致",
+    "source": "旧唐书·哥舒翰传；资治通鉴·唐纪三十四"
+  },
+  {
+    "seq": 619,
+    "eventId": "evt_1392",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「晋阳」迎战，无城外途经点，衔接正常",
+    "source": "旧唐书·李光弼传；资治通鉴·唐纪三十六"
+  },
+  {
+    "seq": 620,
+    "eventId": "evt_1393",
+    "status": "ok",
+    "fixedFromName": "岐山",
+    "fixedFromCityId": "city_qishan",
+    "fixedRoute": [
+      {
+        "name": "武功",
+        "lat": 34.32,
+        "lng": 108.12
+      },
+      {
+        "name": "鄠县",
+        "lat": 34.11,
+        "lng": 108.6
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「岐山」出师进趋「长安城南沣水香积寺」，行军方向与史料一致",
+    "source": "旧唐书·郭子仪传；资治通鉴·唐纪三十六"
+  },
+  {
+    "seq": 621,
+    "eventId": "evt_1394",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "雍丘",
+        "lat": 34.55,
+        "lng": 114.78
+      },
+      {
+        "name": "宁陵",
+        "lat": 34.45,
+        "lng": 115.32
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「开封」出师进趋「河南睢阳郡城」，行军方向与史料一致",
+    "source": "旧唐书·忠义张巡传；韩愈·张中丞传后叙"
+  },
+  {
+    "seq": 622,
+    "eventId": "evt_1396",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "河阳",
+        "lat": 34.85,
+        "lng": 112.58
+      },
+      {
+        "name": "卫州",
+        "lat": 35.42,
+        "lng": 114.05
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「相州城北安阳河原」，行军方向与史料一致",
+    "source": "旧唐书·史思明传；资治通鉴·唐纪三十七"
+  },
+  {
+    "seq": 623,
+    "eventId": "evt_1399",
+    "status": "ok",
+    "fixedFromName": "龙门",
+    "fixedFromCityId": "city_xiayangdu",
+    "fixedRoute": [
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      },
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「龙门」出师进趋「洛阳昭觉寺与孟州横水」，行军方向与史料一致",
+    "source": "旧唐书·仆固怀恩传；资治通鉴·唐纪三十九"
+  },
+  {
+    "seq": 624,
+    "eventId": "evt_1402",
+    "status": "ok",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "咸阳",
+        "lat": 34.33,
+        "lng": 108.7
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长安」出师进趋「京兆泾阳与灵台白渠」，行军方向与史料一致",
+    "source": "旧唐书·郭子仪传；资治通鉴·唐纪四十"
+  },
+  {
+    "seq": 625,
+    "eventId": "evt_1403",
+    "status": "fixed",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [],
+    "reason": "同将连战，承接上一场「京兆泾阳与灵台白渠」终点，将出发据点由「回乐」修正为上一场终点对应据点「长安」，途经点按续行方向衔接至「朔方军镇治所灵州」",
+    "source": "旧唐书·郭子仪传；资治通鉴·唐纪四十一"
+  },
+  {
+    "seq": 626,
+    "eventId": "evt_1404",
+    "status": "ok",
+    "fixedFromName": "安定",
+    "fixedFromCityId": "city_anding",
+    "fixedRoute": [
+      {
+        "name": "彭原",
+        "lat": 35.72,
+        "lng": 107.65
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安定」出师进趋「灵武塞外与邠州原野」，行军方向与史料一致",
+    "source": "旧唐书·马璘传；资治通鉴·唐纪四十一"
+  },
+  {
+    "seq": 627,
+    "eventId": "evt_1411",
+    "status": "ok",
+    "fixedFromName": "安阳",
+    "fixedFromCityId": "city_anyang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「安阳」迎战，无城外途经点，衔接正常",
+    "source": "《资治通鉴·唐纪四十一》"
+  },
+  {
+    "seq": 628,
+    "eventId": "evt_1413",
+    "status": "ok",
+    "fixedFromName": "新平",
+    "fixedFromCityId": "city_binzhou2",
+    "fixedRoute": [
+      {
+        "name": "宜禄",
+        "lat": 35.25,
+        "lng": 107.78
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「新平」出师进趋「关内道潘原险地」，行军方向与史料一致",
+    "source": "《旧唐书·郭子仪传》"
+  },
+  {
+    "seq": 629,
+    "eventId": "evt_1416",
+    "status": "ok",
+    "fixedFromName": "梓州",
+    "fixedFromCityId": "city_zizhou_d",
+    "fixedRoute": [
+      {
+        "name": "绵州",
+        "lat": 31.47,
+        "lng": 104.68
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「梓州」出师进趋「剑南道茂州文川山谷」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪四十二》"
+  },
+  {
+    "seq": 630,
+    "eventId": "evt_1418",
+    "status": "ok",
+    "fixedFromName": "长子",
+    "fixedFromCityId": "city_shangdang",
+    "fixedRoute": [
+      {
+        "name": "壶关",
+        "lat": 36.12,
+        "lng": 113.2
+      },
+      {
+        "name": "武安",
+        "lat": 36.69,
+        "lng": 114.2
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长子」出师进趋「河北道洺州临洺城郊」，行军方向与史料一致",
+    "source": "《旧唐书·马燧传》"
+  },
+  {
+    "seq": 631,
+    "eventId": "evt_1421",
+    "status": "ok",
+    "fixedFromName": "奉天",
+    "fixedFromCityId": "city_fengtian",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「奉天」迎战，无城外途经点，衔接正常",
+    "source": "《资治通鉴·唐纪四十四》"
+  },
+  {
+    "seq": 632,
+    "eventId": "evt_1422",
+    "status": "ok",
+    "fixedFromName": "长宁",
+    "fixedFromCityId": "city_shayuan",
+    "fixedRoute": [
+      {
+        "name": "同州",
+        "lat": 34.8,
+        "lng": 109.94
+      },
+      {
+        "name": "零口",
+        "lat": 34.48,
+        "lng": 109.32
+      },
+      {
+        "name": "东渭桥",
+        "lat": 34.45,
+        "lng": 109.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「长宁」出师进趋「关内道长安城东北光泰门」，行军方向与史料一致",
+    "source": "《旧唐书·李晟传》"
+  },
+  {
+    "seq": 633,
+    "eventId": "evt_1423",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "平阳",
+        "lat": 36.09,
+        "lng": 111.52
+      },
+      {
+        "name": "绛州",
+        "lat": 35.63,
+        "lng": 111.3
+      },
+      {
+        "name": "荣河",
+        "lat": 35.12,
+        "lng": 110.45
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「河东道蒲州河中城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪四十六》"
+  },
+  {
+    "seq": 634,
+    "eventId": "evt_1424",
+    "status": "ok",
+    "fixedFromName": "岐山",
+    "fixedFromCityId": "city_qishan",
+    "fixedRoute": [
+      {
+        "name": "陈仓",
+        "lat": 34.36,
+        "lng": 107.24
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「岐山」出师进趋「关内道陇州汧阳城郊」，行军方向与史料一致",
+    "source": "《旧唐书·吐蕃传》"
+  },
+  {
+    "seq": 635,
+    "eventId": "evt_1425",
+    "status": "ok",
+    "fixedFromName": "敦煌",
+    "fixedFromCityId": "city_dunhuang",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「敦煌」迎战，无城外途经点，衔接正常",
+    "source": "《资治通鉴·唐纪四十八》"
+  },
+  {
+    "seq": 636,
+    "eventId": "evt_1431",
+    "status": "ok",
+    "fixedFromName": "羊苴咩",
+    "fixedFromCityId": "city_dali_city",
+    "fixedRoute": [
+      {
+        "name": "邓川",
+        "lat": 25.96,
+        "lng": 100.09
+      },
+      {
+        "name": "剑川",
+        "lat": 26.53,
+        "lng": 99.9
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「羊苴咩」出师进趋「滇西北金沙江神川铁桥城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪五十》"
+  },
+  {
+    "seq": 637,
+    "eventId": "evt_1408",
+    "status": "fixed",
+    "fixedFromName": "美因茨",
+    "fixedFromCityId": "city_meiyinci",
+    "fixedRoute": [
+      {
+        "name": "弗里茨拉尔",
+        "lat": 51.13,
+        "lng": 9.27
+      }
+    ],
+    "reason": "换将首战，查理曼自美因茨北上经黑森弗里茨拉尔进攻萨克森埃雷斯堡，剔除南折沃尔姆斯之节点",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 638,
+    "eventId": "evt_1410",
+    "status": "fixed",
+    "fixedFromName": "埃雷斯堡",
+    "fixedFromCityId": "city_eresburg",
+    "fixedRoute": [
+      {
+        "name": "塞尼山",
+        "lat": 45.26,
+        "lng": 6.9
+      },
+      {
+        "name": "苏萨",
+        "lat": 45.14,
+        "lng": 7.05
+      },
+      {
+        "name": "都灵",
+        "lat": 45.07,
+        "lng": 7.68
+      }
+    ],
+    "reason": "同将连战，承接上一场「萨克森埃雷斯堡」终点，将出发据点由「日内瓦」修正为上一场终点对应据点「埃雷斯堡」，途经点按续行方向衔接至「北意大利帕维亚城」",
+    "source": "《查理曼传》"
+  },
+  {
+    "seq": 639,
+    "eventId": "evt_1412",
+    "status": "fixed",
+    "fixedFromName": "米兰",
+    "fixedFromCityId": "city_milan",
+    "fixedRoute": [
+      {
+        "name": "维罗纳",
+        "lat": 45.43,
+        "lng": 10.99
+      },
+      {
+        "name": "维琴察",
+        "lat": 45.55,
+        "lng": 11.54
+      }
+    ],
+    "reason": "同将连战，查理曼承接上一场北意大利帕维亚终点，修正出发据点为米兰，沿波河平原经维罗纳、维琴察东进皮亚韦河平定弗留利公爵罗德高德叛乱，消除北返沃尔姆斯造成的4.31倍折返",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 640,
+    "eventId": "evt_1420",
+    "status": "fixed",
+    "fixedFromName": "威尼斯",
+    "fixedFromCityId": "city_venice",
+    "fixedRoute": [
+      {
+        "name": "帕德博恩",
+        "lat": 51.72,
+        "lng": 8.75
+      },
+      {
+        "name": "代特莫尔德",
+        "lat": 51.94,
+        "lng": 8.88
+      }
+    ],
+    "reason": "同将连战，承接上一场「东北意大利皮亚韦河畔」终点，将出发据点由「美因茨」修正为上一场终点对应据点「威尼斯」，途经点按续行方向衔接至「威斯特法伦奥斯纳布吕克哈泽河畔」",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 641,
+    "eventId": "evt_1426",
+    "status": "fixed",
+    "fixedFromName": "不莱梅",
+    "fixedFromCityId": "city_bremen",
+    "fixedRoute": [
+      {
+        "name": "帕德博恩",
+        "lat": 51.72,
+        "lng": 8.75
+      },
+      {
+        "name": "马格德堡",
+        "lat": 52.13,
+        "lng": 11.61
+      },
+      {
+        "name": "哈弗尔贝格",
+        "lat": 52.82,
+        "lng": 12.07
+      }
+    ],
+    "reason": "同将连战，承接上一场「威斯特法伦奥斯纳布吕克哈泽河畔」终点，将出发据点由「科隆」修正为上一场终点对应据点「不莱梅」，途经点按续行方向衔接至「波拉比亚佩内河畔沃尔加斯特要塞」",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 642,
+    "eventId": "evt_1428",
+    "status": "fixed",
+    "fixedFromName": "沃尔加斯特",
+    "fixedFromCityId": "city_wolgast",
+    "fixedRoute": [
+      {
+        "name": "帕绍",
+        "lat": 48.57,
+        "lng": 13.46
+      },
+      {
+        "name": "洛尔希",
+        "lat": 48.22,
+        "lng": 14.48
+      }
+    ],
+    "reason": "同将连战，承接上一场「波拉比亚佩内河畔沃尔加斯特要塞」终点，将出发据点由「雷根斯堡」修正为上一场终点对应据点「沃尔加斯特」，途经点按续行方向衔接至「潘诺尼亚维也纳森林坎普河防线」",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 643,
+    "eventId": "evt_1432",
+    "status": "ok",
+    "fixedFromName": "维罗纳",
+    "fixedFromCityId": "city_verona",
+    "fixedRoute": [
+      {
+        "name": "阿奎莱亚",
+        "lat": 45.77,
+        "lng": 13.37
+      },
+      {
+        "name": "奇维达莱",
+        "lat": 46.09,
+        "lng": 13.43
+      },
+      {
+        "name": "锡斯基亚",
+        "lat": 45.48,
+        "lng": 16.37
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「维罗纳」出师进趋「潘诺尼亚多瑙蒂萨河间阿瓦尔环城」，行军方向与史料一致",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 644,
+    "eventId": "evt_1437",
+    "status": "ok",
+    "fixedFromName": "图卢兹",
+    "fixedFromCityId": "city_toulouse",
+    "fixedRoute": [
+      {
+        "name": "纳博讷",
+        "lat": 43.18,
+        "lng": 3
+      },
+      {
+        "name": "赫罗纳",
+        "lat": 41.98,
+        "lng": 2.82
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「图卢兹」出师进趋「加泰罗尼亚海岸巴塞罗那城」，行军方向与史料一致",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 645,
+    "eventId": "evt_1441",
+    "status": "ok",
+    "fixedFromName": "亚琛",
+    "fixedFromCityId": "city_yachen",
+    "fixedRoute": [
+      {
+        "name": "美因茨",
+        "lat": 50,
+        "lng": 8.27
+      },
+      {
+        "name": "维尔茨堡",
+        "lat": 49.79,
+        "lng": 9.95
+      },
+      {
+        "name": "埃格尔",
+        "lat": 50.08,
+        "lng": 12.37
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「亚琛」出师进趋「波希米亚奥赫热河畔卡努尔格堡」，行军方向与史料一致",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 646,
+    "eventId": "evt_1447",
+    "status": "ok",
+    "fixedFromName": "拉文纳",
+    "fixedFromCityId": "city_ravenna",
+    "fixedRoute": [
+      {
+        "name": "科马基奥",
+        "lat": 44.69,
+        "lng": 12.18
+      },
+      {
+        "name": "基奥贾",
+        "lat": 45.22,
+        "lng": 12.28
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「拉文纳」出师进趋「亚得里亚海北端威尼斯泻湖马拉莫科」，行军方向与史料一致",
+    "source": "《法兰克王室年鉴》"
+  },
+  {
+    "seq": 647,
+    "eventId": "evt_1446",
+    "status": "ok",
+    "fixedFromName": "索非亚",
+    "fixedFromCityId": "city_sofia",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「索非亚」迎战，无城外途经点，衔接正常",
+    "source": "《宣信者塞奥法诺斯编年史》"
+  },
+  {
+    "seq": 648,
+    "eventId": "evt_1449",
+    "status": "fixed",
+    "fixedFromName": "索非亚",
+    "fixedFromCityId": "city_sofia",
+    "fixedRoute": [
+      {
+        "name": "阿德里安堡",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "马尔凯莱",
+        "lat": 42.64,
+        "lng": 26.89
+      },
+      {
+        "name": "普利斯卡",
+        "lat": 43.39,
+        "lng": 27.13
+      }
+    ],
+    "reason": "同将连战，承接上一场「巴尔干交通枢纽塞尔迪卡索非亚城」终点，将出发据点由「君士坦丁堡」修正为上一场终点对应据点「索非亚」，途经点按续行方向衔接至「巴尔干山脉弗尔比察山口」",
+    "source": "《宣信者塞奥法诺斯编年史》"
+  },
+  {
+    "seq": 649,
+    "eventId": "evt_1452",
+    "status": "ok",
+    "fixedFromName": "君士坦丁堡",
+    "fixedFromCityId": "city_junshitandingbao",
+    "fixedRoute": [
+      {
+        "name": "阿卡迪奥波利斯",
+        "lat": 41.4,
+        "lng": 27.35
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「君士坦丁堡」出师进趋「色雷斯巴巴埃斯基郊野」，行军方向与史料一致",
+    "source": "《续塞奥法诺斯编年史》"
+  },
+  {
+    "seq": 650,
+    "eventId": "evt_1454",
+    "status": "ok",
+    "fixedFromName": "帕坦",
+    "fixedFromCityId": "city_patan",
+    "fixedRoute": [
+      {
+        "name": "奇托尔",
+        "lat": 24.89,
+        "lng": 74.63
+      },
+      {
+        "name": "瓜廖尔",
+        "lat": 26.22,
+        "lng": 78.18
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「帕坦」出师进趋「北印度恒河中游曲女城」，行军方向与史料一致",
+    "source": "《瓜廖尔铭文》"
+  },
+  {
+    "seq": 651,
+    "eventId": "evt_1453",
+    "status": "ok",
+    "fixedFromName": "许昌",
+    "fixedFromCityId": "city_xuchang",
+    "fixedRoute": [
+      {
+        "name": "临颍",
+        "lat": 33.81,
+        "lng": 113.93
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「许昌」出师进趋「河南道蔡州小溵水南岸」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪五十五》"
+  },
+  {
+    "seq": 652,
+    "eventId": "evt_1455",
+    "status": "ok",
+    "fixedFromName": "襄阳",
+    "fixedFromCityId": "city_xiangyang",
+    "fixedRoute": [
+      {
+        "name": "唐州",
+        "lat": 32.69,
+        "lng": 112.83
+      },
+      {
+        "name": "文城栅",
+        "lat": 33.22,
+        "lng": 113.78
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「襄阳」出师进趋「河南道蔡州汝南悬瓠城」，行军方向与史料一致",
+    "source": "《旧唐书·李愬传》"
+  },
+  {
+    "seq": 653,
+    "eventId": "evt_1457",
+    "status": "ok",
+    "fixedFromName": "大名",
+    "fixedFromCityId": "city_daming",
+    "fixedRoute": [
+      {
+        "name": "莘县",
+        "lat": 36.24,
+        "lng": 115.67
+      },
+      {
+        "name": "阳谷",
+        "lat": 36.11,
+        "lng": 115.79
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大名」出师进趋「河南道郓州东平城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪五十七》"
+  },
+  {
+    "seq": 654,
+    "eventId": "evt_1460",
+    "status": "ok",
+    "fixedFromName": "陆泽",
+    "fixedFromCityId": "city_luze",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「陆泽」迎战，无城外途经点，衔接正常",
+    "source": "《资治通鉴·唐纪五十九》"
+  },
+  {
+    "seq": 655,
+    "eventId": "evt_1467",
+    "status": "ok",
+    "fixedFromName": "聊城",
+    "fixedFromCityId": "city_liaocheng",
+    "fixedRoute": [
+      {
+        "name": "德州",
+        "lat": 37.45,
+        "lng": 116.3
+      },
+      {
+        "name": "南皮",
+        "lat": 38.04,
+        "lng": 116.7
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「聊城」出师进趋「河北道沧州清池城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪六十》"
+  },
+  {
+    "seq": 656,
+    "eventId": "evt_1477",
+    "status": "ok",
+    "fixedFromName": "乌布萨泊",
+    "fixedFromCityId": "city_wubusabo",
+    "fixedRoute": [
+      {
+        "name": "唐努山",
+        "lat": 50.8,
+        "lng": 94.5
+      },
+      {
+        "name": "色楞格河",
+        "lat": 49.25,
+        "lng": 100.8
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「乌布萨泊」出师进趋「漠北鄂尔浑河畔回鹘窝鲁朵八里」，行军方向与史料一致",
+    "source": "《新唐书·回鹘传》"
+  },
+  {
+    "seq": 657,
+    "eventId": "evt_1480",
+    "status": "ok",
+    "fixedFromName": "大同",
+    "fixedFromCityId": "city_datong",
+    "fixedRoute": [
+      {
+        "name": "云中",
+        "lat": 40.38,
+        "lng": 111.82
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「大同」出师进趋「关内道振武塞北黑山杀胡山」，行军方向与史料一致",
+    "source": "《旧唐书·石雄传》"
+  },
+  {
+    "seq": 658,
+    "eventId": "evt_1481",
+    "status": "fixed",
+    "fixedFromName": "归化城",
+    "fixedFromCityId": "city_guihua",
+    "fixedRoute": [
+      {
+        "name": "翼城",
+        "lat": 35.74,
+        "lng": 111.72
+      },
+      {
+        "name": "端氏",
+        "lat": 35.65,
+        "lng": 112.55
+      }
+    ],
+    "reason": "同将连战，承接上一场「关内道振武塞北黑山杀胡山」终点，将出发据点由「曲沃」修正为上一场终点对应据点「归化城」，途经点按续行方向衔接至「河东道潞州上党城」",
+    "source": "《资治通鉴·唐纪六十四》"
+  },
+  {
+    "seq": 659,
+    "eventId": "evt_1479",
+    "status": "ok",
+    "fixedFromName": "青唐城",
+    "fixedFromCityId": "city_qingtang",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「青唐城」出师进趋「陇右道鄯州湟水河谷」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪六十三》"
+  },
+  {
+    "seq": 660,
+    "eventId": "evt_1485",
+    "status": "ok",
+    "fixedFromName": "敦煌",
+    "fixedFromCityId": "city_dunhuang",
+    "fixedRoute": [],
+    "reason": "换将接棒首战，主将自史实出发据点「敦煌」出师进趋「陇右道沙州敦煌城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪六十四》"
+  },
+  {
+    "seq": 661,
+    "eventId": "evt_1486",
+    "status": "ok",
+    "fixedFromName": "新平",
+    "fixedFromCityId": "city_binzhou2",
+    "fixedRoute": [
+      {
+        "name": "泾州",
+        "lat": 35.33,
+        "lng": 107.36
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「新平」出师进趋「关内道原州与萧关石门七关」，行军方向与史料一致",
+    "source": "《旧唐书·宣宗纪》"
+  },
+  {
+    "seq": 662,
+    "eventId": "evt_1487",
+    "status": "ok",
+    "fixedFromName": "敦煌",
+    "fixedFromCityId": "city_dunhuang",
+    "fixedRoute": [
+      {
+        "name": "晋昌",
+        "lat": 40.53,
+        "lng": 95.82
+      },
+      {
+        "name": "莫贺延碛",
+        "lat": 41.65,
+        "lng": 94.15
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「敦煌」出师进趋「陇右道伊州伊吾纳职城」，行军方向与史料一致",
+    "source": "《新唐书·张议潮传》"
+  },
+  {
+    "seq": 663,
+    "eventId": "evt_1494",
+    "status": "ok",
+    "fixedFromName": "安定",
+    "fixedFromCityId": "city_anding",
+    "fixedRoute": [
+      {
+        "name": "陇州",
+        "lat": 34.89,
+        "lng": 106.86
+      },
+      {
+        "name": "秦州",
+        "lat": 34.58,
+        "lng": 105.73
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「安定」出师进趋「陇右道渭州襄武城郊」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪六十五》"
+  },
+  {
+    "seq": 664,
+    "eventId": "evt_1498",
+    "status": "ok",
+    "fixedFromName": "敦煌",
+    "fixedFromCityId": "city_dunhuang",
+    "fixedRoute": [
+      {
+        "name": "酒泉",
+        "lat": 39.74,
+        "lng": 98.5
+      },
+      {
+        "name": "甘州",
+        "lat": 38.93,
+        "lng": 100.45
+      },
+      {
+        "name": "删丹",
+        "lat": 38.78,
+        "lng": 101.08
+      },
+      {
+        "name": "番禾",
+        "lat": 38.22,
+        "lng": 101.95
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「敦煌」出师进趋「陇右道凉州姑臧城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪六十六》"
+  },
+  {
+    "seq": 665,
+    "eventId": "evt_1492",
+    "status": "ok",
+    "fixedFromName": "以弗所",
+    "fixedFromCityId": "city_yifusuo",
+    "fixedRoute": [
+      {
+        "name": "阿莫里乌姆",
+        "lat": 39.02,
+        "lng": 31.29
+      },
+      {
+        "name": "凯撒利亚",
+        "lat": 38.72,
+        "lng": 35.48
+      },
+      {
+        "name": "塞巴斯蒂亚",
+        "lat": 39.75,
+        "lng": 37.01
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「以弗所」出师进趋「东安纳托利亚幼发拉底河上游特夫里克」，行军方向与史料一致",
+    "source": "《续塞奥法诺斯编年史》"
+  },
+  {
+    "seq": 666,
+    "eventId": "evt_1500",
+    "status": "fixed",
+    "fixedFromName": "特夫里克",
+    "fixedFromCityId": "city_tephrike",
+    "fixedRoute": [
+      {
+        "name": "塞巴斯蒂亚",
+        "lat": 39.75,
+        "lng": 37.02
+      }
+    ],
+    "reason": "同将连战，佩特罗纳斯承接上一场幼发拉底河上游特夫里克终点，修正出发据点为特夫里克，经塞巴斯蒂亚西北截击埃米尔奥马尔于拉拉卡翁河谷，消除原西绕安基拉造成的3.26倍折返",
+    "source": "《续塞奥法诺斯编年史》"
+  },
+  {
+    "seq": 667,
+    "eventId": "evt_1501",
+    "status": "ok",
+    "fixedFromName": "哥本哈根",
+    "fixedFromCityId": "city_gebenhagen",
+    "fixedRoute": [
+      {
+        "name": "里伯",
+        "lat": 55.33,
+        "lng": 8.76
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「哥本哈根」出师进趋「英格兰东海岸东盎格利亚塞特福德」，行军方向与史料一致",
+    "source": "《盎格鲁撒克逊编年史》"
+  },
+  {
+    "seq": 668,
+    "eventId": "evt_1504",
+    "status": "ok",
+    "fixedFromName": "诺里奇",
+    "fixedFromCityId": "city_norwich",
+    "fixedRoute": [
+      {
+        "name": "林肯",
+        "lat": 53.23,
+        "lng": -0.54
+      },
+      {
+        "name": "亨伯津",
+        "lat": 53.7,
+        "lng": -0.45
+      }
+    ],
+    "reason": "同将连战，自上一场「英格兰东海岸东盎格利亚塞特福德」续行至「英格兰北部约维克约克城内」，出发据点与途经点方向连贯无误",
+    "source": "《盎格鲁撒克逊编年史》"
+  },
+  {
+    "seq": 669,
+    "eventId": "evt_1508",
+    "status": "ok",
+    "fixedFromName": "温彻斯特",
+    "fixedFromCityId": "city_winchester",
+    "fixedRoute": [
+      {
+        "name": "贝辛斯托克",
+        "lat": 51.26,
+        "lng": -1.09
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「温彻斯特」出师进趋「英格兰伯克郡阿什当白垩山脊」，行军方向与史料一致",
+    "source": "《盎格鲁撒克逊编年史》"
+  },
+  {
+    "seq": 670,
+    "eventId": "evt_1516",
+    "status": "ok",
+    "fixedFromName": "温彻斯特",
+    "fixedFromCityId": "city_winchester",
+    "fixedRoute": [
+      {
+        "name": "索尔兹伯里",
+        "lat": 51.07,
+        "lng": -1.79
+      }
+    ],
+    "reason": "同将连战，自上一场「英格兰伯克郡阿什当白垩山脊」续行至「英格兰威尔特郡埃丁顿高地」，出发据点与途经点方向连贯无误",
+    "source": "《阿尔弗雷德传》"
+  },
+  {
+    "seq": 671,
+    "eventId": "evt_1519",
+    "status": "ok",
+    "fixedFromName": "布鲁日",
+    "fixedFromCityId": "city_bruges",
+    "fixedRoute": [
+      {
+        "name": "根特",
+        "lat": 51.05,
+        "lng": 3.72
+      },
+      {
+        "name": "科尔特赖克",
+        "lat": 50.83,
+        "lng": 3.26
+      },
+      {
+        "name": "亚眠",
+        "lat": 49.89,
+        "lng": 2.3
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「布鲁日」出师进趋「西法兰克皮卡第索库尔昂维默原野」，行军方向与史料一致",
+    "source": "《路易之歌》"
+  },
+  {
+    "seq": 672,
+    "eventId": "evt_1518",
+    "status": "ok",
+    "fixedFromName": "洛阳",
+    "fixedFromCityId": "city_luoyang",
+    "fixedRoute": [
+      {
+        "name": "渑池",
+        "lat": 34.76,
+        "lng": 111.76
+      },
+      {
+        "name": "陕州",
+        "lat": 34.72,
+        "lng": 111.1
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「洛阳」出师进趋「关内道潼关禁沟与长安城」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪七十》"
+  },
+  {
+    "seq": 673,
+    "eventId": "evt_1521",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [
+      {
+        "name": "绛州",
+        "lat": 35.63,
+        "lng": 111.3
+      },
+      {
+        "name": "河中",
+        "lat": 34.83,
+        "lng": 110.3
+      },
+      {
+        "name": "同州",
+        "lat": 34.8,
+        "lng": 109.94
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「晋阳」出师进趋「关内道华州渭南梁田陂」，行军方向与史料一致",
+    "source": "《旧五代史·唐书·武皇纪》"
+  },
+  {
+    "seq": 674,
+    "eventId": "evt_1522",
+    "status": "fixed",
+    "fixedFromName": "长安",
+    "fixedFromCityId": "city_changan",
+    "fixedRoute": [
+      {
+        "name": "潼关",
+        "lat": 34.61,
+        "lng": 110.27
+      },
+      {
+        "name": "河阳",
+        "lat": 34.86,
+        "lng": 112.58
+      },
+      {
+        "name": "许州",
+        "lat": 34.03,
+        "lng": 113.85
+      }
+    ],
+    "reason": "同将连战，李克用承接上一场关内华州梁田陂终点，修正出发据点为长安，东出潼关经河阳、许州驰援陈州并北追黄巢至中牟王满渡，剔除与终点名称重叠之陈州节点",
+    "source": "《资治通鉴·唐纪七十一》"
+  },
+  {
+    "seq": 675,
+    "eventId": "evt_1523",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [],
+    "reason": "同将连战，自上一场「河南道陈州宛丘至中牟王满渡」续行至「河南道汴州开封城内上源驿」，出发据点与途经点方向连贯无误",
+    "source": "《新五代史·唐本纪》"
+  },
+  {
+    "seq": 676,
+    "eventId": "evt_1529",
+    "status": "fixed",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "西河",
+        "lat": 37.27,
+        "lng": 111.79
+      }
+    ],
+    "reason": "同将连战，承接上一场「河南道汴州开封城内上源驿」终点，将出发据点由「晋阳」修正为上一场终点对应据点「开封」，途经点按续行方向衔接至「河东道汾州灵石阴地关与晋州」",
+    "source": "《资治通鉴·唐纪七十四》"
+  },
+  {
+    "seq": 677,
+    "eventId": "evt_1533",
+    "status": "fixed",
+    "fixedFromName": "灵石关",
+    "fixedFromCityId": "city_lingshiguan",
+    "fixedRoute": [
+      {
+        "name": "代州",
+        "lat": 39.19,
+        "lng": 112.87
+      },
+      {
+        "name": "飞狐",
+        "lat": 39.52,
+        "lng": 114.58
+      },
+      {
+        "name": "妫州",
+        "lat": 40.38,
+        "lng": 115.75
+      }
+    ],
+    "reason": "同将连战，承接上一场「河东道汾州灵石阴地关与晋州」终点，将出发据点由「晋阳」修正为上一场终点对应据点「灵石关」，途经点按续行方向衔接至「河北道居庸关至幽州蓟城」",
+    "source": "《旧五代史·唐书·武皇纪》"
+  },
+  {
+    "seq": 678,
+    "eventId": "evt_1536",
+    "status": "ok",
+    "fixedFromName": "开封",
+    "fixedFromCityId": "city_bianliang",
+    "fixedRoute": [
+      {
+        "name": "亳州",
+        "lat": 33.88,
+        "lng": 115.77
+      },
+      {
+        "name": "宿州",
+        "lat": 33.63,
+        "lng": 116.98
+      },
+      {
+        "name": "泗州",
+        "lat": 33.52,
+        "lng": 118.25
+      }
+    ],
+    "reason": "换将接棒首战，主将自史实出发据点「开封」出师进趋「淮南道楚州泗口清口淮水营盘」，行军方向与史料一致",
+    "source": "《资治通鉴·唐纪七十七》"
+  },
+  {
+    "seq": 679,
+    "eventId": "evt_1537",
+    "status": "ok",
+    "fixedFromName": "清池",
+    "fixedFromCityId": "city_qingchi",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「清池」迎战，无城外途经点，衔接正常",
+    "source": "《新五代史·刘守光传》"
+  },
+  {
+    "seq": 680,
+    "eventId": "evt_1540",
+    "status": "ok",
+    "fixedFromName": "晋阳",
+    "fixedFromCityId": "city_taiyuan",
+    "fixedRoute": [],
+    "reason": "换将接棒守城战，主将据守「晋阳」迎战，无城外途经点，衔接正常",
+    "source": "《旧五代史·唐书·武皇纪》"
+  }
+]
