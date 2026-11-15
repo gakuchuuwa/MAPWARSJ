@@ -36,13 +36,19 @@ expect.forEach((x, k) => {
   const o = orig[x.id];
   const sameS = JSON.stringify(s) === JSON.stringify(o.合并战略播报);
   if (!sameS) changed++;
-  if (rewrite[x.id] && sameS) err(x.id, `要求改写（${rewrite[x.id].join('、')}）但战略播报与原文相同`);
+  // 章首场的前一场若与原顺序相同，原文本来就接得上上一场，保留原文只记提醒
+  const prevSame = k > 0 ? expect[k - 1].id === Object.values(orig).find((e) => e.seq === o.seq - 1)?.id : true;
+  if (rewrite[x.id] && sameS) {
+    const onlyHead = rewrite[x.id].every((w) => w === '章首');
+    if (onlyHead && prevSame) warns.push(`${x.id} 章首保留原文（前一场与原顺序相同，可接受）`);
+    else err(x.id, `要求改写（${rewrite[x.id].join('、')}）但战略播报与原文相同`);
+  }
   if (!rewrite[x.id] && !sameS) warns.push(`${x.id} 未列入改写却改了战略播报`);
   if (g.战术播报 !== o.战术播报_勿动) warns.push(`${x.id} 战术播报有改动`);
   const text = s.join('') + (g.战术播报 ?? '');
   for (const [re, m] of BAN) if (m && re.test(text)) err(x.id, m);
   // 「朝」单独检查：除「朝鲜」外，作政权后缀的「X朝」都不许；「朝廷/朝野/朝政」等常用词放行
-  const chao = [...text.matchAll(/朝(?!鲜|廷|野|政|堂|中|臣|见|贡|局|会|夕|阳|向|着|天|服|拜|议)/g)].map((m) => text.slice(Math.max(0, m.index - 2), m.index + 2));
+  const chao = [...text.matchAll(/(?<!临|满|入|还|归|在)朝(?!鲜|廷|野|政|堂|中|臣|见|贡|局|会|夕|阳|向|着|天|服|拜|议|柄|发|纲)/g)].map((m) => text.slice(Math.max(0, m.index - 2), m.index + 2));
   if (chao.length) warns.push(`${x.id} 含「朝」需人工看：${chao.join('、')}`);
 });
 const need = expect.filter((x) => rewrite[x.id]).length;

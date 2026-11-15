@@ -515,7 +515,7 @@ export class GameApp {
             // [2026-08-11 13 v2] 出兵口互攻演出层：全屏 canvas 叠在地图上（透明背景，冻结地图透出）
             this.scene13War = new Scene13WarLayer();
             this.scene13War.attach();
-            this.navalWar = new NavalWarLayer();
+            this.navalWar = new NavalWarLayer(() => this.map?.getLeafletMap?.() ?? null);
             this.navalWar.attach();
 
             this.gameTimeHUD = new GameTimeHUD();

@@ -242,7 +242,14 @@ function startNavalWar(
     followedOnDefenderSide: boolean,
     title: string | null,
     historicalWinner: 'attacker' | 'defender' | 'draw' | null,
+    center: { lat: number; lng: number } | null,
+    participantIds: string[],
 ): void {
+    // 战略地图上要藏起来的：参战舰队 + 随军玩家（船由海战场面画，免得画两份）
+    const hidden = [...participantIds];
+    const hero = app.playerHero;
+    const hostId = hero?.getHostLegionId?.();
+    if (hero && hostId && participantIds.includes(hostId)) hidden.push(hero.id);
     const side = (u: NavalSideUnit) => {
         const gName = u.generalId ? getGeneralRecordByGeneralId(u.generalId)?.generalName ?? null : null;
         const e = u.getEntity?.();
@@ -253,6 +260,7 @@ function startNavalWar(
             shipKey: fleetShipKey(u),
             name: gName ?? u.name ?? e?.name ?? (fName || '舰队'),
             generalName: gName,
+            legionName: (u.name ?? e?.name ?? null) as string | null,
         };
     };
     app.navalWar.onDecision = (winner, survivors) => {
@@ -266,6 +274,8 @@ function startNavalWar(
         followedOnDefenderSide,
         favored: historicalWinner === 'attacker' || historicalWinner === 'defender' ? historicalWinner : null,
         title,
+        center,
+        hiddenUnitIds: hidden,
     });
     gameLog('battle', `⛵ [NavalWar] 海战场面启动: ${attacker.factionId} vs ${defender.factionId}`);
 }
@@ -565,7 +575,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                     battle.defender.id === followedId,
                     (battle as any).title ?? (battle as any).customTitle ?? null,
-                    resolveScene13HistoricalWinner([battle.attacker], [battle.defender], battle.getScriptedWinner()));
+                    resolveScene13HistoricalWinner([battle.attacker], [battle.defender], battle.getScriptedWinner()),
+                    t.center, [battle.attacker.id, battle.defender.id]);
                 app.battleScene?.enter(t.id);
             }
             return;
@@ -730,6 +741,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         defenders.some((u) => u.id === followedId),
                         title ?? null,
                         resolveScene13HistoricalWinner(attackers, defenders, battleField.getScriptedWinner()),
+                        t.center,
+                        allIds,
                     );
                 } else if (att && def) {
                     startScene13War(

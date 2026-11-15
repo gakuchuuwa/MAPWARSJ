@@ -23,6 +23,7 @@ import {
     actAt, blockOffsetAt, slotPlanAt, easeInOut, SCENE13_CONTACT_RATIO,
 } from './legion/Scene13Choreographer'; // [2026-08-10 剧本法]
 import { LegionFlagDrawer } from './legion/LegionFlagDrawer'; // [AI FLAG SYSTEM]
+import { navalHiddenUnitIds } from '../naval/navalSceneState';
 import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
 import { BanditDrawer, BanditState } from './BanditDrawer';
 import { LegionType } from '../types/UnitTypes';
@@ -832,6 +833,8 @@ export class GlobalUnitRenderer {
             const unit = this.sortedUnitsCache[i];
             // 阵亡尸体必须画出（神出鬼没等可能在 destroy 前把 visible 关掉）
             if ((unit as any).visible === false && !unit.isDestroyed) continue;
+            // 🔴 [2026-11-16] 海战场面接管的舰队由 NavalWarLayer 画，这里不再画一份
+            if (navalHiddenUnitIds.size > 0 && unit.id && navalHiddenUnitIds.has(unit.id)) continue;
             if (!isValidMapCoord(unit.getPosition())) continue;
             if (!this.isUnitInContainerView(unit)) continue;
             list.push(unit);
@@ -952,6 +955,8 @@ export class GlobalUnitRenderer {
             staggerMs?: number;
             durationMs?: number;
             type?: 'arrow' | 'stone' | 'fire' | 'cannon';
+            /** 海上：炮弹 / 石弹落水出 DE 水花，开炮带炮口焰（与战略海战同一套） */
+            naval?: boolean;
         }
     ): void {
         this.projectileSystem.spawnVolley(L.latLng(from), L.latLng(to), options);
@@ -1379,7 +1384,8 @@ export class GlobalUnitRenderer {
         // sceneActiveNoArrows 禁用门是 AI 擅自加的，主人从未要求，已删）。
         // [2026-08-30 海战演出] 海军走独立对射（炮弹+箭矢打敌舰），不走下方陆战箭矢（射中心点会糊成对空）。
         if (unit.isAttacking && unit.isOnSea) {
-            this.fireNavalProjectile(unit, currentPos);
+            // 海战场面接管的舰队：开火由 NavalWarLayer 按模拟发，这里不再双鱼对射
+            if (!(unit.id && navalHiddenUnitIds.has(unit.id))) this.fireNavalProjectile(unit, currentPos);
         } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const lType = unit.legionType || 'infantry';
             const hasRangedSlots = ((unit as any).cultureSlots as string[] | undefined)?.some(

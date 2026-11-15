@@ -1,23 +1,40 @@
 /**
- * 海战场面 · 画面层（全屏画布，叠在战略地图上）
+ * 海战场面 · 画面层（透明画布，叠在战略地图上）
  *
- * 🔴 [2026-11-16 主人定「按这个方向做」] 舰队对舰队的海战不再只在战略地图上绕圈，单独进这个场面：
- *   每方 10 艘（九格三排 + 旗舰），自动打，靠风向、火攻、接舷夺船、旗舰决胜、逐舰沉没出看点。
- *   模拟在 NavalBattleSim（纯逻辑），这里只管画、播报、音效、镜头，以及打完把胜负交回战斗引擎。
+ * 🔴 [2026-11-16 主人定「按这个方向做」] 舰队对舰队的海战单独成场面：每方 10 艘（九格三排 + 旗舰），自动打。
+ * 🔴 [2026-11-16 主人令「尽量还原战略模式的效果，UI 等和陆战差不多；船尾的水花要和战略一致，海面的样式要一致」]
+ *   · 海面：不再自己画——画布透明，仗就打在**战略地图的真实海面**上（海岸、海浪层、海洋生物原样），
+ *     镜头平移战略地图本身；船按真实海陆绕开陆地（开局就近挑一片够大的水面）。
+ *   · 船：与战略地图同一套尺寸（strategicArmyScale × drawNaval 基准）、16 向帧、残差微旋、船帆、势力染色；
+ *     船尾/船头浪花直接用 NavalWakeDrawer（DE 原版浪花）。
+ *   · 炮弹 / 箭 / 石弹 / 希腊火、落水水花、炮口焰：走战略地图的 ProjectileRenderer（spawnProjectileVolley naval）。
+ *   · 旗舰：战略地图同款军旗（LegionFlagDrawer）与名字标签（武将青、军团白、兵力金）。
+ *   · 界面：顶部横栏已删（主人令：下面有兵力显示）——兵力看底部战斗面板（与陆战同一套 13 布局），
+ *     大事走游戏统一字幕条 SubtitleBanner，右上角只留一个风向罗盘。
  *
  * 生命周期与战术模式同一条路：GameAppCombatHooks 冻结战斗 + battleScene.enter()（暂停大地图），
  *   本层 start() → 每帧 tick() → 判出胜负调 onDecision（→ forceScene13Result 写回兵力）
  *   → 引擎结算 → battleScene.beginLingerAfterDefeat（残局停 3 秒）→ battleScene.exit() → 本层 stop()。
  */
 
+import L from 'leaflet';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
+import { NavalWakeDrawer, type WakeProjection } from '../map/legion/NavalWakeDrawer';
+import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
+import { drawUnitLabel, type UnitLabelStyle } from '../map/UnitLabelCache';
+import { getGlobalUnitRenderer } from '../map/UnitRenderer';
+import { strategicArmyScale } from '../map/strategicSpriteScale';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
+import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
 import { buildSailLayers } from '../data/NavalSails';
-import { getNavalShipChineseName } from '../types/NavalShipTiers';
+import { getNavalShipChineseName, getNavalShipDrawScale } from '../types/NavalShipTiers';
 import { audioManager } from '../audio/AudioManager';
+import { NavalFxSprites } from '../map/NavalFxSprites';
+import { SubtitleBanner } from '../ui/SubtitleBanner';
+import { navalHiddenUnitIds } from './navalSceneState';
 import {
-    NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, NAVAL_TIME_LIMIT, windName,
+    NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
     type NavalSide, type NavalShip, type NavalEvent, type NavalPhase,
 } from './NavalBattleSim';
 
@@ -25,42 +42,62 @@ export interface NavalWarSideInit {
     factionId: string;
     troops: number;
     shipKey: string;
-    /** 面板上的名字（武将名优先，其次军团名） */
+    /** 名字（武将名优先，其次军团名） */
     name: string;
     generalName?: string | null;
+    /** 军团 / 精锐名（旗舰标签第二行，同战略地图） */
+    legionName?: string | null;
 }
 
 export interface NavalWarInit {
     attacker: NavalWarSideInit;
     defender: NavalWarSideInit;
     seed: string;
-    /** 跟随军团在守方：画面左右对调，跟随的舰队固定在左边 */
+    /** 战场所在（战略地图坐标）：开局就近挑一片够大的水面 */
+    center?: { lat: number; lng: number } | null;
+    /** 跟随军团在守方：守方舰队摆左边 */
     followedOnDefenderSide?: boolean;
     favored?: NavalSide | null;
     title?: string | null;
+    /** 战略地图上要藏起来的军团（参战舰队 + 随军玩家），免得同一支舰队画两份 */
+    hiddenUnitIds?: string[];
 }
 
 type Fx =
-    | { k: 'splash'; x: number; y: number; t: number; big: boolean }
-    | { k: 'spark'; x: number; y: number; t: number }
-    | { k: 'muzzle'; x: number; y: number; t: number; ang: number }
+    | { k: 'spark'; x: number; y: number; t: number; wood?: boolean }
     | { k: 'boom'; x: number; y: number; t: number; big: boolean }
+    | { k: 'splash'; x: number; y: number; t: number; big: boolean }
+    | { k: 'greekfire'; x: number; y: number; tx: number; ty: number; dur: number; t: number }
     | { k: 'text'; x: number; y: number; t: number; text: string; color: string }
     | { k: 'ring'; x: number; y: number; t: number; color: string };
 
-interface Toast { text: string; color: string; t: number }
-
-const PHASE_LABEL: Record<NavalPhase, string> = {
-    approach: '抢风接近',
-    exchange: '远程对射',
-    melee: '接舷混战',
-    rout: '溃逃追击',
-};
-
-/** 船贴图 1 像素 = 多少世界单位 */
+/** 船贴图 1 像素 = 多少世界单位（模拟的船体半径按它定） */
 const SPRITE_WS = 0.85;
 const SIM_STEP = 1 / 30;
+/** 海战场面固定用的战略地图缩放（船与战略地图 zoom 9 同大；一场 20 艘船的仗刚好一屏） */
+const NAVAL_SCENE_ZOOM = 9;
+/** drawNaval 的船体基准：baseHeight 72 / 帧框基准 64 */
+const HULL_BASE = 72 / 64;
+/** zoom 9 时 1 世界单位 = 多少屏幕 CSS 像素 */
+const U_REF = HULL_BASE * strategicArmyScale(NAVAL_SCENE_ZOOM) * getNavalShipDrawScale(undefined) / SPRITE_WS;
+/** 海陆采样格（世界单位）与外扩边（溃逃船会驶出战场矩形） */
+const LAND_CELL = 50;
+const LAND_MARGIN = 500;
+/**
+ * 开场准备：海陆掩膜 / 海拔瓦片没加载到的地方 isSeaAt 先答「陆地」并去拉瓦片，
+ * 所以开场先停一小会儿（字幕报战名与风向），分几次重采样海岸线、重摆船，拿到可靠的海陆再开船。
+ */
+const PREP_RESAMPLE_AT = [0.7, 1.6, 2.6];
 const DEFAULT_COLOR: Record<NavalSide, string> = { attacker: '#d94a3a', defender: '#3a7bd9' };
+
+/** 与 GlobalUnitRenderer 的战略标签同款 */
+const LABEL_STYLE_GENERAL: UnitLabelStyle = { id: 'gen', font: 'bold 13px Arial', stroke: 'black', lineWidth: 3, fill: '#00FFFF' };
+const LABEL_STYLE_NAME: UnitLabelStyle = { id: 'name', font: 'bold 13px Arial', stroke: 'rgba(0, 0, 0, 0.85)', lineWidth: 3, fill: '#ffffff' };
+const LABEL_STYLE_TROOPS: UnitLabelStyle = { id: 'troops', font: 'bold 12px Arial', stroke: 'black', lineWidth: 3, fill: '#ffd700' };
+
+const PROJECTILE_TYPE: Record<'arrow' | 'cannon' | 'trebuchet' | 'greekfire', 'arrow' | 'cannon' | 'stone' | 'fire'> = {
+    arrow: 'arrow', cannon: 'cannon', trebuchet: 'stone', greekfire: 'fire',
+};
 
 export class NavalWarLayer {
     /** 判出胜负时回调（必须在 start 前赋值） */
@@ -75,16 +112,27 @@ export class NavalWarLayer {
     private acc = 0;
     private decided = false;
     private fx: Fx[] = [];
-    private toasts: Toast[] = [];
-    private cam = { x: NAVAL_WORLD_W / 2, y: NAVAL_WORLD_H / 2, z: 0 };
     private focus: { x: number; y: number; until: number } | null = null;
     private colors: Record<NavalSide, string> = { ...DEFAULT_COLOR };
-    private flip = false;
     private wallT = 0;
     private sfxAt: Record<string, number> = {};
     private lastPhase: NavalPhase = 'approach';
     private finalTroops: { attacker: number; defender: number } | null = null;
     private errorLogged = false;
+    private runId = 0;
+    /** 战场中心（世界 (W/2,H/2) 对应的经纬度）与它在 zoom 9 的投影像素 */
+    private centerLL: L.LatLng | null = null;
+    private centerPx: L.Point | null = null;
+    private landGrid: Uint8Array | null = null;
+    private landCols = 0;
+    private landRows = 0;
+    private panRem = { x: 0, y: 0 };
+    private subtitleQueue: string[] = [];
+    private subtitleAt = -99;
+    private shipLenCache = new Map<string, number>();
+    private prepStep = 0;
+
+    constructor(private readonly getMap: () => L.Map | null) {}
 
     public attach(): void {
         if (this.canvas) return;
@@ -124,21 +172,13 @@ export class NavalWarLayer {
         return { attacker: a, defender: d, total: a + d };
     }
 
-    /** 演出还在打（没判胜负） */
-    public isFighting(): boolean {
-        return this.active && !this.decided;
-    }
-
     public start(init: NavalWarInit): void {
         this.attach();
         this.init = init;
-        this.sim = new NavalBattleSim({
-            attacker: { factionId: init.attacker.factionId, troops: init.attacker.troops, shipKey: init.attacker.shipKey },
-            defender: { factionId: init.defender.factionId, troops: init.defender.troops, shipKey: init.defender.shipKey },
-            seed: init.seed,
-            favored: init.favored ?? null,
-        });
-        this.flip = !!init.followedOnDefenderSide;
+        this.runId++;
+        this.setupGeography(this.getMap(), init.center ?? null);
+        this.sim = this.makeSim(init);
+        this.prepStep = 0;
         this.colors = {
             attacker: FactionTintSystem.getTintHex(init.attacker.factionId) ?? DEFAULT_COLOR.attacker,
             defender: FactionTintSystem.getTintHex(init.defender.factionId) ?? DEFAULT_COLOR.defender,
@@ -147,25 +187,39 @@ export class NavalWarLayer {
         this.acc = 0;
         this.decided = false;
         this.fx = [];
-        this.toasts = [];
         this.focus = null;
         this.wallT = 0;
         this.sfxAt = {};
         this.lastPhase = 'approach';
         this.finalTroops = null;
         this.errorLogged = false;
-        this.cam = { x: NAVAL_WORLD_W / 2, y: NAVAL_WORLD_H / 2, z: 0 };
+        this.panRem = { x: 0, y: 0 };
+        this.subtitleQueue = [];
+        this.subtitleAt = -99;
         this.active = true;
         this.lingering = false;
-        // 预载双方船型素材（第一帧没到就先画剪影，到了自动换上）
+        navalHiddenUnitIds.clear();
+        for (const id of init.hiddenUnitIds ?? []) if (id) navalHiddenUnitIds.add(id);
         LegionPhalanxDrawer.ensureUnitTypeLoading(init.attacker.shipKey);
         LegionPhalanxDrawer.ensureUnitTypeLoading(init.defender.shipKey);
+        NavalFxSprites.preload();
         if (this.canvas) this.canvas.style.display = 'block';
         (window as any).game?.combatUI?.applyScene13Layout?.(true);
         const wind = windName(this.sim.windAng);
-        this.toast(init.title || `${init.attacker.name} 迎战 ${init.defender.name}`, '#ffe9b0');
-        this.toast(`海上${wind}，${getNavalShipChineseName(init.attacker.shipKey)} 对 ${getNavalShipChineseName(init.defender.shipKey)}`, '#cfe6ff');
-        this.render();
+        this.say(init.title || `${init.attacker.name} 迎战 ${init.defender.name}`);
+        this.say(`海上${wind}，${getNavalShipChineseName(init.attacker.shipKey)} 对 ${getNavalShipChineseName(init.defender.shipKey)}`);
+        this.render(0);
+    }
+
+    private makeSim(init: NavalWarInit): NavalBattleSim {
+        return new NavalBattleSim({
+            attacker: { factionId: init.attacker.factionId, troops: init.attacker.troops, shipKey: init.attacker.shipKey },
+            defender: { factionId: init.defender.factionId, troops: init.defender.troops, shipKey: init.defender.shipKey },
+            seed: init.seed,
+            favored: init.favored ?? null,
+            attackerRight: !!init.followedOnDefenderSide,
+            isWater: this.landGrid ? (x, y) => this.isWaterAt(x, y) : undefined,
+        });
     }
 
     /** 判完胜负后的残局：船停在原地继续漂、火继续烧，等场景退场 */
@@ -176,12 +230,17 @@ export class NavalWarLayer {
     }
 
     public stop(): void {
+        if (!this.active && !this.lingering && !this.sim) return;
         this.active = false;
         this.lingering = false;
         this.sim = null;
         this.fx = [];
-        this.toasts = [];
-        if (this.canvas) this.canvas.style.display = 'none';
+        this.subtitleQueue = [];
+        navalHiddenUnitIds.clear();
+        if (this.canvas) {
+            this.canvas.style.display = 'none';
+            this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 
     public tick(dt: number): void {
@@ -207,7 +266,16 @@ export class NavalWarLayer {
         if (!this.sim) return;
         const realDt = Math.max(0, Math.min(0.1, dt));
         this.wallT += realDt;
-        if (this.active && !this.decided) {
+        if (this.active && !this.decided && this.prepStep < PREP_RESAMPLE_AT.length) {
+            // 开场准备：重采样海岸线、重摆船（船还没开动，换中心与重摆都看不出来）
+            if (this.wallT >= PREP_RESAMPLE_AT[this.prepStep]) {
+                this.prepStep++;
+                if (this.init) {
+                    this.setupGeography(this.getMap(), this.init.center ?? null);
+                    this.sim = this.makeSim(this.init);
+                }
+            }
+        } else if (this.active && !this.decided) {
             this.acc += realDt;
             while (this.acc >= SIM_STEP) {
                 this.acc -= SIM_STEP;
@@ -218,7 +286,9 @@ export class NavalWarLayer {
             if (this.sim.result) this.decide();
         }
         this.updateFx(realDt);
-        this.render();
+        this.pumpSubtitles();
+        this.updateCamera(realDt);
+        this.render(realDt);
     }
 
     private decide(): void {
@@ -227,12 +297,9 @@ export class NavalWarLayer {
         const r = this.sim.result;
         const winSide = r.winner;
         const loseSide: NavalSide = winSide === 'attacker' ? 'defender' : 'attacker';
-        const winName = this.init[winSide].name;
-        this.toast(`${winName} 大胜！`, this.colors[winSide]);
-        const survivors = {
-            attacker: 0,
-            defender: 0,
-        };
+        this.subtitleQueue = [];
+        this.say(`${this.init[winSide].name} 大胜`, true);
+        const survivors = { attacker: 0, defender: 0 };
         survivors[winSide] = Math.max(1, Math.round(this.init[winSide].troops * Math.min(1, r.winnerStrength)));
         survivors[loseSide] = 0;
         this.finalTroops = { ...survivors };
@@ -243,6 +310,105 @@ export class NavalWarLayer {
         }
     }
 
+    // ─────────────────────────── 战场落在真实海面上 ───────────────────────────
+
+    /** 世界坐标 → 战略地图 zoom 9 像素（墨卡托投影像素是线性的，任何缩放都按 2^(z-9) 换算） */
+    private worldToRefPx(x: number, y: number, base: L.Point): L.Point {
+        return L.point(base.x + (x - NAVAL_WORLD_W / 2) * U_REF, base.y + (y - NAVAL_WORLD_H / 2) * U_REF);
+    }
+
+    /**
+     * 选战场中心 + 采样海陆：在开战点附近找一处「战场矩形里陆地最少」的水面（近的优先），
+     * 然后按格采样海陆给模拟绕岸用。陆地太多（找不到像样的水面）就不绕岸，免得船卡死。
+     */
+    private setupGeography(map: L.Map | null, center: { lat: number; lng: number } | null): void {
+        this.landGrid = null;
+        this.centerLL = null;
+        this.centerPx = null;
+        if (!map) return;
+        const c0 = center ? L.latLng(center.lat, center.lng) : map.getCenter();
+        const p0 = map.project(c0, NAVAL_SCENE_ZOOM);
+        const seaAt = (p: L.Point): boolean => {
+            try {
+                const ll = map.unproject(p, NAVAL_SCENE_ZOOM);
+                return TerrainSpeedSystem.isSeaAt({ lat: ll.lat, lng: ll.lng });
+            } catch { return true; }
+        };
+        const landFrac = (base: L.Point): number => {
+            let land = 0, n = 0;
+            for (let i = 0; i <= 15; i++) {
+                for (let j = 0; j <= 8; j++) {
+                    const p = this.worldToRefPx(NAVAL_WORLD_W * (0.08 + 0.84 * i / 15), NAVAL_WORLD_H * (0.1 + 0.8 * j / 8), base);
+                    if (!seaAt(p)) land++;
+                    n++;
+                }
+            }
+            return land / n;
+        };
+        let best = p0, bestScore = Infinity, bestFrac = 1;
+        const rings = [0, 250, 500, 800, 1150, 1600, 2200];
+        for (const r of rings) {
+            const steps = r === 0 ? 1 : 12;
+            for (let k = 0; k < steps; k++) {
+                const a = k * Math.PI * 2 / steps;
+                const cand = L.point(p0.x + Math.cos(a) * r, p0.y + Math.sin(a) * r);
+                const f = landFrac(cand);
+                const score = f + r / 5000;
+                if (score < bestScore) { bestScore = score; best = cand; bestFrac = f; }
+            }
+            if (bestFrac < 0.04) break;   // 已经是开阔水面，不必再往远找
+        }
+        this.centerPx = best;
+        this.centerLL = map.unproject(best, NAVAL_SCENE_ZOOM);
+        map.setView(this.centerLL, NAVAL_SCENE_ZOOM, { animate: false });
+        if (bestFrac > 0.55) return;   // 四面是陆：不绕岸
+        const cols = Math.ceil((NAVAL_WORLD_W + LAND_MARGIN * 2) / LAND_CELL) + 1;
+        const rows = Math.ceil((NAVAL_WORLD_H + LAND_MARGIN * 2) / LAND_CELL) + 1;
+        const grid = new Uint8Array(cols * rows);
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                const p = this.worldToRefPx(i * LAND_CELL - LAND_MARGIN, j * LAND_CELL - LAND_MARGIN, best);
+                grid[j * cols + i] = seaAt(p) ? 1 : 0;
+            }
+        }
+        this.landGrid = grid;
+        this.landCols = cols;
+        this.landRows = rows;
+    }
+
+    private isWaterAt(x: number, y: number): boolean {
+        const g = this.landGrid;
+        if (!g) return true;
+        const i = Math.round((x + LAND_MARGIN) / LAND_CELL);
+        const j = Math.round((y + LAND_MARGIN) / LAND_CELL);
+        if (i < 0 || j < 0 || i >= this.landCols || j >= this.landRows) return true;
+        return g[j * this.landCols + i] === 1;
+    }
+
+    /** 当前缩放下 1 世界单位 = 多少 CSS 像素 */
+    private unitPx(map: L.Map): number {
+        return U_REF * Math.pow(2, map.getZoom() - NAVAL_SCENE_ZOOM);
+    }
+
+    /** 经纬度 → 容器 CSS 像素（亚像素，与 GlobalUnitRenderer.latLngToContainerPointSubpixel 同法） */
+    private llToScreen(map: L.Map, ll: L.LatLngExpression): L.Point {
+        const zoom = map.getZoom();
+        const projected = map.project(ll, zoom);
+        const origin = map.getPixelOrigin();
+        const pane = (map as unknown as { _getMapPanePos?: () => L.Point })._getMapPanePos?.() ?? L.point(0, 0);
+        return L.point(projected.x - origin.x + pane.x, projected.y - origin.y + pane.y);
+    }
+
+    private worldToLatLng(map: L.Map, x: number, y: number): L.LatLng {
+        return map.unproject(this.worldToRefPx(x, y, this.centerPx!), NAVAL_SCENE_ZOOM);
+    }
+
+    /** 本帧的世界 → 屏幕换算（每帧取一次锚点，之后都是线性） */
+    private frameXf(map: L.Map): { ax: number; ay: number; u: number } {
+        const a = this.llToScreen(map, this.centerLL!);
+        return { ax: a.x, ay: a.y, u: this.unitPx(map) };
+    }
+
     // ─────────────────────────── 事件 → 特效 / 播报 / 音效 ───────────────────────────
 
     private sideName(side: NavalSide): string {
@@ -251,76 +417,92 @@ export class NavalWarLayer {
 
     private handleEvents(events: NavalEvent[]): void {
         const sim = this.sim!;
+        const map = this.getMap();
         for (const e of events) {
             switch (e.type) {
-                case 'fire':
-                    if (e.weapon === 'cannon') {
-                        const s = sim.getShip(e.shipId);
-                        this.fx.push({ k: 'muzzle', x: e.x, y: e.y, t: 0, ang: s ? s.heading : 0 });
-                        this.sfx('naval_cannon_fire', 0.35);
-                    } else if (e.weapon === 'arrow') {
-                        this.sfx('naval_arrow_fire', 0.45);
-                    } else if (e.weapon === 'trebuchet') {
-                        this.sfx('naval_cannon_fire', 0.9);
+                case 'fire': {
+                    // 炮弹 / 箭 / 石弹 / 希腊火、落水水花、炮口焰：全走战略地图同一套投射物
+                    if (map && this.centerPx) {
+                        const from = this.worldToLatLng(map, e.x, e.y);
+                        const to = this.worldToLatLng(map, e.tx, e.ty);
+                        const type = PROJECTILE_TYPE[e.weapon];
+                        getGlobalUnitRenderer()?.spawnProjectileVolley(from, to, {
+                            count: e.weapon === 'arrow' ? 3 : e.weapon === 'greekfire' ? 2 : 1,
+                            spreadFactor: e.weapon === 'arrow' ? 0.04 : 0.02,
+                            staggerMs: 60,
+                            durationMs: Math.round(e.dur * 1000),
+                            type,
+                            naval: true,
+                        });
                     }
+                    if (e.weapon === 'greekfire') {
+                        this.fx.push({ k: 'greekfire', x: e.x, y: e.y, tx: e.tx, ty: e.ty, dur: Math.max(0.35, e.dur), t: 0 });
+                    }
+                    if (e.weapon === 'cannon') this.sfx('naval_cannon_fire', 0.35);
+                    else if (e.weapon === 'arrow') this.sfx('naval_arrow_fire', 0.45);
+                    else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
                     break;
+                }
                 case 'impact':
-                    if (e.hit) this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0 });
+                    if (e.hit) this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0, wood: e.weapon !== 'arrow' });
                     else {
-                        this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: e.weapon !== 'arrow' });
+                        this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: e.weapon === 'cannon' || e.weapon === 'trebuchet' });
                         if (e.weapon !== 'arrow') this.sfx('naval_cannon_splash', 0.4);
                     }
                     break;
                 case 'ignite':
                     if (e.isFlag) {
-                        this.toast(`${this.sideName(e.side)} 旗舰起火！`, '#ffb060');
+                        this.say(`${this.sideName(e.side)} 旗舰起火`, true);
                         this.focusOn(e.x, e.y, 3);
                     }
                     break;
                 case 'ram':
+                    this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: true });
                     this.fx.push({ k: 'boom', x: e.x, y: e.y, t: 0, big: false });
-                    this.fx.push({ k: 'text', x: e.x, y: e.y - 40, t: 0, text: '冲撞！', color: '#ffffff' });
+                    this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '冲撞', color: '#ffffff' });
                     this.sfx('naval_explode', 0.6);
                     break;
                 case 'boardStart':
-                    this.fx.push({ k: 'text', x: e.x, y: e.y - 50, t: 0, text: '接舷！', color: '#ffe9b0' });
+                    this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0, wood: false });
+                    this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '接舷', color: '#ffe9b0' });
                     break;
                 case 'capture':
                     this.fx.push({ k: 'ring', x: e.x, y: e.y, t: 0, color: this.colors[e.side] });
-                    this.fx.push({ k: 'text', x: e.x, y: e.y - 60, t: 0, text: e.isFlag ? '夺下敌旗舰！' : '夺船！', color: this.colors[e.side] });
+                    this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: e.isFlag ? '夺下敌旗舰' : '夺船', color: this.colors[e.side] });
                     if (e.isFlag) {
-                        this.toast(`${this.sideName(e.side)} 跳帮夺下敌方旗舰！`, this.colors[e.side]);
+                        this.say(`${this.sideName(e.side)} 跳帮夺下敌方旗舰`, true);
                         this.focusOn(e.x, e.y, 4);
                     } else {
-                        this.toast(`${this.sideName(e.side)} 接舷夺下一艘敌船，换上自家旗号`, this.colors[e.side]);
+                        this.say(`${this.sideName(e.side)} 接舷夺下一艘敌船，换上自家旗号`);
                         this.focusOn(e.x, e.y, 2.5);
                     }
                     break;
                 case 'sink':
+                    this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: true });
                     this.fx.push({ k: 'boom', x: e.x, y: e.y, t: 0, big: e.explode || e.isFlag });
                     this.sfx(e.explode || e.isFlag ? 'naval_explode' : 'naval_sink', 0.2);
                     if (e.isFlag) {
-                        this.toast(`${this.sideName(e.side)} 旗舰沉没！`, '#ff7b6b');
+                        this.say(`${this.sideName(e.side)} 旗舰沉没`, true);
                         this.focusOn(e.x, e.y, 4);
                     } else if (e.explode) {
-                        this.fx.push({ k: 'text', x: e.x, y: e.y - 60, t: 0, text: '殉爆！', color: '#ffb060' });
+                        this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '殉爆', color: '#ffb060' });
                     }
                     break;
                 case 'windShift': {
                     const wn = windName(sim.windAng);
-                    this.toast(e.windward ? `风向转为${wn}，${this.sideName(e.windward)} 占了上风` : `风向转为${wn}`, '#cfe6ff');
+                    this.say(e.windward ? `风向转为${wn}，${this.sideName(e.windward)} 占了上风` : `风向转为${wn}`, true);
                     break;
                 }
                 case 'rout':
-                    this.toast(e.reason === 'flag'
+                    this.say(e.reason === 'flag'
                         ? `${this.sideName(e.side)} 帅旗已倒，全军溃散`
-                        : `${this.sideName(e.side)} 船队折损殆尽，掉头溃逃`, '#ff9a8a');
+                        : `${this.sideName(e.side)} 船队折损殆尽，掉头溃逃`, true);
                     break;
                 case 'phase':
                     if (e.phase !== this.lastPhase) {
                         this.lastPhase = e.phase;
-                        if (e.phase === 'exchange') this.toast('进入射程，双方开始对射', '#e8e8e8');
-                        else if (e.phase === 'melee') this.toast('两军船队绞在一起，接舷肉搏', '#e8e8e8');
+                        if (e.phase === 'exchange') this.say('进入射程，双方开始对射');
+                        else if (e.phase === 'melee') this.say('两军船队绞在一起，接舷肉搏');
                     }
                     break;
             }
@@ -334,9 +516,17 @@ export class NavalWarLayer {
         try { audioManager.play(key as any); } catch { /* 音效失败不影响演出 */ }
     }
 
-    private toast(text: string, color: string): void {
-        this.toasts.push({ text, color, t: 0 });
-        if (this.toasts.length > 4) this.toasts.shift();
+    /** 播报走游戏统一字幕条；排队，一条至少停 2.8 秒。urgent 插到最前、挤掉排着的普通条 */
+    private say(text: string, urgent = false): void {
+        if (urgent) this.subtitleQueue = [text, ...this.subtitleQueue.slice(0, 1)];
+        else if (this.subtitleQueue.length < 3) this.subtitleQueue.push(text);
+    }
+
+    private pumpSubtitles(): void {
+        if (this.subtitleQueue.length === 0 || this.wallT - this.subtitleAt < 2.8) return;
+        const text = this.subtitleQueue.shift()!;
+        this.subtitleAt = this.wallT;
+        try { SubtitleBanner.show(text, 3200, false, true); } catch { /* 字幕失败不影响演出 */ }
     }
 
     private focusOn(x: number, y: number, secs: number): void {
@@ -347,174 +537,113 @@ export class NavalWarLayer {
         for (let i = this.fx.length - 1; i >= 0; i--) {
             const f = this.fx[i];
             f.t += dt;
-            const life = f.k === 'text' ? 1.8 : f.k === 'boom' ? (f.big ? 2.2 : 1.0) : f.k === 'ring' ? 1.4 : f.k === 'muzzle' ? 0.35 : 0.8;
+            const life = f.k === 'text' ? 1.8
+                : f.k === 'boom' ? (f.big ? 2.2 : 1.0)
+                : f.k === 'splash' ? (f.big ? 1.15 : 0.75)
+                : f.k === 'greekfire' ? f.dur + 0.2
+                : f.k === 'ring' ? 1.4
+                : 0.8;
             if (f.t > life) this.fx.splice(i, 1);
         }
-        if (this.fx.length > 400) this.fx.splice(0, this.fx.length - 400);
-        for (let i = this.toasts.length - 1; i >= 0; i--) {
-            this.toasts[i].t += dt;
-            if (this.toasts[i].t > 4.5) this.toasts.splice(i, 1);
-        }
+        if (this.fx.length > 300) this.fx.splice(0, this.fx.length - 300);
     }
 
-    // ─────────────────────────── 镜头 ───────────────────────────
+    // ─────────────────────────── 镜头：平移战略地图本身 ───────────────────────────
 
-    private updateCamera(cw: number, ch: number): void {
-        const sim = this.sim!;
+    private updateCamera(dt: number): void {
+        const map = this.getMap();
+        const sim = this.sim;
+        if (!map || !sim || !this.centerLL) return;
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         for (const s of sim.ships) {
             if (s.state !== 'alive' && s.state !== 'sinking') continue;
-            // 溃逃出场的船不再拖着镜头走
             if (s.routing && (s.x < 0 || s.x > NAVAL_WORLD_W || s.y < 0 || s.y > NAVAL_WORLD_H)) continue;
             minX = Math.min(minX, s.x); maxX = Math.max(maxX, s.x);
             minY = Math.min(minY, s.y); maxY = Math.max(maxY, s.y);
         }
-        if (!isFinite(minX)) { minX = 0; maxX = NAVAL_WORLD_W; minY = 0; maxY = NAVAL_WORLD_H; }
+        if (!isFinite(minX)) return;
         let tx = (minX + maxX) / 2;
-        let ty = (minY + maxY) / 2;
-        const bw = maxX - minX + 700;
-        const bh = maxY - minY + 600;
-        let tz = Math.min(cw / bw, ch / bh);
-        tz = Math.max(cw / 3600, Math.min(cw / 1500, tz));
+        let ty = (minY + maxY) / 2 + 95;
         if (this.focus && this.wallT < this.focus.until) {
-            tx = tx * 0.45 + this.focus.x * 0.55;
-            ty = ty * 0.45 + this.focus.y * 0.55;
-            tz *= 1.12;
+            tx = tx * 0.5 + this.focus.x * 0.5;
+            ty = ty * 0.5 + (this.focus.y + 80) * 0.5;
         }
-        if (this.cam.z === 0) { this.cam = { x: tx, y: ty, z: tz }; return; }
-        const k = 0.035;
-        this.cam.x += (tx - this.cam.x) * k;
-        this.cam.y += (ty - this.cam.y) * k;
-        this.cam.z += (tz - this.cam.z) * k * 0.7;
-    }
-
-    private sx(x: number, cw: number): number {
-        const wx = this.flip ? NAVAL_WORLD_W - x : x;
-        const cx = this.flip ? NAVAL_WORLD_W - this.cam.x : this.cam.x;
-        return (wx - cx) * this.cam.z + cw / 2;
-    }
-
-    private sy(y: number, ch: number): number {
-        return (y - this.cam.y) * this.cam.z + ch / 2;
-    }
-
-    /** 世界航向 → 屏幕航向（左右对调时镜像） */
-    private screenHeading(h: number): number {
-        return this.flip ? Math.PI - h : h;
+        const xf = this.frameXf(map);
+        const size = map.getSize();
+        const dx = xf.ax + (tx - NAVAL_WORLD_W / 2) * xf.u - size.x / 2;
+        const dy = xf.ay + (ty - NAVAL_WORLD_H / 2) * xf.u - size.y / 2;
+        if (Math.abs(dx) + Math.abs(dy) < 2) return;
+        const k = Math.min(1, dt * 1.1);
+        this.panRem.x += dx * k;
+        this.panRem.y += dy * k;
+        const ix = Math.round(this.panRem.x), iy = Math.round(this.panRem.y);
+        if (ix === 0 && iy === 0) return;
+        this.panRem.x -= ix;
+        this.panRem.y -= iy;
+        map.panBy(L.point(ix, iy), { animate: false });
     }
 
     // ─────────────────────────── 绘制 ───────────────────────────
 
-    private render(): void {
+    private render(_dt: number): void {
         const cv = this.canvas, ctx = this.ctx, sim = this.sim;
+        const map = this.getMap();
         if (!cv || !ctx || !sim) return;
         const dpr = Math.min(2, window.devicePixelRatio || 1);
-        const cw = Math.round(window.innerWidth * dpr);
-        const ch = Math.round(window.innerHeight * dpr);
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const cw = Math.round(vw * dpr), ch = Math.round(vh * dpr);
         if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
-        this.updateCamera(cw, ch);
-        this.drawSea(ctx, cw, ch);
-        // 尾浪在船下面
-        for (const s of sim.ships) if (s.state === 'alive' || s.state === 'fled') this.drawWake(ctx, s, cw, ch);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, cw, ch);
+        if (!map || !this.centerLL) return;
+        // 画布铺满视口，地图容器不一定从 (0,0) 开始：按容器偏移对齐
+        const rect = map.getContainer().getBoundingClientRect();
+        ctx.setTransform(dpr, 0, 0, dpr, rect.left * dpr, rect.top * dpr);
+        const xf = this.frameXf(map);
+        const zoom = map.getZoom();
+        const mapScale = strategicArmyScale(Math.min(zoom, 10));
+        const toS = (x: number, y: number) => ({ x: xf.ax + (x - NAVAL_WORLD_W / 2) * xf.u, y: xf.ay + (y - NAVAL_WORLD_H / 2) * xf.u });
+        const projection: WakeProjection = {
+            toWorld: (p) => {
+                const ll = map.containerPointToLatLng(L.point(p.x, p.y));
+                return { x: ll.lng, y: ll.lat };
+            },
+            toScreen: (p) => this.llToScreen(map, [p.y, p.x]),
+        };
         const order = sim.ships.filter((s) => s.state !== 'sunk' && s.state !== 'fled').sort((a, b) => a.y - b.y);
-        for (const s of order) this.drawBoardingLink(ctx, s, cw, ch);
-        for (const s of order) this.drawShip(ctx, s, cw, ch);
-        this.drawProjectiles(ctx, cw, ch);
-        this.drawFx(ctx, cw, ch);
-        for (const s of order) this.drawShipBadge(ctx, s, cw, ch);
-        this.drawHud(ctx, cw, ch, dpr);
-    }
-
-    private drawSea(ctx: CanvasRenderingContext2D, cw: number, ch: number): void {
-        const g = ctx.createLinearGradient(0, 0, 0, ch);
-        g.addColorStop(0, '#0c3550');
-        g.addColorStop(0.5, '#0f4566');
-        g.addColorStop(1, '#0b3049');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, cw, ch);
-        // 浪纹：按世界网格摆，随风漂；每格一道短弧，明暗起伏
-        const sim = this.sim!;
-        const z = this.cam.z;
-        const cell = 120;
-        const drift = this.wallT * 18 * sim.windStrength;
-        const wdx = Math.cos(sim.windAng) * drift, wdy = Math.sin(sim.windAng) * drift;
-        const halfW = cw / 2 / z, halfH = ch / 2 / z;
-        const camX = this.flip ? NAVAL_WORLD_W - this.cam.x : this.cam.x;
-        const x0 = Math.floor((camX - halfW - wdx * (this.flip ? -1 : 1)) / cell) - 1;
-        const x1 = Math.ceil((camX + halfW - wdx * (this.flip ? -1 : 1)) / cell) + 1;
-        const y0 = Math.floor((this.cam.y - halfH - wdy) / cell) - 1;
-        const y1 = Math.ceil((this.cam.y + halfH - wdy) / cell) + 1;
-        ctx.lineWidth = Math.max(1, 2.2 * z);
-        ctx.lineCap = 'round';
-        for (let gx = x0; gx <= x1; gx++) {
-            for (let gy = y0; gy <= y1; gy++) {
-                let h = (gx * 73856093) ^ (gy * 19349663);
-                h = (h ^ (h >>> 13)) * 1274126177;
-                const r1 = ((h >>> 0) % 1000) / 1000;
-                const r2 = (((h >>> 10) >>> 0) % 1000) / 1000;
-                const wx = gx * cell + r1 * cell + wdx * (this.flip ? -1 : 1);
-                const wy = gy * cell + r2 * cell + wdy;
-                const px = (wx - camX) * z + cw / 2;
-                const py = (wy - this.cam.y) * z + ch / 2;
-                const a = 0.10 + 0.10 * Math.sin(this.wallT * 1.3 + r1 * 12);
-                if (a <= 0.02) continue;
-                const len = (18 + r2 * 22) * z;
-                ctx.strokeStyle = `rgba(200,230,255,${a.toFixed(3)})`;
-                ctx.beginPath();
-                ctx.moveTo(px - len, py);
-                ctx.quadraticCurveTo(px, py - len * 0.35, px + len, py);
-                ctx.stroke();
-            }
+        const poses = new Map<number, ShipPose>();
+        for (const s of order) poses.set(s.id, this.shipPose(s, toS(s.x, s.y), zoom));
+        // ① 船尾 / 船头浪花：战略地图同一套（NavalWakeDrawer，DE 原版）
+        const tick = performance.now();
+        for (const s of order) {
+            const p = poses.get(s.id)!;
+            NavalWakeDrawer.drawNavalWakes(
+                ctx,
+                [{ x: p.x, y: p.y, r: 0, isAlive: s.state === 'alive', dir: p.dir, rot: p.rot, deg: p.deg, shipLen: p.len }],
+                p.dir, mapScale, tick, s.state === 'alive' && s.speed > 6 && s.boardingWith === null,
+                undefined, p.len * 1.15, `navalwar-${this.runId}-${s.id}`, projection,
+            );
         }
-    }
-
-    private drawWake(ctx: CanvasRenderingContext2D, s: NavalShip, cw: number, ch: number): void {
-        const tr = s.trail;
-        if (tr.length < 2) return;
-        const z = this.cam.z;
-        for (let i = 1; i < tr.length; i++) {
-            const a = (i / tr.length) * 0.35;
-            ctx.strokeStyle = `rgba(235,248,255,${a.toFixed(3)})`;
-            ctx.lineWidth = Math.max(1, (4 + (tr.length - i) * 0.9) * z);
-            ctx.beginPath();
-            ctx.moveTo(this.sx(tr[i - 1].x, cw), this.sy(tr[i - 1].y, ch));
-            ctx.lineTo(this.sx(tr[i].x, cw), this.sy(tr[i].y, ch));
-            ctx.stroke();
+        for (const s of order) this.drawBoardingLink(ctx, s, toS, xf.u);
+        // ② 旗杆（在船后面）→ 船 → 旗面
+        const year = (window as any).game?.timeSystem?.getYear?.() ?? -999;
+        for (const s of order) {
+            const p = poses.get(s.id)!;
+            const isFlag = s.role === 'flag' && s.state === 'alive';
+            if (isFlag) LegionFlagDrawer.drawPole(ctx, { x: p.x, y: p.y }, mapScale, s.factionId || 'panshu');
+            this.drawShip(ctx, s, p, xf.u);
+            if (isFlag) LegionFlagDrawer.drawFlag(ctx, { x: p.x, y: p.y }, 0, mapScale, Date.now(), s.factionId || 'panshu', year);
         }
+        this.drawFx(ctx, toS, xf.u);
+        for (const s of order) this.drawShipBadge(ctx, s, poses.get(s.id)!, mapScale);
+        // ③ 风向罗盘（右上，屏幕坐标）
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.drawWindCompass(ctx, vw);
     }
 
-    private drawBoardingLink(ctx: CanvasRenderingContext2D, s: NavalShip, cw: number, ch: number): void {
-        if (s.boardingWith === null || s.state !== 'alive') return;
-        const o = this.sim!.getShip(s.boardingWith);
-        if (!o || s.id > o.id) return;
-        const ax = this.sx(s.x, cw), ay = this.sy(s.y, ch), bx = this.sx(o.x, cw), by = this.sy(o.y, ch);
-        ctx.strokeStyle = 'rgba(80,55,30,0.9)';
-        ctx.lineWidth = Math.max(2, 5 * this.cam.z);
-        for (let k = -1; k <= 1; k++) {
-            const nx = -(by - ay), ny = bx - ax;
-            const nl = Math.hypot(nx, ny) || 1;
-            const off = k * 18 * this.cam.z;
-            ctx.beginPath();
-            ctx.moveTo(ax + nx / nl * off, ay + ny / nl * off);
-            ctx.lineTo(bx + nx / nl * off, by + ny / nl * off);
-            ctx.stroke();
-        }
-    }
-
-    private drawShip(ctx: CanvasRenderingContext2D, s: NavalShip, cw: number, ch: number): void {
-        const sim = this.sim!;
-        const z = this.cam.z;
-        const px = this.sx(s.x, cw);
-        const py = this.sy(s.y, ch);
-        if (px < -400 || px > cw + 400 || py < -400 || py > ch + 400) return;
-        const sinkT = s.state === 'sinking' ? sim.time - s.sinkAt : 0;
-        const alpha = s.state === 'sinking' ? Math.max(0, 1 - sinkT / 6) : 1;
-        const bob = Math.sin(this.wallT * 1.6 + s.id * 1.7) * 2.5 * z;
-        const sinkY = s.state === 'sinking' ? sinkT / 6 * 60 * z : 0;
-        const roll = Math.sin(this.wallT * 1.1 + s.id) * 0.03 + (s.state === 'sinking' ? sinkT * 0.05 : 0);
-
-        // 屏幕航向（北=0 顺时针）→ DE 16 向帧 + 残差角（与 LegionPhalanxDrawer.drawNaval 同一套换算）
-        const h = this.screenHeading(s.heading);
+    /** 屏幕位置 + 16 向帧 + 残差角 + 船长（与 LegionPhalanxDrawer.drawNaval 同一套换算） */
+    private shipPose(s: NavalShip, at: { x: number; y: number }, zoom: number): ShipPose {
+        const h = s.heading;
         let shipDeg = (Math.atan2(Math.cos(h), -Math.sin(h)) * 180 / Math.PI);
         shipDeg = ((shipDeg % 360) + 360) % 360;
         const shipRad = shipDeg * Math.PI / 180;
@@ -524,10 +653,102 @@ export class NavalWarLayer {
         let resDeg = shipDeg - Math.atan2(Math.sin(frameRad), 0.5 * Math.cos(frameRad)) * 180 / Math.PI;
         while (resDeg > 180) resDeg -= 360;
         while (resDeg < -180) resDeg += 360;
-        const rot = resDeg * Math.PI / 180 + roll;
+        const hs = HULL_BASE * strategicArmyScale(Math.min(zoom, 10)) * getNavalShipDrawScale(s.shipKey);
+        return { x: at.x, y: at.y, dir, rot: resDeg * Math.PI / 180, deg: shipDeg, hs, len: this.refLen(s.shipKey) * hs };
+    }
+
+    /** 参考船长（16 向帧框最长边，素材像素）；素材没到时按楼船量级估 */
+    private refLen(key: string): number {
+        const hit = this.shipLenCache.get(key);
+        if (hit) return hit;
+        const dyn = (LegionPhalanxDrawer.getUnitAssets(key) as any)?.dyn?.IDLE;
+        if (!dyn?.dirs) return 170;
+        let len = 0;
+        for (const d of Object.values(dyn.dirs) as { fw: number; fh: number }[]) len = Math.max(len, d.fw, d.fh);
+        if (len > 0) this.shipLenCache.set(key, len);
+        return len || 170;
+    }
+
+    private drawBoardingLink(ctx: CanvasRenderingContext2D, s: NavalShip, toS: (x: number, y: number) => { x: number; y: number }, u: number): void {
+        if (s.boardingWith === null || s.state !== 'alive') return;
+        const o = this.sim!.getShip(s.boardingWith);
+        if (!o || s.id > o.id) return;
+        const a = toS(s.x, s.y), b = toS(o.x, o.y);
+        const nx = -(b.y - a.y), ny = b.x - a.x;
+        const nl = Math.hypot(nx, ny) || 1;
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        // 抛绳索带自然垂弧
+        ctx.save();
+        for (let k = -1; k <= 1; k++) {
+            const off = k * 15 * u;
+            const ax = a.x + nx / nl * off, ay = a.y + ny / nl * off;
+            const bx = b.x + nx / nl * off, by = b.y + ny / nl * off;
+            const cx = (ax + bx) / 2, cy = (ay + by) / 2 + 8 * u;
+            ctx.strokeStyle = 'rgba(42,28,16,0.92)';
+            ctx.lineWidth = Math.max(2, 3.8 * u);
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.quadraticCurveTo(cx, cy, bx, by);
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(155,118,74,0.85)';
+            ctx.lineWidth = Math.max(1, 1.8 * u);
+            ctx.stroke();
+        }
+        // 接舷肉搏刀光火花（周期性闪现）
+        const pulse = (this.wallT * 3.8 + s.id * 0.7) % 1;
+        if (pulse < 0.35) {
+            const k = pulse / 0.35;
+            const alpha = (1 - k).toFixed(3);
+            const sx = mx + Math.sin(this.wallT * 19 + s.id) * 14 * u;
+            const sy = my - 10 * u + Math.cos(this.wallT * 23 + o.id) * 8 * u;
+            ctx.strokeStyle = `rgba(255,236,155,${alpha})`;
+            ctx.lineWidth = Math.max(1.5, 2.5 * u);
+            for (let i = 0; i < 4; i++) {
+                const ang = i * Math.PI / 2 + this.wallT * 6;
+                const r0 = 3 * u, r1 = (8 + k * 12) * u;
+                ctx.beginPath();
+                ctx.moveTo(sx + Math.cos(ang) * r0, sy + Math.sin(ang) * r0);
+                ctx.lineTo(sx + Math.cos(ang) * r1, sy + Math.sin(ang) * r1);
+                ctx.stroke();
+            }
+        }
+        ctx.restore();
+    }
+
+    private drawShip(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, u: number): void {
+        const sim = this.sim!;
+        if (p.x < -400 || p.x > window.innerWidth + 400 || p.y < -400 || p.y > window.innerHeight + 400) return;
+        const sinkT = s.state === 'sinking' ? sim.time - s.sinkAt : 0;
+        const alpha = s.state === 'sinking' ? Math.max(0, 1 - sinkT / 6) : 1;
+        // 与 drawNaval 同量级的浮沉横摇（只动贴图，不动逻辑位）
+        const bob = Math.sin(this.wallT * 1.6 + s.id * 1.7) * 1.2 * p.hs;
+        const sinkY = s.state === 'sinking' ? sinkT / 6 * p.len * 0.7 : 0;
+        const roll = Math.sin(this.wallT * 1.1 + s.id) * 0.02 + (s.state === 'sinking' ? sinkT * 0.05 : 0);
+        const rot = p.rot + roll;
+        // 开火微后坐力 + 中弹微震与受击高光
+        const fireAgo = sim.time - s.lastFireAt;
+        const recoil = fireAgo >= 0 && fireAgo < 0.18 && s.state === 'alive'
+            ? Math.sin((fireAgo / 0.18) * Math.PI) * 3.5 * p.hs
+            : 0;
+        const hitAgo = sim.time - s.lastHitAt;
+        const hitFlash = hitAgo >= 0 && hitAgo < 0.22 && s.state === 'alive' ? 1 - hitAgo / 0.22 : 0;
+        const jx = (hitFlash > 0 ? Math.sin(this.wallT * 65 + s.id) * 2.2 * hitFlash * u : 0) - Math.cos(s.heading) * recoil;
+        const jy = (hitFlash > 0 ? Math.cos(this.wallT * 58 + s.id) * 1.6 * hitFlash * u : 0) - Math.sin(s.heading) * recoil;
+
+        // 战略海面水线投影：让船体贴合海面而非悬浮
+        if (s.state !== 'sunk') {
+            ctx.save();
+            ctx.globalAlpha = alpha * 0.34;
+            ctx.translate(p.x + jx, p.y + jy + bob + 8 * p.hs);
+            ctx.rotate(s.heading);
+            ctx.fillStyle = '#072238';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, p.len * 0.44, p.len * 0.16, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
 
         const set: any = LegionPhalanxDrawer.getUnitAssets(s.shipKey);
-        const scale = SPRITE_WS * z * (s.role === 'flag' ? 1.18 : 1);
         let drawn = false;
         if (set) {
             const attacking = sim.time - s.lastFireAt < 0.6 && s.state === 'alive';
@@ -535,31 +756,33 @@ export class NavalWarLayer {
             let anim: 'MOVE' | 'ATTACK' | 'IDLE' | 'DEATH' = attacking && set.ATTACK?.length ? 'ATTACK' : (set.MOVE?.length ? 'MOVE' : 'IDLE');
             let useDeath = false;
             if (s.state === 'sinking' && deathFrames.length > 0) { anim = 'DEATH'; useDeath = true; }
+            if (s.boardingWith !== null && set.IDLE?.length) anim = 'IDLE';
             const arr: HTMLImageElement[] = set[anim] ?? set.IDLE ?? [];
-            const raw = arr[dir] || arr[0];
+            const raw = arr[p.dir] || arr[0];
             if (raw && raw.complete && raw.naturalWidth > 0) {
                 const img = (SpriteTinter.getTintedSprite(raw, s.factionId) ?? raw) as CanvasImageSource;
                 const dyn = set.dyn?.[anim] ?? set.dyn?.IDLE;
                 // 战船是 16 向素材：帧框键就是 16 向下标（同 LegionPhalanxDrawer.metaDirFor(…, true)）
-                const meta = dyn?.dirs ? dyn.dirs[String(dir)] : undefined;
+                const meta = dyn?.dirs ? dyn.dirs[String(p.dir)] : undefined;
                 const frames = dyn?.frames ?? Math.max(1, Math.round(raw.naturalWidth / raw.naturalHeight));
                 let fi: number;
                 if (useDeath) fi = Math.min(frames - 1, Math.floor(sinkT / 0.15));
                 else fi = Math.floor((this.wallT + s.id * 0.13) * frames / 1.5) % frames;
                 ctx.save();
                 ctx.globalAlpha = useDeath ? Math.min(1, alpha + 0.4) : alpha;
-                ctx.translate(px, py + bob + (useDeath ? 0 : sinkY));
+                ctx.translate(p.x + jx, p.y + jy + bob + (useDeath ? 0 : sinkY));
                 ctx.rotate(rot);
+                const hs = p.hs;
                 if (meta) {
-                    ctx.drawImage(img, fi * meta.fw, 0, meta.fw, meta.fh, -meta.hx * scale, -meta.hy * scale, meta.fw * scale, meta.fh * scale);
+                    ctx.drawImage(img, fi * meta.fw, 0, meta.fw, meta.fh, -meta.hx * hs, -meta.hy * hs, meta.fw * hs, meta.fh * hs);
                     if (!useDeath) {
-                        const sails = buildSailLayers(s.shipKey, dir, scale, LegionPhalanxDrawer.sailGroupOf(s.factionId));
+                        const sails = buildSailLayers(s.shipKey, p.dir, hs, LegionPhalanxDrawer.sailGroupOf(s.factionId));
                         if (sails) for (const sl of sails) ctx.drawImage(sl.img, sl.ox, sl.oy, sl.w, sl.h);
                     }
                 } else {
                     const fw = raw.naturalWidth / frames;
                     const fh = raw.naturalHeight;
-                    ctx.drawImage(img, fi * fw, 0, fw, fh, -fw * scale / 2, -fh * scale / 2, fw * scale, fh * scale);
+                    ctx.drawImage(img, fi * fw, 0, fw, fh, -fw * hs / 2, -fh * hs / 2, fw * hs, fh * hs);
                 }
                 ctx.restore();
                 drawn = true;
@@ -567,206 +790,295 @@ export class NavalWarLayer {
         } else {
             LegionPhalanxDrawer.ensureUnitTypeLoading(s.shipKey);
         }
-        if (!drawn) this.drawHullSilhouette(ctx, s, px, py + bob + sinkY, h, alpha);
-
-        // 火：船上跳动的火舌 + 往下风飘的烟
-        if (s.burnT > 0 && s.state !== 'sunk') this.drawFire(ctx, s, px, py + bob + sinkY);
-        if (s.state === 'sinking') this.drawBubbles(ctx, px, py, sinkT);
+        if (!drawn) this.drawHullSilhouette(ctx, s, p.x + jx, p.y + jy + bob + sinkY, s.heading, alpha, p.len);
+        if (hitFlash > 0.05) {
+            ctx.save();
+            const g = ctx.createRadialGradient(p.x + jx, p.y + jy - 8 * u, 2, p.x + jx, p.y + jy - 8 * u, p.len * 0.35);
+            g.addColorStop(0, `rgba(255,220,140,${(0.45 * hitFlash).toFixed(3)})`);
+            g.addColorStop(1, 'rgba(255,140,40,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(p.x + jx, p.y + jy - 8 * u, p.len * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+        if (s.burnT > 0 && s.state !== 'sunk') this.drawFire(ctx, s, p.x + jx, p.y + jy + bob + sinkY, u);
+        if (s.state === 'sinking') this.drawBubbles(ctx, p.x, p.y, sinkT, u);
     }
 
     /** 素材还没到时的剪影：势力色船身，免得第一帧空海 */
-    private drawHullSilhouette(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number, h: number, alpha: number): void {
-        const z = this.cam.z * (s.role === 'flag' ? 1.18 : 1);
+    private drawHullSilhouette(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number, h: number, alpha: number, len: number): void {
+        const k = len / 130;
         ctx.save();
         ctx.globalAlpha = alpha;
         ctx.translate(px, py);
         ctx.rotate(h);
+        ctx.scale(1, 0.6);
         ctx.fillStyle = '#5a3d22';
         ctx.beginPath();
-        ctx.moveTo(70 * z, 0);
-        ctx.quadraticCurveTo(20 * z, -24 * z, -60 * z, -20 * z);
-        ctx.lineTo(-60 * z, 20 * z);
-        ctx.quadraticCurveTo(20 * z, 24 * z, 70 * z, 0);
+        ctx.moveTo(65 * k, 0);
+        ctx.quadraticCurveTo(20 * k, -24 * k, -60 * k, -20 * k);
+        ctx.lineTo(-60 * k, 20 * k);
+        ctx.quadraticCurveTo(20 * k, 24 * k, 65 * k, 0);
         ctx.fill();
         ctx.fillStyle = this.colors[s.side];
-        ctx.fillRect(-14 * z, -30 * z, 28 * z, 60 * z);
+        ctx.fillRect(-12 * k, -28 * k, 24 * k, 56 * k);
         ctx.restore();
     }
 
-    private drawFire(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number): void {
-        const z = this.cam.z;
+    private drawFire(ctx: CanvasRenderingContext2D, s: NavalShip, px: number, py: number, u: number): void {
         const sim = this.sim!;
-        const wx = Math.cos(this.screenHeading(sim.windAng)), wy = Math.sin(sim.windAng);
-        for (let i = 0; i < 9; i++) {
-            const ph = this.wallT * 6 + i * 1.9 + s.id;
-            const ox = Math.sin(i * 2.3 + s.id) * 34 * z;
-            const oy = (-20 - Math.abs(Math.sin(ph)) * 34) * z;
-            const r = (10 + 7 * Math.sin(ph * 1.3)) * z;
-            ctx.fillStyle = i % 3 === 0 ? 'rgba(255,230,120,0.85)' : 'rgba(255,120,30,0.75)';
+        const wx = Math.cos(sim.windAng), wy = Math.sin(sim.windAng);
+        ctx.save();
+        // 顺风浓烟
+        for (let i = 0; i < 7; i++) {
+            const k = (this.wallT * 0.48 + i / 7) % 1;
+            const sx = px + wx * k * 145 * u + Math.sin(i * 3.1 + k * 4) * 11 * u;
+            const sy = py - 34 * u - k * 95 * u + wy * k * 48 * u;
+            const sr = (12 + k * 32) * u;
+            const g = ctx.createRadialGradient(sx, sy, 1, sx, sy, sr);
+            g.addColorStop(0, `rgba(45,42,40,${(0.45 * (1 - k)).toFixed(3)})`);
+            g.addColorStop(1, 'rgba(45,42,40,0)');
+            ctx.fillStyle = g;
             ctx.beginPath();
-            ctx.arc(px + ox, py + oy, Math.max(1, r), 0, Math.PI * 2);
+            ctx.arc(sx, sy, sr, 0, Math.PI * 2);
             ctx.fill();
         }
-        for (let i = 0; i < 6; i++) {
-            const k = ((this.wallT * 0.5 + i / 6) % 1);
-            const sx = px + wx * k * 160 * z + Math.sin(i * 3.1) * 12 * z;
-            const sy = py - 50 * z - k * 110 * z + wy * k * 60 * z;
-            ctx.fillStyle = `rgba(60,60,60,${(0.45 * (1 - k)).toFixed(3)})`;
+        // 分层火舌（外层橙红光晕 + 内层金白焰心，随风倾斜）
+        for (let i = 0; i < 8; i++) {
+            const ph = this.wallT * 7.2 + i * 1.7 + s.id;
+            const ox = Math.sin(i * 2.5 + s.id) * 26 * u;
+            const baseY = py - 12 * u + Math.cos(i * 1.9 + s.id) * 6 * u;
+            const h = (26 + Math.abs(Math.sin(ph)) * 28) * u;
+            const tipX = px + ox + wx * 16 * u + Math.sin(ph * 1.4) * 6 * u;
+            const tipY = baseY - h;
+            const w = (8 + 4 * Math.sin(ph * 1.1)) * u;
+            ctx.fillStyle = i % 2 === 0 ? 'rgba(255,95,20,0.78)' : 'rgba(255,145,30,0.82)';
             ctx.beginPath();
-            ctx.arc(sx, sy, (16 + k * 40) * z, 0, Math.PI * 2);
+            ctx.moveTo(px + ox - w, baseY);
+            ctx.quadraticCurveTo(px + ox - w * 0.4, baseY - h * 0.6, tipX, tipY);
+            ctx.quadraticCurveTo(px + ox + w * 0.6, baseY - h * 0.5, px + ox + w, baseY);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(255,240,150,0.88)';
+            ctx.beginPath();
+            ctx.moveTo(px + ox - w * 0.45, baseY);
+            ctx.quadraticCurveTo(px + ox, baseY - h * 0.45, tipX - wx * 4 * u, baseY - h * 0.65);
+            ctx.quadraticCurveTo(px + ox + w * 0.3, baseY - h * 0.35, px + ox + w * 0.45, baseY);
+            ctx.closePath();
             ctx.fill();
         }
+        ctx.restore();
     }
 
-    private drawBubbles(ctx: CanvasRenderingContext2D, px: number, py: number, t: number): void {
-        const z = this.cam.z;
-        ctx.strokeStyle = `rgba(230,245,255,${Math.max(0, 0.6 - t * 0.08).toFixed(3)})`;
-        ctx.lineWidth = Math.max(1, 2 * z);
-        for (let i = 0; i < 3; i++) {
-            const r = ((t * 30 + i * 25) % 90) * z;
+    private drawBubbles(ctx: CanvasRenderingContext2D, px: number, py: number, t: number, u: number): void {
+        const fade = Math.max(0, 1 - t / 6);
+        ctx.save();
+        for (let i = 0; i < 4; i++) {
+            const p = ((t * 0.55 + i * 0.25) % 1);
+            const r = (18 + p * 78) * u;
+            ctx.strokeStyle = `rgba(225,246,255,${(0.55 * (1 - p) * fade).toFixed(3)})`;
+            ctx.lineWidth = Math.max(1, (2.2 - p * 1.2) * u);
             ctx.beginPath();
-            ctx.ellipse(px, py + 10 * z, r * 1.6, r * 0.6, 0, 0, Math.PI * 2);
+            ctx.ellipse(px, py + 8 * u, r * 1.65, r * 0.62, 0, 0, Math.PI * 2);
             ctx.stroke();
         }
-    }
-
-    private drawProjectiles(ctx: CanvasRenderingContext2D, cw: number, ch: number): void {
-        const z = this.cam.z;
-        for (const p of this.sim!.projectiles) {
-            const u = Math.min(1, p.t / p.dur);
-            const dist = Math.hypot(p.x1 - p.x0, p.y1 - p.y0);
-            const x = p.x0 + (p.x1 - p.x0) * u;
-            const y = p.y0 + (p.y1 - p.y0) * u - p.arc * dist * 4 * u * (1 - u);
-            const px = this.sx(x, cw), py = this.sy(y, ch);
-            if (p.kind === 'arrow') {
-                const u2 = Math.max(0, u - 0.06);
-                const x2 = p.x0 + (p.x1 - p.x0) * u2;
-                const y2 = p.y0 + (p.y1 - p.y0) * u2 - p.arc * dist * 4 * u2 * (1 - u2);
-                ctx.strokeStyle = p.ignite ? 'rgba(255,170,60,0.95)' : 'rgba(40,30,20,0.85)';
-                ctx.lineWidth = Math.max(1, 1.8 * z);
-                ctx.beginPath();
-                ctx.moveTo(this.sx(x2, cw), this.sy(y2, ch));
-                ctx.lineTo(px, py);
-                ctx.stroke();
-            } else if (p.kind === 'cannon') {
-                ctx.fillStyle = '#1a1a1a';
-                ctx.beginPath();
-                ctx.arc(px, py, Math.max(2, 5 * z), 0, Math.PI * 2);
-                ctx.fill();
-            } else if (p.kind === 'trebuchet') {
-                // 石弹 + 海面上的影子（拱得越高影子越远）
-                ctx.fillStyle = 'rgba(0,0,0,0.25)';
-                const shx = this.sx(p.x0 + (p.x1 - p.x0) * u, cw), shy = this.sy(p.y0 + (p.y1 - p.y0) * u, ch);
-                ctx.beginPath();
-                ctx.ellipse(shx, shy, 9 * z, 4 * z, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#8a8378';
-                ctx.beginPath();
-                ctx.arc(px, py, Math.max(3, 9 * z), 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                // 希腊火：火球拖尾
-                for (let k = 0; k < 4; k++) {
-                    const uk = Math.max(0, u - k * 0.05);
-                    const xk = p.x0 + (p.x1 - p.x0) * uk;
-                    const yk = p.y0 + (p.y1 - p.y0) * uk - p.arc * dist * 4 * uk * (1 - uk);
-                    ctx.fillStyle = k === 0 ? 'rgba(255,235,140,0.95)' : `rgba(255,${120 - k * 20},30,${(0.7 - k * 0.15).toFixed(2)})`;
-                    ctx.beginPath();
-                    ctx.arc(this.sx(xk, cw), this.sy(yk, ch), Math.max(2, (9 - k * 1.6) * z), 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
+        for (let i = 0; i < 6; i++) {
+            const p = ((t * 1.1 + i * 0.17) % 1);
+            const bx = px + Math.sin(i * 2.4 + t * 3) * 32 * u;
+            const by = py + 12 * u - p * 36 * u;
+            ctx.fillStyle = `rgba(235,250,255,${(0.65 * (1 - p) * fade).toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(bx, by, (2.5 + (i % 2) * 1.5) * u, 0, Math.PI * 2);
+            ctx.fill();
         }
+        ctx.restore();
     }
 
-    private drawFx(ctx: CanvasRenderingContext2D, cw: number, ch: number): void {
-        const z = this.cam.z;
+    private drawFx(ctx: CanvasRenderingContext2D, toS: (x: number, y: number) => { x: number; y: number }, u: number): void {
         for (const f of this.fx) {
-            const px = this.sx(f.x, cw), py = this.sy(f.y, ch);
+            const { x: px, y: py } = toS(f.x, f.y);
             switch (f.k) {
-                case 'splash': {
-                    const k = f.t / 0.8;
-                    const big = f.big ? 1.8 : 1;
-                    ctx.strokeStyle = `rgba(240,250,255,${(0.8 * (1 - k)).toFixed(3)})`;
-                    ctx.lineWidth = Math.max(1, 2.5 * z);
-                    ctx.beginPath();
-                    ctx.ellipse(px, py, (8 + k * 30) * z * big, (3 + k * 12) * z * big, 0, 0, Math.PI * 2);
-                    ctx.stroke();
-                    if (f.big) {
-                        // 水柱
-                        const hgt = Math.sin(Math.min(1, k * 1.4) * Math.PI) * 70 * z;
-                        ctx.fillStyle = `rgba(235,248,255,${(0.75 * (1 - k)).toFixed(3)})`;
-                        ctx.beginPath();
-                        ctx.ellipse(px, py - hgt / 2, 9 * z, hgt / 2 + 1, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    break;
-                }
                 case 'spark': {
                     const k = f.t / 0.8;
-                    for (let i = 0; i < 5; i++) {
-                        const a = i * 1.26 + f.x;
-                        const r = k * 30 * z;
-                        ctx.fillStyle = i % 2 ? `rgba(255,200,90,${(1 - k).toFixed(3)})` : `rgba(110,75,40,${(1 - k).toFixed(3)})`;
-                        ctx.fillRect(px + Math.cos(a) * r, py + Math.sin(a) * r - 20 * z * k, 4 * z, 4 * z);
+                    const fade = 1 - k;
+                    ctx.save();
+                    // 命中闪光
+                    if (k < 0.35) {
+                        const fk = 1 - k / 0.35;
+                        const g = ctx.createRadialGradient(px, py - 14 * u, 1, px, py - 14 * u, 28 * u);
+                        g.addColorStop(0, `rgba(255,245,190,${(0.9 * fk).toFixed(3)})`);
+                        g.addColorStop(1, 'rgba(255,160,50,0)');
+                        ctx.fillStyle = g;
+                        ctx.beginPath();
+                        ctx.arc(px, py - 14 * u, 28 * u, 0, Math.PI * 2);
+                        ctx.fill();
                     }
+                    // 飞溅火星 + 木屑碎片
+                    const count = f.wood ? 8 : 6;
+                    for (let i = 0; i < count; i++) {
+                        const a = i * (Math.PI * 2 / count) + f.x * 0.13;
+                        const r = k * (24 + (i % 3) * 12) * u;
+                        const sx = px + Math.cos(a) * r;
+                        const sy = py - 12 * u + Math.sin(a) * r * 0.65 - Math.sin(k * Math.PI) * 24 * u;
+                        ctx.save();
+                        ctx.translate(sx, sy);
+                        ctx.rotate(a + k * 5);
+                        if (f.wood && i % 2 === 0) {
+                            ctx.fillStyle = `rgba(148,100,52,${fade.toFixed(3)})`;
+                            ctx.fillRect(-4 * u, -1.4 * u, 8 * u, 2.8 * u);
+                        } else {
+                            ctx.fillStyle = `rgba(255,210,105,${fade.toFixed(3)})`;
+                            ctx.beginPath();
+                            ctx.arc(0, 0, 2.6 * u, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                    }
+                    ctx.restore();
                     break;
                 }
-                case 'muzzle': {
-                    const k = f.t / 0.35;
-                    ctx.fillStyle = `rgba(255,220,120,${(1 - k).toFixed(3)})`;
+                case 'splash': {
+                    const life = f.big ? 1.15 : 0.75;
+                    const k = f.t / life;
+                    const fade = 1 - k;
+                    const maxR = (f.big ? 58 : 26) * u;
+                    ctx.save();
+                    // 战略海面水花波纹圈（双圈扩散）
+                    ctx.strokeStyle = `rgba(232,248,255,${(0.75 * fade).toFixed(3)})`;
+                    ctx.lineWidth = Math.max(1.2, (f.big ? 3.2 : 2.0) * u * fade);
                     ctx.beginPath();
-                    ctx.arc(px, py - 10 * z, (14 + k * 10) * z, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = `rgba(200,200,200,${(0.5 * (1 - k)).toFixed(3)})`;
-                    ctx.beginPath();
-                    ctx.arc(px, py - 20 * z - k * 30 * z, (20 + k * 30) * z, 0, Math.PI * 2);
-                    ctx.fill();
+                    ctx.ellipse(px, py, (10 + k * maxR), (4 + k * maxR * 0.42), 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    if (k > 0.15) {
+                        const k2 = (k - 0.15) / 0.85;
+                        ctx.strokeStyle = `rgba(165,222,238,${(0.5 * (1 - k2)).toFixed(3)})`;
+                        ctx.lineWidth = Math.max(1, 1.8 * u * (1 - k2));
+                        ctx.beginPath();
+                        ctx.ellipse(px, py, (6 + k2 * maxR * 0.7), (2.5 + k2 * maxR * 0.28), 0, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                    // 溅起水珠
+                    const drops = f.big ? 9 : 5;
+                    for (let i = 0; i < drops; i++) {
+                        const a = i * (Math.PI * 2 / drops) + f.y * 0.17;
+                        const r = k * maxR * 0.65;
+                        const dx = px + Math.cos(a) * r;
+                        const dy = py + Math.sin(a) * r * 0.4 - Math.sin(k * Math.PI) * (f.big ? 28 : 14) * u;
+                        ctx.fillStyle = `rgba(238,250,255,${(0.85 * fade).toFixed(3)})`;
+                        ctx.beginPath();
+                        ctx.arc(dx, dy, (f.big ? 2.8 : 1.8) * u * (1 - k * 0.4), 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                    break;
+                }
+                case 'greekfire': {
+                    const end = toS(f.tx, f.ty);
+                    const total = f.dur + 0.2;
+                    const k = Math.min(1, f.t / total);
+                    const head = Math.min(1, f.t / f.dur);
+                    const tail = Math.max(0, (f.t - 0.12) / f.dur);
+                    ctx.save();
+                    for (let i = 0; i < 8; i++) {
+                        const s = tail + (head - tail) * (i / 7);
+                        const fx = px + (end.x - px) * s + Math.sin(this.wallT * 24 + i * 2.1) * 5 * u;
+                        const fy = py - 14 * u + (end.y - py) * s - Math.sin(s * Math.PI) * 14 * u;
+                        const r = (5 + Math.sin(i * 0.9 + k * 6) * 3.5) * u * (1 - k * 0.35);
+                        const g = ctx.createRadialGradient(fx, fy, 0.5, fx, fy, Math.max(2, r * 1.8));
+                        g.addColorStop(0, `rgba(255,245,165,${(0.92 * (1 - k * 0.5)).toFixed(3)})`);
+                        g.addColorStop(0.5, `rgba(255,115,25,${(0.75 * (1 - k * 0.5)).toFixed(3)})`);
+                        g.addColorStop(1, 'rgba(255,60,0,0)');
+                        ctx.fillStyle = g;
+                        ctx.beginPath();
+                        ctx.arc(fx, fy, Math.max(2, r * 1.8), 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
                     break;
                 }
                 case 'boom': {
                     const life = f.big ? 2.2 : 1.0;
                     const k = f.t / life;
-                    const R = (f.big ? 130 : 55) * z;
-                    ctx.fillStyle = `rgba(255,170,60,${(0.85 * (1 - k)).toFixed(3)})`;
+                    const fade = 1 - k;
+                    const R = (f.big ? 115 : 52) * u;
+                    ctx.save();
+                    // 海面冲击波环
+                    ctx.strokeStyle = `rgba(230,248,255,${(0.6 * fade).toFixed(3)})`;
+                    ctx.lineWidth = Math.max(1.5, 3.2 * u * fade);
                     ctx.beginPath();
-                    ctx.arc(px, py - 20 * z, R * (0.3 + k * 0.7), 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = `rgba(70,60,55,${(0.6 * (1 - k)).toFixed(3)})`;
+                    ctx.ellipse(px, py + 4 * u, R * (0.4 + k * 1.15), R * (0.18 + k * 0.48), 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    // 爆炸火球渐变
+                    const fr = R * (0.3 + k * 0.75);
+                    const fg = ctx.createRadialGradient(px, py - 18 * u, 2, px, py - 18 * u, fr);
+                    fg.addColorStop(0, `rgba(255,250,200,${(0.95 * fade).toFixed(3)})`);
+                    fg.addColorStop(0.45, `rgba(255,145,40,${(0.8 * fade).toFixed(3)})`);
+                    fg.addColorStop(1, 'rgba(200,55,10,0)');
+                    ctx.fillStyle = fg;
                     ctx.beginPath();
-                    ctx.arc(px, py - 40 * z - k * 60 * z, R * (0.4 + k), 0, Math.PI * 2);
+                    ctx.arc(px, py - 18 * u, fr, 0, Math.PI * 2);
                     ctx.fill();
-                    // 碎木
-                    for (let i = 0; i < (f.big ? 12 : 6); i++) {
-                        const a = i * 0.9 + f.y;
-                        const r = k * R * 1.4;
-                        ctx.fillStyle = `rgba(90,60,30,${(1 - k).toFixed(3)})`;
-                        ctx.fillRect(px + Math.cos(a) * r, py + Math.sin(a) * r * 0.6 - Math.sin(k * Math.PI) * 50 * z, 6 * z, 3 * z);
+                    // 翻腾黑烟
+                    const sr = R * (0.42 + k * 0.95);
+                    const sy = py - 34 * u - k * 58 * u;
+                    const sg = ctx.createRadialGradient(px, sy, 2, px, sy, sr);
+                    sg.addColorStop(0, `rgba(55,48,44,${(0.68 * fade).toFixed(3)})`);
+                    sg.addColorStop(1, 'rgba(55,48,44,0)');
+                    ctx.fillStyle = sg;
+                    ctx.beginPath();
+                    ctx.arc(px, sy, sr, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 飞溅木片与火星
+                    const pieces = f.big ? 14 : 8;
+                    for (let i = 0; i < pieces; i++) {
+                        const a = i * (Math.PI * 2 / pieces) + f.y * 0.11;
+                        const r = k * R * 1.5;
+                        const sx = px + Math.cos(a) * r;
+                        const sy2 = py - 14 * u + Math.sin(a) * r * 0.58 - Math.sin(k * Math.PI) * (f.big ? 62 : 38) * u;
+                        ctx.save();
+                        ctx.translate(sx, sy2);
+                        ctx.rotate(a + k * 6);
+                        ctx.fillStyle = i % 3 === 0 ? `rgba(255,205,95,${fade.toFixed(3)})` : `rgba(115,74,38,${fade.toFixed(3)})`;
+                        ctx.fillRect(-3.5 * u, -1.6 * u, 7 * u, 3.2 * u);
+                        ctx.restore();
                     }
+                    ctx.restore();
                     break;
                 }
                 case 'ring': {
                     const k = f.t / 1.4;
+                    const fade = 1 - k;
+                    ctx.save();
                     ctx.strokeStyle = f.color;
-                    ctx.globalAlpha = 1 - k;
-                    ctx.lineWidth = Math.max(2, 6 * z);
+                    ctx.globalAlpha = fade;
+                    ctx.lineWidth = Math.max(2, 4.5 * u);
                     ctx.beginPath();
-                    ctx.ellipse(px, py, (60 + k * 80) * z, (30 + k * 40) * z, 0, 0, Math.PI * 2);
+                    ctx.ellipse(px, py, (52 + k * 75) * u, (24 + k * 34) * u, 0, 0, Math.PI * 2);
                     ctx.stroke();
-                    ctx.globalAlpha = 1;
+                    ctx.strokeStyle = '#ffd97a';
+                    ctx.globalAlpha = fade * 0.75;
+                    ctx.lineWidth = Math.max(1.2, 2.2 * u);
+                    ctx.beginPath();
+                    ctx.ellipse(px, py, (36 + k * 52) * u, (16 + k * 24) * u, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
                     break;
                 }
                 case 'text': {
+                    // 船上冒字：与战略地图标签同一种描边字，略大
                     const k = f.t / 1.8;
-                    const size = Math.max(22, 40 * Math.max(z, 0.6));
+                    const size = Math.max(16, Math.round(22 * Math.max(u, 0.7)));
                     ctx.font = `bold ${size}px "Microsoft YaHei","PingFang SC",sans-serif`;
                     ctx.textAlign = 'center';
-                    ctx.lineWidth = size / 7;
-                    ctx.strokeStyle = `rgba(0,0,0,${(0.8 * (1 - k)).toFixed(3)})`;
+                    ctx.lineWidth = Math.max(3, size / 6);
                     ctx.globalAlpha = 1 - k * k;
-                    ctx.strokeText(f.text, px, py - k * 50 * z);
+                    const ty = py - 70 * u - k * 40 * u;
+                    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+                    ctx.strokeText(f.text, px, ty);
                     ctx.fillStyle = f.color;
-                    ctx.fillText(f.text, px, py - k * 50 * z);
+                    ctx.fillText(f.text, px, ty);
                     ctx.globalAlpha = 1;
                     break;
                 }
@@ -774,131 +1086,101 @@ export class NavalWarLayer {
         }
     }
 
-    /** 船顶血条；旗舰挂将旗名 */
-    private drawShipBadge(ctx: CanvasRenderingContext2D, s: NavalShip, cw: number, ch: number): void {
+    /** 旗舰：战略地图同款名字标签（武将 / 军团 / 兵力）；船受了伤才显示细血条 */
+    private drawShipBadge(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, mapScale: number): void {
         if (s.state !== 'alive' || !this.init) return;
-        const z = this.cam.z;
-        const px = this.sx(s.x, cw), py = this.sy(s.y, ch);
-        const w = (s.role === 'flag' ? 120 : 84) * z;
-        const y = py - 110 * z;
-        ctx.fillStyle = 'rgba(0,0,0,0.55)';
-        ctx.fillRect(px - w / 2 - 2, y - 2, w + 4, Math.max(5, 10 * z) + 4);
-        ctx.fillStyle = this.colors[s.side];
-        ctx.fillRect(px - w / 2, y, w * Math.max(0, s.hp / s.maxHp), Math.max(5, 10 * z));
-        if (s.boardingWith !== null) {
-            // 接舷中：显示船上剩多少人
-            ctx.fillStyle = '#f2e6c8';
-            ctx.fillRect(px - w / 2, y + 12 * z, w * Math.max(0, s.crew / s.maxCrew), Math.max(3, 5 * z));
-        }
-        if (s.role === 'flag') {
-            const size = Math.max(22, 34 * Math.max(z, 0.65));
-            ctx.font = `bold ${size}px "Microsoft YaHei","PingFang SC",sans-serif`;
-            ctx.textAlign = 'center';
-            const label = `帅·${this.init[s.side].generalName || this.init[s.side].name}`;
-            ctx.lineWidth = size / 6;
-            ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-            ctx.strokeText(label, px, y - 12 * z);
+        if (s.hp < s.maxHp - 0.5 || s.boardingWith !== null) {
+            const w = Math.max(32, p.len * 0.45);
+            const y = p.y - p.len * 0.42;
+            const ratio = Math.max(0, Math.min(1, s.hp / s.maxHp));
+            ctx.fillStyle = 'rgba(10,12,16,0.78)';
+            ctx.fillRect(p.x - w / 2 - 1.5, y - 1.5, w + 3, 7.5);
             ctx.fillStyle = this.colors[s.side];
-            ctx.fillText(label, px, y - 12 * z);
+            ctx.fillRect(p.x - w / 2, y, w * ratio, 4.5);
+            ctx.fillStyle = 'rgba(255,255,255,0.28)';
+            ctx.fillRect(p.x - w / 2, y, w * ratio, 1.5);
+            if (s.boardingWith !== null) {
+                const cr = Math.max(0, Math.min(1, s.crew / s.maxCrew));
+                ctx.fillStyle = 'rgba(10,12,16,0.72)';
+                ctx.fillRect(p.x - w / 2 - 1, y + 6, w + 2, 4.5);
+                ctx.fillStyle = '#f2e6c8';
+                ctx.fillRect(p.x - w / 2, y + 6.5, w * cr, 3);
+            }
         }
+        if (s.role !== 'flag') return;
+        const side = this.init[s.side];
+        let y = p.y + 75 * mapScale;
+        if (side.generalName) {
+            drawUnitLabel(ctx, side.generalName, p.x, y, LABEL_STYLE_GENERAL);
+            y += 17;
+        }
+        const legion = side.legionName || (side.generalName ? '' : side.name);
+        if (legion) {
+            drawUnitLabel(ctx, legion, p.x, y, LABEL_STYLE_NAME);
+            y += 17;
+        }
+        const live = this.getLiveTroops();
+        if (live) drawUnitLabel(ctx, `${live[s.side]}`, p.x, y, LABEL_STYLE_TROOPS);
     }
 
-    private drawHud(ctx: CanvasRenderingContext2D, cw: number, ch: number, dpr: number): void {
+    /** 右上角风向罗盘：海战独有的胜负变数，必须看得见 */
+    private drawWindCompass(ctx: CanvasRenderingContext2D, vw: number): void {
         const sim = this.sim!;
-        const init = this.init!;
-        const u = Math.max(0.6, Math.min(2, (ch / dpr) / 1440)) * dpr;   // 主人 2560×1440 为基准
-        const left: NavalSide = this.flip ? 'defender' : 'attacker';
-        const right: NavalSide = this.flip ? 'attacker' : 'defender';
-        const font = (px: number) => `bold ${Math.round(px * u)}px "Microsoft YaHei","PingFang SC",sans-serif`;
-
-        // 顶栏：双方名 + 船数 + 船力条
-        const barW = 620 * u, barH = 26 * u, top = 36 * u;
-        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-        ctx.fillRect(cw / 2 - barW - 60 * u, top - 10 * u, barW * 2 + 120 * u, 150 * u);
-        const total = (side: NavalSide) => {
-            let hp = 0, max = 0;
-            for (const s of sim.ships) {
-                if (s.origSide === side) max += s.maxHp;
-                if (s.side === side && s.state === 'alive') hp += s.hp;
-            }
-            return max > 0 ? Math.min(1, hp / max) : 0;
-        };
-        for (const side of [left, right]) {
-            const isLeft = side === left;
-            const x0 = isLeft ? cw / 2 - 40 * u - barW : cw / 2 + 40 * u;
-            ctx.font = font(44);
-            ctx.textAlign = isLeft ? 'left' : 'right';
-            ctx.fillStyle = this.colors[side];
-            ctx.fillText(init[side].name, isLeft ? x0 : x0 + barW, top + 38 * u);
-            ctx.font = font(36);
-            ctx.fillStyle = '#ffffff';
-            ctx.textAlign = isLeft ? 'right' : 'left';
-            ctx.fillText(`⛵ ${sim.countAlive(side)}`, isLeft ? x0 + barW : x0, top + 38 * u);
-            ctx.fillStyle = 'rgba(255,255,255,0.15)';
-            ctx.fillRect(x0, top + 58 * u, barW, barH);
-            ctx.fillStyle = this.colors[side];
-            const f = total(side);
-            if (isLeft) ctx.fillRect(x0 + barW * (1 - f), top + 58 * u, barW * f, barH);
-            else ctx.fillRect(x0, top + 58 * u, barW * f, barH);
-        }
-        ctx.font = font(48);
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffe9b0';
-        ctx.fillText('VS', cw / 2, top + 50 * u);
-        ctx.font = font(32);
-        ctx.fillStyle = '#e6e6e6';
-        const remain = Math.max(0, NAVAL_TIME_LIMIT - sim.time);
-        ctx.fillText(`${PHASE_LABEL[sim.phase]} · ${Math.floor(remain / 60)}:${String(Math.floor(remain % 60)).padStart(2, '0')}`, cw / 2, top + 122 * u);
-
-        // 风向罗盘（右上）
-        const cx = cw - 150 * u, cy = 150 * u, R = 80 * u;
-        ctx.fillStyle = 'rgba(0,0,0,0.45)';
-        ctx.beginPath(); ctx.arc(cx, cy, R + 14 * u, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        ctx.lineWidth = 2 * u;
+        const R = 34;
+        const cx = vw - 70, cy = 150;
+        const g = ctx.createLinearGradient(0, cy - R - 12, 0, cy + R + 60);
+        g.addColorStop(0, 'rgba(22,17,13,0.88)');
+        g.addColorStop(1, 'rgba(12,9,7,0.92)');
+        ctx.fillStyle = g;
+        ctx.strokeStyle = 'rgba(212,175,55,0.45)';
+        ctx.lineWidth = 1;
+        const bx = cx - R - 26, by = cy - R - 14, bw = (R + 26) * 2, bh = R * 2 + 70;
+        ctx.beginPath();
+        ctx.roundRect?.(bx, by, bw, bh, 8);
+        if (!ctx.roundRect) ctx.rect(bx, by, bw, bh);
+        ctx.fill();
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(232,220,192,0.45)';
         ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
-        ctx.font = font(24);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('北', cx, cy - R + 26 * u);
-        const wa = this.screenHeading(sim.windAng);
-        const ax = Math.cos(wa), ay = Math.sin(wa);
+        ctx.font = "bold 12px 'Noto Serif SC','SimSun',serif";
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#e8dcc0';
+        ctx.fillText('北', cx, cy - R + 13);
+        const ax = Math.cos(sim.windAng), ay = Math.sin(sim.windAng);
         ctx.strokeStyle = '#9fd4ff';
         ctx.fillStyle = '#9fd4ff';
-        ctx.lineWidth = 8 * u;
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx - ax * R * 0.7, cy - ay * R * 0.7);
-        ctx.lineTo(cx + ax * R * 0.55, cy + ay * R * 0.55);
+        ctx.lineTo(cx + ax * R * 0.5, cy + ay * R * 0.5);
         ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(cx + ax * R * 0.85, cy + ay * R * 0.85);
-        ctx.lineTo(cx + ax * R * 0.45 - ay * R * 0.28, cy + ay * R * 0.45 + ax * R * 0.28);
-        ctx.lineTo(cx + ax * R * 0.45 + ay * R * 0.28, cy + ay * R * 0.45 - ax * R * 0.28);
+        ctx.lineTo(cx + ax * R * 0.42 - ay * R * 0.3, cy + ay * R * 0.42 + ax * R * 0.3);
+        ctx.lineTo(cx + ax * R * 0.42 + ay * R * 0.3, cy + ay * R * 0.42 - ax * R * 0.3);
         ctx.closePath();
         ctx.fill();
+        ctx.font = "bold 15px 'Noto Serif SC','SimSun',serif";
+        ctx.fillStyle = '#f2e6c8';
+        ctx.fillText(windName(sim.windAng), cx, cy + R + 20);
         const ww = sim.windwardSide();
-        ctx.font = font(32);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(windName(sim.windAng), cx, cy + R + 50 * u);
-        if (ww) {
-            ctx.font = font(26);
+        if (ww && this.init) {
+            ctx.font = "bold 12px 'Noto Serif SC','SimSun',serif";
             ctx.fillStyle = this.colors[ww];
-            ctx.fillText(`上风：${init[ww].name}`, cx, cy + R + 86 * u);
-        }
-
-        // 播报字幕（顶栏下方，新的在下）
-        let ty = top + 210 * u;
-        for (const t of this.toasts) {
-            const a = t.t < 0.25 ? t.t / 0.25 : t.t > 3.8 ? Math.max(0, 1 - (t.t - 3.8) / 0.7) : 1;
-            ctx.globalAlpha = a;
-            ctx.font = font(50);
-            ctx.textAlign = 'center';
-            ctx.lineWidth = 9 * u;
-            ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-            ctx.strokeText(t.text, cw / 2, ty);
-            ctx.fillStyle = t.color;
-            ctx.fillText(t.text, cw / 2, ty);
-            ctx.globalAlpha = 1;
-            ty += 66 * u;
+            const name = this.init[ww].name;
+            ctx.fillText(`上风 ${name.length > 5 ? name.slice(0, 5) : name}`, cx, cy + R + 40);
         }
     }
+}
+
+interface ShipPose {
+    x: number;
+    y: number;
+    dir: number;
+    rot: number;
+    deg: number;
+    /** 船体缩放（贴图像素 → CSS 像素） */
+    hs: number;
+    /** 船长（CSS 像素） */
+    len: number;
 }

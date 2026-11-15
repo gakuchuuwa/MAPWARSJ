@@ -92,7 +92,7 @@ export class CoastalWaveLayer extends L.Layer {
         if (
             this.map.getContainer().style.visibility === 'hidden'
             || (window as any).game?.scene13War?.isActive?.() === true
-            || (window as any).game?.battleScene?.isLingering?.() === true
+            || ((window as any).game?.battleScene?.isLingering?.() === true && !(window as any).game?.navalWar?.isActive?.())
         ) return;
         this.lastRenderAt = now;
 

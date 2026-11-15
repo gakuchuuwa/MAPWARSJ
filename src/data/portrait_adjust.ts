@@ -1933,8 +1933,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/CENTRAL/ruo_wangjian.png": {
-            "scale": 1.07,
-            "offsetX": 1,
+            "scale": 1.05,
+            "offsetX": 4,
             "offsetY": 11
         },
         "/assets/CENTRAL/sizhou_hanshizhong.png": {
@@ -11400,6 +11400,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/ATHENIANS/xila_tolmides.png": {
             "scale": 1,
             "offsetX": 4,
+            "offsetY": 0
+        },
+        "/assets/ATHENIANS/xila_feiluokelisi.png": {
+            "scale": 1,
+            "offsetX": 13,
             "offsetY": 0
         }
     },

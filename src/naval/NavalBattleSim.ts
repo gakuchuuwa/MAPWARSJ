@@ -114,7 +114,7 @@ export interface NavalProjectile {
 }
 
 export type NavalEvent =
-    | { type: 'fire'; weapon: Exclude<NavalWeapon, 'ram'>; side: NavalSide; x: number; y: number; shipId: number }
+    | { type: 'fire'; weapon: Exclude<NavalWeapon, 'ram'>; side: NavalSide; x: number; y: number; shipId: number; tx: number; ty: number; dur: number }
     | { type: 'impact'; weapon: Exclude<NavalWeapon, 'ram'>; hit: boolean; x: number; y: number }
     | { type: 'ignite'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean }
     | { type: 'ram'; side: NavalSide; x: number; y: number }
@@ -143,6 +143,10 @@ export interface NavalSimInit {
     favored?: NavalSide | null;
     /** 每方船数（含旗舰），缺省 10 */
     shipsPerSide?: number;
+    /** 攻方摆在右边（跟随军团在守方时，让跟随的舰队在左边） */
+    attackerRight?: boolean;
+    /** 真实海陆：这一点是不是水（海战摆在战略地图真实海面上，船要绕开陆地）。不给 = 全是水 */
+    isWater?: (x: number, y: number) => boolean;
 }
 
 export interface NavalResult {
@@ -201,12 +205,16 @@ export class NavalBattleSim {
     private windShifted = false;
     private lastDt = 0;
     private order: number[] = [];
+    private readonly isWater: (x: number, y: number) => boolean;
+    private readonly attackerRight: boolean;
     private readonly initHp: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
     private readonly initCount: Record<NavalSide, number> = { attacker: 0, defender: 0 };
 
     constructor(init: NavalSimInit) {
         this.rng = makeRng(init.seed || 'naval');
+        this.isWater = init.isWater ?? (() => true);
+        this.attackerRight = !!init.attackerRight;
         const r = this.rng;
         // 风：大致横吹战场（双方都有机会抢上风），偏一点随机
         this.windAng = (r() < 0.5 ? -Math.PI / 2 : Math.PI / 2) + (r() - 0.5) * 1.6;
@@ -234,8 +242,9 @@ export class NavalBattleSim {
     }
 
     private spawnFleet(side: NavalSide, fleet: NavalFleetInit, n: number): void {
-        const dirX = side === 'attacker' ? 1 : -1;
-        const baseX = side === 'attacker' ? 560 : NAVAL_WORLD_W - 560;
+        const onLeft = (side === 'attacker') !== this.attackerRight;
+        const dirX = onLeft ? 1 : -1;
+        const baseX = onLeft ? 560 : NAVAL_WORLD_W - 560;
         const cy = NAVAL_WORLD_H / 2;
         const m = this.mult[side];
         // 九格三排：前排最靠近敌方，后排其后，旗舰居中压阵
@@ -248,8 +257,9 @@ export class NavalBattleSim {
         const perRow = [0, 0, 0];
         for (let i = 0; i < escorts; i++) perRow[i % 3]++;
         let id = this.ships.length;
-        const heading = side === 'attacker' ? 0 : Math.PI;
-        const mk = (role: NavalRole, x: number, y: number, key: string): void => {
+        const heading = onLeft ? 0 : Math.PI;
+        const mk = (role: NavalRole, x0: number, y0: number, key: string): void => {
+            const { x, y } = this.nearestWater(x0, y0);
             const isFlag = role === 'flag';
             const hp = (isFlag ? 260 : 170) * m.hp;
             const crew = (isFlag ? 140 : 100) * m.hp;
@@ -281,6 +291,25 @@ export class NavalBattleSim {
         for (const s of this.ships) if (s.side === side) hpSum += s.maxHp;
         this.initHp[side] = hpSum;
         this.initCount[side] = n;
+    }
+
+    /** 就近找水面（出生点压在陆地上时用） */
+    private nearestWater(x: number, y: number): { x: number; y: number } {
+        if (this.isWater(x, y)) return { x, y };
+        for (let r = 40; r <= 900; r += 40) {
+            for (let k = 0; k < 16; k++) {
+                const a = k * Math.PI / 8;
+                const nx = x + Math.cos(a) * r, ny = y + Math.sin(a) * r;
+                if (this.isWater(nx, ny)) return { x: nx, y: ny };
+            }
+        }
+        return { x, y };
+    }
+
+    /** 沿某航向往前看：前方两处都是水才算走得通 */
+    private clearAhead(x: number, y: number, ang: number): boolean {
+        const c = Math.cos(ang), sn = Math.sin(ang);
+        return this.isWater(x + c * 110, y + sn * 110) && this.isWater(x + c * 230, y + sn * 230);
     }
 
     /** 取走本帧事件（画面层播特效 / 音效 / 播报） */
@@ -478,6 +507,14 @@ export class NavalBattleSim {
             if (s.y > NAVAL_WORLD_H - m) ay -= (s.y - (NAVAL_WORLD_H - m)) / m * 2;
         }
         desired = Math.atan2(ay, ax);
+        // 绕开陆地：前方是岸就左右找最近一条走得通的航向
+        if (!this.clearAhead(s.x, s.y, desired)) {
+            for (let k = 1; k <= 9; k++) {
+                const a1 = desired + k * 0.35 * s.orbitSign, a2 = desired - k * 0.35 * s.orbitSign;
+                if (this.clearAhead(s.x, s.y, a1)) { desired = a1; break; }
+                if (this.clearAhead(s.x, s.y, a2)) { desired = a2; break; }
+            }
+        }
         const diff = angDiff(desired, s.heading);
         const turn = TURN_RATE * (s.role === 'flag' ? 0.8 : 1) * dt;
         s.heading += Math.max(-turn, Math.min(turn, diff));
@@ -487,8 +524,16 @@ export class NavalBattleSim {
         const roleMul = s.role === 'front' ? 1.12 : s.role === 'flag' ? 0.88 : 1;
         const target = BASE_SPEED * windMul * turnMul * roleMul * throttle;
         s.speed += (target - s.speed) * Math.min(1, dt * 0.8);
-        s.x += Math.cos(s.heading) * s.speed * dt;
-        s.y += Math.sin(s.heading) * s.speed * dt;
+        const nx = s.x + Math.cos(s.heading) * s.speed * dt;
+        const ny = s.y + Math.sin(s.heading) * s.speed * dt;
+        if (this.isWater(nx, ny) || !this.isWater(s.x, s.y)) {
+            s.x = nx;
+            s.y = ny;
+        } else {
+            // 撞岸：停一下、掉头
+            s.speed *= 0.3;
+            s.heading += Math.PI * 0.5 * s.orbitSign;
+        }
         s.trailAcc += s.speed * dt;
         if (s.trailAcc > 14) {
             s.trailAcc = 0;
@@ -541,7 +586,7 @@ export class NavalBattleSim {
                 damage: spec.damage * m, crewDamage: spec.crewDamage * m, splash: spec.splash,
                 ignite: this.rng() < spec.igniteChance * igniteBoost,
             });
-            this.events.push({ type: 'fire', weapon: w, side: s.side, x: s.x, y: s.y, shipId: s.id });
+            this.events.push({ type: 'fire', weapon: w, side: s.side, x: s.x, y: s.y, shipId: s.id, tx: x1, ty: y1, dur: Math.max(0.15, d / spec.speed) });
         }
     }
 
@@ -604,12 +649,12 @@ export class NavalBattleSim {
                 if (b.state !== 'alive') continue;
                 const dx = b.x - a.x, dy = b.y - a.y;
                 const d = Math.hypot(dx, dy) || 0.01;
-                const min = (a.radius + b.radius) * 0.95;
+                const min = (a.radius + b.radius) * ((a.boardingWith === b.id) ? 1.05 : 1.32);
                 if (d >= min) continue;
                 // 推开（不叠船）
-                const push = (min - d) / 2;
-                if (a.boardingWith === null) { a.x -= dx / d * push; a.y -= dy / d * push; }
-                if (b.boardingWith === null) { b.x += dx / d * push; b.y += dy / d * push; }
+                const push = (min - d) * 0.55;
+                if (a.boardingWith === null && this.isWater(a.x - dx / d * push, a.y - dy / d * push)) { a.x -= dx / d * push; a.y -= dy / d * push; }
+                if (b.boardingWith === null && this.isWater(b.x + dx / d * push, b.y + dy / d * push)) { b.x += dx / d * push; b.y += dy / d * push; }
                 if (a.side === b.side) continue;
                 if (a.boardingWith !== null || b.boardingWith !== null) continue;
                 // 撞角：船头对准对方才算撞上
@@ -619,6 +664,10 @@ export class NavalBattleSim {
                     if (Math.abs(angDiff(toDef, att.heading)) > 0.7) continue;
                     att.ramCd = 5;
                     const sp = Math.min(1.3, att.speed / BASE_SPEED);
+                    att.speed *= 0.35;
+                    const kick = 14 * sp;
+                    const kx = Math.cos(toDef) * kick, ky = Math.sin(toDef) * kick;
+                    if (this.isWater(def.x + kx, def.y + ky)) { def.x += kx; def.y += ky; }
                     this.events.push({ type: 'ram', side: att.side, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
                     this.damage(def, 17 * sp * this.mult[att.side].dmg, 6, att.side);
                 }
