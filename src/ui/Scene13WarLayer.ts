@@ -311,18 +311,6 @@ const SKILL_PANIC_MOVE = 1.1;       // 【混】混乱中移速倍率（2026-11-
 
 const SKILL_DEFECT_INVULN_SEC = 3;  // 【并】倒戈士兵倒戈后无敌秒数（2026-11-03 主人令「并战计的倒戈士兵增加+3秒的倒戈后无敌。」）
 
-// 剧本模式·史实胜方电脑六计强化参数（只作用于 viewer === null 且 isScriptPeriod() && historicalWinnerSide === f）
-const SCRIPT_SKILL_SEC = 15;             // 持续三计基准秒数（攻 / 胜 / 混：10s → 15s）
-const SCRIPT_FRENZY_DMG = 1.8;           // 【攻】伤害倍率（1.2 → 1.8）
-const SCRIPT_FRENZY_ATKSPD = 1.6;        // 【攻】攻速倍率（1.2 → 1.6）
-const SCRIPT_PANIC_TAKEN = 3.0;          // 【混】混乱中受伤倍率（2.5 → 3.0）
-const SCRIPT_PANIC_BLEED_RATIO = 0.25;   // 【混】混乱总掉血比例（10% → 25%）
-const SCRIPT_DIZHAN_RATIO = 0.25;        // 【敌】增兵比例（按双方较大初始兵池 ×25%）
-const SCRIPT_BAIZHAN_RATIO = 0.28;       // 【败】减兵比例（按敌方初始兵池 ×28%）
-const SCRIPT_BINGZHAN_RATIO = 0.20;      // 【并】夺兵比例（按敌方初始兵池 ×20%，净差 40%）
-const SCRIPT_DEFECT_INVULN_SEC = 5;      // 【并】倒戈无敌秒数（3s → 5s）
-const SCRIPT_SHIELD_HEAL_FLOOR = 0.50;   // 【胜】回血保底比例（15% → 50%）
-
 /**
  * 🔴 [2026-11-08 主人令「法术兵释放的频率请降低」]
  * 法术兵（CASTER_TYPES 里的僧侣/祭司/传教士/异教徒…，**不含英雄**）的施法周期倍率。
@@ -1316,19 +1304,9 @@ export class Scene13WarLayer {
 
     private skillPanicBleedRate: [number, number] = [0.03, 0.03];
 
-    /** 剧本模式历史胜方阵营（0=攻方 / 1=守方 / null=非指定胜负） */
+    /** 剧本模式历史胜方阵营（0=攻方 / 1=守方 / null=平局或非指定胜负） */
 
     private historicalWinnerSide: 0 | 1 | null = null;
-
-    /** 双方【攻】振己威当前伤害 / 攻速倍率（默认 SKILL_FRENZY_*；剧本胜方电脑放计时抬高） */
-
-    private skillFrenzyDmgMul: [number, number] = [SKILL_FRENZY_DMG, SKILL_FRENZY_DMG];
-
-    private skillFrenzyAtkSpdMul: [number, number] = [SKILL_FRENZY_ATKSPD, SKILL_FRENZY_ATKSPD];
-
-    /** 双方【混】乱敌阵当前受伤倍率（默认 SKILL_PANIC_TAKEN；剧本胜方电脑放计时抬高） */
-
-    private skillPanicTakenMul: [number, number] = [SKILL_PANIC_TAKEN, SKILL_PANIC_TAKEN];
 
     /** 玩家（观众）按官职局部释放六计时的持续计时（斥候本人 / 探马本队 / 先锋本排；将军及以上仍走全军计时） */
 
@@ -1532,12 +1510,6 @@ export class Scene13WarLayer {
 
             this.skillPanicTimer[f] = 0;
 
-            this.skillFrenzyDmgMul[f] = SKILL_FRENZY_DMG;
-
-            this.skillFrenzyAtkSpdMul[f] = SKILL_FRENZY_ATKSPD;
-
-            this.skillPanicTakenMul[f] = SKILL_PANIC_TAKEN;
-
         }
 
         this.historicalWinnerSide = init.historicalWinner === 'attacker' ? 0 : init.historicalWinner === 'defender' ? 1 : null;
@@ -1559,22 +1531,6 @@ export class Scene13WarLayer {
             this.skillRatePerSec[0] = 0;
 
             this.skillRatePerSec[1] = 0;
-
-        }
-
-        // 历史事件战败方在战术模式中不集气、不释放武将技（平局及未标注胜负的战斗双方照常；观众放计走 castViewerSkill，不受影响）
-
-        if (init.historicalWinner === 'attacker') {
-
-            this.skillRatePerSec[1] = 0;
-
-            this.skillRateMult[1] = 0;
-
-        } else if (init.historicalWinner === 'defender') {
-
-            this.skillRatePerSec[0] = 0;
-
-            this.skillRateMult[0] = 0;
 
         }
 
@@ -1888,7 +1844,7 @@ export class Scene13WarLayer {
 
             return {
 
-                // 小队模式或历史事件战败方（不集气、不放武将技）不显示武将技栏；观众放计不走此槽，不受影响
+                // 小队模式或无充能速率（不集气、不放武将技）不显示武将技栏；观众放计不走此槽，不受影响
 
                 hasGeneral: !this.skirmish && this.skillRatePerSec[f] > 0,
 
@@ -1950,20 +1906,11 @@ export class Scene13WarLayer {
 
         for (const f of [0, 1] as const) {
 
-            if (this.skillFrenzyTimer[f] > 0) {
-                this.skillFrenzyTimer[f] = Math.max(0, this.skillFrenzyTimer[f] - dt);
-                if (this.skillFrenzyTimer[f] === 0) {
-                    this.skillFrenzyDmgMul[f] = SKILL_FRENZY_DMG;
-                    this.skillFrenzyAtkSpdMul[f] = SKILL_FRENZY_ATKSPD;
-                }
-            }
+            if (this.skillFrenzyTimer[f] > 0) this.skillFrenzyTimer[f] = Math.max(0, this.skillFrenzyTimer[f] - dt);
 
             if (this.skillShieldTimer[f] > 0) this.skillShieldTimer[f] = Math.max(0, this.skillShieldTimer[f] - dt);
 
-            if (this.skillPanicTimer[f] > 0) {
-                this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
-                if (this.skillPanicTimer[f] === 0) this.skillPanicTakenMul[f] = SKILL_PANIC_TAKEN;
-            }
+            if (this.skillPanicTimer[f] > 0) this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
 
         }
 
@@ -2875,19 +2822,17 @@ export class Scene13WarLayer {
 
         const oppFamous = this.sideIsFamous[ef];
 
-        const isScript = isScriptPeriod();
+        // 剧本模式下电脑（viewer === null）按史实胜负定倍率：赢家 ×1.5、输家 ×0.5、平局/未定 ×1.0（不论名将普将）；观众与乱斗走原口径
 
-        // 剧本模式下只修改电脑（viewer === null）且为历史胜方时的六计强度；观众放计与乱斗模式均不受影响
-
-        const isScriptWinnerAi = viewer === null && isScript && this.historicalWinnerSide === f;
-
-        // 历史模式取消名将VS普将倍率差，一律 1.0；乱斗模式保持不变
-
-        const famousDiffMult = (viewer !== null || isScript)
+        const famousDiffMult = viewer !== null
 
             ? 1.0
 
-            : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0);
+            : (isScriptPeriod() && this.historicalWinnerSide !== null
+
+                ? (this.historicalWinnerSide === f ? 1.5 : 0.5)
+
+                : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0));
 
         // 🔴 [2026-11-07 主人定·乱入者VS维序者] 观众积分释放六计两边完全对等（全军有效）
 
@@ -2933,11 +2878,7 @@ export class Scene13WarLayer {
 
         if (six === 'dizhan') {
 
-            const dizhanPool = isScriptWinnerAi ? Math.max(this.initPool[f], this.initPool[ef]) : this.initPool[f];
-
-            const dizhanRatio = isScriptWinnerAi ? SCRIPT_DIZHAN_RATIO : 0.10;
-
-            const fullAddPop = Math.max(Math.round(12 * famousDiffMult), Math.round(dizhanPool * dizhanRatio * famousDiffMult));
+            const fullAddPop = Math.max(Math.round(12 * famousDiffMult), Math.round(this.initPool[f] * 0.10 * famousDiffMult));
 
             const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : Math.round(12 * famousDiffMult);
 
@@ -2971,9 +2912,7 @@ export class Scene13WarLayer {
 
         } else if (six === 'baizhan') {
 
-            const baizhanRatio = isScriptWinnerAi ? SCRIPT_BAIZHAN_RATIO : 0.10;
-
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * baizhanRatio * famousDiffMult));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10 * famousDiffMult));
 
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
 
@@ -3015,17 +2954,11 @@ export class Scene13WarLayer {
 
         } else if (six === 'gongzhan') {
 
-            const frenzyBaseSec = isScriptWinnerAi ? SCRIPT_SKILL_SEC : SKILL_FRENZY_SEC;
-
-            const frenzySec = frenzyBaseSec * famousDiffMult;
+            const frenzySec = SKILL_FRENZY_SEC * famousDiffMult;
 
             if (scopedControl === null) {
 
                 for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
-
-                this.skillFrenzyDmgMul[f] = isScriptWinnerAi ? SCRIPT_FRENZY_DMG : SKILL_FRENZY_DMG;
-
-                this.skillFrenzyAtkSpdMul[f] = isScriptWinnerAi ? SCRIPT_FRENZY_ATKSPD : SKILL_FRENZY_ATKSPD;
 
                 this.skillFrenzyTimer[f] = frenzySec;
 
@@ -3039,19 +2972,13 @@ export class Scene13WarLayer {
 
         } else if (six === 'shengzhan') {
 
-            const shieldBaseSec = isScriptWinnerAi ? SCRIPT_SKILL_SEC : SKILL_SHIELD_SEC;
-
-            const shieldSec = shieldBaseSec * famousDiffMult;
+            const shieldSec = SKILL_SHIELD_SEC * famousDiffMult;
 
             const allyLiving = this.men.filter((m) => m.f === f && m.hp > 0 && !m.siegeW);
 
             const livingPop = Math.max(1, allyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
 
-            const shieldFloor = isScriptWinnerAi ? SCRIPT_SHIELD_HEAL_FLOOR : 0.15;
-
-            const shieldRatio = isScriptWinnerAi ? SCRIPT_SHIELD_HEAL_FLOOR : 0.10;
-
-            const baseHealFrac = Math.min(1.0, Math.max(shieldFloor, (this.initPool[f] * shieldRatio) / livingPop));
+            const baseHealFrac = Math.min(1.0, Math.max(0.15, (this.initPool[f] * 0.10) / livingPop));
 
             if (scopedControl === null) {
 
@@ -3133,23 +3060,17 @@ export class Scene13WarLayer {
 
             const livingPop = Math.max(1, enemyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
 
-            const panicBaseSec = isScriptWinnerAi ? SCRIPT_SKILL_SEC : SKILL_PANIC_SEC;
-
-            const panicBleedRatio = isScriptWinnerAi ? SCRIPT_PANIC_BLEED_RATIO : 0.10;
-
-            const baseBleedFrac = Math.min(1.0, Math.max(panicBleedRatio, (this.initPool[ef] * panicBleedRatio) / livingPop));
+            const baseBleedFrac = Math.min(1.0, Math.max(0.10, (this.initPool[ef] * 0.10) / livingPop));
 
             // 每秒掉血率恒定（基准 10秒掉10% = 1%/秒），名将控 15秒掉 15%、普将控 5秒掉 5%，不二次叠乘
 
-            this.skillPanicBleedRate[ef] = baseBleedFrac / panicBaseSec;
+            this.skillPanicBleedRate[ef] = baseBleedFrac / SKILL_PANIC_SEC;
 
             if (scopedControl === null) {
 
                 for (const m of enemyLiving) { m.march = false; vfxTargets.push(m); }
 
-                this.skillPanicTakenMul[ef] = isScriptWinnerAi ? SCRIPT_PANIC_TAKEN : SKILL_PANIC_TAKEN;
-
-                this.skillPanicTimer[ef] = panicBaseSec * famousDiffMult;
+                this.skillPanicTimer[ef] = SKILL_PANIC_SEC * famousDiffMult;
 
             } else {
 
@@ -3251,11 +3172,7 @@ export class Scene13WarLayer {
 
         } else if (six === 'bingzhan') {
 
-            const bingzhanRatio = isScriptWinnerAi ? SCRIPT_BINGZHAN_RATIO : 0.10;
-
-            const defectInvulnSec = isScriptWinnerAi ? SCRIPT_DEFECT_INVULN_SEC : SKILL_DEFECT_INVULN_SEC;
-
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * bingzhanRatio * famousDiffMult));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10 * famousDiffMult));
 
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
 
@@ -3295,7 +3212,7 @@ export class Scene13WarLayer {
 
                 m.playerPanicTimer = 0;
 
-                m.defectInvulnTimer = defectInvulnSec;
+                m.defectInvulnTimer = SKILL_DEFECT_INVULN_SEC;
 
                 let assignedLane = sharedLaneByKey.get(m.key);
 
@@ -3377,7 +3294,7 @@ export class Scene13WarLayer {
 
                         u.flag = true;
 
-                        u.defectInvulnTimer = defectInvulnSec;
+                        u.defectInvulnTimer = SKILL_DEFECT_INVULN_SEC;
 
                     }
 
@@ -4315,17 +4232,9 @@ export class Scene13WarLayer {
 
     }
 
-    private frenzyDmgMul(m: WarMan): number {
-        const player = this.playerSixFrenzyTimer > 0 && this.playerLiveAffects(m) ? 1 + (SKILL_FRENZY_DMG - 1) * this.playerSixBoost : 1;
-        const general = (this.skillFrenzyTimer?.[m.f] ?? 0) > 0 ? this.skillFrenzyDmgMul[m.f] : 1;
-        return Math.max(player, general);
-    }
+    private frenzyDmgMul(m: WarMan): number { return 1 + (SKILL_FRENZY_DMG - 1) * this.frenzyK(m); }
 
-    private frenzyAtkSpdMul(m: WarMan): number {
-        const player = this.playerSixFrenzyTimer > 0 && this.playerLiveAffects(m) ? 1 + (SKILL_FRENZY_ATKSPD - 1) * this.playerSixBoost : 1;
-        const general = (this.skillFrenzyTimer?.[m.f] ?? 0) > 0 ? this.skillFrenzyAtkSpdMul[m.f] : 1;
-        return Math.max(player, general);
-    }
+    private frenzyAtkSpdMul(m: WarMan): number { return 1 + (SKILL_FRENZY_ATKSPD - 1) * this.frenzyK(m); }
 
     /** 【胜】受伤倍率：玩家献计按倍数叠乘（×3 ⇒ 0.4³ ≈ 0.06）；【并】倒戈后 3 秒内无敌（0） */
 
@@ -13589,7 +13498,7 @@ export class Scene13WarLayer {
 
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
 
-        t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? this.skillFrenzyAtkSpdMul[1] : 1.0);
+        t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
 
     }
 
@@ -13654,7 +13563,7 @@ export class Scene13WarLayer {
 
         const speed = PROJ_SPEED_PX[DEF_BLD_PROJ] ?? PROJ_SPEED_PX.PROJ_ARROW ?? 440;
 
-        const frenzy = this.skillFrenzyTimer[1] > 0 ? this.skillFrenzyDmgMul[1] : 1.0;
+        const frenzy = this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0;
 
         for (let i = 0; i < shooters; i++) {
 
@@ -13776,7 +13685,7 @@ export class Scene13WarLayer {
 
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
 
-        b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? this.skillFrenzyAtkSpdMul[1] : 1.0);
+        b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
 
     }
 
@@ -13801,15 +13710,8 @@ export class Scene13WarLayer {
     /** 【混】乱阵受伤倍率：混乱中的兵（不含行军入场中、玩家本人、攻城器械）受一切伤害 ×2，其余 ×1 */
 
     private panicTakenMul(m: WarMan): number {
-
         if (!this.unitHasPanic(m)) return 1;
-
-        if ((this.skillPanicTimer?.[m.f] ?? 0) <= 0 && m.casterPanic) return CASTER_PANIC_TAKEN;
-
-        const general = (this.skillPanicTimer?.[m.f] ?? 0) > 0 ? this.skillPanicTakenMul[m.f] : SKILL_PANIC_TAKEN;
-
-        return Math.max(SKILL_PANIC_TAKEN, general);
-
+        return (this.skillPanicTimer?.[m.f] ?? 0) <= 0 && m.casterPanic ? CASTER_PANIC_TAKEN : SKILL_PANIC_TAKEN;
     }
 
 

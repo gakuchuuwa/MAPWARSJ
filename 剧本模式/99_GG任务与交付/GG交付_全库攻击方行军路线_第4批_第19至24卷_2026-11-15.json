@@ -1,0 +1,5910 @@
+[
+  {
+    "eventId": "evt_1858",
+    "battleType": "攻城战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "普拉",
+        "lat": 44.87,
+        "lng": 13.85
+      }
+    ],
+    "source": "维尔阿杜安《征服君士坦丁堡记》；《克来里的罗伯特纪事》：第四次十字军与威尼斯总督丹多洛自威尼斯扬帆启航，经伊斯特拉半岛普拉港南下合围达尔马提亚重镇扎达尔"
+  },
+  {
+    "eventId": "evt_1860",
+    "battleType": "攻城战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      }
+    ],
+    "source": "尼基塔斯《历史》；维尔阿杜安《征服君士坦丁堡记》：威尼斯总督丹多洛与第四次十字军舰队自亚得里亚海经科孚岛、阿比多斯闯入达达尼尔海峡，进泊金角湾水陆合围攻陷君士坦丁堡"
+  },
+  {
+    "eventId": "evt_1861",
+    "battleType": "野战",
+    "fromName": "特尔诺沃",
+    "fromCityId": "city_teernuowo",
+    "route": [],
+    "source": "维尔阿杜安《征服君士坦丁堡记》；尼基塔斯《历史》：保加利亚沙皇卡洛扬率保加利亚军与库曼轻骑自特尔诺沃翻越巴尔干山南下，驰援阿德里安堡并设伏歼灭拉丁皇帝鲍德温一世主力"
+  },
+  {
+    "eventId": "evt_1862",
+    "battleType": "攻城战",
+    "fromName": "盱眙",
+    "fromCityId": "city_zhongli",
+    "route": [],
+    "source": "《宋史·毕再遇传》《两朝纲目备要》：开禧北伐东路先锋毕再遇自盱眙夜间潜渡淮河，奇袭攻克淮北重镇泗州东西两城"
+  },
+  {
+    "eventId": "evt_1863",
+    "battleType": "野战",
+    "fromName": "特尔诺沃",
+    "fromCityId": "city_teernuowo",
+    "route": [
+      {
+        "name": "普罗夫迪夫",
+        "lat": 42.14,
+        "lng": 24.74
+      }
+    ],
+    "source": "维尔阿杜安《征服君士坦丁堡记》；尼基塔斯《历史》：保加利亚沙皇卡洛扬统山地兵自特尔诺沃南下菲利波波利斯与罗多彼山脉，于莫西诺波利斯设伏击杀萨洛尼卡国王博尼法斯"
+  },
+  {
+    "eventId": "evt_1865",
+    "battleType": "攻城战",
+    "fromName": "里昂",
+    "fromCityId": "city_lyon",
+    "route": [
+      {
+        "name": "阿维尼翁",
+        "lat": 43.94,
+        "lng": 4.8
+      },
+      {
+        "name": "纳博讷",
+        "lat": 43.18,
+        "lng": 3.0
+      }
+    ],
+    "source": "《阿尔比十字军之歌》；沃德塞尔奈的彼得《清洁派史》：教宗特使阿诺阿莫里统阿尔比十字军自里昂沿罗讷河南下，经阿维尼翁、蒙彼利埃与贝济耶及纳博讷，西进合围卡尔卡松"
+  },
+  {
+    "eventId": "evt_1866",
+    "battleType": "野战",
+    "fromName": "哥本哈根",
+    "fromCityId": "city_gebenhagen",
+    "route": [
+      {
+        "name": "哥德堡",
+        "lat": 57.7,
+        "lng": 11.97
+      }
+    ],
+    "source": "《埃里克编年史》《冰岛王公年鉴》：流亡丹麦的前瑞典国王斯韦克尔二世借丹麦重骑自西兰岛北渡哈兰与约塔河口，深入西约特兰耶斯蒂尔伦与埃里克十世决战"
+  },
+  {
+    "eventId": "evt_1868",
+    "battleType": "野战",
+    "fromName": "托莱多",
+    "fromCityId": "city_toledo",
+    "route": [
+      {
+        "name": "卡拉特拉瓦",
+        "lat": 39.07,
+        "lng": -3.83
+      }
+    ],
+    "source": "《拉丁语卡斯蒂利亚国王编年史》；罗德里戈《西班牙史》：卡斯蒂利亚国王阿方索八世会合四国十字军自托莱多南下，攻拔马拉贡与卡拉特拉瓦要塞，翻越莫雷纳山脉于拉托洛萨决战"
+  },
+  {
+    "eventId": "evt_1869",
+    "battleType": "野战",
+    "fromName": "萨拉戈萨",
+    "fromCityId": "city_zaragoza",
+    "route": [
+      {
+        "name": "伊莱尔达",
+        "lat": 41.62,
+        "lng": 0.62
+      }
+    ],
+    "source": "《阿尔比十字军之歌》《海梅一世功业书》：阿拉贡国王佩德罗二世自阿拉贡与莱里达北越比利牛斯山脉，会合图卢兹军进围加龙河畔米雷城"
+  },
+  {
+    "eventId": "evt_1870",
+    "battleType": "野战",
+    "fromName": "亚琛",
+    "fromCityId": "city_yachen",
+    "route": [
+      {
+        "name": "布鲁塞尔",
+        "lat": 50.85,
+        "lng": 4.35
+      }
+    ],
+    "source": "布列塔尼的纪尧姆《腓力纪》《圣丹尼斯大编年史》：神圣罗马皇帝奥托四世自亚琛西进，经布拉班特至瓦朗谢讷会合佛兰德与英格兰联军，西追法王腓力二世至布汶桥决战"
+  },
+  {
+    "eventId": "evt_1872",
+    "battleType": "攻城战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "罗切斯特",
+        "lat": 51.39,
+        "lng": 0.5
+      }
+    ],
+    "source": "马修·帕里斯《大编年史》；温多弗的罗杰《历史之花》：法兰西王太子路易入占伦敦后，率法军与英格兰叛乱男爵沿肯特大道经罗切斯特东进，合围海峡锁钥多佛尔城堡"
+  },
+  {
+    "eventId": "evt_1873",
+    "battleType": "攻城战",
+    "fromName": "开封",
+    "fromCityId": "city_bianliang",
+    "route": [
+      {
+        "name": "宛丘",
+        "lat": 33.63,
+        "lng": 114.7
+      },
+      {
+        "name": "昆阳",
+        "lat": 33.22,
+        "lng": 113.22
+      },
+      {
+        "name": "宛城",
+        "lat": 32.96,
+        "lng": 112.52
+      }
+    ],
+    "source": "《宋史·孟宗政传》《金史·宣宗本纪》：金宣宗命完颜讹可自汴京率师南下，经蔡州、唐州越桐柏山猛攻随枣走廊重镇枣阳"
+  },
+  {
+    "eventId": "evt_1877",
+    "battleType": "水战",
+    "fromName": "镰仓",
+    "fromCityId": "city_kamakura",
+    "route": [
+      {
+        "name": "箱根关",
+        "lat": 35.19,
+        "lng": 139.0
+      },
+      {
+        "name": "骏府",
+        "lat": 34.97,
+        "lng": 138.38
+      },
+      {
+        "name": "浜松城",
+        "lat": 34.71,
+        "lng": 137.73
+      },
+      {
+        "name": "宫宿",
+        "lat": 35.12,
+        "lng": 136.95
+      },
+      {
+        "name": "不破关",
+        "lat": 35.36,
+        "lng": 136.46
+      }
+    ],
+    "source": "《吾妻镜》《承久记》：北条泰时统镰仓幕府东海道主力自镰仓西上，经箱根、骏府、远江、尾张热田与美浓不破关直趋近江，进逼山城国宇治川渡口"
+  },
+  {
+    "eventId": "evt_1880",
+    "battleType": "野战",
+    "fromName": "尼凯亚",
+    "fromCityId": "city_nixiya",
+    "route": [
+      {
+        "name": "布尔萨",
+        "lat": 40.18,
+        "lng": 29.06
+      },
+      {
+        "name": "达斯基利翁",
+        "lat": 40.13,
+        "lng": 28.05
+      }
+    ],
+    "source": "乔治·阿克罗波利特斯《历史》；尼基弗鲁斯《罗马史》：尼西亚皇帝约翰三世瓦塔泽斯自尼凯亚经普鲁萨西进密细亚，于波伊马内农要塞外大破拉丁帝国军"
+  },
+  {
+    "eventId": "evt_1884",
+    "battleType": "野战",
+    "fromName": "岐山",
+    "fromCityId": "city_qishan",
+    "route": [
+      {
+        "name": "汧源",
+        "lat": 34.89,
+        "lng": 106.86
+      },
+      {
+        "name": "安定",
+        "lat": 35.33,
+        "lng": 107.36
+      }
+    ],
+    "source": "《金史·完颜陈和尚传》《归潜志》：金忠孝军提控完颜陈和尚随赤盏合喜自凤翔府北上，经陇州、泾州驰援庆阳，于宁州大昌原迎击蒙古军"
+  },
+  {
+    "eventId": "evt_1885",
+    "battleType": "攻城战",
+    "fromName": "塔拉科",
+    "fromCityId": "city_tarraco",
+    "route": [],
+    "source": "《海梅一世功业书》《德斯克洛特加泰罗尼亚编年史》：阿拉贡国王海梅一世统加泰罗尼亚舰队自萨洛与塔拉戈纳扬帆跨海，登陆马略卡岛并合围帕尔马城"
+  },
+  {
+    "eventId": "evt_1886",
+    "battleType": "野战",
+    "fromName": "佩拉",
+    "fromCityId": "city_salonica",
+    "route": [
+      {
+        "name": "安菲波利斯",
+        "lat": 40.82,
+        "lng": 23.85
+      },
+      {
+        "name": "普罗夫迪夫",
+        "lat": 42.14,
+        "lng": 24.74
+      }
+    ],
+    "source": "乔治·阿克罗波利特斯《历史》；《特尔诺沃四十烈士堂铭文》：萨洛尼卡帝国皇帝狄奥多尔·科穆宁自塞萨洛尼基率军东进，至阿德里安堡后溯马里查河北上侵入保加利亚，进抵克洛科特尼察"
+  },
+  {
+    "eventId": "evt_1887",
+    "battleType": "攻城战",
+    "fromName": "东京城",
+    "fromCityId": "city_liaoyang",
+    "route": [
+      {
+        "name": "龙湾",
+        "lat": 40.2,
+        "lng": 124.53
+      }
+    ],
+    "source": "《高丽史·朴犀传》《元史·高丽传》：蒙古元帅撒礼塔率师自辽东进抵鸭绿江，渡江攻陷咸新镇与铁州，进围平安道重镇龟州城"
+  },
+  {
+    "eventId": "evt_1893",
+    "battleType": "攻城战",
+    "fromName": "托莱多",
+    "fromCityId": "city_toledo",
+    "route": [],
+    "source": "《拉丁语卡斯蒂利亚国王编年史》《阿方索十世西班牙通史》：卡斯蒂利亚与莱昂国王费尔南多三世闻边兵夜夺科尔多瓦东郊，星夜自卡斯蒂利亚兼程南下越莫雷纳山合围科尔多瓦"
+  },
+  {
+    "eventId": "evt_1894",
+    "battleType": "攻城战",
+    "fromName": "萨拉托夫",
+    "fromCityId": "city_salatuofu",
+    "route": [],
+    "source": "《拔都毁灭梁赞故事》《诺夫哥罗德第一编年史》：西征统帅拔都与速不台自伏尔加河中游沃罗涅日森林北上，趁严冬冰封直扑梁赞公国都城"
+  },
+  {
+    "eventId": "evt_1895",
+    "battleType": "野战",
+    "fromName": "弗拉基米尔",
+    "fromCityId": "city_fulajimier",
+    "route": [],
+    "source": "《拉夫连季编年史》《史集·窝阔台合罕纪》：拔都攻陷弗拉基米尔后，遣大将不伦台自弗拉基米尔分兵经罗斯托夫与伏尔加河上游迂回追击，于锡季河林地全歼尤里二世主力"
+  },
+  {
+    "eventId": "evt_1897",
+    "battleType": "攻城战",
+    "fromName": "佩列斯拉夫",
+    "fromCityId": "city_peilieyasilafu",
+    "route": [],
+    "source": "《伊帕季耶夫编年史》；柏朗嘉宾《蒙古行纪》：拔都、速不台与蒙哥统西征主力自第聂伯河左岸佩列斯拉夫踏冰渡河，合围罗斯母城基辅"
+  },
+  {
+    "eventId": "evt_1898",
+    "battleType": "野战",
+    "fromName": "克拉科夫",
+    "fromCityId": "city_kelakefu",
+    "route": [
+      {
+        "name": "本津堡",
+        "lat": 50.33,
+        "lng": 19.13
+      },
+      {
+        "name": "弗罗茨瓦夫",
+        "lat": 51.11,
+        "lng": 17.04
+      }
+    ],
+    "source": "扬·德乌戈什《波兰编年史》；志费尼《世界征服者史》：蒙古西征北路帅拜答儿与合丹焚掠克拉科夫后西入西里西亚，经奥波莱、弗罗茨瓦夫进逼莱格尼察"
+  },
+  {
+    "eventId": "evt_1899",
+    "battleType": "野战",
+    "fromName": "加利奇",
+    "fromCityId": "city_jialiqi",
+    "route": [
+      {
+        "name": "维雷茨基",
+        "lat": 48.77,
+        "lng": 23.17
+      }
+    ],
+    "source": "托马斯《斯普利特史》；罗杰大师《悲歌》：拔都与速不台自加利奇越喀尔巴阡山维雷茨基俄罗斯门山口南下匈牙利平原，于绍约河畔莫希会战击溃贝拉四世"
+  },
+  {
+    "eventId": "evt_1900",
+    "battleType": "野战",
+    "fromName": "尤里耶夫",
+    "fromCityId": "city_youliyefu",
+    "route": [],
+    "source": "《诺夫哥罗德第一编年史》《利沃尼亚押韵编年史》：多尔帕特主教赫尔曼与利沃尼亚条顿骑士团自多尔帕特即尤里耶夫东进，在楚德湖狭窄冰面与亚历山大·涅夫斯基决战"
+  },
+  {
+    "eventId": "evt_1901",
+    "battleType": "野战",
+    "fromName": "第比利斯",
+    "fromCityId": "city_dibilisi",
+    "route": [
+      {
+        "name": "埃尔祖鲁姆",
+        "lat": 39.9,
+        "lng": 41.27
+      }
+    ],
+    "source": "志费尼《世界征服者史》；伊本·比比《塞尔柱史》：蒙古统帅拜住自外高加索西征安纳托利亚，攻克埃尔祖鲁姆后继续西进至克塞山击溃罗姆苏丹凯霍斯鲁二世"
+  },
+  {
+    "eventId": "evt_1903",
+    "battleType": "攻城战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [],
+    "source": "《卡斯蒂利亚诸王编年史》《阿方索十世通史》：卡斯蒂利亚国王费尔南多三世自科尔多瓦溯瓜达尔基维尔河东进，合围安达卢西亚山城哈恩"
+  },
+  {
+    "eventId": "evt_1904",
+    "battleType": "野战",
+    "fromName": "维也纳",
+    "fromCityId": "city_weiyeena",
+    "route": [],
+    "source": "《奥地利韵文编年史》《匈牙利彩绘编年史》：奥地利公爵腓特烈二世自维也纳率军南出，于奥匈边境莱塔河畔迎击匈牙利王贝拉四世并阵亡"
+  },
+  {
+    "eventId": "evt_1905",
+    "battleType": "攻城战",
+    "fromName": "达米埃塔",
+    "fromCityId": "city_damietta",
+    "route": [
+      {
+        "name": "佩鲁西姆",
+        "lat": 31.04,
+        "lng": 32.55
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      }
+    ],
+    "source": "《提尔的威廉续编》；马克里齐《苏丹史》：埃及阿尤布苏丹命统帅法赫尔丁自尼罗河三角洲率海陆大军经西奈与加沙北上，合围攻拔阿什凯隆城堡"
+  },
+  {
+    "eventId": "evt_1906",
+    "battleType": "攻城战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [],
+    "source": "《卡斯蒂利亚第一通史》；伊本·伊萨里《马格里布史》：费尔南多三世统卡斯蒂利亚大军自科尔多瓦顺瓜达尔基维尔河西南进军，水陆合围塞维利亚"
+  },
+  {
+    "eventId": "evt_1908",
+    "battleType": "攻城战",
+    "fromName": "达米埃塔",
+    "fromCityId": "city_damietta",
+    "route": [],
+    "source": "让·德·茹安维尔《圣路易传》；马克里齐《苏丹史》：法兰西国王路易九世率第七次十字军攻占达米埃塔港后，溯尼罗河支流南下直扑曼苏拉城"
+  },
+  {
+    "eventId": "evt_1910",
+    "battleType": "野战",
+    "fromName": "大马士革",
+    "fromCityId": "city_damasikusi",
+    "route": [
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "佩鲁西姆",
+        "lat": 31.04,
+        "lng": 32.55
+      }
+    ],
+    "source": "马克里齐《苏丹史》；伊本·瓦西尔《编年史》：大马士革阿尤布苏丹纳西尔·优素福率叙利亚铁骑自大马士革南下，经加沙越西奈沙漠进抵尼罗河三角洲东缘库拉原野"
+  },
+  {
+    "eventId": "evt_1911",
+    "battleType": "攻城战",
+    "fromName": "基辅",
+    "fromCityId": "city_jifu",
+    "route": [
+      {
+        "name": "日托米尔",
+        "lat": 50.25,
+        "lng": 28.65
+      }
+    ],
+    "source": "《加利西亚沃里尼亚编年史》《伊帕季耶夫编年史》：金帐汗国西境万户库列姆萨自第聂伯河右岸草原经日托米尔西进沃里尼亚，猛攻克列梅涅茨山堡"
+  },
+  {
+    "eventId": "evt_1913",
+    "battleType": "野战",
+    "fromName": "尼凯亚",
+    "fromCityId": "city_nixiya",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "鲁西翁",
+        "lat": 40.88,
+        "lng": 26.63
+      }
+    ],
+    "source": "乔治·阿克罗波利特斯《历史》；帕希梅雷斯《历史》：尼凯亚皇帝狄奥多尔二世自小亚细亚星夜西渡赫勒斯滂海峡，经加里波利与鲁西翁北上收复阿德里安堡"
+  },
+  {
+    "eventId": "evt_1914",
+    "battleType": "野战",
+    "fromName": "尚贝里",
+    "fromCityId": "city_shangbeili",
+    "route": [],
+    "source": "《阿斯蒂编年史》；维拉尼《新编年史》：萨伏伊托马斯二世自萨伏伊翻越阿尔卑斯山经都灵南下皮埃蒙特，于蒙特布鲁诺迎战阿斯蒂与伦巴第军"
+  },
+  {
+    "eventId": "evt_1916",
+    "battleType": "野战",
+    "fromName": "滇池",
+    "fromCityId": "city_tuodongcheng",
+    "route": [
+      {
+        "name": "通海城",
+        "lat": 24.11,
+        "lng": 102.76
+      }
+    ],
+    "source": "《元史·兀良合台传》《大越史记全书·本纪卷五》：蒙古征南都元帅兀良合台自云南押赤城即昆明经阿迷、通海沿红河南下，渡洮江破平厉原攻入升龙"
+  },
+  {
+    "eventId": "evt_1921",
+    "battleType": "攻城战",
+    "fromName": "尼凯亚",
+    "fromCityId": "city_nixiya",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "鲁西翁",
+        "lat": 40.88,
+        "lng": 26.63
+      }
+    ],
+    "source": "乔治·阿克罗波利特斯《历史》；帕希梅雷斯《历史》：尼凯亚名将斯特拉提戈普洛斯奉米海尔八世命渡赫勒斯滂海峡巡边色雷斯，乘虚自西侧潜入金门收复君士坦丁堡"
+  },
+  {
+    "eventId": "evt_1924",
+    "battleType": "野战",
+    "fromName": "卑尔根",
+    "fromCityId": "city_beiergen",
+    "route": [],
+    "source": "《哈康王萨迦》；福顿《苏格兰编年史》：挪威老王哈康四世亲统维京长船舰队自卑尔根跨海南下，经赫布里底群岛与金泰尔驶入克莱德湾，于拉格斯海滩登岸交战"
+  },
+  {
+    "eventId": "evt_1925",
+    "battleType": "野战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [],
+    "source": "《里绍尔男爵战争纪事》《威斯敏斯特之花》：莱斯特伯爵西蒙·德·孟福尔统男爵联军与伦敦市民军自伦敦南下萨塞克斯，抢占刘易斯西北高地迎击亨利三世"
+  },
+  {
+    "eventId": "evt_1926",
+    "battleType": "野战",
+    "fromName": "格洛斯特",
+    "fromCityId": "city_geluosite",
+    "route": [],
+    "source": "《里绍尔男爵战争纪事》；吉斯伯勒的沃尔特《编年史》：英格兰王储长腿爱德华自格洛斯特与伍斯特北上奇袭肯尼尔沃思后，回师将老孟福尔逼入雅芳河湾伊夫舍姆歼灭"
+  },
+  {
+    "eventId": "evt_1927",
+    "battleType": "野战",
+    "fromName": "罗马",
+    "fromCityId": "city_luoma",
+    "route": [],
+    "source": "维拉尼《新编年史》；萨巴·马拉斯皮纳《西西里史》：安茹伯爵卡洛在罗马受教宗加冕后，率法兰西与普罗旺斯骑士团沿拉丁大道东南疾进坎帕尼亚贝内文托"
+  },
+  {
+    "eventId": "evt_1930",
+    "battleType": "野战",
+    "fromName": "佛罗伦萨",
+    "fromCityId": "city_florence",
+    "route": [],
+    "source": "维拉尼《新编年史》《锡耶纳编年史》：安茹驻军副帅让·布里托偕佛罗伦萨归尔甫派市民军自佛罗伦萨南下埃尔萨河谷，于科莱城郊击破锡耶纳军"
+  },
+  {
+    "eventId": "evt_1931",
+    "battleType": "攻城战",
+    "fromName": "卡利亚里",
+    "fromCityId": "city_cagliari",
+    "route": [],
+    "source": "纪尧姆·德·南吉斯《圣路易行传》；伊本·赫勒敦《历史绪论》：法王路易九世率第八次十字军舰队于撒丁岛卡利亚里集结后，扬帆南渡登陆古迦太基遗址并围攻突尼斯"
+  },
+  {
+    "eventId": "evt_1932",
+    "battleType": "野战",
+    "fromName": "阿卡",
+    "fromCityId": "city_ake",
+    "route": [],
+    "source": "《提尔圣殿骑士编年史》；马克里齐《苏丹史》：英格兰王储长腿爱德华率十字军与骑士团自阿卡星夜南下沙仑平原，奔袭马穆鲁克卡昆堡"
+  },
+  {
+    "eventId": "evt_1939",
+    "battleType": "野战",
+    "fromName": "永昌",
+    "fromCityId": "city_baoshan",
+    "route": [
+      {
+        "name": "腾越城",
+        "lat": 25.02,
+        "lng": 98.48
+      }
+    ],
+    "source": "《元史·缅国传》《马可波罗游记》：大理蒙古万户忽都与信苴日自大理驰援永昌，经腾越西出大盈江河谷，于牙嵩延以步骑劲弩大破蒲甘象阵"
+  },
+  {
+    "eventId": "evt_1940",
+    "battleType": "野战",
+    "fromName": "维也纳",
+    "fromCityId": "city_weiyeena",
+    "route": [],
+    "source": "《科尔马编年史》《奥地利韵文编年史》：德意志国王鲁道夫一世自维也纳渡多瑙河东北进军，会合匈牙利国王拉斯洛四世于摩拉瓦河畔马尔希菲尔德击毙波西米亚王奥托卡二世"
+  },
+  {
+    "eventId": "evt_1942",
+    "battleType": "野战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [],
+    "source": "《阿方索十世编年史》；伊本·哈蒂卜《格拉纳达史》：圣地亚哥骑士团团长冈萨洛·希龙自科尔多瓦前营率军南下扫荡格拉纳达西北境，深入莫克林山谷中伏"
+  },
+  {
+    "eventId": "evt_1943",
+    "battleType": "水战",
+    "fromName": "宁波",
+    "fromCityId": "city_qingyuan_zj",
+    "route": [
+      {
+        "name": "舟山",
+        "lat": 30.02,
+        "lng": 122.11
+      },
+      {
+        "name": "长崎",
+        "lat": 32.76,
+        "lng": 129.88
+      }
+    ],
+    "source": "《元史·日本传》《竹崎季长蒙古袭来绘词》：元征东右丞范文虎统江南水师自庆元定海启航，经平户岛与壹岐岛会合东路军进逼筑前博多湾志贺岛与鹰岛"
+  },
+  {
+    "eventId": "evt_1944",
+    "battleType": "野战",
+    "fromName": "格洛斯特",
+    "fromCityId": "city_geluosite",
+    "route": [],
+    "source": "吉斯伯勒的沃尔特《编年史》《威尔士王公编年史》：英格兰边疆领主罗杰·莱斯特兰奇与埃德蒙·莫蒂默自赫里福德及什罗普边境西进布ил斯，于伊尔冯河奥雷温桥截杀威尔士亲王卢埃林"
+  },
+  {
+    "eventId": "evt_1945",
+    "battleType": "水战",
+    "fromName": "梅西纳",
+    "fromCityId": "city_messina",
+    "route": [
+      {
+        "name": "锡拉库萨",
+        "lat": 37.07,
+        "lng": 15.28
+      }
+    ],
+    "source": "《蒙塔内尔编年史》《德斯克洛特佩德罗三世编年史》：阿拉贡海军统帅罗杰·德·劳里亚率加泰罗尼亚与西西里舰队自墨西拿经锡拉库萨南下，突入马耳他大港全歼安茹舰队"
+  },
+  {
+    "eventId": "evt_1946",
+    "battleType": "水战",
+    "fromName": "热那亚",
+    "fromCityId": "city_genoa",
+    "route": [],
+    "source": "雅各布·多利亚《热那亚年鉴》；维拉尼《新编年史》：热那亚海军提督奥贝托·多利亚统主力桨帆舰队自热那亚沿利古里亚海岸东南进逼比萨外港，于梅洛里亚浅滩重创比萨舰队"
+  },
+  {
+    "eventId": "evt_1947",
+    "battleType": "水战",
+    "fromName": "蓝山",
+    "fromCityId": "city_xidu",
+    "route": [
+      {
+        "name": "华闾",
+        "lat": 20.25,
+        "lng": 105.92
+      }
+    ],
+    "source": "《大越史记全书·本纪卷五》《元史·安南传》：大越兴道王陈国峻与上相陈光启奉陈圣宗自清化、长安即华闾率水陆大军沿红河北上反攻，连破咸子关与章阳渡元军"
+  },
+  {
+    "eventId": "evt_1948",
+    "battleType": "关隘战",
+    "fromName": "阿克曼",
+    "fromCityId": "city_akeman",
+    "route": [
+      {
+        "name": "加利奇",
+        "lat": 49.12,
+        "lng": 24.72
+      },
+      {
+        "name": "维雷茨基",
+        "lat": 48.77,
+        "lng": 23.17
+      }
+    ],
+    "source": "《匈牙利彩绘编年史》《加利西亚沃里尼亚编年史》：金帐汗国权臣那海与秃剌不花可汗自黑海北岸草原经加利奇翻越喀尔巴阡山口入侵上匈牙利，于雷盖茨石堡群受阻"
+  },
+  {
+    "eventId": "evt_1950",
+    "battleType": "攻城战",
+    "fromName": "永昌",
+    "fromCityId": "city_baoshan",
+    "route": [
+      {
+        "name": "勐卯",
+        "lat": 24.01,
+        "lng": 97.85
+      },
+      {
+        "name": "瑞波",
+        "lat": 22.57,
+        "lng": 95.7
+      }
+    ],
+    "source": "《元史·缅国传》《经世大典·征缅录》：元云南王也先帖木儿与右丞也速答儿自大理经永昌、江头城与太公城顺伊洛瓦底江南下，直取蒲甘王城"
+  },
+  {
+    "eventId": "evt_1951",
+    "battleType": "水战",
+    "fromName": "昇龙",
+    "fromCityId": "city_shenglong",
+    "route": [],
+    "source": "《大越史记全书·本纪卷五》《元史·安南传》：大越兴道王陈国峻统主力自升龙与万劫顺水东进，于白藤江入海河道植铁头木桩伏击全歼元将乌马儿水师"
+  },
+  {
+    "eventId": "evt_1952",
+    "battleType": "攻城战",
+    "fromName": "阿瓦里斯",
+    "fromCityId": "city_awalisi",
+    "route": [
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "大马士革",
+        "lat": 33.51,
+        "lng": 36.31
+      }
+    ],
+    "source": "马克里齐《苏丹史》；阿布·菲达《人类简史》：马穆鲁克苏丹嘉拉温自开罗率埃及大军经加沙至大马士革与霍姆斯，会合叙利亚诸镇兵团及重型投石机西出合围攻陷的黎波里"
+  },
+  {
+    "eventId": "evt_1953",
+    "battleType": "攻城战",
+    "fromName": "里加",
+    "fromCityId": "city_liga",
+    "route": [],
+    "source": "《利沃尼亚韵文编年史》；赫尔曼·冯·瓦特贝格《利沃尼亚纪事》：利沃尼亚骑士团团长哈滕施泰因自里加统日耳曼十字军南下瑟米加利亚，围攻希达布雷山堡"
+  },
+  {
+    "eventId": "evt_1954",
+    "battleType": "攻城战",
+    "fromName": "阿瓦里斯",
+    "fromCityId": "city_awalisi",
+    "route": [
+      {
+        "name": "佩鲁西姆",
+        "lat": 31.04,
+        "lng": 32.55
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "卡昆",
+        "lat": 32.36,
+        "lng": 35.0
+      }
+    ],
+    "source": "《提尔圣殿骑士编年史》；马克里齐《苏丹史》：马穆鲁克苏丹哈利勒统埃及大军自开罗经西奈、加沙与卡昆北上，会合叙利亚攻城回回炮队合围攻陷阿卡"
+  },
+  {
+    "eventId": "evt_1955",
+    "battleType": "攻城战",
+    "fromName": "塞维利亚",
+    "fromCityId": "city_seville",
+    "route": [
+      {
+        "name": "加的斯",
+        "lat": 36.52,
+        "lng": -6.28
+      }
+    ],
+    "source": "《桑乔四世编年史》；伊本·伊萨里《马格里布史》：卡斯蒂利亚国王桑乔四世自塞维利亚率海陆大军南下，经赫雷斯与加的斯水陆合围攻克直布罗陀海峡重镇塔里法"
+  },
+  {
+    "eventId": "evt_1957",
+    "battleType": "攻城战",
+    "fromName": "卡那封",
+    "fromCityId": "city_kanafeng",
+    "route": [],
+    "source": "吉斯伯勒的沃尔特《编年史》《威尔士年代记》：威尔士起义首领马多格攻陷卡那封城后，乘冬雪与河水暴涨东进围困驻扎康威城堡的英王长腿爱德华"
+  },
+  {
+    "eventId": "evt_1958",
+    "battleType": "野战",
+    "fromName": "格洛斯特",
+    "fromCityId": "city_geluosite",
+    "route": [
+      {
+        "name": "布伊尔斯",
+        "lat": 52.15,
+        "lng": -3.4
+      }
+    ],
+    "source": "特里维特《编年史》；吉斯伯勒的沃尔特《编年史》：沃里克伯爵博尚率英格兰重骑与长弓手自威尔士边疆领地奥斯沃斯特里与蒙哥马利星夜翻山，突袭迈斯莫伊多格高地威尔士义军"
+  },
+  {
+    "eventId": "evt_1959",
+    "battleType": "野战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [
+      {
+        "name": "贝里克",
+        "lat": 55.77,
+        "lng": -2.0
+      }
+    ],
+    "source": "吉斯伯勒的沃尔特《编年史》；福顿《苏格兰编年史》：英王长腿爱德华自约克北伐攻陷边境重镇贝里克后，遣萨里伯爵瓦伦率英军先锋沿东海岸北上围攻邓巴城堡"
+  },
+  {
+    "eventId": "evt_1960",
+    "battleType": "野战",
+    "fromName": "斯昆",
+    "fromCityId": "city_scone",
+    "route": [],
+    "source": "吉斯伯勒的沃尔特《编年史》《拉纳克编年史》：威廉·华莱士与安德鲁·莫里收复泰河以北诸城后，自邓迪与珀斯斯昆南下抢占斯特灵桥北岸阿比克雷格高地"
+  },
+  {
+    "eventId": "evt_1961",
+    "battleType": "野战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [
+      {
+        "name": "贝里克",
+        "lat": 55.77,
+        "lng": -2.0
+      },
+      {
+        "name": "爱丁堡",
+        "lat": 55.95,
+        "lng": -3.18
+      }
+    ],
+    "source": "吉斯伯勒的沃尔特《编年史》《拉纳克编年史》：英王长腿爱德华于罗克斯堡与贝里克集结主力，经爱丁堡西进福尔柯克森林坡地击破威廉·华莱士长矛圆阵"
+  },
+  {
+    "eventId": "evt_1962",
+    "battleType": "野战",
+    "fromName": "大不里士",
+    "fromCityId": "city_dabulishi",
+    "route": [
+      {
+        "name": "尼西比斯",
+        "lat": 37.07,
+        "lng": 41.22
+      },
+      {
+        "name": "阿勒颇",
+        "lat": 36.2,
+        "lng": 37.16
+      }
+    ],
+    "source": "拉施特《史集》；马克里齐《苏丹史》：伊利汗国合赞汗统蒙古大军自大不里士西征，渡幼发拉底河连克阿勒颇与哈马，南下霍姆斯北郊瓦迪哈兹纳达尔大败马穆鲁克军"
+  },
+  {
+    "eventId": "evt_1963",
+    "battleType": "水战",
+    "fromName": "那不勒斯",
+    "fromCityId": "city_naples",
+    "route": [],
+    "source": "《蒙塔内尔编年史》；维拉尼《新编年史》：效忠阿拉贡与安茹王室的海军名将罗杰·德·劳里亚自那不勒斯海湾率舰队出击，于蓬扎群岛海面截击并俘获西西里提督科拉多·奥里亚"
+  },
+  {
+    "eventId": "evt_1964",
+    "battleType": "野战",
+    "fromName": "金微山",
+    "fromCityId": "city_naiman",
+    "route": [
+      {
+        "name": "科布多",
+        "lat": 48.01,
+        "lng": 91.64
+      },
+      {
+        "name": "杭爱山",
+        "lat": 47.0,
+        "lng": 101.0
+      }
+    ],
+    "source": "《元史·武宗本纪》；拉施特《史集》：窝阔台汗国海都会合察合台汗笃哇自伊犁阿力麻里与叶密立东越阿尔泰山、杭爱山直扑哈拉和林，于铁坚古山与元怀宁王海山决战"
+  },
+  {
+    "eventId": "evt_1965",
+    "battleType": "野战",
+    "fromName": "布鲁日",
+    "fromCityId": "city_bruges",
+    "route": [],
+    "source": "《根特编年史》；维拉尼《新编年史》：于利希的威廉一世与那慕尔的居伊统佛兰德起义市民长矛军自布鲁日南下，进围科特赖克城堡并于城东格罗宁格草甸迎歼法兰西重骑"
+  },
+  {
+    "eventId": "evt_1966",
+    "battleType": "野战",
+    "fromName": "阿瓦里斯",
+    "fromCityId": "city_awalisi",
+    "route": [
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      }
+    ],
+    "source": "马克里齐《苏丹史》《瓦萨夫史》：马穆鲁克苏丹纳西尔与统帅拜巴尔斯·贾尚吉尔统开罗精锐经加沙兼程北上，于大马士革南郊沙克哈卜平原击败伊利汗国忽都鲁沙大军"
+  },
+  {
+    "eventId": "evt_1968",
+    "battleType": "野战",
+    "fromName": "撒马尔罕",
+    "fromCityId": "city_samaerhan",
+    "route": [
+      {
+        "name": "喀布尔",
+        "lat": 34.55,
+        "lng": 69.2
+      },
+      {
+        "name": "拉合尔",
+        "lat": 31.55,
+        "lng": 74.35
+      }
+    ],
+    "source": "阿米尔·胡斯鲁《征服宝藏》；巴拉尼《费罗兹沙史》：察合台汗国宗王阿里别与塔尔塔克统蒙古铁骑自河中经兴都库什山与旁遮普南下，绕过德里东进恒河上游阿姆罗哈"
+  },
+  {
+    "eventId": "evt_1969",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [],
+    "source": "约翰·巴伯《布鲁斯史诗》《拉纳克编年史》：英格兰统帅彭布罗克伯爵瓦朗斯自洛锡安北渡福斯河进驻珀斯，旋即乘黄昏突袭珀斯西郊梅思文森林的罗伯特·布鲁斯营地"
+  },
+  {
+    "eventId": "evt_1970",
+    "battleType": "野战",
+    "fromName": "卡莱尔",
+    "fromCityId": "city_carlisle",
+    "route": [],
+    "source": "约翰·巴伯《布鲁斯史诗》；福顿《苏格兰编年史》：英格兰彭布罗克伯爵瓦朗斯率重装骑兵自英苏西境北入艾尔郡追剿罗伯特·布鲁斯，进抵劳登希尔山麓沼泽"
+  },
+  {
+    "eventId": "evt_1971",
+    "battleType": "野战",
+    "fromName": "因弗内斯",
+    "fromCityId": "city_yinfeineisi",
+    "route": [],
+    "source": "约翰·巴伯《布鲁斯史诗》；福顿《苏格兰编年史》：苏格兰王罗伯特·布鲁斯平定莫里与因弗内斯后率军东进阿伯丁郡，于因弗鲁里巴拉山岗击溃巴肯伯爵约翰·科明"
+  },
+  {
+    "eventId": "evt_1973",
+    "battleType": "攻城战",
+    "fromName": "法马古斯塔",
+    "fromCityId": "city_famagusta",
+    "route": [
+      {
+        "name": "克桑托斯",
+        "lat": 36.36,
+        "lng": 29.32
+      }
+    ],
+    "source": "《罗得岛大团长编年史》；帕希梅雷斯《历史》：医院骑士团大团长维拉雷自塞浦路斯利马索尔率舰队西航，经吕基亚海岸登岸罗得岛并合围攻克罗得城"
+  },
+  {
+    "eventId": "evt_1974",
+    "battleType": "野战",
+    "fromName": "佩拉",
+    "fromCityId": "city_salonica",
+    "route": [
+      {
+        "name": "佩利纳",
+        "lat": 39.57,
+        "lng": 21.93
+      }
+    ],
+    "source": "《蒙塔内尔编年史》《莫里亚编年史》：加泰罗尼亚大佣兵团自马其顿南下色萨利平原，于阿尔米罗斯沼泽设阵全歼雅典公爵瓦尔特五世重装骑士军"
+  },
+  {
+    "eventId": "evt_1975",
+    "battleType": "野战",
+    "fromName": "布达佩斯",
+    "fromCityId": "city_budapeisi",
+    "route": [],
+    "source": "《匈牙利彩绘编年史》；图罗齐《匈牙利编年史》：匈牙利国王查理一世率王室军与医院骑士自布达东北进军上匈牙利，驰援科希策并于罗兹戈尼击破阿巴家族联军"
+  },
+  {
+    "eventId": "evt_1976",
+    "battleType": "野战",
+    "fromName": "奥格斯堡",
+    "fromCityId": "city_aogesibao",
+    "route": [],
+    "source": "《菲尔斯滕费尔德修道院编年史》；维克特林的约翰《史书》：上巴伐利亚公爵路德维希自慕尼黑与上巴伐利亚兼程东进伊萨尔河谷，于加默尔斯多夫突袭大败奥地利军"
+  },
+  {
+    "eventId": "evt_1977",
+    "battleType": "野战",
+    "fromName": "斯昆",
+    "fromCityId": "city_scone",
+    "route": [],
+    "source": "约翰·巴伯《布鲁斯史诗》《拉纳克编年史》：苏格兰国王罗伯特·布鲁斯集结各部精兵扼守斯特灵南郊新公园森林，在班诺克本溪谷主动出击全歼英王爱德华二世大军"
+  },
+  {
+    "eventId": "evt_1978",
+    "battleType": "关隘战",
+    "fromName": "克拉文纳",
+    "fromCityId": "city_clavenna",
+    "route": [],
+    "source": "温特图尔的约翰《编年史》《瑞士白皮书》：施维茨与乌里、下瓦尔登森林州民兵自施维茨山谷抢占埃格里湖畔莫尔加滕险隘，居高临下伏击粉碎奥地利公爵利奥波德一世铁骑"
+  },
+  {
+    "eventId": "evt_1979",
+    "battleType": "野战",
+    "fromName": "都柏林",
+    "fromCityId": "city_dublin",
+    "route": [],
+    "source": "《康诺特编年史》《克林修道士爱尔兰年鉴》：英属爱尔兰领主威廉·德·伯格与理查·德·伯明翰集结安格鲁诺曼重装步骑西援阿森赖，大破康诺特王费利姆·奥康纳联军"
+  },
+  {
+    "eventId": "evt_1980",
+    "battleType": "攻城战",
+    "fromName": "格拉纳达",
+    "fromCityId": "city_granada",
+    "route": [],
+    "source": "《阿方索十一世编年史》；伊本·哈蒂卜《格拉纳达史》：格拉纳达苏丹伊斯梅尔一世自格拉纳达发兵西南进围直布罗陀海岬要塞，遭卡斯蒂利亚摄政彼得亲王海陆驰援击退"
+  },
+  {
+    "eventId": "evt_1981",
+    "battleType": "野战",
+    "fromName": "都柏林",
+    "fromCityId": "city_dublin",
+    "route": [],
+    "source": "《拉纳克编年史》；约翰·巴伯《布鲁斯史诗》：英属爱尔兰统帅约翰·德·伯明翰自都柏林率军北上邓多克，于福哈特山丘迎击并阵斩爱德华·布鲁斯"
+  },
+  {
+    "eventId": "evt_1982",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [
+      {
+        "name": "卡莱尔",
+        "lat": 54.89,
+        "lng": -2.93
+      }
+    ],
+    "source": "《拉纳克编年史》；约翰·巴伯《布鲁斯史诗》：苏格兰名将黑道格拉斯与莫里伯爵兰道夫自苏格兰南境绕开贝里克围城英军，经西境深入约克郡斯韦尔河畔迈顿大破约克大主教民兵"
+  },
+  {
+    "eventId": "evt_1983",
+    "battleType": "野战",
+    "fromName": "卡乌纳斯",
+    "fromCityId": "city_kawunas",
+    "route": [],
+    "source": "彼得·冯·杜斯堡《普鲁士编年史》；维甘德《新普鲁士编年史》：立陶宛萨莫吉希亚军自内穆纳斯河与卡乌纳斯西北林地疾趋梅迪宁凯，设伏全歼条顿骑士团大元帅普勒茨克所部"
+  },
+  {
+    "eventId": "evt_1984",
+    "battleType": "攻城战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [],
+    "source": "《爱德华二世传》；托马斯·沃尔辛厄姆《英国史》：英王爱德华二世自伦敦调集步骑与攻城器械东南进军肯特郡，围攻并迫降巴德尔斯米尔男爵夫人据守的利兹城堡"
+  },
+  {
+    "eventId": "evt_1985",
+    "battleType": "野战",
+    "fromName": "雷根斯堡",
+    "fromCityId": "city_leigensibao",
+    "route": [],
+    "source": "《波西米亚王室编年史》；维克特林的约翰《史书》：德意志王路德维希四世会合波西米亚国王约翰与纽伦堡伯爵，自雷根斯堡及多瑙河谷南下因河畔米尔多夫，击败并生擒奥地利腓特烈三世"
+  },
+  {
+    "eventId": "evt_1986",
+    "battleType": "攻城战",
+    "fromName": "德里",
+    "fromCityId": "city_deli",
+    "route": [
+      {
+        "name": "瓜廖尔堡",
+        "lat": 26.23,
+        "lng": 78.17
+      },
+      {
+        "name": "桑奇",
+        "lat": 23.48,
+        "lng": 77.74
+      },
+      {
+        "name": "比达尔",
+        "lat": 17.91,
+        "lng": 77.52
+      }
+    ],
+    "source": "巴拉尼《费罗兹沙史》；伊萨米《诸王纪》：德里苏丹国储君乌鲁格汗率大军自德里南下，经马尔瓦、德瓦吉里与比达尔长驱进围瓦朗加尔双环坚城"
+  },
+  {
+    "eventId": "evt_1987",
+    "battleType": "攻城战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "香波堡",
+        "lat": 47.62,
+        "lng": 1.52
+      }
+    ],
+    "source": "《大法兰西编年史》；让·勒贝尔《真实编年史》：法兰西瓦卢瓦伯爵查理奉查理四世命自巴黎南下，经卢瓦尔河与朗格多克沿加龙河西进，合围迫降英军驻守的拉雷奥勒要塞"
+  },
+  {
+    "eventId": "evt_1988",
+    "battleType": "野战",
+    "fromName": "维罗纳",
+    "fromCityId": "city_verona",
+    "route": [],
+    "source": "维拉尼《新编年史》《摩德纳编年史》：摩德纳领主帕塞里诺·博纳科尔西会合维罗纳、曼图亚与米兰吉伯林派援军南下帕纳罗河谷，于萨波利诺山麓大败博洛尼亚军"
+  },
+  {
+    "eventId": "evt_1989",
+    "battleType": "攻城战",
+    "fromName": "瑟于特",
+    "fromCityId": "city_seyute",
+    "route": [],
+    "source": "阿什克帕夏扎德《奥斯曼史》；坎塔库泽努斯《历史》：奥斯曼一世与长子奥尔汗自比提尼亚瑟于特及耶尼谢希尔西进，长期筑堡封锁并迫降重镇布尔萨定为都城"
+  },
+  {
+    "eventId": "evt_1990",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [
+      {
+        "name": "卡莱尔",
+        "lat": 54.89,
+        "lng": -2.93
+      }
+    ],
+    "source": "让·勒贝尔《真实编年史》；弗鲁瓦萨尔《编年史》：苏格兰名将黑道格拉斯与莫里伯爵自苏格兰边境越境南入英格兰北部韦尔河谷，于斯坦霍普猎苑夜袭英王爱德华三世大营"
+  },
+  {
+    "eventId": "evt_1991",
+    "battleType": "关隘战",
+    "fromName": "上都",
+    "fromCityId": "city_shangdu",
+    "route": [],
+    "source": "《元史·文宗本纪》《元史·燕帖木儿传》：上都权臣倒剌沙遣梁王王禅、太尉不花与失剌统上都军自开平府南下，经榆林猛攻太行北口居庸关"
+  },
+  {
+    "eventId": "evt_1992",
+    "battleType": "野战",
+    "fromName": "布尔萨",
+    "fromCityId": "city_buersa",
+    "route": [
+      {
+        "name": "尼凯亚",
+        "lat": 40.43,
+        "lng": 29.72
+      }
+    ],
+    "source": "坎塔库泽努斯《历史》；格雷戈拉斯《罗马史》：奥斯曼君主奥尔汗一世自布尔萨与尼凯亚围城前线率突厥骑兵北上马尔马拉海岸，抢占佩莱卡农丘陵击退东罗马皇帝安德洛尼卡三世"
+  },
+  {
+    "eventId": "evt_1993",
+    "battleType": "野战",
+    "fromName": "斯科普里",
+    "fromCityId": "city_skopje",
+    "route": [],
+    "source": "达尼洛二世《塞尔维亚诸王传》；坎塔库泽努斯《历史》：塞尔维亚国王乌罗什三世与王子斯蒂芬·杜尚自斯科普里与科索沃东出斯特鲁马河谷，于维尔布日德奇袭全歼保加利亚沙皇希什曼"
+  },
+  {
+    "eventId": "evt_1994",
+    "battleType": "野战",
+    "fromName": "克拉科夫",
+    "fromCityId": "city_kelakefu",
+    "route": [
+      {
+        "name": "本津堡",
+        "lat": 50.33,
+        "lng": 19.13
+      }
+    ],
+    "source": "扬·德乌戈什《波兰史》；维甘德《新普鲁士编年史》：波兰国王瓦迪斯瓦夫一世自小波兰率军北上库亚维尾追条顿骑士团，于普沃夫采原野趁浓雾痛击骑士团后卫"
+  },
+  {
+    "eventId": "evt_1995",
+    "battleType": "野战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [
+      {
+        "name": "爱丁堡",
+        "lat": 55.95,
+        "lng": -3.18
+      }
+    ],
+    "source": "《拉纳克编年史》；托马斯·格雷《阶梯编年史》：爱德华·巴利奥尔与亨利·德·博蒙特自英格兰约克郡雷文斯珀恩乘船北上，入福斯湾登陆法夫金霍恩，西进恩河畔达普林荒原"
+  },
+  {
+    "eventId": "evt_1996",
+    "battleType": "攻城战",
+    "fromName": "京都",
+    "fromCityId": "city_kyoto",
+    "route": [
+      {
+        "name": "大阪",
+        "lat": 34.69,
+        "lng": 135.53
+      }
+    ],
+    "source": "《太平记·卷七》《梅松论》：镰仓幕府大将阿曾治时、大佛高直与名越宗教会师京都六波罗，经摄津天王寺南下河内，重兵围困金钢山千早城"
+  },
+  {
+    "eventId": "evt_1997",
+    "battleType": "攻城战",
+    "fromName": "宇都宫城",
+    "fromCityId": "city_utsunomiya",
+    "route": [
+      {
+        "name": "江户城",
+        "lat": 35.75,
+        "lng": 139.8
+      }
+    ],
+    "source": "《太平记·卷十》《梅松论》：新田义贞自上野国新田庄举兵，沿镰仓街道南下经武藏小手指原、分倍河原连破北条军，自稻村崎海滩突入攻灭镰仓幕府"
+  },
+  {
+    "eventId": "evt_1998",
+    "battleType": "水战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "卡里斯托斯",
+        "lat": 38.01,
+        "lng": 24.42
+      },
+      {
+        "name": "米蒂利尼",
+        "lat": 39.11,
+        "lng": 26.55
+      }
+    ],
+    "source": "维拉尼《新编年史》；丹多洛《威尼斯编年史》：威尼斯提督彼得罗·泽诺统神圣同盟舰队自威尼斯经科孚至优卑亚内格罗蓬特会师，渡爱琴海东岸于阿德拉米蒂翁湾焚毁卡拉西侯国船队"
+  },
+  {
+    "eventId": "evt_1999",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [
+      {
+        "name": "斯昆",
+        "lat": 56.42,
+        "lng": -3.42
+      }
+    ],
+    "source": "温顿《苏格兰编年史》；福顿《苏格兰编年史》：苏格兰护国摄政安德鲁·莫里自洛锡安经泰河斯昆兼程北渡迪河，于卡尔布林森林击毙亲英统帅大卫·德·斯特拉斯博吉"
+  },
+  {
+    "eventId": "evt_2000",
+    "battleType": "野战",
+    "fromName": "太宰府",
+    "fromCityId": "city_taizaifu",
+    "route": [],
+    "source": "《梅松论·下卷》《太平记·卷十六》：西奔九州的足利尊氏自筑前宗像与香椎宫会合少贰赖尚出阵，于博多湾东郊多多良滨迎头痛击菊池武敏"
+  },
+  {
+    "eventId": "evt_2001",
+    "battleType": "野战",
+    "fromName": "太宰府",
+    "fromCityId": "city_taizaifu",
+    "route": [
+      {
+        "name": "赤间关",
+        "lat": 33.95,
+        "lng": 130.93
+      },
+      {
+        "name": "备中高松城",
+        "lat": 34.69,
+        "lng": 133.82
+      },
+      {
+        "name": "姬路城",
+        "lat": 34.84,
+        "lng": 134.69
+      }
+    ],
+    "source": "《太平记·卷十六》《梅松论·下卷》：足利尊氏与弟足利直义自九州太宰府博多水陆并进，经赤间关、备后鞆之津、播磨室津直趋摄津兵库凑川，夹击破灭楠木正成与新田义贞"
+  },
+  {
+    "eventId": "evt_2002",
+    "battleType": "攻城战",
+    "fromName": "京都",
+    "fromCityId": "city_kyoto",
+    "route": [],
+    "source": "《太平记·卷十八》《梅松论》：室町幕府大将高师泰与斯波高经奉足利尊氏命自京都北上若狭与越前，水陆合围敦贺湾畔金崎城"
+  },
+  {
+    "eventId": "evt_2003",
+    "battleType": "水战",
+    "fromName": "加莱",
+    "fromCityId": "city_calais",
+    "route": [
+      {
+        "name": "布鲁日",
+        "lat": 51.21,
+        "lng": 3.22
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；让·勒贝尔《真实编年史》：法兰西海军上将休·基耶雷与尼古拉·贝于谢统桨帆船队自海峡北上，经佛兰德海岸驶入泽兰瓦尔赫伦岛阿尔讷默伊登外海截获英船"
+  },
+  {
+    "eventId": "evt_2004",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [
+      {
+        "name": "里尔",
+        "lat": 50.63,
+        "lng": 3.06
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；让·勒贝尔《真实编年史》：英王爱德华三世自布拉班特布鲁塞尔会合低地诸侯南下，经埃诺瓦朗谢讷越境围攻康布雷城"
+  },
+  {
+    "eventId": "evt_2006",
+    "battleType": "野战",
+    "fromName": "利沃夫",
+    "fromCityId": "city_liweifu",
+    "route": [],
+    "source": "扬·德乌戈什《波兰史》；恰尔库夫的扬《编年史》：加利西亚实权贵族德德科引金帐鞑靼骑兵自利沃夫与红鲁塞尼亚西北进军，围掠卢布林并直逼维斯瓦河渡口"
+  },
+  {
+    "eventId": "evt_2007",
+    "battleType": "野战",
+    "fromName": "雷恩",
+    "fromCityId": "city_rennes",
+    "route": [],
+    "source": "杰弗里·勒贝克《编年史》；弗鲁瓦萨尔《编年史》：布卢瓦的查理统法布联军自东布列塔尼与雷恩西进驰援莫尔莱，于兰默尔林缘冲击英将诺森普顿伯爵壕沟阵地"
+  },
+  {
+    "eventId": "evt_2008",
+    "battleType": "野战",
+    "fromName": "里加",
+    "fromCityId": "city_liga",
+    "route": [
+      {
+        "name": "派德",
+        "lat": 58.89,
+        "lng": 25.56
+      }
+    ],
+    "source": "巴尔塔萨·鲁索夫《利沃尼亚编年史》；赫尔曼·冯·瓦特贝格《纪事》：利沃尼亚骑士团团长德赖莱本自南方北上派德诱杀爱沙尼亚四王后，疾趋塔林近郊索亚迈击溃义军"
+  },
+  {
+    "eventId": "evt_2009",
+    "battleType": "攻城战",
+    "fromName": "塞维利亚",
+    "fromCityId": "city_seville",
+    "route": [
+      {
+        "name": "加的斯",
+        "lat": 36.52,
+        "lng": -6.28
+      }
+    ],
+    "source": "《阿方索十一世大编年史》；伊本·赫勒敦《历史绪论》：卡斯蒂利亚国王阿方索十一世自塞维利亚率大军经赫雷斯与加的斯南下，水陆合围迫降马林苏丹国主港阿尔赫西拉斯"
+  },
+  {
+    "eventId": "evt_2011",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "博韦",
+        "lat": 49.43,
+        "lng": 2.08
+      },
+      {
+        "name": "圣瓦莱里",
+        "lat": 50.19,
+        "lng": 1.63
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；让·勒贝尔《真实编年史》：法王腓力六世自巴黎圣但尼督贵族重骑与热那亚弩手北追英军，经亚眠、阿布维尔及索姆河口进抵克雷西山坡仰攻"
+  },
+  {
+    "eventId": "evt_2013",
+    "battleType": "野战",
+    "fromName": "京都",
+    "fromCityId": "city_kyoto",
+    "route": [],
+    "source": "《太平记·卷二十六》《园太历》：室町幕府执事高师直与弟高师泰统六万幕府军自京都八幡南下河内，于饭盛山麓四条畷合围击杀楠木正行"
+  },
+  {
+    "eventId": "evt_2014",
+    "battleType": "野战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [],
+    "source": "弗鲁瓦萨尔《编年史》《圣但尼大编年史》：法军普瓦图统帅让·德·利勒自卢瓦尔河与普瓦捷一带率骑兵南追，于吕纳隆热原野截击英属加斯科涅军"
+  },
+  {
+    "eventId": "evt_2016",
+    "battleType": "攻城战",
+    "fromName": "永城",
+    "fromCityId": "city_yongcheng",
+    "route": [
+      {
+        "name": "谯县",
+        "lat": 33.88,
+        "lng": 115.77
+      }
+    ],
+    "source": "《元史·顺帝本纪》《明史·韩林儿传》：白莲教首领刘福通自永年事泄后南奔亳州、颍州白鹿庄聚河工起义，首拔颍州并进略汝宁"
+  },
+  {
+    "eventId": "evt_2021",
+    "battleType": "野战",
+    "fromName": "沙特尔",
+    "fromCityId": "city_shatteer",
+    "route": [
+      {
+        "name": "香波堡",
+        "lat": 47.62,
+        "lng": 1.52
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；杰弗里·勒贝克《编年史》：法王约翰二世于沙特尔集结王室大军，渡卢瓦尔河经图尔与绍维尼疾追英格兰黑太子，于普瓦捷南郊莫佩尔蒂决战"
+  },
+  {
+    "eventId": "evt_2024",
+    "battleType": "野战",
+    "fromName": "熊本",
+    "fromCityId": "city_xiongben",
+    "route": [],
+    "source": "《太平记·卷三十三》《菊池武朝申状》：肥后名将菊池武光奉征西大将军怀良亲王自肥后隈府北上，渡筑后川于大保原夜袭大破少贰赖尚六万联军"
+  },
+  {
+    "eventId": "evt_2025",
+    "battleType": "水战",
+    "fromName": "柴桑",
+    "fromCityId": "city_chaisang",
+    "route": [
+      {
+        "name": "皖口",
+        "lat": 30.51,
+        "lng": 117.04
+      },
+      {
+        "name": "姑孰",
+        "lat": 31.55,
+        "lng": 118.47
+      }
+    ],
+    "source": "《明太祖实录》《明史·陈友谅传》：陈友谅统巨舰水师自江州顺长江东下，攻陷太平即姑孰后于采石称帝，进逼应天府西郊龙湾中伏大败"
+  },
+  {
+    "eventId": "evt_2026",
+    "battleType": "野战",
+    "fromName": "哥本哈根",
+    "fromCityId": "city_gebenhagen",
+    "route": [],
+    "source": "《维斯比方济各会编年史》《吕贝克汉萨编年史》：丹麦国王瓦尔德马四世统丹麦与德意志雇佣军自西兰岛跨波罗的海登陆哥特兰岛西岸，进逼维斯比城下歼灭农兵"
+  },
+  {
+    "eventId": "evt_2027",
+    "battleType": "野战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [
+      {
+        "name": "日托米尔",
+        "lat": 50.25,
+        "lng": 28.65
+      },
+      {
+        "name": "基辅",
+        "lat": 50.45,
+        "lng": 30.52
+      }
+    ],
+    "source": "《立陶宛编年史》《古斯京编年史》：立陶宛大公阿尔吉尔达斯自维尔纽斯南下，会合沃里尼亚与基辅诸军深入波多利亚，于南布格河支流辛纽哈蓝水河大破金帐三那颜"
+  },
+  {
+    "eventId": "evt_2028",
+    "battleType": "攻城战",
+    "fromName": "武昌",
+    "fromCityId": "city_wuchang",
+    "route": [
+      {
+        "name": "蕲春",
+        "lat": 30.23,
+        "lng": 115.45
+      },
+      {
+        "name": "柴桑",
+        "lat": 29.68,
+        "lng": 116.0
+      }
+    ],
+    "source": "《明太祖实录》《明史·朱文正传》：陈友谅统六十万水军楼船自武昌顺长江东下，经江州入鄱阳湖猛攻江西省治洪都城八十五日"
+  },
+  {
+    "eventId": "evt_2030",
+    "battleType": "野战",
+    "fromName": "坎佩尔",
+    "fromCityId": "city_kanpeier",
+    "route": [],
+    "source": "弗鲁瓦萨尔《编年史》《布列塔尼编年史》：英军名将约翰·钱多斯与小约翰·蒙福尔自西布列塔尼进围奥赖港，抢占城北高地击毙来援的布卢瓦查理并生擒杜盖克兰"
+  },
+  {
+    "eventId": "evt_2031",
+    "battleType": "攻城战",
+    "fromName": "法马古斯塔",
+    "fromCityId": "city_famagusta",
+    "route": [],
+    "source": "纪尧姆·德·马绍《亚历山大陷落记》；努韦里《亚历山大史》：塞浦路斯国王彼得一世自塞浦路斯赴罗得岛会合医院骑士团舰队，扬帆南渡奇袭攻陷埃及主港亚历山大"
+  },
+  {
+    "eventId": "evt_2032",
+    "battleType": "攻城战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "卡里斯托斯",
+        "lat": 38.01,
+        "lng": 24.42
+      }
+    ],
+    "source": "《萨伏伊十字军账册与纪事》；坎塔库泽努斯《历史》：萨伏伊绿伯爵阿梅迪奥六世率十字军舰队自威尼斯启航，经科孚、摩里亚与优卑亚北入达达尼尔海峡，攻克加里波利"
+  },
+  {
+    "eventId": "evt_2035",
+    "battleType": "野战",
+    "fromName": "北京",
+    "fromCityId": "city_beijing",
+    "route": [
+      {
+        "name": "范阳",
+        "lat": 39.48,
+        "lng": 115.98
+      },
+      {
+        "name": "井陉关",
+        "lat": 38.02,
+        "lng": 114.0
+      }
+    ],
+    "source": "《明太祖实录》《明史·徐达传》：明征虏大将军徐达与副帅常遇春自北平南下，经保定、真定西越太行山井陉关与平定州直趋太原，乘夜奇袭大破扩廓帖木儿"
+  },
+  {
+    "eventId": "evt_2036",
+    "battleType": "野战",
+    "fromName": "图卢兹",
+    "fromCityId": "city_toulouse",
+    "route": [
+      {
+        "name": "萨拉戈萨",
+        "lat": 41.65,
+        "lng": -0.88
+      },
+      {
+        "name": "托莱多",
+        "lat": 39.86,
+        "lng": -4.02
+      }
+    ],
+    "source": "阿亚拉《佩德罗王编年史》；弗鲁瓦萨尔《编年史》：恩里克二世与法国名将杜盖克兰自南法越比利牛斯山经阿拉贡返入卡斯蒂利亚，自托莱多围城前线星夜南驰蒙铁尔全歼佩德罗一世"
+  },
+  {
+    "eventId": "evt_2037",
+    "battleType": "野战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [
+      {
+        "name": "卡乌纳斯",
+        "lat": 54.9,
+        "lng": 23.91
+      }
+    ],
+    "source": "维甘德·冯·马尔堡《新普鲁士编年史》：立陶宛大公阿尔吉尔达斯与科斯图提斯统立陶宛及鲁塞尼亚铁骑自维尔纽斯与卡乌纳斯踏冰西进桑比亚，于柯尼斯堡北郊鲁道林地会战"
+  },
+  {
+    "eventId": "evt_2038",
+    "battleType": "野战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [],
+    "source": "哈尔科孔迪莱斯《史书》；阿什克帕夏扎德《奥斯曼史》：奥斯曼鲁米利亚总督拉拉·沙欣与哈吉·伊尔贝伊自埃迪尔内出精骑溯马里查河西上，乘夜突袭切尔诺门塞尔维亚大营"
+  },
+  {
+    "eventId": "evt_2039",
+    "battleType": "野战",
+    "fromName": "北京",
+    "fromCityId": "city_beijing",
+    "route": [
+      {
+        "name": "宣化",
+        "lat": 40.61,
+        "lng": 115.05
+      },
+      {
+        "name": "集宁",
+        "lat": 41.03,
+        "lng": 113.1
+      },
+      {
+        "name": "浚稽山",
+        "lat": 45.77,
+        "lng": 106.28
+      }
+    ],
+    "source": "《明太祖实录》《明史·徐达传》：魏国公徐达率中路北伐大军自北平西出宣府、大同与雁门，北出口温深入大漠，渡土剌河与扩廓帖木儿决战于岭北"
+  },
+  {
+    "eventId": "evt_2040",
+    "battleType": "野战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [],
+    "source": "弗鲁瓦萨尔《编年史》《大法兰西编年史》：法兰西王室大元帅杜盖克兰自卢瓦尔河谷南下收复普瓦图，进围希泽城堡并全歼来援的英将约翰·德弗罗所部"
+  },
+  {
+    "eventId": "evt_2041",
+    "battleType": "野战",
+    "fromName": "安布拉基亚",
+    "fromCityId": "city_anbulajiya",
+    "route": [],
+    "source": "《约阿尼纳编年史》；哈尔科孔迪莱斯《史书》：阿尔塔专制公吉恩·布阿·什帕塔自阿尔塔即安布拉基亚出兵迎击南下的约阿尼纳专制公托马斯·普雷柳博维奇，大败敌军"
+  },
+  {
+    "eventId": "evt_2042",
+    "battleType": "攻城战",
+    "fromName": "佛罗伦萨",
+    "fromCityId": "city_florence",
+    "route": [],
+    "source": "马尔基奥内《佛罗伦萨编年史》《博洛尼亚编年史》：佛罗伦萨八圣人战事委员会自佛罗伦萨北向策动罗马涅诸城起义，派援军越亚平宁山脉协助博洛尼亚市民驱逐教宗总督"
+  },
+  {
+    "eventId": "evt_2043",
+    "battleType": "攻城战",
+    "fromName": "克拉科夫",
+    "fromCityId": "city_kelakefu",
+    "route": [
+      {
+        "name": "波兹南",
+        "lat": 52.41,
+        "lng": 16.93
+      }
+    ],
+    "source": "恰尔库夫的扬《编年史》；扬·德乌戈什《波兰史》：波兰王室大总管森济武伊·帕乌卡与卡西米尔公爵调集大波兰与小波兰王军北上库亚维，水陆围攻维斯瓦河畔兹沃托里亚石堡"
+  },
+  {
+    "eventId": "evt_2044",
+    "battleType": "攻城战",
+    "fromName": "阇槃",
+    "fromCityId": "city_dupan",
+    "route": [],
+    "source": "《大越史记全书·本纪卷七》《明史·占城传》：占婆国王制蓬峨据国都阇槃城诈降诱敌，于城外山谷设圆阵伏击全歼南征的大越陈睿宗大军"
+  },
+  {
+    "eventId": "evt_2046",
+    "battleType": "攻城战",
+    "fromName": "撒马尔罕",
+    "fromCityId": "city_samaerhan",
+    "route": [
+      {
+        "name": "布哈拉",
+        "lat": 39.77,
+        "lng": 64.43
+      },
+      {
+        "name": "达尔甘",
+        "lat": 40.53,
+        "lng": 62.27
+      },
+      {
+        "name": "希瓦",
+        "lat": 41.56,
+        "lng": 60.71
+      }
+    ],
+    "source": "尼扎姆丁·沙米《胜利之书》；亚兹迪《武功记》：帖木儿亲统察合台铁骑自撒马尔罕经布哈拉沿阿姆河西北下，合围攻克花剌子模都城乌尔根奇"
+  },
+  {
+    "eventId": "evt_2050",
+    "battleType": "攻城战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "加莱",
+        "lat": 50.95,
+        "lng": 1.85
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；托马斯·沃尔辛厄姆《英国史》：诺里奇主教亨利·德斯潘塞率英格兰十字军自泰晤士河渡海登陆加莱，连克格拉沃利讷与敦刻尔克后东进围攻伊普尔"
+  },
+  {
+    "eventId": "evt_2051",
+    "battleType": "攻城战",
+    "fromName": "托莱多",
+    "fromCityId": "city_toledo",
+    "route": [
+      {
+        "name": "梅里达",
+        "lat": 38.92,
+        "lng": -6.34
+      },
+      {
+        "name": "巴达霍斯",
+        "lat": 38.88,
+        "lng": -6.97
+      }
+    ],
+    "source": "费尔南·洛佩斯《若昂一世编年史》；阿亚拉《胡安一世编年史》：卡斯蒂利亚国王胡安一世统大军自卡斯蒂利亚经巴达霍斯与圣塔伦西进塔霍河口，水陆合围葡萄牙首都里斯本"
+  },
+  {
+    "eventId": "evt_2052",
+    "battleType": "野战",
+    "fromName": "布尔戈斯",
+    "fromCityId": "city_burgos",
+    "route": [
+      {
+        "name": "萨拉曼卡",
+        "lat": 40.96,
+        "lng": -5.66
+      },
+      {
+        "name": "科英布拉",
+        "lat": 40.21,
+        "lng": -8.43
+      }
+    ],
+    "source": "费尔南·洛佩斯《若昂一世编年史》；弗鲁瓦萨尔《编年史》：卡斯蒂利亚国王胡安一世集结大军自卡斯蒂利亚经萨拉曼卡、罗德里戈城与科英布拉南下直扑里斯本，于阿勒祖巴洛塔山脊惨败"
+  },
+  {
+    "eventId": "evt_2053",
+    "battleType": "野战",
+    "fromName": "巴塞尔",
+    "fromCityId": "city_basaier",
+    "route": [],
+    "source": "《克林根贝格编年史》《伯尔尼编年史》：奥地利公爵利奥波德三世于阿尔高与布鲁格集结哈布斯堡重装骑士南下卢塞恩境，于森帕赫湖畔遭瑞士森林邦联长戟军击毙"
+  },
+  {
+    "eventId": "evt_2055",
+    "battleType": "攻城战",
+    "fromName": "大不里士",
+    "fromCityId": "city_dabulishi",
+    "route": [
+      {
+        "name": "哈马丹",
+        "lat": 34.8,
+        "lng": 48.51
+      },
+      {
+        "name": "古尔帕耶甘",
+        "lat": 33.45,
+        "lng": 50.29
+      }
+    ],
+    "source": "亚兹迪《武功记》；尼扎姆丁·沙米《胜利之书》：帖木儿平定阿塞拜疆与外高加索后，自大不里士南下经哈马丹与古尔帕耶甘兵临伊斯法罕，因城民杀害税官而攻破屠城"
+  },
+  {
+    "eventId": "evt_2057",
+    "battleType": "野战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [
+      {
+        "name": "普罗夫迪夫",
+        "lat": 42.14,
+        "lng": 24.74
+      },
+      {
+        "name": "索非亚",
+        "lat": 42.7,
+        "lng": 23.32
+      }
+    ],
+    "source": "阿什克帕夏扎德《奥斯曼史》；杜卡斯《拜占庭史》：奥斯曼苏丹穆拉德一世与王子巴耶济德自埃迪尔内统军西进，经菲利波波利斯、伊赫蒂曼与韦尔布日德直入科索沃黑鸫原野"
+  },
+  {
+    "eventId": "evt_2059",
+    "battleType": "野战",
+    "fromName": "撒马尔罕",
+    "fromCityId": "city_samaerhan",
+    "route": [
+      {
+        "name": "柘折城",
+        "lat": 41.3,
+        "lng": 69.3
+      },
+      {
+        "name": "讹答剌",
+        "lat": 42.29,
+        "lng": 69.57
+      },
+      {
+        "name": "奥伦堡",
+        "lat": 51.77,
+        "lng": 55.1
+      }
+    ],
+    "source": "亚兹迪《武功记》《卡尔萨克帕伊石碑铭文》：帖木儿自撒马尔罕经塔什干、讹答剌北穿钦察荒原，越乌拉尔河即亚伊克河西进至伏尔加河东岸昆都尔察河大败脱脱迷失汗"
+  },
+  {
+    "eventId": "evt_2060",
+    "battleType": "关隘战",
+    "fromName": "布尔萨",
+    "fromCityId": "city_buersa",
+    "route": [
+      {
+        "name": "安卡拉",
+        "lat": 39.93,
+        "lng": 32.85
+      },
+      {
+        "name": "哈图沙",
+        "lat": 40.02,
+        "lng": 34.61
+      }
+    ],
+    "source": "阿斯塔拉巴迪《布尔汉丁战史》；阿什克帕夏扎德《奥斯曼史》：奥斯曼王子埃尔图鲁尔奉巴耶济德一世命自比提尼亚经安卡拉东北进军乔鲁姆，于克尔克迪利姆峡谷遭布尔汉丁伏击阵亡"
+  },
+  {
+    "eventId": "evt_2061",
+    "battleType": "攻城战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [
+      {
+        "name": "塞乌托波利",
+        "lat": 42.62,
+        "lng": 25.31
+      }
+    ],
+    "source": "察姆布拉克《欧西米乌斯颂词》；阿什克帕夏扎德《奥斯曼史》：奥斯曼苏丹巴耶济德一世遣长子苏莱曼自埃迪尔内北越巴尔干山脉，重兵合围攻陷保加利亚都城特尔诺沃"
+  },
+  {
+    "eventId": "evt_2062",
+    "battleType": "野战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [
+      {
+        "name": "特尔诺沃",
+        "lat": 43.08,
+        "lng": 25.65
+      }
+    ],
+    "source": "《瓦拉几亚编年史》；哈尔科孔迪莱斯《史书》：奥斯曼苏丹巴耶济德一世统军自埃迪尔内北越巴尔干山，自尼科波利斯渡多瑙河北侵瓦拉几亚，深入阿尔杰什河谷遭老米尔恰阻击"
+  },
+  {
+    "eventId": "evt_2063",
+    "battleType": "野战",
+    "fromName": "大不里士",
+    "fromCityId": "city_dabulishi",
+    "route": [
+      {
+        "name": "打耳班",
+        "lat": 42.06,
+        "lng": 48.3
+      },
+      {
+        "name": "谢缅杰尔",
+        "lat": 43.0,
+        "lng": 47.4
+      }
+    ],
+    "source": "亚兹迪《武功记》；尼扎姆丁·沙米《胜利之书》：帖木儿自阿塞拜疆北越希尔凡与打耳班铁门关，经达吉斯坦追击至北高加索帖列克河畔，彻底击溃金帐可汗脱脱迷失"
+  },
+  {
+    "eventId": "evt_2064",
+    "battleType": "野战",
+    "fromName": "布达佩斯",
+    "fromCityId": "city_budapeisi",
+    "route": [
+      {
+        "name": "塞格德",
+        "lat": 46.25,
+        "lng": 20.15
+      },
+      {
+        "name": "巴巴维达",
+        "lat": 43.99,
+        "lng": 22.89
+      }
+    ],
+    "source": "弗鲁瓦萨尔《编年史》；席尔特贝格尔《回忆录》：匈牙利国王西吉斯蒙德与勃艮第无畏的约翰于布达会师，顺多瑙河南下攻克维丁与拉霍瓦，进围保加利亚重镇尼科波利斯"
+  },
+  {
+    "eventId": "evt_2065",
+    "battleType": "野战",
+    "fromName": "布尔萨",
+    "fromCityId": "city_buersa",
+    "route": [
+      {
+        "name": "瑟于特",
+        "lat": 40.03,
+        "lng": 30.18
+      }
+    ],
+    "source": "阿什克帕夏扎德《奥斯曼史》；内什里《世界之镜》：巴耶济德一世自欧洲渡海返布尔萨，率奥斯曼主力经埃斯基谢希尔东南疾进科尼亚阿克恰伊平原，击灭卡拉曼侯国君主阿拉丁·阿里"
+  },
+  {
+    "eventId": "evt_2066",
+    "battleType": "攻城战",
+    "fromName": "撒马尔罕",
+    "fromCityId": "city_samaerhan",
+    "route": [
+      {
+        "name": "喀布尔",
+        "lat": 34.55,
+        "lng": 69.2
+      },
+      {
+        "name": "马里斯",
+        "lat": 30.2,
+        "lng": 71.47
+      },
+      {
+        "name": "费罗兹普尔",
+        "lat": 30.93,
+        "lng": 74.61
+      }
+    ],
+    "source": "亚兹迪《武功记》《帖木儿自传制度集》：帖木儿自撒马尔罕南越兴都库什山至喀布尔，渡印度河会合木尔坦偏师，经旁遮普直扑德里并以火驼破象攻陷德里城"
+  },
+  {
+    "eventId": "evt_2067",
+    "battleType": "野战",
+    "fromName": "萨莱",
+    "fromCityId": "city_salai",
+    "route": [],
+    "source": "《尼康编年史》；扬·德乌戈什《波兰史》：白帐与诺盖权臣埃迪古会合帖木儿忽都鲁汗自伏尔加河下游萨莱西驰第聂伯河左岸，于沃尔斯克拉河设伏重创立陶宛大公维陶塔斯联军"
+  },
+  {
+    "eventId": "evt_2072",
+    "battleType": "野战",
+    "fromName": "第比利斯",
+    "fromCityId": "city_dibilisi",
+    "route": [
+      {
+        "name": "埃尔祖鲁姆",
+        "lat": 39.9,
+        "lng": 41.27
+      },
+      {
+        "name": "埃尔津詹",
+        "lat": 39.75,
+        "lng": 39.49
+      },
+      {
+        "name": "锡瓦斯",
+        "lat": 39.75,
+        "lng": 37.02
+      },
+      {
+        "name": "凯撒利亚马扎卡",
+        "lat": 38.72,
+        "lng": 35.48
+      }
+    ],
+    "source": "亚兹迪《武功记》；杜卡斯《拜占庭史》：帖木儿自卡拉巴赫与外高加索西入安纳托利亚，经埃尔祖鲁姆、埃尔津詹、锡瓦斯与开塞利迂回包抄安卡拉，于楚布克平原生擒巴耶济德一世"
+  },
+  {
+    "eventId": "evt_2073",
+    "battleType": "野战",
+    "fromName": "卡莱尔",
+    "fromCityId": "city_carlisle",
+    "route": [
+      {
+        "name": "哈瓦登",
+        "lat": 53.18,
+        "lng": -3.03
+      }
+    ],
+    "source": "托马斯·沃尔辛厄姆《圣奥尔本斯编年史》：珀西家族世子亨利·珀西自英格兰北境南下切斯特募兵，南趋什鲁斯伯里企图会合威尔士军，于城北遭亨利四世截击阵亡"
+  },
+  {
+    "eventId": "evt_2074",
+    "battleType": "水战",
+    "fromName": "坎佩尔",
+    "fromCityId": "city_kanpeier",
+    "route": [],
+    "source": "《圣德尼修士编年史》：布列塔尼骑士纪尧姆·迪·沙泰尔率法兰西远征船队自布列塔尼横渡英吉利海峡，抢滩登陆德文郡达特茅斯布莱克浦海滩"
+  },
+  {
+    "eventId": "evt_2075",
+    "battleType": "野战",
+    "fromName": "布伊尔斯",
+    "fromCityId": "city_buyiersi",
+    "route": [],
+    "source": "《亚当·厄斯克编年史》：威尔士亲王欧文·格林多长子格鲁菲兹统威尔士义军自中威尔士山地南下蒙茅斯郡，进攻厄斯克城郊普尔梅林"
+  },
+  {
+    "eventId": "evt_2076",
+    "battleType": "野战",
+    "fromName": "格拉纳达",
+    "fromCityId": "city_granada",
+    "route": [],
+    "source": "《胡安二世编年史》：格拉纳达苏丹穆罕默德七世遣摩尔精兵自格拉纳达北越山脉袭掠哈恩东境，于乌韦达科列哈雷斯谷地与卡斯蒂利亚军激战"
+  },
+  {
+    "eventId": "evt_2078",
+    "battleType": "野战",
+    "fromName": "里尔",
+    "fromCityId": "city_lier",
+    "route": [
+      {
+        "name": "布鲁塞尔",
+        "lat": 50.85,
+        "lng": 4.35
+      }
+    ],
+    "source": "《蒙斯特雷莱编年史》：勃艮第公爵无畏的约翰自佛兰德里尔率军经埃诺与布拉班特东驰，于列日近郊奥泰原野全歼列日市民起义军"
+  },
+  {
+    "eventId": "evt_2082",
+    "battleType": "野战",
+    "fromName": "因弗内斯",
+    "fromCityId": "city_yinfeineisi",
+    "route": [],
+    "source": "鲍尔《苏格兰编年史》：苏格兰群岛领主唐纳德率高地氏族军占领因弗内斯后，东进阿伯丁郡因弗鲁里哈劳原野与马尔伯爵血战"
+  },
+  {
+    "eventId": "evt_2083",
+    "battleType": "野战",
+    "fromName": "布达佩斯",
+    "fromCityId": "city_budapeisi",
+    "route": [
+      {
+        "name": "格拉代茨",
+        "lat": 45.81,
+        "lng": 15.97
+      },
+      {
+        "name": "阿奎莱亚",
+        "lat": 45.77,
+        "lng": 13.37
+      }
+    ],
+    "source": "马里诺·萨努托《威尼斯人传记》：匈牙利统帅皮波·斯帕诺奉西吉斯蒙德命自匈牙利经萨格勒布即格拉代茨与弗留利乌迪内西进，渡利文扎河突袭威尼斯莫塔大营"
+  },
+  {
+    "eventId": "evt_2084",
+    "battleType": "野战",
+    "fromName": "布尔萨",
+    "fromCityId": "city_buersa",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      }
+    ],
+    "source": "阿什克帕夏扎德《奥斯曼王室史》：穆罕默德一世自布尔萨在东罗马舰船协助下渡博斯普鲁斯海峡，经埃迪尔内与索非亚南郊查穆尔卢平原击败穆萨·切莱比，重一统奥斯曼帝国"
+  },
+  {
+    "eventId": "evt_2087",
+    "battleType": "水战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      },
+      {
+        "name": "卡里斯托斯",
+        "lat": 38.01,
+        "lng": 24.42
+      },
+      {
+        "name": "特洛伊",
+        "lat": 39.96,
+        "lng": 26.24
+      }
+    ],
+    "source": "萨努托《威尼斯编年史》；杜卡斯《拜占庭史》：威尼斯舰队总提督彼得罗·洛雷丹自威尼斯经科孚、内格罗蓬特与特内多斯驶入达达尼尔海峡，于加里波利港外全歼奥斯曼舰队"
+  },
+  {
+    "eventId": "evt_2090",
+    "battleType": "水战",
+    "fromName": "金海",
+    "fromCityId": "city_gimhae",
+    "route": [],
+    "source": "《朝鲜王朝实录·世宗实录》：朝鲜三军都体察使李从茂统两百余艘战船自庆尚道巨济岛与金海马山浦扬帆东南渡海，直扑对马岛浅茅湾尾崎浦"
+  },
+  {
+    "eventId": "evt_2091",
+    "battleType": "攻城战",
+    "fromName": "卢吉杜努姆",
+    "fromCityId": "city_lugidunum",
+    "route": [],
+    "source": "劳伦斯·冯·布热佐瓦《胡斯战争编年史》：神圣罗马国王西吉斯蒙德于西里西亚布雷斯劳帝国会议誓师后，统十字军西南越山进围布拉格并强攻东郊维特科夫山"
+  },
+  {
+    "eventId": "evt_2092",
+    "battleType": "野战",
+    "fromName": "布尔诺",
+    "fromCityId": "city_buernuo",
+    "route": [],
+    "source": "劳伦斯·冯·布热佐瓦《胡斯战争编年史》：西吉斯蒙德统神圣罗马与匈牙利十字军自摩拉维亚布尔诺及伊赫拉瓦西北进逼波西米亚银矿重镇库特纳霍拉，与扬·杰式卡战车阵交锋"
+  },
+  {
+    "eventId": "evt_2094",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "蒙特罗",
+        "lat": 48.39,
+        "lng": 2.95
+      }
+    ],
+    "source": "《瓦夫兰编年史》《蒙斯特雷莱编年史》：英军索尔兹伯里伯爵托马斯·蒙塔古自巴黎与香槟南下，会合勃艮第军驰援约讷河畔克拉旺，隔河击破法苏同盟军"
+  },
+  {
+    "eventId": "evt_2095",
+    "battleType": "野战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [
+      {
+        "name": "沙特尔",
+        "lat": 48.45,
+        "lng": 1.49
+      }
+    ],
+    "source": "《布尔茹瓦巴黎日记》《瓦夫兰编年史》：阿朗松公爵与苏格兰道格拉斯伯爵统法苏同盟军自卢瓦尔河谷图尔北上，经沙特尔西境进入诺曼底韦尔讷伊与贝德福德公爵决战"
+  },
+  {
+    "eventId": "evt_2096",
+    "battleType": "关隘战",
+    "fromName": "米兰",
+    "fromCityId": "city_milan",
+    "route": [],
+    "source": "马基雅维利《佛罗伦萨史》；比昂多《历史》：米兰公国名将圭多·托雷罗与皮奇尼诺自伦巴第东南进兵罗马涅，于拉莫内河谷设伏击毙佛罗伦萨统帅奥多·达·蒙托内"
+  },
+  {
+    "eventId": "evt_2097",
+    "battleType": "野战",
+    "fromName": "昇龙",
+    "fromCityId": "city_shenglong",
+    "route": [],
+    "source": "《大越史记全书·本纪卷十》《明宣宗实录》：明成山侯王通统交趾守军与援兵自东关城即升龙分道西出渡底江，于崒洞与祝洞中黎利义军埋伏大败"
+  },
+  {
+    "eventId": "evt_2098",
+    "battleType": "关隘战",
+    "fromName": "昇龙",
+    "fromCityId": "city_shenglong",
+    "route": [],
+    "source": "《大越史记全书·本纪卷十》《蓝山实录》：蓝山起义统帅黎利自东关城外围分遣黎察、刘仁澍北上攻拔昌江城，并于谅山南支棱关隘设伏全歼明安远侯柳升援军"
+  },
+  {
+    "eventId": "evt_2099",
+    "battleType": "攻城战",
+    "fromName": "布达佩斯",
+    "fromCityId": "city_budapeisi",
+    "route": [
+      {
+        "name": "塞格德",
+        "lat": 46.25,
+        "lng": 20.15
+      },
+      {
+        "name": "贝尔格莱德",
+        "lat": 44.78,
+        "lng": 20.45
+      }
+    ],
+    "source": "扬·德乌戈什《波兰编年史》：匈牙利国王西吉斯蒙德自布达统军顺多瑙河南下，经贝尔格莱德东进水陆围攻塞尔维亚多瑙河峡谷哥鲁巴茨要塞"
+  },
+  {
+    "eventId": "evt_2100",
+    "battleType": "攻城战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [],
+    "source": "《奥尔良围城日志》《少女编年史》：圣女贞德奉王储查理命自希农赴布卢瓦集结粮队与援军，沿卢瓦尔河南岸东进突入奥尔良并攻拔托雷勒堡解围"
+  },
+  {
+    "eventId": "evt_2101",
+    "battleType": "攻城战",
+    "fromName": "里尔",
+    "fromCityId": "city_lier",
+    "route": [],
+    "source": "《蒙斯特雷莱编年史》：勃艮第公爵好人菲利普会合卢森堡的约翰自佛兰德与阿图瓦南下皮卡第，渡瓦兹河合围贡比涅并于城门外俘获出击的贞德"
+  },
+  {
+    "eventId": "evt_2103",
+    "battleType": "野战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "维罗纳",
+        "lat": 45.43,
+        "lng": 10.99
+      }
+    ],
+    "source": "萨努托《威尼斯共和国史》：威尼斯共和国督军乔治·科尔纳罗率军自威尼托经贝尔加莫翻越圣马可山口北入瓦尔泰利纳河谷，于德莱比奥遭米兰名将皮奇尼诺击溃"
+  },
+  {
+    "eventId": "evt_2104",
+    "battleType": "野战",
+    "fromName": "平壤",
+    "fromCityId": "city_pyongyang",
+    "route": [
+      {
+        "name": "息谷",
+        "lat": 39.62,
+        "lng": 125.66
+      }
+    ],
+    "source": "《朝鲜王朝实录·世宗实录》：朝鲜平安道都节制使崔润德自平壤、安州北集江界，分兵七道北渡鸭绿江奇袭婆猪江建州女真李满住诸寨"
+  },
+  {
+    "eventId": "evt_2105",
+    "battleType": "野战",
+    "fromName": "布拉格",
+    "fromCityId": "city_bulage",
+    "route": [],
+    "source": "帕拉茨基《波西米亚史》；皮科洛米尼《波西米亚史》：圣杯派温和贵族与天主教同盟军攻占布拉格新城区后，由博雷克统率东出迎战大普罗科普，于利帕尼高地诱敌出战车阵歼灭之"
+  },
+  {
+    "eventId": "evt_2106",
+    "battleType": "水战",
+    "fromName": "巴勒莫",
+    "fromCityId": "city_palermo",
+    "route": [
+      {
+        "name": "那不勒斯",
+        "lat": 40.85,
+        "lng": 14.26
+      }
+    ],
+    "source": "乔尔乔·斯泰拉《热那亚年鉴》：阿拉贡国王阿方索五世自西西里率海陆大军北围加埃塔，亲率舰队自加埃塔外海迎击热那亚提督阿塞雷托，于蓬扎岛海战战败被俘"
+  },
+  {
+    "eventId": "evt_2107",
+    "battleType": "攻城战",
+    "fromName": "博韦",
+    "fromCityId": "city_beauvais",
+    "route": [],
+    "source": "让·沙尔捷《查理七世编年史》：法兰西王室元帅理察蒙会合勃艮第军自法兰西岛北境与蓬图瓦兹南下，由圣雅克门里应外合收复王都巴黎"
+  },
+  {
+    "eventId": "evt_2108",
+    "battleType": "攻城战",
+    "fromName": "里斯本",
+    "fromCityId": "city_lisiben",
+    "route": [],
+    "source": "鲁伊·德·皮纳《杜阿尔特一世编年史》：葡萄牙航海家恩里克王子自里斯本扬帆抵北非休达，违令由陆路孤军西扑丹吉尔城下，遭马林苏丹国大军合围迫降"
+  },
+  {
+    "eventId": "evt_2109",
+    "battleType": "攻城战",
+    "fromName": "安达瓦伊拉斯",
+    "fromCityId": "city_andahuaylas",
+    "route": [],
+    "source": "加西拉索·德·拉·维加《印加王室述评》：昌卡部族联盟统帅阿斯塔瓦兰卡自安达瓦伊拉斯率军东越阿普里马克河，直逼印加都城库斯科"
+  },
+  {
+    "eventId": "evt_2110",
+    "battleType": "攻城战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [
+      {
+        "name": "索非亚",
+        "lat": 42.7,
+        "lng": 23.32
+      },
+      {
+        "name": "尼什",
+        "lat": 43.32,
+        "lng": 21.9
+      }
+    ],
+    "source": "阿什克帕夏扎德《奥斯曼帝国史》；杜卡斯《拜占庭史》：奥斯曼苏丹穆拉德二世亲率水陆大军自埃迪尔内经索非亚、尼什沿摩拉瓦河北上，合围攻克多瑙河畔塞尔维亚都城斯梅代雷沃"
+  },
+  {
+    "eventId": "evt_2111",
+    "battleType": "野战",
+    "fromName": "米兰",
+    "fromCityId": "city_milan",
+    "route": [
+      {
+        "name": "拉文纳",
+        "lat": 44.41,
+        "lng": 12.2
+      }
+    ],
+    "source": "马基雅维利《佛罗伦萨史》：米兰公国统帅尼科洛·皮奇尼诺率军自伦巴第经罗马涅翻越亚平宁山脉南入上台伯河谷，自圣塞波尔克罗强攻安吉亚里石桥战败"
+  },
+  {
+    "eventId": "evt_2113",
+    "battleType": "关隘战",
+    "fromName": "巴巴维达",
+    "fromCityId": "city_baba_vida",
+    "route": [],
+    "source": "图罗齐《匈牙利人编年史》：奥斯曼维丁桑贾克贝伊梅齐德率军自多瑙河维丁渡河，经瓦拉几亚北越喀尔巴阡山入侵特兰西瓦尼亚，于铁门关遭匈雅提·亚诺什歼灭"
+  },
+  {
+    "eventId": "evt_2117",
+    "battleType": "关隘战",
+    "fromName": "埃迪尔内",
+    "fromCityId": "city_aidiernei",
+    "route": [
+      {
+        "name": "斯科普里",
+        "lat": 41.99,
+        "lng": 21.43
+      }
+    ],
+    "source": "马林·巴尔莱蒂《斯坎德培功业史》：奥斯曼将领费鲁兹帕夏奉穆拉德二世命自鲁米利亚经斯科普里与普里兹伦西越莫克拉山脉，中斯坎德培埋伏覆没"
+  },
+  {
+    "eventId": "evt_2118",
+    "battleType": "野战",
+    "fromName": "迪拉基乌姆",
+    "fromCityId": "city_dyrrachium",
+    "route": [],
+    "source": "马林·巴尔莱蒂《斯坎德培功业史》：莱什同盟统帅斯坎德培自克鲁亚山地东出上迪布拉，突袭攻破奥斯曼统领穆斯塔法贝伊驻扎的奥托内特设防军营"
+  },
+  {
+    "eventId": "evt_2119",
+    "battleType": "攻城战",
+    "fromName": "迪拉基乌姆",
+    "fromCityId": "city_dyrrachium",
+    "route": [],
+    "source": "马林·巴尔莱蒂《斯坎德培功业史》：斯坎德培统阿尔巴尼亚莱什同盟军自克鲁亚北上德林河畔，围攻威尼斯共和国抢占的达努姆要塞"
+  },
+  {
+    "eventId": "evt_2124",
+    "battleType": "野战",
+    "fromName": "雷恩",
+    "fromCityId": "city_rennes",
+    "route": [],
+    "source": "让·沙尔捷《查理七世编年史》：法兰西王室元帅理察蒙自布列塔尼与库唐斯兼程北上，会合克莱蒙伯爵于福尔米尼原野合围全歼英将基里尔远征军"
+  },
+  {
+    "eventId": "evt_2125",
+    "battleType": "攻城战",
+    "fromName": "波尔多",
+    "fromCityId": "city_bordeaux",
+    "route": [],
+    "source": "让·沙尔捷《查理七世编年史》：法军统帅迪努瓦伯爵与炮兵总监让·彼罗收复波尔多后，挥师南下加斯科涅水陆合围迫降英军最后的堡垒巴约讷"
+  },
+  {
+    "eventId": "evt_2126",
+    "battleType": "野战",
+    "fromName": "格拉纳达",
+    "fromCityId": "city_granada",
+    "route": [],
+    "source": "《胡安二世编年史》：格拉纳达名将阿卜杜勒·马利克统摩尔精骑自格拉纳达与巴萨东出袭掠穆尔西亚，返程至洛尔卡近郊阿尔波乔内斯遭卡斯蒂利亚军截击败亡"
+  },
+  {
+    "eventId": "evt_2128",
+    "battleType": "野战",
+    "fromName": "波尔多",
+    "fromCityId": "city_bordeaux",
+    "route": [],
+    "source": "让·沙尔捷《查理七世编年史》：英格兰老帅什鲁斯伯里伯爵约翰·塔尔博特自波尔多率军东驰多尔多涅河畔救援卡斯蒂永，强攻让·彼罗火炮营垒中弹阵亡"
+  },
+  {
+    "eventId": "evt_2129",
+    "battleType": "野战",
+    "fromName": "什切青",
+    "fromCityId": "city_shiqieqing",
+    "route": [],
+    "source": "扬·德乌戈什《波兰编年史》：条顿骑士团雇佣军统帅顺堡率日耳曼与波西米亚雇佣兵自新马尔克东援霍伊尼采，大破波兰国王卡齐米日四世贵族大军"
+  },
+  {
+    "eventId": "evt_2130",
+    "battleType": "攻城战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [],
+    "source": "《克罗伊兰编年史》：约克公爵理查会合索尔兹伯里伯爵与沃里克伯爵自北方领地率军南下伦敦方向，于圣奥尔本斯街市突袭攻破亨利六世与萨默塞特公爵王军"
+  },
+  {
+    "eventId": "evt_2132",
+    "battleType": "攻城战",
+    "fromName": "白老",
+    "fromCityId": "city_bailao",
+    "route": [],
+    "source": "松前家史《新罗之记录》：虾夷地东部阿伊努部族首领胡奢魔犬即柯沙玛因自胆振与日高沿岸举兵西进，连拔渡岛半岛志苔馆等和人十座馆城"
+  },
+  {
+    "eventId": "evt_2134",
+    "battleType": "野战",
+    "fromName": "牛津",
+    "fromCityId": "city_oxford",
+    "route": [],
+    "source": "《英格兰编年史》《格雷戈里编年史》：兰开斯特派奥德利男爵奉玛格丽特王后命自米德兰兹考文垂与埃克尔绍尔西北进军，于布洛希思荒原设伏拦截索尔兹伯里伯爵战败阵亡"
+  },
+  {
+    "eventId": "evt_2135",
+    "battleType": "野战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [],
+    "source": "爱德华·霍尔《霍尔编年史》：兰开斯特派萨默塞特公爵与克利福德勋爵于约克郡集结大军，南逼韦克菲尔德桑德尔城堡诱出并阵斩约克公爵理查"
+  },
+  {
+    "eventId": "evt_2136",
+    "battleType": "野战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "牛津",
+        "lat": 51.75,
+        "lng": -1.25
+      }
+    ],
+    "source": "《克罗伊兰编年史》；霍尔《编年史》：新加冕的约克派英王爱德华四世偕沃里克伯爵自伦敦北上，渡艾尔河于暴风雪中在陶顿高地歼灭兰开斯特主力"
+  },
+  {
+    "eventId": "evt_2137",
+    "battleType": "野战",
+    "fromName": "库尔泰亚",
+    "fromCityId": "city_agesi",
+    "route": [],
+    "source": "哈尔科孔迪莱斯《希腊史》；杜卡斯《拜占庭史》：瓦拉几亚大公穿刺公弗拉德三世自喀尔巴阡山南麓库尔泰亚德阿尔杰什潜师南下，乘夜突袭驻扎特尔戈维什泰郊外的奥斯曼苏丹穆罕默德二世大营"
+  },
+  {
+    "eventId": "evt_2139",
+    "battleType": "野战",
+    "fromName": "约克",
+    "fromCityId": "city_york",
+    "route": [],
+    "source": "《英格兰编年史》《格雷戈里编年史》：约克派北方统帅蒙塔古勋爵约翰·内维尔自约克与纽卡斯尔西进泰恩河谷，于赫克瑟姆南岸合围歼灭兰开斯特派萨默塞特公爵残部"
+  },
+  {
+    "eventId": "evt_2142",
+    "battleType": "攻城战",
+    "fromName": "姬路城",
+    "fromCityId": "city_himeji",
+    "route": [
+      {
+        "name": "大阪",
+        "lat": 34.69,
+        "lng": 135.53
+      }
+    ],
+    "source": "《应仁记》：西军总帅山名宗全纠合但马、播磨及西国诸大名兵马入驻京都西阵，东攻相国寺与上御灵社细川胜元东军"
+  },
+  {
+    "eventId": "evt_2146",
+    "battleType": "野战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "牛津",
+        "lat": 51.75,
+        "lng": -1.25
+      }
+    ],
+    "source": "《爱德华四世复辟记》《克罗伊兰编年史》：英王爱德华四世自伦敦与温莎急行军西进科茨沃尔德，于塞文河渡口蒂克斯伯里截住玛格丽特王后大军并将其全歼"
+  },
+  {
+    "eventId": "evt_2149",
+    "battleType": "野战",
+    "fromName": "巴塞尔",
+    "fromCityId": "city_basaier",
+    "route": [],
+    "source": "希林《伯尔尼编年史》：瑞士旧邦联与上莱茵低地同盟联军自伯尔尼、巴塞尔西越汝拉山进围上勃艮第埃里库尔，并击溃来援的勃艮第罗蒙伯爵"
+  },
+  {
+    "eventId": "evt_2151",
+    "battleType": "野战",
+    "fromName": "巴塞尔",
+    "fromCityId": "city_basaier",
+    "route": [],
+    "source": "希林《伯尔尼编年史》；科米纳《回忆录》：瑞士各邦联与洛林公爵勒内二世自伯尔尼及巴塞尔冒雨西驰莫拉特湖畔，突袭摧毁大胆查理的勃艮第围城大营"
+  },
+  {
+    "eventId": "evt_2152",
+    "battleType": "野战",
+    "fromName": "巴塞尔",
+    "fromCityId": "city_basaier",
+    "route": [
+      {
+        "name": "斯特拉斯堡",
+        "lat": 48.57,
+        "lng": 7.75
+      }
+    ],
+    "source": "菲利普·德·科米纳《回忆录》：洛林公爵勒内二世率瑞士雇佣长矛兵与阿尔萨斯同盟军自巴塞尔经塞莱斯塔、圣尼古拉德波尔冒雪北上，于南锡城外全歼大胆查理"
+  },
+  {
+    "eventId": "evt_2155",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "米利都",
+        "lat": 37.53,
+        "lng": 27.28
+      },
+      {
+        "name": "哈利卡纳苏斯",
+        "lat": 37.03,
+        "lng": 27.43
+      }
+    ],
+    "source": "威廉·考尔辛《罗得岛围城记》：奥斯曼帕夏梅西赫奉穆罕默德二世命统舰队与攻城大军自伊斯坦布尔出加里波利，沿小亚细亚西岸至马尔马里斯集结后渡海强攻罗得岛"
+  },
+  {
+    "eventId": "evt_2156",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [],
+    "source": "阿什克帕夏扎德《奥斯曼帝国史》；萨阿德丁《王冠史》：奥斯曼苏丹巴耶济德二世在君士坦丁堡即位后，统加尼沙里近卫军渡博斯普鲁斯海峡南下比提尼亚，于布尔萨东郊耶尼谢希尔平原击败幼弟杰姆苏丹"
+  },
+  {
+    "eventId": "evt_2157",
+    "battleType": "野战",
+    "fromName": "那不勒斯",
+    "fromCityId": "city_naples",
+    "route": [],
+    "source": "圭恰迪尼《意大利史》；马基雅维利《佛罗伦萨史》：那不勒斯王储卡拉布里亚公爵阿方索率军自那不勒斯北上拉齐奥进逼罗马，于韦莱特里近郊坎波莫尔托沼泽遭教廷统帅罗伯托·马拉泰斯塔击溃"
+  },
+  {
+    "eventId": "evt_2158",
+    "battleType": "野战",
+    "fromName": "萨拉热窝",
+    "fromCityId": "city_sarajevo",
+    "route": [
+      {
+        "name": "克柳奇",
+        "lat": 44.53,
+        "lng": 16.78
+      }
+    ],
+    "source": "图罗齐《克罗地亚编年史》：奥斯曼波斯尼亚桑贾克骑兵自波斯尼亚经克柳奇西北深入卡尼奥拉与克罗地亚劫掠，返程渡乌纳河时遭克罗地亚总督马蒂亚·格雷布截击歼灭"
+  },
+  {
+    "eventId": "evt_2159",
+    "battleType": "野战",
+    "fromName": "坎普堡",
+    "fromCityId": "city_kamba",
+    "route": [],
+    "source": "博菲尼《匈牙利人编年史》：神圣罗马帝国统帅汉斯·冯·普赫海姆于下奥地利多瑙河北岸集结解围军，自克雷姆斯与坎普谷东进驰援科尔新堡，于莱策斯多夫原野遭匈牙利黑军击溃"
+  },
+  {
+    "eventId": "evt_2160",
+    "battleType": "野战",
+    "fromName": "布伊尔斯",
+    "fromCityId": "city_buyiersi",
+    "route": [],
+    "source": "《克罗伊兰编年史》；波利多尔·维吉尔《英国史》：都铎伯爵亨利自威尔士米尔福德港登陆，经中威尔士与什鲁斯伯里东进莱斯特郡，于博斯沃思原野击毙英王理查三世开创都铎王朝"
+  },
+  {
+    "eventId": "evt_2161",
+    "battleType": "攻城战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [],
+    "source": "普尔加《天主教双王编年史》：卡斯蒂利亚与阿拉贡国王斐迪南二世于科尔多瓦集结大军与重型火炮，南下赫尼尔河谷合围并攻克格拉纳达西部门户洛哈山城"
+  },
+  {
+    "eventId": "evt_2162",
+    "battleType": "野战",
+    "fromName": "都柏林",
+    "fromCityId": "city_dublin",
+    "route": [
+      {
+        "name": "约克",
+        "lat": 53.95,
+        "lng": -1.08
+      }
+    ],
+    "source": "波利多尔·维吉尔《英格兰历史》：约克派林肯伯爵约翰·德·拉·波尔偕日耳曼雇佣兵统帅施瓦茨自都柏林渡海登陆兰开夏，翻越奔宁山脉经约克郡南下诺丁汉郡东斯托克，与亨利七世决战"
+  },
+  {
+    "eventId": "evt_2163",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "沙特尔",
+        "lat": 48.45,
+        "lng": 1.49
+      }
+    ],
+    "source": "雅克·德·马耶《查理八世史》：法兰西统帅拉特雷穆瓦耶奉摄政博热的安妮命自巴黎西进，经沙特尔与安茹攻入布列塔尼东境，于圣欧班迪科尔米耶大败布列塔尼与奥尔良公爵联军"
+  },
+  {
+    "eventId": "evt_2164",
+    "battleType": "攻城战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [
+      {
+        "name": "哈恩",
+        "lat": 37.77,
+        "lng": -3.79
+      }
+    ],
+    "source": "普尔加《天主教双王编年史》：斐迪南二世自科尔多瓦与哈恩统卡斯蒂利亚大军东进安达卢西亚山地，历经六个月围城攻拔格拉纳达东翼重镇巴萨"
+  },
+  {
+    "eventId": "evt_2165",
+    "battleType": "野战",
+    "fromName": "巴卡塔",
+    "fromCityId": "city_bacata",
+    "route": [],
+    "source": "卢卡斯·费尔南德斯·德·皮耶德拉伊塔《新格拉纳达征服通史》：南部穆伊斯卡巴卡塔最高首领萨瓜曼奇卡统五万武士自巴卡塔即波哥大高原北伐洪萨，于乔孔塔河谷决战同归于尽"
+  },
+  {
+    "eventId": "evt_2167",
+    "battleType": "攻城战",
+    "fromName": "科尔多瓦",
+    "fromCityId": "city_cordoba",
+    "route": [],
+    "source": "普尔加《格拉纳达战争史》：天主教双王斐迪南二世与伊莎贝拉一世自科尔多瓦南进格拉纳达平原筑圣菲军城长期围困，迫使末代埃米尔穆罕默德十二世献阿尔罕布拉宫投降"
+  },
+  {
+    "eventId": "evt_2168",
+    "battleType": "野战",
+    "fromName": "萨拉热窝",
+    "fromCityId": "city_sarajevo",
+    "route": [
+      {
+        "name": "克柳奇",
+        "lat": 44.53,
+        "lng": 16.78
+      }
+    ],
+    "source": "图罗齐《克罗地亚史记》；伊斯特万菲《匈牙利史》：奥斯曼波斯尼亚桑贾克贝伊雅库普帕夏率精骑自波斯尼亚西北远掠斯蒂里亚后返经乌德比纳，于克尔巴瓦原野全歼克罗地亚总督德伦钦贵族军"
+  },
+  {
+    "eventId": "evt_2169",
+    "battleType": "关隘战",
+    "fromName": "特尔德",
+    "fromCityId": "city_telde",
+    "route": [],
+    "source": "维埃拉《加那利群岛征服史》：卡斯蒂利亚征服者阿隆索·费尔南德斯·德·卢戈自大加那利岛渡海登陆特内里费岛圣克鲁斯，经拉古纳西进阿森特霍深涧遭关切人伏击惨败"
+  },
+  {
+    "eventId": "evt_2170",
+    "battleType": "野战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "维罗纳",
+        "lat": 45.43,
+        "lng": 10.99
+      }
+    ],
+    "source": "圭恰迪尼《意大利史》；科米纳《回忆录》：威尼斯与神圣同盟统帅曼图亚侯爵弗朗切斯科二世·冈萨加自威尼托与曼图亚南渡波河，进驻帕尔马西南塔罗河谷弗尔诺沃阻截北返法王查理八世"
+  },
+  {
+    "eventId": "evt_2171",
+    "battleType": "攻城战",
+    "fromName": "科森扎",
+    "fromCityId": "city_kesenza",
+    "route": [],
+    "source": "保罗·乔维奥《大队长编年史》；圭恰迪尼《意大利史》：西班牙名将贡萨洛·德·科尔多瓦自卡拉布里亚北上巴西利卡塔，会合威尼斯与那不勒斯盟军合围阿泰拉迫降法军总督蒙庞西耶伯爵"
+  },
+  {
+    "eventId": "evt_2172",
+    "battleType": "野战",
+    "fromName": "利沃夫",
+    "fromCityId": "city_liweifu",
+    "route": [
+      {
+        "name": "加利奇",
+        "lat": 49.12,
+        "lng": 24.72
+      }
+    ],
+    "source": "乌雷凯《摩尔达维亚编年史》；马切伊·梅霍维塔《波兰编年史》：波兰国王扬一世·阿尔布雷赫特统大军自利沃夫经加利奇渡德涅斯特河侵入摩尔达维亚，围苏恰瓦不克北撤途经科斯明森林遭斯特凡三世伏击重创"
+  },
+  {
+    "eventId": "evt_2173",
+    "battleType": "水战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "卡里斯托斯",
+        "lat": 38.01,
+        "lng": 24.42
+      },
+      {
+        "name": "斯巴达",
+        "lat": 37.07,
+        "lng": 22.42
+      }
+    ],
+    "source": "马里诺·萨努托《威尼斯日记》：奥斯曼海军名将凯末尔·雷斯率舰队自君士坦丁堡出达达尼尔海峡，绕摩里亚南端马利亚角西进伊奥尼亚海，于宗基奥海角击破威尼斯提督格里马尼舰队"
+  },
+  {
+    "eventId": "evt_2174",
+    "battleType": "野战",
+    "fromName": "海瑟比",
+    "fromCityId": "city_hedeby",
+    "route": [],
+    "source": "内奥科鲁斯《迪特马申编年史》：丹麦国王汉斯与荷尔斯泰因公爵腓特烈于石勒苏益格荷尔斯泰因集结大军与黑色卫队，西进侵入迪特马申，于海明施泰特长堤遭农兵开闸水淹歼灭"
+  },
+  {
+    "eventId": "evt_2177",
+    "battleType": "野战",
+    "fromName": "那不勒斯",
+    "fromCityId": "city_naples",
+    "route": [],
+    "source": "圭恰迪尼《意大利史》；乔维奥《大队长传》：西班牙大队长贡萨洛·德·科尔多瓦自那不勒斯北上加里利亚诺河南岸与法军对峙，趁冬雨夜在上游秘密架设浮桥渡河奇袭大破萨卢佐侯爵"
+  },
+  {
+    "eventId": "evt_2178",
+    "battleType": "水战",
+    "fromName": "古里",
+    "fromCityId": "city_guli",
+    "route": [],
+    "source": "加斯帕尔·科雷亚《印度传奇》；巴罗斯《亚洲旬年史》：卡利卡特扎莫林王特里穆帕拉统水陆大军自卡利卡特即古里沿马拉巴尔海岸泻湖南下，猛攻葡萄牙名将帕切科·佩雷拉协防的科钦渡口"
+  },
+  {
+    "eventId": "evt_2179",
+    "battleType": "攻城战",
+    "fromName": "基尔瓦",
+    "fromCityId": "city_kilwa",
+    "route": [],
+    "source": "若昂·德·巴罗斯《亚洲旬年史》：葡属印度首任总督弗朗西斯科·德·阿尔梅达统远征舰队自东非基尔瓦港北上，炮击并攻陷斯瓦希里重镇蒙巴萨"
+  },
+  {
+    "eventId": "evt_2180",
+    "battleType": "水战",
+    "fromName": "古里",
+    "fromCityId": "city_guli",
+    "route": [],
+    "source": "费尔南·洛佩斯·德·卡斯塔涅达《印度发现与征服史》：卡利卡特扎莫林王组建两百余艘武装船队自古里北上马拉巴尔海面，于坎纳诺尔港外遭洛伦索·德·阿尔梅达葡萄牙舰队全歼"
+  },
+  {
+    "eventId": "evt_2181",
+    "battleType": "水战",
+    "fromName": "马斯喀特",
+    "fromCityId": "",
+    "route": [],
+    "source": "布拉斯·德·阿尔布克尔克《阿尔布克尔克评传》：葡萄牙名将阿方索·德·阿尔布克尔克自索科特拉岛沿阿曼海岸连克库里亚特、马斯喀特与苏哈尔，北航直入波斯湾咽喉攻占霍尔木兹岛"
+  },
+  {
+    "eventId": "evt_2182",
+    "battleType": "水战",
+    "fromName": "苏伊士",
+    "fromCityId": "city_suez",
+    "route": [
+      {
+        "name": "亚丁",
+        "lat": 12.79,
+        "lng": 45.02
+      },
+      {
+        "name": "索姆纳特",
+        "lat": 20.89,
+        "lng": 70.4
+      }
+    ],
+    "source": "若昂·德·巴罗斯《亚洲旬年史》：埃及马穆鲁克海军统帅胡赛因·库尔迪自苏伊士出红海经亚丁东渡印度第乌，会合古吉拉特水师南下康坎海岸，于乔尔河口击沉洛伦索·阿尔梅达旗舰"
+  },
+  {
+    "eventId": "evt_2183",
+    "battleType": "水战",
+    "fromName": "柯枝",
+    "fromCityId": "city_cochin",
+    "route": [
+      {
+        "name": "古里",
+        "lat": 11.25,
+        "lng": 75.78
+      },
+      {
+        "name": "果阿",
+        "lat": 15.5,
+        "lng": 73.91
+      },
+      {
+        "name": "孟买",
+        "lat": 18.94,
+        "lng": 72.84
+      }
+    ],
+    "source": "卡斯塔涅达《印度发现与征服史》；巴罗斯《亚洲旬年史》：葡属印度总督弗朗西斯科·德·阿尔梅达统舰队自科钦即柯枝北上，经坎纳诺尔、果阿与达布尔直扑古吉拉特第乌海峡，全歼马穆鲁克古吉拉特联合舰队"
+  },
+  {
+    "eventId": "evt_2186",
+    "battleType": "野战",
+    "fromName": "米兰",
+    "fromCityId": "city_milan",
+    "route": [],
+    "source": "圭恰迪尼《意大利史》；忠勇骑士《巴亚尔传》：法兰西统帅内穆尔公爵加斯东·德·富瓦解博洛尼亚之围并克布雷西亚后，自伦巴第挥师东南围攻拉韦纳，于城外龙科河畔击溃神圣同盟联军并阵亡"
+  },
+  {
+    "eventId": "evt_2187",
+    "battleType": "野战",
+    "fromName": "克拉文纳",
+    "fromCityId": "city_clavenna",
+    "route": [],
+    "source": "圭恰迪尼《意大利史》：瑞士旧邦联援军翻越圣哥达与阿尔卑斯山隘星夜驰入皮埃蒙特诺瓦拉，翌晨无炮兵掩护下列方阵出城奇袭，全歼法帅拉特雷穆瓦耶围城大军"
+  },
+  {
+    "eventId": "evt_2188",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "布尔萨",
+        "lat": 40.18,
+        "lng": 29.06
+      },
+      {
+        "name": "安卡拉",
+        "lat": 39.93,
+        "lng": 32.85
+      },
+      {
+        "name": "锡瓦斯",
+        "lat": 39.75,
+        "lng": 37.02
+      },
+      {
+        "name": "埃尔津詹",
+        "lat": 39.75,
+        "lng": 39.49
+      },
+      {
+        "name": "埃尔祖鲁姆",
+        "lat": 39.9,
+        "lng": 41.27
+      }
+    ],
+    "source": "伊德里斯·比特利西《塞利姆书》：奥斯曼苏丹塞利姆一世亲统大军自伊斯坦布尔渡海东征，经布尔萨、锡瓦斯、埃尔津詹与埃尔祖鲁姆深入阿塞拜疆西境，于查尔迪兰平原以火器车阵击溃波斯沙阿伊斯玛仪一世"
+  },
+  {
+    "eventId": "evt_2192",
+    "battleType": "攻城战",
+    "fromName": "休达",
+    "fromCityId": "city_xiuta",
+    "route": [],
+    "source": "桑多瓦尔《查理五世皇帝史》《巴巴里海盗史》：西班牙奥兰总督科马雷斯侯爵率西班牙驻军与马格里布部落盟军自奥兰海港南进内陆，合围特莱姆森王城并追歼奥鲁奇·雷斯"
+  },
+  {
+    "eventId": "evt_2193",
+    "battleType": "水战",
+    "fromName": "庐陵",
+    "fromCityId": "city_luling",
+    "route": [
+      {
+        "name": "豫章",
+        "lat": 28.68,
+        "lng": 115.88
+      }
+    ],
+    "source": "《明武宗实录》《王阳明全集·平濠疏》：南赣巡抚王守仁于吉安即庐陵倡义集兵，北上樟树镇攻克叛藩老巢南昌即豫章，旋挥水师北入鄱阳湖于黄家渡、樵舍火攻生擒宁王朱宸濠"
+  },
+  {
+    "eventId": "evt_2194",
+    "battleType": "野战",
+    "fromName": "特诺奇提特兰",
+    "fromCityId": "city_tenochtitlan",
+    "route": [],
+    "source": "贝尔纳尔·迪亚斯《征服新西班牙信史》；科尔特斯《呈查理五世第二封信》：阿兹特克军事统帅西瓦科瓦特尔自特诺奇蒂特兰调集主力东北疾驰抄截，于奥图巴平原拦阻撤往特拉斯卡拉的科尔特斯残军"
+  },
+  {
+    "eventId": "evt_2197",
+    "battleType": "水战",
+    "fromName": "山口",
+    "fromCityId": "city_yamaguchi",
+    "route": [
+      {
+        "name": "长崎",
+        "lat": 32.76,
+        "lng": 129.88
+      },
+      {
+        "name": "舟山",
+        "lat": 30.02,
+        "lng": 122.11
+      }
+    ],
+    "source": "《明史·日本传》《筹海图编》：日本大内义兴遣正使宗设谦道自周防山口与博多乘遣明船跨东海，经五岛与舟山双屿入泊浙江宁波府，因争贡起事焚掠绍兴宁波夺船出海"
+  },
+  {
+    "eventId": "evt_2198",
+    "battleType": "野战",
+    "fromName": "米兰",
+    "fromCityId": "city_milan",
+    "route": [],
+    "source": "圭恰迪尼《意大利史》《巴亚尔骑士忠勇传》：那不勒斯总督查理·德·朗努瓦、佩斯卡拉侯爵与叛法投帝的波旁公爵自米兰西追撤退法军，于皮埃蒙特塞西亚河畔罗马尼亚诺重创博尼韦并击毙巴亚尔骑士"
+  },
+  {
+    "eventId": "evt_2199",
+    "battleType": "野战",
+    "fromName": "维罗纳",
+    "fromCityId": "city_verona",
+    "route": [
+      {
+        "name": "米兰",
+        "lat": 45.46,
+        "lng": 9.19
+      }
+    ],
+    "source": "圭恰迪尼《意大利史》：帝国统帅佩斯卡拉侯爵、朗努瓦与乔治·冯·弗伦茨贝格于洛迪及米兰南郊集结德西援军，南驰帕维亚夜破米拉贝洛皇家猎苑北墙，大破法军并生擒法王弗朗索瓦一世"
+  },
+  {
+    "eventId": "evt_2202",
+    "battleType": "野战",
+    "fromName": "阿杰梅尔",
+    "fromCityId": "city_ajiemier",
+    "route": [],
+    "source": "巴布尔《巴布尔回忆录》：梅瓦尔大君拉纳·桑加统拉杰普特诸邦与阿富汗联军自奇托尔加尔与拉贾斯坦东进，攻克巴亚纳前哨后进抵阿格拉以西汗瓦原野与巴布尔决战"
+  },
+  {
+    "eventId": "evt_2203",
+    "battleType": "攻城战",
+    "fromName": "米兰",
+    "fromCityId": "city_milan",
+    "route": [
+      {
+        "name": "拉文纳",
+        "lat": 44.41,
+        "lng": 12.2
+      },
+      {
+        "name": "罗马",
+        "lat": 41.9,
+        "lng": 12.49
+      }
+    ],
+    "source": "圭恰迪尼《意大利史》：法兰西元帅洛特雷克统科尼亚克同盟军自伦巴第南下，经博洛尼亚、罗马涅与阿布鲁佐长驱进围那不勒斯城"
+  },
+  {
+    "eventId": "evt_2205",
+    "battleType": "野战",
+    "fromName": "佛罗伦萨",
+    "fromCityId": "city_florence",
+    "route": [],
+    "source": "瓦尔奇《佛罗伦萨史》；圭恰迪尼《意大利史》：围困佛罗伦萨的神圣罗马帝国统帅奥兰治亲王菲利贝尔·德·沙龙自佛罗伦萨围城大营率精兵西北迎截，于皮斯托亚山脉加维纳纳与费鲁奇同归于尽"
+  },
+  {
+    "eventId": "evt_2208",
+    "battleType": "关隘战",
+    "fromName": "利马",
+    "fromCityId": "city_lima",
+    "route": [
+      {
+        "name": "安达瓦伊拉斯",
+        "lat": -13.66,
+        "lng": -73.39
+      }
+    ],
+    "source": "佩德罗·西耶萨·德·莱昂《秘鲁编年史》：西班牙征服者皮萨罗命前锋埃尔南多·德·索托率精骑自豪哈沿安第斯印加王道东南疾进，经维尔卡斯与阿普里马克河攀登维尔卡孔加陡隘"
+  },
+  {
+    "eventId": "evt_2210",
+    "battleType": "攻城战",
+    "fromName": "巴塞罗那",
+    "fromCityId": "city_barcelona",
+    "route": [
+      {
+        "name": "卡利亚里",
+        "lat": 39.22,
+        "lng": 9.12
+      }
+    ],
+    "source": "桑多瓦尔《查理五世皇帝史》：神圣罗马皇帝查理五世与海军名帅安德烈亚·多里亚自巴塞罗那启航，于撒丁岛卡利亚里会合帝国、西葡与骑士团联合舰队，南渡迦太基海面攻克突尼斯"
+  },
+  {
+    "eventId": "evt_2211",
+    "battleType": "攻城战",
+    "fromName": "马丘比丘",
+    "fromCityId": "city_machu_picchu",
+    "route": [],
+    "source": "加西拉索《印加王室述评》；蒂图·库西·尤潘基《印加征服记述》：印加皇帝曼科·印加自库斯科潜赴乌鲁班巴河谷尤卡伊集结十余万印加大军，南返夺占萨克赛瓦曼巨石堡并合围库斯科城"
+  },
+  {
+    "eventId": "evt_2212",
+    "battleType": "关隘战",
+    "fromName": "库斯科",
+    "fromCityId": "city_cusco",
+    "route": [],
+    "source": "西耶萨·德·莱昂《秘鲁编年史》：西班牙统帅埃尔南多·皮萨罗自库斯科率骑步军与印第安仆从军西北进入乌鲁班巴神圣河谷，强攻曼科·印加据守的奥扬泰坦博梯田巨石堡受挫"
+  },
+  {
+    "eventId": "evt_2214",
+    "battleType": "野战",
+    "fromName": "王舍城",
+    "fromCityId": "city_wangshecheng",
+    "route": [],
+    "source": "古尔巴丹·贝居姆《胡马雍传》；阿巴斯·汗《舍尔沙史》：阿富汗苏尔雄主舍尔沙自比哈尔罗赫塔斯堡与巴特那率军西进恒河南岸，于乔萨渡口拂晓突袭击溃莫卧儿皇帝胡马雍"
+  },
+  {
+    "eventId": "evt_2215",
+    "battleType": "野战",
+    "fromName": "华氏城",
+    "fromCityId": "city_huashicheng",
+    "route": [
+      {
+        "name": "瓦拉纳西",
+        "lat": 25.32,
+        "lng": 83.01
+      }
+    ],
+    "source": "阿布·法兹尔《阿克巴书》；阿巴斯·汗《舍尔沙史》：舍尔沙在比哈尔击败胡马雍后沿恒河西进，经瓦拉纳西与焦恩布尔进抵曲女城即卡瑙季，隔河相持后大破莫卧儿军夺占德里"
+  },
+  {
+    "eventId": "evt_2217",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [],
+    "source": "约翰·诺克斯《苏格兰宗教改革史》：苏格兰国王詹姆斯五世集结西路苏军自洛锡安西南下邓弗里斯，由麦克斯韦勋爵与奥利弗·辛克莱率领渡埃斯克河侵入坎布里亚索尔韦沼泽溃败"
+  },
+  {
+    "eventId": "evt_2218",
+    "battleType": "野战",
+    "fromName": "阿克苏姆",
+    "fromCityId": "city_aksum",
+    "route": [
+      {
+        "name": "塞米恩",
+        "lat": 13.3,
+        "lng": 38.2
+      }
+    ],
+    "source": "《格劳德沃斯编年史》；卡斯坦霍索《葡萄牙远征阿比西尼亚记》：埃塞俄比亚皇帝格劳德沃斯自提格雷与塞米恩高原南下，会合葡萄牙火绳枪队进抵塔纳湖东岸瓦伊纳达加，击毙阿达尔伊玛目格拉尼"
+  },
+  {
+    "eventId": "evt_2219",
+    "battleType": "野战",
+    "fromName": "都灵",
+    "fromCityId": "city_turin",
+    "route": [],
+    "source": "布莱兹·德·蒙吕克《蒙吕克战评录》：法兰西皮埃蒙特统帅昂吉安伯爵自都灵与卡里尼亚诺围城营率军南出，于切雷索莱丘陵与帝国名将德尔瓦斯托侯爵决战大胜"
+  },
+  {
+    "eventId": "evt_2220",
+    "battleType": "水战",
+    "fromName": "阿夫勒尔",
+    "fromCityId": "city_harfleur",
+    "route": [],
+    "source": "马丁·迪·贝莱《回忆录》《亨利八世统治编年》：法兰西海军上将克洛德·达讷博统两百余艘战舰自塞纳河口勒阿弗尔即阿夫勒尔启航横渡英吉利海峡，驶入怀特岛北侧索伦特海峡进攻朴茨茅斯"
+  },
+  {
+    "eventId": "evt_2221",
+    "battleType": "野战",
+    "fromName": "箱根关",
+    "fromCityId": "city_hakone",
+    "route": [
+      {
+        "name": "镰仓",
+        "lat": 35.32,
+        "lng": 139.55
+      },
+      {
+        "name": "江户城",
+        "lat": 35.75,
+        "lng": 139.8
+      }
+    ],
+    "source": "三浦净心《北条五代记》：后北条氏家督北条氏康自相模小田原城率八千精兵北上，经武藏府中与三木原星夜驰援河越城，轻装夜袭冲垮八万关东上杉联军"
+  },
+  {
+    "eventId": "evt_2222",
+    "battleType": "野战",
+    "fromName": "雷根斯堡",
+    "fromCityId": "city_leigensibao",
+    "route": [
+      {
+        "name": "卡努尔格",
+        "lat": 50.37,
+        "lng": 13.79
+      }
+    ],
+    "source": "路易斯·德·阿维拉《查理五世德意志战记》：神圣罗马皇帝查理五世与阿尔瓦公爵自多瑙河与上普法尔茨北进埃格尔，穿过厄尔士山脉进入萨克森，于米尔贝格强渡易北河生擒萨克森选侯约翰·腓特烈"
+  },
+  {
+    "eventId": "evt_2224",
+    "battleType": "野战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [],
+    "source": "亚历山大·内维尔《诺福克暴动纪实》：沃里克伯爵约翰·达德利奉爱德华六世枢密院命，统王室重骑与外籍雇佣兵自伦敦经剑桥东北疾进诺福克，夺回诺里奇并于达辛代尔谷地全歼罗伯特·凯特农军"
+  },
+  {
+    "eventId": "evt_2226",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "马耳他",
+        "lat": 35.9,
+        "lng": 14.44
+      }
+    ],
+    "source": "贾科莫·博西奥《马耳他骑士团史》：奥斯曼海军统帅锡南帕夏与德拉古特率舰队自伊斯坦布尔西航，袭扰西西里与戈佐岛并试探马耳他后，南渡北非合围迫降圣约翰骑士团驻守的黎波里"
+  },
+  {
+    "eventId": "evt_2227",
+    "battleType": "攻城战",
+    "fromName": "莫斯科",
+    "fromCityId": "city_mosike",
+    "route": [
+      {
+        "name": "弗拉基米尔",
+        "lat": 56.12,
+        "lng": 40.4
+      },
+      {
+        "name": "下诺城",
+        "lat": 56.32,
+        "lng": 44.0
+      }
+    ],
+    "source": "《喀山历史记》《尼康编年史》：全罗斯沙皇伊凡四世亲统十五万大军与重炮船队自莫斯科经科洛姆纳、穆罗姆、下诺夫哥罗德顺伏尔加河至斯维亚日斯克基地，水陆合围爆破攻克喀山城"
+  },
+  {
+    "eventId": "evt_2229",
+    "battleType": "野战",
+    "fromName": "佛罗伦萨",
+    "fromCityId": "city_florence",
+    "route": [],
+    "source": "加卢齐《托斯卡纳大公国史》；蒙吕克《战评录》：帝国与佛罗伦萨联军统帅马里尼亚诺侯爵自佛罗伦萨南下围困锡耶纳，并东移基亚纳河谷于马尔恰诺干涸溪床重创法锡联军统帅斯特罗齐"
+  },
+  {
+    "eventId": "evt_2231",
+    "battleType": "水战",
+    "fromName": "吉田郡山",
+    "fromCityId": "city_yoshida",
+    "route": [],
+    "source": "香川正矩《阴德太平记》：安艺战国大名毛利元就自居城吉田郡山城率精兵南下佐东银山与草津地御前，乘暴风雨夜渡濑户内海登陆严岛包之浦，翻越博奕尾奇袭全歼陶晴贤大军"
+  },
+  {
+    "eventId": "evt_2233",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [
+      {
+        "name": "里尔",
+        "lat": 50.63,
+        "lng": 3.06
+      }
+    ],
+    "source": "弗朗索瓦·德·拉努《军事与政治回忆录》：西属尼德兰总督萨伏伊公爵埃马努埃莱·菲利贝托自布鲁塞尔集结西英联军，佯攻香槟吉斯后急转西向围攻皮卡第圣康坦，全歼蒙莫朗西解围法军"
+  },
+  {
+    "eventId": "evt_2234",
+    "battleType": "攻城战",
+    "fromName": "莫斯科",
+    "fromCityId": "city_mosike",
+    "route": [
+      {
+        "name": "诺夫哥罗德",
+        "lat": 58.52,
+        "lng": 31.27
+      }
+    ],
+    "source": "《尼康编年史》；巴尔塔萨·鲁索《立窝尼亚省编年史》：沙皇伊凡四世命沙希阿合买与巴斯马诺夫统俄军自莫斯科经诺夫哥罗德与伊万哥罗德进逼纳尔瓦河，趁大火渡河强攻夺占纳尔瓦要塞"
+  },
+  {
+    "eventId": "evt_2235",
+    "battleType": "攻城战",
+    "fromName": "巴士拉",
+    "fromCityId": "city_bashila",
+    "route": [],
+    "source": "迪奥戈·多·库托《亚洲志》《奥斯曼重要事务档册》：奥斯曼拉赫萨总督穆斯塔法帕夏自波斯湾西岸卡提夫乘桨帆船跨海登陆巴林岛，围攻卡拉特要塞遭葡萄牙援军封锁海面迫降"
+  },
+  {
+    "eventId": "evt_2236",
+    "battleType": "野战",
+    "fromName": "宫宿",
+    "fromCityId": "city_atsuta",
+    "route": [],
+    "source": "太田牛一《信长公记》：尾张大名织田信长自清洲城单骑疾驰热田神宫即宫宿集结两千精兵，推进至善照寺砦后借雷雨掩护突袭桶狭间山谷，阵斩今川义元"
+  },
+  {
+    "eventId": "evt_2238",
+    "battleType": "野战",
+    "fromName": "春日山",
+    "fromCityId": "city_kasugayama",
+    "route": [],
+    "source": "高坂昌信《甲阳军鉴》《上杉家御年谱》：越后上杉谦信统万余北陆军自春日山城沿北国街道南下信浓善光寺，渡千曲川抢占妻女山，旋乘夜雾下山渡川于八幡原猛攻武田信玄本阵"
+  },
+  {
+    "eventId": "evt_2239",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [],
+    "source": "阿格里帕·多比涅《世界史》；拉努《军事与政治回忆录》：法国天主教三巨头蒙莫朗西、吉斯公爵与圣安德烈元帅统王室军自巴黎西出追截新教军，于诺曼底南缘厄尔河畔德勒展开会战"
+  },
+  {
+    "eventId": "evt_2241",
+    "battleType": "攻城战",
+    "fromName": "莫斯科",
+    "fromCityId": "city_mosike",
+    "route": [
+      {
+        "name": "斯摩棱斯克",
+        "lat": 54.78,
+        "lng": 32.04
+      },
+      {
+        "name": "维捷布斯克",
+        "lat": 55.19,
+        "lng": 30.2
+      }
+    ],
+    "source": "《立窝尼亚战争俄国军务档案》；斯特里科夫斯基《波兰立陶宛编年史》：沙皇伊凡四世御驾亲征统六万俄军与重炮自莫斯科经莫扎伊斯克、斯摩棱斯克与大卢基西进，踏冰合围攻陷立陶宛重镇波洛茨克"
+  },
+  {
+    "eventId": "evt_2242",
+    "battleType": "野战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [],
+    "source": "斯特里科夫斯基《波兰立陶宛纪事》：立陶宛大盖特曼米科瓦伊·拉齐维乌自维尔纽斯与明斯克星夜东驰查什尼基，于乌拉河畔乘暮色突袭尚未列阵的俄帅彼得·舒伊斯基大军"
+  },
+  {
+    "eventId": "evt_2243",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "斯巴达",
+        "lat": 37.07,
+        "lng": 22.42
+      }
+    ],
+    "source": "弗朗切斯科·巴尔比《马耳他之围日记》；博西奥《圣约翰骑士团史》：奥斯曼陆海统帅穆斯塔法帕夏与皮亚莱帕夏统近两百艘战舰自伊斯坦布尔出达达尼尔海峡，经摩里亚纳瓦里诺西渡马耳他岛发起大围攻"
+  },
+  {
+    "eventId": "evt_2244",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "索非亚",
+        "lat": 42.7,
+        "lng": 23.32
+      },
+      {
+        "name": "尼什",
+        "lat": 43.32,
+        "lng": 21.9
+      },
+      {
+        "name": "贝尔格莱德",
+        "lat": 44.78,
+        "lng": 20.45
+      }
+    ],
+    "source": "契尔恩科《锡盖特堡陷落记》；塞拉尼基《编年史》：奥斯曼苏丹苏莱曼一世偕大维齐尔索库鲁自伊斯坦布尔经埃迪尔内、索非亚、贝尔格莱德渡德拉瓦河北上，重兵合围匈牙利西南要塞锡盖特堡"
+  },
+  {
+    "eventId": "evt_2245",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [],
+    "source": "拉努《军事与政治回忆录》；德·图《本时代史》：法国王室大元帅安娜·德·蒙莫朗西率天主教王军自巴黎城门北出，向盘踞圣但尼平原切断巴黎漕粮的孔代亲王胡格诺新教军发起总攻"
+  },
+  {
+    "eventId": "evt_2246",
+    "battleType": "野战",
+    "fromName": "不莱梅",
+    "fromCityId": "city_bremen",
+    "route": [],
+    "source": "范·梅特伦《尼德兰史》；彼得·博尔《尼德兰战争起源与发展》：沉默者威廉之弟路易·冯·拿骚于东弗里斯兰埃姆登募兵，西渡埃姆斯河攻入格罗宁根省，于海利格莱修道院沼泽设伏全歼西军"
+  },
+  {
+    "eventId": "evt_2247",
+    "battleType": "野战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [],
+    "source": "布莱兹·德·蒙吕克《战评录》；拉努《军事与政治回忆录》：法国王储安茹公爵亨利与塔凡纳元帅自卢瓦尔河谷希农南下解普瓦捷之围，追至迪沃河畔蒙孔图尔原野重创科利尼新教军"
+  },
+  {
+    "eventId": "evt_2249",
+    "battleType": "水战",
+    "fromName": "梅西纳",
+    "fromCityId": "city_messina",
+    "route": [
+      {
+        "name": "科孚",
+        "lat": 39.62,
+        "lng": 19.92
+      }
+    ],
+    "source": "威尼斯元老院《勒班陀海战公报》；萨拉萨尔《海战实录》：神圣同盟总司令奥地利的唐·胡安统西、威、教廷联合舰队于西西里墨西拿誓师东航，经科孚岛南下驶入帕特雷湾口，于勒班陀海面全歼奥斯曼舰队"
+  },
+  {
+    "eventId": "evt_2250",
+    "battleType": "水战",
+    "fromName": "加莱",
+    "fromCityId": "city_calais",
+    "route": [],
+    "source": "范·梅特伦《尼德兰史》；格劳秀斯《尼德兰编年史》：海上乞丐领袖吕迈领主威廉·范·德·马克率二十四艘武装船自英格兰多佛尔海峡被驱出港，顺风驶入南荷兰马斯河口突袭占领布里勒城"
+  },
+  {
+    "eventId": "evt_2252",
+    "battleType": "攻城战",
+    "fromName": "阿姆斯特丹",
+    "fromCityId": "city_amsterdam",
+    "route": [],
+    "source": "扬·弗鲁特斯《莱顿被围与解围实录》；格劳秀斯《尼德兰编年史》：西班牙将领弗朗西斯科·德·巴尔德斯自乌得勒支与阿姆斯特丹经海牙进兵南荷兰，修筑六十余座堡垒重重围困莱顿城"
+  },
+  {
+    "eventId": "evt_2253",
+    "battleType": "野战",
+    "fromName": "躑躅崎馆",
+    "fromCityId": "city_tsutsujigasaki",
+    "route": [],
+    "source": "太田牛一《信长公记》；大久保忠教《三河物语》：武田胜赖统甲信精骑自甲斐踯躅崎馆经信浓诹访伊那谷南下奥三河，围攻长筱城并进逼设乐原连吾川织田德川防马栅"
+  },
+  {
+    "eventId": "evt_2255",
+    "battleType": "野战",
+    "fromName": "春日山",
+    "fromCityId": "city_kasugayama",
+    "route": [
+      {
+        "name": "金泽",
+        "lat": 36.56,
+        "lng": 136.65
+      }
+    ],
+    "source": "《上杉家御年谱》《信长公记》：越后上杉谦信自春日山城西进攻陷能登七尾城与加贺松任城，乘夜雨追击撤退的柴田胜家织田北陆军，于手取川渡口大破之"
+  },
+  {
+    "eventId": "evt_2256",
+    "battleType": "野战",
+    "fromName": "里斯本",
+    "fromCityId": "city_lisiben",
+    "route": [
+      {
+        "name": "加的斯",
+        "lat": 36.52,
+        "lng": -6.28
+      },
+      {
+        "name": "丹吉尔",
+        "lat": 35.74,
+        "lng": -5.87
+      }
+    ],
+    "source": "门多萨《阿非利加三王战役纪实》；菲什塔利《萨阿德王朝史》：葡萄牙国王塞巴斯蒂安一世统远征军自里斯本启航，经加的斯与摩洛哥丹吉尔登陆阿西拉，冒酷暑南进卢库斯河谷凯比尔堡战败殒命"
+  },
+  {
+    "eventId": "evt_2257",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "法米亚诺·斯特拉达《佛兰德战争史》；范·梅特伦《尼德兰史》：西班牙尼德兰总督帕尔马亲王亚历山大·法尔内塞统佛兰德军团自布拉班特与那慕尔东进默兹河谷，重兵合围攻陷马斯特里赫特"
+  },
+  {
+    "eventId": "evt_2258",
+    "battleType": "野战",
+    "fromName": "巴达霍斯",
+    "fromCityId": "city_badajoz",
+    "route": [
+      {
+        "name": "埃武拉",
+        "lat": 38.57,
+        "lng": -7.91
+      }
+    ],
+    "source": "科内斯塔乔《葡萄牙与卡斯蒂利亚合并史》《阿尔瓦公爵书信集》：西班牙名将阿尔瓦公爵奉腓力二世命于巴达霍斯集结大军西入葡萄牙，经埃尔瓦斯、塞图巴尔与卡斯凯什逼近里斯本西郊，于阿尔坎塔拉河谷击溃安东尼奥"
+  },
+  {
+    "eventId": "evt_2259",
+    "battleType": "攻城战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [
+      {
+        "name": "波洛茨克",
+        "lat": 55.48,
+        "lng": 28.76
+      }
+    ],
+    "source": "皮奥特罗夫斯基《普斯科夫远征日记》《普斯科夫围城记》：波兰国王斯特凡·巴托里统联邦大军自维尔纽斯经波洛茨克与大卢基北上，进抵韦利卡亚河畔合围俄国西北重镇普斯科夫"
+  },
+  {
+    "eventId": "evt_2260",
+    "battleType": "攻城战",
+    "fromName": "京都",
+    "fromCityId": "city_kyoto",
+    "route": [],
+    "source": "太田牛一《信长公记》；弗洛伊斯《日本史》：织田家大将明智光秀自近江坂本与丹波龟山城出兵，渡桂川高喊敌在本能寺，拂晓突袭合围京都本能寺逼死织田信长"
+  },
+  {
+    "eventId": "evt_2262",
+    "battleType": "攻城战",
+    "fromName": "赫图阿拉",
+    "fromCityId": "city_hetuala",
+    "route": [],
+    "source": "《满洲实录》《清太祖武皇帝实录》：努尔哈赤以父祖十三副遗甲自建州苏克苏浒河赫图阿拉起兵，西攻尼堪外兰盘踞的图伦城"
+  },
+  {
+    "eventId": "evt_2264",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "斯特拉达《佛兰德战争史》；范·梅特伦《尼德兰史》：西班牙总督亚历山大·法尔内塞自布拉班特与佛兰德分兵进逼斯海尔德河，架设八百米武装浮桥封锁水道，围困十四个月迫降安特卫普"
+  },
+  {
+    "eventId": "evt_2266",
+    "battleType": "野战",
+    "fromName": "香波堡",
+    "fromCityId": "city_chambord",
+    "route": [],
+    "source": "苏利公爵《王室经济回忆录》；多比涅《世界史》：法王亨利三世宠臣茹瓦约斯公爵率王室天主教军自卢瓦尔河谷图尔与普瓦图南下吉耶讷拦截新教军，于德龙河畔库特拉遭纳瓦拉王亨利击毙"
+  },
+  {
+    "eventId": "evt_2267",
+    "battleType": "水战",
+    "fromName": "普利茅斯",
+    "fromCityId": "city_plymouth",
+    "route": [
+      {
+        "name": "温彻斯特",
+        "lat": 51.06,
+        "lng": -1.31
+      },
+      {
+        "name": "加莱",
+        "lat": 50.95,
+        "lng": 1.85
+      }
+    ],
+    "source": "卡姆登《伊丽莎白女王编年史》《巴尔德斯海战供词》：英格兰海军统帅霍华德勋爵与副帅弗朗西斯·德雷克自普利茅斯出港，沿英吉利海峡东追西班牙无敌舰队，于加莱放火船夜袭后在格拉沃利讷外海重创西舰"
+  },
+  {
+    "eventId": "evt_2268",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "博韦",
+        "lat": 49.43,
+        "lng": 2.08
+      },
+      {
+        "name": "鲁昂",
+        "lat": 49.44,
+        "lng": 1.1
+      }
+    ],
+    "source": "苏利公爵《王室经济回忆录》：天主教联盟统帅马耶讷公爵夏尔·德·洛林率三万联军自巴黎西北出兵，经诺曼底鲁昂北逼迪耶普，于阿尔克河谷强攻法王亨利四世防线受挫"
+  },
+  {
+    "eventId": "evt_2270",
+    "battleType": "攻城战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [
+      {
+        "name": "阿姆斯特丹",
+        "lat": 52.37,
+        "lng": 4.9
+      }
+    ],
+    "source": "安东尼·迪克《尼德兰十年战纪》；弗朗西斯·维尔《战评集》：尼德兰联省执政拿骚的莫里斯偕英将维尔自海牙与乌得勒支东进海尔德兰，奇袭夺占艾瑟尔河畔聚特芬对岸要塞并迫降全城"
+  },
+  {
+    "eventId": "evt_2274",
+    "battleType": "攻城战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [
+      {
+        "name": "阿姆斯特丹",
+        "lat": 52.37,
+        "lng": 4.9
+      }
+    ],
+    "source": "威廉·路易《军事书信集》；范·梅特伦《尼德兰史》：拿骚的莫里斯与弗里斯兰执政威廉·路易会合荷英联军自荷兰经兹沃勒与库福尔登北上，掘壕爆破攻克北尼德兰重镇格罗宁根"
+  },
+  {
+    "eventId": "evt_2275",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "普雷斯拉夫",
+        "lat": 43.14,
+        "lng": 26.81
+      }
+    ],
+    "source": "瓦尔特《米哈伊公爵战记》；奈马《奈马史》：奥斯曼大维齐尔科贾·锡南帕夏统十万大军自伊斯坦布尔经埃迪尔内北上至鲁塞，架浮桥渡多瑙河向布加勒斯特推进，于卡卢格雷尼沼泽木桥遭勇敢者米哈伊伏击重创"
+  },
+  {
+    "eventId": "evt_2276",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "索非亚",
+        "lat": 42.7,
+        "lng": 23.32
+      },
+      {
+        "name": "贝尔格莱德",
+        "lat": 44.78,
+        "lng": 20.45
+      },
+      {
+        "name": "塞格德",
+        "lat": 46.25,
+        "lng": 20.15
+      }
+    ],
+    "source": "佩切维《佩切维史》；伊斯法罕尼《匈牙利战纪》：奥斯曼苏丹穆罕默德三世御驾亲征自伊斯坦布尔经埃迪尔内、贝尔格莱德与塞格德北上攻拔埃格尔，继于梅泽凯雷斯泰什平原逆转击破哈布斯堡联军"
+  },
+  {
+    "eventId": "evt_2277",
+    "battleType": "水战",
+    "fromName": "金海",
+    "fromCityId": "city_gimhae",
+    "route": [
+      {
+        "name": "晋州",
+        "lat": 35.19,
+        "lng": 128.1
+      },
+      {
+        "name": "顺天",
+        "lat": 34.97,
+        "lng": 127.5
+      }
+    ],
+    "source": "李舜臣《乱中日记》《宣祖实录》：藤堂高虎、胁坂安治与来岛通总统日本水军自庆尚道巨济漆川梁沿南海道西进，经顺天与康津兰浦驶入珍岛鸣梁海峡，遭李舜臣十二艘板屋船利用急流重创"
+  },
+  {
+    "eventId": "evt_2279",
+    "battleType": "野战",
+    "fromName": "特尔戈维",
+    "fromCityId": "city_teergewishite",
+    "route": [],
+    "source": "伊什特万菲《匈牙利史》；米龙·科斯廷《摩尔达维亚编年史》：瓦拉几亚大公勇敢者米哈伊自特尔戈维什泰与普洛耶什蒂率军北越喀尔巴阡山布泽乌山口，西进锡比乌近郊谢林伯尔大破安德烈·巴托里"
+  },
+  {
+    "eventId": "evt_2280",
+    "battleType": "关隘战",
+    "fromName": "重庆",
+    "fromCityId": "city_chongqing",
+    "route": [
+      {
+        "name": "綦江",
+        "lat": 29.03,
+        "lng": 106.65
+      },
+      {
+        "name": "娄山关",
+        "lat": 27.99,
+        "lng": 106.82
+      }
+    ],
+    "source": "李化龙《平播全书》《明神宗实录》：川湖贵总督李化龙坐镇重庆督八路大军进讨播州，总兵刘綖自綦江连破楠木山、娄山关天险直抵海龙屯下，会合诸路攻破铁柱城迫杨应龙自焚"
+  },
+  {
+    "eventId": "evt_2282",
+    "battleType": "野战",
+    "fromName": "维雷茨基",
+    "fromCityId": "city_eger",
+    "route": [],
+    "source": "伊什特万菲《匈牙利史》；贝特伦《特兰西瓦尼亚史》：哈布斯堡统帅乔治·巴斯塔与勇敢者米哈伊于上匈牙利科希策及萨图马雷会师，东南进至萨拉日郡古鲁斯劳河谷击溃齐格蒙德·巴托里"
+  },
+  {
+    "eventId": "evt_2283",
+    "battleType": "攻城战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [],
+    "source": "格劳秀斯《尼德兰编年史》；范·梅特伦《尼德兰史》：联省执政拿骚的莫里斯自荷兰经奈梅亨南渡瓦尔河，修筑长达二十五公里环城掘壕防线合围并迫降马斯河重镇格拉弗"
+  },
+  {
+    "eventId": "evt_2284",
+    "battleType": "野战",
+    "fromName": "特尔戈维",
+    "fromCityId": "city_teergewishite",
+    "route": [],
+    "source": "伊什特万菲《匈牙利史》《坎塔库济诺编年史》：瓦拉几亚大公拉杜·谢尔班统瓦拉几亚军自特尔戈维什泰北越喀尔巴阡山泰莱亚真山口，奇袭布拉索夫城外大营并击毙摩西·塞凯伊"
+  },
+  {
+    "eventId": "evt_2285",
+    "battleType": "攻城战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [],
+    "source": "格劳秀斯《尼德兰编年史》；本蒂沃利奥《佛兰德战争史》：拿骚的莫里斯率联省舰队与陆军自南荷兰渡过西斯海尔德河登陆卡赞德岛，包抄围困并迫降泽兰佛兰德海港斯勒伊斯"
+  },
+  {
+    "eventId": "evt_2286",
+    "battleType": "野战",
+    "fromName": "塔林",
+    "fromCityId": "city_talin",
+    "route": [
+      {
+        "name": "派尔努",
+        "lat": 58.39,
+        "lng": 24.5
+      }
+    ],
+    "source": "霍德凯维奇《致齐格蒙特三世捷报》；纳鲁谢维奇《霍德凯维奇传》：瑞典国王卡尔九世统大军自爱沙尼亚派尔努沿波罗的海东岸南下进围里加，东进道加瓦河畔基尔霍尔姆遭霍德凯维奇翼骑兵全歼"
+  },
+  {
+    "eventId": "evt_2287",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [
+      {
+        "name": "维特拉",
+        "lat": 51.65,
+        "lng": 6.45
+      }
+    ],
+    "source": "本蒂沃利奥《佛兰德战争史》；格劳秀斯《尼德兰编年史》：西班牙名将斯皮诺拉统佛兰德军团自布拉班特东北渡莱茵河与利珀河，经洛赫姆攻取并解救东部星堡重镇赫龙洛"
+  },
+  {
+    "eventId": "evt_2288",
+    "battleType": "水战",
+    "fromName": "阿姆斯特丹",
+    "fromCityId": "city_amsterdam",
+    "route": [
+      {
+        "name": "里斯本",
+        "lat": 38.72,
+        "lng": -9.13
+      },
+      {
+        "name": "加的斯",
+        "lat": 36.52,
+        "lng": -6.28
+      }
+    ],
+    "source": "范·梅特伦《尼德兰史》《直布罗陀海战档案》：荷兰海军上将雅各布·范·海姆斯克尔克率二十六艘战舰自特塞尔出航，绕大西洋经里斯本与加的斯外海直闯直布罗陀湾，全歼西班牙主力舰队"
+  },
+  {
+    "eventId": "evt_2289",
+    "battleType": "野战",
+    "fromName": "切尔尼戈夫",
+    "fromCityId": "city_qiernigeweifu",
+    "route": [],
+    "source": "《新编年史》；康拉德·布索夫《莫斯科国混乱纪实》：伪德米特里二世与波立统帅罗曼·鲁任斯基自斯塔罗杜布及布良斯克东北进军奥廖尔，于博尔霍夫击溃沙皇胞弟德米特里·舒伊斯基"
+  },
+  {
+    "eventId": "evt_2290",
+    "battleType": "攻城战",
+    "fromName": "鹿儿岛城",
+    "fromCityId": "city_satsuma",
+    "route": [
+      {
+        "name": "赤尾木城",
+        "lat": 30.73,
+        "lng": 131.0
+      },
+      {
+        "name": "赤木名城",
+        "lat": 28.45,
+        "lng": 129.67
+      }
+    ],
+    "source": "喜安蕃元《喜安日记》《琉球渡海日账》：萨摩岛津家大将桦山久高统三千火枪兵自萨摩山川港扬帆南下，连陷奄美大岛、德之岛与冲永良部岛，登陆冲绳本岛运天港直扑那霸与首里王城"
+  },
+  {
+    "eventId": "evt_2291",
+    "battleType": "野战",
+    "fromName": "斯摩棱斯克",
+    "fromCityId": "city_simolengsike",
+    "route": [],
+    "source": "热乌凯夫斯基《莫斯科战争始末》；马斯凯维奇《日记》：波兰王冠领地大盖特曼热乌凯夫斯基自斯摩棱斯克围城大营抽调精锐翼骑兵东进，经察廖沃扎伊米谢星夜穿过密林，于克卢希诺拂晓突袭全歼俄瑞解围大军"
+  },
+  {
+    "eventId": "evt_2292",
+    "battleType": "攻城战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [
+      {
+        "name": "维捷布斯克",
+        "lat": 55.19,
+        "lng": 30.2
+      }
+    ],
+    "source": "《斯摩棱斯克保卫战档案》；热乌凯夫斯基《莫斯科战争始末》：波兰立陶宛国王齐格蒙特三世自维尔纽斯与奥尔沙率军东进第聂伯河畔，历经二十个月围困爆破攻克俄国西部巨城斯摩棱斯克"
+  },
+  {
+    "eventId": "evt_2293",
+    "battleType": "野战",
+    "fromName": "维尔纽斯",
+    "fromCityId": "city_weierniwusi",
+    "route": [
+      {
+        "name": "斯摩棱斯克",
+        "lat": 54.78,
+        "lng": 32.04
+      }
+    ],
+    "source": "《新编年史》；布泽克《莫斯科国纪事》：立陶宛大盖特曼霍德凯维奇押送粮队自斯摩棱斯克与维亚济马东进驰援克里姆林宫波兰守军，于莫斯科城西新圣女修道院与莫斯科河渡口遭米宁与波扎尔斯基击退"
+  },
+  {
+    "eventId": "evt_2294",
+    "battleType": "攻城战",
+    "fromName": "诺夫哥罗德",
+    "fromCityId": "city_nuofugeerdede",
+    "route": [
+      {
+        "name": "拉多加",
+        "lat": 60.0,
+        "lng": 32.3
+      }
+    ],
+    "source": "《季赫温修道院围城纪事》；维德金德《古斯塔夫二世十年战史》：占领诺夫哥罗德的瑞典统帅德·拉·加尔迪遣军自诺夫哥罗德与老拉多加东北推进，重兵围攻起义反瑞的季赫温圣母升天修道院要塞"
+  },
+  {
+    "eventId": "evt_2297",
+    "battleType": "攻城战",
+    "fromName": "威尼斯",
+    "fromCityId": "city_venice",
+    "route": [
+      {
+        "name": "阿奎莱亚",
+        "lat": 45.77,
+        "lng": 13.37
+      }
+    ],
+    "source": "福斯蒂诺·莫伊塞索《弗留利战史》；保罗·萨尔皮《乌斯科克史》：威尼斯共和国统帅庞培奥·朱斯蒂尼亚尼自威尼托与帕尔马诺瓦东进伊松佐河畔，围攻内奥地利哈布斯堡重镇格拉迪斯卡星堡"
+  },
+  {
+    "eventId": "evt_2298",
+    "battleType": "水战",
+    "fromName": "巴达维亚",
+    "fromCityId": "city_batavia",
+    "route": [
+      {
+        "name": "马尼拉",
+        "lat": 14.59,
+        "lng": 120.98
+      }
+    ],
+    "source": "西属菲律宾总督府《普拉亚翁达捷报》《菲律宾群岛史料集》：荷兰东印度公司提督约里斯·范·斯皮尔贝亨率舰队北上封锁马尼拉湾口，并进至吕宋西岸三描礼士普拉亚翁达海面与西班牙舰队决战"
+  },
+  {
+    "eventId": "evt_2300",
+    "battleType": "野战",
+    "fromName": "沈阳",
+    "fromCityId": "city_shenyang",
+    "route": [],
+    "source": "《满洲实录》《明神宗实录》《三朝辽事实录》：辽东经略杨镐坐镇沈阳与辽阳，分遣杜松、刘綖、马林、李如柏四路明军出抚顺关、宽奠、开原与鸦鹘关合击赫图阿拉，杜松中路军于浑河萨尔浒山遭努尔哈赤全歼"
+  },
+  {
+    "eventId": "evt_2301",
+    "battleType": "野战",
+    "fromName": "维也纳",
+    "fromCityId": "city_weiyeena",
+    "route": [
+      {
+        "name": "坎普堡",
+        "lat": 48.4,
+        "lng": 15.7
+      },
+      {
+        "name": "塔博尔",
+        "lat": 49.41,
+        "lng": 14.66
+      }
+    ],
+    "source": "《安哈尔特机密文书》；阿贝林《欧罗巴剧场》：天主教同盟统帅蒂利伯爵与帝国统帅布奎于上奥地利与下奥地利会师，北入南波西米亚经皮塞克与比尔森直逼布拉格西郊白山高地"
+  },
+  {
+    "eventId": "evt_2302",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "德鲁斯塔尔",
+        "lat": 44.12,
+        "lng": 27.26
+      },
+      {
+        "name": "雅西",
+        "lat": 47.16,
+        "lng": 27.58
+      }
+    ],
+    "source": "雅各布·索别斯基《霍京战役日记》；卡蒂普·切莱比《历史纲要》：奥斯曼苏丹奥斯曼二世亲统大军自伊斯坦布尔经埃迪尔内、伊萨克恰渡多瑙河，经摩尔达维亚雅西北进猛攻德涅斯特河畔霍京波立营垒"
+  },
+  {
+    "eventId": "evt_2303",
+    "battleType": "野战",
+    "fromName": "海德堡",
+    "fromCityId": "city_heidelberg",
+    "route": [
+      {
+        "name": "特里尔",
+        "lat": 49.75,
+        "lng": 6.64
+      }
+    ],
+    "source": "本蒂沃利奥《佛兰德战争史》；阿贝林《欧罗巴剧场》：新教雇佣军统帅恩斯特·冯·曼斯菲尔德与不伦瑞克的克里斯蒂安自普法尔茨与洛林西越阿登进入西属尼德兰埃诺，于弗勒吕斯强行突围北援贝尔亨奥普佐姆"
+  },
+  {
+    "eventId": "evt_2304",
+    "battleType": "野战",
+    "fromName": "埃雷斯堡",
+    "fromCityId": "city_eresburg",
+    "route": [],
+    "source": "蒂利伯爵《施塔特洛恩战报》；阿贝林《欧罗巴剧场》：天主教同盟统帅蒂利伯爵自黑森与下萨克森兼程西北追击不伦瑞克的克里斯蒂安，于荷德边境前夕的施塔特洛恩伯克尔河畔全歼新教军"
+  },
+  {
+    "eventId": "evt_2305",
+    "battleType": "水战",
+    "fromName": "阿姆斯特丹",
+    "fromCityId": "city_amsterdam",
+    "route": [
+      {
+        "name": "里贝拉",
+        "lat": 14.92,
+        "lng": -23.6
+      }
+    ],
+    "source": "德·拉特《西印度公司年鉴》；维森特·多·萨尔瓦多《巴西史》：荷兰西印度公司提督维勒肯斯与副将皮特·海因率二十六艘战舰自特塞尔启航，经佛得角群岛横渡大西洋突袭攻占巴西首府万圣湾萨尔瓦多"
+  },
+  {
+    "eventId": "evt_2306",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "赫尔曼·胡果《布雷达围城实录》；本蒂沃利奥《佛兰德战争史》：西班牙名将斯皮诺拉统佛兰德军团自布鲁塞尔与安特卫普北上北布拉班特，修筑坚固双重环城防线合围十个月迫降布雷达"
+  },
+  {
+    "eventId": "evt_2309",
+    "battleType": "攻城战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "香波堡",
+        "lat": 47.62,
+        "lng": 1.52
+      }
+    ],
+    "source": "黎塞留《政治遗嘱与回忆录》；梅尔维《拉罗谢尔围城日记》：法王路易十三与首席大臣黎塞留统王室大军自巴黎经卢瓦尔河谷与普瓦图西南推进，筑长堤锁死海口迫降胡格诺重镇拉罗谢尔"
+  },
+  {
+    "eventId": "evt_2311",
+    "battleType": "攻城战",
+    "fromName": "阿姆斯特丹",
+    "fromCityId": "city_amsterdam",
+    "route": [
+      {
+        "name": "里贝拉",
+        "lat": 14.92,
+        "lng": -23.6
+      }
+    ],
+    "source": "德·拉特《西印度公司年鉴》；阿尔布克尔克《每日战记》：荷兰西印度公司上将亨德里克·隆克率六十七艘大船队自荷兰经佛得角圣维森特岛集结，横渡大西洋登陆巴西伯南布哥攻占奥林达与累西腓"
+  },
+  {
+    "eventId": "evt_2312",
+    "battleType": "野战",
+    "fromName": "马格德堡",
+    "fromCityId": "city_magedebao",
+    "route": [],
+    "source": "罗伯特·蒙罗《古斯塔夫国王麾下远征录》；阿贝林《欧罗巴剧场》：神圣罗马帝国与天主教同盟统帅蒂利伯爵攻陷马格德堡后，率主力东南侵入萨克森夺占莱比锡，于北郊布赖滕费尔德平原迎战古斯塔夫二世"
+  },
+  {
+    "eventId": "evt_2313",
+    "battleType": "野战",
+    "fromName": "纽伦堡",
+    "fromCityId": "city_niulunbao",
+    "route": [],
+    "source": "弗利特伍德《吕岑战况书信》《华伦斯坦军中奏报档案》：瑞典国王古斯塔夫二世自巴伐利亚与纽伦堡兼程北救萨克森，经埃尔福特与瑙姆堡进抵吕岑，乘晨雾向华伦斯坦帝国军发起总攻"
+  },
+  {
+    "eventId": "evt_2314",
+    "battleType": "水战",
+    "fromName": "冶城",
+    "fromCityId": "city_fuzhou",
+    "route": [
+      {
+        "name": "刺桐",
+        "lat": 24.9,
+        "lng": 118.58
+      }
+    ],
+    "source": "邹维琏《奉剿红夷报捷疏》《巴达维亚城日志》：福建巡抚邹维琏自福州即冶城南下漳泉，会合五虎游击郑芝龙水师自泉州、漳州海澄出击，于金门岛南岸料罗湾火攻重创荷兰东印度公司普特曼斯舰队"
+  },
+  {
+    "eventId": "evt_2315",
+    "battleType": "野战",
+    "fromName": "奥格斯堡",
+    "fromCityId": "city_aogesibao",
+    "route": [],
+    "source": "迭戈·德·埃多《枢机亲王行纪》；阿贝林《欧罗巴剧场》：瑞典元帅古斯塔夫·霍恩与萨克森魏玛公爵伯恩哈德自施瓦本奥格斯堡与乌尔姆北上驰援诺德林根，强攻阿尔布赫高地遭哈布斯堡联军重创"
+  },
+  {
+    "eventId": "evt_2316",
+    "battleType": "野战",
+    "fromName": "兰斯",
+    "fromCityId": "city_lansi",
+    "route": [],
+    "source": "黎塞留《政治遗嘱与回忆录》《法兰西公报战事专刊》：法兰西元帅布雷泽与沙蒂永奉路易十三宣战诏令自香槟梅济耶尔沿默兹河北上赴马斯特里赫特会师荷军，途经列日境莱萨万击溃西班牙托马索亲王"
+  },
+  {
+    "eventId": "evt_2317",
+    "battleType": "野战",
+    "fromName": "马格德堡",
+    "fromCityId": "city_magedebao",
+    "route": [],
+    "source": "巴纳尔《致瑞典摄政内阁捷报》；普芬多夫《瑞典战事史》：瑞典元帅约翰·巴纳尔与亚历山大·莱斯利自易北河西岸北上追击帝国与萨克森联军，于勃兰登堡北部维茨托克分兵迂回大获全胜"
+  },
+  {
+    "eventId": "evt_2319",
+    "battleType": "野战",
+    "fromName": "巴塞尔",
+    "fromCityId": "city_basaier",
+    "route": [],
+    "source": "罗昂公爵《莱茵战事书信》；阿贝林《欧罗巴剧场》：萨克森魏玛公爵伯恩哈德自巴塞尔东境劳芬堡重整旗鼓，沿莱茵河西进实施回马突袭，于莱茵费尔登全歼帝国名将约翰·冯·韦尔特"
+  },
+  {
+    "eventId": "evt_2320",
+    "battleType": "水战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [
+      {
+        "name": "加莱",
+        "lat": 50.95,
+        "lng": 1.85
+      }
+    ],
+    "source": "特龙普《航海作战日志》；博克塞《马滕·特龙普海战档案集》：荷兰海军上将马滕·特龙普率分舰队于英吉利海峡加莱外海截击西班牙奥肯多运兵船队，将其逼入肯特郡唐斯锚地并获国内增援全歼之"
+  },
+  {
+    "eventId": "evt_2321",
+    "battleType": "攻城战",
+    "fromName": "博韦",
+    "fromCityId": "city_beauvais",
+    "route": [],
+    "source": "黎塞留《政治遗嘱与回忆录》《法兰西公报阿拉斯捷报》：法兰西元帅肖讷、沙蒂永与拉梅耶雷统法军自皮卡第亚眠北上阿图瓦，修筑环城壁垒攻克西属重镇阿拉斯"
+  },
+  {
+    "eventId": "evt_2324",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "拉穆萨耶《罗克鲁瓦战役记述》；马尔凯西《佛兰德军报》：西属尼德兰总督弗朗西斯科·德·梅洛统西班牙佛兰德军团自布拉班特与埃诺南下越过阿登森林边缘，合围香槟北门罗克鲁瓦"
+  },
+  {
+    "eventId": "evt_2328",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [],
+    "source": "西米恩·阿什《马斯顿荒原战报》；克拉伦登伯爵《大叛乱史》：苏格兰盟约军利文伯爵自苏格兰南下，会合费尔法克斯与曼彻斯特伯爵及克伦威尔东部协会铁骑军围困约克，旋移师城西马斯顿荒原大破鲁普雷希特亲王"
+  },
+  {
+    "eventId": "evt_2330",
+    "battleType": "野战",
+    "fromName": "牛津",
+    "fromCityId": "city_oxford",
+    "route": [],
+    "source": "约书亚·斯普里格《英格兰复兴记》；克拉伦登伯爵《大叛乱史》：新模范军总司令托马斯·费尔法克斯撤牛津之围北上会合克伦威尔骑兵，于北安普敦郡纳斯比追及并全歼查理一世保王主力"
+  },
+  {
+    "eventId": "evt_2331",
+    "battleType": "野战",
+    "fromName": "邓纳德",
+    "fromCityId": "city_dunadd",
+    "route": [],
+    "source": "里努奇尼大主教《爱尔兰使节回忆录》《奥尼尔军中日志》：驻北爱尔兰卡里克弗格斯的苏格兰盟约派统帅罗伯特·门罗率军西南推进蒂龙郡，企图南攻基尔肯尼，于布莱克沃特河畔本伯布遭欧文·罗·奥尼尔全歼"
+  },
+  {
+    "eventId": "evt_2332",
+    "battleType": "野战",
+    "fromName": "卡舍尔",
+    "fromCityId": "city_kasheer",
+    "route": [],
+    "source": "博莱斯《可憎爱尔兰叛乱史》《迈克尔·琼斯致议会捷报》：爱尔兰天主教邦联伦斯特军统帅托马斯·普雷斯顿自基尔肯尼与卡洛北进米斯郡围攻特里姆，乘隙向都柏林推进途中于邓根山被迈克尔·琼斯全歼"
+  },
+  {
+    "eventId": "evt_2333",
+    "battleType": "野战",
+    "fromName": "布伊尔斯",
+    "fromCityId": "city_buyiersi",
+    "route": [],
+    "source": "克伦威尔《致下议院议长兰托尔普雷斯顿战报》：奥利弗·克伦威尔攻克南威尔士彭布罗克城堡后，率新模范军昼夜兼程东北疾驰约克郡会合兰伯特，西越奔宁山脉从侧翼腰斩普雷斯顿的苏格兰保王联军"
+  },
+  {
+    "eventId": "evt_2334",
+    "battleType": "攻城战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "布伊尔斯",
+        "lat": 52.15,
+        "lng": -3.4
+      },
+      {
+        "name": "都柏林",
+        "lat": 53.34,
+        "lng": -6.26
+      }
+    ],
+    "source": "克伦威尔《致议长兰托尔德罗赫达战报》；拉德洛《回忆录》：克伦威尔统新模范军自伦敦经米尔福德港跨海登陆都柏林，整军后沿东海岸北上强攻博因河口重镇德罗赫达"
+  },
+  {
+    "eventId": "evt_2335",
+    "battleType": "野战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [
+      {
+        "name": "约克",
+        "lat": 53.95,
+        "lng": -1.08
+      },
+      {
+        "name": "贝里克",
+        "lat": 55.77,
+        "lng": -2.0
+      }
+    ],
+    "source": "克伦威尔《邓巴战报与家书》；罗伯特·贝利《书信与日志》：克伦威尔统英格兰共和国军自伦敦经约克、纽卡斯尔与贝里克北入苏格兰，攻爱丁堡受阻退屯海港邓巴，拂晓奇袭反破大卫·莱斯利主力"
+  },
+  {
+    "eventId": "evt_2336",
+    "battleType": "野战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [
+      {
+        "name": "约克",
+        "lat": 53.95,
+        "lng": -1.08
+      }
+    ],
+    "source": "克伦威尔《最后的慈悲伍斯特捷报》：克伦威尔自苏格兰珀斯与爱丁堡挥师南下追击查理二世，经约克郡与米德兰兹会合各路民兵，于塞文河畔伍斯特合围全歼斯图亚特保王军"
+  },
+  {
+    "eventId": "evt_2337",
+    "battleType": "攻城战",
+    "fromName": "贵阳",
+    "fromCityId": "city_juzhou",
+    "route": [
+      {
+        "name": "偏刀水",
+        "lat": 27.92,
+        "lng": 107.69
+      },
+      {
+        "name": "古严关",
+        "lat": 25.68,
+        "lng": 110.62
+      }
+    ],
+    "source": "王夫之《永历实录》；温睿临《南疆逸史》：南明安西王李定国自贵州出湖广连克靖州、武冈、宝庆与全州，奇袭突破严关天险攻入桂林府城，逼清定南王孔有德自焚"
+  },
+  {
+    "eventId": "evt_2339",
+    "battleType": "水战",
+    "fromName": "阿姆斯特丹",
+    "fromCityId": "city_amsterdam",
+    "route": [],
+    "source": "德·鲁伊特《海战日志》《第一次英荷战争书信与文书集》：荷兰海军上将马滕·特龙普自马斯河口与特塞尔的德·维特分舰队在斯海弗宁恩外海会师，猛攻封锁荷兰海岸的英格兰蒙克舰队"
+  },
+  {
+    "eventId": "evt_2340",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "苏瓦松",
+        "lat": 49.38,
+        "lng": 3.32
+      }
+    ],
+    "source": "图雷纳子爵《回忆录》；约克公爵詹姆斯《军中纪事》：法兰西大元帅图雷纳子爵自法兰西岛与皮卡第佩罗讷北上阿图瓦，切断敌军粮道后破晓强袭攻破大孔代与西班牙军的阿拉斯围城壕垒"
+  },
+  {
+    "eventId": "evt_2341",
+    "battleType": "水战",
+    "fromName": "圣多明各",
+    "fromCityId": "city_shengduomingge",
+    "route": [],
+    "source": "维纳布尔斯《西印度远征述略》《英格兰国务会议殖民档案》：英格兰护国公国远征军统帅威廉·佩恩与罗伯特·维纳布尔斯在伊斯帕尼奥拉岛圣多明各受挫后，扬帆西航登陆牙买加岛卡瓜湾占领圣地亚哥城"
+  },
+  {
+    "eventId": "evt_2342",
+    "battleType": "野战",
+    "fromName": "格但斯克",
+    "fromCityId": "city_gdansk",
+    "route": [],
+    "source": "普芬多夫《卡尔·古斯塔夫国王功业史》；帕塞克《回忆录》：瑞典国王卡尔十世·古斯塔夫于东普鲁士与新德武尔会合勃兰登堡选帝侯腓特烈·威廉，沿维斯瓦河东岸南下华沙普拉加郊野击败波王扬二世"
+  },
+  {
+    "eventId": "evt_2343",
+    "battleType": "水战",
+    "fromName": "加的斯",
+    "fromCityId": "city_jiadisi",
+    "route": [],
+    "source": "罗伯特·布莱克《海战公报与书信集》；费尔南德斯·杜罗《西班牙海军史》：英国海上将军罗伯特·布莱克自西班牙加的斯外海封锁阵位拔锚西南航向加那利群岛，直闯圣克鲁斯德特内里费港全歼西班牙白银船队"
+  },
+  {
+    "eventId": "evt_2344",
+    "battleType": "野战",
+    "fromName": "加莱",
+    "fromCityId": "city_calais",
+    "route": [],
+    "source": "图雷纳子爵《回忆录》；约克公爵詹姆斯《佛兰德从军记》：法军元帅图雷纳子爵会合英格兰新模范军自加莱与马尔迪克沿佛兰德海岸东进围困敦刻尔克，并迎前于城东海滨沙丘击溃西班牙唐·胡安援军"
+  },
+  {
+    "eventId": "evt_2345",
+    "battleType": "野战",
+    "fromName": "切尔卡瑟",
+    "fromCityId": "city_cherkasy",
+    "route": [
+      {
+        "name": "佩列斯拉夫",
+        "lat": 50.07,
+        "lng": 31.45
+      }
+    ],
+    "source": "萨莫维德茨《目击者编年史》；韦利奇科《哥萨克战事编年史》：扎波罗热哥萨克盖特曼伊凡·维霍夫斯基自奇吉林北上，会合克里米亚可汗穆罕默德四世·格来驰援科诺托普，于索斯尼夫卡河设伏全歼俄国贵族铁骑"
+  },
+  {
+    "eventId": "evt_2346",
+    "battleType": "野战",
+    "fromName": "华沙",
+    "fromCityId": "city_huasha",
+    "route": [
+      {
+        "name": "布列斯特",
+        "lat": 52.09,
+        "lng": 23.68
+      }
+    ],
+    "source": "帕塞克《回忆录》；科霍夫斯基《波兰年鉴》：波兰名将斯特凡·恰尔涅茨基自华沙东渡布格河至布列斯特会合立陶宛大盖特曼帕维乌·萨皮耶哈，东北进至巴拉诺维奇近郊波隆卡河击破俄将霍万斯基"
+  },
+  {
+    "eventId": "evt_2350",
+    "battleType": "野战",
+    "fromName": "贝尔格莱德",
+    "fromCityId": "city_belgrade",
+    "route": [
+      {
+        "name": "塞格德",
+        "lat": 46.25,
+        "lng": 20.15
+      },
+      {
+        "name": "布达佩斯",
+        "lat": 47.49,
+        "lng": 19.04
+      }
+    ],
+    "source": "蒙特库科利《论战争艺术与匈牙利战纪》；拉希德《奥斯曼编年史》：奥斯曼大维齐尔法齐尔·艾哈迈德帕夏自贝尔格莱德北上匈牙利，经卡尼扎沿拉巴河西向维也纳推进，于圣哥达渡河时遭蒙特库科利击退"
+  },
+  {
+    "eventId": "evt_2351",
+    "battleType": "野战",
+    "fromName": "巴达霍斯",
+    "fromCityId": "city_badajoz",
+    "route": [],
+    "source": "梅内塞斯《葡萄牙复兴史》；萨里《熊贝格公爵军旅纪实》：西班牙统帅卡拉塞纳侯爵统两万西军自埃斯特雷马杜拉巴达霍斯西越边境侵入阿连特茹，围攻维拉维索萨并于蒙特斯克拉罗斯山谷遭葡英联军全歼"
+  },
+  {
+    "eventId": "evt_2352",
+    "battleType": "水战",
+    "fromName": "伦敦",
+    "fromCityId": "city_lundun",
+    "route": [],
+    "source": "塞缪尔·佩皮斯《佩皮斯日记》；布兰特《德·鲁伊特上将生平实录》：英格兰阿尔伯马尔公爵乔治·蒙克统舰队自泰晤士河口与唐斯锚地驶入北海南部，向弗兰德外海锚泊的荷兰德·鲁伊特主力舰队发起进攻"
+  },
+  {
+    "eventId": "evt_2353",
+    "battleType": "水战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [],
+    "source": "塞缪尔·佩皮斯《佩皮斯日记》；约翰·伊夫林《日记》：荷兰海军统帅德·鲁伊特与科内利斯·德·维特率舰队自马斯河口与特塞尔横渡北海，闯入泰晤士河口与梅德韦河焚掠查塔姆皇家造船厂"
+  },
+  {
+    "eventId": "evt_2354",
+    "battleType": "攻城战",
+    "fromName": "皇家港",
+    "fromCityId": "city_portroyal",
+    "route": [],
+    "source": "埃斯克梅林《美洲海盗史》《牙买加总督莫迪福德呈枢密院报告》：威尔士私掠者首领亨利·摩根率十二艘船自牙买加皇家港南渡加勒比海，在巴拿马地峡夜间划独木舟奇袭攻占西班牙银港波多韦洛"
+  },
+  {
+    "eventId": "evt_2355",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "羊河",
+        "lat": 40.33,
+        "lng": 26.6
+      },
+      {
+        "name": "斯巴达",
+        "lat": 37.07,
+        "lng": 22.42
+      }
+    ],
+    "source": "安德烈亚·瓦列罗《克里特战争史》；拉希德《奥斯曼编年史》：奥斯曼大维齐尔法齐尔·艾哈迈德帕夏自伊斯坦布尔经埃迪尔内与摩里亚蒙巴西安渡海亲临克里特岛，督大军掘壕爆破迫降威尼斯干地亚守将莫罗西尼"
+  },
+  {
+    "eventId": "evt_2356",
+    "battleType": "关隘战",
+    "fromName": "孟买",
+    "fromCityId": "city_mumbai",
+    "route": [],
+    "source": "克里希纳吉·阿南特《萨巴萨德编年史》：马拉塔名将塔纳吉·马卢萨雷奉希瓦吉之命自西高止山脉莱加德要塞率山地精兵秘密北上，黑夜攀爬悬崖奇袭夺占普纳西南的辛哈加德山堡"
+  },
+  {
+    "eventId": "evt_2357",
+    "battleType": "水战",
+    "fromName": "德里",
+    "fromCityId": "city_deli",
+    "route": [
+      {
+        "name": "瓦拉纳西",
+        "lat": 25.32,
+        "lng": 83.01
+      },
+      {
+        "name": "华氏城",
+        "lat": 25.61,
+        "lng": 85.13
+      },
+      {
+        "name": "高达城",
+        "lat": 24.88,
+        "lng": 88.13
+      },
+      {
+        "name": "索玛普利",
+        "lat": 25.03,
+        "lng": 88.98
+      }
+    ],
+    "source": "《阿豪姆王国编年史布兰吉》；马西尔《奥朗则布朝廷实录》：莫卧儿统帅安布尔王公拉姆·辛格奉奥朗则布命自德里经比哈尔与孟加拉兰加马蒂溯布拉马普特拉河东进，于古瓦哈提萨莱哈特峡江遭阿豪姆名将拉其特水战重创"
+  },
+  {
+    "eventId": "evt_2358",
+    "battleType": "水战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [],
+    "source": "德·鲁伊特《海战日志》；约克公爵詹姆斯《海战回忆录》：荷兰海军统帅米希尔·德·鲁伊特率联省舰队自特塞尔与马斯河口横渡北海，乘晨雾突袭萨福克郡索尔贝锚泊补水的英法联合舰队"
+  },
+  {
+    "eventId": "evt_2360",
+    "battleType": "野战",
+    "fromName": "里尔",
+    "fromCityId": "city_lier",
+    "route": [],
+    "source": "苏什伯爵《塞内夫战役呈皇室报告》：法军主帅大孔代亲王驻防西属尼德兰沙勒罗瓦皮埃通河畔，侦知威廉三世反法联军自尼韦勒向南行军侧翼暴露，果断出营猛扑塞内夫后卫"
+  },
+  {
+    "eventId": "evt_2361",
+    "battleType": "野战",
+    "fromName": "美因茨",
+    "fromCityId": "city_meiyinci",
+    "route": [
+      {
+        "name": "马格德堡",
+        "lat": 52.13,
+        "lng": 11.61
+      },
+      {
+        "name": "勃兰登堡",
+        "lat": 52.41,
+        "lng": 12.55
+      }
+    ],
+    "source": "普芬多夫《大选帝侯腓特烈·威廉功业史》：勃兰登堡大选帝侯腓特烈·威廉自法兰克福尼周营星夜东驰，于马格德堡舍步兵带精骑奇袭拉特诺，继追至费尔贝林击败瑞典军"
+  },
+  {
+    "eventId": "evt_2362",
+    "battleType": "野战",
+    "fromName": "哥德堡",
+    "fromCityId": "city_gothenburg",
+    "route": [],
+    "source": "达尔贝里《卡尔十一世战阵图志》：瑞典国王卡尔十一世于斯莫兰永比集结援军南下斯科讷，趁严冬踏冰渡过谢夫灵厄河，于隆德北郊风车山雪原决死击败丹麦王克里斯蒂安五世"
+  },
+  {
+    "eventId": "evt_2363",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [
+      {
+        "name": "布鲁日",
+        "lat": 51.21,
+        "lng": 3.22
+      }
+    ],
+    "source": "佩利松《路易十四书信集》；卢森堡元帅《佛兰德战纪》：奥兰治亲王威廉三世率荷西联军自布拉班特经根特与伊普尔西南驰援圣奥梅尔，于卡塞勒山麓佩讷溪谷遭奥尔良公爵与卢森堡元帅击败"
+  },
+  {
+    "eventId": "evt_2365",
+    "battleType": "关隘战",
+    "fromName": "爱丁堡",
+    "fromCityId": "city_aidingbao",
+    "route": [],
+    "source": "罗伯特·沃德罗《苏格兰教会受难史》；克赖顿《克拉弗豪斯从军回忆录》：蒙茅斯公爵与格雷厄姆统苏格兰王室军自爱丁堡西进拉纳克郡，强攻克莱德河博斯韦尔石桥击溃苏格兰盟约派义军"
+  },
+  {
+    "eventId": "evt_2366",
+    "battleType": "攻城战",
+    "fromName": "圣菲",
+    "fromCityId": "",
+    "route": [],
+    "source": "奥特明《新墨西哥撤退呈新西班牙总督禀文》《普韦布洛起义档案》：普韦布洛宗教领袖波佩于新墨西哥北部陶斯普韦布洛用结绳传令，统各村落印第安武士南下合围圣菲总督宫堡，断水迫走西班牙总督奥特明"
+  },
+  {
+    "eventId": "evt_2367",
+    "battleType": "攻城战",
+    "fromName": "成都",
+    "fromCityId": "city_chengdu",
+    "route": [
+      {
+        "name": "严道",
+        "lat": 30.0,
+        "lng": 102.97
+      },
+      {
+        "name": "会川",
+        "lat": 26.65,
+        "lng": 102.25
+      }
+    ],
+    "source": "《清圣祖仁皇帝实录》《平定三逆方略》：勇略将军川陕总督赵良栋自成都南下，经雅州、建昌卫渡金沙江入滇，会合彰泰、赖塔清军夺取银锭山与得胜桥，合围攻克昆明五华山"
+  },
+  {
+    "eventId": "evt_2368",
+    "battleType": "攻城战",
+    "fromName": "德里",
+    "fromCityId": "city_deli",
+    "route": [
+      {
+        "name": "阿格拉",
+        "lat": 27.18,
+        "lng": 78.02
+      },
+      {
+        "name": "桑奇",
+        "lat": 23.48,
+        "lng": 77.74
+      }
+    ],
+    "source": "卡菲汗《卢巴卜选集》；萨卡尔《奥朗则布时代史》：莫卧儿皇帝奥朗则布统大军自北印经马尔瓦南驻奥兰加巴德，命大将沙哈布丁汗西进围攻纳西克北郊拉姆塞杰山堡"
+  },
+  {
+    "eventId": "evt_2370",
+    "battleType": "攻城战",
+    "fromName": "南锡",
+    "fromCityId": "city_nancy",
+    "route": [],
+    "source": "沃邦元帅《论要塞攻防实录》；卢瓦侯爵《军事往来书信》：法军元帅克雷基与攻城总工程师沃邦奉路易十四命自洛林梅斯与南锡北上，掘壕炮击一个月攻陷西属尼德兰卢森堡要塞"
+  },
+  {
+    "eventId": "evt_2373",
+    "battleType": "野战",
+    "fromName": "贝尔格莱德",
+    "fromCityId": "city_belgrade",
+    "route": [],
+    "source": "查理五世《匈牙利战局奏报》；锡拉赫达尔《锡拉赫达尔史》：奥斯曼大维齐尔萨里·苏莱曼帕夏自贝尔格莱德率土军北渡德拉瓦河至奥西耶克，尾追洛林公爵查理五世至哈尔沙尼山麓遭联军反击惨败"
+  },
+  {
+    "eventId": "evt_2375",
+    "battleType": "关隘战",
+    "fromName": "因弗内斯",
+    "fromCityId": "city_yinfeineisi",
+    "route": [],
+    "source": "休·麦凯《苏格兰与爱尔兰战事回忆录》：詹姆士党统帅邓迪子爵约翰·格雷厄姆于洛哈伯与因弗内斯高地集结氏族军，东南疾驰抢占布莱尔城堡，于基利克兰基山口居高临下冲垮麦凯政府军"
+  },
+  {
+    "eventId": "evt_2378",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "圣西门公爵《路易十四时代回忆录》《伦敦公报斯滕凯尔克战讯》：英王兼荷兰执政威廉三世统大同盟军自布鲁塞尔南郊哈莱大营拂晓出击，进袭埃诺省斯滕凯尔克卢森堡元帅法军大营"
+  },
+  {
+    "eventId": "evt_2379",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "伯威克公爵《回忆录》；圣西门公爵《路易十四时代回忆录》：法国卢森堡元帅在布拉班特佯攻列日诱威廉三世分兵后，自于伊与列日西郊星夜急行军扑向小盖特河湾兰登与内尔温登"
+  },
+  {
+    "eventId": "evt_2380",
+    "battleType": "野战",
+    "fromName": "纳博讷",
+    "fromCityId": "city_nabone",
+    "route": [],
+    "source": "诺阿耶元帅《加泰罗尼亚远征公报》：法国诺阿耶元帅统鲁西永法军自纳博讷与佩皮尼昂南越比利牛斯山脉，攻占罗萨斯后乘晨雾强渡特尔河下游托罗埃利亚浅滩大破西班牙军"
+  },
+  {
+    "eventId": "evt_2381",
+    "battleType": "攻城战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "爱德华·达韦尔涅《一六九五年法兰德斯战役史》：英王威廉三世与巴伐利亚选帝侯自根特与布鲁塞尔挥师东南默兹河畔，会合库霍恩攻城炮队围困并迫降法帅布夫莱驻守的那慕尔要塞"
+  },
+  {
+    "eventId": "evt_2384",
+    "battleType": "野战",
+    "fromName": "阿克曼",
+    "fromCityId": "city_akeman",
+    "route": [
+      {
+        "name": "霍京",
+        "lat": 48.52,
+        "lng": 26.5
+      }
+    ],
+    "source": "奥特维诺夫斯基《奥古斯特二世朝廷纪事》：克里米亚汗国卡普兰·格来统鞑靼与奥斯曼联军自布贾克草原与霍京北渡德涅斯特河进入鲁塞尼亚，猛攻波德盖齐波托茨基军营不克撤退"
+  },
+  {
+    "eventId": "evt_2385",
+    "battleType": "攻城战",
+    "fromName": "拉合尔",
+    "fromCityId": "city_laheer",
+    "route": [],
+    "source": "塞纳帕蒂《古鲁光辉传》《达萨姆经典书信录》：西瓦利克山地卡卢尔等土邦王公阿里姆·昌德与巴利亚·昌德纠集山地联军进逼萨特莱杰河谷，突袭锡克教古鲁戈宾德·辛格驻守的阿南德普尔要塞"
+  },
+  {
+    "eventId": "evt_2386",
+    "battleType": "野战",
+    "fromName": "斯德哥尔摩",
+    "fromCityId": "city_sidedegelmo",
+    "route": [
+      {
+        "name": "派尔努",
+        "lat": 58.39,
+        "lng": 24.5
+      },
+      {
+        "name": "塔林",
+        "lat": 59.43,
+        "lng": 24.75
+      }
+    ],
+    "source": "阿德勒费尔特《查理十二世军事史》；哈拉尔特《纳尔瓦围城目击记》：少年瑞典王查理十二世自卡尔斯港与斯德哥尔摩渡海登陆派尔努，经雷瓦尔即塔林与韦森贝格冒暴风雪东驰，一举击溃围攻纳尔瓦的俄军主力"
+  },
+  {
+    "eventId": "evt_2387",
+    "battleType": "水战",
+    "fromName": "尤里耶夫",
+    "fromCityId": "city_youliyefu",
+    "route": [],
+    "source": "达尔贝里《渡河作战日记》；诺德贝里《查理十二世史》：查理十二世统瑞军自多尔帕特即尤里耶夫冬营南下进抵里加北郊，乘点燃湿稻草烟幕掩护强渡道加瓦河击破萨俄联军"
+  },
+  {
+    "eventId": "evt_2388",
+    "battleType": "野战",
+    "fromName": "华沙",
+    "fromCityId": "city_huasha",
+    "route": [],
+    "source": "阿德勒费尔特《查理十二世军事史》；舒伦堡《回忆录》：查理十二世占领华沙后率瑞典主力经凯尔采南追波兰王兼萨克森选侯奥古斯特二世，于克拉科夫东北克利舒夫沼泽林原大破萨波联军"
+  },
+  {
+    "eventId": "evt_2389",
+    "battleType": "野战",
+    "fromName": "斯特拉斯堡",
+    "fromCityId": "city_sitelasibao",
+    "route": [],
+    "source": "圣西门公爵《路易十四时代回忆录》：法军元帅塔拉尔自阿尔萨斯斯特拉斯堡北进围攻普法尔茨要塞兰道，闻黑森卡塞尔世子率联军南救，果断抽兵北迎于施派尔巴赫溪畔突袭破敌"
+  },
+  {
+    "eventId": "evt_2390",
+    "battleType": "野战",
+    "fromName": "海牙",
+    "fromCityId": "city_hague",
+    "route": [
+      {
+        "name": "科隆",
+        "lat": 50.93,
+        "lng": 6.95
+      },
+      {
+        "name": "美因茨",
+        "lat": 50.0,
+        "lng": 8.27
+      },
+      {
+        "name": "海德堡",
+        "lat": 49.4,
+        "lng": 8.68
+      }
+    ],
+    "source": "马尔博罗公爵《布伦海姆捷报便笺与书信集》：马尔博罗公爵约翰·丘吉尔率英荷联军自低地贝德堡秘密南下，沿莱茵河经科布伦茨、美因茨、海德堡翻越施瓦本汝拉山至多瑙沃特，会合欧根亲王于布伦海姆全歼法巴大军"
+  },
+  {
+    "eventId": "evt_2392",
+    "battleType": "野战",
+    "fromName": "亚琛",
+    "fromCityId": "city_yachen",
+    "route": [],
+    "source": "马尔博罗公爵《拉米伊军中书信》；戈斯林加《战地回忆录》：马尔博罗公爵于马斯特里赫特集结英荷联军西进布拉班特，于拉米伊高地以隐蔽右翼转移主攻大破法帅维勒鲁瓦元帅"
+  },
+  {
+    "eventId": "evt_2393",
+    "battleType": "野战",
+    "fromName": "巴伦西亚",
+    "fromCityId": "city_valencia",
+    "route": [],
+    "source": "伯威克公爵《回忆录》；圣费利佩侯爵《西班牙战争评论》：英葡荷同盟军统帅高威伯爵与米纳斯侯爵自瓦伦西亚西进新卡斯蒂利亚门户，主动进攻阿尔曼萨平原的伯威克公爵法西联军遭全歼"
+  },
+  {
+    "eventId": "evt_2394",
+    "battleType": "野战",
+    "fromName": "斯摩棱斯克",
+    "fromCityId": "city_simolengsike",
+    "route": [],
+    "source": "彼得一世《大北方战争手记与诏书集》；列文豪普特《回忆录》：沙皇彼得一世与缅希科夫亲率俄军精锐机动纵队自斯摩棱斯克与姆季斯拉夫尔西南急追，渡索日河于列斯纳亚截毁瑞典列文豪普特辎重兵团"
+  },
+  {
+    "eventId": "evt_2395",
+    "battleType": "野战",
+    "fromName": "切尔尼戈夫",
+    "fromCityId": "city_qiernigeweifu",
+    "route": [],
+    "source": "彼得一世《波尔塔瓦战事日志》；吉伦克罗克《行军记》：瑞典王查理十二世自谢韦里亚巴图林南下乌克兰过冬，进围沃尔斯克拉河畔波尔塔瓦并向彼得一世田字形棱堡阵地发起决死冲击"
+  },
+  {
+    "eventId": "evt_2396",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "维拉尔元帅《回忆录》《马尔博罗公爵报告》：马尔博罗公爵与欧根亲王攻克图尔奈后自布鲁塞尔南下合围埃诺首府蒙斯，并向进驻马尔普拉凯林间间隙的法帅维拉尔防线发起血战强攻"
+  },
+  {
+    "eventId": "evt_2397",
+    "battleType": "野战",
+    "fromName": "托莱多",
+    "fromCityId": "city_toledo",
+    "route": [
+      {
+        "name": "马德里",
+        "lat": 40.41,
+        "lng": -3.7
+      }
+    ],
+    "source": "旺多姆公爵《军中公报》；圣费利佩侯爵《西班牙战争评论》：法帅旺多姆公爵偕波旁西王腓力五世自塔拉韦拉与马德里神速东追撤退的同盟军，先克布里韦加英军后卫，次日于比利亚维西奥萨击败斯塔海姆贝格"
+  },
+  {
+    "eventId": "evt_2398",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "德鲁斯塔尔",
+        "lat": 44.12,
+        "lng": 27.26
+      }
+    ],
+    "source": "莫罗·德·布拉赛《一七一一年普鲁特战役回忆录》；拉希德《奥斯曼史》：奥斯曼大维齐尔巴尔塔吉·穆罕默德帕夏统大军自伊斯坦布尔经埃迪尔内至伊萨克恰渡多瑙河，会合克里米亚铁骑北上普鲁特河斯塔尼莱什蒂合围沙皇彼得一世"
+  },
+  {
+    "eventId": "evt_2399",
+    "battleType": "野战",
+    "fromName": "苏瓦松",
+    "fromCityId": "city_soissons",
+    "route": [],
+    "source": "维拉尔元帅《回忆录》；孟德斯鸠勋爵《德南军报》：法军元帅维拉尔自康布雷与谢尔河畔诺扬战线佯攻朗德勒西，连夜声东击西强渡斯海尔德河，一举攻破德南筑垒营地全歼阿尔伯马尔荷军"
+  },
+  {
+    "eventId": "evt_2400",
+    "battleType": "攻城战",
+    "fromName": "斯特拉斯堡",
+    "fromCityId": "city_sitelasibao",
+    "route": [],
+    "source": "维拉尔元帅《回忆录》《拉什塔特和约档案》：法军大元帅维拉尔攻克兰道后自斯特拉斯堡与凯尔渡莱茵河东进布赖斯高，突破黑森林防线围攻迫降神圣罗马帝国弗赖堡要塞"
+  },
+  {
+    "eventId": "evt_2401",
+    "battleType": "攻城战",
+    "fromName": "萨拉戈萨",
+    "fromCityId": "city_zaragoza",
+    "route": [
+      {
+        "name": "伊莱尔达",
+        "lat": 41.62,
+        "lng": 0.62
+      },
+      {
+        "name": "塔拉科",
+        "lat": 41.12,
+        "lng": 1.25
+      }
+    ],
+    "source": "圣费利佩侯爵《西班牙战争评论》；卡斯特利亚维《加泰罗尼亚纪事》：波旁西法联军统帅伯威克公爵与波波利公爵自阿拉贡经莱里达与塔拉戈纳东进，水陆围困十四个月轰破巴塞罗那圣克拉拉棱堡"
+  },
+  {
+    "eventId": "evt_2402",
+    "battleType": "野战",
+    "fromName": "因弗内斯",
+    "fromCityId": "city_yinfeineisi",
+    "route": [
+      {
+        "name": "斯昆",
+        "lat": 56.42,
+        "lng": -3.42
+      }
+    ],
+    "source": "阿盖尔公爵《谢里夫缪尔呈内阁战报》《一七一五年叛乱史》：苏格兰詹姆士党统帅马尔伯爵约翰·厄斯金于布雷马举旗后南占珀斯斯昆，继续南进企图渡福斯河，于邓布兰东北谢里夫缪尔荒原遭阿盖尔公爵阻截"
+  },
+  {
+    "eventId": "evt_2403",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "埃迪尔内",
+        "lat": 41.68,
+        "lng": 26.56
+      },
+      {
+        "name": "尼什",
+        "lat": 43.32,
+        "lng": 21.9
+      },
+      {
+        "name": "贝尔格莱德",
+        "lat": 44.78,
+        "lng": 20.45
+      }
+    ],
+    "source": "欧根亲王《军事通信集》；拉希德《奥斯曼编年史》：奥斯曼大维齐尔达马特·阿里帕夏统十五万大军自伊斯坦布尔经埃迪尔内、尼什抵贝尔格莱德，渡萨瓦河西北进逼多瑙河南岸彼得罗瓦拉丁，遭欧根亲王全歼阵亡"
+  },
+  {
+    "eventId": "evt_2404",
+    "battleType": "攻城战",
+    "fromName": "安布拉基亚",
+    "fromCityId": "city_anbulajiya",
+    "route": [],
+    "source": "舒伦堡元帅《科孚保卫战日志》；加尔佐尼《威尼斯共和国史》：奥斯曼海军统帅卡尼姆·穆罕默德与陆军主帅卡拉·穆斯塔法自伊庇鲁斯大陆布特林特渡海峡登陆科孚岛，猛攻舒伦堡死守的科孚新旧双堡"
+  },
+  {
+    "eventId": "evt_2405",
+    "battleType": "攻城战",
+    "fromName": "维也纳",
+    "fromCityId": "city_weiyeena",
+    "route": [
+      {
+        "name": "布达佩斯",
+        "lat": 47.49,
+        "lng": 19.04
+      },
+      {
+        "name": "塞格德",
+        "lat": 46.25,
+        "lng": 20.15
+      }
+    ],
+    "source": "欧根亲王《贝尔格莱德捷报》《奥土战争纪实》：哈布斯堡名帅欧根亲王自维也纳经布达与彼得罗瓦拉丁南下，架浮桥渡多瑙河合围贝尔格莱德，并乘晨雾反击全歼大维齐尔哈利勒帕夏解围大军"
+  },
+  {
+    "eventId": "evt_2407",
+    "battleType": "攻城战",
+    "fromName": "哥德堡",
+    "fromCityId": "city_gothenburg",
+    "route": [],
+    "source": "梅格雷《一七一八年挪威战役工程日志》；伏尔泰《查理十二世史》：瑞典王查理十二世自西约特兰与博胡斯兰率主力北越伊德峡湾侵入挪威东南部，掘平行壕围攻弗雷德里克斯哈尔德之弗雷德里克斯滕要塞"
+  },
+  {
+    "eventId": "evt_2409",
+    "battleType": "攻城战",
+    "fromName": "坎大哈",
+    "fromCityId": "city_kandaha",
+    "route": [
+      {
+        "name": "巴姆",
+        "lat": 29.12,
+        "lng": 58.37
+      },
+      {
+        "name": "卡曼尼亚",
+        "lat": 28.67,
+        "lng": 57.74
+      },
+      {
+        "name": "亚兹德",
+        "lat": 31.9,
+        "lng": 54.36
+      }
+    ],
+    "source": "克鲁辛斯基神父《波斯革命目击史》；哈津《伊斯法罕陷落回忆录》：汉达基阿富汗首领马哈茂德·霍塔克统军自坎大哈西征，经锡斯坦、克尔曼与亚兹德直抵伊斯法罕东郊古尔纳巴德破敌，合围六个月迫降萨法维帝都"
+  },
+  {
+    "eventId": "evt_2411",
+    "battleType": "野战",
+    "fromName": "伊斯法罕",
+    "fromCityId": "city_yisifahan",
+    "route": [
+      {
+        "name": "里海门",
+        "lat": 35.25,
+        "lng": 52.34
+      }
+    ],
+    "source": "米尔扎·马赫迪《纳迪尔沙战史》；汉韦《波斯革命纪行》：汉达基君主阿什拉夫·霍塔克统阿富汗铁骑自伊斯法罕北上，经德黑兰即雷伊与塞姆南东进呼罗珊门户，于达姆甘河畔遭纳迪尔汗火器阵击溃"
+  },
+  {
+    "eventId": "evt_2412",
+    "battleType": "野战",
+    "fromName": "和博克",
+    "fromCityId": "city_dzungar_basin",
+    "route": [
+      {
+        "name": "金微山",
+        "lat": 47.64,
+        "lng": 88.29
+      }
+    ],
+    "source": "《清世宗宪皇帝实录》《平定准噶尔方略前编》：准噶尔浑台吉噶勒丹策凌遣大小策凌敦多布自伊犁越额尔齐斯河与阿尔泰山设伏，诱清靖边大将军傅尔丹自科布多西出，于和通泊合围重创清军"
+  },
+  {
+    "eventId": "evt_2413",
+    "battleType": "野战",
+    "fromName": "金微山",
+    "fromCityId": "city_naiman",
+    "route": [
+      {
+        "name": "杭爱山",
+        "lat": 47.0,
+        "lng": 101.0
+      }
+    ],
+    "source": "《清世宗宪皇帝实录》《平定准噶尔方略前编》：准噶尔小策零敦多布统三万骑自阿尔泰山南麓绕开科布多，经推河越杭爱山奇袭塔米尔河大营，东进至鄂尔浑河畔光显寺遭喀尔喀亲王策棱回师歼灭"
+  },
+  {
+    "eventId": "evt_2414",
+    "battleType": "野战",
+    "fromName": "哈马丹",
+    "fromCityId": "city_hamadan",
+    "route": [
+      {
+        "name": "呼勒万",
+        "lat": 34.35,
+        "lng": 45.9
+      }
+    ],
+    "source": "米尔扎·马赫迪《纳迪尔沙战史》：波斯统帅纳迪尔汗在萨迈拉受挫后退至哈马丹神速重整大军，再次西越扎格罗斯山脉进入伊拉克北部，于基尔库克阿克苏河谷全歼并击毙奥斯曼老帅托帕尔·奥斯曼帕夏"
+  },
+  {
+    "eventId": "evt_2415",
+    "battleType": "野战",
+    "fromName": "那不勒斯",
+    "fromCityId": "city_naples",
+    "route": [
+      {
+        "name": "梅尔菲",
+        "lat": 40.99,
+        "lng": 15.65
+      }
+    ],
+    "source": "科莱塔《那不勒斯王国史》《蒙特马尔战报》：波旁西班牙统帅蒙特马尔伯爵辅佐查理王储进占那不勒斯后，率军东越亚平宁山脉进入普利亚，于巴里西郊比通托全歼哈布斯堡奥地利驻军"
+  },
+  {
+    "eventId": "evt_2416",
+    "battleType": "野战",
+    "fromName": "埃尔祖鲁姆",
+    "fromCityId": "city_erzurum",
+    "route": [
+      {
+        "name": "阿尼",
+        "lat": 40.51,
+        "lng": 43.57
+      }
+    ],
+    "source": "米尔扎·马赫迪《纳迪尔沙战史》《拉希德续编奥斯曼编年史》：奥斯曼东线统帅科普律吕·阿卜杜拉帕夏自埃尔祖鲁姆与卡尔斯率八万大军东进驰援埃里温，于耶格瓦尔德山谷遭纳迪尔汗以少胜多全歼并阵亡"
+  },
+  {
+    "eventId": "evt_2417",
+    "battleType": "攻城战",
+    "fromName": "基辅",
+    "fromCityId": "city_jifu",
+    "route": [
+      {
+        "name": "切尔卡瑟",
+        "lat": 49.44,
+        "lng": 32.06
+      }
+    ],
+    "source": "曼施泰因《俄罗斯历史政治军事回忆录》；米尼赫《军中日志》：俄国陆军元帅米尼赫统七万大军自基辅与第聂伯河防线顺南布格河南下横穿草原，三日强攻引爆火药库攻陷黑海门户奥恰科夫棱堡"
+  },
+  {
+    "eventId": "evt_2418",
+    "battleType": "野战",
+    "fromName": "坎大哈",
+    "fromCityId": "city_kandaha",
+    "route": [
+      {
+        "name": "喀布尔",
+        "lat": 34.55,
+        "lng": 69.2
+      },
+      {
+        "name": "阿托克",
+        "lat": 33.77,
+        "lng": 72.36
+      },
+      {
+        "name": "拉合尔",
+        "lat": 31.55,
+        "lng": 74.35
+      }
+    ],
+    "source": "米尔扎·马赫迪《纳迪尔沙战史》：阿夫沙尔波斯君主纳迪尔沙攻克坎大哈后北上喀布尔，东越开伯尔山口渡印度河连克白沙瓦与拉合尔，南下亚穆纳河西岸卡尔纳尔平原大破莫卧儿皇帝穆罕默德沙"
+  },
+  {
+    "eventId": "evt_2419",
+    "battleType": "水战",
+    "fromName": "皇家港",
+    "fromCityId": "city_portroyal",
+    "route": [],
+    "source": "弗农上将《波多韦洛公报》；里奇蒙《海军史》：英国海军中将爱德华·弗农率六艘风帆战列舰自牙买加皇家港南渡加勒比海，两日炮击攻克巴拿马地峡西班牙银运重镇波多韦洛"
+  },
+  {
+    "eventId": "evt_2420",
+    "battleType": "野战",
+    "fromName": "奥尔穆茨",
+    "fromCityId": "city_aoermuci",
+    "route": [],
+    "source": "腓特烈二世《我所处时代的历史》《奥地利参谋部王位继承战史》：奥地利元帅奈佩格自摩拉维亚奥尔穆茨率军北越苏台德山脉进入西里西亚解尼斯之围，进至布热格西郊莫尔维茨雪原与普军会战"
+  },
+  {
+    "eventId": "evt_2421",
+    "battleType": "攻城战",
+    "fromName": "皇家港",
+    "fromCityId": "city_portroyal",
+    "route": [],
+    "source": "布拉斯·德·莱索《卡塔赫纳防守日志》：英国海军中将弗农与陆军少将温特沃斯于牙买加皇家港集结一百八十余艘船舰与两万七千大军，南渡加勒比海强攻卡塔赫纳博卡奇卡水道与圣费利佩山堡惨败"
+  },
+  {
+    "eventId": "evt_2422",
+    "battleType": "野战",
+    "fromName": "布尔诺",
+    "fromCityId": "city_buernuo",
+    "route": [],
+    "source": "腓特烈二世《我所处时代的历史》；阿内特《玛丽亚·特蕾西亚史》：奥地利统帅洛林的查理亲王率奥军自摩拉维亚布尔诺西北进军波西米亚，企图收复布拉格，于恰斯拉夫北郊霍图西茨与腓特烈二世决战"
+  },
+  {
+    "eventId": "evt_2423",
+    "battleType": "野战",
+    "fromName": "海德堡",
+    "fromCityId": "city_heidelberg",
+    "route": [],
+    "source": "罗素勋爵《德廷根战地书信》；诺阿耶元帅《呈路易十五奏折》：法军元帅诺阿耶统莱茵军团自普法尔茨与莱茵河上游北进美因河谷，于阿沙芬堡西侧德廷根渡河截击英王乔治二世联军"
+  },
+  {
+    "eventId": "evt_2424",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "莫里斯·德·萨克森《我的遐想与书信》；伏尔泰《路易十五时代》：英荷汉同盟军统帅坎伯兰公爵威廉自布鲁塞尔率军西南进经苏瓦尼森林与阿特驰援图尔奈，于东南郊丰特努瓦强攻萨克森元帅防线受挫"
+  },
+  {
+    "eventId": "evt_2425",
+    "battleType": "野战",
+    "fromName": "卢吉杜努姆",
+    "fromCityId": "city_lugidunum",
+    "route": [],
+    "source": "腓特烈二世《西里西亚战争史》：普鲁士国王腓特烈二世于西里西亚施韦德尼茨与布雷斯劳间伪装留营，连夜秘密拔营北移施特里高河畔，拂晓奇袭翻越巨人山脉下山的洛林亲王奥萨联军"
+  },
+  {
+    "eventId": "evt_2426",
+    "battleType": "野战",
+    "fromName": "因弗内斯",
+    "fromCityId": "city_yinfeineisi",
+    "route": [],
+    "source": "坎伯兰公爵《卡洛登公报》《詹姆士党文书集》：詹姆士党查理·爱德华·斯图亚特王子退守高地首府因弗内斯，率高地氏族军东出卡洛登荒原并在奈恩夜袭未果后迎战坎伯兰公爵政府军"
+  },
+  {
+    "eventId": "evt_2427",
+    "battleType": "攻城战",
+    "fromName": "金奇",
+    "fromCityId": "city_jinqi",
+    "route": [],
+    "source": "拉布尔多内《印度远征回忆录》；奥姆《印度斯坦军事行动史》：法属毛里求斯总督拉布尔多内率舰队抵科罗曼德尔海岸本地治里，会合总督杜普莱克斯陆军北上水陆合围攻占英国东印度据点马德拉斯"
+  },
+  {
+    "eventId": "evt_2428",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "莫里斯·德·萨克森《劳费尔德战报》：法国大元帅莫里斯·德·萨克森统法军自布鲁塞尔与鲁汶东进默兹河谷企图合围马斯特里赫特，于西郊劳费尔德筑垒村猛攻击败坎伯兰公爵同盟军"
+  },
+  {
+    "eventId": "evt_2429",
+    "battleType": "关隘战",
+    "fromName": "成都",
+    "fromCityId": "city_chengdu",
+    "route": [
+      {
+        "name": "灌口",
+        "lat": 30.99,
+        "lng": 103.62
+      },
+      {
+        "name": "薛寨",
+        "lat": 31.43,
+        "lng": 103.16
+      },
+      {
+        "name": "美诺寨",
+        "lat": 31.0,
+        "lng": 102.4
+      }
+    ],
+    "source": "《清高宗纯皇帝实录》《平定金川方略》：经略大学士傅恒与四川提督岳钟琪自成都经灌县、汶川与小金川美诺西进，强攻大金川勒乌围外围昔岭与刮耳崖石碉群"
+  },
+  {
+    "eventId": "evt_2430",
+    "battleType": "攻城战",
+    "fromName": "坦贾武尔",
+    "fromCityId": "city_tanjiawuer",
+    "route": [
+      {
+        "name": "金奇",
+        "lat": 12.25,
+        "lng": 79.42
+      }
+    ],
+    "source": "罗伯特·奥姆《印度斯坦英国军事行动史》：卡纳提克君主昌达·萨希卜抽调围困蒂鲁吉拉帕利的精兵，命子拉扎·萨希卜会合本地治里法军北上帕拉尔河畔，强攻克莱武夺占的阿尔科特城"
+  },
+  {
+    "eventId": "evt_2432",
+    "battleType": "野战",
+    "fromName": "魁北克",
+    "fromCityId": "city_quebec",
+    "route": [
+      {
+        "name": "奥农多加",
+        "lat": 43.05,
+        "lng": -76.15
+      }
+    ],
+    "source": "乔治·华盛顿《莫农加希拉战事书信》；帕克曼《蒙卡尔姆与沃尔夫》：法属新法兰西驻军自圣劳伦斯河与安大略湖经伊利湖进入俄亥俄河谷筑迪凯纳堡，由博热与朗格拉德率法印联军出堡于莫农加希拉河密林伏击歼灭英将布拉多克"
+  },
+  {
+    "eventId": "evt_2434",
+    "battleType": "野战",
+    "fromName": "加尔各答",
+    "fromCityId": "city_kolkata",
+    "route": [],
+    "source": "克莱武《普拉西战后呈公司董事局报告》；吴拉姆·侯赛因《近代史览》：英国东印度公司罗伯特·克莱武收复加尔各答与钱德纳戈尔后，率三千英印军沿胡格利河北上穆尔希达巴德，于普拉西芒果林击败孟加拉纳瓦卜西拉杰"
+  },
+  {
+    "eventId": "evt_2435",
+    "battleType": "野战",
+    "fromName": "卡努尔格",
+    "fromCityId": "city_canburg",
+    "route": [
+      {
+        "name": "卢吉杜努姆",
+        "lat": 51.21,
+        "lng": 16.16
+      }
+    ],
+    "source": "腓特烈二世《七年战争史》；拿破仑《腓特烈战局评注》：普鲁士国王腓特烈二世在萨克森罗斯巴赫大捷后，率普军十二天急行军三百公里东返西里西亚，于帕尔希维茨会合贝弗恩残部后进抵洛伊滕，以斜线战术击溃洛林亲王奥军"
+  },
+  {
+    "eventId": "evt_2436",
+    "battleType": "野战",
+    "fromName": "卢吉杜努姆",
+    "fromCityId": "city_lugidunum",
+    "route": [],
+    "source": "腓特烈二世《七年战争史》；博洛托夫《生平与时代回忆录》：腓特烈二世自西里西亚与波西米亚边境兼程北上法兰克福与屈斯特林，在居斯特比泽架桥渡过奥得河迂回至东岸曹恩道夫与费尔莫尔俄军血战"
+  },
+  {
+    "eventId": "evt_2438",
+    "battleType": "野战",
+    "fromName": "哈利法克斯",
+    "fromCityId": "",
+    "route": [],
+    "source": "诺克斯上尉《北美战役历史日志》；帕克曼《蒙卡尔姆与沃尔夫》：英军少将詹姆斯·沃尔夫与海军上将桑德斯自新斯科舍路易斯堡溯圣劳伦斯河西上围困魁北克，乘夜自富隆湾攀崖登陆城西亚伯拉罕平原决战"
+  },
+  {
+    "eventId": "evt_2439",
+    "battleType": "野战",
+    "fromName": "卢吉杜努姆",
+    "fromCityId": "city_lugidunum",
+    "route": [],
+    "source": "腓特烈二世《七年战争史》；阿内特《道恩元帅战纪》：腓特烈二世自西里西亚西返萨克森渡易北河，与齐滕将军分南北两路夹击托尔高南郊叙普蒂茨高地的道恩元帅奥军主力"
+  },
+  {
+    "eventId": "evt_2441",
+    "battleType": "攻城战",
+    "fromName": "朴茨茅斯",
+    "fromCityId": "city_winchester",
+    "route": [
+      {
+        "name": "马提尼克",
+        "lat": 14.6,
+        "lng": -61.07
+      },
+      {
+        "name": "皇家港",
+        "lat": 17.94,
+        "lng": -76.84
+      }
+    ],
+    "source": "塞耶《哈瓦那远征从军日记》《哈瓦那陷落档案》：阿尔伯马尔伯爵乔治·凯佩尔与海军上将波科克统英国远征舰队自朴茨茅斯经马提尼克与牙买加会师，穿越老巴哈马海峡登陆哈瓦那东岸强攻摩罗城堡"
+  },
+  {
+    "eventId": "evt_2442",
+    "battleType": "野战",
+    "fromName": "曲女城",
+    "fromCityId": "city_qunvcheng",
+    "route": [
+      {
+        "name": "阿逾陀",
+        "lat": 26.8,
+        "lng": 82.2
+      },
+      {
+        "name": "瓦拉纳西",
+        "lat": 25.32,
+        "lng": 83.01
+      }
+    ],
+    "source": "芒罗少校《布克萨尔捷报》；布鲁姆《孟加拉陆军兴起史》：阿瓦德纳瓦卜舒贾·乌德·道拉、莫卧儿皇帝沙阿兰二世与孟加拉米尔·卡西姆于阿拉哈巴德及瓦拉纳西会师，沿恒河南岸东进比哈尔布克萨尔与英将赫克托·芒罗决战"
+  },
+  {
+    "eventId": "evt_2444",
+    "battleType": "野战",
+    "fromName": "因瓦",
+    "fromCityId": "city_ava",
+    "route": [],
+    "source": "《清高宗纯皇帝实录》《琉璃宫史》：缅甸贡榜王朝名将摩诃悉都自国都阿瓦即因瓦统缅军东北出击，截断深入宋赛的清征缅将军明瑞粮道，并尾追围攻至木邦西南蛮结与小猛育山隘"
+  },
+  {
+    "eventId": "evt_2445",
+    "battleType": "攻城战",
+    "fromName": "廓尔喀",
+    "fromCityId": "",
+    "route": [],
+    "source": "斯蒂勒《现代尼泊尔的崛起》《廓尔喀王室世系编年史》：廓尔喀沙阿国王普里特维·纳拉扬·沙阿自廓尔喀山城东进占领努瓦科特与基尔蒂布尔，乘因陀罗节合围攻克加德满都王城"
+  },
+  {
+    "eventId": "evt_2447",
+    "battleType": "水战",
+    "fromName": "圣彼得堡",
+    "fromCityId": "city_shengpidebao",
+    "route": [],
+    "source": "格雷格海军上将《切斯马航海日志》；安德森《黎凡特海战史》：俄国统帅阿列克谢·奥尔洛夫与斯皮里多夫率波罗的海舰队自喀琅施塔得启航，绕大西洋过直布罗陀海峡经摩里亚驶入爱琴海，于希俄斯切斯马湾全歼奥斯曼舰队"
+  },
+  {
+    "eventId": "evt_2449",
+    "battleType": "野战",
+    "fromName": "雅西",
+    "fromCityId": "city_yaxi",
+    "route": [
+      {
+        "name": "密尔科夫",
+        "lat": 45.65,
+        "lng": 27.05
+      },
+      {
+        "name": "德鲁斯塔尔",
+        "lat": 44.12,
+        "lng": 27.26
+      }
+    ],
+    "source": "苏沃洛夫《致胜的科学及军旅书信》；鲁缅采夫《多瑙河战报》：俄军元帅鲁缅采夫命前锋苏沃洛夫与卡缅斯基自摩尔达维亚与瓦拉几亚南渡多瑙河，经希尔绍瓦与锡利斯特拉南下保加利亚舒门东北科兹卢贾，击溃奥斯曼大军"
+  },
+  {
+    "eventId": "evt_2450",
+    "battleType": "攻城战",
+    "fromName": "波士顿",
+    "fromCityId": "",
+    "route": [],
+    "source": "托马斯·盖奇将军《波士顿战报》；弗罗辛厄姆《波士顿围城史》：被围困在波士顿城内的英军少将威廉·豪率两千余名红衣军乘驳船北渡查尔斯河口，登陆查尔斯顿半岛强攻布里德山与邦克山北美民兵棱堡"
+  },
+  {
+    "eventId": "evt_2452",
+    "battleType": "野战",
+    "fromName": "新阿姆斯特丹",
+    "fromCityId": "city_newamsterdam",
+    "route": [],
+    "source": "乔治·华盛顿《致大陆会议主席汉考克特伦顿战报》：大陆军总司令华盛顿自纽约即新阿姆斯特丹经新泽西退驻宾夕法尼亚，于圣诞夜自麦康基渡口冒浮冰东渡特拉华河，拂晓奇袭全歼特伦顿黑森雇佣军"
+  },
+  {
+    "eventId": "evt_2453",
+    "battleType": "野战",
+    "fromName": "魁北克",
+    "fromCityId": "city_quebec",
+    "route": [],
+    "source": "伯戈因《加拿大远征情况呈议会申辩书》：英军少将约翰·伯戈因统八千大军自加拿大魁北克与蒙特利尔沿尚普兰湖及哈德逊河谷南下，攻占提康德罗加堡后进至萨拉托加贝米斯高地被美军合围迫降"
+  },
+  {
+    "eventId": "evt_2454",
+    "battleType": "攻城战",
+    "fromName": "蒂亚瓦纳科",
+    "fromCityId": "city_diyawanake",
+    "route": [],
+    "source": "塞古罗拉《一七八一年拉巴斯围城日记》：上秘鲁艾马拉起义领袖图帕克·卡塔里自阿约阿约与蒂亚瓦纳科高原集结四万印第安大军，进驻阿尔托高地长期围困盆地内的西班牙重镇拉巴斯"
+  },
+  {
+    "eventId": "evt_2455",
+    "battleType": "攻城战",
+    "fromName": "新阿姆斯特丹",
+    "fromCityId": "city_newamsterdam",
+    "route": [],
+    "source": "罗尚博伯爵《美洲军事政治回忆录》；华盛顿《约克镇日令簿》：乔治·华盛顿与法国罗尚博伯爵率美法联军自纽约北郊哈德逊河防线秘密南下，经新泽西、费城与切萨皮克湾顶会合德格拉斯舰队，水陆合围迫降约克镇康沃利斯英军"
+  },
+  {
+    "eventId": "evt_2457",
+    "battleType": "野战",
+    "fromName": "富春",
+    "fromCityId": "city_fuchun",
+    "route": [
+      {
+        "name": "洞海城",
+        "lat": 17.62,
+        "lng": 106.5
+      },
+      {
+        "name": "蓝山",
+        "lat": 19.8,
+        "lng": 105.78
+      },
+      {
+        "name": "华闾",
+        "lat": 20.25,
+        "lng": 105.92
+      }
+    ],
+    "source": "吴家文派《皇黎一统志》《清高宗纯皇帝实录》：西山政权光中帝阮惠于富春即顺化登基誓师，率象步大军经乂安、清化与三叠山即华闾兼程北袭，乘除夕春节连破河回、玉洄与栋多清军营垒"
+  },
+  {
+    "eventId": "evt_2458",
+    "battleType": "攻城战",
+    "fromName": "雅西",
+    "fromCityId": "city_yaxi",
+    "route": [
+      {
+        "name": "密尔科夫",
+        "lat": 45.65,
+        "lng": 27.05
+      }
+    ],
+    "source": "苏沃洛夫《伊兹梅尔捷报》：俄军名将亚历山大·苏沃洛夫奉波将金命自摩尔达维亚与加拉茨兼程赶赴多瑙河三角洲基利亚水道，督九路纵队拂晓强攻拔除奥斯曼坚城伊兹梅尔"
+  },
+  {
+    "eventId": "evt_2460",
+    "battleType": "野战",
+    "fromName": "特里尔",
+    "fromCityId": "city_teerier",
+    "route": [],
+    "source": "歌德《一七九二年留法随军记》；凯勒曼《瓦尔密战事报告》：普奥联军总司令不伦瑞克公爵自科布伦茨与特里尔经卢森堡侵入法国洛林，连克朗维与凡尔登后越过阿贡森林进抵瓦尔密风车山"
+  },
+  {
+    "eventId": "evt_2461",
+    "battleType": "攻城战",
+    "fromName": "阿维尼翁",
+    "fromCityId": "city_avignon",
+    "route": [],
+    "source": "拿破仑《圣赫勒拿回忆录·土伦卷》；迪戈米耶《呈救国委员会捷报》：法兰西共和国军统帅迪戈米耶与炮兵少校拿破仑·波拿巴自罗讷河谷阿维尼翁与马赛东进，攻克埃吉耶特海角马尔格雷夫堡收复土伦军港"
+  },
+  {
+    "eventId": "evt_2462",
+    "battleType": "野战",
+    "fromName": "布鲁塞尔",
+    "fromCityId": "city_bulusaier",
+    "route": [],
+    "source": "儒尔当元帅《一七九四年战役回忆录》；卡尔大公《战史评述》：第一次反法同盟主帅科堡亲王约西亚斯自布鲁塞尔与尼韦勒统奥荷英联军分五路南下救援沙勒罗瓦，于弗勒吕斯遭儒尔当法军击退"
+  },
+  {
+    "eventId": "evt_2463",
+    "battleType": "关隘战",
+    "fromName": "火奴鲁鲁",
+    "fromCityId": "city_honolulu",
+    "route": [],
+    "source": "卡马考《统治酋长编年史》；库克肯德尔《夏威夷王国史》：夏威夷大岛君主卡美哈梅哈一世率战舟舰队跨海登陆瓦胡岛怀基基与火奴鲁鲁，沿努阿努山谷北推将卡拉尼库普莱守军逼下帕利悬崖"
+  },
+  {
+    "eventId": "evt_2464",
+    "battleType": "野战",
+    "fromName": "大不里士",
+    "fromCityId": "city_dabulishi",
+    "route": [
+      {
+        "name": "埃里温",
+        "lat": 40.18,
+        "lng": 44.51
+      }
+    ],
+    "source": "布特科夫《高加索新史料》；法萨伊《法尔斯纳玛恺加史》：波斯恺加之主阿迦·穆罕默德汗统大军自阿塞拜疆北渡阿拉斯河，经舒沙与甘贾直扑格鲁吉亚都城第比利斯南郊克尔察尼西峡谷"
+  },
+  {
+    "eventId": "evt_2465",
+    "battleType": "关隘战",
+    "fromName": "维罗纳",
+    "fromCityId": "city_verona",
+    "route": [],
+    "source": "拿破仑《意大利战役回忆录》；马尔蒙元帅《回忆录》：法国意大利军团总司令拿破仑·波拿巴自维罗纳连夜沿阿迪杰河南下至龙科架浮桥渡河，北插阿尔波内溪阿科莱木桥截击奥帅阿尔文齐侧后"
+  },
+  {
+    "eventId": "evt_2466",
+    "battleType": "野战",
+    "fromName": "克拉文纳",
+    "fromCityId": "city_clavenna",
+    "route": [],
+    "source": "拿破仑《意大利战役书信集》；克劳塞维茨《一七九六至一七九七年战局》：奥地利元帅阿尔文齐于南蒂罗尔特伦托集结主力，分六路沿加尔达湖东侧阿迪杰河峡谷南下强攻法军里沃利高地"
+  },
+  {
+    "eventId": "evt_2467",
+    "battleType": "水战",
+    "fromName": "锡拉库萨",
+    "fromCityId": "city_syracuse",
+    "route": [],
+    "source": "纳尔逊勋爵《书信与海战公报集》；詹姆斯《大不列颠海军史》：英国海军少将霍雷肖·纳尔逊统地中海分舰队于西西里锡拉库萨补给后东航索敌，直抵埃及亚历山大港东郊阿布基尔湾全歼法国东方舰队"
+  },
+  {
+    "eventId": "evt_2468",
+    "battleType": "关隘战",
+    "fromName": "竹山",
+    "fromCityId": "city_shangyong",
+    "route": [],
+    "source": "《清仁宗睿皇帝实录》《钦定剿平三省邪匪方略》：广州将军明亮与都统德楞泰自陕楚边境竹山、房县衔尾急追襄阳黄号白莲教义军，渡汉江经郧阳合围王聪儿、姚之富于郧西卸甲沟三岔河绝壁"
+  },
+  {
+    "eventId": "evt_2469",
+    "battleType": "攻城战",
+    "fromName": "阿瓦里斯",
+    "fromCityId": "city_awalisi",
+    "route": [
+      {
+        "name": "佩鲁西姆",
+        "lat": 31.04,
+        "lng": 32.55
+      },
+      {
+        "name": "加沙",
+        "lat": 31.5,
+        "lng": 34.47
+      },
+      {
+        "name": "卡昆",
+        "lat": 32.36,
+        "lng": 35.0
+      }
+    ],
+    "source": "拿破仑《埃及与叙利亚战役录》：拿破仑·波拿巴统法军东方军团自开罗经西奈阿里什、加沙与雅法沿地中海岸北上，围攻奥斯曼贾扎尔帕夏与英舰协防的阿卡坚城"
+  },
+  {
+    "eventId": "evt_2470",
+    "battleType": "野战",
+    "fromName": "日内瓦",
+    "fromCityId": "city_geneva",
+    "route": [
+      {
+        "name": "米兰",
+        "lat": 45.46,
+        "lng": 9.19
+      },
+      {
+        "name": "托尔托纳",
+        "lat": 44.9,
+        "lng": 8.87
+      }
+    ],
+    "source": "贝蒂埃《马伦哥战役官方公报》：第一执政拿破仑率预备军团自日内瓦翻越大圣伯纳德山口进入意大利，占领米兰后南渡波河经斯特拉代拉与托尔托纳西逼亚历山德里亚，于马伦哥平原逆转击败奥军"
+  },
+  {
+    "eventId": "evt_2472",
+    "battleType": "野战",
+    "fromName": "孟买",
+    "fromCityId": "city_mumbai",
+    "route": [],
+    "source": "威灵顿公爵《印度军务公报集》：英军少将阿瑟·韦尔斯利自普纳与孟买管区东北进军德干高原，攻克艾哈迈德讷格尔后北追至凯特纳河畔阿萨耶村，强渡河湾击破辛迪亚马拉塔大军"
+  },
+  {
+    "eventId": "evt_2473",
+    "battleType": "水战",
+    "fromName": "温彻斯特",
+    "fromCityId": "city_winchester",
+    "route": [
+      {
+        "name": "里斯本",
+        "lat": 38.72,
+        "lng": -9.13
+      },
+      {
+        "name": "加的斯",
+        "lat": 36.52,
+        "lng": -6.28
+      }
+    ],
+    "source": "科林伍德勋爵《特拉法加海战公报》：霍雷肖·纳尔逊乘胜利号自英国朴茨茅斯南航至西班牙加的斯外海接掌地中海舰队，于特拉法加海角以双纵列战术切穿并全歼维尔纳夫法西联合舰队"
+  },
+  {
+    "eventId": "evt_2474",
+    "battleType": "野战",
+    "fromName": "奥尔穆茨",
+    "fromCityId": "city_aoermuci",
+    "route": [],
+    "source": "拿破仑《大军团第三十号公报》；库图佐夫《一八零五年战事档案》：俄皇亚历山大一世、奥皇弗朗茨与统帅库图佐夫于摩拉维亚奥尔穆茨会合俄奥主力，西南推进至布尔诺东郊奥斯特里茨普拉岑高地向法军发起进攻"
+  },
+  {
+    "eventId": "evt_2475",
+    "battleType": "野战",
+    "fromName": "纽伦堡",
+    "fromCityId": "city_niulunbao",
+    "route": [],
+    "source": "达武元帅《第三军团作战报告》；克劳塞维茨《一八零六年大灾难》：法皇拿破仑一世于美因河与巴姆贝格集结大军团，分三纵队穿过图林根森林北上萨勒河谷，于耶拿与奥尔施泰特同时击碎普鲁士主力"
+  },
+  {
+    "eventId": "evt_2476",
+    "battleType": "野战",
+    "fromName": "格但斯克",
+    "fromCityId": "city_gdansk",
+    "route": [],
+    "source": "马尔博将军《回忆录》；本尼格森《一八零七年波兰战役手记》：拿破仑一世于东普鲁士集结大军团，命拉纳元帅在阿勒河西岸弗里德兰拖住渡河的本尼格森俄军，亲率主力自埃劳急行军赶至将背水俄军彻底击溃"
+  },
+  {
+    "eventId": "evt_2477",
+    "battleType": "野战",
+    "fromName": "塞维利亚",
+    "fromCityId": "city_seville",
+    "route": [
+      {
+        "name": "科尔多瓦",
+        "lat": 37.88,
+        "lng": -4.77
+      }
+    ],
+    "source": "福伊将军《半岛战争史》；阿特加《西班牙独立战争史》：西班牙安达卢西亚军团统帅卡斯塔尼奥斯自塞维利亚与乌特雷拉率军沿瓜达尔基维尔河东进，经科尔多瓦与安杜哈尔合围北撤拜伦的法将杜邦军团"
+  },
+  {
+    "eventId": "evt_2478",
+    "battleType": "攻城战",
+    "fromName": "索非亚",
+    "fromCityId": "city_sofia",
+    "route": [],
+    "source": "兰克《塞尔维亚革命史》；卡拉季奇《塞尔维亚现代史料》：奥斯曼鲁米利亚统帅胡尔希德帕夏自索非亚与鲁米利亚调集大军西援尼什，集中强攻城东北切加尔山丘的塞尔维亚义军辛格利奇棱堡"
+  },
+  {
+    "eventId": "evt_2479",
+    "battleType": "野战",
+    "fromName": "维也纳",
+    "fromCityId": "city_weiyeena",
+    "route": [],
+    "source": "佩莱将军《一八零九年战争回忆录》；卡尔大公《选集与战报》：拿破仑一世占领维也纳后依托多瑙河心洛鲍岛筑坚固浮桥群，乘雷雨夜率十八万大军团北渡多瑙河，于马尔希费尔德平原瓦格拉姆击破卡尔大公奥军"
+  },
+  {
+    "eventId": "evt_2480",
+    "battleType": "攻城战",
+    "fromName": "塞维利亚",
+    "fromCityId": "city_seville",
+    "route": [],
+    "source": "内皮尔《半岛战争史》；阿曼《威灵顿半岛战役全史》：法国南方军团统帅苏尔特元帅自安达卢西亚塞维利亚率军北越莫雷纳山进入埃斯特雷马杜拉，攻占奥利文萨后合围迫降瓜迪亚纳河畔重镇巴达霍斯"
+  },
+  {
+    "eventId": "evt_2481",
+    "battleType": "野战",
+    "fromName": "卡乌纳斯",
+    "fromCityId": "city_kawunas",
+    "route": [
+      {
+        "name": "维尔纽斯",
+        "lat": 54.68,
+        "lng": 25.27
+      },
+      {
+        "name": "维捷布斯克",
+        "lat": 55.19,
+        "lng": 30.2
+      },
+      {
+        "name": "斯摩棱斯克",
+        "lat": 54.78,
+        "lng": 32.04
+      }
+    ],
+    "source": "塞居尔伯爵《一八一二年俄罗斯远征史》：法皇拿破仑一世统大军团自科夫诺即卡乌纳斯渡涅曼河东征，经维尔纽斯、维捷布斯克、斯摩棱斯克与维亚济马直趋莫扎伊斯克近郊博罗季诺，与库图佐夫俄军主力决战"
+  },
+  {
+    "eventId": "evt_2482",
+    "battleType": "野战",
+    "fromName": "布拉格",
+    "fromCityId": "city_bulage",
+    "route": [
+      {
+        "name": "卡努尔格",
+        "lat": 50.37,
+        "lng": 13.79
+      }
+    ],
+    "source": "奥代莱本《一八一三年萨克森战役目击记》：第六次反法同盟总司令施瓦岑贝格亲王统波西米亚主力自布拉格翻越厄尔士山脉北入萨克森，会合北路贝尔纳多特与西里西亚布吕歇尔军团合围莱比锡拿破仑大军"
+  },
+  {
+    "eventId": "evt_2483",
+    "battleType": "攻城战",
+    "fromName": "巴约讷",
+    "fromCityId": "city_bayonne",
+    "route": [],
+    "source": "内皮尔《半岛战争史》；格莱格《巴约讷围城从军记》：被围困在巴约讷的法军守将图韦诺自阿杜尔河北岸圣艾蒂安卫城夜间出击，突袭英葡联军围城阵地并生擒英帅约翰·霍普"
+  },
+  {
+    "eventId": "evt_2484",
+    "battleType": "野战",
+    "fromName": "皇家港",
+    "fromCityId": "city_portroyal",
+    "route": [],
+    "source": "拉图尔少校《西佛罗里达与路易斯安那战事回忆录》：英军少将爱德华·帕克南与海军上将科克伦自牙买加内格里尔湾集结远征舰队北渡墨西哥湾，经博涅湖潜入密西西比河东岸，强攻沙尔梅特安德鲁·杰克逊防线阵亡"
+  },
+  {
+    "eventId": "evt_2485",
+    "battleType": "野战",
+    "fromName": "巴黎",
+    "fromCityId": "city_bali",
+    "route": [
+      {
+        "name": "苏瓦松",
+        "lat": 49.38,
+        "lng": 3.32
+      }
+    ],
+    "source": "威灵顿公爵《滑铁卢公报》；西本《一八一五年法兰西与比利时战史》：百日复辟的拿破仑一世统北方军团自巴黎经拉昂北上沙勒罗瓦渡桑布尔河，先于利尼击退布吕歇尔，继北进布鲁塞尔南郊滑铁卢猛攻威灵顿公爵"
+  },
+  {
+    "eventId": "evt_2486",
+    "battleType": "野战",
+    "fromName": "门多萨",
+    "fromCityId": "city_mendoza",
+    "route": [],
+    "source": "米特雷《圣马丁与南美解放史》；米勒将军《秘鲁服役回忆录》：何塞·德·圣马丁于阿根廷门多萨普卢梅里略军营整训安第斯军团，分兵翻越乌斯帕亚塔与帕托斯高寒山口，于智利查卡布科山谷会师全歼西班牙保王军"
+  },
+  {
+    "eventId": "evt_2488",
+    "battleType": "关隘战",
+    "fromName": "洪萨",
+    "fromCityId": "city_hongsa",
+    "route": [],
+    "source": "奥利里将军《玻利瓦尔副官回忆录》：西蒙·玻利瓦尔翻越安第斯山皮斯巴山口并在潘塔诺沼泽获胜后，连夜迂回占领通哈即洪萨，南下博亚卡石桥拦腰截断并全俘撤向波哥大的西帅巴雷罗全军"
+  },
+  {
+    "eventId": "evt_2489",
+    "battleType": "野战",
+    "fromName": "曼丁尼亚",
+    "fromCityId": "city_mantinea",
+    "route": [],
+    "source": "科洛科特罗尼斯《摩里亚老人回忆录》；芬利《希腊革命史》：奥斯曼驻摩里亚统帅凯哈亚·穆斯塔法贝伊自首府特里波利察即曼丁尼亚率正规骑步军西出，猛攻科洛科特罗尼斯希腊义军据守的瓦尔泰齐石堡山村大败"
+  },
+  {
+    "eventId": "evt_2490",
+    "battleType": "野战",
+    "fromName": "巴卡塔",
+    "fromCityId": "city_bacata",
+    "route": [
+      {
+        "name": "索加莫索",
+        "lat": 5.71,
+        "lng": -72.93
+      }
+    ],
+    "source": "玻利瓦尔《呈库库塔国会卡拉沃沃捷报》；帕埃斯《自传》：西蒙·玻利瓦尔自新格拉纳达与巴里纳斯率军东北推进，于委内瑞拉圣卡洛斯会合帕埃斯草原骑兵，进抵瓦伦西亚西南卡拉沃沃平原全歼拉托雷西军"
+  },
+  {
+    "eventId": "evt_2492",
+    "battleType": "野战",
+    "fromName": "库斯科",
+    "fromCityId": "city_cusco",
+    "route": [
+      {
+        "name": "安达瓦伊拉斯",
+        "lat": -13.66,
+        "lng": -73.39
+      }
+    ],
+    "source": "苏克雷《阿亚库乔战役公报》；加西亚·坎巴《西班牙驻秘鲁军回忆录》：西班牙秘鲁总督拉塞尔纳统保王主力自库斯科西越阿普里马克河，经安达瓦伊拉斯迂回抢占阿亚库乔孔多尔坎基山，下山进攻苏克雷联军惨败被俘"
+  },
+  {
+    "eventId": "evt_2493",
+    "battleType": "野战",
+    "fromName": "阿克苏",
+    "fromCityId": "",
+    "route": [
+      {
+        "name": "巴楚",
+        "lat": 39.79,
+        "lng": 78.55
+      },
+      {
+        "name": "涓笃",
+        "lat": 39.48,
+        "lng": 76.72
+      }
+    ],
+    "source": "《清宣宗成皇帝实录》《钦定平定回疆剿擒逆裔方略》：扬威将军长龄与参赞大臣杨遇春、武隆阿自阿克苏统满汉精兵西进，经柯尔坪、巴尔楚克连破洋阿尔巴特与沙布都尔，进抵喀什噶尔城东浑河渡口击溃张格尔"
+  },
+  {
+    "eventId": "evt_2494",
+    "battleType": "水战",
+    "fromName": "马耳他",
+    "fromCityId": "city_malta",
+    "route": [],
+    "source": "科德林顿海军上将《纳瓦里诺公报与回忆录》：英国海军中将科德林顿自马耳他率舰队至伯罗奔尼撒西岸会合法国德·里尼与俄国海登分舰队，直驶入纳瓦里诺海湾全歼奥斯曼埃及联合舰队"
+  },
+  {
+    "eventId": "evt_2495",
+    "battleType": "野战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "布尔萨",
+        "lat": 40.18,
+        "lng": 29.06
+      },
+      {
+        "name": "凯莱奈",
+        "lat": 38.06,
+        "lng": 30.16
+      }
+    ],
+    "source": "卡达尔维内《叙利亚与小亚细亚战争史》；法赫米《易卜拉欣帕夏战史》：奥斯曼大维齐尔雷希德·穆罕默德帕夏统五万大军自伊斯坦布尔经比提尼亚与阿菲永卡拉希萨尔南下，于科尼亚浓雾平原猛攻易卜拉欣帕夏埃及军遭全歼被俘"
+  },
+  {
+    "eventId": "evt_2496",
+    "battleType": "野战",
+    "fromName": "奥斯汀",
+    "fromCityId": "",
+    "route": [],
+    "source": "山姆·休斯敦《圣哈辛托官方战报》；德拉培尼亚《得克萨斯随军日记》：得克萨斯独立军总司令山姆·休斯敦自冈萨雷斯与科罗拉多河实施战略东撤，诱墨西哥总统圣安纳孤军深入圣哈辛托河口沼泽，趁午睡发起突袭生擒圣安纳"
+  },
+  {
+    "eventId": "evt_2497",
+    "battleType": "水战",
+    "fromName": "澳门",
+    "fromCityId": "city_aomen",
+    "route": [],
+    "source": "梁廷枏《夷氛闻记》；宾汉《英军在华作战记》：英军海军准将伯麦即布伯统舰队自珠江口澳门与香港水域北上穿鼻洋，水陆并进强攻虎门横档、永安、威远与靖远炮台，水师提督关天培力战殉国"
+  },
+  {
+    "eventId": "evt_2498",
+    "battleType": "攻城战",
+    "fromName": "舟山",
+    "fromCityId": "city_zhoushan",
+    "route": [
+      {
+        "name": "海陵",
+        "lat": 32.55,
+        "lng": 120.0
+      }
+    ],
+    "source": "恩格斯《英人对华的新远征》；洛赫《南京条约缔结记》《清史稿·海龄传》：英军司令休·高夫与海军巴尔克自舟山定海北上攻占吴淞与宝山，率七十余艘舰船溯长江西进猛攻大运河咽喉镇江府城"
+  },
+  {
+    "eventId": "evt_2499",
+    "battleType": "野战",
+    "fromName": "费罗兹普尔",
+    "fromCityId": "city_firozpur",
+    "route": [],
+    "source": "坎宁安《锡克人史》；史密斯爵士《阿里瓦尔与索布拉昂回忆录》：英印军总司令休·高夫在穆德基与费罗兹沙赫交战后，于费罗兹普尔迎来德里重炮列车，随即东进向萨特莱杰河南岸索布拉昂锡克桥头棱堡发起总攻"
+  },
+  {
+    "eventId": "evt_2500",
+    "battleType": "攻城战",
+    "fromName": "韦拉克鲁斯",
+    "fromCityId": "city_veracruz",
+    "route": [
+      {
+        "name": "普埃布拉",
+        "lat": 19.04,
+        "lng": -98.2
+      }
+    ],
+    "source": "温菲尔德·斯科特《回忆录》；格兰特《个人回忆录》：美军总司令温菲尔德·斯科特自韦拉克鲁斯两栖登陆，经塞罗戈多与普埃布拉翻越火山山口进入墨西哥谷地，连克丘鲁武斯科与莫利诺德尔雷伊后强攻查普尔特佩克城堡"
+  },
+  {
+    "eventId": "evt_2501",
+    "battleType": "野战",
+    "fromName": "都灵",
+    "fromCityId": "city_turin",
+    "route": [],
+    "source": "拉德茨基元帅《意大利战报》；皮耶里《复兴运动军事史》：撒丁国王查理·阿尔贝特与波兰将领赫扎诺夫斯基自都灵与亚历山德里亚北上渡提契诺河，因奥帅拉德茨基反插敌后急退守诺瓦拉南郊比科卡高地决战惨败"
+  },
+  {
+    "eventId": "evt_2503",
+    "battleType": "水战",
+    "fromName": "赫尔松涅斯",
+    "fromCityId": "city_heersongniesi",
+    "route": [],
+    "source": "纳希莫夫海军上将《锡诺普海战文件集》；菲格斯《克里米亚战争史》：俄国黑海舰队中将帕维尔·纳希莫夫率六艘战列舰自克里米亚塞瓦斯托波尔即赫尔松涅斯军港南渡黑海，冒雨闯入锡诺普湾用佩克珊开花弹全歼奥斯曼舰队"
+  },
+  {
+    "eventId": "evt_2506",
+    "battleType": "攻城战",
+    "fromName": "君士坦丁堡",
+    "fromCityId": "city_junshitandingbao",
+    "route": [
+      {
+        "name": "瓦尔纳",
+        "lat": 43.21,
+        "lng": 27.91
+      }
+    ],
+    "source": "托特列本《塞瓦斯托波尔保卫战记述》；麦克马洪元帅《回忆录》：法英撒联军自伊斯坦布尔与瓦尔纳渡黑海登陆克里米亚叶夫帕托里亚，经阿尔马河合围塞瓦斯托波尔近一年后，由佩利西耶与麦克马洪发起总攻夺占马拉科夫棱堡"
+  },
+  {
+    "eventId": "evt_2508",
+    "battleType": "攻城战",
+    "fromName": "费罗兹普尔",
+    "fromCityId": "city_firozpur",
+    "route": [],
+    "source": "罗伯茨勋爵《印度四十一年回忆录》；达尔林普尔《末代莫卧儿》：英军少将阿奇代尔·威尔逊与尼科尔森集结安巴拉、密拉特及旁遮普锡克援军与重型攻城炮列，进占德里北郊山脊并爆破强攻克什米尔门"
+  },
+  {
+    "eventId": "evt_2510",
+    "battleType": "野战",
+    "fromName": "都灵",
+    "fromCityId": "city_turin",
+    "route": [
+      {
+        "name": "米兰",
+        "lat": 45.46,
+        "lng": 9.19
+      }
+    ],
+    "source": "亨利·杜南《索尔费里诺回忆录》；巴赞元帅《一八五九年意大利战役报告》：法皇拿破仑三世与撒丁国王维托里奥·埃马努埃莱二世自皮埃蒙特都灵东进，于马真塔获胜解放米兰后继续东渡基耶塞河，于索尔费里诺与奥军主力遭遇决战"
+  },
+  {
+    "eventId": "evt_2511",
+    "battleType": "野战",
+    "fromName": "热那亚",
+    "fromCityId": "city_genoa",
+    "route": [
+      {
+        "name": "利利拜乌姆",
+        "lat": 37.8,
+        "lng": 12.43
+      }
+    ],
+    "source": "加里波第《亲笔回忆录》；阿巴《从夸托到沃尔图诺红衫军笔记》：朱塞佩·加里波第率红衫千人团自热那亚夸托港乘两艘轮船南航，登陆西西里西岸马萨拉即古利利拜乌姆，东进萨莱米后于卡拉塔菲米击破两西西里军"
+  },
+  {
+    "eventId": "evt_2512",
+    "battleType": "野战",
+    "fromName": "漂渝津",
+    "fromCityId": "city_piaoyujin",
+    "route": [],
+    "source": "埃里松伯爵《翻译官随军日记》《筹办夷务始末·咸丰朝》：英法联军统帅格兰特与蒙托邦自北塘登陆攻陷大沽炮台，占领天津后沿北运河西北进逼通州，于八里桥击败僧格林沁马队"
+  },
+  {
+    "eventId": "evt_2514",
+    "battleType": "野战",
+    "fromName": "华盛顿",
+    "fromCityId": "",
+    "route": [],
+    "source": "麦克莱伦《我的故事》；西尔斯《安提塔姆战史》：北方联邦波托马克军团司令乔治·麦克莱伦自华盛顿西北出兵马里兰，于弗雷德里克截获李将军第191号特令后突破南山山口，进逼夏普斯堡安提塔姆溪"
+  },
+  {
+    "eventId": "evt_2516",
+    "battleType": "野战",
+    "fromName": "詹姆斯敦",
+    "fromCityId": "city_jamestown",
+    "route": [],
+    "source": "米德将军《生平与书信》；朗斯特里特《从马纳萨斯到阿波马托克斯》：美利坚联盟国北弗吉尼亚军团司令罗伯特·李自弗吉尼亚弗雷德里克斯堡经谢南多厄河谷北渡波托马克河，穿过马里兰深入宾夕法尼亚，于葛底斯堡与北方军团决战三日"
+  },
+  {
+    "eventId": "evt_2518",
+    "battleType": "野战",
+    "fromName": "詹姆斯敦",
+    "fromCityId": "city_jamestown",
+    "route": [],
+    "source": "格兰特《个人回忆录》；波特将军《与格兰特出征记》：联邦军总司令尤利西斯·格兰特攻破彼得斯堡与里士满防线后，督谢里登骑兵与米德步兵沿阿波马托克斯河昼夜西追，于赛勒溪重创南军后在阿波马托克斯法院村合围迫降罗伯特·李"
+  },
+  {
+    "eventId": "evt_2519",
+    "battleType": "攻城战",
+    "fromName": "讹答剌",
+    "fromCityId": "city_sailan",
+    "route": [],
+    "source": "捷连季耶夫《征服中亚史》；麦肯齐《雄狮切尔尼亚耶夫传》：俄国少将切尔尼亚耶夫自奇姆肯特即塞兰南下奇尔奇克河绿洲，切断尼亚兹别克水源并于城外击败阿里木库力后，自卡马兰门夜袭攻占塔什干"
+  },
+  {
+    "eventId": "evt_2520",
+    "battleType": "野战",
+    "fromName": "勃兰登堡",
+    "fromCityId": "city_bolandengbao",
+    "route": [
+      {
+        "name": "卢吉杜努姆",
+        "lat": 51.21,
+        "lng": 16.16
+      }
+    ],
+    "source": "普鲁士总参谋部《一八六六年战役史》：普鲁士总参谋长老毛奇运用铁路网自勃兰登堡、萨克森与西里西亚调动易北军团、第一军团与王储第二军团分越苏台德山脉南入波西米亚，于萨多瓦即克尼格雷茨合围大破奥帅贝内德克"
+  },
+  {
+    "eventId": "evt_2521",
+    "battleType": "水战",
+    "fromName": "普拉",
+    "fromCityId": "city_pula",
+    "route": [],
+    "source": "特格特霍夫《利萨海战官方报告》；威尔逊《实战中的铁甲舰》：奥地利海军少将特格特霍夫率铁甲与木壳舰队自伊斯特拉半岛普拉军港拔锚东南疾航，于达尔马提亚利萨岛北侧海域以楔形撞角战术击溃意大利佩尔萨诺舰队"
+  },
+  {
+    "eventId": "evt_2522",
+    "battleType": "攻城战",
+    "fromName": "蒙特雷",
+    "fromCityId": "",
+    "route": [
+      {
+        "name": "圣路易斯波托西",
+        "lat": 22.15,
+        "lng": -100.99
+      }
+    ],
+    "source": "布拉西奥《马西米连诺皇帝秘书回忆录》；班克罗夫特《墨西哥史》：墨西哥共和国北方军团主帅埃斯科韦多奉胡亚雷斯总统命自新莱昂蒙特雷与圣路易斯波托西南下中央高原，会合科罗纳军团合围攻克克雷塔罗并生擒马西米连诺一世"
+  },
+  {
+    "eventId": "evt_2523",
+    "battleType": "野战",
+    "fromName": "大阪",
+    "fromCityId": "city_osaka",
+    "route": [],
+    "source": "太政官《复古老记》；大山柏《戊辰役战史》：旧幕府军陆军奉行竹中重固会合会津、桑名藩兵一万五千人自大坂城沿淀川北上，分由鸟羽街道与伏见街道强行进军京都，遭萨长新政府官军击溃"
+  },
+  {
+    "eventId": "evt_2524",
+    "battleType": "攻城战",
+    "fromName": "江户城",
+    "fromCityId": "city_edo",
+    "route": [
+      {
+        "name": "青叶馆",
+        "lat": 38.27,
+        "lng": 140.87
+      },
+      {
+        "name": "根城",
+        "lat": 40.5,
+        "lng": 141.46
+      }
+    ],
+    "source": "大鸟圭介《南柯纪行》；大山柏《戊辰役战史》：明治新政府军参谋黑田清隆率海陆大军自东京品川北上，经宫古湾海战与青森集结后渡津轻海峡登陆乙部，收复松前胜山馆后东进合围箱馆与五棱郭迫降榎本武扬"
+  },
+  {
+    "eventId": "evt_2525",
+    "battleType": "野战",
+    "fromName": "美因茨",
+    "fromCityId": "city_meiyinci",
+    "route": [
+      {
+        "name": "特里尔",
+        "lat": 49.75,
+        "lng": 6.64
+      }
+    ],
+    "source": "普鲁士大总参谋部《普法战史》；霍华德《普法战争》：德军总参谋长老毛奇自美因茨督第三军团与默兹军团西进洛林，封锁梅斯后挥师北折阿登默兹河谷，于博蒙击败法军并将其合围全俘于色当盆地"
+  },
+  {
+    "eventId": "evt_2526",
+    "battleType": "攻城战",
+    "fromName": "海德堡",
+    "fromCityId": "city_heidelberg",
+    "route": [],
+    "source": "乌里希将军《斯特拉斯堡围城档案与申辩录》；瓦格纳《斯特拉斯堡围城史》：普鲁士将领奥古斯特·冯·韦尔德统巴登师与普鲁士攻城军团自巴登卡尔斯鲁厄与拉什塔特渡莱茵河，在韦尔特会战后南下合围轰击迫降斯特拉斯堡要塞"
+  },
+  {
+    "eventId": "evt_2533",
+    "battleType": "野战",
+    "fromName": "华沙",
+    "fromCityId": "city_huasha",
+    "route": [
+      {
+        "name": "卢布林",
+        "lat": 51.25,
+        "lng": 22.57
+      },
+      {
+        "name": "索卡利",
+        "lat": 50.48,
+        "lng": 24.28
+      }
+    ],
+    "source": "《奥斯维琴日记》《目击者编年史》：波兰国王扬二世·卡齐米日统联邦贵族军与德意志雇佣步炮自华沙东南进军，经卢布林至索卡利大营集结，东进沃里尼亚斯特里河畔别列斯特奇科击败赫梅利尼茨基哥萨克与克里米亚联军"
+  },
+  {
+    "eventId": "evt_2535",
+    "battleType": "野战",
+    "fromName": "巴卡塔",
+    "fromCityId": "city_bacata",
+    "route": [
+      {
+        "name": "洪萨",
+        "lat": 5.53,
+        "lng": -73.36
+      }
+    ],
+    "source": "卡斯特利亚诺斯《新格拉纳达名士挽歌》：西班牙征服者巴尔塔萨·马尔多纳多自圣菲波哥大即巴卡塔沿高原北上，经通哈即洪萨与派帕进逼索加莫索西郊邦萨沼泽，强攻通达马山地防线"
+  }
+]
