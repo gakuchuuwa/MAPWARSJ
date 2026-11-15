@@ -2822,7 +2822,7 @@ export class Scene13WarLayer {
 
         const oppFamous = this.sideIsFamous[ef];
 
-        // 剧本模式下电脑（viewer === null）按史实胜负定倍率：赢家 ×1.5、输家 ×0.5、平局/未定 ×1.0（不论名将普将）；观众与乱斗走原口径
+        // 剧本模式下电脑（viewer === null）按史实胜负定倍率：赢家 ×1.8、输家 ×0.2、平局/未定 ×1.0（不论名将普将）；观众与乱斗走原口径
 
         const famousDiffMult = viewer !== null
 
@@ -2830,7 +2830,7 @@ export class Scene13WarLayer {
 
             : (isScriptPeriod() && this.historicalWinnerSide !== null
 
-                ? (this.historicalWinnerSide === f ? 1.5 : 0.5)
+                ? (this.historicalWinnerSide === f ? 1.8 : 0.2)
 
                 : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0));
 
