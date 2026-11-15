@@ -279,8 +279,21 @@ async function main() {
     const DT = 0.2; // 0.2s 步长，兼顾精度与千场秒级运行速度
     const results: Array<Record<string, unknown>> = [];
 
-    for (let idx = 0; idx < CHRONICLE_MAINLINE.length; idx++) {
-        const ev = CHRONICLE_MAINLINE[idx];
+    // 可选：CHRONICLE_ORDER_FILE 指向含 order（事件ID数组）的 JSON 时，按该顺序重算（分章调序后用）
+    const orderFile = process.env.CHRONICLE_ORDER_FILE;
+    let mainline = CHRONICLE_MAINLINE;
+    if (orderFile) {
+        const order: string[] = JSON.parse(fs.readFileSync(orderFile, 'utf-8')).order;
+        const byId = new Map(CHRONICLE_MAINLINE.map((e) => [e.id, e]));
+        const missing = order.filter((id) => !byId.has(id));
+        if (missing.length || order.length !== CHRONICLE_MAINLINE.length) {
+            throw new Error(`顺序文件与主线不符：缺 ${missing.length} 场，顺序 ${order.length} 场 / 主线 ${CHRONICLE_MAINLINE.length} 场`);
+        }
+        mainline = order.map((id) => byId.get(id)!);
+    }
+
+    for (let idx = 0; idx < mainline.length; idx++) {
+        const ev = mainline[idx];
         const fb = ev.battle!;
         const chained = idx > 0 && prevGeneralId === ev.leadGeneralId && prevBattlePos !== null;
 
@@ -496,7 +509,7 @@ async function main() {
         });
     }
 
-    const outPath = path.join(process.cwd(), 'scratch', 'chronicle_march_times.json');
+    const outPath = process.env.CHRONICLE_MARCH_OUT ?? path.join(process.cwd(), 'scratch', 'chronicle_march_times.json');
     fs.writeFileSync(outPath, JSON.stringify(results, null, 2), 'utf-8');
 
     // 打印统计摘要与前 10 场实测对比
