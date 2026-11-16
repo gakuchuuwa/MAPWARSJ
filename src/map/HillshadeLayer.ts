@@ -108,6 +108,8 @@ type TileCommitJob =
 
 /** ESRI World_Shaded_Relief 最细一级（更高缩放借这一级的父瓦片当水域掩膜） */
 const ESRI_MASK_MAX_Z = 13;
+/** zoom > 12（如海战 zoom 15）统一从原生 zoom 12 瓦片裁剪平滑放大，避免高缩放 DEM 缺块与 0m 误判绿块 */
+const HILLSHADE_MAX_NATIVE_Z = 12;
 
 export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
@@ -149,6 +151,8 @@ export class HillshadeLayer extends L.GridLayer {
     private seasonRafId: number | null = null;
     /** 已发过预取请求的 z/x/y，避免每次 zoomend 重复占用连接 */
     private prefetchedKeys: Set<string> = new Set();
+    /** zoom > 12 共用同一块 zoom 12 原生瓦片的回调队列 */
+    private nativePendingCallbacks: Map<string, Array<(bmp: ImageBitmap) => void>> = new Map();
 
     // [诊断 2026-07-27] 只读计数器，供 ZoomPerfProbe 判断某次缩放到底新算了多少块瓦片
     private statTilesComputed = 0;
@@ -267,7 +271,7 @@ export class HillshadeLayer extends L.GridLayer {
                 const nextRetry = retryCount + 1;
                 const delayMs = Math.min(8000, 1200 * nextRetry);
                 setTimeout(() => {
-                    if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
+                    if ((!tile.isConnected && !(tile as any).__hsNativeFetch) || task.modeVersion !== this.modeVersion) return;
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, nextRetry);
                 }, delayMs);
             }
@@ -341,8 +345,19 @@ export class HillshadeLayer extends L.GridLayer {
             const { ctx, tile, done, cacheKey, coords, size, bounds, isExpTile, isValleyTile, retryCount } = task;
             try {
                 const _t0 = performance.now();
+                const isNativeFetch = !!(tile as any).__hsNativeFetch;
                 if (isCoarseFallback) {
-                    if (tile.isConnected) {
+                    if (isNativeFetch) {
+                        const cbs = this.nativePendingCallbacks.get(cacheKey);
+                        if (cbs) {
+                            this.nativePendingCallbacks.delete(cacheKey);
+                            for (const cb of cbs) cb(bitmap);
+                        }
+                        bitmap.close();
+                        summerBitmap?.close();
+                        autumnBitmap?.close();
+                        winterBitmap?.close();
+                    } else if (tile.isConnected) {
                         this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
                         this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, true);
                     } else {
@@ -355,16 +370,21 @@ export class HillshadeLayer extends L.GridLayer {
                         const nextRetry = retryCount + 1;
                         const delayMs = 2000 * nextRetry;
                         setTimeout(() => {
-                            if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
+                            if ((!tile.isConnected && !isNativeFetch) || task.modeVersion !== this.modeVersion) return;
                             this.dispatchTile(coords, size, bounds, ctx, tile, () => {}, cacheKey, isExpTile, isValleyTile, nextRetry);
                         }, delayMs);
                     }
                 } else {
-                    if (tile.isConnected) {
+                    if (tile.isConnected && !isNativeFetch) {
                         this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
                         this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, false);
                     }
                     this.cachePut(cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
+                    const cbs = this.nativePendingCallbacks.get(cacheKey);
+                    if (cbs) {
+                        this.nativePendingCallbacks.delete(cacheKey);
+                        for (const cb of cbs) cb(bitmap);
+                    }
                 }
                 perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
             } catch (err) {
@@ -856,6 +876,66 @@ export class HillshadeLayer extends L.GridLayer {
         // 创建时保持透明，在 Worker 计算完成前自然透出底图，彻底消除棋盘方块闪烁
 
         this.ensureWorkers();
+        if (coords.z > HILLSHADE_MAX_NATIVE_Z) {
+            const d = coords.z - HILLSHADE_MAX_NATIVE_Z;
+            const nx = coords.x >> d;
+            const ny = coords.y >> d;
+            const nz = HILLSHADE_MAX_NATIVE_Z;
+            const sub = size.x >> d;
+            const sx = (coords.x - (nx << d)) * sub;
+            const sy = (coords.y - (ny << d)) * sub;
+            const nBounds = tileBoundsFromCoords(nz, nx, ny);
+            const nExp = this.isReliefTile(nz);
+            const nValley = this.isValleyTile(nz, nBounds);
+            const nKey = this.tileCacheKey(nz, nx, ny, nExp, nValley);
+            const modeVer = this.modeVersion;
+            const paintSub = (bmp: ImageBitmap) => {
+                if (!tile.isConnected || modeVer !== this.modeVersion) return;
+                const padL = sx > 0 ? 1 : 0;
+                const padT = sy > 0 ? 1 : 0;
+                const padR = sx + sub < bmp.width ? 1 : 0;
+                const padB = sy + sub < bmp.height ? 1 : 0;
+                const sc = size.x / sub;
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.clearRect(0, 0, size.x, size.y);
+                ctx.drawImage(
+                    bmp,
+                    sx - padL, sy - padT, sub + padL + padR, sub + padT + padB,
+                    -padL * sc, -padT * sc, size.x + (padL + padR) * sc, size.y + (padT + padB) * sc,
+                );
+            };
+            const cachedNative = this.cacheGet(nKey);
+            if (cachedNative) {
+                this.statCacheHits++;
+                queueMicrotask(() => {
+                    paintSub(cachedNative);
+                    done(undefined, tile);
+                });
+                return tile;
+            }
+            let list = this.nativePendingCallbacks.get(nKey);
+            const isFirst = !list;
+            if (!list) {
+                list = [];
+                this.nativePendingCallbacks.set(nKey, list);
+            }
+            list.push((bmp) => {
+                paintSub(bmp);
+                done(undefined, tile);
+            });
+            if (isFirst) {
+                const dummy = document.createElement('canvas');
+                dummy.width = size.x;
+                dummy.height = size.y;
+                (dummy as any).__hsNativeFetch = true;
+                const dCtx = dummy.getContext('2d');
+                if (dCtx) {
+                    this.dispatchTile({ z: nz, x: nx, y: ny } as L.Coords, size, nBounds, dCtx, dummy, () => {}, nKey, nExp, nValley, 0);
+                }
+            }
+            return tile;
+        }
         const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
         const isExpTile = this.isReliefTile(coords.z);
         const isValleyTile = this.isValleyTile(coords.z, bounds);

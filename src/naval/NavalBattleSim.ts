@@ -330,10 +330,12 @@ export class NavalBattleSim {
         return { x, y };
     }
 
-    /** 沿某航向往前看：前方两处都是水才算走得通 */
+    /** 沿某航向往前看：近、中、远三处都是水才算走得通 */
     private clearAhead(x: number, y: number, ang: number): boolean {
         const c = Math.cos(ang), sn = Math.sin(ang);
-        return this.isWater(x + c * 110, y + sn * 110) && this.isWater(x + c * 230, y + sn * 230);
+        return this.isWater(x + c * 36, y + sn * 36)
+            && this.isWater(x + c * 96, y + sn * 96)
+            && this.isWater(x + c * 180, y + sn * 180);
     }
 
     /** 设天气（null = 晴）。强度 0..1；只改乘数，不发事件（播报由画面层负责） */
@@ -557,8 +559,13 @@ export class NavalBattleSim {
             if (s.y > NAVAL_WORLD_H - m) ay -= (s.y - (NAVAL_WORLD_H - m)) / m * 2;
         }
         desired = Math.atan2(ay, ax);
-        // 绕开陆地：前方是岸就左右找最近一条走得通的航向
-        if (!this.clearAhead(s.x, s.y, desired)) {
+        const onLandNow = !this.isWater(s.x, s.y);
+        const exitWater = onLandNow ? this.nearestWater(s.x, s.y) : null;
+        if (onLandNow && exitWater && (exitWater.x !== s.x || exitWater.y !== s.y)) {
+            // 已在陆地上：只能往最近水面出海，禁止继续往陆地深处走
+            desired = Math.atan2(exitWater.y - s.y, exitWater.x - s.x);
+        } else if (!this.clearAhead(s.x, s.y, desired)) {
+            // 绕开陆地：前方是岸就左右找最近一条走得通的航向
             for (let k = 1; k <= 9; k++) {
                 const a1 = desired + k * 0.35 * s.orbitSign, a2 = desired - k * 0.35 * s.orbitSign;
                 if (this.clearAhead(s.x, s.y, a1)) { desired = a1; break; }
@@ -576,13 +583,29 @@ export class NavalBattleSim {
         s.speed += (target - s.speed) * Math.min(1, dt * 0.8);
         const nx = s.x + Math.cos(s.heading) * s.speed * dt;
         const ny = s.y + Math.sin(s.heading) * s.speed * dt;
-        if (this.isWater(nx, ny) || !this.isWater(s.x, s.y)) {
-            s.x = nx;
-            s.y = ny;
-        } else {
-            // 撞岸：停一下、掉头
-            s.speed *= 0.3;
-            s.heading += Math.PI * 0.5 * s.orbitSign;
+        const bowClear = this.isWater(nx, ny)
+            && this.isWater(nx + Math.cos(s.heading) * (s.radius * 0.55), ny + Math.sin(s.heading) * (s.radius * 0.55));
+        if (!onLandNow) {
+            if (bowClear) {
+                s.x = nx;
+                s.y = ny;
+            } else {
+                // 在水面禁止进陆地：停一下、掉头绕岸
+                s.speed *= 0.3;
+                s.heading += Math.PI * 0.5 * s.orbitSign;
+            }
+        } else if (exitWater) {
+            const curD = Math.hypot(exitWater.x - s.x, exitWater.y - s.y);
+            const nextD = Math.hypot(exitWater.x - nx, exitWater.y - ny);
+            if (this.isWater(nx, ny) || nextD < curD) {
+                s.x = nx;
+                s.y = ny;
+            } else if (curD > 0.01) {
+                // 只能出陆地不能进陆地：被朝陆方向阻挡时直接朝最近水面挪出
+                const step = Math.min(curD, Math.max(s.speed, 35) * dt);
+                s.x += (exitWater.x - s.x) / curD * step;
+                s.y += (exitWater.y - s.y) / curD * step;
+            }
         }
         s.trailAcc += s.speed * dt;
         if (s.trailAcc > 14) {

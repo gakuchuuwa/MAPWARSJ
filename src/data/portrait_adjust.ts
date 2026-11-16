@@ -778,8 +778,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/BASHU/shuixi_anbangyan.png": {
-            "scale": 1,
-            "offsetX": 0,
+            "scale": 0.96,
+            "offsetX": 25,
             "offsetY": 4
         },
         "/assets/JIANGNAN/chen2_zhaofan.png": {
@@ -11456,6 +11456,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/TIBET/tubo_shouling_2.png": {
+            "scale": 1.01,
+            "offsetX": 5,
+            "offsetY": -5
+        },
+        "/assets/CENTRAL/bfe_cb_jingzhou_1.png": {
+            "scale": 1.32,
+            "offsetX": 17,
+            "offsetY": -17
+        },
+        "/assets/XIANBEI/xianbei_gen_312.png": {
+            "scale": 1.08,
+            "offsetX": 5,
+            "offsetY": 28
+        },
+        "/assets/ORIE/gen_muhammad_xii.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/CENTRAL_ASIA/fergana_aleda_gen_479.png": {
+            "scale": 1.17,
+            "offsetX": 32,
+            "offsetY": 8
+        },
+        "/assets/WEI/bfe_lifu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 2
         }
     },
     "folderGuides": {

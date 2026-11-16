@@ -34,7 +34,7 @@ import { FX_CFG } from '../ui/scene13/Scene13ProjectilesAndFx';
 import { SubtitleBanner } from '../ui/SubtitleBanner';
 import { navalHiddenUnitIds, navalSceneFlags } from './navalSceneState';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, type TacticalWeatherContext } from '../map/WeatherLayer';
+import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, getSeaStormWaveBoostAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import {
     NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
     type NavalSide, type NavalShip, type NavalEvent, type NavalPhase,
@@ -827,9 +827,9 @@ export class NavalWarLayer {
         }
         if (w === 0) return;
         const rawX = sx / w;
-        const rawY = sy / w + 95;   // 船下面挂着名字标签、底部有兵力条：取景略往下压
+        const rawY = sy / w + 45;   // 底部有兵力条，取景略往下压一点即可
         if (!this.camTgt) this.camTgt = { x: rawX, y: rawY };
-        const a = 1 - Math.exp(-dt / 2.5);
+        const a = 1 - Math.exp(-dt / 0.7);
         this.camTgt.x += (rawX - this.camTgt.x) * a;
         this.camTgt.y += (rawY - this.camTgt.y) * a;
         // ② 目标在屏幕上离中心多远
@@ -838,14 +838,14 @@ export class NavalWarLayer {
         const offX = xf.ax + (this.camTgt.x - NAVAL_WORLD_W / 2) * xf.u - size.x / 2;
         const offY = xf.ay + (this.camTgt.y - NAVAL_WORLD_H / 2) * xf.u - size.y / 2;
         // ③ 死区迟滞
-        if (!this.camMoving && (Math.abs(offX) > size.x * 0.16 || Math.abs(offY) > size.y * 0.16)) this.camMoving = true;
-        if (this.camMoving && Math.hypot(offX, offY) < Math.min(size.x, size.y) * 0.03) this.camMoving = false;
+        if (!this.camMoving && (Math.abs(offX) > size.x * 0.08 || Math.abs(offY) > size.y * 0.08)) this.camMoving = true;
+        if (this.camMoving && Math.hypot(offX, offY) < Math.min(size.x, size.y) * 0.02) this.camMoving = false;
         // ④ 限速 + 限加速度
-        const MAX_V = 90, MAX_A = 80;
+        const MAX_V = 220, MAX_A = 280;
         let wantX = 0, wantY = 0;
         if (this.camMoving) {
-            wantX = offX * 0.8;
-            wantY = offY * 0.8;
+            wantX = offX * 1.4;
+            wantY = offY * 1.4;
             const sp = Math.hypot(wantX, wantY);
             if (sp > MAX_V) { wantX *= MAX_V / sp; wantY *= MAX_V / sp; }
         }
@@ -906,8 +906,9 @@ export class NavalWarLayer {
         const order = sim.ships.filter((s) => s.state !== 'sunk' && s.state !== 'fled').sort((a, b) => a.y - b.y);
         const poses = new Map<number, ShipPose>();
         for (const s of order) poses.set(s.id, this.shipPose(s, toS(s.x, s.y), zoom));
-        // ① 船尾 / 船头浪花：战略地图同一套（NavalWakeDrawer，DE 原版）
+        // ① 船尾 / 船头浪花：战略地图同一套（NavalWakeDrawer，DE 原版）；zoom > 12 时补画战略水波纹（CoastalWaveLayer 只画到 zoom 12）
         const tick = performance.now();
+        if (zoom > 12) this.drawSeaRipples(ctx, toS, xf.u, vw, vh, tick, sim.windAng);
         for (const s of order) {
             const p = poses.get(s.id)!;
             NavalWakeDrawer.drawNavalWakes(
@@ -1047,6 +1048,85 @@ export class NavalWarLayer {
                 ctx.arc(sx, sy, 1.3 * u * fade, 0, Math.PI * 2);
                 ctx.fill();
             }
+        }
+        ctx.restore();
+    }
+
+    /** zoom > 12 时 CoastalWaveLayer 退场：按同款深蓝波谷+亮波峰画世界锚定的动态海面波纹 */
+    private drawSeaRipples(
+        ctx: CanvasRenderingContext2D,
+        toS: (x: number, y: number) => { x: number; y: number },
+        u: number,
+        vw: number,
+        vh: number,
+        tick: number,
+        windAng: number,
+    ): void {
+        if (!this.centerLL) return;
+        const t = tick / 1000;
+        const stormBoost = getSeaStormWaveBoostAt(this.centerLL.lat, this.centerLL.lng, tick);
+        const cell = 54;
+        const o0 = toS(0, 0);
+        const minWx = -o0.x / u - cell;
+        const maxWx = (vw - o0.x) / u + cell;
+        const minWy = -o0.y / u - cell;
+        const maxWy = (vh - o0.y) / u + cell;
+        const ix0 = Math.floor(minWx / cell), ix1 = Math.ceil(maxWx / cell);
+        const iy0 = Math.floor(minWy / cell), iy1 = Math.ceil(maxWy / cell);
+        const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+        const rippleFreq = 0.16 * (1 + stormBoost * 1.35);
+        const travelScale = (4.5 + stormBoost * 4.0) * Math.max(0.75, u * 0.55);
+        const halfScale = (1 + stormBoost * 0.45) * Math.max(0.85, u * 0.6);
+        const liftScale = 1 + stormBoost * 0.90;
+        const waveBaseAng = windAng + Math.PI / 2;
+
+        for (let iy = iy0; iy <= iy1; iy++) {
+            for (let ix = ix0; ix <= ix1; ix++) {
+                let h = (ix * 374761393 + iy * 668265263) ^ 0x5bf03635;
+                h = Math.imul(h ^ (h >>> 13), 1274126177);
+                const r0 = ((h >>> 0) & 0xffff) / 65536;
+                if (r0 < 0.18) continue;
+                const r1 = ((h >>> 16) & 0xff) / 256;
+                const r2 = ((h >>> 24) & 0xff) / 256;
+                const wx = (ix + 0.15 + r1 * 0.7) * cell;
+                const wy = (iy + 0.15 + r2 * 0.7) * cell;
+                if (this.landGrid && !this.isWaterAt(wx, wy)) continue;
+                const sp = toS(wx, wy);
+                if (sp.x < -30 || sp.x > vw + 30 || sp.y < -30 || sp.y > vh + 30) continue;
+
+                const phaseOff = ((h >>> 8) & 0xff) / 256;
+                const phase = (t * rippleFreq + phaseOff) % 1;
+                const crest = Math.sin(phase * Math.PI);
+                if (crest < 0.18 - stormBoost * 0.06) continue;
+                const bucket = Math.min(3, Math.floor(crest * 4));
+                const angJitter = (r0 - 0.5) * 0.55;
+                const ang = waveBaseAng + angJitter;
+                const dx = Math.cos(ang), dy = Math.sin(ang);
+                const nx = -dy, ny = dx;
+                const travel = (phase - 0.5) * travelScale;
+                const cx = sp.x - nx * travel, cy = sp.y - ny * travel;
+                const baseLen = 8 + r1 * 9;
+                const half = baseLen * (0.38 + crest * 0.12) * halfScale;
+                const lift = (0.45 + crest * 0.55) * liftScale;
+                const path = paths[bucket];
+                path.moveTo(cx - dx * half, cy - dy * half);
+                path.quadraticCurveTo(cx + nx * lift, cy + ny * lift, cx + dx * half, cy + dy * half);
+            }
+        }
+
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        const troughAlphaMul = 0.055 * (1 + stormBoost * 1.2);
+        const crestAlphaMul = 0.22 * (1 + stormBoost * 1.15);
+        for (let bucket = 0; bucket < paths.length; bucket++) {
+            const strength = (bucket + 1) / paths.length;
+            ctx.strokeStyle = `rgba(8, 45, 72, ${(troughAlphaMul * strength).toFixed(3)})`;
+            ctx.lineWidth = 2.0 + stormBoost * 0.7;
+            ctx.stroke(paths[bucket]);
+            ctx.strokeStyle = `rgba(195, 232, 242, ${(crestAlphaMul * strength).toFixed(3)})`;
+            ctx.lineWidth = 0.9 + stormBoost * 0.45;
+            ctx.stroke(paths[bucket]);
         }
         ctx.restore();
     }

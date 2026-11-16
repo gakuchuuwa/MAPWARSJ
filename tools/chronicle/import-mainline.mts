@@ -143,6 +143,11 @@ for (const s of orderedScript) {
     }
     out.push(ev);
 }
+// 🔴 2026-11-16 主人令：编年史必须严格按历史先后，不许倒叙——年份或季节倒退一律算导入错误
+for (let k = 1; k < out.length; k++) {
+    const a = out[k - 1], b = out[k];
+    if (b.year * 4 + b.season < a.year * 4 + a.season) errors.push(`时序倒退：${a.id} ${a.title}（${a.year}）→ ${b.id} ${b.title}（${b.year}）`);
+}
 if (out.length && epilogue) out[out.length - 1].tactical.push(epilogue);
 if (errors.length) {
     console.error('导入失败：\n' + errors.map((x) => '  ' + x).join('\n'));
