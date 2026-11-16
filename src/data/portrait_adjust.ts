@@ -10892,11 +10892,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_35.png": {
-            "scale": 1.18,
-            "offsetX": 12,
-            "offsetY": -1
-        },
         "/assets/JIANGNAN/kejia_wentianxiang.png": {
             "scale": 1.22,
             "offsetX": 0,
@@ -11486,6 +11481,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 2
+        },
+        "/assets/TIBET/tubo_gen_500.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/MACEDONIAN/maqidun_gen_61.png": {
+            "scale": 1,
+            "offsetX": 10,
+            "offsetY": -30
+        },
+        "/assets/JIANGNAN/dongjin_gen_375.png": {
+            "scale": 1.18,
+            "offsetX": 12,
+            "offsetY": -2
         }
     },
     "folderGuides": {

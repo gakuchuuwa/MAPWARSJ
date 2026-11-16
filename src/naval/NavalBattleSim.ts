@@ -11,7 +11,7 @@
  * 坐标：世界平面 = 屏幕平面（与战略地图海战同一规矩），x 向右、y 向下；航向用屏幕数学角（弧度）。
  */
 
-import { getNavalWeapons, type NavalWeapon } from '../types/NavalShipTiers';
+import { getNavalDeStats, getNavalShipMass, getNavalWeapons, type NavalWeapon } from '../types/NavalShipTiers';
 
 export type NavalSide = 'attacker' | 'defender';
 export type NavalRole = 'front' | 'main' | 'back' | 'flag';
@@ -66,6 +66,8 @@ export interface NavalShip {
     y: number;
     heading: number;
     speed: number;
+    speedMul: number;
+    mass: number;
     radius: number;
     hp: number;
     maxHp: number;
@@ -285,11 +287,13 @@ export class NavalBattleSim {
         const mk = (role: NavalRole, x0: number, y0: number, key: string): void => {
             const { x, y } = this.nearestWater(x0, y0);
             const isFlag = role === 'flag';
-            const hp = (isFlag ? 260 : 170) * m.hp;
+            const de = getNavalDeStats(key);
+            const mass = getNavalShipMass(key) * (isFlag ? 1.25 : 1);
+            const hp = de.hp * (isFlag ? 1.55 : 1.15) * m.hp;
             const crew = (isFlag ? 140 : 100) * m.hp;
             this.ships.push({
                 id: id++, side, origSide: side, role, shipKey: key, factionId: fleet.factionId,
-                x, y, heading, speed: BASE_SPEED * 0.6, radius: isFlag ? FLAG_R : SHIP_R,
+                x, y, heading, speed: BASE_SPEED * 0.6, speedMul: de.speed / 1.35, mass, radius: isFlag ? FLAG_R : SHIP_R,
                 hp, maxHp: hp, crew, maxCrew: crew,
                 weapons: getNavalWeapons(key, fleet.factionId),
                 cooldowns: {},
@@ -579,7 +583,7 @@ export class NavalBattleSim {
         const windMul = 1 + 0.24 * this.windStrength * Math.cos(s.heading - this.windAng);
         const turnMul = 1 - Math.min(0.45, Math.abs(diff) / Math.PI * 0.6);
         const roleMul = s.role === 'front' ? 1.12 : s.role === 'flag' ? 0.88 : 1;
-        const target = BASE_SPEED * windMul * turnMul * roleMul * throttle * this.wx.speed;
+        const target = BASE_SPEED * s.speedMul * windMul * turnMul * roleMul * throttle * this.wx.speed;
         s.speed += (target - s.speed) * Math.min(1, dt * 0.8);
         const nx = s.x + Math.cos(s.heading) * s.speed * dt;
         const ny = s.y + Math.sin(s.heading) * s.speed * dt;
@@ -640,26 +644,36 @@ export class NavalBattleSim {
                 }
             }
             if (!tgt) continue;
-            s.cooldowns[w] = spec.cooldown * (0.85 + this.rng() * 0.3) * (s.crew / s.maxCrew < 0.35 ? 1.6 : 1);
+            const isArrow = w === 'arrow';
+            const archers = s.role === 'flag' ? 4 : 3;
+            const cdMul = isArrow
+                ? (0.45 + this.rng() * 1.10) / archers
+                : (0.85 + this.rng() * 0.30);
+            s.cooldowns[w] = spec.cooldown * cdMul * (s.crew / s.maxCrew < 0.35 ? 1.6 : 1);
             s.lastFireAt = this.time;
             const d = Math.hypot(tgt.x - s.x, tgt.y - s.y);
             const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1) * this.wx.acc;
             const hit = this.rng() < acc;
-            // 落点：命中落在船上，打空落在船边水里
+            // 起射点沿甲板纵向散布，落点落在船身不同部位或船边水里（学陆战箭塔真实单支火箭连射）
+            const deckShift = isArrow ? (this.rng() - 0.5) * s.radius * 1.15 : 0;
+            const x0 = s.x + Math.cos(s.heading) * deckShift;
+            const y0 = s.y + Math.sin(s.heading) * deckShift;
             const ang = this.rng() * Math.PI * 2;
-            const miss = hit ? 0 : 50 + this.rng() * 70;
+            const miss = hit ? (isArrow ? this.rng() * tgt.radius * 0.45 : 0) : 50 + this.rng() * 70;
             const lead = tgt.speed * (d / spec.speed) * 0.8;
             const x1 = tgt.x + Math.cos(tgt.heading) * lead + Math.cos(ang) * miss;
             const y1 = tgt.y + Math.sin(tgt.heading) * lead + Math.sin(ang) * miss;
-            const m = this.mult[s.side].dmg;
-            const igniteBoost = w === 'arrow' && windward === s.side ? 2 : 1;
+            const m = this.mult[s.side].dmg * (isArrow ? 1 / 3 : 1);
+            const igniteBoost = isArrow && windward === s.side ? 1.6 : 1;
+            const igniteBase = isArrow ? spec.igniteChance * 0.65 : spec.igniteChance;
+            const dur = Math.max(0.15, Math.hypot(x1 - x0, y1 - y0) / spec.speed);
             this.projectiles.push({
-                kind: w, side: s.side, x0: s.x, y0: s.y, x1, y1, t: 0, dur: Math.max(0.15, d / spec.speed),
+                kind: w, side: s.side, x0, y0, x1, y1, t: 0, dur,
                 arc: spec.arc, targetId: tgt.id, hit,
                 damage: spec.damage * m, crewDamage: spec.crewDamage * m, splash: spec.splash,
-                ignite: this.rng() < spec.igniteChance * igniteBoost * this.wx.ignite,
+                ignite: this.rng() < igniteBase * igniteBoost * this.wx.ignite,
             });
-            this.events.push({ type: 'fire', weapon: w, side: s.side, x: s.x, y: s.y, shipId: s.id, tx: x1, ty: y1, dur: Math.max(0.15, d / spec.speed) });
+            this.events.push({ type: 'fire', weapon: w, side: s.side, x: x0, y: y0, shipId: s.id, tx: x1, ty: y1, dur });
         }
     }
 
@@ -694,7 +708,7 @@ export class NavalBattleSim {
         if (s.state !== 'alive') return;
         s.hp -= hp;
         s.crew = Math.max(0, s.crew - crew);
-        s.lastHitAt = this.time;
+        if (_from !== null) s.lastHitAt = this.time;
         if (s.hp <= 0) this.sink(s);
     }
 
@@ -730,19 +744,23 @@ export class NavalBattleSim {
                 if (b.boardingWith === null && this.isWater(b.x + dx / d * push, b.y + dy / d * push)) { b.x += dx / d * push; b.y += dy / d * push; }
                 if (a.side === b.side) continue;
                 if (a.boardingWith !== null || b.boardingWith !== null) continue;
-                // 撞角：船头对准对方才算撞上
+                // 撞击 / 碾压：带撞角的战船或吨位更大的大船迎头撞上敌船，按吨位差造成重创与撞飞
                 for (const [att, def] of [[a, b], [b, a]] as const) {
-                    if (!att.weapons.includes('ram') || att.ramCd > 0) continue;
+                    const hasRam = att.weapons.includes('ram');
+                    const massRatio = att.mass / Math.max(0.45, def.mass);
+                    if ((!hasRam && massRatio < 1.15) || att.ramCd > 0 || att.speed < BASE_SPEED * 0.45) continue;
                     const toDef = Math.atan2(def.y - att.y, def.x - att.x);
                     if (Math.abs(angDiff(toDef, att.heading)) > 0.7) continue;
-                    att.ramCd = 5;
-                    const sp = Math.min(1.3, att.speed / BASE_SPEED);
-                    att.speed *= 0.35;
-                    const kick = 14 * sp;
+                    att.ramCd = 4.5;
+                    const sp = Math.min(1.4, att.speed / BASE_SPEED);
+                    att.speed *= Math.min(0.82, 0.35 + 0.25 * Math.min(1.8, massRatio));
+                    const kick = (16 + 22 * Math.min(2.6, massRatio)) * sp;
                     const kx = Math.cos(toDef) * kick, ky = Math.sin(toDef) * kick;
                     if (this.isWater(def.x + kx, def.y + ky)) { def.x += kx; def.y += ky; }
                     this.events.push({ type: 'ram', side: att.side, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
-                    this.damage(def, 17 * sp * this.mult[att.side].dmg, 6, att.side);
+                    const ramBonus = hasRam ? 1.45 : 1.0;
+                    const dmg = (18 + 16 * Math.min(3.5, massRatio)) * sp * ramBonus * this.mult[att.side].dmg;
+                    this.damage(def, dmg, 6 + Math.round(4 * Math.min(2.5, massRatio)), att.side);
                 }
                 if (a.state !== 'alive' || b.state !== 'alive') continue;
                 // 接舷：贴上了的前排船（或撞角船）抛钩跳帮

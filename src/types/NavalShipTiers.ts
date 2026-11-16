@@ -481,6 +481,8 @@ const SHIP_EXTRA_WEAPONS: Record<string, { weapons: NavalWeapon[]; why: string }
     HERO_AEGINETAN: { weapons: ['ram'], why: '与 HERO_THEMISTOCLES 同型：古典三列桨，靠撞角' },
     DREKI: { weapons: ['ram'], why: '维京英雄龙船：接舷冲撞与弓箭齐发' },
     HERO_DREKI: { weapons: ['ram'], why: '维京英雄龙船：接舷冲撞与弓箭齐发' },
+    HERO_LEIFERIKSON: { weapons: ['ram'], why: '维京英雄龙船：与 DREKI 同型，接舷冲撞与弓箭齐发' },
+    THE_MIDDLEBROOK: { weapons: ['ram'], why: '维京英雄龙船：与 DREKI 同型，接舷冲撞与弓箭齐发' },
     HERO_STOERTEBEKER: { weapons: ['ram'], why: '海盗斯托尔特贝克旗舰：沿用重型爆破舰，接舷与爆破' },
     // 2026-10-19 主人令：英雄舰船登记为舰队模型（武器照所借船型）
     HERO_VASCODAGAMA: { weapons: ['cannon'], why: '与 ELITE_CARAVEL 同型（卡拉维尔帆船高级 16 向图）：远洋火炮帆船' },
@@ -533,4 +535,77 @@ export function getNavalWeapons(shipAssetId?: string | null, factionId?: string 
 /** 供验收脚本读的武器分配明细（船号 → 武器 + 依据） */
 export function listNavalShipWeapons(): Record<string, { weapons: NavalWeapon[]; why: string }> {
     return SHIP_EXTRA_WEAPONS;
+}
+
+/** 按船型侧向像素长度折算质量/吨位系数（192px WAR_GALLEY = 1.0，范围 0.45..2.6） */
+export function getNavalShipMass(shipId?: string | null): number {
+    const px = (shipId && SHIP_SIDE_WIDTH[shipId]) || 192;
+    return Math.max(0.45, Math.min(2.6, Math.pow(px / 192, 1.5)));
+}
+
+/** AoE2 DE 原版战船属性（HP 与航速），未单列者取 WAR_GALLEY 基准 (135 / 1.43) */
+const DE_SHIP_STATS: Record<string, { hp: number; speed: number }> = {
+    GALLEY: { hp: 120, speed: 1.43 },
+    WAR_GALLEY: { hp: 135, speed: 1.43 },
+    GALLEON: { hp: 165, speed: 1.43 },
+    ANT_GALLEY: { hp: 120, speed: 1.43 },
+    ANT_WAR_GALLEY: { hp: 135, speed: 1.43 },
+    ANT_ELITE_GALLEY: { hp: 165, speed: 1.43 },
+    FIRE_GALLEY: { hp: 100, speed: 1.30 },
+    FIRE_SHIP: { hp: 120, speed: 1.35 },
+    FAST_FIRE_SHIP: { hp: 140, speed: 1.43 },
+    CANNON_GALLEON: { hp: 120, speed: 1.10 },
+    ELITE_CANNON_GALLEON: { hp: 150, speed: 1.10 },
+    CATAPULT_GALLEON: { hp: 160, speed: 1.15 },
+    CATAPULT_SHIP: { hp: 160, speed: 1.15 },
+    ONAGER_SHIP: { hp: 160, speed: 1.15 },
+    DROMON: { hp: 150, speed: 1.20 },
+    LOU_CHUAN: { hp: 240, speed: 1.05 },
+    THIRISADAI: { hp: 250, speed: 1.20 },
+    TURTLE_SHIP: { hp: 200, speed: 0.90 },
+    ELITE_TURTLE_SHIP: { hp: 300, speed: 0.90 },
+    HERO_ADMIRALYISUNSHIN: { hp: 300, speed: 0.90 },
+    CARAVEL: { hp: 130, speed: 1.43 },
+    ELITE_CARAVEL: { hp: 150, speed: 1.43 },
+    HERO_VASCODAGAMA: { hp: 150, speed: 1.43 },
+    LONGBOAT: { hp: 130, speed: 1.54 },
+    ELITE_LONGBOAT: { hp: 160, speed: 1.54 },
+    DREKI: { hp: 145, speed: 1.54 },
+    HERO_DREKI: { hp: 160, speed: 1.54 },
+    HERO_LEIFERIKSON: { hp: 160, speed: 1.54 },
+    THE_MIDDLEBROOK: { hp: 160, speed: 1.54 },
+    DRAGON_SHIP: { hp: 150, speed: 1.40 },
+    TRIREME: { hp: 145, speed: 1.45 },
+    HERO_THEMISTOCLES: { hp: 145, speed: 1.45 },
+    HERO_ARTEMISIA: { hp: 145, speed: 1.45 },
+    HERO_DIONYSUS: { hp: 145, speed: 1.45 },
+    HERO_AEGINETAN: { hp: 145, speed: 1.45 },
+    BIREME: { hp: 125, speed: 1.43 },
+    MONOREME: { hp: 110, speed: 1.35 },
+    BOARDING_GALLEY: { hp: 115, speed: 1.35 },
+    LEMBOS: { hp: 100, speed: 1.55 },
+    WAR_LEMBOS: { hp: 115, speed: 1.55 },
+    HEAVY_LEMBOS: { hp: 130, speed: 1.55 },
+    ELITE_LEMBOS: { hp: 145, speed: 1.55 },
+    HULK: { hp: 160, speed: 1.15 },
+    WAR_HULK: { hp: 200, speed: 1.15 },
+    CARRACK: { hp: 180, speed: 1.20 },
+    SHP_FLAGSHIP: { hp: 280, speed: 1.25 },
+    HERO_FLAGSHIPOFNEARCHOS: { hp: 280, speed: 1.25 },
+    DEMO_RAFT: { hp: 65, speed: 1.55 },
+    DEMO_SHIP: { hp: 80, speed: 1.60 },
+    HEAVY_DEMO_SHIP: { hp: 95, speed: 1.60 },
+    HERO_STOERTEBEKER: { hp: 130, speed: 1.50 },
+    INCENDIARY_RAFT: { hp: 65, speed: 1.55 },
+    INCENDIARY_SHIP: { hp: 80, speed: 1.60 },
+    HEAVY_INCENDIARY_SHIP: { hp: 95, speed: 1.60 },
+    JUNK: { hp: 100, speed: 1.35 },
+    CANOE: { hp: 95, speed: 1.40 },
+    MERCHANT_SHIP: { hp: 110, speed: 1.25 },
+    TRADE_COG: { hp: 110, speed: 1.25 },
+    TRANSPORT_SHIP: { hp: 120, speed: 1.30 },
+};
+
+export function getNavalDeStats(shipId?: string | null): { hp: number; speed: number } {
+    return (shipId ? DE_SHIP_STATS[shipId] : undefined) ?? { hp: 135, speed: 1.43 };
 }

@@ -106,9 +106,9 @@ const FINE_LANDSEA_Z = 13;
 function readNavalSceneZoom(): number {
     try { return localStorage.getItem(NAVAL_ZOOM15_KEY) === '0' ? NAVAL_SCENE_ZOOM : NAVAL_ZOOM15; } catch { return NAVAL_ZOOM15; }
 }
-/** zoom 15 期间要藏起来的战略图层：据点、道路、河流线、领土、植被、动物、商路、标签……只留晕渲底图、海浪、海洋生物和部队画布（投射物） */
+/** zoom 15 期间（学习陆战战术模式）隐藏战略底图与各类战略图层，改由海战画布 1:1 原生绘制 DE 海面与动态波纹 */
 const NAVAL_Z15_STYLE = `
-    body.naval-z15 .leaflet-map-pane > .leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-coastalWave-pane):not(.leaflet-marineLife-pane):not(.leaflet-units-pane):not(.leaflet-unitsLow-pane) {
+    body.naval-z15 .leaflet-map-pane > .leaflet-pane:not(.leaflet-coastalWave-pane):not(.leaflet-marineLife-pane):not(.leaflet-units-pane):not(.leaflet-unitsLow-pane) {
         visibility: hidden !important;
     }
 `;
@@ -141,6 +141,7 @@ interface DeFxSprite {
 }
 const DE_EXTRA_BASE: Record<string, string> = {
     PROJ_ARROW: '/SUCAI/PROJ_ARROW/',
+    PROJ_ARROW_FIRE: '/SUCAI/PROJ_ARROW_FIRE/',
     PROJ_BALL: '/SUCAI/PROJ_BALL/',
     PROJ_ROCK: '/SUCAI/PROJ_ROCK/',
     FLAMETHROWER_FLAME: '/SUCAI_FX/FLAMETHROWER_FLAME/',
@@ -149,9 +150,50 @@ const DE_EXTRA_BASE: Record<string, string> = {
 const DE_FX_KEYS = [
     'FX_FIRE_SMALL', 'FX_FIRE_MEDIUM', 'FX_FIRE_LARGE',
     'FX_EXPLOSION', 'FX_PETARD', 'FX_TREBUCHET_SMOKE', 'FX_WALL_DUST',
-    'PROJ_ARROW', 'PROJ_BALL', 'PROJ_ROCK', 'FLAMETHROWER_FLAME',
+    'PROJ_ARROW', 'PROJ_ARROW_FIRE', 'PROJ_BALL', 'PROJ_ROCK', 'FLAMETHROWER_FLAME',
 ] as const;
 const deFxCache = new Map<string, DeFxSprite>();
+const DE_SEA_URLS = ['/SUCAI_TERRAIN/wt2.png', '/SUCAI_TERRAIN/wt4.png', '/SUCAI_TERRAIN/wt3.png'] as const;
+const deSeaImgs: (HTMLImageElement | null)[] = [null, null, null];
+function getDeSeaImg(idx: 0 | 1 | 2): HTMLImageElement | null {
+    let img = deSeaImgs[idx];
+    if (!img) {
+        img = new Image();
+        img.src = DE_SEA_URLS[idx];
+        deSeaImgs[idx] = img;
+    }
+    return img.complete && img.naturalWidth > 0 ? img : null;
+}
+let bakedSeaCanvas: HTMLCanvasElement | null = null;
+function getBakedDeSeaCanvas(): HTMLCanvasElement | null {
+    if (bakedSeaCanvas) return bakedSeaCanvas;
+    const i0 = getDeSeaImg(0), i1 = getDeSeaImg(1), i2 = getDeSeaImg(2);
+    if (!i0 || !i1 || !i2) return null;
+    const S = Math.max(512, i0.naturalWidth, i0.naturalHeight);
+    const cv = document.createElement('canvas');
+    cv.width = S;
+    cv.height = S;
+    const g = cv.getContext('2d');
+    if (!g) return null;
+    g.drawImage(i0, 0, 0, S, S);
+    const drawWrapped = (img: HTMLImageElement, alpha: number, ox: number, oy: number) => {
+        g.globalAlpha = alpha;
+        const dx = ((ox % S) + S) % S;
+        const dy = ((oy % S) + S) % S;
+        for (const sx of [dx - S, dx]) {
+            for (const sy of [dy - S, dy]) {
+                g.drawImage(img, sx, sy, S, S);
+            }
+        }
+    };
+    drawWrapped(i1, 0.45, Math.round(S * 0.43), Math.round(S * 0.37));
+    drawWrapped(i2, 0.22, Math.round(S * 0.19), Math.round(S * 0.71));
+    g.globalAlpha = 1;
+    g.fillStyle = 'rgba(18, 62, 98, 0.20)';
+    g.fillRect(0, 0, S, S);
+    bakedSeaCanvas = cv;
+    return cv;
+}
 
 function getDeFx(key: string): DeFxSprite | null {
     const hit = deFxCache.get(key);
@@ -325,8 +367,14 @@ export class NavalWarLayer {
             document.head.appendChild(st);
         }
         document.body.classList.toggle('naval-z15', z15);
-        if (z15 && map0 && init.center) this.prefetchFineLandSea(init.center);
-        this.setupGeography(map0, init.center ?? null);
+        if (z15) {
+            this.centerPx = map0 ? map0.project(L.latLng(init.center?.lat ?? 35, init.center?.lng ?? 20), this.sceneZoom) : null;
+            this.centerLL = init.center ? L.latLng(init.center.lat, init.center.lng) : (map0 ? map0.getCenter() : null);
+            if (map0 && this.centerLL) map0.setView(this.centerLL, this.sceneZoom, { animate: false });
+            this.landGrid = null;
+        } else {
+            this.setupGeography(map0, init.center ?? null);
+        }
         this.sim = this.makeSim(init);
         this.prepStep = 0;
         // 与陆战进战术模式同一步：接上战场所在地此刻的天气（没有就按当地气候与季节补一团）
@@ -365,6 +413,7 @@ export class NavalWarLayer {
         LegionPhalanxDrawer.ensureUnitTypeLoading(init.defender.shipKey);
         NavalFxSprites.preload();
         for (const k of DE_FX_KEYS) getDeFx(k);
+        getDeSeaImg(0); getDeSeaImg(1); getDeSeaImg(2);
         if (this.canvas) this.canvas.style.display = 'block';
         document.body.classList.add('naval-war-active');
         (window as any).game?.combatUI?.applyScene13Layout?.(true);
@@ -906,9 +955,12 @@ export class NavalWarLayer {
         const order = sim.ships.filter((s) => s.state !== 'sunk' && s.state !== 'fled').sort((a, b) => a.y - b.y);
         const poses = new Map<number, ShipPose>();
         for (const s of order) poses.set(s.id, this.shipPose(s, toS(s.x, s.y), zoom));
-        // ① 船尾 / 船头浪花：战略地图同一套（NavalWakeDrawer，DE 原版）；zoom > 12 时补画战略水波纹（CoastalWaveLayer 只画到 zoom 12）
+        // ① 海面铺底（zoom > 12 时学习陆战 Scene13：1:1 原生 DE 海水贴图 + 世界锚定波纹）+ 船尾/船头浪花
         const tick = performance.now();
-        if (zoom > 12) this.drawSeaRipples(ctx, toS, xf.u, vw, vh, tick, sim.windAng);
+        if (zoom > 12) {
+            this.drawDeSeaBackground(ctx, toS, vw, vh);
+            this.drawSeaRipples(ctx, toS, xf.u, vw, vh, tick, sim.windAng);
+        }
         for (const s of order) {
             const p = poses.get(s.id)!;
             NavalWakeDrawer.drawNavalWakes(
@@ -1052,6 +1104,30 @@ export class NavalWarLayer {
         ctx.restore();
     }
 
+    /** 与陆战 Scene13 一致：预先将多层 DE 海水贴图烘焙到离屏画布，每帧只做几次纯 GPU drawImage 平铺，不每帧 createPattern/旋转 */
+    private drawDeSeaBackground(
+        ctx: CanvasRenderingContext2D,
+        toS: (x: number, y: number) => { x: number; y: number },
+        vw: number,
+        vh: number,
+    ): void {
+        const baked = getBakedDeSeaCanvas();
+        if (!baked) {
+            ctx.fillStyle = '#255a82';
+            ctx.fillRect(0, 0, vw, vh);
+            return;
+        }
+        const o = toS(0, 0);
+        const S = baked.width;
+        const startX = Math.floor((((o.x % S) + S) % S) - S);
+        const startY = Math.floor((((o.y % S) + S) % S) - S);
+        for (let y = startY; y < vh; y += S) {
+            for (let x = startX; x < vw; x += S) {
+                ctx.drawImage(baked, x, y);
+            }
+        }
+    }
+
     /** zoom > 12 时 CoastalWaveLayer 退场：按同款深蓝波谷+亮波峰画世界锚定的动态海面波纹 */
     private drawSeaRipples(
         ctx: CanvasRenderingContext2D,
@@ -1155,27 +1231,11 @@ export class NavalWarLayer {
             const angle = Math.atan2(vy, dx);
 
             if (pr.kind === 'arrow') {
-                // 战船齐射箭簇（5 支错落飞出，纯视觉齐射，不改伤害结算）
-                const fx = getDeFx('PROJ_ARROW');
+                // 学陆战箭塔（Scene13WarLayer.fireDefBuildingVolley）：每发单支 DE 火箭（PROJ_ARROW_FIRE），由船舷随机间隔射出
+                const fx = getDeFx('PROJ_ARROW_FIRE') ?? getDeFx('PROJ_ARROW');
+                const key = getDeFx('PROJ_ARROW_FIRE') ? 'PROJ_ARROW_FIRE' : 'PROJ_ARROW';
                 const midFr = fx ? Math.floor(fx.frames / 2) : 5;
-                const seed = Math.sin(pr.x0 * 12.9898 + pr.y0 * 78.233 + pr.x1 * 37.719) * 43758.5453;
-                for (let k = 0; k < 5; k++) {
-                    const h1 = Math.sin(seed + k * 19.31);
-                    const h2 = Math.cos(seed + k * 41.17);
-                    const stagger = (k - 2) * 0.045;
-                    const pk = Math.max(0, Math.min(1, p * 1.12 - (k * 0.03)));
-                    if (pk <= 0 && p < 0.05) continue;
-                    const ox0 = s0.x + h1 * 12 * u;
-                    const oy0 = s0.y + h2 * 8 * u;
-                    const ox1 = s1.x + h2 * 24 * u;
-                    const oy1 = s1.y + h1 * 14 * u;
-                    const kdx = ox1 - ox0, kdy = oy1 - oy0;
-                    const kArc = arcH * (0.9 + (k % 3) * 0.1) + Math.abs(stagger) * 20 * u;
-                    const ax = ox0 + kdx * pk;
-                    const ay = oy0 + kdy * pk - 4 * kArc * pk * (1 - pk);
-                    const avy = kdy - 4 * kArc * (1 - 2 * pk);
-                    drawDeFxFrame(ctx, 'PROJ_ARROW', ax, ay, pk, baseScale * 1.15, 1, Math.atan2(avy, kdx), midFr);
-                }
+                drawDeFxFrame(ctx, key, x, y, p, baseScale * 1.18, 1, angle, midFr);
             } else if (pr.kind === 'cannon') {
                 drawDeFxFrame(ctx, 'PROJ_BALL', x, y, (p * 2) % 1, baseScale * 1.1, 1, angle);
             } else if (pr.kind === 'trebuchet') {
@@ -1208,7 +1268,7 @@ export class NavalWarLayer {
             : 0;
         const hitAgo = sim.time - s.lastHitAt;
         // 接舷肉搏期间每帧都在扣兵力，不再触发船体抖动，保持两船平稳贴舷
-        const hitFlash = s.boardingWith === null && hitAgo >= 0 && hitAgo < 0.22 && s.state === 'alive' ? 1 - hitAgo / 0.22 : 0;
+        const hitFlash = s.boardingWith === null && s.burnT <= 0 && hitAgo >= 0 && hitAgo < 0.22 && s.state === 'alive' ? 1 - hitAgo / 0.22 : 0;
         const jx = (hitFlash > 0 ? Math.sin(this.wallT * 65 + s.id) * 2.2 * hitFlash * u : 0) - Math.cos(s.heading) * recoil;
         const jy = (hitFlash > 0 ? Math.cos(this.wallT * 58 + s.id) * 1.6 * hitFlash * u : 0) - Math.sin(s.heading) * recoil;
 
