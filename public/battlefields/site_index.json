@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-16T07:01:27.424Z",
+ "generatedAt": "2026-11-16T07:22:27.679Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -19287,15 +19287,15 @@
   {
    "id": "city_argentan",
    "file": "site_city_argentan.json",
-   "bytes": 332358,
+   "bytes": 333703,
    "koppen": "Cfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
-   "waterCells": 15,
-   "waterPct": 0.1,
-   "reliefM": 34,
+   "waterCells": 162,
+   "waterPct": 1.1,
+   "reliefM": 92,
    "cliffs": 0,
-   "top": "Grass 2 91.4% · Forest 5% · Pine Forest 2.2% · Forest, Bush 0.8%",
+   "top": "Grass 2 90% · Forest 5% · Pine Forest 2.2% · Water, Shallow 1.1%",
    "verify": "ok"
   },
   {
