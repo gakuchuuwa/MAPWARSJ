@@ -47,6 +47,9 @@ import type { NavalWindCode } from '../data/NavalBattleParams.generated';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { selectLegionTechs, normalizeTechCulture66 } from '../systems/MilitaryTechState';
+import { getGeneralCulture } from '../data/GeneralCulture';
+import { getFactionGeneral } from '../data/FactionGenerals';
+import { CITIES_V2 } from '../data/cities_v2';
 import type { RegionType } from '../systems/RegionSystem';
 import { getGeneralEliteConfig, getFactionEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 
@@ -432,8 +435,11 @@ export class NavalWarLayer {
         if (this.getDeployRemainingSec() > 0) return 'wait';
         const now = performance.now();
         if (now < this.skillCastWallUntil) return 'wait';
-        this.skillCastWallUntil = now + 1800;
         const navalSide: NavalSide = side === 0 ? 'attacker' : 'defender';
+        // 同陆战：本方代表（乱入者 / 维序者）这一刻不在场（沉了、补位船还没就位）就先排队，等它就位再放
+        if (!this.sim.ships.some((s) => s.repRole && s.side === navalSide && s.state === 'alive')) return 'wait';
+        // 同陆战 SKILL_CAST_GAP_SEC：两计之间隔 3.4 秒
+        this.skillCastWallUntil = now + 3400;
         this.lastSkillBySide[side] = SIX_NAME_BY_KEY[six] || '奇谋';
         this.sim.castSixSkill(navalSide, six, true);
         if (viewerName) {
@@ -492,11 +498,29 @@ export class NavalWarLayer {
 
     public getSideTechs(): { attacker: MilitaryTech[]; defender: MilitaryTech[] } | null {
         if (!this.isActive() || !this.init) return null;
-        const year = this.init.getYear?.() ?? 0;
-        return {
-            attacker: selectLegionTechs(year, normalizeTechCulture66(this.init.attacker.region ?? ''), this.init.attacker.factionId),
-            defender: selectLegionTechs(year, normalizeTechCulture66(this.init.defender.region ?? ''), this.init.defender.factionId),
-        };
+        return { attacker: this.techsOf(this.init, 'attacker'), defender: this.techsOf(this.init, 'defender') };
+    }
+
+    /**
+     * 🔴 [2026-11-16 主人令「海战科技与陆战一致」] 本方军团科技：与陆战 Scene13WarLayer.sideTechCulture / sideTechSeed 同一口径——
+     *   文化 = 本方武将文化 → 势力名将文化 → 该势力据点建筑文化 → 舰队文化区；种子 = 势力 id（没有就武将 id）。
+     *   同一份列表既给面板显示，也传进模拟按 DE 原表加到船上（NavalShipTechs.generated）。
+     */
+    private techsOf(init: NavalWarInit, side: NavalSide): MilitaryTech[] {
+        const s = init[side];
+        const year = init.getYear?.() ?? 0;
+        const culture = (() => {
+            const g = getGeneralCulture(s.generalId ?? undefined);
+            if (g) return normalizeTechCulture66(String(g));
+            if (s.factionId) {
+                const fg = getGeneralCulture(getFactionGeneral(s.factionId)?.generalId);
+                if (fg) return normalizeTechCulture66(String(fg));
+                const city = (CITIES_V2 as any[]).find((c) => c.factionId === s.factionId);
+                if (city?.buildingStyle) return normalizeTechCulture66(String(city.buildingStyle));
+            }
+            return normalizeTechCulture66(s.region ?? '');
+        })();
+        return selectLegionTechs(year, culture, s.factionId || s.generalId || side);
     }
 
     public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
@@ -621,6 +645,11 @@ export class NavalWarLayer {
     }
 
     private makeSim(init: NavalWarInit): NavalBattleSim {
+        const tierOf = (s: NavalWarSideInit) => {
+            const cfg = getGeneralEliteConfig(s.generalId ?? undefined) ?? getFactionEliteConfig(s.factionId);
+            return cfg ? cfg.tier : null;
+        };
+        const hasGenOf = (s: NavalWarSideInit) => !!(s.generalId || s.generalName || s.isFamous);
         return new NavalBattleSim({
             attacker: {
                 factionId: init.attacker.factionId,
@@ -629,6 +658,10 @@ export class NavalWarLayer {
                 flagShipKey: init.attacker.flagShipKey,
                 rowShipKeys: init.attacker.rowShipKeys,
                 isFamous: init.attacker.isFamous,
+                generalId: init.attacker.generalId ?? null,
+                eliteTier: tierOf(init.attacker),
+                hasGeneral: hasGenOf(init.attacker),
+                techs: this.techsOf(init, 'attacker').map((t) => t.de),
             },
             defender: {
                 factionId: init.defender.factionId,
@@ -637,6 +670,10 @@ export class NavalWarLayer {
                 flagShipKey: init.defender.flagShipKey,
                 rowShipKeys: init.defender.rowShipKeys,
                 isFamous: init.defender.isFamous,
+                generalId: init.defender.generalId ?? null,
+                eliteTier: tierOf(init.defender),
+                hasGeneral: hasGenOf(init.defender),
+                techs: this.techsOf(init, 'defender').map((t) => t.de),
             },
             seed: init.seed,
             favored: init.favored ?? null,
@@ -734,6 +771,8 @@ export class NavalWarLayer {
                 }
             }
         } else if (this.active && !this.decided) {
+            // 🔴 [2026-11-16 主人令「海战与陆战一致」] 与陆战同一个场景时间（主循环 dt 已乘 SCENE13_TIME_SCALE），
+            //    技能槽充满、六计持续秒数才和陆战一样；一局的长短改由 NavalBattleSim.COMBAT_PACE 调
             this.acc += realDt;
             while (this.acc >= SIM_STEP) {
                 this.acc -= SIM_STEP;
@@ -1064,8 +1103,11 @@ export class NavalWarLayer {
                     break;
                 case 'capture':
                     this.fx.push({ k: 'ring', x: e.x, y: e.y, t: 0, color: this.colors[e.side] });
-                    this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: e.isFlag ? '夺下敌旗舰' : '夺船', color: this.colors[e.side] });
-                    if (e.isFlag) {
+                    this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: e.defect ? (e.isFlag ? '敌旗舰倒戈' : '倒戈') : e.isFlag ? '夺下敌旗舰' : '夺船', color: this.colors[e.side] });
+                    if (e.defect) {
+                        this.say(e.isFlag ? `敌方旗舰阵前倒戈，改挂${this.sideName(e.side)}旗号` : `一艘敌船阵前倒戈，改挂${this.sideName(e.side)}旗号`, e.isFlag);
+                        this.focusOn(e.x, e.y, e.isFlag ? 4 : 2);
+                    } else if (e.isFlag) {
                         this.say(`${this.sideName(e.side)} 跳帮夺下敌方旗舰`, true);
                         this.focusOn(e.x, e.y, 4);
                     } else {
