@@ -776,8 +776,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_qielami',
         name: '切拉米',
-        lat: 37.8167,
-        lng: 14.5,
+        lat: 37.6076,
+        lng: 14.3426,
         scriptYear: 1063,
         note: '切拉米之战（1063，罗杰一世破西西里穆斯林联军）。按史：今西西里恩纳省切拉米镇（Cerami），诺曼军守镇、主战场在镇南谷地。本批只加战场点，未配剧本事件、不画路。',
     },

@@ -1192,11 +1192,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_kaunos: -550, // 考诺斯
     city_perinthus: -602, // 佩林索斯
     city_phaselis: -690, // 法塞利斯
-    city_euboea: -700, // 优卑亚
     city_ikaria: -600, // 伊卡里亚
     city_kythnos: -600, // 基斯诺斯
     city_pylos: -425, // 皮洛斯
-    city_lychnidos: -350, // 利克尼斯托斯
     city_dion: -420, // 迪翁
     city_marathus: -550, // 马拉托斯
     city_synnada: -300, // 辛纳达
@@ -1292,7 +1290,6 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_tulamba: -326, // 图兰巴
     city_wasit: 702, // 瓦西特
     city_yanze: -100, // 盐泽
-    city_yixun: -77, // 伊循城
     city_zeugma: -300, // 泽乌格马
     city_taron: -300, // 塔龙
     city_dongqiemi: -100, // 东且弥
@@ -1300,11 +1297,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_mardin: 300, // 马尔丁
     city_bezabde: 300, // 贝扎布德
     city_badghis: 450, // 巴德吉斯
-    city_baishuijian: 600, // 白水涧
     city_taliqan: 650, // 塔里干
     city_chaghaniyan: 400, // 恰加尼扬
     city_changle_hexi: -111, // 常乐
-    city_kulan: 600, // 俱兰城
     city_chittor: 728, // 奇托尔
     city_nagapattinam: 800, // 纳加帕蒂南
     city_kashan_iran: 500, // 卡尚
@@ -1371,10 +1366,8 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_wutanzili: -100, // 乌贪訾离
     city_chuyue: 640, // 处月
     city_yanmianzhou: 658, // 咽面州
-    city_shuanghe_xj: 658, // 双河
     city_kedah: 500, // 吉打
     city_jambi: 650, // 占卑
-    city_ningjiangzhou: 1014, // 宁江州
     city_liaobinzhou: 999, // 辽宾州
     city_balezhuna: 1203, // 巴勒渚纳
     city_changzhou_nm: 1196, // 昌州
