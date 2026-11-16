@@ -127,6 +127,24 @@ export type NavalEvent =
 
 export type NavalPhase = 'approach' | 'exchange' | 'melee' | 'rout';
 
+/**
+ * 🔴 [2026-11-16 主人认可「海战接天气」] 天气对海战的影响（满强度时的乘数；天气强度 0..1 线性插值）。
+ *   speed 航速 · range 射程 · acc 命中 · ignite 引燃概率（含火势蔓延）· burnOut 火灭得多快（>1 更快灭）· wind 风力下限
+ * 依据：暴风雨船难操控、弓弦受潮、火点不着；海雾看不远只能贴上去打；雨打湿船板、火势难起。
+ */
+export type NavalWeatherKind = 'SEA_STORM' | 'MONSOON_SQUALL' | 'DRIZZLE_MIST' | 'SEA_FOG' | 'SNOW' | 'BLIZZARD' | 'SANDSTORM';
+interface WeatherEffect { speed: number; range: number; acc: number; ignite: number; burnOut: number; wind: number }
+const WEATHER_EFFECTS: Record<NavalWeatherKind, WeatherEffect> = {
+    SEA_STORM: { speed: 0.78, range: 0.8, acc: 0.65, ignite: 0.25, burnOut: 2.2, wind: 1.0 },
+    MONSOON_SQUALL: { speed: 0.9, range: 0.9, acc: 0.8, ignite: 0.4, burnOut: 1.8, wind: 0.85 },
+    DRIZZLE_MIST: { speed: 1.0, range: 0.85, acc: 0.9, ignite: 0.7, burnOut: 1.3, wind: 0 },
+    SEA_FOG: { speed: 0.92, range: 0.55, acc: 0.85, ignite: 1.0, burnOut: 1.0, wind: 0 },
+    SNOW: { speed: 0.92, range: 0.85, acc: 0.85, ignite: 0.6, burnOut: 1.4, wind: 0 },
+    BLIZZARD: { speed: 0.8, range: 0.7, acc: 0.7, ignite: 0.3, burnOut: 2.0, wind: 1.0 },
+    SANDSTORM: { speed: 0.9, range: 0.75, acc: 0.75, ignite: 1.0, burnOut: 1.0, wind: 0.9 },
+};
+const NO_WEATHER: WeatherEffect = { speed: 1, range: 1, acc: 1, ignite: 1, burnOut: 1, wind: 0 };
+
 export interface NavalFleetInit {
     factionId: string;
     troops: number;
@@ -206,6 +224,12 @@ export class NavalBattleSim {
     private lastDt = 0;
     private order: number[] = [];
     private readonly isWater: (x: number, y: number) => boolean;
+    public weatherKind: NavalWeatherKind | null = null;
+    public weatherStrength = 0;
+    /** 当前天气折算后的乘数（强度插值后） */
+    private wx: WeatherEffect = NO_WEATHER;
+    /** 风由天气接管：不再随机转风 */
+    private windLocked = false;
     private readonly attackerRight: boolean;
     private readonly initHp: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
@@ -312,6 +336,31 @@ export class NavalBattleSim {
         return this.isWater(x + c * 110, y + sn * 110) && this.isWater(x + c * 230, y + sn * 230);
     }
 
+    /** 设天气（null = 晴）。强度 0..1；只改乘数，不发事件（播报由画面层负责） */
+    public setWeather(kind: NavalWeatherKind | string | null, strength: number): void {
+        const k = kind && (kind in WEATHER_EFFECTS) ? kind as NavalWeatherKind : null;
+        const st = k ? Math.max(0, Math.min(1, strength)) : 0;
+        this.weatherKind = k;
+        this.weatherStrength = st;
+        if (!k) { this.wx = NO_WEATHER; return; }
+        const e = WEATHER_EFFECTS[k];
+        const lerp = (v: number) => 1 + (v - 1) * st;
+        this.wx = { speed: lerp(e.speed), range: lerp(e.range), acc: lerp(e.acc), ignite: lerp(e.ignite), burnOut: lerp(e.burnOut), wind: e.wind * st };
+        if (this.wx.wind > this.windStrength) this.windStrength = Math.min(1, this.wx.wind);
+    }
+
+    /**
+     * 风由天气接管：雨雪往哪边斜飘，风就往哪边吹（xSign：+1 往右、−1 往左）。
+     * 方向变了（左右翻转）发一次转风事件；接管后不再随机转风。
+     */
+    public setWindFromWeather(xSign: number): void {
+        if (!xSign) return;
+        this.windLocked = true;
+        if (Math.sign(Math.cos(this.windAng)) === Math.sign(xSign)) return;
+        this.windAng = Math.PI - this.windAng;
+        this.events.push({ type: 'windShift', windward: this.windwardSide() });
+    }
+
     /** 取走本帧事件（画面层播特效 / 音效 / 播报） */
     public drainEvents(): NavalEvent[] {
         const e = this.events;
@@ -394,7 +443,7 @@ export class NavalBattleSim {
     }
 
     private updateWind(): void {
-        if (this.windShifted || this.time < this.windShiftAt) return;
+        if (this.windLocked || this.windShifted || this.time < this.windShiftAt) return;
         this.windShifted = true;
         this.windAng += (this.rng() < 0.5 ? 1 : -1) * (1.7 + this.rng() * 1.1);
         this.events.push({ type: 'windShift', windward: this.windwardSide() });
@@ -402,7 +451,7 @@ export class NavalBattleSim {
 
     private updateBurn(s: NavalShip, dt: number, windward: NavalSide | null): void {
         if (s.burnT <= 0) return;
-        s.burnT -= dt;
+        s.burnT -= dt * this.wx.burnOut;   // 雨雪天火灭得快
         this.damage(s, 1.7 * dt, 0.7 * dt, null);
         if (s.state !== 'alive') return;
         // 火往下风烧：下风的邻船更容易被引燃（火烧连营）
@@ -413,7 +462,7 @@ export class NavalBattleSim {
             const d = Math.hypot(dx, dy);
             if (d > 150) continue;
             const downwind = (dx * wx + dy * wy) / (d || 1);
-            const p = (0.09 + Math.max(0, downwind) * 0.22 * this.windStrength) * (1 - d / 150) * dt;
+            const p = (0.09 + Math.max(0, downwind) * 0.22 * this.windStrength) * (1 - d / 150) * dt * this.wx.ignite;
             if (this.rng() < p) this.ignite(o);
         }
         void windward;
@@ -449,7 +498,8 @@ export class NavalBattleSim {
     private maxRange(s: NavalShip): number {
         let r = 0;
         for (const w of s.weapons) if (w !== 'ram') r = Math.max(r, WEAPON_SPECS[w].range);
-        return r || 200;
+        // 海雾 / 暴雨看不远：射程缩短，远程船也只能往前凑
+        return (r || 200) * this.wx.range;
     }
 
     private isMelee(s: NavalShip): boolean {
@@ -522,7 +572,7 @@ export class NavalBattleSim {
         const windMul = 1 + 0.24 * this.windStrength * Math.cos(s.heading - this.windAng);
         const turnMul = 1 - Math.min(0.45, Math.abs(diff) / Math.PI * 0.6);
         const roleMul = s.role === 'front' ? 1.12 : s.role === 'flag' ? 0.88 : 1;
-        const target = BASE_SPEED * windMul * turnMul * roleMul * throttle;
+        const target = BASE_SPEED * windMul * turnMul * roleMul * throttle * this.wx.speed;
         s.speed += (target - s.speed) * Math.min(1, dt * 0.8);
         const nx = s.x + Math.cos(s.heading) * s.speed * dt;
         const ny = s.y + Math.sin(s.heading) * s.speed * dt;
@@ -553,7 +603,7 @@ export class NavalBattleSim {
             const cd = (s.cooldowns[w] ?? 0) - dt;
             s.cooldowns[w] = cd;
             if (cd > 0 || !t) continue;
-            const rangeMul = windward === s.side ? 1.12 : 1;
+            const rangeMul = (windward === s.side ? 1.12 : 1) * this.wx.range;
             // 射程内任挑一条敌船（优先当前目标）
             let tgt: NavalShip | null = null;
             const dT = Math.hypot(t.x - s.x, t.y - s.y);
@@ -570,7 +620,7 @@ export class NavalBattleSim {
             s.cooldowns[w] = spec.cooldown * (0.85 + this.rng() * 0.3) * (s.crew / s.maxCrew < 0.35 ? 1.6 : 1);
             s.lastFireAt = this.time;
             const d = Math.hypot(tgt.x - s.x, tgt.y - s.y);
-            const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1);
+            const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1) * this.wx.acc;
             const hit = this.rng() < acc;
             // 落点：命中落在船上，打空落在船边水里
             const ang = this.rng() * Math.PI * 2;
@@ -584,7 +634,7 @@ export class NavalBattleSim {
                 kind: w, side: s.side, x0: s.x, y0: s.y, x1, y1, t: 0, dur: Math.max(0.15, d / spec.speed),
                 arc: spec.arc, targetId: tgt.id, hit,
                 damage: spec.damage * m, crewDamage: spec.crewDamage * m, splash: spec.splash,
-                ignite: this.rng() < spec.igniteChance * igniteBoost,
+                ignite: this.rng() < spec.igniteChance * igniteBoost * this.wx.ignite,
             });
             this.events.push({ type: 'fire', weapon: w, side: s.side, x: s.x, y: s.y, shipId: s.id, tx: x1, ty: y1, dur: Math.max(0.15, d / spec.speed) });
         }

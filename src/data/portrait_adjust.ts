@@ -1683,7 +1683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/MONGOL/wuli_d_celeng.png": {
-            "scale": 0.96,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -2013,7 +2013,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/CENTRAL/__闲置__CENTRAL_42.png": {
-            "scale": 1.28,
+            "scale": 1.24,
             "offsetX": 0,
             "offsetY": -8
         },
@@ -4788,7 +4788,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/BERBER/hamade_hamade.png": {
-            "scale": 1.01,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -6053,7 +6053,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/CENTRAL/huo_songlaosheng.png": {
-            "scale": 0.93,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -8344,7 +8344,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/CENTRAL/bfe2_pang_juan.png": {
             "scale": 1.14,
-            "offsetX": 0,
+            "offsetX": 16,
             "offsetY": 21
         },
         "/assets/CENTRAL/bfe_wu_yuanji.png": {
@@ -11406,6 +11406,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 13,
             "offsetY": 0
+        },
+        "/assets/ROMA/luoma_gongheguo_gen_63.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/TIBET/bfe_cb_tubo_1.png": {
+            "scale": 1.17,
+            "offsetX": 35,
+            "offsetY": 19
+        },
+        "/assets/XIANBEI/yongxiebu_gen_133.png": {
+            "scale": 1.22,
+            "offsetX": 31,
+            "offsetY": -6
+        },
+        "/assets/CENTRAL/qin_jiu.png": {
+            "scale": 1.15,
+            "offsetX": 9,
+            "offsetY": -16
+        },
+        "/assets/CENTRAL/bfe_cb_dongjin_3.png": {
+            "scale": 1.49,
+            "offsetX": 69,
+            "offsetY": -1
+        },
+        "/assets/SAXONS/wende_johnfriedrich.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/VIETNAMESE/bfe_tran_duc_tong.png": {
+            "scale": 1.16,
+            "offsetX": 57,
+            "offsetY": -5
+        },
+        "/assets/WEI/tuoba_gen_383.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/CENTRAL_ASIA/bfe_xiaoceling.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {

@@ -40,7 +40,7 @@ expect.forEach((x, k) => {
   const prevSame = k > 0 ? expect[k - 1].id === Object.values(orig).find((e) => e.seq === o.seq - 1)?.id : true;
   if (rewrite[x.id] && sameS) {
     const onlyHead = rewrite[x.id].every((w) => w === '章首');
-    const parallelOk = rewrite[x.id].every((w) => w === '章内并行') && /早在|回溯|与此同时|先于此役/.test(s.join(''));
+    const parallelOk = rewrite[x.id].every((w) => w === '章内并行') && /早在|回溯|与此同时|先于此役|年前|载之前/.test(s.join(''));
     if (onlyHead && prevSame) warns.push(`${x.id} 章首保留原文（前一场与原顺序相同，可接受）`);
     else if (parallelOk) warns.push(`${x.id} 章内并行保留原文（原文已交代并行线，可接受）`);
     else err(x.id, `要求改写（${rewrite[x.id].join('、')}）但战略播报与原文相同`);

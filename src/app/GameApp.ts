@@ -70,7 +70,7 @@ import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { gameLog } from '../utils/GameLogger';
-import { tickGameAppFrame, tickGameLogicOnly } from './GameAppLoop';
+import { tickGameAppFrame, tickGameLogicOnly, panByThrottledMoveEnd } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
 import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
@@ -515,7 +515,7 @@ export class GameApp {
             // [2026-08-11 13 v2] 出兵口互攻演出层：全屏 canvas 叠在地图上（透明背景，冻结地图透出）
             this.scene13War = new Scene13WarLayer();
             this.scene13War.attach();
-            this.navalWar = new NavalWarLayer(() => this.map?.getLeafletMap?.() ?? null);
+            this.navalWar = new NavalWarLayer(() => this.map?.getLeafletMap?.() ?? null, panByThrottledMoveEnd);
             this.navalWar.attach();
 
             this.gameTimeHUD = new GameTimeHUD();

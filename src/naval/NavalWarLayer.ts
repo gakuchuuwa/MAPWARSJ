@@ -22,7 +22,6 @@ import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 import { NavalWakeDrawer, type WakeProjection } from '../map/legion/NavalWakeDrawer';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { drawUnitLabel, type UnitLabelStyle } from '../map/UnitLabelCache';
-import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import { strategicArmyScale } from '../map/strategicSpriteScale';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
@@ -34,6 +33,7 @@ import { NavalFxSprites } from '../map/NavalFxSprites';
 import { FX_CFG } from '../ui/scene13/Scene13ProjectilesAndFx';
 import { SubtitleBanner } from '../ui/SubtitleBanner';
 import { navalHiddenUnitIds } from './navalSceneState';
+import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import {
     NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
     type NavalSide, type NavalShip, type NavalEvent, type NavalPhase,
@@ -65,10 +65,11 @@ export interface NavalWarInit {
 }
 
 type Fx =
-    | { k: 'spark'; x: number; y: number; t: number; wood?: boolean }
+    | { k: 'spark'; x: number; y: number; t: number }
     | { k: 'boom'; x: number; y: number; t: number; big: boolean }
     | { k: 'splash'; x: number; y: number; t: number; big: boolean }
-    | { k: 'greekfire'; x: number; y: number; tx: number; ty: number; dur: number; t: number }
+    | { k: 'muzzle'; x: number; y: number; tx: number; ty: number; t: number }
+    | { k: 'deImpact'; key: string; x: number; y: number; t: number; dur: number; scale: number }
     | { k: 'text'; x: number; y: number; t: number; text: string; color: string }
     | { k: 'ring'; x: number; y: number; t: number; color: string };
 
@@ -89,16 +90,24 @@ const LAND_MARGIN = 500;
  * 所以开场先停一小会儿（字幕报战名与风向），分几次重采样海岸线、重摆船，拿到可靠的海陆再开船。
  */
 const PREP_RESAMPLE_AT = [0.7, 1.6, 2.6];
+/** 天气中文名与它对海战的影响（播报用；数值见 NavalBattleSim.WEATHER_EFFECTS） */
+const WEATHER_TEXT: Record<string, { name: string; effect: string }> = {
+    SEA_STORM: { name: '暴风雨', effect: '海上起了暴风雨，船难操控，弓弩失准，火攻难成' },
+    MONSOON_SQUALL: { name: '骤雨', effect: '骤雨倾盆，弓弦受潮，火攻难成' },
+    DRIZZLE_MIST: { name: '烟雨', effect: '烟雨蒙蒙，看不远，火势难起' },
+    SEA_FOG: { name: '海雾', effect: '海上起雾，弓弩难以及远，双方只能贴近接舷' },
+    SNOW: { name: '大雪', effect: '天降大雪，弓弩失准，火势难起' },
+    BLIZZARD: { name: '暴风雪', effect: '暴风雪压海，船行艰难，弓弩难中' },
+    SANDSTORM: { name: '风沙', effect: '风沙蔽日，弓弩难中' },
+};
+/** 天气强度低于这个就当晴天（气团边缘只是飘几滴） */
+const WEATHER_MIN_STRENGTH = 0.15;
 const DEFAULT_COLOR: Record<NavalSide, string> = { attacker: '#d94a3a', defender: '#3a7bd9' };
 
 /** 与 GlobalUnitRenderer 的战略标签同款 */
 const LABEL_STYLE_GENERAL: UnitLabelStyle = { id: 'gen', font: 'bold 13px Arial', stroke: 'black', lineWidth: 3, fill: '#00FFFF' };
 const LABEL_STYLE_NAME: UnitLabelStyle = { id: 'name', font: 'bold 13px Arial', stroke: 'rgba(0, 0, 0, 0.85)', lineWidth: 3, fill: '#ffffff' };
 const LABEL_STYLE_TROOPS: UnitLabelStyle = { id: 'troops', font: 'bold 12px Arial', stroke: 'black', lineWidth: 3, fill: '#ffd700' };
-
-const PROJECTILE_TYPE: Record<'arrow' | 'cannon' | 'trebuchet' | 'greekfire', 'arrow' | 'cannon' | 'stone' | 'fire'> = {
-    arrow: 'arrow', cannon: 'cannon', trebuchet: 'stone', greekfire: 'fire',
-};
 
 interface DeFxSprite {
     img: HTMLImageElement | null;
@@ -108,17 +117,27 @@ interface DeFxSprite {
     hx: number;
     hy: number;
 }
-const DE_FX_KEYS = ['FX_FIRE_SMALL', 'FX_FIRE_MEDIUM', 'FX_FIRE_LARGE', 'FX_EXPLOSION', 'FX_PETARD', 'FX_TREBUCHET_SMOKE'] as const;
+const DE_EXTRA_BASE: Record<string, string> = {
+    PROJ_ARROW: '/SUCAI/PROJ_ARROW/',
+    PROJ_BALL: '/SUCAI/PROJ_BALL/',
+    PROJ_ROCK: '/SUCAI/PROJ_ROCK/',
+    FLAMETHROWER_FLAME: '/SUCAI_FX/FLAMETHROWER_FLAME/',
+    FX_WALL_DUST: '/SUCAI_FX/IMPACT_DUST/dir00/',
+};
+const DE_FX_KEYS = [
+    'FX_FIRE_SMALL', 'FX_FIRE_MEDIUM', 'FX_FIRE_LARGE',
+    'FX_EXPLOSION', 'FX_PETARD', 'FX_TREBUCHET_SMOKE', 'FX_WALL_DUST',
+    'PROJ_ARROW', 'PROJ_BALL', 'PROJ_ROCK', 'FLAMETHROWER_FLAME',
+] as const;
 const deFxCache = new Map<string, DeFxSprite>();
 
 function getDeFx(key: string): DeFxSprite | null {
     const hit = deFxCache.get(key);
     if (hit) return hit.img && hit.fw > 0 ? hit : null;
-    const cfg = FX_CFG[key];
-    if (!cfg) return null;
+    const base = DE_EXTRA_BASE[key] ?? (FX_CFG[key] ? `/SUCAI_FX/${FX_CFG[key].path}/` : null);
+    if (!base) return null;
     const entry: DeFxSprite = { img: null, frames: 1, fw: 0, fh: 0, hx: 0, hy: 0 };
     deFxCache.set(key, entry);
-    const base = `/SUCAI_FX/${cfg.path}/`;
     fetch(`${base}_meta.json`)
         .then((r) => (r.ok ? r.json() : null))
         .then((m) => {
@@ -144,13 +163,19 @@ function drawDeFxFrame(
     progress: number,
     scale: number,
     alpha = 1,
+    rotation = 0,
+    frameOverride?: number,
 ): boolean {
     const fx = getDeFx(key);
     if (!fx || !fx.img || !fx.fw) return false;
-    const fr = Math.min(fx.frames - 1, Math.max(0, Math.floor(progress * fx.frames)));
+    const fr = frameOverride !== undefined
+        ? Math.min(fx.frames - 1, Math.max(0, frameOverride))
+        : Math.min(fx.frames - 1, Math.max(0, Math.floor(progress * fx.frames)));
     ctx.save();
     if (alpha < 1) ctx.globalAlpha = alpha;
-    ctx.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, x - fx.hx * scale, y - fx.hy * scale, fx.fw * scale, fx.fh * scale);
+    ctx.translate(x, y);
+    if (rotation) ctx.rotate(rotation);
+    ctx.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, -fx.hx * scale, -fx.hy * scale, fx.fw * scale, fx.fh * scale);
     ctx.restore();
     return true;
 }
@@ -183,15 +208,41 @@ export class NavalWarLayer {
     private landCols = 0;
     private landRows = 0;
     private panRem = { x: 0, y: 0 };
+    /** 镜头：平滑后的目标点（世界坐标）、当前平移速度（CSS px/s）、是否处在「追」的状态（死区迟滞） */
+    private camTgt: { x: number; y: number } | null = null;
+    private camVel = { x: 0, y: 0 };
+    private camMoving = false;
     private subtitleQueue: string[] = [];
     private subtitleAt = -99;
     private shipLenCache = new Map<string, number>();
     private prepStep = 0;
+    private weatherKind: string | null = null;
+    private weatherCheckAt = 0;
 
-    constructor(private readonly getMap: () => L.Map | null) {}
+    /**
+     * @param panMap 平移地图：传 GameAppLoop.panByThrottledMoveEnd（与战略跟拍同一个）——
+     *   亚像素平移 + moveend 节流、停稳补发。不能每帧 panBy：panBy 每帧都发 moveend，
+     *   「等地图停稳才补画」的图层就永远等不到，镜头一动，新露出来的地图就不刷新（主人 11-16 报障）。
+     */
+    constructor(
+        private readonly getMap: () => L.Map | null,
+        private readonly panMap?: (map: L.Map, pt: L.Point) => void,
+    ) {}
 
     public attach(): void {
         if (this.canvas) return;
+        if (!document.getElementById('naval-war-style')) {
+            const st = document.createElement('style');
+            st.id = 'naval-war-style';
+            st.textContent = `
+                body.naval-war-active #debug-control-panel,
+                body.naval-war-active .hud-map-panel,
+                body.naval-war-active #perf-toggle-btn {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(st);
+        }
         const cv = document.createElement('canvas');
         cv.id = 'naval-war-canvas';
         cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:400;pointer-events:none;display:none;';
@@ -235,6 +286,14 @@ export class NavalWarLayer {
         this.setupGeography(this.getMap(), init.center ?? null);
         this.sim = this.makeSim(init);
         this.prepStep = 0;
+        // 与陆战进战术模式同一步：接上战场所在地此刻的天气（没有就按当地气候与季节补一团）
+        this.weatherKind = null;
+        this.weatherCheckAt = 0;
+        const wq = this.weatherQuery();
+        if (wq) {
+            try { syncTacticalWeatherAt(wq); } catch { /* 天气失败不影响海战 */ }
+        }
+        this.applyWeather(false);
         this.colors = {
             attacker: FactionTintSystem.getTintHex(init.attacker.factionId) ?? DEFAULT_COLOR.attacker,
             defender: FactionTintSystem.getTintHex(init.defender.factionId) ?? DEFAULT_COLOR.defender,
@@ -250,6 +309,9 @@ export class NavalWarLayer {
         this.finalTroops = null;
         this.errorLogged = false;
         this.panRem = { x: 0, y: 0 };
+        this.camTgt = null;
+        this.camVel = { x: 0, y: 0 };
+        this.camMoving = false;
         this.subtitleQueue = [];
         this.subtitleAt = -99;
         this.active = true;
@@ -261,6 +323,7 @@ export class NavalWarLayer {
         NavalFxSprites.preload();
         for (const k of DE_FX_KEYS) getDeFx(k);
         if (this.canvas) this.canvas.style.display = 'block';
+        document.body.classList.add('naval-war-active');
         (window as any).game?.combatUI?.applyScene13Layout?.(true);
         const wind = windName(this.sim.windAng);
         this.say(init.title || `${init.attacker.name} 迎战 ${init.defender.name}`);
@@ -294,6 +357,7 @@ export class NavalWarLayer {
         this.fx = [];
         this.subtitleQueue = [];
         navalHiddenUnitIds.clear();
+        document.body.classList.remove('naval-war-active');
         if (this.canvas) {
             this.canvas.style.display = 'none';
             this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -328,8 +392,10 @@ export class NavalWarLayer {
             if (this.wallT >= PREP_RESAMPLE_AT[this.prepStep]) {
                 this.prepStep++;
                 if (this.init) {
-                    this.setupGeography(this.getMap(), this.init.center ?? null);
+                    this.setupGeography(this.getMap(), this.init.center ?? null, false);
                     this.sim = this.makeSim(this.init);
+                    this.weatherKind = null;
+                    this.applyWeather(false);
                 }
             }
         } else if (this.active && !this.decided) {
@@ -342,10 +408,47 @@ export class NavalWarLayer {
             }
             if (this.sim.result) this.decide();
         }
+        if (this.active && !this.decided && this.wallT >= this.weatherCheckAt) {
+            this.weatherCheckAt = this.wallT + 1;
+            this.applyWeather(true);
+        }
         this.updateFx(realDt);
         this.pumpSubtitles();
         this.updateCamera(realDt);
         this.render(realDt);
+    }
+
+    private weatherQuery(): TacticalWeatherContext | null {
+        if (this.centerLL) return { lat: this.centerLL.lat, lng: this.centerLL.lng, isSea: true };
+        const c = this.init?.center;
+        return c ? { lat: c.lat, lng: c.lng, isSea: true } : null;
+    }
+
+    /**
+     * 天气 → 海战：同一团天气决定航速 / 射程 / 命中 / 火攻（NavalBattleSim.setWeather），
+     * 风往雨雪斜飘的那边吹（setWindFromWeather）。天气来了、换了、散了都播报一句。
+     */
+    private applyWeather(announce: boolean): void {
+        const sim = this.sim;
+        const q = this.weatherQuery();
+        if (!sim || !q) return;
+        let w: ReturnType<typeof queryWeatherAt> = null;
+        try { w = queryWeatherAt(q); } catch { w = null; }
+        const kind = w && w.strength >= WEATHER_MIN_STRENGTH && WEATHER_TEXT[w.kind] ? w.kind : null;
+        sim.setWeather(kind, w?.strength ?? 0);
+        if (kind && w) {
+            const xs = Math.sin(w.windAngle);
+            if (Math.abs(xs) > 0.02) sim.setWindFromWeather(Math.sign(xs));
+        }
+        if (kind === this.weatherKind) return;
+        const prev = this.weatherKind;
+        this.weatherKind = kind;
+        if (!announce) {
+            if (kind) this.say(WEATHER_TEXT[kind].effect);
+            return;
+        }
+        if (kind) this.say(WEATHER_TEXT[kind].effect, true);
+        else if (prev && WEATHER_TEXT[prev]) this.say(`${WEATHER_TEXT[prev].name}渐散，海面转晴`);
     }
 
     private decide(): void {
@@ -378,7 +481,7 @@ export class NavalWarLayer {
      * 选战场中心 + 采样海陆：在开战点附近找一处「战场矩形里陆地最少」的水面（近的优先），
      * 然后按格采样海陆给模拟绕岸用。陆地太多（找不到像样的水面）就不绕岸，免得船卡死。
      */
-    private setupGeography(map: L.Map | null, center: { lat: number; lng: number } | null): void {
+    private setupGeography(map: L.Map | null, center: { lat: number; lng: number } | null, moveView = true): void {
         this.landGrid = null;
         this.centerLL = null;
         this.centerPx = null;
@@ -417,7 +520,8 @@ export class NavalWarLayer {
         }
         this.centerPx = best;
         this.centerLL = map.unproject(best, NAVAL_SCENE_ZOOM);
-        map.setView(this.centerLL, NAVAL_SCENE_ZOOM, { animate: false });
+        // 只在开场摆一次视野；准备期重采样换了中心也不跳地图，交给镜头平滑平移过去
+        if (moveView) map.setView(this.centerLL, NAVAL_SCENE_ZOOM, { animate: false });
         if (bestFrac > 0.55) return;   // 四面是陆：不绕岸
         const cols = Math.ceil((NAVAL_WORLD_W + LAND_MARGIN * 2) / LAND_CELL) + 1;
         const rows = Math.ceil((NAVAL_WORLD_H + LAND_MARGIN * 2) / LAND_CELL) + 1;
@@ -474,35 +578,23 @@ export class NavalWarLayer {
 
     private handleEvents(events: NavalEvent[]): void {
         const sim = this.sim!;
-        const map = this.getMap();
         for (const e of events) {
             switch (e.type) {
                 case 'fire': {
-                    // 炮弹 / 箭 / 石弹 / 希腊火、落水水花、炮口焰：全走战略地图同一套投射物
-                    if (map && this.centerPx) {
-                        const from = this.worldToLatLng(map, e.x, e.y);
-                        const to = this.worldToLatLng(map, e.tx, e.ty);
-                        const type = PROJECTILE_TYPE[e.weapon];
-                        getGlobalUnitRenderer()?.spawnProjectileVolley(from, to, {
-                            count: e.weapon === 'arrow' ? 3 : e.weapon === 'greekfire' ? 2 : 1,
-                            spreadFactor: e.weapon === 'arrow' ? 0.04 : 0.02,
-                            staggerMs: 60,
-                            durationMs: Math.round(e.dur * 1000),
-                            type,
-                            naval: true,
-                        });
-                    }
-                    if (e.weapon === 'greekfire') {
-                        this.fx.push({ k: 'greekfire', x: e.x, y: e.y, tx: e.tx, ty: e.ty, dur: Math.max(0.35, e.dur), t: 0 });
-                    }
-                    if (e.weapon === 'cannon') this.sfx('naval_cannon_fire', 0.35);
-                    else if (e.weapon === 'arrow') this.sfx('naval_arrow_fire', 0.45);
+                    if (e.weapon === 'cannon') {
+                        this.fx.push({ k: 'muzzle', x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: 0 });
+                        this.sfx('naval_cannon_fire', 0.35);
+                    } else if (e.weapon === 'arrow') this.sfx('naval_arrow_fire', 0.45);
                     else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
                     break;
                 }
                 case 'impact':
-                    if (e.hit) this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0, wood: e.weapon !== 'arrow' });
-                    else {
+                    if (e.hit) {
+                        if (e.weapon === 'cannon') this.fx.push({ k: 'deImpact', key: 'FX_EXPLOSION', x: e.x, y: e.y, t: 0, dur: 0.45, scale: 0.65 });
+                        else if (e.weapon === 'trebuchet') this.fx.push({ k: 'deImpact', key: 'FX_TREBUCHET_SMOKE', x: e.x, y: e.y, t: 0, dur: 0.48, scale: 0.72 });
+                        else if (e.weapon === 'greekfire') this.fx.push({ k: 'deImpact', key: 'FLAMETHROWER_FLAME', x: e.x, y: e.y, t: 0, dur: 0.4, scale: 0.62 });
+                        else this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0 });
+                    } else {
                         this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: e.weapon === 'cannon' || e.weapon === 'trebuchet' });
                         if (e.weapon !== 'arrow') this.sfx('naval_cannon_splash', 0.4);
                     }
@@ -515,12 +607,13 @@ export class NavalWarLayer {
                     break;
                 case 'ram':
                     this.fx.push({ k: 'splash', x: e.x, y: e.y, t: 0, big: true });
+                    this.fx.push({ k: 'deImpact', key: 'FX_WALL_DUST', x: e.x, y: e.y, t: 0, dur: 0.5, scale: 0.72 });
                     this.fx.push({ k: 'boom', x: e.x, y: e.y, t: 0, big: false });
                     this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '冲撞', color: '#ffffff' });
                     this.sfx('naval_explode', 0.6);
                     break;
                 case 'boardStart':
-                    this.fx.push({ k: 'spark', x: e.x, y: e.y, t: 0, wood: false });
+                    this.fx.push({ k: 'deImpact', key: 'FX_WALL_DUST', x: e.x, y: e.y, t: 0, dur: 0.45, scale: 0.55 });
                     this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '接舷', color: '#ffe9b0' });
                     break;
                 case 'capture':
@@ -586,8 +679,12 @@ export class NavalWarLayer {
         try { SubtitleBanner.show(text, 3200, false, true); } catch { /* 字幕失败不影响演出 */ }
     }
 
-    private focusOn(x: number, y: number, secs: number): void {
-        this.focus = { x, y, until: this.wallT + secs };
+    /**
+     * 🔴 [2026-11-16 主人令「海战的跟随镜头…最好不要乱动」] 出大事不再把镜头拉过去（原来起火 / 夺船 / 旗舰沉没
+     *    各拉一次、几秒后再拉回，一场仗来回好几趟）。大事只靠字幕播报；保留函数免得调用点散改。
+     */
+    private focusOn(_x: number, _y: number, _secs: number): void {
+        this.focus = null;
     }
 
     private updateFx(dt: number): void {
@@ -597,9 +694,10 @@ export class NavalWarLayer {
             const life = f.k === 'text' ? 1.8
                 : f.k === 'boom' ? (f.big ? 2.2 : 1.0)
                 : f.k === 'splash' ? (f.big ? 1.15 : 0.75)
-                : f.k === 'greekfire' ? f.dur + 0.2
+                : f.k === 'muzzle' ? NavalFxSprites.durationMs('CANNON_MUZZLE') / 1000
+                : f.k === 'deImpact' ? f.dur
                 : f.k === 'ring' ? 1.4
-                : 0.8;
+                : 0.55;
             if (f.t > life) this.fx.splice(i, 1);
         }
         if (this.fx.length > 300) this.fx.splice(0, this.fx.length - 300);
@@ -607,32 +705,74 @@ export class NavalWarLayer {
 
     // ─────────────────────────── 镜头：平移战略地图本身 ───────────────────────────
 
+    /**
+     * 🔴 [2026-11-16 主人令「海战的跟随镜头请检查下，合理吗，最好不要乱动」] 稳定跟拍：
+     *   · 目标 = 在场战船（未沉、未溃逃）的重心，旗舰算两份；再做 2.5 秒低通 —— 有船沉 / 逃 / 被夺时重心不跳；
+     *     旧写法取「所有船的外框中心」，外框边上一艘船一没，目标就跳几百像素。
+     *   · 死区 + 迟滞：重心偏离画面中心超过 16% 屏宽 / 屏高才开始追，追回 3% 以内就停；
+     *     旧写法没有死区，船绕着打、目标每帧在变，镜头 95% 的时间都在漂。
+     *   · 限速 90 px/s、加速度 80 px/s²：起步、停下都是缓的，不会被一次跳变拽着猛冲（旧写法实测峰值 676 px/s）。
+     *   · 出大事不拉镜头（见 focusOn）。
+     */
     private updateCamera(dt: number): void {
         const map = this.getMap();
         const sim = this.sim;
-        if (!map || !sim || !this.centerLL) return;
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        for (const s of sim.ships) {
-            if (s.state !== 'alive' && s.state !== 'sinking') continue;
-            if (s.routing && (s.x < 0 || s.x > NAVAL_WORLD_W || s.y < 0 || s.y > NAVAL_WORLD_H)) continue;
-            minX = Math.min(minX, s.x); maxX = Math.max(maxX, s.x);
-            minY = Math.min(minY, s.y); maxY = Math.max(maxY, s.y);
+        if (!map || !sim || !this.centerLL || dt <= 0) return;
+        // ① 在场战船重心（溃逃、下沉的不算；全溃散时退回所有还浮着的船）
+        let sx = 0, sy = 0, w = 0;
+        for (const pass of [0, 1]) {
+            for (const s of sim.ships) {
+                if (s.state !== 'alive') continue;
+                if (pass === 0 && s.routing) continue;
+                const k = s.role === 'flag' ? 2 : 1;
+                sx += s.x * k; sy += s.y * k; w += k;
+            }
+            if (w > 0) break;
         }
-        if (!isFinite(minX)) return;
-        let tx = (minX + maxX) / 2;
-        let ty = (minY + maxY) / 2 + 95;
-        if (this.focus && this.wallT < this.focus.until) {
-            tx = tx * 0.5 + this.focus.x * 0.5;
-            ty = ty * 0.5 + (this.focus.y + 80) * 0.5;
-        }
+        if (w === 0) return;
+        const rawX = sx / w;
+        const rawY = sy / w + 95;   // 船下面挂着名字标签、底部有兵力条：取景略往下压
+        if (!this.camTgt) this.camTgt = { x: rawX, y: rawY };
+        const a = 1 - Math.exp(-dt / 2.5);
+        this.camTgt.x += (rawX - this.camTgt.x) * a;
+        this.camTgt.y += (rawY - this.camTgt.y) * a;
+        // ② 目标在屏幕上离中心多远
         const xf = this.frameXf(map);
         const size = map.getSize();
-        const dx = xf.ax + (tx - NAVAL_WORLD_W / 2) * xf.u - size.x / 2;
-        const dy = xf.ay + (ty - NAVAL_WORLD_H / 2) * xf.u - size.y / 2;
-        if (Math.abs(dx) + Math.abs(dy) < 2) return;
-        const k = Math.min(1, dt * 1.1);
-        this.panRem.x += dx * k;
-        this.panRem.y += dy * k;
+        const offX = xf.ax + (this.camTgt.x - NAVAL_WORLD_W / 2) * xf.u - size.x / 2;
+        const offY = xf.ay + (this.camTgt.y - NAVAL_WORLD_H / 2) * xf.u - size.y / 2;
+        // ③ 死区迟滞
+        if (!this.camMoving && (Math.abs(offX) > size.x * 0.16 || Math.abs(offY) > size.y * 0.16)) this.camMoving = true;
+        if (this.camMoving && Math.hypot(offX, offY) < Math.min(size.x, size.y) * 0.03) this.camMoving = false;
+        // ④ 限速 + 限加速度
+        const MAX_V = 90, MAX_A = 80;
+        let wantX = 0, wantY = 0;
+        if (this.camMoving) {
+            wantX = offX * 0.8;
+            wantY = offY * 0.8;
+            const sp = Math.hypot(wantX, wantY);
+            if (sp > MAX_V) { wantX *= MAX_V / sp; wantY *= MAX_V / sp; }
+        }
+        const dvx = wantX - this.camVel.x, dvy = wantY - this.camVel.y;
+        const dv = Math.hypot(dvx, dvy);
+        const maxDv = MAX_A * dt;
+        if (dv > maxDv) {
+            this.camVel.x += dvx * maxDv / dv;
+            this.camVel.y += dvy * maxDv / dv;
+        } else {
+            this.camVel.x = wantX;
+            this.camVel.y = wantY;
+        }
+        const px = this.camVel.x * dt, py = this.camVel.y * dt;
+        if (Math.abs(px) + Math.abs(py) < 0.01) return;
+        const pt = L.point(px, py);
+        if (this.panMap) {
+            this.panMap(map, pt);
+            return;
+        }
+        // 兜底（无头测试等没注入平移函数时）：整像素 panBy
+        this.panRem.x += pt.x;
+        this.panRem.y += pt.y;
         const ix = Math.round(this.panRem.x), iy = Math.round(this.panRem.y);
         if (ix === 0 && iy === 0) return;
         this.panRem.x -= ix;
@@ -691,9 +831,17 @@ export class NavalWarLayer {
             this.drawShip(ctx, s, p, xf.u, mapScale);
             if (isFlag) LegionFlagDrawer.drawFlag(ctx, { x: p.x, y: p.y }, 0, mapScale, Date.now(), s.factionId || 'panshu', year);
         }
+        for (const s of order) this.drawBoardingMelee(ctx, s, toS, xf.u, mapScale);
+        this.drawProjectiles(ctx, toS, xf.u, mapScale);
         this.drawFx(ctx, toS, xf.u, mapScale);
         for (const s of order) this.drawShipBadge(ctx, s, poses.get(s.id)!, mapScale);
-        // ③ 风向罗盘（右上，屏幕坐标）
+        // ③ 天气：与陆战战术模式同一套整屏雨雪雾（WeatherLayer.renderTactical），盖在船上面
+        const wq = this.weatherQuery();
+        if (wq) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            try { renderTacticalWeather(ctx, cw, ch, wq); } catch { /* 天气失败不影响海战 */ }
+        }
+        // ④ 风向罗盘（右上，屏幕坐标）
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         this.drawWindCompass(ctx, vw);
     }
@@ -733,7 +881,6 @@ export class NavalWarLayer {
         const a = toS(s.x, s.y), b = toS(o.x, o.y);
         const nx = -(b.y - a.y), ny = b.x - a.x;
         const nl = Math.hypot(nx, ny) || 1;
-        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
         // 抛绳索带自然垂弧
         ctx.save();
         for (let k = -1; k <= 1; k++) {
@@ -741,35 +888,131 @@ export class NavalWarLayer {
             const ax = a.x + nx / nl * off, ay = a.y + ny / nl * off;
             const bx = b.x + nx / nl * off, by = b.y + ny / nl * off;
             const cx = (ax + bx) / 2, cy = (ay + by) / 2 + 8 * u;
-            ctx.strokeStyle = 'rgba(42,28,16,0.92)';
+            ctx.strokeStyle = 'rgba(72,52,24,0.9)';
             ctx.lineWidth = Math.max(2, 3.8 * u);
             ctx.beginPath();
             ctx.moveTo(ax, ay);
             ctx.quadraticCurveTo(cx, cy, bx, by);
             ctx.stroke();
-            ctx.strokeStyle = 'rgba(155,118,74,0.85)';
-            ctx.lineWidth = Math.max(1, 1.8 * u);
+            ctx.strokeStyle = 'rgba(208,168,96,0.95)';
+            ctx.lineWidth = Math.max(1.2, 2.0 * u);
             ctx.stroke();
         }
-        // 接舷肉搏刀光火花（周期性闪现）
-        const pulse = (this.wallT * 3.8 + s.id * 0.7) % 1;
-        if (pulse < 0.35) {
-            const k = pulse / 0.35;
-            const alpha = (1 - k).toFixed(3);
-            const sx = mx + Math.sin(this.wallT * 19 + s.id) * 14 * u;
-            const sy = my - 10 * u + Math.cos(this.wallT * 23 + o.id) * 8 * u;
-            ctx.strokeStyle = `rgba(255,236,155,${alpha})`;
-            ctx.lineWidth = Math.max(1.5, 2.5 * u);
-            for (let i = 0; i < 4; i++) {
-                const ang = i * Math.PI / 2 + this.wallT * 6;
-                const r0 = 3 * u, r1 = (8 + k * 12) * u;
+        ctx.restore();
+    }
+
+    /** 接舷白刃战特效：纯 DE 撞击尘烟（FX_WALL_DUST / FX_TREBUCHET_SMOKE）＋ Scene13 同款短脉冲交锋火星 */
+    private drawBoardingMelee(
+        ctx: CanvasRenderingContext2D,
+        s: NavalShip,
+        toS: (x: number, y: number) => { x: number; y: number },
+        u: number,
+        mapScale: number,
+    ): void {
+        if (s.boardingWith === null || s.state !== 'alive') return;
+        const o = this.sim!.getShip(s.boardingWith);
+        if (!o || s.id > o.id) return;
+        const a = toS(s.x, s.y), b = toS(o.x, o.y);
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - 12 * u;
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const nx = -dy, ny = dx;
+        const nl = Math.hypot(nx, ny) || 1;
+        const ux = nx / nl, uy = ny / nl;
+        const dustScale = HULL_BASE * mapScale * 0.22;
+
+        ctx.save();
+        ctx.lineCap = 'round';
+        for (let slot = 0; slot < 3; slot++) {
+            const cyc = (this.wallT * 2.4 + s.id * 0.43 + o.id * 0.29 + slot * 0.34) % 1;
+            if (cyc > 0.55) continue;
+            const k = cyc / 0.55;
+            const fade = 1 - k;
+            const along = (slot - 1) * 18 * u + Math.sin(slot * 3.1 + Math.floor(this.wallT * 2.4 + slot)) * 6 * u;
+            const cx = mx + ux * along;
+            const cy = my + uy * along;
+
+            // DE 尘烟精灵（IMPACT_DUST / IMPACT_TREBUCHET_SMOKE）
+            drawDeFxFrame(ctx, slot === 1 ? 'FX_TREBUCHET_SMOKE' : 'FX_WALL_DUST', cx, cy + 4 * u, k, dustScale, 0.45 * fade);
+
+            // Scene13 同款兵刃交锋火星
+            for (let sp = 0; sp < 5; sp++) {
+                const sa = sp * (Math.PI * 2 / 5) + slot * 1.7 + k * 0.4;
+                const dist = k * (14 + (sp % 2) * 8) * u;
+                const sx = cx + Math.cos(sa) * dist;
+                const sy = cy + Math.sin(sa) * dist * 0.7 - Math.sin(k * Math.PI) * 7 * u;
+                ctx.strokeStyle = `rgba(255,180,45,${(0.9 * fade).toFixed(3)})`;
+                ctx.lineWidth = Math.max(1.1, 2.0 * u * fade);
                 ctx.beginPath();
-                ctx.moveTo(sx + Math.cos(ang) * r0, sy + Math.sin(ang) * r0);
-                ctx.lineTo(sx + Math.cos(ang) * r1, sy + Math.sin(ang) * r1);
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx - Math.cos(sa) * 5 * u, sy - Math.sin(sa) * 3.5 * u);
                 ctx.stroke();
+                ctx.fillStyle = `rgba(255,255,255,${fade.toFixed(3)})`;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 1.3 * u * fade, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
         ctx.restore();
+    }
+
+    /** 全部弹丸使用与陆战（Scene13）同一套 DE 抛射物精灵（PROJ_ARROW / PROJ_BALL / PROJ_ROCK / FLAMETHROWER_FLAME） */
+    private drawProjectiles(
+        ctx: CanvasRenderingContext2D,
+        toS: (x: number, y: number) => { x: number; y: number },
+        u: number,
+        mapScale: number,
+    ): void {
+        const sim = this.sim;
+        if (!sim || sim.projectiles.length === 0) return;
+        const baseScale = HULL_BASE * mapScale * 0.45;
+        for (const pr of sim.projectiles) {
+            const p = Math.max(0, Math.min(1, pr.t / pr.dur));
+            const s0 = toS(pr.x0, pr.y0);
+            const s1 = toS(pr.x1, pr.y1);
+            const dx = s1.x - s0.x;
+            const dy = s1.y - s0.y;
+            const dist = Math.hypot(dx, dy);
+            const arcH = Math.min(dist * pr.arc, 95 * u);
+            const x = s0.x + dx * p;
+            const y = s0.y + dy * p - 4 * arcH * p * (1 - p);
+            const vy = dy - 4 * arcH * (1 - 2 * p);
+            const angle = Math.atan2(vy, dx);
+
+            if (pr.kind === 'arrow') {
+                // 战船齐射箭簇（5 支错落飞出，纯视觉齐射，不改伤害结算）
+                const fx = getDeFx('PROJ_ARROW');
+                const midFr = fx ? Math.floor(fx.frames / 2) : 5;
+                const seed = Math.sin(pr.x0 * 12.9898 + pr.y0 * 78.233 + pr.x1 * 37.719) * 43758.5453;
+                for (let k = 0; k < 5; k++) {
+                    const h1 = Math.sin(seed + k * 19.31);
+                    const h2 = Math.cos(seed + k * 41.17);
+                    const stagger = (k - 2) * 0.045;
+                    const pk = Math.max(0, Math.min(1, p * 1.12 - (k * 0.03)));
+                    if (pk <= 0 && p < 0.05) continue;
+                    const ox0 = s0.x + h1 * 12 * u;
+                    const oy0 = s0.y + h2 * 8 * u;
+                    const ox1 = s1.x + h2 * 24 * u;
+                    const oy1 = s1.y + h1 * 14 * u;
+                    const kdx = ox1 - ox0, kdy = oy1 - oy0;
+                    const kArc = arcH * (0.9 + (k % 3) * 0.1) + Math.abs(stagger) * 20 * u;
+                    const ax = ox0 + kdx * pk;
+                    const ay = oy0 + kdy * pk - 4 * kArc * pk * (1 - pk);
+                    const avy = kdy - 4 * kArc * (1 - 2 * pk);
+                    drawDeFxFrame(ctx, 'PROJ_ARROW', ax, ay, pk, baseScale * 1.15, 1, Math.atan2(avy, kdx), midFr);
+                }
+            } else if (pr.kind === 'cannon') {
+                drawDeFxFrame(ctx, 'PROJ_BALL', x, y, (p * 2) % 1, baseScale * 1.1, 1, angle);
+            } else if (pr.kind === 'trebuchet') {
+                drawDeFxFrame(ctx, 'PROJ_ROCK', x, y, (p * 2) % 1, baseScale * 1.35, 1, angle);
+            } else if (pr.kind === 'greekfire') {
+                for (let k = 0; k < 3; k++) {
+                    const pk = Math.max(0, Math.min(1, p - k * 0.06));
+                    const gx = s0.x + dx * pk;
+                    const gy = s0.y + dy * pk - 4 * arcH * pk * (1 - pk);
+                    drawDeFxFrame(ctx, 'FLAMETHROWER_FLAME', gx, gy, pk, baseScale * 0.55, 0.92, angle + Math.PI / 4);
+                }
+            }
+        }
     }
 
     private drawShip(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, u: number, mapScale: number): void {
@@ -788,7 +1031,8 @@ export class NavalWarLayer {
             ? Math.sin((fireAgo / 0.18) * Math.PI) * 3.5 * p.hs
             : 0;
         const hitAgo = sim.time - s.lastHitAt;
-        const hitFlash = hitAgo >= 0 && hitAgo < 0.22 && s.state === 'alive' ? 1 - hitAgo / 0.22 : 0;
+        // 接舷肉搏期间每帧都在扣兵力，不再触发船体抖动，保持两船平稳贴舷
+        const hitFlash = s.boardingWith === null && hitAgo >= 0 && hitAgo < 0.22 && s.state === 'alive' ? 1 - hitAgo / 0.22 : 0;
         const jx = (hitFlash > 0 ? Math.sin(this.wallT * 65 + s.id) * 2.2 * hitFlash * u : 0) - Math.cos(s.heading) * recoil;
         const jy = (hitFlash > 0 ? Math.cos(this.wallT * 58 + s.id) * 1.6 * hitFlash * u : 0) - Math.sin(s.heading) * recoil;
 
@@ -926,37 +1170,26 @@ export class NavalWarLayer {
             const { x: px, y: py } = toS(f.x, f.y);
             switch (f.k) {
                 case 'spark': {
-                    // 与 Scene13Render 一致的细亮火星轨迹 + 飞溅木屑
-                    const k = f.t / 0.8;
+                    // Scene13 同款受击火星
+                    const k = f.t / 0.55;
                     const fade = 1 - k;
                     ctx.save();
                     ctx.lineCap = 'round';
-                    const count = f.wood ? 8 : 6;
-                    for (let i = 0; i < count; i++) {
-                        const a = i * (Math.PI * 2 / count) + f.x * 0.13;
-                        const spd = 28 + (i % 3) * 14;
-                        const r = k * spd * u;
+                    for (let i = 0; i < 6; i++) {
+                        const a = i * (Math.PI * 2 / 6) + f.x * 0.13;
+                        const r = k * (24 + (i % 3) * 12) * u;
                         const sx = px + Math.cos(a) * r;
-                        const sy = py - 12 * u + Math.sin(a) * r * 0.65 - Math.sin(k * Math.PI) * 20 * u;
-                        if (f.wood && i % 2 === 0) {
-                            ctx.save();
-                            ctx.translate(sx, sy);
-                            ctx.rotate(a + k * 5);
-                            ctx.fillStyle = `rgba(138,94,48,${fade.toFixed(3)})`;
-                            ctx.fillRect(-3.5 * u, -1.2 * u, 7 * u, 2.4 * u);
-                            ctx.restore();
-                        } else {
-                            ctx.strokeStyle = `rgba(255,175,30,${(fade * 0.9).toFixed(3)})`;
-                            ctx.lineWidth = Math.max(1.2, 2.2 * u * fade);
-                            ctx.beginPath();
-                            ctx.moveTo(sx, sy);
-                            ctx.lineTo(sx - Math.cos(a) * 6 * u, sy - Math.sin(a) * 4 * u);
-                            ctx.stroke();
-                            ctx.fillStyle = `rgba(255,255,255,${fade.toFixed(3)})`;
-                            ctx.beginPath();
-                            ctx.arc(sx, sy, 1.4 * u * fade, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
+                        const sy = py - 12 * u + Math.sin(a) * r * 0.65 - Math.sin(k * Math.PI) * 18 * u;
+                        ctx.strokeStyle = `rgba(255,175,30,${(fade * 0.9).toFixed(3)})`;
+                        ctx.lineWidth = Math.max(1.2, 2.2 * u * fade);
+                        ctx.beginPath();
+                        ctx.moveTo(sx, sy);
+                        ctx.lineTo(sx - Math.cos(a) * 6 * u, sy - Math.sin(a) * 4 * u);
+                        ctx.stroke();
+                        ctx.fillStyle = `rgba(255,255,255,${fade.toFixed(3)})`;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, 1.4 * u * fade, 0, Math.PI * 2);
+                        ctx.fill();
                     }
                     ctx.restore();
                     break;
@@ -968,46 +1201,31 @@ export class NavalWarLayer {
                     NavalFxSprites.draw(ctx, 'WATER_SPLASH', px, py, k, mapScale * (f.big ? 1.35 : 0.9));
                     break;
                 }
-                case 'greekfire': {
-                    const end = toS(f.tx, f.ty);
-                    const total = f.dur + 0.2;
-                    const k = Math.min(1, f.t / total);
-                    const head = Math.min(1, f.t / f.dur);
-                    const tail = Math.max(0, (f.t - 0.12) / f.dur);
-                    for (let i = 0; i < 4; i++) {
-                        const s = tail + (head - tail) * (i / 3);
-                        const fx = px + (end.x - px) * s;
-                        const fy = py - 10 * u + (end.y - py) * s - Math.sin(s * Math.PI) * 12 * u;
-                        drawDeFxFrame(ctx, 'FX_FIRE_SMALL', fx, fy, (k * 1.4 + i * 0.2) % 1, fxScale * 0.75, 1 - k * 0.45);
-                    }
+                case 'muzzle': {
+                    // DE 原版炮口焰（CANNON_MUZZLE）
+                    const dur = NavalFxSprites.durationMs('CANNON_MUZZLE') / 1000;
+                    const k = Math.min(1, f.t / dur);
+                    const aim = toS(f.tx, f.ty);
+                    const rot = Math.atan2(aim.y - py, aim.x - px);
+                    NavalFxSprites.draw(ctx, 'CANNON_MUZZLE', px, py, k, mapScale, rot);
+                    break;
+                }
+                case 'deImpact': {
+                    const k = Math.min(1, f.t / f.dur);
+                    drawDeFxFrame(ctx, f.key, px, py - 8 * u, k, fxScale * f.scale, 0.95);
                     break;
                 }
                 case 'boom': {
                     const life = f.big ? 2.2 : 1.0;
                     const k = Math.min(1, f.t / life);
                     const fade = 1 - k;
-                    // 与 Scene13 一致的 DE 爆炸 / 烟尘精灵 + 飞溅碎木
+                    // 纯 DE 爆炸与烟尘精灵（FX_PETARD / FX_EXPLOSION + FX_TREBUCHET_SMOKE）
                     if (k < 0.55) {
                         const ek = k / 0.55;
                         const key = f.big ? 'FX_PETARD' : 'FX_EXPLOSION';
                         drawDeFxFrame(ctx, key, px, py - 8 * u, ek, fxScale * (f.big ? 1.15 : 0.78), 0.95);
                     }
                     drawDeFxFrame(ctx, 'FX_TREBUCHET_SMOKE', px, py - 12 * u - k * 24 * u, k, fxScale * (f.big ? 1.25 : 0.8), fade * 0.85);
-                    ctx.save();
-                    const pieces = f.big ? 10 : 6;
-                    for (let i = 0; i < pieces; i++) {
-                        const a = i * (Math.PI * 2 / pieces) + f.y * 0.11;
-                        const r = k * (f.big ? 110 : 52) * u * 1.25;
-                        const sx = px + Math.cos(a) * r;
-                        const sy2 = py - 14 * u + Math.sin(a) * r * 0.58 - Math.sin(k * Math.PI) * (f.big ? 56 : 32) * u;
-                        ctx.save();
-                        ctx.translate(sx, sy2);
-                        ctx.rotate(a + k * 6);
-                        ctx.fillStyle = `rgba(115,74,38,${fade.toFixed(3)})`;
-                        ctx.fillRect(-3.5 * u, -1.5 * u, 7 * u, 3 * u);
-                        ctx.restore();
-                    }
-                    ctx.restore();
                     break;
                 }
                 case 'ring': {
@@ -1090,14 +1308,14 @@ export class NavalWarLayer {
     private drawWindCompass(ctx: CanvasRenderingContext2D, vw: number): void {
         const sim = this.sim!;
         const R = 34;
-        const cx = vw - 70, cy = 150;
+        const cx = vw - 84, cy = 150;
         const g = ctx.createLinearGradient(0, cy - R - 12, 0, cy + R + 60);
         g.addColorStop(0, 'rgba(22,17,13,0.88)');
         g.addColorStop(1, 'rgba(12,9,7,0.92)');
         ctx.fillStyle = g;
         ctx.strokeStyle = 'rgba(212,175,55,0.45)';
         ctx.lineWidth = 1;
-        const bx = cx - R - 26, by = cy - R - 14, bw = (R + 26) * 2, bh = R * 2 + 70;
+        const bx = cx - R - 40, by = cy - R - 14, bw = (R + 40) * 2, bh = R * 2 + 70;
         ctx.beginPath();
         ctx.roundRect?.(bx, by, bw, bh, 8);
         if (!ctx.roundRect) ctx.rect(bx, by, bw, bh);
@@ -1125,7 +1343,8 @@ export class NavalWarLayer {
         ctx.fill();
         ctx.font = "bold 15px 'Noto Serif SC','SimSun',serif";
         ctx.fillStyle = '#f2e6c8';
-        ctx.fillText(windName(sim.windAng), cx, cy + R + 20);
+        const wName = this.weatherKind && WEATHER_TEXT[this.weatherKind] ? ` · ${WEATHER_TEXT[this.weatherKind].name}` : '';
+        ctx.fillText(windName(sim.windAng) + wName, cx, cy + R + 20);
         const ww = sim.windwardSide();
         if (ww && this.init) {
             ctx.font = "bold 12px 'Noto Serif SC','SimSun',serif";

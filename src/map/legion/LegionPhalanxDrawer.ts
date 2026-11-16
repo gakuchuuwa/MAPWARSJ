@@ -826,7 +826,12 @@ export class LegionPhalanxDrawer {
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），渲染走 hotspot 对齐。
             //    所有 /SUCAI/ 素材目录自动加载 _meta.json（内部有 dynMetaCache 缓存，404 会缓存 null），杜绝白名单漏配切碎贴图。
             const _firstUrl: string = (config.MOVE?.[0] ?? config.ATTACK?.[0] ?? config.IDLE?.[0] ?? config.DEATH?.[0] ?? '') as string;
-            if (typeof _firstUrl === 'string' && _firstUrl.includes('/SUCAI/')) {
+            // 🔴 [2026-11-16 主人报「海贼倭寇的船没有船帆，是不是没有解析好」] 商船模转战船的素材在 /SUCAI_TRADE/（运输船、柯克货船），
+            //    原来只认 /SUCAI/ → 帧框读不到 → drawNaval / 海战场面都走老式整图画法，而叠帆只在 DE 帧框那条路上做，
+            //    于是 NavalSails 里登记了帆的这两型船从来没挂上帆。只放开「登记了帆的 SUCAI_TRADE 船」，商队车、商船不动。
+            const _isDeDir = typeof _firstUrl === 'string'
+                && (_firstUrl.includes('/SUCAI/') || (_firstUrl.includes('/SUCAI_TRADE/') && needsSail(key)));
+            if (_isDeDir) {
                 const _dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
                 const dyn = await LegionPhalanxDrawer.loadDynMeta(_dir);
                 if (dyn) {

@@ -116,6 +116,14 @@ export function renderTacticalWeather(
     activeWeatherLayer?.renderTactical(ctx, cw, ch, q, now);
 }
 
+/**
+ * 🔴 [2026-11-16 海战接天气] 查某处此刻的天气（不生成新气团）：最强的那团、强度 0..1、雨雪斜飘角。
+ * 没天气返回 null。海战场面用它决定天气对航速/射程/命中/火攻的影响和风往哪边吹。
+ */
+export function queryWeatherAt(q: TacticalWeatherContext, now = performance.now()): { kind: WeatherKind; strength: number; windAngle: number } | null {
+    return activeWeatherLayer?.queryAt(q, now) ?? null;
+}
+
 export class WeatherLayer extends L.Layer {
     private map: L.Map | null = null;
     private canvas = document.createElement('canvas');
@@ -295,11 +303,23 @@ export class WeatherLayer extends L.Layer {
         return !!(war && (war.active || war.lingering));
     }
 
+    /** 🔴 [2026-11-16] 海战场面开着：天气改由海战画布画在船的上面，战略画布这边先清空、暂停 */
+    private isNavalOverlayActive(): boolean {
+        return (window as any).game?.navalWar?.isActive?.() === true;
+    }
+
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
         if (!this.map || !this.ctx || !this.visible || now - this.lastRenderAt < FRAME_MS) return;
         // 战术地图处于前景时，由 Scene13Render 调用 renderTactical 驱动同一套天气与粒子，战略画布暂停重复绘制
         if (this.isTacticalOverlayActive()) return;
+        if (this.isNavalOverlayActive()) {
+            if (this.canvasDirty && this.ctx) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.canvasDirty = false;
+            }
+            return;
+        }
 
         const dt = this.lastTickAt > 0 ? Math.min(0.1, (now - this.lastTickAt) / 1000) : 1 / 30;
         this.lastTickAt = now;
@@ -479,6 +499,24 @@ export class WeatherLayer extends L.Layer {
             isSnowGround: q.isSnowGround,
             warmStart: true,
         });
+    }
+
+    public queryAt(q: TacticalWeatherContext, now = performance.now()): { kind: WeatherKind; strength: number; windAngle: number } | null {
+        const isSea = q.isSea ?? LandSeaSystem.isSeaAt(L.latLng(q.lat, q.lng));
+        const elevM = q.elevM ?? LandSeaSystem.getSampler().getElevationSync(q.lat, q.lng);
+        const calendarSeason = this.getCalendarSeason();
+        let best: WeatherCell | null = null;
+        let bestS = 0;
+        for (const c of this.cells) {
+            if (now >= c.expiresAt) continue;
+            const s = this.cellStrengthAt(c, q.lat, q.lng, now, elevM, q.isSnowGround);
+            if (s > bestS) { bestS = s; best = c; }
+        }
+        if (!best || bestS <= 0.05) return null;
+        const kind = coerceWeatherKindForLocation(best.kind, {
+            lat: q.lat, lng: q.lng, isSea, elevM, calendarSeason, isSnowGround: q.isSnowGround,
+        });
+        return { kind, strength: Math.min(1, bestS), windAngle: best.windAngle };
     }
 
     /**

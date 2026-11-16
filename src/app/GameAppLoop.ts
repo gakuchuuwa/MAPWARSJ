@@ -188,8 +188,9 @@ function fireMoveTimed(map: L.Map, type: 'move' | 'moveend' = 'move'): void {
     }
 }
 
-/** 按亚像素平移（不取整，见 followPanState 的说明），并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
-function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
+/** 按亚像素平移（不取整，见 followPanState 的说明），并把逐帧 moveend 收敛成「节流 + 停稳补发」。
+ *  🔴 [2026-11-16] 海战场面的镜头也走这一个（逐帧 moveend 会让「停稳才补画」的地图层永远不刷新）。 */
+export function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     const now = performance.now();
     // DEV A/B 量具：`__moveEndNoThrottle = true` 退回改前行为（每帧都 fire moveend），
     // 用于同一次运行内对照（惯例同 TileDecoder.__tileDecodeNoBudget）。
