@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-16T05:39:11.926Z",
+ "generatedAt": "2026-11-16T06:26:19.840Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -14037,13 +14037,13 @@
   {
    "id": "city_tikal",
    "file": "site_city_tikal.json",
-   "bytes": 308637,
+   "bytes": 308945,
    "koppen": "Am",
    "theme": "NEOTROPICAL_TROPICAL",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 103,
+   "reliefM": 117,
    "cliffs": 0,
    "top": "Jungle Grass 91.6% · Jungle 6% · Rainforest 2.4%",
    "verify": "ok"
@@ -15689,13 +15689,13 @@
   {
    "id": "city_palenque",
    "file": "site_city_palenque.json",
-   "bytes": 280447,
+   "bytes": 280281,
    "koppen": "Af",
    "theme": "NEOTROPICAL_TROPICAL",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 526,
+   "reliefM": 37,
    "cliffs": 0,
    "top": "Jungle Grass 93.6% · Jungle 4% · Rainforest 2.4%",
    "verify": "ok"
@@ -17691,15 +17691,15 @@
   {
    "id": "city_shuman",
    "file": "site_city_shuman.json",
-   "bytes": 228671,
+   "bytes": 227657,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
-   "waterCells": 33,
-   "waterPct": 0.2,
-   "reliefM": 67,
+   "waterCells": 945,
+   "waterPct": 6.6,
+   "reliefM": 54,
    "cliffs": 0,
-   "top": "Desert 91% · Palm Desert 5.7% · Forest, Birch 2.2% · Beach 0.7%",
+   "top": "Desert 81.8% · Water, Shallow 6.6% · Palm Desert 5.7% · Beach 3.5%",
    "verify": "ok"
   },
   {
@@ -18713,13 +18713,13 @@
   {
    "id": "city_contrebia",
    "file": "site_city_contrebia.json",
-   "bytes": 227758,
+   "bytes": 227764,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 143,
+   "reliefM": 35,
    "cliffs": 0,
    "top": "Desert 91.9% · Palm Desert 5.7% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
@@ -19693,15 +19693,15 @@
   {
    "id": "city_khmilnyk",
    "file": "site_city_khmilnyk.json",
-   "bytes": 332131,
+   "bytes": 326077,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
-   "waterCells": 228,
-   "waterPct": 1.6,
-   "reliefM": 55,
+   "waterCells": 244,
+   "waterPct": 1.7,
+   "reliefM": 30,
    "cliffs": 0,
-   "top": "Grass 2 88.5% · Forest 5% · Pine Forest 2.2% · Beach 1.8%",
+   "top": "Grass 2 89% · Forest 5% · Pine Forest 2.2% · Water, Shallow 1.7%",
    "verify": "ok"
   },
   {
@@ -20169,13 +20169,13 @@
   {
    "id": "city_bathinda",
    "file": "site_city_bathinda.json",
-   "bytes": 228177,
-   "koppen": "BSh",
+   "bytes": 228181,
+   "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 39,
+   "reliefM": 15,
    "cliffs": 0,
    "top": "Desert 91.9% · Palm Desert 5.7% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"

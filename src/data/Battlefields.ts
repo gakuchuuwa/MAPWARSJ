@@ -200,8 +200,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_haidasipaisihe',
         name: '海达斯佩斯河',
-        lat: 32.8278,
-        lng: 73.6389,
+        lat: 32.9158,
+        lng: 73.7129,
         scriptYear: -326,
         note: '海达斯佩斯河战役战场，公元前326年5月，今杰赫勒姆河畔、巴基斯坦旁遮普省。波鲁斯据南岸列阵拒渡，亚历山大连日沿河佯动后于雷雨之夜自上游多林河岛偷渡，先以骑射手扰其右翼、伙伴骑兵破其左翼、科伊诺斯抄其后路击溃印度骑兵，再以方阵萨里沙长矛顶住战象；波鲁斯力战被俘，仍得保有其国。坐标取英文维基百科 Battle of the Hydaspes 信息框 32°49′40″N 73°38′20″E。',
         briefing: '印度河上游再无险可守，亚历山大挥师南下，架浮桥渡河，抵塔克西拉。随后直趋海达斯佩斯河，波鲁斯已把战象排在河对岸——要去印度腹地，必渡此河。',
@@ -874,8 +874,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_kunuosikefalai',
         name: '库诺斯克法莱之战',
-        lat: 39.417,
-        lng: 22.567,
+        lat: 39.5447,
+        lng: 22.5283,
         scriptYear: -364,
         note: '编年史 evt_0194 库诺斯克法莱之战（前364，底比斯佩洛皮达斯 vs 费莱亚历山大）。距最近据点佩利纳 57.25km。不画路。',
     },
@@ -1404,8 +1404,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_aobieerting',
         name: '奥别尔廷之战',
-        lat: 48.698,
-        lng: 25.171,
+        lat: 48.7813,
+        lng: 25.2769,
         scriptYear: 1531,
         note: '编年史 evt_2206 奥别尔廷之战（1531，波兰 vs 摩尔达维亚）。距最近据点加利奇 57.34km。不画路。',
     },
@@ -1436,8 +1436,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_bielesiteqike',
         name: '别列斯特奇科会战',
-        lat: 50.35,
-        lng: 25.12,
+        lat: 50.4218,
+        lng: 25.7248,
         scriptYear: 1651,
         note: '编年史 evt_2533 别列斯特奇科会战（1651，波兰 vs 哥萨克）。距最近据点利沃夫 96.24km。不画路。',
     },
