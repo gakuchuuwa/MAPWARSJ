@@ -4047,13 +4047,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代萨珊军团', civ: '波斯', age: 'antiquity', deStyle: 'PERSIAN', region: 'SASANIAN' as RegionType,
         buildingStyle: 'SASANIAN',
         castleId: 'PERS_CASTLE_AGE3', castleName: '波斯 萨珊泰西封砖石穹顶堡',
-        formationMode: 'balance_yoke',
+        formationMode: 'crane_wing',
         shipId: 'BIREME',
         commanderUnit: 'hero_artaphernes',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_war_elephant（主将队须为古典时代的英雄或精英兵）
         slots: [
+            { type: 'elite_war_elephant', count: 2 },
             { type: 'sparabara', count: 4 },
-            { type: 'savar', count: 2 },
-            { type: 'elite_antiquity_skirmisher', count: 3 },
+            { type: 'savar', count: 3 },
         ],
     },
     // ── 波斯 · 封建时代 · 封建时代霍拉桑军团　（本次新建）────────────────
@@ -4069,7 +4069,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_khosrau',
         // 🔴 [2026-10-16 主人令] 波斯战象：精锐在霍拉桑军团 2 档；普通在伊儿军团 2 档。
         slots: [
-            { type: 'elite_war_elephant', count: 2 },
+            { type: 'war_elephant', count: 2 },
             { type: 'sparabara', count: 4 },
             { type: 'elite_antiquity_skirmisher', count: 3 },
         ],
@@ -4121,15 +4121,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代阿契美尼德军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         // 旗舰沿用被替换掉的「古典时代阿契美尼德军团」原值：主人 2026-10-05 令登记的
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
         commanderUnit: 'hero_darius',
         slots: [
             { type: 'war_chariot', count: 2 },
-            { type: 'elite_immortal', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'imperial_cavalry', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // ── 法尔斯 · 封建时代 · 封建时代德莱木军团　（本次新建）────────────────
@@ -4144,7 +4144,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_yury',
         slots: [
-            { type: 'war_elephant', count: 2 },
+            { type: 'shock_cavalry', count: 2 },
             { type: 'immortal', count: 4 },
             { type: 'elite_immortal_ranged', count: 3 },
         ],
