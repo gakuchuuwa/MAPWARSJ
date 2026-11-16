@@ -1,10 +1,11 @@
 /**
  * 战略播报字数按移动时间定（2026-11-16 主人定，取代 S1–S5 五档与 233 字封顶）。
  *
- *   字数上限 = 移动秒数 × 3.6 字/秒 × 0.92 × 0.9 ≈ 移动秒数 × 2.98，不封顶；
+ *   可念秒数 = min(移动秒数, 300) − 5 × (屏数 − 1)；屏与屏之间留 5 秒（2026-11-16 主人定），一条最长约 5 分钟。
+ *   字数上限 = 可念秒数 × 3.6 字/秒 × 0.92 × 0.9 ≈ 可念秒数 × 2.98；
  *     3.6 是朗读速度；0.92 让军团到站前几秒念完；0.9 吸收实际移动比离线测算快一成的偏差。
  *   字数下限 = 上限 × 0.8；保底 38–45 字（原地开战也要报纪年和双方）。
- *   屏数 = 上限 ÷ 144 向上取整；一屏一段，念完一屏自动接下一屏（ClassicBattleBriefingRunner 段数不限）。
+ *   屏数 = 放得下上限的最少屏（每屏 ≤144 字）；念完一屏停 5 秒接下一屏（ClassicBattleBriefingRunner 段数不限）。
  *   单段区间 = 总区间平分后上下各放宽一成，单段最多 144 字。
  *
  * 就地改写：
@@ -21,11 +22,20 @@ const FINAL = R + '02_播报文案/战争编年史_主线1022场合并战略播�
 
 export const CHARS_PER_SEC = 3.6 * 0.92 * 0.9;
 export const SCREEN_MAX = 144;
+/** 屏与屏之间留白秒数（与 src/player/ClassicBattleBriefingRunner.ts 的 SCREEN_GAP_MS 同值） */
+export const SCREEN_GAP_SEC = 5;
+/** 一条战略播报最长占用的移动秒数（含屏间留白）；更长的路程后半段交给音乐和地图 */
+export const MAX_BRIEFING_SEC = 300;
 
 export function strategicQuota(sec) {
-  const max = Math.max(45, Math.floor(sec * CHARS_PER_SEC));
+  const usable = Math.min(sec, MAX_BRIEFING_SEC);
+  // 屏数取能放下的最少屏：每多一屏就多一次留白，可念时间相应扣掉
+  let screens = 1, max = 0;
+  for (;; screens++) {
+    max = Math.max(45, Math.floor((usable - SCREEN_GAP_SEC * (screens - 1)) * CHARS_PER_SEC));
+    if (max <= SCREEN_MAX * screens) break;
+  }
   const min = Math.max(38, Math.round(max * 0.8));
-  const screens = Math.ceil(max / SCREEN_MAX);
   const pmin = screens === 1 ? min : Math.floor((min / screens) * 0.9);
   const pmax = screens === 1 ? max : Math.min(SCREEN_MAX, Math.ceil((max / screens) * 1.1));
   return { tier: `${screens}屏`, screens, min, max, pmin, pmax };
@@ -36,6 +46,21 @@ const table = JSON.parse(fs.readFileSync(QUOTA, 'utf8'));
 const fin = JSON.parse(fs.readFileSync(FINAL, 'utf8'));
 const finArr = Array.isArray(fin) ? fin : (fin.events ?? Object.values(fin).find(Array.isArray));
 const text = Object.fromEntries(finArr.map((e) => [e.id, e['合并战略播报'] ?? []]));
+
+// 可选：CHRONICLE_MARCH_FILE 指向 calc-march-times.mts 按本表顺序重算的输出时，先同步移动秒数
+//（首战扣掉开卷导语 33.7 秒，与 chapters-63-gen-tables.mjs 同口径）
+const marchFile = process.env.CHRONICLE_MARCH_FILE;
+if (marchFile) {
+  const march = Object.fromEntries(JSON.parse(fs.readFileSync(marchFile, 'utf8')).map((x) => [x.id, x.totalSec]));
+  let changed = 0;
+  for (const r of table) {
+    if (march[r.id] == null) throw new Error(`移动时间文件缺 ${r.id}`);
+    const sec = +(r.新序号 === 1 ? march[r.id] - 33.7 : march[r.id]).toFixed(1);
+    if (Math.abs(sec - r.移动秒数) > 0.05) changed++;
+    r.移动秒数 = sec;
+  }
+  console.log('同步移动秒数，变化', changed, '场');
+}
 
 for (const r of table) {
   const q = strategicQuota(r.移动秒数);

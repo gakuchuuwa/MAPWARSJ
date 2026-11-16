@@ -8,6 +8,7 @@ import {
     type NavalWeapon,
 } from '../types/NavalShipTiers';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
+import { buildSailLayers } from '../data/NavalSails';
 
 interface EditableRoster {
     flagShipKey: string;
@@ -86,21 +87,32 @@ function shipSummary(key: string): string {
 function drawShipSprite(ctx: CanvasRenderingContext2D, shipKey: string, cx: number, cy: number, targetH: number): boolean {
     LegionPhalanxDrawer.ensureUnitTypeLoading(shipKey);
     const set: any = LegionPhalanxDrawer.getUnitAssets(shipKey);
-    const dir = 2; // 朝右偏下斜角，方便看清船型
-    const frames: HTMLImageElement[] | undefined = set?.dirFrames?.[dir];
-    const img: HTMLImageElement | undefined =
-        (frames && frames[0]?.complete && frames[0].naturalWidth > 0 ? frames[0] : undefined)
-        ?? (set?.idle?.complete && set.idle.naturalWidth > 0 ? set.idle : undefined)
-        ?? (set?.frames?.[0]?.complete && set.frames[0].naturalWidth > 0 ? set.frames[0] : undefined);
-    if (!img) return false;
-    const meta = set?.dirMetas?.[dir]?.[0] ?? set?.meta;
-    const scale = getNavalShipDrawScale(shipKey);
-    const aspect = img.naturalWidth / Math.max(1, img.naturalHeight);
-    const drawH = targetH * scale;
-    const drawW = drawH * aspect;
-    const ax = meta?.anchorX ?? 0.5;
-    const ay = meta?.anchorY ?? 0.5;
-    ctx.drawImage(img, cx - drawW * ax, cy - drawH * ay, drawW, drawH);
+    if (!set) return false;
+    const anim: 'MOVE' | 'IDLE' = set.MOVE?.length ? 'MOVE' : 'IDLE';
+    const arr: HTMLImageElement[] = set[anim] ?? set.IDLE ?? [];
+    const dir = 2; // 朝右偏下 16 向帧，方便看清船型
+    const raw = arr[dir] || arr[0];
+    if (!raw || !raw.complete || raw.naturalWidth <= 0) return false;
+    const dyn = set.dyn?.[anim] ?? set.dyn?.IDLE;
+    const meta = dyn?.dirs ? dyn.dirs[String(dir)] : undefined;
+    const frames = dyn?.frames ?? Math.max(1, Math.round(raw.naturalWidth / Math.max(1, raw.naturalHeight)));
+    const fw = meta?.fw ?? (raw.naturalWidth / frames);
+    const fh = meta?.fh ?? raw.naturalHeight;
+    const hs = (targetH / Math.max(1, fh)) * getNavalShipDrawScale(shipKey);
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (meta) {
+        ctx.drawImage(raw, 0, 0, meta.fw, meta.fh, -meta.hx * hs, -meta.hy * hs, meta.fw * hs, meta.fh * hs);
+        const sails = buildSailLayers(shipKey, dir, hs);
+        if (sails) {
+            for (const sl of sails) {
+                if (sl.img.complete && sl.img.naturalWidth > 0) ctx.drawImage(sl.img, sl.ox, sl.oy, sl.w, sl.h);
+            }
+        }
+    } else {
+        ctx.drawImage(raw, 0, 0, fw, fh, (-fw * hs) / 2, (-fh * hs) / 2, fw * hs, fh * hs);
+    }
+    ctx.restore();
     return true;
 }
 
@@ -129,11 +141,11 @@ function injectStyles(): void {
         .nf-btn:disabled { opacity: 0.45; cursor: default; }
         .nf-stats { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #cfc2aa; background: #171411; padding: 8px 12px; border: 1px solid #2d2720; border-radius: 6px; }
         .nf-canvas-box { background: radial-gradient(circle at 50% 45%, #163b57 0%, #0b2236 70%, #071624 100%); border: 1px solid #35526b; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; }
-        .nf-canvas { width: 100%; max-width: 920px; height: 290px; display: block; }
+        .nf-canvas { width: 100%; max-width: 1120px; height: 400px; display: block; }
         .nf-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
         .nf-slot { background: #171411; border: 1px solid #322c24; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .nf-slot-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: #e8cf8a; }
-        .nf-slot-preview { height: 92px; background: #0d2233; border: 1px solid #29465e; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+        .nf-slot-preview { height: 150px; background: #0d2233; border: 1px solid #29465e; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
         .nf-slot-meta { font-size: 11px; color: #b8ab92; line-height: 1.5; }
     `;
     document.head.appendChild(st);
@@ -268,8 +280,8 @@ function drawFormationCanvas(cv: HTMLCanvasElement, r: EditableRoster): void {
     const ctx = cv.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const w = cv.clientWidth || 900;
-    const h = cv.clientHeight || 290;
+    const w = cv.clientWidth || 1100;
+    const h = cv.clientHeight || 400;
     cv.width = Math.round(w * dpr);
     cv.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -277,24 +289,24 @@ function drawFormationCanvas(cv: HTMLCanvasElement, r: EditableRoster): void {
 
     // 海战 10 舰标准阵位（左：后排 → 中排 → 前排 → 旗舰压阵或前突，清楚标出每排）
     const cols: { label: string; key: string; ys: number[]; x: number }[] = [
-        { label: '后排（3艘）', key: r.backShipKey, x: w * 0.16, ys: [h * 0.24, h * 0.50, h * 0.76] },
-        { label: '中排（3艘）', key: r.mainShipKey, x: w * 0.39, ys: [h * 0.24, h * 0.50, h * 0.76] },
-        { label: '前排（3艘）', key: r.frontShipKey, x: w * 0.62, ys: [h * 0.24, h * 0.50, h * 0.76] },
-        { label: '旗舰（1艘）', key: r.flagShipKey, x: w * 0.84, ys: [h * 0.50] },
+        { label: '后排（3艘）', key: r.backShipKey, x: w * 0.14, ys: [h * 0.25, h * 0.53, h * 0.81] },
+        { label: '中排（3艘）', key: r.mainShipKey, x: w * 0.38, ys: [h * 0.25, h * 0.53, h * 0.81] },
+        { label: '前排（3艘）', key: r.frontShipKey, x: w * 0.62, ys: [h * 0.25, h * 0.53, h * 0.81] },
+        { label: '旗舰（1艘）', key: r.flagShipKey, x: w * 0.86, ys: [h * 0.53] },
     ];
 
     let needRetry = false;
-    ctx.font = '12px "Noto Serif SC", sans-serif';
+    ctx.font = '13px "Noto Serif SC", sans-serif';
     ctx.textAlign = 'center';
     for (const col of cols) {
         ctx.fillStyle = '#d9c592';
-        ctx.fillText(`${col.label} · ${getNavalShipChineseName(col.key)}`, col.x, 20);
+        ctx.fillText(`${col.label} · ${getNavalShipChineseName(col.key)}`, col.x, 22);
         for (const y of col.ys) {
             ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
             ctx.beginPath();
-            ctx.ellipse(col.x, y + 6, 36, 12, 0, 0, Math.PI * 2);
+            ctx.ellipse(col.x, y + 10, 58, 18, 0, 0, Math.PI * 2);
             ctx.stroke();
-            if (!drawShipSprite(ctx, col.key, col.x, y, 56)) {
+            if (!drawShipSprite(ctx, col.key, col.x, y, 96)) {
                 needRetry = true;
             }
         }
@@ -442,14 +454,14 @@ function renderMain(): void {
         const prevBox = document.createElement('div');
         prevBox.className = 'nf-slot-preview';
         const scv = document.createElement('canvas');
-        scv.width = 180;
-        scv.height = 86;
+        scv.width = 280;
+        scv.height = 140;
         prevBox.appendChild(scv);
         const drawSlot = () => {
             const c = scv.getContext('2d');
             if (!c) return;
             c.clearRect(0, 0, scv.width, scv.height);
-            if (!drawShipSprite(c, curKey, scv.width / 2, scv.height / 2 + 4, 62)) {
+            if (!drawShipSprite(c, curKey, scv.width / 2, scv.height / 2 + 8, 110)) {
                 setTimeout(() => { if (document.body.contains(scv)) drawSlot(); }, 160);
             }
         };

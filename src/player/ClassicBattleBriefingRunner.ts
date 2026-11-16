@@ -5,18 +5,24 @@
  *    一直念到这一仗开打；战术播报从开打（进战术模式）开始念。
  *
  * 规则：
- *   · 一段一次 `announceBriefing`（一段＝一屏字幕），念完一段接下一段；
+ *   · 一段一次 `announceBriefing`（一段＝一屏字幕），念完一段停 `SCREEN_GAP_MS` 再接下一段；
+ *     🔴 [2026-11-16 主人定] 屏与屏之间留 5 秒，音乐回升、让观众看地图；留白期间仍算「在念」（isBusy），
+ *     到站时军团照样等整条念完再开打，最后一屏（本场背景）不会被截掉。字数配额已扣掉这些留白。
  *   · 改找别的武将 → 当前这段念完就停，换成新武将的那一套从头念；
- *   · 开打时还没念完 → **当前这段念完就收，剩下的不念**，战术播报接着开口
+ *   · 到站时还没念完 → 军团在战场外列阵等整条念完（PlayerQuestSystem 看 `isBusy`）；
+ *     已进战斗 / 换场 → **当前这段念完就收，剩下的不念**，战术播报接着开口
  *     （战术模式那边本来就等 S 级播报空闲才开口，见 Scene13WarLayer `isSTierBusy`）。
- *     文案因此按「最重要的放第一段」来写。
  *   · 不跟着人走不走：寻将路上、会面对话、随军行军都照念（会面对话不念语音，不会撞音）。
  */
 
 type SpeakFn = (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
 
+/** 屏与屏之间的留白（毫秒）；与 tools/chronicle/apply-strategic-quota-by-time.mjs 的 SCREEN_GAP_SEC 同值 */
+export const SCREEN_GAP_MS = 5000;
+
 export class ClassicBattleBriefingRunner {
     private generalId: string | null = null;
+    private gapTimer: ReturnType<typeof setTimeout> | null = null;
     private paragraphs: string[] = [];
     private idx = 0;
     private speaking = false;
@@ -49,6 +55,8 @@ export class ClassicBattleBriefingRunner {
 
     /** 当前这段念完就停（开打 / 改找没有经典战的人 / 任务作废） */
     public stopAfterCurrent(): void {
+        // 正在屏间留白 → 当前这屏已念完，直接收
+        if (this.gapTimer) { clearTimeout(this.gapTimer); this.gapTimer = null; this.speaking = false; }
         this.stopRequested = true;
         this.generalId = null;
         this.paragraphs = [];
@@ -72,6 +80,11 @@ export class ClassicBattleBriefingRunner {
         const line = this.paragraphs[this.idx++];
         this.speaking = true;
         speak(line, () => {
+            // 同一套还有下一屏 → 留白期间保持 speaking，留白后接着念
+            if (!this.stopRequested && this.idx < this.paragraphs.length) {
+                this.gapTimer = setTimeout(() => { this.gapTimer = null; this.next(); }, SCREEN_GAP_MS);
+                return;
+            }
             this.speaking = false;
             // 停下期间又换了一位（start 清过 stopRequested）→ 接着念新这一套
             this.next();
