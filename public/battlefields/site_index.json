@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-16T06:26:19.840Z",
+ "generatedAt": "2026-11-16T07:01:27.424Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -19455,15 +19455,15 @@
   {
    "id": "city_szigetvar",
    "file": "site_city_szigetvar.json",
-   "bytes": 337966,
+   "bytes": 341221,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
-   "waterCells": 9,
-   "waterPct": 0.1,
-   "reliefM": 18,
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 28,
    "cliffs": 0,
-   "top": "Grass 2 91.6% · Forest 5% · Pine Forest 2.2% · Forest, Autumn 0.7%",
+   "top": "Grass 2 91.9% · Forest 5% · Pine Forest 2.2% · Forest, Autumn 0.4%",
    "verify": "ok"
   },
   {

@@ -1515,10 +1515,10 @@ export function getBattlefield(id: string): BattlefieldData | undefined {
  * 按 10 km 计（实测最近距离）：格拉尼库斯河 0.4、特斯科科湖 0.4、加龙河 1.1、阿尔帕德 1.5、
  * 布巴特 1.5、亚瓦尔潘帕 2.5、悲痛之夜 5.0、锡尔河 5.3、夸尔特 5.6、多瑙河渡口 7.8、七河 8.5 → 归并。
  */
-export const BATTLEFIELD_MERGE_KM = 10;
+export const BATTLEFIELD_MERGE_KM = 20;
 
 const mergedCityCache = new Map<string, string | null>();
-/** 这个战场在路网里归到哪座据点（null = 不归并，是独立的路网端点；阈值 10 km） */
+/** 这个战场在路网里归到哪座据点（null = 不归并，是独立的路网端点；阈值 20 km） */
 export function battlefieldMergedCityId(bfId: string): string | null {
     if (mergedCityCache.has(bfId)) return mergedCityCache.get(bfId)!;
     const bf = getBattlefield(bfId);
