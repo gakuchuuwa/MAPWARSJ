@@ -1,15 +1,21 @@
 ﻿/**
- * 🔴 [2026-11-10 主人令] 历史模式「文化徽章」——67 文化（60 布料融合文化符号 ＋ 7 单字旗）。
+ * 🔴 [2026-11-10 主人令] 历史模式「文化徽章」——67 文化全数采用布料融合文化符号旗。
  *
  * 口径：
- *   · 汉字圈 7 文化（中原/河朔/江南/巴蜀/湖广/越南/河西）走四时代统一单字旗（华/魏/吴/蜀/荆/越/凉），见 `CULTURE_TEXT_FLAG`。
- *   · 其余 60 文化统一走 `public/culture-emblems/sprite/{file}.png`（4×6 帧、单帧 128×160；剥离底盘外框、去 UI 塑料高光、带迎风透视切变与 S10QZ 旗布褶皱光影融合）。
- *   · 与 `FACTION_EMBLEM`（势力专属纹章）分开登记：只在历史模式「该势力此刻无在场武将」且该势力本身无专属纹章时作为据点文化兜底显示。
+ *   · 67 文化统一走 `public/culture-emblems/sprite/{file}.png`（4×6 帧、单帧 128×160；剥离底盘外框、去 UI 塑料高光、带迎风透视切变与 S10QZ 旗布褶皱光影融合）。
+ *   · 与 `FACTION_EMBLEM`（势力专属纹章）分开登记：只在历史模式「该势力此刻无在场武将」或 3 字以上非单字国号在场势力兜底显示。
  */
 
-/** 60 个非单字旗文化键 → `public/culture-emblems/sprite/{file}.png` 文件名（不含 `.png`） */
+/** 67 个文化键 → `public/culture-emblems/sprite/{file}.png` 文件名（不含 `.png`） */
 export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
-    // ── 东亚 / 内亚（其余 7 文化见 CULTURE_TEXT_FLAG）──────────────────
+    // ── 东亚 / 内亚 ──────────────────────────────────────────────
+    CENTRAL: 'chinese',          // 中原：华夏青铜九鼎（朱砂赤红旗）
+    WEI: 'wei',                  // 河朔：汉魏朱缨金盔（燕云深靛旗）
+    JIANGNAN: 'wu',              // 江南：吴越名剑碧浪（青瓷湖蓝旗）
+    BASHU: 'shu',                // 巴蜀：金沙太阳神鸟（蜀锦绛紫旗）
+    HUGUANG: 'huguang',          // 湖广：楚漆流云朱凤（楚漆玄黑旗）
+    VIETNAMESE: 'vietnamese',    // 越南：东山铜鼓金阳雒鸟（红河翠绿旗）
+    HEXI: 'hexi',                // 河西：武威铜奔马（敦煌赭褐旗）
     NORTHEAST: 'jurchens',       // 🔴 [2026-11-13 主人令] 东北（白山黑水）：白山海东青（黑水玄黑旗，万鹰之神）
     XIANBEI: 'khitans',          // 🔴 [2026-11-13 主人令] 漠南（契丹/鲜卑）：大辽金冠展翅飞凤（大辽墨青旗）
     MONGOL: 'mongols',           // 🔴 [2026-11-13 主人令] 漠北蒙古：黄金索永布（长生天苍蓝旗）
@@ -79,16 +85,8 @@ export const CULTURE_EMBLEM: Readonly<Record<string, string>> = {
     GREECE: 'greece',            // 🔴 [2026-11-13 主人令] 希腊（爱琴海）：科林斯重步兵战盔（爱琴海翡翠天青旗）
 };
 
-/** 🔴 [2026-11-10 主人令「这些还是用字更好」] 不用图案、四代统一走单字旗的 7 个文化 */
-export const CULTURE_TEXT_FLAG: Readonly<Record<string, string>> = {
-    CENTRAL: '华',
-    WEI: '魏',
-    JIANGNAN: '吴',
-    BASHU: '蜀',
-    HUGUANG: '荆',
-    VIETNAMESE: '越',
-    HEXI: '凉',
-};
+/** 7 个原汉字圈文化已全部升级为文化符号并合入 `CULTURE_EMBLEM`，保留空表以兼容调用方 */
+export const CULTURE_TEXT_FLAG: Readonly<Record<string, string>> = {};
 
 /** 待补画清单（已全部就绪） */
 export const CULTURE_EMBLEM_PENDING: readonly string[] = [];

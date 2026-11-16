@@ -316,8 +316,10 @@ function startNavalWar(
     const effectiveCenter = param ? { lat: param.waterLat, lng: param.waterLng } : center;
     const attTroopsOverride = param && param.gameAttTroops > 0 ? param.gameAttTroops : undefined;
     const defTroopsOverride = param && param.gameDefTroops > 0 ? param.gameDefTroops : undefined;
-    const subtitleExtra = param && (param.attShips > 0 || param.attTroops > 0)
-        ? `史实编制：攻方 ${param.attShips > 0 ? `${param.attShips}艘 ` : ''}${param.attTroops > 0 ? `${param.attTroops}人` : ''} 对 守方 ${param.defShips > 0 ? `${param.defShips}艘 ` : ''}${param.defTroops > 0 ? `${param.defTroops}人` : ''}`.trim()
+    // 推算出来的船数不当史实念：shipsEstimated 的场次只报兵力
+    const showShips = !!param && !param.shipsEstimated;
+    const subtitleExtra = param && ((showShips && param.attShips > 0) || param.attTroops > 0)
+        ? `史实编制：攻方 ${showShips && param.attShips > 0 ? `${param.attShips}艘 ` : ''}${param.attTroops > 0 ? `${param.attTroops}人` : ''} 对 守方 ${showShips && param.defShips > 0 ? `${param.defShips}艘 ` : ''}${param.defTroops > 0 ? `${param.defTroops}人` : ''}`.trim()
         : null;
     app.navalWar.onDecision = (winner, survivors) => {
         (app as any).live?.onTacticalBattleDecision?.(winner);
