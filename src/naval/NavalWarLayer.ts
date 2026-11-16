@@ -1126,6 +1126,9 @@ export class NavalWarLayer {
                         this.fx.push({ k: 'text', x: e.x, y: e.y, t: 0, text: '殉爆', color: '#ffb060' });
                     }
                     break;
+                case 'rally':
+                    this.say(`${this.sideName(e.side)} 陷入劣势，绝地反击`, true);
+                    break;
                 case 'windShift': {
                     const wn = windName(sim.windAng);
                     this.say(e.windward ? `风向转为${wn}，${this.sideName(e.windward)} 占了上风` : `风向转为${wn}`, true);

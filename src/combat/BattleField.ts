@@ -255,6 +255,10 @@ export class BattleField implements IOpeningPulseSink {
      *
      *    要退回站撸把 Scene13WarLayer + tools/war_sim.mjs 的 kite 全改回 60（两处必须同步）。
      */
+    /**
+     * ⚠️ [2026-11-16 主人令] 战术模式已不再调用本函数（八环只作用于战略地图上的战斗，战术模式、历史模式都不用）。
+     *    保留它只为离线工具 / 日后对照；要重新接回战术模式必须主人点头。
+     */
     public getScene13PowerBonus(): { attacker: number; defender: number } {
         const attT = Math.max(1, this.attackerGroup.initialTotalTroops);
         const defT = Math.max(1, this.defenderGroup.initialTotalTroops);

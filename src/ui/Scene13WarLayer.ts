@@ -84,6 +84,7 @@ import { destrFamilyOf, destrCandidatesOf, rubbleCandidatesOf, DE_DESTR_FALLBACK
 import { needsSail, getSailDeltas, getSailPartDir, loadSailPartAsync, DE_STYLE_TO_SAIL_GROUP } from '../data/NavalSails';
 
 import { isScriptPeriod } from '../events/scriptPeriod';
+import { HIST_WIN_MULT, HIST_LOSE_MULT, RALLY_RATIO, RALLY_GAP_SEC } from '../naval/NavalBattleSim';
 
 import { audioManager } from '../audio/AudioManager';
 
@@ -1323,6 +1324,11 @@ export class Scene13WarLayer {
     /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 SKILL_CAST_GAP_SEC 再放 */
 
     private skillCastCooldown: number = 0;
+    /** 本场是否向史实胜方倾斜（历史模式且有史实胜方）：六计 1.8/0.2、充槽 1.8/0.2、绝地反击都看它 */
+    private historyTilt = false;
+    /** 历史模式绝地反击：冷却（场景秒）与检查间隔 */
+    private rallyCd = 0;
+    private rallyCheckT = 0;
 
     /**
 
@@ -1513,6 +1519,20 @@ export class Scene13WarLayer {
         }
 
         this.historicalWinnerSide = init.historicalWinner === 'attacker' ? 0 : init.historicalWinner === 'defender' ? 1 : null;
+        // 🔴 [2026-11-16 主人令「两个都改」] 历史模式让画面胜负贴近史实，只走六计（八环已不进战术模式）：
+        //    ① 充槽：史实胜方 ×1.8、败方 ×0.2（与六计效果倍率同一组数）；② 绝地反击见 stepSkill 充槽处。与海战 NavalBattleSim 同一套数。
+        this.rallyCd = 0;
+        this.rallyCheckT = 0;
+        // ⚠️ 不能再用 isScriptPeriod()：剧本模式 11-12 已删、它恒 false ⇒ 原「剧本期 1.8/0.2」一直没生效。
+        //    改按「历史模式（centenarian）且本场有史实胜方」判；即时战斗经典战有观众下注，不倾斜。
+        this.historyTilt = getGameMode() === 'centenarian' && this.historicalWinnerSide !== null;
+        if (this.historyTilt && this.historicalWinnerSide !== null) {
+            const w = this.historicalWinnerSide, l: 0 | 1 = w === 0 ? 1 : 0;
+            this.skillRatePerSec[w] *= HIST_WIN_MULT;
+            this.skillRateMult[w] = +(this.skillRateMult[w] * HIST_WIN_MULT).toFixed(2);
+            this.skillRatePerSec[l] *= HIST_LOSE_MULT;
+            this.skillRateMult[l] = +(this.skillRateMult[l] * HIST_LOSE_MULT).toFixed(2);
+        }
 
         this.playerSixFrenzyTimer = 0;
 
@@ -1958,6 +1978,23 @@ export class Scene13WarLayer {
 
             this.skillGauge[f] = Math.min(100, this.skillGauge[f] + this.skillRatePerSec[f] * dt);
 
+        }
+
+        // 🔴 [2026-11-16 主人令「两个都改」] 历史模式绝地反击：史实胜方兵力落后到对方 0.8 倍 → 技能槽立刻充满
+        //    （照常等交战时放出），两次至少隔 RALLY_GAP_SEC。与海战 NavalBattleSim 同一套数。
+        if (this.rallyCd > 0) this.rallyCd = Math.max(0, this.rallyCd - dt);
+        this.rallyCheckT -= dt;
+        if (this.rallyCheckT <= 0 && this.rallyCd <= 0 && this.historyTilt && this.historicalWinnerSide !== null
+            && this.skillRatePerSec[this.historicalWinnerSide] > 0) {   // 小队模式不集气，也不反击
+            this.rallyCheckT = 0.5;
+            const live = this.getLiveTroops();
+            const w = this.historicalWinnerSide;
+            const mine = live ? (w === 0 ? live.attacker : live.defender) : 0;
+            const foe = live ? (w === 0 ? live.defender : live.attacker) : 0;
+            if (foe > 0 && mine / foe < RALLY_RATIO) {
+                this.skillGauge[w] = 100;
+                this.rallyCd = RALLY_GAP_SEC;
+            }
         }
 
         // 严禁同时释放：按 [0(攻方), 1(守方)] 顺序检视，同时满槽时攻方优先释放；
@@ -2822,13 +2859,14 @@ export class Scene13WarLayer {
 
         const oppFamous = this.sideIsFamous[ef];
 
-        // 剧本模式下电脑（viewer === null）按史实胜负定倍率：赢家 ×1.8、输家 ×0.2、平局/未定 ×1.0（不论名将普将）；观众与乱斗走原口径
+        // 历史模式下电脑（viewer === null）按史实胜负定倍率：赢家 ×1.8、输家 ×0.2、平局/未定 ×1.0（不论名将普将）；观众与乱斗走原口径
+        //   （原挂在剧本期 isScriptPeriod() 上，剧本模式删除后恒 false、一直没生效；2026-11-16 改挂 historyTilt）
 
         const famousDiffMult = viewer !== null
 
             ? 1.0
 
-            : (isScriptPeriod() && this.historicalWinnerSide !== null
+            : (this.historyTilt && this.historicalWinnerSide !== null
 
                 ? (this.historicalWinnerSide === f ? 1.8 : 0.2)
 

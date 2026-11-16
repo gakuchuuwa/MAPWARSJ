@@ -75,6 +75,16 @@ const DEFECT_INVULN_SEC = 3;
 /** 两计之间至少隔多久（场景秒，同陆战 SKILL_CAST_GAP_SEC） */
 const SKILL_CAST_GAP_SEC = 3.4;
 /**
+ * 🔴 [2026-11-16 主人令「两个都改」] 历史模式让画面胜负贴近史实，只走六计（不碰八环）：
+ *   · 充槽：史实胜方 ×1.8、败方 ×0.2（与六计效果倍率 1.8 / 0.2 同一组数）；
+ *   · 绝地反击：史实胜方船力落后到对方 RALLY_RATIO 倍时，技能槽立刻充满放一计，两次至少隔 RALLY_GAP_SEC。
+ * 陆战 Scene13WarLayer 同一套数。离线实测（各 60 局）：同兵 60/60、胜方兵少四成 58/60、兵少一半 56/60。
+ */
+export const HIST_WIN_MULT = 1.8;
+export const HIST_LOSE_MULT = 0.2;
+export const RALLY_RATIO = 0.8;
+export const RALLY_GAP_SEC = 20;
+/**
  * 交战节奏：所有交战伤害（箭炮、火烧、冲撞、接舷）统一乘它。六计按开战船力的比例算，不受影响。
  * 拿它把一局拉到直播要的长度（真实时间中位约 2 分钟，见 tools/naval-sim-check.mts 的时长统计）。
  */
@@ -192,7 +202,8 @@ export type NavalEvent =
     | { type: 'windShift'; windward: NavalSide | null }
     | { type: 'rout'; side: NavalSide; reason: 'flag' | 'losses' }
     | { type: 'phase'; phase: NavalPhase }
-    | { type: 'sixSkill'; side: NavalSide; six: TacticalSixSet; mult: number; isViewerCast: boolean; x: number; y: number };
+    | { type: 'sixSkill'; side: NavalSide; six: TacticalSixSet; mult: number; isViewerCast: boolean; x: number; y: number }
+    | { type: 'rally'; side: NavalSide };
 
 export type NavalPhase = 'approach' | 'exchange' | 'melee' | 'rout';
 
@@ -336,6 +347,8 @@ export class NavalBattleSim {
     private readonly recentCastSkills: Record<NavalSide, TacticalSixSet[]> = { attacker: [], defender: [] };
     private readonly plannedSkill: Record<NavalSide, { key: string; six: TacticalSixSet } | null> = { attacker: null, defender: null };
     private skillCastCooldown = 0;
+    /** 绝地反击冷却（场景秒） */
+    private rallyCd = 0;
     private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
     private readonly initCount: Record<NavalSide, number> = { attacker: 0, defender: 0 };
 
@@ -363,8 +376,10 @@ export class NavalBattleSim {
             const genMult = this.isFamous[s] ? 1.25 : 1.0;
             const tier = sideInit.eliteTier;
             const eliteMult = (tier != null && ELITE_RATE_MULTS[tier] !== undefined) ? ELITE_RATE_MULTS[tier] : 1.0;
-            this.skillRateMult[s] = +(genMult * eliteMult).toFixed(2);
-            this.skillRatePerSec[s] = BASE_RATE * genMult * eliteMult;
+            // 🔴 [2026-11-16 主人令「两个都改」] 历史模式：史实胜方充槽 ×1.8、败方 ×0.2（与六计效果倍率同一组数）
+            const histMult = this.isScriptMode && this.favored !== null ? (this.favored === s ? HIST_WIN_MULT : HIST_LOSE_MULT) : 1;
+            this.skillRateMult[s] = +(genMult * eliteMult * histMult).toFixed(2);
+            this.skillRatePerSec[s] = BASE_RATE * genMult * eliteMult * histMult;
         }
         const r = this.rng;
         // 风：若有史载风向则优先按史实，否则大致横吹战场
@@ -897,7 +912,23 @@ export class NavalBattleSim {
             if (this.skillPanicTimer[side] > 0) this.skillPanicTimer[side] = Math.max(0, this.skillPanicTimer[side] - dt);
         }
         if (this.skillCastCooldown > 0) this.skillCastCooldown = Math.max(0, this.skillCastCooldown - dt);
+        if (this.rallyCd > 0) this.rallyCd = Math.max(0, this.rallyCd - dt);
         if (this.routSide !== null) return;
+        // 历史模式绝地反击：史实胜方船力落后到对方 0.8 倍 → 技能槽立刻充满
+        if (this.isScriptMode && this.favored !== null && this.rallyCd <= 0 && this.phase !== 'approach') {
+            const fav = this.favored;
+            const los: NavalSide = fav === 'attacker' ? 'defender' : 'attacker';
+            let hf = 0, hl = 0;
+            for (const s of this.ships) {
+                if (s.state !== 'alive') continue;
+                if (s.side === fav) hf += s.hp; else if (s.side === los) hl += s.hp;
+            }
+            if (hl > 0 && hf / hl < RALLY_RATIO) {
+                this.skillGauge[fav] = 100;
+                this.rallyCd = RALLY_GAP_SEC;
+                this.events.push({ type: 'rally', side: fav });
+            }
+        }
         for (const side of ['attacker', 'defender'] as const) {
             if (this.skillRatePerSec[side] <= 0) continue;
             this.skillGauge[side] = Math.min(100, this.skillGauge[side] + this.skillRatePerSec[side] * dt);

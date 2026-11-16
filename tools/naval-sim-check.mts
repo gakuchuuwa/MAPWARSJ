@@ -2,7 +2,11 @@
  * 海战场面离线验算：跑 N 场看时长、胜负、各类事件是否都出现（看点有没有真打出来）。
  * 用法：npx tsx --import ./tools/sim-preload.mjs tools/naval-sim-check.mts [场数]
  */
-import { NavalBattleSim, type NavalEvent } from '../src/naval/NavalBattleSim';
+import { NavalBattleSim, NAVAL_TIME_LIMIT, type NavalEvent } from '../src/naval/NavalBattleSim';
+import { GameConfig } from '../src/config/GameConfig';
+
+/** 模拟按场景秒走（与陆战同一个 SCENE13_TIME_SCALE），画面上的真实秒 = 场景秒 ÷ 它 */
+const SCALE = GameConfig.COMBAT.SCENE13_TIME_SCALE;
 
 const N = Number(process.argv[2] ?? 60);
 const matchups: [string, string][] = [
@@ -37,14 +41,14 @@ for (let i = 0; i < N; i++) {
         }
     }
     for (const k of seen) battlesWith[k] = (battlesWith[k] ?? 0) + 1;
-    const t = sim.time;
+    const t = sim.time / SCALE;
     totalT += t; minT = Math.min(minT, t); maxT = Math.max(maxT, t);
     if (!sim.result) { console.log('❌ 没打完', i); continue; }
     if (sim.result.winner === 'attacker') attWins++;
-    if (t >= 299) timeouts++;
+    if (sim.time >= NAVAL_TIME_LIMIT - 1) timeouts++;
     if (ta !== td) { unequal++; if ((ta > td) === (sim.result.winner === 'attacker')) strongerWins++; }
     if (i < 8) console.log(`#${i} ${sa}(${ta}) vs ${sd}(${td}) → ${sim.result.winner} ${t.toFixed(0)}s 胜方余 ${(sim.result.winnerStrength * 100).toFixed(0)}% 船 ${sim.countAlive('attacker')}:${sim.countAlive('defender')}`);
 }
-console.log(`\n场数 ${N} · 时长 平均 ${(totalT / N).toFixed(0)}s 最短 ${minT.toFixed(0)}s 最长 ${maxT.toFixed(0)}s · 打满时限 ${timeouts} · 攻方胜 ${attWins} · 兵多方胜 ${strongerWins}/${unequal}`);
+console.log(`\n场数 ${N} · 真实时长 平均 ${(totalT / N).toFixed(0)}s 最短 ${minT.toFixed(0)}s 最长 ${maxT.toFixed(0)}s · 打满时限 ${timeouts} · 攻方胜 ${attWins} · 兵多方胜 ${strongerWins}/${unequal}`);
 console.log('出现该事件的场数：');
 for (const [k, v] of Object.entries(battlesWith).sort()) console.log(`  ${k.padEnd(18)} ${v}/${N} 场（共 ${evCount[k]} 次）`);

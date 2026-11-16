@@ -25,9 +25,8 @@ import { countNavalBattlesNamed, findNavalBattleParam, type NavalBattleParam } f
 import { getCultureLegionName, getLegionNameOfGeneral } from '../../types/CultureFormations';
 import { FACTION_COMPOSITIONS } from '../../data/FactionCompositions';
 import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
-import { isScriptPeriod } from '../../events/scriptPeriod';
 import { isBattlefieldCharacter } from '../../data/BattlefieldCharacters';
-import { isGeneralOnStage } from '../../data/generalOnStage';
+import { isGeneralOnStage, getGameMode } from '../../data/generalOnStage';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
  * 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团（跟拍军团将领编队）——禁止改成跟战场中点/中心点。 */
@@ -330,7 +329,9 @@ function startNavalWar(
         seed,
         followedOnDefenderSide,
         favored: historicalWinner === 'attacker' || historicalWinner === 'defender' ? historicalWinner : null,
-        isScriptMode: isScriptPeriod(),
+        // 历史模式（centenarian）才向史实胜方倾斜（六计 1.8/0.2、充槽 1.8/0.2、绝地反击）；
+        // 不能用 isScriptPeriod()：剧本模式已删、它恒 false。即时战斗经典战有观众下注，不倾斜。
+        isScriptMode: getGameMode() === 'centenarian',
         scriptedWinner: scriptedWinner ?? null,
         title,
         center: effectiveCenter,
@@ -826,7 +827,10 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                             const finalWinner = scripted ?? (winner === 'draw' ? 'defender' : winner);
                             battleField.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
                         },
-                        battleField.getScene13PowerBonus(),
+                        // 🔴 [2026-11-16 主人令「八环加成只作用在战略地图上的战斗，不用战术模式中作用，也不是历史模式中有用」]
+                        //    战术模式不再接八环（getScene13PowerBonus：八环质量差 + 剧本胜方 1.45 保底），双方加成恒为 1；
+                        //    战术胜负只看兵力、兵种属性、科技与六计（含 1.8/0.2、1.5/0.5 倍率）。战略结算仍照用八环。
+                        undefined,
                         t.center,
                         `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                         isNavalVsFortress ? 'siege' : battleField.type,

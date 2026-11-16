@@ -1761,6 +1761,66 @@ export default defineConfig({
                     });
                 });
                 // ========================================================
+                // /api/naval-fleets/save — 舰队管理编辑器保存（写入 LegionNavalFleets.generated.ts）
+                // ========================================================
+                server.middlewares.use('/api/naval-fleets/save', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const rosters = data?.rosters as Record<string, {
+                                flagShipKey: string; frontShipKey: string; mainShipKey: string; backShipKey: string; navalTier: string;
+                            }> | undefined;
+                            if (!rosters || typeof rosters !== 'object' || Object.keys(rosters).length === 0) {
+                                throw new Error('缺少 rosters 数据');
+                            }
+                            const lines: string[] = [
+                                '/**',
+                                ' * 266 支军团 10 艘船模混编组合（自动生成，2026-11-16）',
+                                ' * 依据：GG 收集的 266 支军团海军历史资料 + NavalShipTiers.ts 现有船模库',
+                                ' * 结构：每支军团 10 艘船 = 旗舰(1) + 前排(3) + 中排(3) + 后排(3)',
+                                ' */',
+                                'export interface LegionNavalFleetRoster {',
+                                '    readonly flagShipKey: string;',
+                                '    readonly frontShipKey: string;',
+                                '    readonly mainShipKey: string;',
+                                '    readonly backShipKey: string;',
+                                '    readonly navalTier: string;',
+                                '}',
+                                '',
+                                'export const LEGION_NAVAL_FLEET_ROSTERS: Readonly<Record<string, LegionNavalFleetRoster>> = {',
+                            ];
+                            for (const [name, r] of Object.entries(rosters)) {
+                                const safe = (s: string) => String(s || '').replace(/'/g, "\\'");
+                                lines.push(
+                                    `    ${JSON.stringify(name)}: { flagShipKey: '${safe(r.flagShipKey)}', frontShipKey: '${safe(r.frontShipKey)}', mainShipKey: '${safe(r.mainShipKey)}', backShipKey: '${safe(r.backShipKey)}', navalTier: ${JSON.stringify(String(r.navalTier || '近海与内河水师'))} },`,
+                                );
+                            }
+                            lines.push('};', '');
+                            lines.push('export function getLegionNavalFleetRoster(legionName?: string | null): LegionNavalFleetRoster | null {');
+                            lines.push('    if (!legionName) return null;');
+                            lines.push('    return LEGION_NAVAL_FLEET_ROSTERS[legionName] ?? null;');
+                            lines.push('}');
+                            const p = path.resolve(__dirname, 'src/data/LegionNavalFleets.generated.ts');
+                            safeWriteFileSync(p, lines.join('\n') + '\n');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, count: Object.keys(rosters).length }));
+                            console.log(`[NavalFleetsSave] ✅ 已保存 ${Object.keys(rosters).length} 支军团舰队编制`);
+                        } catch (err: any) {
+                            console.error('❌ [NavalFleetsSave] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
                 //   body: { culture: string, slots: any[] }
