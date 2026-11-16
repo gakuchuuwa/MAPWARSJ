@@ -165,8 +165,8 @@ export function buildNavalGroundData(input: NavalGroundBuildInput): NavalGroundB
                 canBeLand[idx] = 1;
                 if (!input.isRealWaterAt(wx, wy)) {
                     const n = fbm2D(gx * 0.16, gy * 0.16, seedNum);
-                    // 优先保留离中心航道较远、且属于真实陆地的部分
-                    landScore[idx] = clearD + n * 0.35;
+                    // 优先保留可视区近岸带（clearD 接近 1.0 处），避免退缩时只剩屏幕外的远端陆地
+                    landScore[idx] = -clearD + n * 0.25;
                     landMask[idx] = 1;
                     realLandCount++;
                 }
@@ -174,7 +174,7 @@ export function buildNavalGroundData(input: NavalGroundBuildInput): NavalGroundB
         }
     }
 
-    // 真实海岸没有陆地（外海大洋）：直接返回 100% 纯深海，不放任何岛屿和陆地
+    // 真实海岸没有陆地（外海大洋）：直接返回 100% 纯深海（深蓝色 wt4，不沿用浅海 wt5），不放任何岛屿和陆地
     if (realLandCount === 0) {
         return {
             mapData: {
@@ -185,7 +185,10 @@ export function buildNavalGroundData(input: NavalGroundBuildInput): NavalGroundB
                 elevation: new Array<number>(N * N).fill(0),
                 noTranspose: true,
             },
-            groundTiles,
+            groundTiles: {
+                ...groundTiles,
+                water: 'wt4',
+            },
             isSnowGround,
             lat: input.lat,
             lng: input.lng,

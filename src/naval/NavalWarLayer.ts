@@ -44,6 +44,36 @@ import {
     type NavalSide, type NavalShip, type NavalEvent, type NavalPhase, type NavalWeatherKind,
 } from './NavalBattleSim';
 import type { NavalWindCode } from '../data/NavalBattleParams.generated';
+import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
+
+const SIX_NAME_BY_KEY: Readonly<Record<TacticalSixSet, string>> = {
+    gongzhan: '攻战计',
+    shengzhan: '胜战计',
+    dizhan: '敌战计',
+    hunzhan: '混战计',
+    bingzhan: '并战计',
+    baizhan: '败战计',
+};
+
+const SIX_COLOR_BY_KEY: Readonly<Record<TacticalSixSet, string>> = {
+    gongzhan: '#ff6a24',
+    shengzhan: '#26f065',
+    dizhan: '#38bdf8',
+    hunzhan: '#b572ff',
+    bingzhan: '#ffd228',
+    baizhan: '#f03240',
+};
+
+const sixIconImgs = new Map<TacticalSixSet, HTMLImageElement>();
+function getNavalSixIcon(six: TacticalSixSet): HTMLImageElement | null {
+    let img = sixIconImgs.get(six);
+    if (!img) {
+        img = new Image();
+        img.src = `/SUCAI_FX/SIX_ICONS/${six}.png?v=six_hd1024`;
+        sixIconImgs.set(six, img);
+    }
+    return img.complete && img.naturalWidth > 0 ? img : null;
+}
 
 export interface NavalWarSideInit {
     factionId: string;
@@ -56,6 +86,8 @@ export interface NavalWarSideInit {
     generalName?: string | null;
     /** 军团 / 精锐名（旗舰标签第二行，同战略地图） */
     legionName?: string | null;
+    /** 是否名将（乱斗模式电脑放计 1.5 / 0.5 倍率判据） */
+    isFamous?: boolean;
 }
 
 export interface NavalWarInit {
@@ -67,6 +99,8 @@ export interface NavalWarInit {
     /** 跟随军团在守方：守方舰队摆左边 */
     followedOnDefenderSide?: boolean;
     favored?: NavalSide | null;
+    /** 是否历史/剧本模式（电脑放计 1.8 / 0.2） */
+    isScriptMode?: boolean;
     title?: string | null;
     /** 史实风向与天气 */
     windCode?: NavalWindCode | null;
@@ -84,7 +118,8 @@ type Fx =
     | { k: 'muzzle'; x: number; y: number; tx: number; ty: number; t: number }
     | { k: 'deImpact'; key: string; x: number; y: number; t: number; dur: number; scale: number }
     | { k: 'text'; x: number; y: number; t: number; text: string; color: string }
-    | { k: 'ring'; x: number; y: number; t: number; color: string };
+    | { k: 'ring'; x: number; y: number; t: number; color: string }
+    | { k: 'six'; x: number; y: number; t: number; six: TacticalSixSet; color: string };
 
 /** 船贴图 1 像素 = 多少世界单位（模拟的船体半径按它定） */
 const SPRITE_WS = 0.85;
@@ -345,8 +380,50 @@ export class NavalWarLayer {
         this.ctx = cv.getContext('2d');
     }
 
+    private lastSkillBySide: [string, string] = ['', ''];
+    private skillCastWallUntil = 0;
+
     public isActive(): boolean {
         return this.active || this.lingering;
+    }
+
+    /** 供 ViewerLive 判定 0/1 哪一方是乱入者（跟陆战 getPlayerSide 口径一致） */
+    public getPlayerSide(): 0 | 1 {
+        return this.init?.followedOnDefenderSide ? 1 : 0;
+    }
+
+    public sideDisplayFactionId(side: 0 | 1): string {
+        if (!this.init) return '';
+        return side === 0 ? this.init.attacker.factionId : this.init.defender.factionId;
+    }
+
+    /** 准备期尚未结束时返回剩余秒数，已开战返回 0（供 ViewerLive 封盘用） */
+    public getDeployRemainingSec(): number {
+        if (!this.active) return 0;
+        const prepTimes = this.sceneZoom > NAVAL_SCENE_ZOOM ? PREP_RESAMPLE_AT_Z15 : PREP_RESAMPLE_AT;
+        if (this.prepStep >= prepTimes.length) return 0;
+        const endT = prepTimes[prepTimes.length - 1];
+        return Math.max(0, endT - this.wallT);
+    }
+
+    public lastSkillNameOf(side: 0 | 1): string {
+        return this.lastSkillBySide[side] || '奇谋';
+    }
+
+    /** 直播观众释放六计（与陆战 Scene13WarLayer.castViewerSkill 同签名） */
+    public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, _paid = false): 'cast' | 'wait' | 'closed' {
+        if (!this.active || this.decided || !this.sim) return 'closed';
+        if (this.getDeployRemainingSec() > 0) return 'wait';
+        const now = performance.now();
+        if (now < this.skillCastWallUntil) return 'wait';
+        this.skillCastWallUntil = now + 1800;
+        const navalSide: NavalSide = side === 0 ? 'attacker' : 'defender';
+        this.lastSkillBySide[side] = SIX_NAME_BY_KEY[six] || '奇谋';
+        this.sim.castSixSkill(navalSide, six, true);
+        if (viewerName) {
+            this.say(`${viewerName} 助${this.sideName(navalSide)}施放「${this.lastSkillBySide[side]}」`);
+        }
+        return 'cast';
     }
 
     /**
@@ -462,6 +539,7 @@ export class NavalWarLayer {
                 shipKey: init.attacker.shipKey,
                 flagShipKey: init.attacker.flagShipKey,
                 rowShipKeys: init.attacker.rowShipKeys,
+                isFamous: init.attacker.isFamous,
             },
             defender: {
                 factionId: init.defender.factionId,
@@ -469,9 +547,11 @@ export class NavalWarLayer {
                 shipKey: init.defender.shipKey,
                 flagShipKey: init.defender.flagShipKey,
                 rowShipKeys: init.defender.rowShipKeys,
+                isFamous: init.defender.isFamous,
             },
             seed: init.seed,
             favored: init.favored ?? null,
+            isScriptMode: init.isScriptMode,
             attackerRight: !!init.followedOnDefenderSide,
             isWater: (x, y) => this.isWaterAt(x, y),
             windCode: init.windCode ?? null,
@@ -672,18 +752,20 @@ export class NavalWarLayer {
             }
             return land / n;
         };
-        let best = p0, bestScore = Infinity, bestFrac = 1;
-        const rings = [0, 300, 600, 1000, 1500, 2200, 3000];
-        for (const r of rings) {
-            const steps = r === 0 ? 1 : 12;
-            for (let k = 0; k < steps; k++) {
-                const a = k * Math.PI * 2 / steps;
-                const cand = L.point(p0.x + Math.cos(a) * r, p0.y + Math.sin(a) * r);
-                const f = landFrac(cand);
-                const score = f + r / 12000;
-                if (score < bestScore) { bestScore = score; best = cand; bestFrac = f; }
+        let best = p0, bestScore = Infinity, bestFrac = landFrac(p0);
+        if (bestFrac > 0.40) {
+            const rings = [300, 600, 1000, 1500, 2200, 3000];
+            for (const r of rings) {
+                const steps = 12;
+                for (let k = 0; k < steps; k++) {
+                    const a = k * Math.PI * 2 / steps;
+                    const cand = L.point(p0.x + Math.cos(a) * r, p0.y + Math.sin(a) * r);
+                    const f = landFrac(cand);
+                    const score = Math.max(0, f - 0.15) + r / 10000;
+                    if (score < bestScore) { bestScore = score; best = cand; bestFrac = f; }
+                }
+                if (bestFrac <= 0.25) break;   // 已有近海开阔水域即可，不必推去无陆纯海
             }
-            if (bestFrac === 0) break;   // 整屏全海域，不必再往远找
         }
         this.centerPx = best;
         this.centerLL = map.unproject(best, Z);
@@ -791,7 +873,7 @@ export class NavalWarLayer {
         glCv.style.backgroundPosition = 'center center';
         glCv.style.display = 'block';
 
-        void Scene13GroundLayerGL.create(glCv, built.mapData, built.groundTiles, { isSiege: false }).then((glLayer) => {
+        void Scene13GroundLayerGL.create(glCv, built.mapData, built.groundTiles, { isSiege: false, isNaval: true }).then((glLayer) => {
             if (gen !== this.groundGen || !this.isActive()) {
                 glLayer.destroy();
                 return;
@@ -845,13 +927,8 @@ export class NavalWarLayer {
                     if (e.weapon === 'cannon') {
                         this.fx.push({ k: 'muzzle', x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: 0 });
                         this.sfx('naval_cannon_fire', 0.35);
-                    } else if (e.weapon === 'arrow') {
-                        this.sfx('naval_arrow_fire', 0.45);
-                        if (e.fireArrow) {
-                            this.fx.push({ k: 'deImpact', key: 'FLAMETHROWER_FLAME', x: e.x, y: e.y - 10, t: 0, dur: 0.26, scale: 0.34 });
-                            this.fx.push({ k: 'spark', x: e.x, y: e.y - 8, t: 0 });
-                        }
-                    } else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
+                    } else if (e.weapon === 'arrow') this.sfx('naval_arrow_fire', 0.45);
+                    else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
                     break;
                 }
                 case 'impact':
@@ -921,6 +998,16 @@ export class NavalWarLayer {
                         else if (e.phase === 'melee') this.say('两军船队绞在一起，接舷肉搏');
                     }
                     break;
+                case 'sixSkill': {
+                    const col = SIX_COLOR_BY_KEY[e.six];
+                    const name = SIX_NAME_BY_KEY[e.six];
+                    const sideIdx: 0 | 1 = e.side === 'attacker' ? 0 : 1;
+                    this.lastSkillBySide[sideIdx] = name;
+                    this.fx.push({ k: 'six', x: e.x, y: e.y, t: 0, six: e.six, color: col });
+                    this.fx.push({ k: 'ring', x: e.x, y: e.y, t: 0, color: col });
+                    if (!e.isViewerCast) this.say(`${this.sideName(e.side)} 施展「${name}」`);
+                    break;
+                }
             }
         }
     }
@@ -963,6 +1050,7 @@ export class NavalWarLayer {
                 : f.k === 'muzzle' ? NavalFxSprites.durationMs('CANNON_MUZZLE') / 1000
                 : f.k === 'deImpact' ? f.dur
                 : f.k === 'ring' ? 1.4
+                : f.k === 'six' ? 1.8
                 : 0.55;
             if (f.t > life) this.fx.splice(i, 1);
         }
@@ -1435,46 +1523,13 @@ export class NavalWarLayer {
             const angle = Math.atan2(vy, dx);
 
             if (pr.kind === 'arrow') {
-                // 学陆战箭塔（Scene13WarLayer.fireDefBuildingVolley）：每发单支 DE 火箭（PROJ_ARROW_FIRE），由船舷随机间隔射出
-                const fx = getDeFx('PROJ_ARROW_FIRE') ?? getDeFx('PROJ_ARROW');
-                const key = getDeFx('PROJ_ARROW_FIRE') ? 'PROJ_ARROW_FIRE' : 'PROJ_ARROW';
-                if (pr.fireArrow) {
-                    // 中国楼船专属：炽烈火箭火光拖尾 + 跳动火星 + 动态火焰帧
-                    const pt = Math.max(0, p - 0.14);
-                    const tx = s0.x + dx * pt;
-                    const ty = s0.y + dy * pt - 4 * arcH * pt * (1 - pt);
-                    ctx.save();
-                    ctx.globalCompositeOperation = 'lighter';
-                    ctx.lineCap = 'round';
-                    ctx.strokeStyle = 'rgba(255,95,24,0.68)';
-                    ctx.lineWidth = Math.max(2.2, 4.2 * u);
-                    ctx.beginPath();
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-
-                    ctx.strokeStyle = 'rgba(255,238,145,0.92)';
-                    ctx.lineWidth = Math.max(1.0, 1.8 * u);
-                    ctx.beginPath();
-                    ctx.moveTo((tx + x) * 0.5, (ty + y) * 0.5);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-
-                    for (let k = 1; k <= 2; k++) {
-                        const pk = Math.max(0, p - k * 0.055);
-                        const sx = s0.x + dx * pk + Math.sin(pk * 40 + k * 2.1) * 2.5 * u;
-                        const sy = s0.y + dy * pk - 4 * arcH * pk * (1 - pk) + Math.cos(pk * 35 + k) * 2 * u;
-                        ctx.fillStyle = k === 1 ? 'rgba(255,215,95,0.85)' : 'rgba(255,105,30,0.65)';
-                        ctx.beginPath();
-                        ctx.arc(sx, sy, (2.2 - k * 0.5) * u, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    ctx.restore();
-                }
-                const animFr = (pr.fireArrow && fx)
-                    ? Math.floor((p * 3) * fx.frames) % Math.max(1, fx.frames)
-                    : (fx ? Math.floor(fx.frames / 2) : 5);
-                drawDeFxFrame(ctx, key, x, y, p, baseScale * (pr.fireArrow ? 2.65 : 2.4), 1, angle, animFr);
+                // 使用 DE 原版 PROJ_ARROW_FIRE 第 0 帧（完整火箭朝上，+π/2 对齐飞行切线）＋ 陆战同款 0.625 比例（baseScale * 1.9）
+                const hasFire = !!getDeFx('PROJ_ARROW_FIRE');
+                const key = hasFire ? 'PROJ_ARROW_FIRE' : 'PROJ_ARROW';
+                const fx = getDeFx(key);
+                const fr = hasFire ? 0 : (fx ? Math.floor(fx.frames / 2) : 5);
+                const rot = hasFire ? angle + Math.PI / 2 : angle;
+                drawDeFxFrame(ctx, key, x, y, p, baseScale * 1.9, 1, rot, fr);
             } else if (pr.kind === 'cannon') {
                 drawDeFxFrame(ctx, 'PROJ_BALL', x, y, (p * 2) % 1, baseScale * 1.1, 1, angle);
             } else if (pr.kind === 'trebuchet') {
@@ -1511,17 +1566,22 @@ export class NavalWarLayer {
         const jx = (hitFlash > 0 ? Math.sin(this.wallT * 65 + s.id) * 2.2 * hitFlash * u : 0) - Math.cos(s.heading) * recoil;
         const jy = (hitFlash > 0 ? Math.cos(this.wallT * 58 + s.id) * 1.6 * hitFlash * u : 0) - Math.sin(s.heading) * recoil;
 
-        // 战略海面水线投影：让船体贴合海面而非悬浮
-        if (s.state !== 'sunk') {
-            ctx.save();
-            ctx.globalAlpha = alpha * 0.34;
-            ctx.translate(p.x + jx, p.y + jy + bob + 8 * p.hs);
-            ctx.rotate(s.heading);
-            ctx.fillStyle = '#072238';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, p.len * 0.44, p.len * 0.16, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+        if (s.state === 'alive') {
+            const hasFrenzy = sim.skillFrenzyTimer[s.side] > 0;
+            const hasShield = sim.skillShieldTimer[s.side] > 0;
+            const hasPanic = sim.skillPanicTimer[s.side] > 0;
+            if (hasFrenzy || hasShield || hasPanic) {
+                const auraCol = hasPanic ? 'rgba(181,114,255,0.58)' : (hasShield ? 'rgba(38,240,101,0.58)' : 'rgba(255,106,36,0.58)');
+                ctx.save();
+                ctx.translate(p.x + jx, p.y + jy + bob + 8 * p.hs);
+                ctx.rotate(s.heading);
+                ctx.strokeStyle = auraCol;
+                ctx.lineWidth = Math.max(1.5, 2.4 * u);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.len * 0.52, p.len * 0.22, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
         }
 
         const set: any = LegionPhalanxDrawer.getUnitAssets(s.shipKey);
@@ -1736,6 +1796,26 @@ export class NavalWarLayer {
                     ctx.fillStyle = f.color;
                     ctx.fillText(f.text, px, ty);
                     ctx.globalAlpha = 1;
+                    break;
+                }
+                case 'six': {
+                    const k = Math.min(1, f.t / 1.8);
+                    const fade = k < 0.2 ? k / 0.2 : Math.max(0, (1 - k) / 0.8);
+                    const r = (36 + k * 140) * u;
+                    ctx.save();
+                    ctx.globalAlpha = fade * 0.88;
+                    ctx.strokeStyle = f.color;
+                    ctx.lineWidth = Math.max(2, 4 * (1 - k) * u);
+                    ctx.beginPath();
+                    ctx.ellipse(px, py, r, r * 0.5, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    const icon = getNavalSixIcon(f.six);
+                    if (icon) {
+                        const sz = 48 * (0.85 + (1 - fade) * 0.18) * Math.max(0.8, u);
+                        ctx.drawImage(icon, px - sz / 2, py - 42 * u - sz / 2, sz, sz);
+                    }
+                    ctx.restore();
                     break;
                 }
             }

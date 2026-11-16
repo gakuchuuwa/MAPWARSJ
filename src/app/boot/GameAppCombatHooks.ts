@@ -22,7 +22,12 @@ import { isBlankRebelFaction } from '../../data/RebelFaction';
 import { getCultureNavalShip } from '../../types/NavalShipTiers';
 import { getLegionNavalFleetRoster } from '../../data/LegionNavalFleets.generated';
 import { findNavalBattleParam, type NavalBattleParam } from '../../data/NavalBattleParams.generated';
+import { getCultureLegionName, getLegionNameOfGeneral } from '../../types/CultureFormations';
+import { FACTION_COMPOSITIONS } from '../../data/FactionCompositions';
 import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
+import { isScriptPeriod } from '../../events/scriptPeriod';
+import { isBattlefieldCharacter } from '../../data/BattlefieldCharacters';
+import { isGeneralOnStage } from '../../data/generalOnStage';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
  * 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团（跟拍军团将领编队）——禁止改成跟战场中点/中心点。 */
@@ -256,11 +261,16 @@ function startNavalWar(
     const side = (u: NavalSideUnit, overrideTroops?: number) => {
         const gName = u.generalId ? getGeneralRecordByGeneralId(u.generalId)?.generalName ?? null : null;
         const e = u.getEntity?.();
-        const fName = u.factionId ? app.cityManager.getFactionName(u.factionId) : '';
+        const fId = u.factionId ?? e?.factionId ?? '';
+        const fName = fId ? app.cityManager.getFactionName(fId) : '';
         const legionName = (u.name ?? e?.name ?? null) as string | null;
-        const roster = getLegionNavalFleetRoster(legionName);
+        const resolvedLegionName = (fId ? getLegionNameOfGeneral(fId, u.generalId) : undefined)
+            ?? (fId ? FACTION_COMPOSITIONS[fId]?.legionName : undefined)
+            ?? (e?.cultureRegion ? getCultureLegionName(e.cultureRegion) : undefined)
+            ?? legionName;
+        const roster = getLegionNavalFleetRoster(resolvedLegionName);
         return {
-            factionId: u.factionId ?? e?.factionId ?? '',
+            factionId: fId,
             troops: Math.max(1, overrideTroops && overrideTroops > 0 ? overrideTroops : (u.troops ?? 0)),
             shipKey: roster?.mainShipKey ?? fleetShipKey(u),
             flagShipKey: roster?.flagShipKey,
@@ -270,6 +280,7 @@ function startNavalWar(
             name: gName ?? u.name ?? e?.name ?? (fName || '舰队'),
             generalName: gName,
             legionName,
+            isFamous: !!(u.generalId && (isBattlefieldCharacter(u.generalId) || isGeneralOnStage(u.generalId))),
         };
     };
     const param = navalParam ?? findNavalBattleParam(undefined, title);
@@ -289,6 +300,7 @@ function startNavalWar(
         seed,
         followedOnDefenderSide,
         favored: historicalWinner === 'attacker' || historicalWinner === 'defender' ? historicalWinner : null,
+        isScriptMode: isScriptPeriod(),
         title,
         center: effectiveCenter,
         windCode: param?.windCode ?? null,

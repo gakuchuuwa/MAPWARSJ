@@ -19,6 +19,7 @@ import type { Army } from '../legion/Army';
 import type { City } from '../types/core';
 import { FACTIONS } from '../data/factions';
 import {
+    getFactionGeneral,
     getFactionGeneralsResolved,
     getGeneralRecordByGeneralId,
     type FactionGeneral,
@@ -32,13 +33,14 @@ import {
     getFactionEliteConfig,
     getEliteTierDisplayName,
 } from '../data/ExpeditionLegions';
-import { GENERAL_FIRST_BATTLES, type GeneralFirstBattle } from '../data/GeneralFirstBattles';
+import type { GeneralFirstBattle } from '../data/GeneralFirstBattles';
 import {
-    FIRST_BATTLE_BACKGROUNDS,
     FIRST_BATTLE_KIND_LABEL,
     firstBattleKindOf,
     type FirstBattleKind,
 } from '../data/GeneralFirstBattleBackgrounds';
+import { CHRONICLE_MAINLINE } from '../data/chronicle/ChronicleMainline.generated';
+import { findNavalBattleParam, type NavalBattleParam } from '../data/NavalBattleParams.generated';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CULTURE_NAMES, getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
@@ -427,19 +429,36 @@ class QuickBattle {
         this.classicByKey = new Map(this.classics.map((c) => [c.key, c]));
     }
 
-    /** 构造全库 531 场名将经典战役条目（按历史发生年份由古及今排序） */
+    /** 构造历史模式编年史全部真实战役条目（按历史发生年代由古及今排序） */
     private buildClassicEntries(): ClassicBattleEntry[] {
         const cm = this.app.cityManager;
-        const list: ClassicBattleEntry[] = [];
-        for (const fb of Object.values(GENERAL_FIRST_BATTLES)) {
+        const rows: { entry: ClassicBattleEntry; season: number; order: number }[] = [];
+        for (let i = 0; i < CHRONICLE_MAINLINE.length; i++) {
+            const ev = CHRONICLE_MAINLINE[i];
+            if (ev.kind !== 'battle' || !ev.battle) continue;
+            const fb = ev.battle;
             const hero = this.resolveGeneral(fb.generalId, undefined, fb.targetCityId);
-            const enemy = this.resolveGeneral(fb.enemyGeneralId ?? '', fb.enemyFactionId, fb.targetCityId);
-            if (!hero || !enemy) continue;
+            if (!hero) continue;
 
             const myFactionId = hero.factionId;
             const myFactionName = this.fname(myFactionId);
-            // 🔴 [2026-10-20 / 2026-11-10 主人令「一个武将一个势力，请符合历史」]
-            //    敌将自身在 FactionGenerals.ts 里的真实政权（enemy.factionId）优先于旧首战表的 fb.enemyFactionId
+            const fallbackFacId = fb.enemyFactionId || 'panshu';
+            const fallbackFacGen = !fb.enemyGeneralId && fallbackFacId !== 'panshu'
+                ? getFactionGeneral(fallbackFacId)
+                : undefined;
+            const enemy = this.resolveGeneral(
+                fb.enemyGeneralId || fallbackFacGen?.generalId || '',
+                fallbackFacId,
+                fb.targetCityId,
+            ) ?? {
+                generalId: '',
+                generalName: `${FACTIONS.find((f) => f.id === fallbackFacId)?.name ?? fb.enemyFactionName ?? this.fname(fallbackFacId)}军`,
+                factionId: fallbackFacId,
+                cityId: fb.targetCityId,
+                portrait: '',
+                eliteLabel: resolveEliteLabel('', fallbackFacId),
+            };
+
             const enemyRawFactionId = (enemy.factionId && enemy.factionId !== 'panshu')
                 ? enemy.factionId
                 : (fb.enemyFactionId || enemy.factionId);
@@ -475,23 +494,32 @@ class QuickBattle {
             const targetCity = fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined;
             const cityNote = targetCity && targetCity.name !== fb.targetName ? `·${targetCity.name}` : '';
             const placeText = `${fb.targetName}${cityNote}（${formatCoord(fb.targetLat, fb.targetLng)}）`;
-            const background = FIRST_BATTLE_BACKGROUNDS[fb.generalId]
-                ?? fb.introLines.map((l) => l.text).join(' ');
+            const tacticalText = ev.tactical.map((p) => p.trim()).filter(Boolean).join('\n\n');
+            const strategicText = ev.strategic.map((p) => p.trim()).filter(Boolean).join('\n\n');
+            const background = tacticalText || strategicText || fb.battleName;
 
-            list.push({
-                key: fb.generalId,
-                fb,
-                kind,
-                kindLabel,
-                yearText,
-                placeText,
-                background,
-                att,
-                def,
+            rows.push({
+                season: ev.season,
+                order: i,
+                entry: {
+                    key: fb.battleId ?? `chron:${ev.id}`,
+                    fb,
+                    kind,
+                    kindLabel,
+                    yearText,
+                    placeText,
+                    background,
+                    att,
+                    def,
+                },
             });
         }
-        list.sort((a, b) => a.fb.battleYear - b.fb.battleYear || a.fb.battleName.localeCompare(b.fb.battleName, 'zh'));
-        return list;
+        rows.sort((a, b) =>
+            a.entry.fb.battleYear - b.entry.fb.battleYear
+            || a.season - b.season
+            || a.order - b.order,
+        );
+        return rows.map((r) => r.entry);
     }
 
     private resolveGeneral(generalId: string, fallbackFactionId?: string, fallbackCityId?: string): GeneralItem | null {
@@ -711,8 +739,8 @@ class QuickBattle {
         classicPickRow.className = 'qb-classic-pick-row';
         this.classicSel = new SearchSelect(
             '选择名将经典战役（可搜战役名、年份、地点、双方名将、势力）',
-            '输入关键词搜索 531 场经典战役（不选＝随机经典战役）',
-            600,
+            `输入关键词搜索 ${this.classics.length} 场经典战役（不选＝随机经典战役）`,
+            Math.max(1200, this.classics.length),
         );
         this.classicSel.setOptions(this.classicOptions('all'));
         this.classicSel.onChange = () => {

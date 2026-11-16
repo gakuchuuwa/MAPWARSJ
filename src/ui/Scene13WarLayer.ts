@@ -19737,7 +19737,7 @@ export class Scene13WarLayer {
             const dx = fl.x - m.x, dy = fl.y - m.y;
             if (dx * dx + dy * dy <= r2) near++;
         }
-        keep = Math.max(0.05, keep - Math.min(FLEE_CONTAGION_MAX, near * FLEE_CONTAGION_STEP));
+        keep = Math.max(0.25, keep - Math.min(FLEE_CONTAGION_MAX, near * FLEE_CONTAGION_STEP));
         // 累加器取样（不随机丢弃）：攒够 1 留一具，尸体分布均匀不斑驳
         this.corpseAcc[f] += keep;
         if (this.corpseAcc[f] < 1) return false;

@@ -143,6 +143,7 @@ uniform sampler2D uDryTex;
 uniform float uMapSize;
 uniform float uTime;
 uniform float uIsIce;
+uniform float uIsNaval;
 uniform vec2 uNoiseOff;
 uniform vec3 uSeasonTint;
 uniform vec4 uSeasonGold;
@@ -307,15 +308,28 @@ void main() {
     vec3 waterNormal = normalize(vec3(-waveGrad.x * waveAmp, -waveGrad.y * waveAmp, 1.0));
 
     // 3. 双层对向流动水纹采样（叠加法线微扰动，呈现自然流动的细密水波）
-    vec2 wuv1 = fract(baseWaterUV * 0.96 + vec2(uTime * 0.016, uTime * 0.008) + waterNormal.xy * 0.055);
-    vec2 wuv2 = fract(baseWaterUV * 1.24 + vec2(-uTime * 0.011, uTime * 0.013) - waterNormal.xy * 0.045);
+    vec2 navalWarp = uIsNaval > 0.5 ? vec2(n1 * 0.32 + n2 * 0.16, n2 * 0.26 - n1 * 0.14) : vec2(0.0);
+    vec2 wuv1 = fract(baseWaterUV * 0.96 + vec2(uTime * 0.016, uTime * 0.008) + waterNormal.xy * 0.055 + navalWarp);
+    vec2 wuv2 = fract(baseWaterUV * 1.24 + vec2(-uTime * 0.011, uTime * 0.013) - waterNormal.xy * 0.045 - navalWarp * 0.7);
     vec3 wave1 = mix(texture2D(uWaterTex, wuv1).rgb, texture2D(uMoatWaterTex, wuv1).rgb, moatMark);
     vec3 wave2 = mix(texture2D(uWaterTex, wuv2).rgb, texture2D(uMoatWaterTex, wuv2).rgb, moatMark);
     vec3 rawWater = (wave1 + wave2) * 0.5;
+    if (uIsNaval > 0.5) {
+      // 海战外海：混入旋转错开的大尺度远景波纹打破 512px 平铺重复感，并沉降为深邃海蓝与大洋深浅明暗起伏
+      vec2 wuvFar = fract(vec2(baseWaterUV.x * 0.41 - baseWaterUV.y * 0.19, baseWaterUV.x * 0.19 + baseWaterUV.y * 0.41) + vec2(uTime * 0.006, -uTime * 0.005) - navalWarp * 0.55);
+      vec3 waveFar = texture2D(uWaterTex, wuvFar).rgb;
+      rawWater = mix(rawWater, waveFar, 0.42);
+    }
     float luma = dot(rawWater, vec3(0.299, 0.587, 0.114));
-    float liftScale = luma < 0.26 ? 1.44 : 1.10;
+    float liftScale = uIsNaval > 0.5 ? 0.92 : (luma < 0.26 ? 1.44 : 1.10);
     vec3 shallowBody = clamp(rawWater * (liftScale * 1.10) + vec3(0.03, 0.07, 0.07), 0.0, 1.0);
     vec3 deepBody = clamp(rawWater * (liftScale * 0.90), 0.0, 1.0);
+    if (uIsNaval > 0.5) {
+      float oceanMottle = 0.84 + 0.32 * (n1 * 0.65 + n2 * 0.35);
+      vec3 oceanTint = mix(vec3(0.06, 0.21, 0.35), vec3(0.11, 0.31, 0.45), clamp(n1 * 0.7 + n2 * 0.3 + 0.35, 0.0, 1.0));
+      shallowBody = mix(shallowBody * vec3(0.76, 0.94, 1.08), oceanTint * 1.18, 0.32);
+      deepBody = mix(deepBody * vec3(0.58, 0.80, 1.05), oceanTint * oceanMottle, 0.58);
+    }
     vec3 waterBody = mix(shallowBody, deepBody, isDeepWater);
 
     // 4. 浅滩水下河床折射与通透度层次（DE 风格：近岸浅滩清澈见底并随水波微折射沙床，向外海逐渐深沉）
@@ -717,6 +731,7 @@ export class Scene13GroundLayerGL {
   private dirtTex: WebGLTexture | null = null;
   private dryTex: WebGLTexture | null = null;
   public isIce = false;
+  private isNaval = false;
   private seasonProfile: { lat: number; lng: number; isSnowGround: boolean } | null = null;
   public setSeasonalGroundProfile(lat: number, lng: number, isSnowGround: boolean): void {
     this.seasonProfile = { lat, lng, isSnowGround };
@@ -925,6 +940,7 @@ export class Scene13GroundLayerGL {
       uMapSize: U('uMapSize'),
       uTime: U('uTime'),
       uIsIce: U('uIsIce'),
+      uIsNaval: U('uIsNaval'),
       uNoiseOff: U('uNoiseOff'),
       uSeasonTint: U('uSeasonTint'),
       uSeasonGold: U('uSeasonGold'),
@@ -1304,6 +1320,7 @@ export class Scene13GroundLayerGL {
     gl.uniform1f(this.loc.uMapSize as WebGLUniformLocation, this.N);
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
     gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
+    gl.uniform1f(this.loc.uIsNaval as WebGLUniformLocation, this.isNaval ? 1.0 : 0.0);
     gl.uniform2f(this.loc.uNoiseOff as WebGLUniformLocation, this.noiseOff[0], this.noiseOff[1]);
     if (this.seasonProfile) {
       const ts = (window as any).game?.timeSystem;
@@ -3851,7 +3868,7 @@ export class Scene13GroundLayerGL {
     canvas: HTMLCanvasElement,
     mapData: any,
     tiles?: Partial<Scene13GroundTiles>,
-    opts?: { isSiege?: boolean },
+    opts?: { isSiege?: boolean; isNaval?: boolean },
   ): Promise<Scene13GroundLayerGL> {
     const data = transposeMapData(mapData);
 
@@ -3898,6 +3915,7 @@ export class Scene13GroundLayerGL {
       },
     );
     layer.isIce = water.tile === 'ic2' || water.tile === 'ice' || water.tile === 'ic3';
+    layer.isNaval = !!opts?.isNaval;
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
     if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);

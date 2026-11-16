@@ -100,10 +100,16 @@ const BASE_SCALE = 0.8;
 export const SIZE_NORMALIZE_K = 0;
 
 /** 按船型归一化后的绘制缩放：表里没有的船退回基准值。 */
+const SHIP_VISUAL_SCALE_OVERRIDE: Record<string, number> = {
+    JUNK: 1.45,
+};
+
 export function getNavalShipDrawScale(shipId?: string): number {
-    const w = shipId ? SHIP_SIDE_WIDTH[shipId] : undefined;
-    if (!w) return BASE_SCALE;
-    return BASE_SCALE * Math.pow(SHIP_SIDE_WIDTH[BASE_SHIP] / w, SIZE_NORMALIZE_K);
+    const key = shipId?.toUpperCase();
+    const mult = (key ? SHIP_VISUAL_SCALE_OVERRIDE[key] : undefined) ?? 1;
+    const w = key ? SHIP_SIDE_WIDTH[key] : undefined;
+    if (!w) return BASE_SCALE * mult;
+    return BASE_SCALE * Math.pow(SHIP_SIDE_WIDTH[BASE_SHIP] / w, SIZE_NORMALIZE_K) * mult;
 }
 
 /**

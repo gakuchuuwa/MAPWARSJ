@@ -2454,7 +2454,11 @@ export class ViewerLive {
         if (this.recentCommands.length > 50) this.recentCommands.shift();
     }
 
-    private war() { return this.app.scene13War; }
+    private war(): any {
+        if (this.app.scene13War?.isActive?.()) return this.app.scene13War;
+        if ((this.app as any).navalWar?.isActive?.()) return (this.app as any).navalWar;
+        return this.app.scene13War;
+    }
     private battleOn(): boolean { return this.war()?.isActive?.() === true; }
     private playerSideInBattle(): 0 | 1 | null {
         const w = this.war();

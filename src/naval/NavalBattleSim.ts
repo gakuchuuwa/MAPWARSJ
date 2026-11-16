@@ -13,6 +13,7 @@
 
 import { getNavalDeStats, getNavalShipMass, getNavalWeapons, type NavalWeapon } from '../types/NavalShipTiers';
 import type { NavalWindCode } from '../data/NavalBattleParams.generated';
+import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
 
 export type NavalSide = 'attacker' | 'defender';
 export type NavalRole = 'front' | 'main' | 'back' | 'flag';
@@ -131,7 +132,8 @@ export type NavalEvent =
     | { type: 'sink'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean; explode: boolean }
     | { type: 'windShift'; windward: NavalSide | null }
     | { type: 'rout'; side: NavalSide; reason: 'flag' | 'losses' }
-    | { type: 'phase'; phase: NavalPhase };
+    | { type: 'phase'; phase: NavalPhase }
+    | { type: 'sixSkill'; side: NavalSide; six: TacticalSixSet; mult: number; isViewerCast: boolean; x: number; y: number };
 
 export type NavalPhase = 'approach' | 'exchange' | 'melee' | 'rout';
 
@@ -161,6 +163,8 @@ export interface NavalFleetInit {
     flagShipKey?: string;
     /** 前/中/后三排混编船型（266 支军团史实舰队组合；缺省同 shipKey） */
     rowShipKeys?: { front?: string; main?: string; back?: string };
+    /** 是否名将（乱斗模式电脑放计 1.5 / 0.5 倍率判据） */
+    isFamous?: boolean;
 }
 
 export interface NavalSimInit {
@@ -169,6 +173,8 @@ export interface NavalSimInit {
     seed: string;
     /** 史实胜方（剧本 / 经典战）：演出向它倾斜，免得画面打赢、结算翻盘 */
     favored?: NavalSide | null;
+    /** 是否历史/剧本模式（决定电脑放计走 1.8/0.2 还是乱斗名将 1.5/0.5） */
+    isScriptMode?: boolean;
     /** 每方船数（含旗舰），缺省 10 */
     shipsPerSide?: number;
     /** 攻方摆在右边（跟随军团在守方时，让跟随的舰队在左边） */
@@ -246,6 +252,16 @@ export class NavalBattleSim {
     private windLocked = false;
     private readonly attackerRight: boolean;
     private readonly initHp: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    private readonly isScriptMode: boolean;
+    private readonly favored: NavalSide | null;
+    private readonly isFamous: Record<NavalSide, boolean>;
+    public readonly skillFrenzyTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillShieldTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillPanicTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillBoardTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillBoostTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    private aiSixNextAt: Record<NavalSide, number> = { attacker: 10, defender: 14 };
+    private aiSixIdx: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
     private readonly initCount: Record<NavalSide, number> = { attacker: 0, defender: 0 };
 
@@ -253,6 +269,9 @@ export class NavalBattleSim {
         this.rng = makeRng(init.seed || 'naval');
         this.isWater = init.isWater ?? (() => true);
         this.attackerRight = !!init.attackerRight;
+        this.isScriptMode = !!init.isScriptMode;
+        this.favored = init.favored ?? null;
+        this.isFamous = { attacker: !!init.attacker.isFamous, defender: !!init.defender.isFamous };
         const r = this.rng;
         // 风：若有史载风向则优先按史实，否则大致横吹战场
         const WIND_CODE_ANG: Record<NavalWindCode, number> = {
@@ -306,9 +325,9 @@ export class NavalBattleSim {
         const m = this.mult[side];
         // 九格三排：前排最靠近敌方，后排其后，旗舰居中压阵
         const rows: { role: 'front' | 'main' | 'back'; dx: number }[] = [
-            { role: 'front', dx: 170 },
+            { role: 'front', dx: 210 },
             { role: 'main', dx: 0 },
-            { role: 'back', dx: -170 },
+            { role: 'back', dx: -210 },
         ];
         const escorts = n - 1;
         const perRow = [0, 0, 0];
@@ -342,7 +361,7 @@ export class NavalBattleSim {
                 mk(row.role, baseX + row.dx * dirX + (this.rng() - 0.5) * 30, cy + off + (this.rng() - 0.5) * 40, rowKey);
             }
         });
-        mk('flag', baseX - 300 * dirX, cy, fleet.flagShipKey ?? fleet.shipKey);
+        mk('flag', baseX - 360 * dirX, cy, fleet.flagShipKey ?? fleet.shipKey);
         // 开局错开冷却，别全队同一帧齐射
         for (const s of this.ships) if (s.side === side) {
             for (const w of s.weapons) if (w !== 'ram') s.cooldowns[w] = this.rng() * WEAPON_SPECS[w].cooldown;
@@ -496,10 +515,96 @@ export class NavalBattleSim {
         }
         this.resolveContacts();
         this.updateProjectiles(dt);
+        this.stepSixSkills(dt);
         this.updatePhase();
         this.assignRepShip('attacker');
         this.assignRepShip('defender');
         this.checkEnd();
+    }
+
+    /** 历史模式赢家 1.8 / 输家 0.2；乱斗模式名将 1.5 / 普将 0.5；观众放计恒 1.0 */
+    public computeSixMult(side: NavalSide, isViewerCast: boolean): number {
+        if (isViewerCast) return 1.0;
+        if (this.isScriptMode && this.favored !== null) {
+            return this.favored === side ? 1.8 : 0.2;
+        }
+        const opp: NavalSide = side === 'attacker' ? 'defender' : 'attacker';
+        if (this.isFamous[side] !== this.isFamous[opp]) {
+            return this.isFamous[side] ? 1.5 : 0.5;
+        }
+        return 1.0;
+    }
+
+    public castSixSkill(side: NavalSide, six: TacticalSixSet, isViewerCast: boolean): { mult: number; x: number; y: number } {
+        const opp: NavalSide = side === 'attacker' ? 'defender' : 'attacker';
+        const mult = this.computeSixMult(side, isViewerCast);
+        const allies = this.ships.filter((s) => s.side === side && s.state === 'alive');
+        const enemies = this.ships.filter((s) => s.side === opp && s.state === 'alive');
+        const rep = allies.find((s) => s.repRole) ?? allies.find((s) => s.role === 'flag') ?? allies[0];
+        const x = rep ? rep.x : NAVAL_WORLD_W / 2;
+        const y = rep ? rep.y : NAVAL_WORLD_H / 2;
+
+        if (six === 'gongzhan') {
+            this.skillFrenzyTimer[side] = Math.max(this.skillFrenzyTimer[side], 10 * mult);
+        } else if (six === 'shengzhan') {
+            this.skillShieldTimer[side] = Math.max(this.skillShieldTimer[side], 10 * mult);
+            this.skillPanicTimer[side] = 0;
+            const healFrac = Math.min(0.45, 0.16 * mult);
+            for (const s of allies) {
+                s.burnT = 0;
+                s.hp = Math.min(s.maxHp, s.hp + s.maxHp * healFrac);
+                s.crew = Math.min(s.maxCrew, s.crew + s.maxCrew * healFrac);
+            }
+        } else if (six === 'dizhan') {
+            this.skillBoostTimer[side] = Math.max(this.skillBoostTimer[side], 8 * mult);
+            const strikeCount = Math.max(1, Math.min(enemies.length, Math.round(2 * mult)));
+            const dmgFrac = Math.min(0.28, 0.08 * mult);
+            for (let i = 0; i < strikeCount; i++) {
+                const e = enemies[Math.floor(this.rng() * enemies.length)];
+                if (e) this.damage(e, e.maxHp * dmgFrac, e.maxCrew * dmgFrac * 0.8, side);
+            }
+        } else if (six === 'hunzhan') {
+            this.skillPanicTimer[opp] = Math.max(this.skillPanicTimer[opp], 8 * mult);
+        } else if (six === 'bingzhan') {
+            this.skillBoardTimer[side] = Math.max(this.skillBoardTimer[side], 10 * mult);
+            const crewHeal = Math.min(0.4, 0.18 * mult);
+            for (const s of allies) {
+                s.crew = Math.min(s.maxCrew, s.crew + s.maxCrew * crewHeal);
+            }
+        } else if (six === 'baizhan') {
+            const strikeCount = Math.max(1, Math.min(enemies.length, Math.round(2 * mult)));
+            const dmgFrac = Math.min(0.32, 0.11 * mult);
+            for (let i = 0; i < strikeCount; i++) {
+                const e = enemies[Math.floor(this.rng() * enemies.length)];
+                if (e && e.state === 'alive') {
+                    this.damage(e, e.maxHp * dmgFrac, e.maxCrew * dmgFrac, side);
+                    if (e.state === 'alive') e.burnT = Math.max(e.burnT, 8 * mult);
+                }
+            }
+        }
+
+        this.events.push({ type: 'sixSkill', side, six, mult, isViewerCast, x, y });
+        return { mult, x, y };
+    }
+
+    private stepSixSkills(dt: number): void {
+        for (const side of ['attacker', 'defender'] as const) {
+            if (this.skillFrenzyTimer[side] > 0) this.skillFrenzyTimer[side] = Math.max(0, this.skillFrenzyTimer[side] - dt);
+            if (this.skillShieldTimer[side] > 0) this.skillShieldTimer[side] = Math.max(0, this.skillShieldTimer[side] - dt);
+            if (this.skillPanicTimer[side] > 0) this.skillPanicTimer[side] = Math.max(0, this.skillPanicTimer[side] - dt);
+            if (this.skillBoardTimer[side] > 0) this.skillBoardTimer[side] = Math.max(0, this.skillBoardTimer[side] - dt);
+            if (this.skillBoostTimer[side] > 0) this.skillBoostTimer[side] = Math.max(0, this.skillBoostTimer[side] - dt);
+        }
+        if (this.phase === 'approach' || this.routSide !== null) return;
+        const SIX_CYCLE: readonly TacticalSixSet[] = ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'];
+        for (const side of ['attacker', 'defender'] as const) {
+            if (this.time >= this.aiSixNextAt[side]) {
+                this.aiSixNextAt[side] = this.time + 14 + this.rng() * 6;
+                const six = SIX_CYCLE[this.aiSixIdx[side] % SIX_CYCLE.length];
+                this.aiSixIdx[side]++;
+                this.castSixSkill(side, six, false);
+            }
+        }
     }
 
     private updateWind(): void {
@@ -594,6 +699,10 @@ export class NavalBattleSim {
         } else {
             throttle = 0.3;
         }
+        const sixSpd = (this.skillFrenzyTimer[s.side] > 0 ? 1.25 : 1)
+            * (this.skillBoostTimer[s.side] > 0 ? 1.20 : 1)
+            * (this.skillPanicTimer[s.side] > 0 ? 0.70 : 1);
+        throttle *= sixSpd;
         // 避碰：别和友船叠在一起；不是自己目标的敌船也绕开
         let ax = Math.cos(desired), ay = Math.sin(desired);
         for (const o of this.ships) {
@@ -700,13 +809,15 @@ export class NavalBattleSim {
             if (!tgt) continue;
             const isArrow = w === 'arrow';
             const archers = s.role === 'flag' ? 4 : 3;
-            const cdMul = isArrow
+            const frenzy = this.skillFrenzyTimer[s.side] > 0;
+            const panic = this.skillPanicTimer[s.side] > 0;
+            const cdMul = (isArrow
                 ? (0.45 + this.rng() * 1.10) / archers
-                : (0.85 + this.rng() * 0.30);
+                : (0.85 + this.rng() * 0.30)) * (frenzy ? 0.75 : 1);
             s.cooldowns[w] = spec.cooldown * cdMul * (s.crew / s.maxCrew < 0.35 ? 1.6 : 1);
             s.lastFireAt = this.time;
             const d = Math.hypot(tgt.x - s.x, tgt.y - s.y);
-            const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1) * this.wx.acc;
+            const acc = spec.accuracy * (1 - d / (spec.range * 2.2)) * (windward === s.side ? 1.08 : 1) * this.wx.acc * (panic ? 0.65 : 1);
             const hit = this.rng() < acc;
             // 起射点沿甲板纵向散布，落点落在船身不同部位或船边水里（学陆战箭塔真实单支火箭连射）
             const deckShift = isArrow ? (this.rng() - 0.5) * s.radius * 1.15 : 0;
@@ -717,7 +828,7 @@ export class NavalBattleSim {
             const lead = tgt.speed * (d / spec.speed) * 0.8;
             const x1 = tgt.x + Math.cos(tgt.heading) * lead + Math.cos(ang) * miss;
             const y1 = tgt.y + Math.sin(tgt.heading) * lead + Math.sin(ang) * miss;
-            const m = this.mult[s.side].dmg * (isArrow ? 1 / 3 : 1);
+            const m = this.mult[s.side].dmg * (isArrow ? 1 / 3 : 1) * (frenzy ? 1.30 : 1);
             const igniteBoost = isArrow && windward === s.side ? 1.6 : 1;
             const igniteBase = isArrow ? spec.igniteChance * 0.65 : spec.igniteChance;
             const dur = Math.max(0.15, Math.hypot(x1 - x0, y1 - y0) / spec.speed);
@@ -762,8 +873,9 @@ export class NavalBattleSim {
 
     private damage(s: NavalShip, hp: number, crew: number, _from: NavalSide | null): void {
         if (s.state !== 'alive') return;
-        s.hp -= hp;
-        s.crew = Math.max(0, s.crew - crew);
+        const shieldMul = this.skillShieldTimer[s.side] > 0 ? 0.60 : 1;
+        s.hp -= hp * shieldMul;
+        s.crew = Math.max(0, s.crew - crew * shieldMul);
         if (_from !== null) s.lastHitAt = this.time;
         if (s.hp <= 0) this.sink(s);
     }
@@ -792,7 +904,7 @@ export class NavalBattleSim {
                 if (b.state !== 'alive') continue;
                 const dx = b.x - a.x, dy = b.y - a.y;
                 const d = Math.hypot(dx, dy) || 0.01;
-                const min = (a.radius + b.radius) * ((a.boardingWith === b.id) ? 1.05 : 1.32);
+                const min = (a.radius + b.radius) * ((a.boardingWith === b.id) ? 0.68 : 1.32);
                 if (d >= min) continue;
                 // 推开（不叠船）
                 const push = (min - d) * 0.55;
@@ -835,9 +947,19 @@ export class NavalBattleSim {
         const o = this.getShip(s.boardingWith);
         if (!o || o.state !== 'alive' || o.boardingWith !== s.id) { s.boardingWith = null; return; }
         if (s.id > o.id) return;   // 一对只算一次
-        // 两船并排漂（慢慢一起转）
+        // 两船抛钩拉近贴舷并排漂
         s.speed = o.speed = 0;
-        const ms = this.mult[s.side].dmg, mo = this.mult[o.side].dmg;
+        const bx = o.x - s.x, by = o.y - s.y;
+        const bd = Math.hypot(bx, by) || 0.01;
+        const targetDist = (s.radius + o.radius) * 0.68;
+        if (bd > targetDist + 1) {
+            const pull = Math.min((bd - targetDist) * 0.5, 45 * dt);
+            const nx = (bx / bd) * pull, ny = (by / bd) * pull;
+            if (this.isWater(s.x + nx, s.y + ny)) { s.x += nx; s.y += ny; }
+            if (this.isWater(o.x - nx, o.y - ny)) { o.x -= nx; o.y -= ny; }
+        }
+        const ms = this.mult[s.side].dmg * (this.skillBoardTimer[s.side] > 0 ? 1.6 : 1) * (this.skillFrenzyTimer[s.side] > 0 ? 1.25 : 1);
+        const mo = this.mult[o.side].dmg * (this.skillBoardTimer[o.side] > 0 ? 1.6 : 1) * (this.skillFrenzyTimer[o.side] > 0 ? 1.25 : 1);
         const lossS = (o.crew * 0.045 * mo * (0.6 + this.rng() * 0.8) + 0.6) * dt;
         const lossO = (s.crew * 0.045 * ms * (0.6 + this.rng() * 0.8) + 0.6) * dt;
         s.crew = Math.max(0, s.crew - lossS);

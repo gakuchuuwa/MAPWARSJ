@@ -3033,7 +3033,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/BASHU/dianguo_zhuangqiao.png": {
-            "scale": 1.1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": -32
         },
@@ -3568,8 +3568,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/CENTRAL_ASIA/ansxi_aershake.png": {
-            "scale": 1.12,
-            "offsetX": 0,
+            "scale": 1.1,
+            "offsetX": 2,
             "offsetY": 26
         },
         "/assets/ORIE/guyashu_shamushi.png": {
@@ -5168,7 +5168,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/SLAVIC/walajiyia_fuladesanshi.png": {
-            "scale": 1.2,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": -4
         },
@@ -9058,7 +9058,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 51
         },
         "/assets/MONGOL/tujue_abo_dagan.png": {
-            "scale": 1.2,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 23
         },
@@ -9943,9 +9943,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/GURJARAS/mowoer_mukelabuhan.png": {
-            "scale": 1.03,
-            "offsetX": -7,
-            "offsetY": -14
+            "scale": 0.83,
+            "offsetX": -1,
+            "offsetY": 2
         },
         "/assets/JIANGNAN/__多余__JIANGNAN_01.png": {
             "scale": 1.14,
@@ -11531,6 +11531,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/CENTRAL/tang_gen_468.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/WEI/zhao_yi_gen_524.png": {
+            "scale": 1.44,
+            "offsetX": 32,
+            "offsetY": 35
+        },
+        "/assets/TIBET/tubo_gen_493.png": {
+            "scale": 1.15,
+            "offsetX": 2,
+            "offsetY": -17
+        },
+        "/assets/MONGOL/huihu_gen_451.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/ROMA/bfe_cb_gallic_empire_1.png": {
+            "scale": 1.2,
+            "offsetX": 2,
+            "offsetY": 46
+        },
+        "/assets/CENTRAL/han_d_gen_144.png": {
+            "scale": 1.27,
+            "offsetX": 5,
+            "offsetY": 16
+        },
+        "/assets/MONGOL/xiongnu_gen_83.png": {
+            "scale": 1.2,
+            "offsetX": 15,
+            "offsetY": -3
         }
     },
     "folderGuides": {
