@@ -15342,5 +15342,166 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "纳加帕蒂南-马德拉斯",
+                type: "sea",
+                id: "sea_city_nagapattinam_city_madras_1794819808091",
+                startConnection: "city_nagapattinam",
+                endConnection: "city_madras"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [79.84, 10.77],
+                    [80.25, 10.33333],
+                    [80.25, 11.83333],
+                    [80.58333, 12.33333],
+                    [80.2707, 13.0827],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯基亚索斯-斯库罗斯",
+                type: "sea",
+                id: "sea_city_skiathos_city_skyros_1794820575766",
+                startConnection: "city_skiathos",
+                endConnection: "city_skyros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.49, 39.16],
+                    [24.1753, 38.8096],
+                    [24.563, 38.904],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯基亚索斯-托罗尼",
+                type: "sea",
+                id: "sea_city_skiathos_city_torone_1794820577637",
+                startConnection: "city_skiathos",
+                endConnection: "city_torone"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.49, 39.16],
+                    [23.38416, 39.9129],
+                    [23.87919, 39.87941],
+                    [23.888, 39.977],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯基亚索斯-莱姆诺斯",
+                type: "sea",
+                id: "sea_city_skiathos_city_lemnos_1794820580461",
+                startConnection: "city_skiathos",
+                endConnection: "city_lemnos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.49, 39.16],
+                    [23.38416, 39.9129],
+                    [23.87919, 39.87941],
+                    [24.4893, 39.94452],
+                    [25.06, 39.88],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡里斯托斯-基斯诺斯",
+                type: "sea",
+                id: "sea_city_kalisituosi_city_kythnos_1794820618957",
+                startConnection: "city_kalisituosi",
+                endConnection: "city_kythnos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 38.01],
+                    [24.43799, 37.69038],
+                    [24.42, 37.39],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "基斯诺斯-雅典",
+                type: "sea",
+                id: "sea_city_kythnos_city_yadian_1794820621269",
+                startConnection: "city_kythnos",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 37.39],
+                    [23.88591, 37.61615],
+                    [23.72, 37.98],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨洛纳-安科纳",
+                type: "sea",
+                id: "sea_city_salona_city_ancona_1794820871558",
+                startConnection: "city_salona",
+                endConnection: "city_ancona"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [16.48, 43.54],
+                    [16.41606, 43.4885],
+                    [16.41849, 43.34217],
+                    [16.3457, 43.2385],
+                    [15.94082, 43.04932],
+                    [15.36202, 43.53165],
+                    [15.24138, 43.54306],
+                    [14.66401, 43.60154],
+                    [14.52538, 43.61558],
+                    [13.52, 43.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "吉打-佩迪尔",
+                type: "sea",
+                id: "sea_city_kedah_city_pidie_1794821340386",
+                startConnection: "city_kedah",
+                endConnection: "city_pidie"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [100.43, 5.71],
+                    [100.07996, 5.41368],
+                    [98.76709, 3.87522],
+                    [98.66667, 4.58333],
+                    [98.25, 5.33333],
+                    [97.83333, 5.75],
+                    [96.5, 5.75],
+                    [95.96, 5.38],
+                ]
+            }
+        },
     ]
 };

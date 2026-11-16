@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-16T08:30:50.869Z",
+ "generatedAt": "2026-11-16T09:23:55.522Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -19567,15 +19567,15 @@
   {
    "id": "city_bolghar",
    "file": "site_city_bolghar.json",
-   "bytes": 318872,
+   "bytes": 332654,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
-   "waterCells": 1847,
-   "waterPct": 12.8,
-   "reliefM": 55,
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 48,
    "cliffs": 0,
-   "top": "Grass 2 77% · Water, Shallow 12.8% · Forest 5% · Pine Forest 2.2%",
+   "top": "Grass 2 91.6% · Forest 5% · Pine Forest 2.2% · Forest, Autumn 0.6%",
    "verify": "ok"
   },
   {
@@ -19875,15 +19875,15 @@
   {
    "id": "city_wasit",
    "file": "site_city_wasit.json",
-   "bytes": 226938,
+   "bytes": 228001,
    "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
-   "waterCells": 0,
-   "waterPct": 0,
+   "waterCells": 199,
+   "waterPct": 1.4,
    "reliefM": 15,
    "cliffs": 0,
-   "top": "Desert 91.9% · Palm Desert 5.7% · Forest, Birch 2.2% · Dragon Forest 0.2%",
+   "top": "Desert 89.4% · Palm Desert 5.7% · Forest, Birch 2.2% · Water, Shallow 1.4%",
    "verify": "ok"
   },
   {
@@ -21093,15 +21093,15 @@
   {
    "id": "city_alimalig_xj",
    "file": "site_city_alimalig_xj.json",
-   "bytes": 231082,
+   "bytes": 229871,
    "koppen": "BWk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
-   "waterCells": 0,
+   "waterCells": 2,
    "waterPct": 0,
-   "reliefM": 84,
+   "reliefM": 37,
    "cliffs": 0,
-   "top": "Desert 91.7% · Palm Desert 5.8% · Forest, Birch 2.2% · Dragon Forest 0.2%",
+   "top": "Desert 91.6% · Palm Desert 5.8% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
   },
   {
