@@ -450,6 +450,20 @@ export class Army implements IBattleUnit {
         // 神出鬼没：等再次移动时隐身，此处不立即隐藏
     }
 
+    /**
+     * 仅切换大地图视觉战斗形态（攻击动作、朝向与战旗态），不修改 isExternalCombat，
+     * 用于军团先抵战场等待玩家会合时摆出战斗姿态而不真开战。
+     */
+    public setVisualCombatPose(active: boolean, battleType: 'siege' | 'field' = 'field', targetPos?: { lat: number; lng: number }): void {
+        if (this.isExternalCombat) return;
+        if (!this.renderer) return;
+        if (active) {
+            this.renderer.triggerAttack(battleType, targetPos);
+        } else {
+            this.renderer.stopAttack();
+        }
+    }
+
     public isIdle(): boolean {
         // Army is idle only if not fighting AND has arrived at destination
         return !this.isExternalCombat && this.hasArrived;

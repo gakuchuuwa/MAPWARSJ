@@ -2611,7 +2611,12 @@ export class PlayerQuestSystem {
         const fbState = q.firstBattle;
         if (fbState.engaged) return;
         if (this.awaitingPlayerLegionId === host.id) {
-            // 玩家还没追到军中：到了战场原地等会合（军团行军段先封存，总移动秒数继续等玩家到场）
+            // 玩家还没追到军中：到了战场原地等会合，采取大地图视觉战斗形态但不真开战
+            const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
+            const poseTarget = (fbState.battleType === 'field' && enemyArmy && !enemyArmy.isDestroyed)
+                ? enemyArmy.getPosition()
+                : { lat: fbState.targetLat, lng: fbState.targetLng };
+            host.setVisualCombatPose(true, fbState.battleType, poseTarget);
             if (fbState.battleId) marchTimeRecorder.onLegionWaitAtBattlefield(fbState.battleId, host.getPosition());
             return;
         }
@@ -2789,6 +2794,7 @@ export class PlayerQuestSystem {
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
             host.chronicleKeep = false;
+            host.setVisualCombatPose(false);
             if (kickAi) {
                 this.deps.kickLegionAi(host.id);
             }
