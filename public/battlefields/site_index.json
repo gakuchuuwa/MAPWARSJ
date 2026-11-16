@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-16T07:22:27.679Z",
+ "generatedAt": "2026-11-16T08:30:50.869Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -14681,15 +14681,15 @@
   {
    "id": "city_agesi",
    "file": "site_city_agesi.json",
-   "bytes": 336406,
+   "bytes": 334108,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
-   "waterCells": 573,
-   "waterPct": 4,
-   "reliefM": 736,
+   "waterCells": 784,
+   "waterPct": 5.4,
+   "reliefM": 438,
    "cliffs": 0,
-   "top": "Grass 2 87% · Forest 5% · Water, Shallow 4% · Pine Forest 2.2%",
+   "top": "Grass 2 83.5% · Water, Shallow 5.4% · Forest 5% · Beach 2.6%",
    "verify": "ok"
   },
   {
@@ -18895,13 +18895,13 @@
   {
    "id": "city_obulco",
    "file": "site_city_obulco.json",
-   "bytes": 232664,
+   "bytes": 232668,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 260,
+   "reliefM": 125,
    "cliffs": 0,
    "top": "Desert 91.6% · Palm Desert 6% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
@@ -19133,13 +19133,13 @@
   {
    "id": "city_troia",
    "file": "site_city_troia.json",
-   "bytes": 224252,
+   "bytes": 224255,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
    "waterCells": 0,
    "waterPct": 0,
-   "reliefM": 0,
+   "reliefM": 54,
    "cliffs": 0,
    "top": "Desert 92% · Palm Desert 5.5% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
@@ -21009,15 +21009,15 @@
   {
    "id": "city_yanmianzhou",
    "file": "site_city_yanmianzhou.json",
-   "bytes": 232975,
+   "bytes": 233134,
    "koppen": "BWk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
-   "waterCells": 83,
-   "waterPct": 0.6,
-   "reliefM": 41,
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 83,
    "cliffs": 0,
-   "top": "Desert 90.2% · Palm Desert 6% · Forest, Birch 2.2% · Beach 0.8%",
+   "top": "Desert 91.6% · Palm Desert 6% · Forest, Birch 2.2% · Dragon Forest 0.2%",
    "verify": "ok"
   },
   {
