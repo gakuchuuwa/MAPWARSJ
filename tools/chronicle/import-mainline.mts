@@ -1,6 +1,6 @@
 /**
  * 编年史主线导入器（2026-11-13）：编年史 json（唯一真源）＋ 导演编排表 → src/data/chronicle/ChronicleMainline.generated.ts
- * 2026-11-16：播放顺序与章幕改按 剧本模式/99_GG任务与交付/主线63章切分表_2026-11-16.json；播报文字先由 merge-63-chapters.mjs 回写进 json
+ * 2026-11-17：播放顺序与章幕改按 剧本模式/99_GG任务与交付/主线61章切分表_按史实日期重排_2026-11-16.json；播报文字与核定年份季节先由 merge-61-chapters.mjs 回写进 json
  * 跑法：npx tsx --import ./tools/sim-preload.mjs tools/chronicle/import-mainline.mts
  * 校验失败（事件 / 武将 / 势力不存在）直接退出，不写文件。
  */
@@ -57,8 +57,8 @@ const errors: string[] = [];
 const factionName = new Map(FACTIONS.map((f) => [f.id, f.name]));
 const cityIds = new Set(CITIES_V2.map((c) => c.id));
 
-// 播放顺序与章幕：按 63 章切分表（2026-11-16 起）；编排细节（路线、出发点、胜方等）仍取导演编排表
-const SPLIT = '剧本模式/99_GG任务与交付/主线63章切分表_2026-11-16.json';
+// 播放顺序与章幕：按 61 章按史实日期重排切分表（2026-11-17 起）；编排细节（路线、出发点、胜方等）仍取导演编排表
+const SPLIT = '剧本模式/99_GG任务与交付/主线61章切分表_按史实日期重排_2026-11-16.json';
 const split = JSON.parse(readFileSync(SPLIT, 'utf-8')) as {
     幕: Record<string, string>;
     order: string[];
