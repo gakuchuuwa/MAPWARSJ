@@ -658,8 +658,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_xcam2_2',
         name: '阿尔梅纳尔战役',
-        lat: 41.7967,
-        lng: 0.5683,
+        lat: 41.7451,
+        lng: 0.3894,
         scriptYear: 1081,
         note: '阿尔梅纳尔战役（DE 关卡 xcam2_2 · C2_ElCid_2）1081 年，熙德 攻、贝伦格尔·拉蒙二世 守。坐标取主人 2026-10-25 全表（41.7967, 0.5683）；本批只加战场点，未配剧本事件、不画路。',
     },
@@ -1116,8 +1116,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_tanhanshan_nan',
         name: '塞外三路征鲜卑之战',
-        lat: 41.65,
-        lng: 113.85,
+        lat: 41.7252,
+        lng: 113.7012,
         scriptYear: 177,
         note: '编年史 evt_0781 塞外三路征鲜卑檀石槐全军覆没战（177，东汉 vs 鲜卑）。距最近据点弹汗山 64.95km。不画路。',
     },
