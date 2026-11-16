@@ -128,3 +128,14 @@ start_server.bat
 
 # CodeGraph 本地代码关系图（2026-10-23）
 .codegraph/
+
+# 临时与调试产物（2026-11-17 从历史清除，别再入库）
+# .tmp_chrome_profile 是浏览器配置目录，含登录数据和 Cookie，绝不能进公开仓库
+.tmp_chrome_profile/
+.tmp_*/
+.tmp_*.json
+work/
+_待删隔离区_*/
+# Google Drive 在每个目录放的图标文件
+desktop.ini
+.gemini/
