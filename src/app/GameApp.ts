@@ -1348,7 +1348,24 @@ export class GameApp {
                 this.gameTimeHUD?.setCollapsed(!expanded, false);
             },
         });
-        this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War, {
+        const tacticalPlayerApi = {
+            isActive: () => this.scene13War.isActive() || this.navalWar?.isActive?.() === true,
+            hasPlayerHero: () => (this.navalWar?.isActive?.() ? false : this.scene13War.hasPlayerHero()),
+            setHeroInput: (v: { dx: number; dy: number } | null) => this.scene13War.setHeroInput(v),
+            setHeroMoveToScreen: (x: number, y: number) => this.scene13War.setHeroMoveToScreen(x, y),
+            setPlayerCommand: (cmd: 'attack' | 'hold') => this.scene13War.setPlayerCommand(cmd),
+            requestExitWithResult: () => {
+                if (this.navalWar?.isActive?.()) this.navalWar.requestExitWithResult();
+                else this.scene13War.requestExitWithResult();
+            },
+            getRemainingSec: () => (
+                this.navalWar?.isActive?.() ? this.navalWar.getRemainingSec() : this.scene13War.getRemainingSec()
+            ),
+            getPlayerBattleState: () => (
+                this.navalWar?.isActive?.() ? null : this.scene13War.getPlayerBattleState()
+            ),
+        };
+        this.playerScene13Control = new PlayerScene13Control(hero, tacticalPlayerApi, {
             hasViewerRename: () => this.live?.hasActiveViewerRename() ?? false,
             vetoViewerRename: () => { this.live?.vetoPlayerName(); },
             // 🔴 [2026-11-10 主人令「乱入者前面的旗号请删除，改为玩家加入的势力名」]

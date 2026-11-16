@@ -78,6 +78,8 @@ export interface TacticalWeatherContext {
     elevM?: number | null;
     isSea?: boolean;
     isSnowGround?: boolean;
+    /** 史载天气：强制战场就是这种天气（核定海战用），不按当地气候随机，也不守晴期节奏 */
+    forceKind?: WeatherKind | null;
 }
 
 let activeWeatherLayer: WeatherLayer | null = null;
@@ -397,6 +399,7 @@ export class WeatherLayer extends L.Layer {
             elevM?: number | null;
             isSnowGround?: boolean;
             warmStart?: boolean;
+            forceKind?: WeatherKind | null;
         },
     ): WeatherCell {
         const isSea = opts?.isSea ?? LandSeaSystem.isSeaAt(L.latLng(centerLat, centerLng));
@@ -414,7 +417,7 @@ export class WeatherLayer extends L.Layer {
             calendarSeason,
         });
         const rawKind = pickWeightedWeather(pool, Math.random());
-        const kind = coerceWeatherKindForLocation(rawKind, {
+        const kind = opts?.forceKind ?? coerceWeatherKindForLocation(rawKind, {
             lat: centerLat,
             lng: centerLng,
             isSea,
@@ -490,6 +493,14 @@ export class WeatherLayer extends L.Layer {
 
         // 🔴 [2026-11-04 主人令「一次按一分钟，然后停5分钟」] 战场上正下着 ⇒ 接着下完，不再续到 34 秒；
         //    没在下 ⇒ 守同一个「下完晴 5 分钟」的节奏，晴期内不为开战硬造一场天气（原来每场仗进场都必有天气）
+        if (q.forceKind) {
+            // 史载天气：正下着的那团改成史载种类；没有就立刻在战场上起一团
+            if (matched && bestS > 0.12) { matched.kind = q.forceKind; return; }
+            this.spawnWeatherCellForView(now, q.lat, q.lng, {
+                isSea, elevM, isSnowGround: q.isSnowGround, warmStart: true, forceKind: q.forceKind,
+            });
+            return;
+        }
         if (matched && bestS > 0.12) return;
         if (now < this.nextSpawnAllowedAt) return;
 

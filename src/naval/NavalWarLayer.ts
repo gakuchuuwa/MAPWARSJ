@@ -31,12 +31,12 @@ import { getNavalShipChineseName, getNavalShipDrawScale } from '../types/NavalSh
 import { audioManager } from '../audio/AudioManager';
 import { NavalFxSprites } from '../map/NavalFxSprites';
 import { FX_CFG } from '../ui/scene13/Scene13ProjectilesAndFx';
-import { SubtitleBanner } from '../ui/SubtitleBanner';
 import { navalHiddenUnitIds, navalSceneFlags } from './navalSceneState';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, getSeaStormWaveBoostAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import { Scene13GroundLayerGL, resolveNatureSprite, TAC_MAP_HALF_W, TAC_MAP_HALF_H } from '../ui/scene13/Scene13GroundLayerGL';
 import { drawMeleeSlashEffect } from '../ui/scene13/Scene13Render';
+import { drawScene13SkillCastVfx, type Scene13SkillVfx } from '../ui/scene13/Scene13SkillVfx';
 import { ensureCleanImage } from '../ui/scene13/Scene13SpriteCache';
 import { buildNavalGroundData, type NavalDecorItem } from './NavalGroundBuilder';
 import {
@@ -45,6 +45,10 @@ import {
 } from './NavalBattleSim';
 import type { NavalWindCode } from '../data/NavalBattleParams.generated';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
+import type { MilitaryTech } from '../data/MilitaryTechs';
+import { selectLegionTechs, normalizeTechCulture66 } from '../systems/MilitaryTechState';
+import type { RegionType } from '../systems/RegionSystem';
+import { getGeneralEliteConfig, getFactionEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 
 const SIX_NAME_BY_KEY: Readonly<Record<TacticalSixSet, string>> = {
     gongzhan: '攻战计',
@@ -83,11 +87,18 @@ export interface NavalWarSideInit {
     rowShipKeys?: { front?: string; main?: string; back?: string };
     /** 名字（武将名优先，其次军团名） */
     name: string;
+    generalId?: string | null;
     generalName?: string | null;
+    region?: RegionType | null;
     /** 军团 / 精锐名（旗舰标签第二行，同战略地图） */
     legionName?: string | null;
     /** 是否名将（乱斗模式电脑放计 1.5 / 0.5 倍率判据） */
     isFamous?: boolean;
+    /**
+     * 战略地图上这支舰队实际的兵力（写回用）。核定海战开打时 troops 换成史料数字，
+     * 战后残兵按「剩下几成」折回这个数，不给 = 同 troops。
+     */
+    realTroops?: number;
 }
 
 export interface NavalWarInit {
@@ -105,10 +116,14 @@ export interface NavalWarInit {
     /** 史实风向与天气 */
     windCode?: NavalWindCode | null;
     weatherKind?: NavalWeatherKind | null;
+    /** 剧本写死的胜方：结算一定按它，播报与残兵也跟它走（免得字幕喊甲胜、结算乙胜） */
+    scriptedWinner?: NavalSide | null;
     /** 开场附加字幕（如真实史料船数与总兵力） */
     subtitleExtra?: string | null;
     /** 战略地图上要藏起来的军团（参战舰队 + 随军玩家），免得同一支舰队画两份 */
     hiddenUnitIds?: string[];
+    /** 年份读取（跨年刷新科技用） */
+    getYear?: () => number;
 }
 
 type Fx =
@@ -309,6 +324,7 @@ export class NavalWarLayer {
     private acc = 0;
     private decided = false;
     private fx: Fx[] = [];
+    private skillVfx: Scene13SkillVfx[] = [];
     private focus: { x: number; y: number; until: number } | null = null;
     private colors: Record<NavalSide, string> = { ...DEFAULT_COLOR };
     private wallT = 0;
@@ -450,6 +466,78 @@ export class NavalWarLayer {
         return { attacker: a, defender: d, total: a + d };
     }
 
+    public isSkirmish(): boolean { return false; }
+
+    public getRemainingSec(): number {
+        return Math.max(0, Math.ceil(600 - this.wallT));
+    }
+
+    public requestExitWithResult(): void {
+        if (!this.active || this.decided || !this.sim || !this.init) return;
+        this.decided = true;
+        const live = this.getLiveTroops() ?? { attacker: this.init.attacker.troops, defender: this.init.defender.troops };
+        const winSide: NavalSide = this.init.scriptedWinner
+            ?? (live.attacker >= live.defender ? 'attacker' : 'defender');
+        const loseSide: NavalSide = winSide === 'attacker' ? 'defender' : 'attacker';
+        const strength = Math.max(0.05, Math.min(1, live[winSide] / Math.max(1, this.init[winSide].troops)));
+        const shown = { attacker: 0, defender: 0 };
+        shown[winSide] = Math.max(1, Math.round(this.init[winSide].troops * strength));
+        this.finalTroops = { ...shown };
+        const survivors = { attacker: 0, defender: 0 };
+        const real = this.init[winSide].realTroops ?? this.init[winSide].troops;
+        survivors[winSide] = Math.max(1, Math.round(real * strength));
+        survivors[loseSide] = 0;
+        try { this.onDecision?.(winSide, survivors); } catch (e) { console.error('[NavalWar] 提前退出写回失败', e); }
+    }
+
+    public getSideTechs(): { attacker: MilitaryTech[]; defender: MilitaryTech[] } | null {
+        if (!this.isActive() || !this.init) return null;
+        const year = this.init.getYear?.() ?? 0;
+        return {
+            attacker: selectLegionTechs(year, normalizeTechCulture66(this.init.attacker.region ?? ''), this.init.attacker.factionId),
+            defender: selectLegionTechs(year, normalizeTechCulture66(this.init.defender.region ?? ''), this.init.defender.factionId),
+        };
+    }
+
+    public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
+        if (!this.sim) return;
+        const side: NavalSide = sideOrF === 0 || sideOrF === 'attacker' ? 'attacker' : 'defender';
+        this.sim.setQueuedSkill(side, six);
+    }
+
+    public getScene13SkillState() {
+        if (!this.isActive() || !this.sim || !this.init) return null;
+        const sim = this.sim;
+        const buildSide = (side: NavalSide) => {
+            const sInit = this.init![side];
+            const opp: NavalSide = side === 'attacker' ? 'defender' : 'attacker';
+            const cfg = getGeneralEliteConfig(sInit.generalId ?? undefined) ?? getFactionEliteConfig(sInit.factionId);
+            const eliteTier = cfg ? (getEliteTierDisplayName(cfg.tier) || null) : null;
+            const oppNew = sim.skillCastSeq[opp] > sim.skillAnsweredSeq[side] ? sim.lastCastSkill[opp] : null;
+            const last = sim.lastCastSkill[side];
+            return {
+                hasGeneral: !!(sInit.generalId || sInit.generalName || sInit.isFamous),
+                generalId: sInit.generalId ?? null,
+                isFamous: !!sInit.isFamous,
+                eliteTier,
+                rateMult: sim.skillRateMult[side],
+                gauge: sim.skillGauge[side],
+                ratePerSec: sim.skillRatePerSec[side],
+                lastCastSkill: last,
+                lastCastSkillName: last ? SIX_NAME_BY_KEY[last] : null,
+                queuedSkill: sim.queuedSkill[side],
+                autoNextSkill: sim.getAutoNextSkill(side),
+                oppLastCast: sim.lastCastSkill[opp],
+                oppNewCast: oppNew,
+                frenzySec: Math.max(0, sim.skillFrenzyTimer[side]),
+                shieldSec: Math.max(0, sim.skillShieldTimer[side]),
+                panicSec: Math.max(0, sim.skillPanicTimer[side]),
+                isSiege: false,
+            };
+        };
+        return { attacker: buildSide('attacker'), defender: buildSide('defender') };
+    }
+
     public start(init: NavalWarInit): void {
         this.attach();
         this.init = init;
@@ -497,6 +585,7 @@ export class NavalWarLayer {
         this.acc = 0;
         this.decided = false;
         this.fx = [];
+        this.skillVfx = [];
         this.focus = null;
         this.wallT = 0;
         this.sfxAt = {};
@@ -572,6 +661,7 @@ export class NavalWarLayer {
         this.lingering = false;
         this.sim = null;
         this.fx = [];
+        this.skillVfx = [];
         this.subtitleQueue = [];
         navalHiddenUnitIds.clear();
         document.body.classList.remove('naval-war-active');
@@ -664,9 +754,10 @@ export class NavalWarLayer {
     }
 
     private weatherQuery(): TacticalWeatherContext | null {
-        if (this.centerLL) return { lat: this.centerLL.lat, lng: this.centerLL.lng, isSea: true };
+        const forceKind = this.init?.weatherKind ?? null;
+        if (this.centerLL) return { lat: this.centerLL.lat, lng: this.centerLL.lng, isSea: true, forceKind };
         const c = this.init?.center;
-        return c ? { lat: c.lat, lng: c.lng, isSea: true } : null;
+        return c ? { lat: c.lat, lng: c.lng, isSea: true, forceKind } : null;
     }
 
     /**
@@ -677,11 +768,17 @@ export class NavalWarLayer {
         const sim = this.sim;
         const q = this.weatherQuery();
         if (!sim || !q) return;
+        const forced = this.init?.weatherKind ?? null;
+        // 史载天气：画面上那团天气散了就再起一团，模拟里始终按史载满强度
+        if (forced) {
+            try { syncTacticalWeatherAt(q); } catch { /* 天气失败不影响海战 */ }
+        }
         let w: ReturnType<typeof queryWeatherAt> = null;
         try { w = queryWeatherAt(q); } catch { w = null; }
-        const kind = w && w.strength >= WEATHER_MIN_STRENGTH && WEATHER_TEXT[w.kind] ? w.kind : null;
-        sim.setWeather(kind, w?.strength ?? 0);
-        if (kind && w) {
+        const kind = forced ?? (w && w.strength >= WEATHER_MIN_STRENGTH && WEATHER_TEXT[w.kind] ? w.kind : null);
+        sim.setWeather(kind, forced ? 1 : (w?.strength ?? 0));
+        // 史载风向优先：不让雨雪斜飘方向把风翻过去
+        if (kind && w && !this.init?.windCode) {
             const xs = Math.sin(w.windAngle);
             if (Math.abs(xs) > 0.02) sim.setWindFromWeather(Math.sign(xs));
         }
@@ -700,14 +797,20 @@ export class NavalWarLayer {
         if (this.decided || !this.sim?.result || !this.init) return;
         this.decided = true;
         const r = this.sim.result;
-        const winSide = r.winner;
+        // 剧本写死的胜方优先（模拟偶尔打反时，播报与残兵都跟结算走）
+        const winSide: NavalSide = this.init.scriptedWinner ?? r.winner;
         const loseSide: NavalSide = winSide === 'attacker' ? 'defender' : 'attacker';
+        const strength = Math.max(0.05, Math.min(1, winSide === r.winner ? r.winnerStrength : r.loserStrength));
         this.subtitleQueue = [];
         this.say(`${this.init[winSide].name} 大胜`, true);
+        // 面板显示按开战兵力（核定海战＝史料数字）；写回按战略地图上的实际兵力折算同样的成数
+        const shown = { attacker: 0, defender: 0 };
+        shown[winSide] = Math.max(1, Math.round(this.init[winSide].troops * strength));
+        this.finalTroops = { ...shown };
         const survivors = { attacker: 0, defender: 0 };
-        survivors[winSide] = Math.max(1, Math.round(this.init[winSide].troops * Math.min(1, r.winnerStrength)));
+        const real = this.init[winSide].realTroops ?? this.init[winSide].troops;
+        survivors[winSide] = Math.max(1, Math.round(real * strength));
         survivors[loseSide] = 0;
-        this.finalTroops = { ...survivors };
         try {
             this.onDecision?.(winSide, survivors);
         } catch (e) {
@@ -999,13 +1102,28 @@ export class NavalWarLayer {
                     }
                     break;
                 case 'sixSkill': {
-                    const col = SIX_COLOR_BY_KEY[e.six];
                     const name = SIX_NAME_BY_KEY[e.six];
                     const sideIdx: 0 | 1 = e.side === 'attacker' ? 0 : 1;
                     this.lastSkillBySide[sideIdx] = name;
-                    this.fx.push({ k: 'six', x: e.x, y: e.y, t: 0, six: e.six, color: col });
-                    this.fx.push({ k: 'ring', x: e.x, y: e.y, t: 0, color: col });
-                    if (!e.isViewerCast) this.say(`${this.sideName(e.side)} 施展「${name}」`);
+                    const isSelfBuff = e.six === 'gongzhan' || e.six === 'shengzhan' || e.six === 'dizhan';
+                    const points = (this.sim?.ships ?? [])
+                        .filter((s) => s.state === 'alive' && (isSelfBuff ? s.side === e.side : s.side !== e.side))
+                        .map((s) => ({ x: s.x, y: s.y }));
+                    const onLeft = (e.side === 'attacker') !== !!this.init?.followedOnDefenderSide;
+                    this.skillVfx.push({
+                        six: e.six,
+                        side: sideIdx,
+                        x: e.x,
+                        y: e.y,
+                        angle: onLeft ? 0 : Math.PI,
+                        startMs: performance.now(),
+                        dur: 3.4,
+                        playerCast: false,
+                        paid: false,
+                        targets: [],
+                        points,
+                    });
+                    if (this.skillVfx.length > 12) this.skillVfx.splice(0, this.skillVfx.length - 12);
                     break;
                 }
             }
@@ -1019,17 +1137,13 @@ export class NavalWarLayer {
         try { audioManager.play(key as any); } catch { /* 音效失败不影响演出 */ }
     }
 
-    /** 播报走游戏统一字幕条；排队，一条至少停 2.8 秒。urgent 插到最前、挤掉排着的普通条 */
-    private say(text: string, urgent = false): void {
-        if (urgent) this.subtitleQueue = [text, ...this.subtitleQueue.slice(0, 1)];
-        else if (this.subtitleQueue.length < 3) this.subtitleQueue.push(text);
+    /** 海战不弹底部提示横幅（2026-11-16 主人令：删除提示信息） */
+    private say(_text: string, _urgent = false): void {
+        this.subtitleQueue = [];
     }
 
     private pumpSubtitles(): void {
-        if (this.subtitleQueue.length === 0 || this.wallT - this.subtitleAt < 2.8) return;
-        const text = this.subtitleQueue.shift()!;
-        this.subtitleAt = this.wallT;
-        try { SubtitleBanner.show(text, 3200, false, true); } catch { /* 字幕失败不影响演出 */ }
+        this.subtitleQueue = [];
     }
 
     /**
@@ -1245,6 +1359,16 @@ export class NavalWarLayer {
             if (sp.x < -180 || sp.x > vw + 180 || sp.y < -180 || sp.y > vh + 240) return;
             drawNavalDecorItem(ctx, it.spriteName, sp.x, sp.y, xf.u * it.scale, Math.abs(Math.floor(it.x * 7 + it.y * 13)));
         };
+        const vfxNow = performance.now();
+        this.skillVfx = this.skillVfx.filter((v) => vfxNow - v.startMs <= v.dur * 1000);
+        const worldOrigin = toS(0, 0);
+        if (this.skillVfx.length) {
+            ctx.save();
+            ctx.translate(worldOrigin.x, worldOrigin.y);
+            ctx.scale(xf.u, xf.u);
+            drawScene13SkillCastVfx(ctx, this.skillVfx, 'ground', () => 0, vfxNow);
+            ctx.restore();
+        }
         while (si < order.length && di < decor.length) {
             if (decor[di].y <= order[si].y) drawOneDecor(decor[di++]);
             else drawOneShip(order[si++]);
@@ -1254,6 +1378,13 @@ export class NavalWarLayer {
         for (const s of order) this.drawBoardingMelee(ctx, s, toS, xf.u, mapScale);
         this.drawProjectiles(ctx, toS, xf.u, mapScale);
         this.drawFx(ctx, toS, xf.u, mapScale);
+        if (this.skillVfx.length) {
+            ctx.save();
+            ctx.translate(worldOrigin.x, worldOrigin.y);
+            ctx.scale(xf.u, xf.u);
+            drawScene13SkillCastVfx(ctx, this.skillVfx, 'top', () => 0, vfxNow);
+            ctx.restore();
+        }
         for (const s of order) this.drawShipBadge(ctx, s, poses.get(s.id)!, mapScale);
         // ③ 天气：与陆战战术模式同一套整屏雨雪雾（WeatherLayer.renderTactical），盖在船上面
         const wq = this.weatherQuery();

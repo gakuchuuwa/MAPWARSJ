@@ -405,7 +405,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'liao_dao', count: 4 },
             { type: 'hei_kuang_heavy', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
         ],
     },
     // ── 河朔 · 城堡时代 · 城堡时代燕云军团　（本次新建）────────────────

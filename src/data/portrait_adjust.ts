@@ -10948,9 +10948,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -47
         },
         "/assets/CENTRAL/zhuozhou_anshouzhong.png": {
-            "scale": 1.01,
+            "scale": 0.99,
             "offsetX": 12,
-            "offsetY": 3
+            "offsetY": 4
         },
         "/assets/CENTRAL/han_d_sunang.png": {
             "scale": 1.29,

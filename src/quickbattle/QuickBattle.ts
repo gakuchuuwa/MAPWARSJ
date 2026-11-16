@@ -97,7 +97,7 @@ const QUICK_NAVAL_STRAITS: { label: string; lat: number; lng: number }[] = [
     { label: '鸣梁海峡', lat: 34.57, lng: 126.31 },
 ];
 type PanelMode = 'classic' | 'random';
-type ClassicKindFilter = 'all' | FirstBattleKind;
+type ClassicKindFilter = 'all' | FirstBattleKind | 'naval';
 
 const CITY_TYPE_LABEL: Record<string, string> = {
     big_city: '大城', medium_city: '中城', small_city: '小城', pass: '险要', stockade: '城寨',
@@ -304,7 +304,8 @@ interface Side {
 interface ClassicBattleEntry {
     key: string;
     fb: GeneralFirstBattle;
-    kind: FirstBattleKind;
+    navalParam?: NavalBattleParam;
+    kind: FirstBattleKind | 'naval';
     kindLabel: string;
     yearText: string;
     placeText: string;
@@ -468,9 +469,10 @@ class QuickBattle {
             // 同势力内战时引擎用 panshu 保证双方可交战，显示仍用真实历史势力名
             const enemyEngineFactionId = enemyRawFactionId !== myFactionId ? enemyRawFactionId : 'panshu';
 
-            const kind = firstBattleKindOf(fb);
-            const kindLabel = FIRST_BATTLE_KIND_LABEL[kind];
-            const equalTroops = kind === 'field' ? QUICK_BATTLE_FIELD_TROOPS : QUICK_BATTLE_SIEGE_TROOPS;
+            const navalParam = findNavalBattleParam(ev.id, fb.battleName) ?? undefined;
+            const kind: FirstBattleKind | 'naval' = navalParam ? 'naval' : firstBattleKindOf(fb);
+            const kindLabel = navalParam ? '海战' : FIRST_BATTLE_KIND_LABEL[firstBattleKindOf(fb)];
+            const equalTroops = (kind === 'field' || kind === 'naval') ? QUICK_BATTLE_FIELD_TROOPS : QUICK_BATTLE_SIEGE_TROOPS;
             const role = fb.role ?? 'attacker';
             const heroSide: Side = {
                 factionId: myFactionId,
@@ -493,7 +495,9 @@ class QuickBattle {
 
             const targetCity = fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined;
             const cityNote = targetCity && targetCity.name !== fb.targetName ? `·${targetCity.name}` : '';
-            const placeText = `${fb.targetName}${cityNote}（${formatCoord(fb.targetLat, fb.targetLng)}）`;
+            const placeText = navalParam
+                ? `${navalParam.waterName}（${formatCoord(navalParam.waterLat, navalParam.waterLng)}）`
+                : `${fb.targetName}${cityNote}（${formatCoord(fb.targetLat, fb.targetLng)}）`;
             const tacticalText = ev.tactical.map((p) => p.trim()).filter(Boolean).join('\n\n');
             const strategicText = ev.strategic.map((p) => p.trim()).filter(Boolean).join('\n\n');
             const background = tacticalText || strategicText || fb.battleName;
@@ -504,6 +508,7 @@ class QuickBattle {
                 entry: {
                     key: fb.battleId ?? `chron:${ev.id}`,
                     fb,
+                    navalParam,
                     kind,
                     kindLabel,
                     yearText,
@@ -552,10 +557,10 @@ class QuickBattle {
         this.captureErrors();
         this.buildPanel();
         this.backdrop.say('');
-        // 默认预抽一场经典战役，展示时间、地点、背景介绍与双方武将立绘
-        this.pickRandomClassic();
+        // 默认按年代顺序从第一场历史战役开始，逐场自动推进
+        this.pickNextClassic();
         // 打开页面第一次出选择画面也倒计时 30 秒自动开局（主人：「不是让你设计30秒开局吗」）
-        this.say(`已载入 ${this.classics.length} 场名将经典战役。${QuickBattle.AUTO_NEXT_SEC} 秒内可自由选择经典战役或切换随机战斗，到时自动开局。`);
+        this.say(`已载入 ${this.classics.length} 场历史真实战役（按年代顺序）。${QuickBattle.AUTO_NEXT_SEC} 秒内可自由选择战役或切换随机战斗，到时自动开局。`);
         this.startCountdown();
         // 🔴 [2026-11-07] 下注窗口就在这 30 秒里开着（回到选择画面即开窗，开战封盘）
         this.app.live?.beginBetRound?.();
@@ -711,12 +716,14 @@ class QuickBattle {
         const counts = {
             all: this.classics.length,
             field: this.classics.filter((c) => c.kind === 'field').length,
+            naval: this.classics.filter((c) => c.kind === 'naval').length,
             siege_attack: this.classics.filter((c) => c.kind === 'siege_attack').length,
             siege_defend: this.classics.filter((c) => c.kind === 'siege_defend').length,
         };
         const filterDefs: [ClassicKindFilter, string][] = [
             ['all', `全部（${counts.all}）`],
             ['field', `野战（${counts.field}）`],
+            ['naval', `海战（${counts.naval}）`],
             ['siege_attack', `攻城战（${counts.siege_attack}）`],
             ['siege_defend', `防守战（${counts.siege_defend}）`],
         ];
@@ -729,7 +736,7 @@ class QuickBattle {
                 this.classicFilter = fk;
                 this.syncClassicFilterButtons();
                 this.classicSel.setOptions(this.classicOptions(fk), true);
-                if (!this.classicSel.get()) this.pickRandomClassic();
+                if (!this.classicSel.get()) this.pickNextClassic();
                 else this.refreshPreview();
             });
             filterRow.appendChild(fb);
@@ -899,7 +906,7 @@ class QuickBattle {
         this.mode = m;
         this.syncModeTabs();
         if (m === 'classic' && !this.classicSel.get()) {
-            this.pickRandomClassic();
+            this.pickNextClassic();
         } else if (m === 'random' && !this.attGeneral.get() && !this.defGeneral.get()) {
             this.pickRandomCustomPreview();
         } else {
@@ -941,6 +948,30 @@ class QuickBattle {
                 const search = `${c.fb.battleName} ${c.yearText} ${c.fb.battleYear} ${c.kindLabel} ${c.fb.targetName} ${c.placeText} ${attText} ${defText} ${c.key}`.toLowerCase();
                 return { value: c.key, label, sub, search };
             });
+    }
+
+    /** 按年代顺序选取下一场经典战役（无上一场时取当前分类第一场，打完最后一场后回到第一场） */
+    private pickNextClassic(afterKey?: string): void {
+        const basePool = this.classics.filter(
+            (c) => this.classicFilter === 'all' || c.kind === this.classicFilter,
+        );
+        const pool = basePool.length ? basePool : this.classics;
+        if (!pool.length) return;
+        let next = pool[0];
+        if (afterKey) {
+            const idx = pool.findIndex((c) => c.key === afterKey);
+            if (idx >= 0) {
+                next = pool[(idx + 1) % pool.length];
+            } else {
+                const fullIdx = this.classics.findIndex((c) => c.key === afterKey);
+                if (fullIdx >= 0) {
+                    const keyIdx = new Map(this.classics.map((c, i) => [c.key, i]));
+                    next = pool.find((c) => (keyIdx.get(c.key) ?? -1) > fullIdx) ?? pool[0];
+                }
+            }
+        }
+        this.classicSel.set(next.key, true);
+        this.refreshPreview();
     }
 
     /** 从当前经典战役分类池里随机抽一场并更新面板预览（排除当前与上一局，杜绝连续两场同样战役） */
@@ -1339,7 +1370,7 @@ class QuickBattle {
     private launchClassicInner(): void {
         let key = this.classicSel.get();
         if (!key || !this.classicByKey.has(key)) {
-            this.pickRandomClassic();
+            this.pickNextClassic();
             key = this.classicSel.get();
         }
         const entry = (key ? this.classicByKey.get(key) : undefined) ?? rand(this.classics);
@@ -1352,7 +1383,15 @@ class QuickBattle {
         this.clearWorldLegions();
         const switchedOn = this.forceTacticalOn();
 
-        if (fb.battleType === 'siege') {
+        if (entry.kind === 'naval' && entry.navalParam) {
+            const np = entry.navalParam;
+            const spot = {
+                att: { lat: np.waterLat, lng: np.waterLng - 0.02 },
+                def: { lat: np.waterLat, lng: np.waterLng + 0.02 },
+                label: `${fb.battleName}（${np.waterName}）`,
+            };
+            this.startField(att, def, entry, spot, true);
+        } else if (fb.battleType === 'siege') {
             const targetCity = (fb.targetCityId ? cm.getCity(fb.targetCityId) : undefined)
                 ?? cm.getNearestCity(null, { latitude: fb.targetLat, longitude: fb.targetLng });
             if (!targetCity) throw new Error(`找不到经典战役据点：${fb.targetName}`);
@@ -1865,7 +1904,7 @@ class QuickBattle {
         try { this.app.scene13War?.stop('本局时间到'); } catch { /* 收场失败也要退出 */ }
         try { if (this.app.battleScene?.isActive?.()) this.app.battleScene.exit(); } catch { /* 同上 */ }
         this.cleanup();
-        if (this.mode === 'classic') this.pickRandomClassic(prevClassicKey);
+        if (this.mode === 'classic') this.pickNextClassic(prevClassicKey);
         else this.pickRandomCustomPreview();
         this.say(`本局时间到（${Math.round(QuickBattle.ROUND_LIMIT_MS / 60_000)} 分钟）未分胜负，算和。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局。`);
         this.backdrop.setBattleBriefCard(null);
@@ -1895,7 +1934,7 @@ class QuickBattle {
         if (fought) this.report('finished', a, { result });
         this.cleanup();
         if (this.mode === 'classic') {
-            this.pickRandomClassic(prevClassicKey);
+            this.pickNextClassic(prevClassicKey);
         } else {
             this.pickRandomCustomPreview();
         }
@@ -1951,6 +1990,7 @@ const PANEL_CSS = `
 #quick-battle-panel .qb-meta-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:7px}
 #quick-battle-panel .qb-meta-badge{display:inline-block;padding:2px 9px;border-radius:4px;font-size:12px;font-weight:700;background:#7a3b1e;color:#ffd9b3;border:1px solid #d48455}
 #quick-battle-panel .qb-badge-field{background:#2d5236;color:#d6f5dc;border-color:#68a878}
+#quick-battle-panel .qb-badge-naval{background:#1d4868;color:#cceaff;border-color:#4fa3d8}
 #quick-battle-panel .qb-badge-siege_attack{background:#6e2820;color:#ffd4cc;border-color:#d46a5a}
 #quick-battle-panel .qb-badge-siege_defend{background:#244466;color:#cce6ff;border-color:#5a94d4}
 #quick-battle-panel .qb-badge-random{background:#4f3d66;color:#e8d9ff;border-color:#9678bd}

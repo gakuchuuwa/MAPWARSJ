@@ -99,6 +99,9 @@ export interface NavalShip {
     lastHitAt: number;
     /** 绕敌方向：+1 顺时针 / −1 逆时针（每船固定，船队自然散开成弧） */
     orbitSign: number;
+    /** 船头顶岸后选定的绕岸航向，保持到 shoreEscUntil（免得下一帧又被拉回岸边原地打转） */
+    shoreEsc: number;
+    shoreEscUntil: number;
     /** 航迹（画尾浪） */
     trail: { x: number; y: number }[];
     trailAcc: number;
@@ -260,7 +263,13 @@ export class NavalBattleSim {
     public readonly skillPanicTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     public readonly skillBoardTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     public readonly skillBoostTimer: Record<NavalSide, number> = { attacker: 0, defender: 0 };
-    private aiSixNextAt: Record<NavalSide, number> = { attacker: 10, defender: 14 };
+    public readonly skillGauge: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillRateMult: Record<NavalSide, number> = { attacker: 1, defender: 1 };
+    public readonly skillRatePerSec: Record<NavalSide, number> = { attacker: 6.25, defender: 6.25 };
+    public readonly queuedSkill: Record<NavalSide, TacticalSixSet | null> = { attacker: null, defender: null };
+    public readonly lastCastSkill: Record<NavalSide, TacticalSixSet | null> = { attacker: null, defender: null };
+    public readonly skillCastSeq: Record<NavalSide, number> = { attacker: 0, defender: 0 };
+    public readonly skillAnsweredSeq: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     private aiSixIdx: Record<NavalSide, number> = { attacker: 0, defender: 0 };
     private readonly mult: Record<NavalSide, { hp: number; dmg: number }>;
     private readonly initCount: Record<NavalSide, number> = { attacker: 0, defender: 0 };
@@ -272,6 +281,10 @@ export class NavalBattleSim {
         this.isScriptMode = !!init.isScriptMode;
         this.favored = init.favored ?? null;
         this.isFamous = { attacker: !!init.attacker.isFamous, defender: !!init.defender.isFamous };
+        for (const s of ['attacker', 'defender'] as const) {
+            this.skillRateMult[s] = this.isFamous[s] ? 1.25 : 1.0;
+            this.skillRatePerSec[s] = (100 / 16) * this.skillRateMult[s];
+        }
         const r = this.rng;
         // 风：若有史载风向则优先按史实，否则大致横吹战场
         const WIND_CODE_ANG: Record<NavalWindCode, number> = {
@@ -350,6 +363,7 @@ export class NavalBattleSim {
                 targetId: null, state: 'alive', sinkAt: 0, burnT: 0, boardingWith: null, boardCd: 0, ramCd: 0,
                 captured: false, routing: false, lastFireAt: -9, lastHitAt: -9,
                 orbitSign: this.rng() < 0.5 ? 1 : -1,
+                shoreEsc: heading, shoreEscUntil: -1,
                 trail: [], trailAcc: 0,
             });
         };
@@ -583,8 +597,20 @@ export class NavalBattleSim {
             }
         }
 
+        this.lastCastSkill[side] = six;
+        this.skillCastSeq[side]++;
+        this.skillAnsweredSeq[side] = this.skillCastSeq[opp];
         this.events.push({ type: 'sixSkill', side, six, mult, isViewerCast, x, y });
         return { mult, x, y };
+    }
+
+    public setQueuedSkill(side: NavalSide, six: TacticalSixSet | null): void {
+        this.queuedSkill[side] = this.queuedSkill[side] === six ? null : six;
+    }
+
+    public getAutoNextSkill(side: NavalSide): TacticalSixSet {
+        const SIX_CYCLE: readonly TacticalSixSet[] = ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'];
+        return SIX_CYCLE[this.aiSixIdx[side] % SIX_CYCLE.length];
     }
 
     private stepSixSkills(dt: number): void {
@@ -596,12 +622,14 @@ export class NavalBattleSim {
             if (this.skillBoostTimer[side] > 0) this.skillBoostTimer[side] = Math.max(0, this.skillBoostTimer[side] - dt);
         }
         if (this.phase === 'approach' || this.routSide !== null) return;
-        const SIX_CYCLE: readonly TacticalSixSet[] = ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'];
         for (const side of ['attacker', 'defender'] as const) {
-            if (this.time >= this.aiSixNextAt[side]) {
-                this.aiSixNextAt[side] = this.time + 14 + this.rng() * 6;
-                const six = SIX_CYCLE[this.aiSixIdx[side] % SIX_CYCLE.length];
-                this.aiSixIdx[side]++;
+            this.skillGauge[side] += this.skillRatePerSec[side] * dt;
+            if (this.skillGauge[side] >= 100) {
+                this.skillGauge[side] = 0;
+                const manual = this.queuedSkill[side];
+                this.queuedSkill[side] = null;
+                const six = manual ?? this.getAutoNextSkill(side);
+                if (!manual) this.aiSixIdx[side]++;
                 this.castSixSkill(side, six, false);
             }
         }
@@ -739,6 +767,8 @@ export class NavalBattleSim {
                 if (this.clearAhead(s.x, s.y, a2)) { desired = a2; break; }
             }
         }
+        // 刚顶过岸：先照绕岸航向把船头转出去、走开一段，再回到原来的打法
+        if (!onLandNow && s.shoreEscUntil > this.time) desired = s.shoreEsc;
         const diff = angDiff(desired, s.heading);
         const turn = TURN_RATE * (s.role === 'flag' ? 0.8 : 1) * dt;
         s.heading += Math.max(-turn, Math.min(turn, diff));
@@ -757,9 +787,32 @@ export class NavalBattleSim {
                 s.x = nx;
                 s.y = ny;
             } else {
-                // 在水面禁止进陆地：停一下、掉头绕岸
-                s.speed *= 0.3;
-                s.heading += Math.PI * 0.5 * s.orbitSign;
+                // 在水面禁止进陆地：减速，慢慢转向一条走得通的航向绕岸（受回转率限制，不一帧甩头）
+                // 刚顶岸才减速；已在绕岸时别一擦再擦把船速磨到零（贴着岸爬）
+                if (s.shoreEscUntil <= this.time) s.speed *= 0.6;
+                const c = Math.cos, sn = Math.sin;
+                // 岸在哪边：船身一圈探 16 个点，陆地方向取平均，离岸方向 = 反过来
+                let lx = 0, ly = 0;
+                for (let k = 0; k < 16; k++) {
+                    const a = k * Math.PI / 8;
+                    if (!this.isWater(s.x + c(a) * s.radius * 1.4, s.y + sn(a) * s.radius * 1.4)) { lx += c(a); ly += sn(a); }
+                }
+                const away = (lx || ly) ? Math.atan2(-ly, -lx) : s.heading + Math.PI;
+                // 绕岸航向：离当前船头最近、走得通、且明显朝离岸那边（不贴着岸平行开）
+                const open = (a: number) => Math.abs(angDiff(a, away)) < 1.25
+                    && this.isWater(s.x + c(a) * s.radius, s.y + sn(a) * s.radius)
+                    && this.isWater(s.x + c(a) * 96, s.y + sn(a) * 96);
+                let esc = away;
+                for (let k = 0; k <= 9; k++) {
+                    const a1 = s.heading + k * 0.35 * s.orbitSign, a2 = s.heading - k * 0.35 * s.orbitSign;
+                    if (open(a1)) { esc = a1; break; }
+                    if (open(a2)) { esc = a2; break; }
+                }
+                // 已在绕岸且原定航向仍走得通就别来回改主意；走不通了才换
+                if (s.shoreEscUntil <= this.time || !open(s.shoreEsc)) s.shoreEsc = esc;
+                s.shoreEscUntil = this.time + 1.6;
+                const pivot = TURN_RATE * 2.5 * dt;
+                s.heading += Math.max(-pivot, Math.min(pivot, angDiff(s.shoreEsc, s.heading)));
             }
         } else if (exitWater) {
             const curD = Math.hypot(exitWater.x - s.x, exitWater.y - s.y);

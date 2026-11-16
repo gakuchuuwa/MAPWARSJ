@@ -2486,7 +2486,9 @@ export class CombatUI {
                 const f: 0 | 1 = (visualSide === 'left')
                     ? (this.scene13SidesFlipped ? 1 : 0)
                     : (this.scene13SidesFlipped ? 0 : 1);
-                (window as any).game?.scene13War?.setScene13QueuedSkill?.(f, item.key);
+                const g = (window as any).game;
+                const war = g?.scene13War?.isActive?.() ? g.scene13War : (g?.navalWar?.isActive?.() ? g.navalWar : null);
+                war?.setScene13QueuedSkill?.(f, item.key);
                 this.renderScene13SkillBars();
             });
             btnsWrap.appendChild(btn);
@@ -2554,7 +2556,8 @@ export class CombatUI {
     }
 
     private renderScene13SkillBars(): void {
-        const war = (window as any).game?.scene13War;
+        const g = (window as any).game;
+        const war = g?.scene13War?.isActive?.() ? g.scene13War : (g?.navalWar?.isActive?.() ? g.navalWar : null);
         const is13 = this.scene13LayoutOn && war?.isActive?.() === true;
         const state = is13 ? war?.getScene13SkillState?.() : null;
         if (!is13 || !state) {
@@ -6359,11 +6362,15 @@ export class CombatUI {
 
         // [军事科技与军团/精锐] 只在 13 战斗模式且非剧本模式下显示（🔴 [2026-10-03 主人令] 剧本模式不用显示科技，双方军团名称与精锐番号也不用留，这一行都隐藏）
         if (this.leftTechBox && this.rightTechBox) {
-            const is13 = (window as any).game?.scene13War?.isActive?.() === true;
+            const g = (window as any).game;
+            const activeWar = g?.scene13War?.isActive?.() === true
+                ? g.scene13War
+                : (g?.navalWar?.isActive?.() === true ? g.navalWar : null);
+            const is13 = !!activeWar;
             // 小队模式（故事块小仗）也不显示科技、军团、精锐这一行
-            const hideRow = isScriptPeriod() || (window as any).game?.scene13War?.isSkirmish?.() === true;
+            const hideRow = isScriptPeriod() || activeWar?.isSkirmish?.() === true;
             if (is13 && !hideRow) {
-                const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? { attacker: [], defender: [] };
+                const sideTechs = activeWar?.getSideTechs?.() ?? { attacker: [], defender: [] };
                 this.renderTechSide(
                     this.sideElement('attacker', this.leftTechBox, this.rightTechBox),
                     sideTechs.attacker || [], sideTechs.defender || [], true,
