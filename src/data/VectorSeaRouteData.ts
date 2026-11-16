@@ -15503,5 +15503,436 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥斯陆-哥本哈根",
+                type: "sea",
+                id: "sea_city_oslo_city_gebenhagen_1794821593885",
+                startConnection: "city_oslo",
+                endConnection: "city_gebenhagen"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [10.75, 59.91],
+                    [10.64987, 59.88532],
+                    [10.54604, 59.80694],
+                    [10.60421, 59.68213],
+                    [10.64129, 59.57451],
+                    [10.56267, 59.44577],
+                    [10.58395, 59.26588],
+                    [10.7, 59.1],
+                    [10.70164, 59.03711],
+                    [10.88745, 58.6855],
+                    [11.11647, 58.24286],
+                    [11.4, 57.7],
+                    [11.98857, 56.90525],
+                    [12.40912, 56.33738],
+                    [12.62973, 56.06389],
+                    [12.75, 55.9],
+                    [12.57, 55.68],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里伯-奥斯陆",
+                type: "sea",
+                id: "sea_city_ribe_city_oslo_1794821608949",
+                startConnection: "city_ribe",
+                endConnection: "city_oslo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [8.76, 55.33],
+                    [7.75, 55.16667],
+                    [7.58333, 55.33333],
+                    [7.58333, 57],
+                    [7.5683, 57.2695],
+                    [8.05, 57.95],
+                    [9.6, 58.6],
+                    [9.80222, 58.69192],
+                    [9.94527, 58.75694],
+                    [10.00931, 58.78605],
+                    [10.04925, 58.8042],
+                    [10.49944, 59.00884],
+                    [10.7, 59.1],
+                    [10.58395, 59.26588],
+                    [10.56267, 59.44577],
+                    [10.64129, 59.57451],
+                    [10.60421, 59.68213],
+                    [10.54604, 59.80694],
+                    [10.64987, 59.88532],
+                    [10.75, 59.91],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉海纳-火奴鲁鲁",
+                type: "sea",
+                id: "sea_city_lahaina_city_honolulu_1794822003035",
+                startConnection: "city_lahaina",
+                endConnection: "city_honolulu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-156.68, 20.89],
+                    [-157.42525, 21.05975],
+                    [-157.86, 21.31],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "凯法利尼亚-扎金索斯",
+                type: "sea",
+                id: "sea_city_kefalonia_city_zakynthos_1794822033178",
+                startConnection: "city_kefalonia",
+                endConnection: "city_zakynthos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [20.65, 38.25],
+                    [20.68049, 37.97709],
+                    [20.9, 37.78],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕特雷-凯法利尼亚",
+                type: "sea",
+                id: "sea_city_patras_city_kefalonia_1794822040946",
+                startConnection: "city_patras",
+                endConnection: "city_kefalonia"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [21.73, 38.25],
+                    [21.1468, 38.2266],
+                    [20.65, 38.25],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕特雷-扎金索斯",
+                type: "sea",
+                id: "sea_city_patras_city_zakynthos_1794822042963",
+                startConnection: "city_patras",
+                endConnection: "city_zakynthos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [21.73, 38.25],
+                    [21.3533, 38.21984],
+                    [20.9, 37.78],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "皮洛斯-扎金索斯",
+                type: "sea",
+                id: "sea_city_pylos_city_zakynthos_1794822059164",
+                startConnection: "city_pylos",
+                endConnection: "city_zakynthos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [21.7, 36.91],
+                    [21, 36.91667],
+                    [20.66667, 36.91667],
+                    [20.58333, 37.16667],
+                    [20.9, 37.78],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "凯法利尼亚-科孚",
+                type: "sea",
+                id: "sea_city_kefalonia_city_kefu_1794822067184",
+                startConnection: "city_kefalonia",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [20.65, 38.25],
+                    [19.91667, 38.66667],
+                    [19.16667, 39.41667],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蓬莱-乌骨岛",
+                type: "sea",
+                id: "sea_city_dengzhou_city_wugudao_1794822302964",
+                startConnection: "city_dengzhou",
+                endConnection: "city_wugudao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.72, 37.82],
+                    [121.25, 38.33333],
+                    [120.9, 38.35],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "乌骨岛-卑沙城",
+                type: "sea",
+                id: "sea_city_wugudao_city_beishacheng_1794822307087",
+                startConnection: "city_wugudao",
+                endConnection: "city_beishacheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.9, 38.35],
+                    [120.41667, 38.83333],
+                    [121.95923, 39.44469],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "乌骨岛-漂渝津",
+                type: "sea",
+                id: "sea_city_wugudao_city_piaoyujin_1794822311337",
+                startConnection: "city_wugudao",
+                endConnection: "city_piaoyujin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.9, 38.35],
+                    [120, 38.25],
+                    [119.75, 38.16667],
+                    [119.75, 38],
+                    [119.66667, 37.91667],
+                    [119.16667, 38.58333],
+                    [118.97114, 38.55545],
+                    [117.85034, 38.89103],
+                    [117.6, 39.02],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "德物岛-瀑池",
+                type: "sea",
+                id: "sea_city_dewudao_city_haeju_1794822333320",
+                startConnection: "city_dewudao",
+                endConnection: "city_haeju"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [126.1, 37.05],
+                    [125.91156, 36.89719],
+                    [125.71, 38.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "德物岛-蓬莱",
+                type: "sea",
+                id: "sea_city_dewudao_city_dengzhou_1794822348184",
+                startConnection: "city_dewudao",
+                endConnection: "city_dengzhou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [126.1, 37.05],
+                    [125.25, 37.33333],
+                    [124.33333, 37.41667],
+                    [124.08333, 37.66667],
+                    [124.08333, 38.5],
+                    [124.25, 38.66667],
+                    [124.08333, 39.33333],
+                    [123.66667, 39.41667],
+                    [123.5, 38.75],
+                    [122.33333, 38.75],
+                    [121.83333, 38.41667],
+                    [121.33333, 38.41667],
+                    [120.72, 37.82],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希俄斯-斯库罗斯",
+                type: "sea",
+                id: "sea_city_chios_city_skyros_1794822424749",
+                startConnection: "city_chios",
+                endConnection: "city_skyros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.14, 38.37],
+                    [25.43244, 38.32716],
+                    [25.3786, 38.61228],
+                    [24.563, 38.904],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伊卡里亚-提洛",
+                type: "sea",
+                id: "sea_city_ikaria_city_tiluo_1794822580851",
+                startConnection: "city_ikaria",
+                endConnection: "city_tiluo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.15, 37.6],
+                    [25.94945, 37.4041],
+                    [25.27, 37.39],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伊卡里亚-希马鲁塔",
+                type: "sea",
+                id: "sea_city_ikaria_city_chimarros_1794822584383",
+                startConnection: "city_ikaria",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.15, 37.6],
+                    [25.94945, 37.4041],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伊卡里亚-希俄斯",
+                type: "sea",
+                id: "sea_city_ikaria_city_chios_1794822589266",
+                startConnection: "city_ikaria",
+                endConnection: "city_chios"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.15, 37.6],
+                    [26.12677, 38.21014],
+                    [26.14, 38.37],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伊卡里亚-以弗所",
+                type: "sea",
+                id: "sea_city_ikaria_city_yifusuo_1794822596308",
+                startConnection: "city_ikaria",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.15, 37.6],
+                    [26.36622, 37.8134],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米利都-伊卡里亚",
+                type: "sea",
+                id: "sea_city_miletus_city_ikaria_1794822599026",
+                startConnection: "city_miletus",
+                endConnection: "city_ikaria"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.2783, 37.5303],
+                    [26.93833, 37.24336],
+                    [26.54165, 37.6889],
+                    [26.15, 37.6],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伊卡里亚-克拉佐美奈",
+                type: "sea",
+                id: "sea_city_ikaria_city_kelazuomeinai_1794822601164",
+                startConnection: "city_ikaria",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.15, 37.6],
+                    [26.54165, 37.6889],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哈利卡纳苏斯-伊卡里亚",
+                type: "sea",
+                id: "sea_city_halikanasu_city_ikaria_1794822613460",
+                startConnection: "city_halikanasu",
+                endConnection: "city_ikaria"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.43, 37.03],
+                    [26.93833, 37.24336],
+                    [26.54165, 37.6889],
+                    [26.15, 37.6],
+                ]
+            }
+        },
     ]
 };

@@ -12,6 +12,7 @@
  */
 
 import { getNavalDeStats, getNavalShipMass, getNavalWeapons, type NavalWeapon } from '../types/NavalShipTiers';
+import type { NavalWindCode } from '../data/NavalBattleParams.generated';
 
 export type NavalSide = 'attacker' | 'defender';
 export type NavalRole = 'front' | 'main' | 'back' | 'flag';
@@ -153,6 +154,8 @@ export interface NavalFleetInit {
     shipKey: string;
     /** 旗舰船型（缺省同 shipKey） */
     flagShipKey?: string;
+    /** 前/中/后三排混编船型（266 支军团史实舰队组合；缺省同 shipKey） */
+    rowShipKeys?: { front?: string; main?: string; back?: string };
 }
 
 export interface NavalSimInit {
@@ -167,6 +170,10 @@ export interface NavalSimInit {
     attackerRight?: boolean;
     /** 真实海陆：这一点是不是水（海战摆在战略地图真实海面上，船要绕开陆地）。不给 = 全是水 */
     isWater?: (x: number, y: number) => boolean;
+    /** 史载风向（八方位；传入时直接锁定开场风向） */
+    windCode?: NavalWindCode | null;
+    /** 史载天气（传入时开场即应用该天气影响） */
+    weatherKind?: NavalWeatherKind | null;
 }
 
 export interface NavalResult {
@@ -242,11 +249,30 @@ export class NavalBattleSim {
         this.isWater = init.isWater ?? (() => true);
         this.attackerRight = !!init.attackerRight;
         const r = this.rng;
-        // 风：大致横吹战场（双方都有机会抢上风），偏一点随机
-        this.windAng = (r() < 0.5 ? -Math.PI / 2 : Math.PI / 2) + (r() - 0.5) * 1.6;
-        this.windStrength = 0.55 + r() * 0.45;
-        this.windShiftAt = 38 + r() * 45;
-        if (r() < 0.4) this.windShiftAt = Infinity;   // 六成场次中途转风
+        // 风：若有史载风向则优先按史实，否则大致横吹战场
+        const WIND_CODE_ANG: Record<NavalWindCode, number> = {
+            N: Math.PI / 2,
+            NE: (3 * Math.PI) / 4,
+            E: Math.PI,
+            SE: (-3 * Math.PI) / 4,
+            S: -Math.PI / 2,
+            SW: -Math.PI / 4,
+            W: 0,
+            NW: Math.PI / 4,
+        };
+        if (init.windCode && WIND_CODE_ANG[init.windCode] !== undefined) {
+            this.windAng = WIND_CODE_ANG[init.windCode];
+            this.windStrength = 0.85;
+            this.windShiftAt = Infinity;
+        } else {
+            this.windAng = (r() < 0.5 ? -Math.PI / 2 : Math.PI / 2) + (r() - 0.5) * 1.6;
+            this.windStrength = 0.55 + r() * 0.45;
+            this.windShiftAt = 38 + r() * 45;
+            if (r() < 0.4) this.windShiftAt = Infinity;   // 六成场次中途转风
+        }
+        if (init.weatherKind) {
+            this.setWeather(init.weatherKind, 1.0);
+        }
 
         // 兵力 → 船体 / 火力乘区：总战力 ∝ 兵力比（hp × dmg 各取平方根）
         const ta = Math.max(1, init.attacker.troops);
@@ -274,7 +300,7 @@ export class NavalBattleSim {
         const cy = NAVAL_WORLD_H / 2;
         const m = this.mult[side];
         // 九格三排：前排最靠近敌方，后排其后，旗舰居中压阵
-        const rows: { role: NavalRole; dx: number }[] = [
+        const rows: { role: 'front' | 'main' | 'back'; dx: number }[] = [
             { role: 'front', dx: 170 },
             { role: 'main', dx: 0 },
             { role: 'back', dx: -170 },
@@ -305,9 +331,10 @@ export class NavalBattleSim {
         };
         rows.forEach((row, ri) => {
             const cnt = perRow[ri];
+            const rowKey = fleet.rowShipKeys?.[row.role] ?? fleet.shipKey;
             for (let k = 0; k < cnt; k++) {
                 const off = (k - (cnt - 1) / 2) * 230;
-                mk(row.role, baseX + row.dx * dirX + (this.rng() - 0.5) * 30, cy + off + (this.rng() - 0.5) * 40, fleet.shipKey);
+                mk(row.role, baseX + row.dx * dirX + (this.rng() - 0.5) * 30, cy + off + (this.rng() - 0.5) * 40, rowKey);
             }
         });
         mk('flag', baseX - 300 * dirX, cy, fleet.flagShipKey ?? fleet.shipKey);

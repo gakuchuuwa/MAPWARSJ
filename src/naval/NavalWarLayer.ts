@@ -37,13 +37,16 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, getSeaStormWaveBoostAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import {
     NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
-    type NavalSide, type NavalShip, type NavalEvent, type NavalPhase,
+    type NavalSide, type NavalShip, type NavalEvent, type NavalPhase, type NavalWeatherKind,
 } from './NavalBattleSim';
+import type { NavalWindCode } from '../data/NavalBattleParams.generated';
 
 export interface NavalWarSideInit {
     factionId: string;
     troops: number;
     shipKey: string;
+    flagShipKey?: string;
+    rowShipKeys?: { front?: string; main?: string; back?: string };
     /** 名字（武将名优先，其次军团名） */
     name: string;
     generalName?: string | null;
@@ -61,6 +64,11 @@ export interface NavalWarInit {
     followedOnDefenderSide?: boolean;
     favored?: NavalSide | null;
     title?: string | null;
+    /** 史实风向与天气 */
+    windCode?: NavalWindCode | null;
+    weatherKind?: NavalWeatherKind | null;
+    /** 开场附加字幕（如真实史料船数与总兵力） */
+    subtitleExtra?: string | null;
     /** 战略地图上要藏起来的军团（参战舰队 + 随军玩家），免得同一支舰队画两份 */
     hiddenUnitIds?: string[];
 }
@@ -420,17 +428,32 @@ export class NavalWarLayer {
         const wind = windName(this.sim.windAng);
         this.say(init.title || `${init.attacker.name} 迎战 ${init.defender.name}`);
         this.say(`海上${wind}，${getNavalShipChineseName(init.attacker.shipKey)} 对 ${getNavalShipChineseName(init.defender.shipKey)}`);
+        if (init.subtitleExtra) this.say(init.subtitleExtra);
         this.render(0);
     }
 
     private makeSim(init: NavalWarInit): NavalBattleSim {
         return new NavalBattleSim({
-            attacker: { factionId: init.attacker.factionId, troops: init.attacker.troops, shipKey: init.attacker.shipKey },
-            defender: { factionId: init.defender.factionId, troops: init.defender.troops, shipKey: init.defender.shipKey },
+            attacker: {
+                factionId: init.attacker.factionId,
+                troops: init.attacker.troops,
+                shipKey: init.attacker.shipKey,
+                flagShipKey: init.attacker.flagShipKey,
+                rowShipKeys: init.attacker.rowShipKeys,
+            },
+            defender: {
+                factionId: init.defender.factionId,
+                troops: init.defender.troops,
+                shipKey: init.defender.shipKey,
+                flagShipKey: init.defender.flagShipKey,
+                rowShipKeys: init.defender.rowShipKeys,
+            },
             seed: init.seed,
             favored: init.favored ?? null,
             attackerRight: !!init.followedOnDefenderSide,
             isWater: this.landGrid ? (x, y) => this.isWaterAt(x, y) : undefined,
+            windCode: init.windCode ?? null,
+            weatherKind: init.weatherKind ?? null,
         });
     }
 

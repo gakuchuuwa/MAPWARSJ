@@ -20,6 +20,8 @@ import { getClassicBattleById } from '../../data/GeneralFirstBattles';
 import { getChronicleEventByBattleId } from '../../data/chronicle/ChronicleDirector';
 import { isBlankRebelFaction } from '../../data/RebelFaction';
 import { getCultureNavalShip } from '../../types/NavalShipTiers';
+import { getLegionNavalFleetRoster } from '../../data/LegionNavalFleets.generated';
+import { findNavalBattleParam, type NavalBattleParam } from '../../data/NavalBattleParams.generated';
 import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
@@ -244,37 +246,54 @@ function startNavalWar(
     historicalWinner: 'attacker' | 'defender' | 'draw' | null,
     center: { lat: number; lng: number } | null,
     participantIds: string[],
+    navalParam?: NavalBattleParam | null,
 ): void {
     // 战略地图上要藏起来的：参战舰队 + 随军玩家（船由海战场面画，免得画两份）
     const hidden = [...participantIds];
     const hero = app.playerHero;
     const hostId = hero?.getHostLegionId?.();
     if (hero && hostId && participantIds.includes(hostId)) hidden.push(hero.id);
-    const side = (u: NavalSideUnit) => {
+    const side = (u: NavalSideUnit, overrideTroops?: number) => {
         const gName = u.generalId ? getGeneralRecordByGeneralId(u.generalId)?.generalName ?? null : null;
         const e = u.getEntity?.();
         const fName = u.factionId ? app.cityManager.getFactionName(u.factionId) : '';
+        const legionName = (u.name ?? e?.name ?? null) as string | null;
+        const roster = getLegionNavalFleetRoster(legionName);
         return {
             factionId: u.factionId ?? e?.factionId ?? '',
-            troops: Math.max(1, u.troops ?? 0),
-            shipKey: fleetShipKey(u),
+            troops: Math.max(1, overrideTroops && overrideTroops > 0 ? overrideTroops : (u.troops ?? 0)),
+            shipKey: roster?.mainShipKey ?? fleetShipKey(u),
+            flagShipKey: roster?.flagShipKey,
+            rowShipKeys: roster
+                ? { front: roster.frontShipKey, main: roster.mainShipKey, back: roster.backShipKey }
+                : undefined,
             name: gName ?? u.name ?? e?.name ?? (fName || '舰队'),
             generalName: gName,
-            legionName: (u.name ?? e?.name ?? null) as string | null,
+            legionName,
         };
     };
+    const param = navalParam ?? findNavalBattleParam(undefined, title);
+    const effectiveCenter = param ? { lat: param.waterLat, lng: param.waterLng } : center;
+    const attTroopsOverride = param && param.gameAttTroops > 0 ? param.gameAttTroops : undefined;
+    const defTroopsOverride = param && param.gameDefTroops > 0 ? param.gameDefTroops : undefined;
+    const subtitleExtra = param && (param.attShips > 0 || param.attTroops > 0)
+        ? `史实编制：攻方 ${param.attShips > 0 ? `${param.attShips}艘 ` : ''}${param.attTroops > 0 ? `${param.attTroops}人` : ''} 对 守方 ${param.defShips > 0 ? `${param.defShips}艘 ` : ''}${param.defTroops > 0 ? `${param.defTroops}人` : ''}`.trim()
+        : null;
     app.navalWar.onDecision = (winner, survivors) => {
         (app as any).live?.onTacticalBattleDecision?.(winner);
         onDecision(winner, survivors);
     };
     app.navalWar.start({
-        attacker: side(attacker),
-        defender: side(defender),
+        attacker: side(attacker, attTroopsOverride),
+        defender: side(defender, defTroopsOverride),
         seed,
         followedOnDefenderSide,
         favored: historicalWinner === 'attacker' || historicalWinner === 'defender' ? historicalWinner : null,
         title,
-        center,
+        center: effectiveCenter,
+        windCode: param?.windCode ?? null,
+        weatherKind: param?.weatherKind ?? null,
+        subtitleExtra,
         hiddenUnitIds: hidden,
     });
     gameLog('battle', `⛵ [NavalWar] 海战场面启动: ${attacker.factionId} vs ${defender.factionId}`);
@@ -557,8 +576,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
-        // 🔴 [2026-11-16 主人定] 舰队对舰队 → 海战场面（门槛：双方真武将 + 兵力够，或剧本/经典战），不进战术模式
-        const navalFleet = isNavalFleetBattle([battle.attacker], [battle.defender]);
+        // 🔴 [2026-11-16 主人定] 舰队对舰队或命中 103 场核定海战 → 海战场面，不进战术模式
+        const navalParam1 = findNavalBattleParam(undefined, (battle as any).title ?? (battle as any).customTitle ?? null);
+        const navalFleet = (!isNavalVsFortress && !!navalParam1) || isNavalFleetBattle([battle.attacker], [battle.defender]);
         if (navalFleet) {
             const navalEligible = isQuickBattleUnit(battle.attacker) || isQuickBattleUnit(battle.defender)
                 || (tacticalModeOn(app) && (isBattlefieldEvent || (bothSidesHaveRealGenerals([battle.attacker], [battle.defender]) && bigEnough)));
@@ -576,7 +596,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     battle.defender.id === followedId,
                     (battle as any).title ?? (battle as any).customTitle ?? null,
                     resolveScene13HistoricalWinner([battle.attacker], [battle.defender], battle.getScriptedWinner()),
-                    t.center, [battle.attacker.id, battle.defender.id]);
+                    t.center, [battle.attacker.id, battle.defender.id], navalParam1);
                 app.battleScene?.enter(t.id);
             }
             return;
@@ -726,8 +746,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     ?? defenders.find((u) => !!u.generalId)?.generalId
                     ?? defEntity?.getEntity?.()?._firstBattleDefenderGeneralId
                     ?? defEntity?.getEntity?.()?._siegeGarrisonGeneralId;
-                if (att && def && isNavalFleetBattle(attackers, defenders)) {
-                    // 🔴 [2026-11-16 主人定] 舰队对舰队 → 海战场面（双方兵力含援军合计）
+                const navalParam2 = findNavalBattleParam(undefined, title ?? null);
+                if (att && def && ((!isNavalVsFortress && !!navalParam2) || isNavalFleetBattle(attackers, defenders))) {
+                    // 🔴 [2026-11-16 主人定] 舰队对舰队或命中核定海战 → 海战场面（双方兵力含援军合计）
                     startNavalWar(
                         app,
                         { factionId: att.factionId, troops: attTroops, generalId: att.generalId, name: att.name, getEntity: () => att.getEntity?.() },
@@ -743,6 +764,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         resolveScene13HistoricalWinner(attackers, defenders, battleField.getScriptedWinner()),
                         t.center,
                         allIds,
+                        navalParam2,
                     );
                 } else if (att && def) {
                     startScene13War(
