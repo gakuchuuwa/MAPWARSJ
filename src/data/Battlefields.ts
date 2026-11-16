@@ -1100,8 +1100,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_jishishan',
         name: '积石山之战',
-        lat: 35.45,
-        lng: 102.25,
+        lat: 35.753,
+        lng: 102.0744,
         scriptYear: 160,
         note: '编年史 evt_0762 积石山段颎雪谷追歼烧何当煎羌战（160，东汉 vs 烧当羌）。距最近据点枹罕 88.46km。不画路。',
     },

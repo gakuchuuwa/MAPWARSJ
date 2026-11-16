@@ -917,7 +917,7 @@ export class VectorRoadEditor implements IEditor {
                 const mm = L.circleMarker([bf.lat, bf.lng], {
                     pane: PANE, radius: 9, color: '#2e7d32', weight: 3, fillColor: '#81c784', fillOpacity: 0.85,
                 });
-                mm.bindTooltip(`⚔${bf.name} ＝ ${mergedCity.name}（归为一点）`, { permanent: true, direction: 'right', offset: [8, 0] });
+                mm.bindTooltip(`⚔${bf.name} ＝ ${mergedCity.name}（归为一点）`, { direction: 'right', offset: [8, 0] });
                 mm.on('click', (e: L.LeafletMouseEvent) => {
                     L.DomEvent.stopPropagation(e);
                     this.pickEndpoint(mergedCity);
@@ -937,7 +937,7 @@ export class VectorRoadEditor implements IEditor {
                     html: `<div style="width:18px;height:18px;border-radius:50%;background:${fill};border:3px solid ${border};box-shadow:0 0 0 2px rgba(255,255,255,0.85);cursor:grab;box-sizing:border-box;"></div>`,
                 });
                 const dm = L.marker([bf.lat, bf.lng], { pane: PANE, draggable: true, icon });
-                dm.bindTooltip(`✥ ${bf.name}${linked ? ` · ${n} 条路` : ' · 拖动移动'}`, { permanent: true, direction: 'right', offset: [10, 0] });
+                dm.bindTooltip(`✥ ${bf.name}${linked ? ` · ${n} 条路` : ' · 拖动移动'}`, { direction: 'right', offset: [10, 0] });
                 dm.on('dragend', () => {
                     const pos = dm.getLatLng();
                     void this.handleBattlefieldDragEnd(bf.id, bf.name, pos.lat, pos.lng);
@@ -954,7 +954,7 @@ export class VectorRoadEditor implements IEditor {
                 fillColor: linked ? '#b388ff' : '#ff80ab',
                 fillOpacity: 0.85,
             });
-            m.bindTooltip(`⚔${bf.name}${linked ? ` · ${n} 条路` : ' · 未连路'}`, { permanent: true, direction: 'right', offset: [8, 0] });
+            m.bindTooltip(`⚔${bf.name}${linked ? ` · ${n} 条路` : ' · 未连路'}`, { direction: 'right', offset: [8, 0] });
             m.on('click', (e: L.LeafletMouseEvent) => {
                 L.DomEvent.stopPropagation(e);
                 const ep = findEndpoint(bf.id);

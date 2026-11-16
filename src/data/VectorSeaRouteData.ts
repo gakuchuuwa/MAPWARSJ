@@ -15322,5 +15322,25 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "大光-直通",
+                type: "sea",
+                id: "sea_city_yangon_city_thaton_1794819181436",
+                startConnection: "city_yangon",
+                endConnection: "city_thaton"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [96.15, 16.8],
+                    [96.24985, 16.5954],
+                    [96.39404, 16.41238],
+                    [97.48169, 16.10915],
+                    [97.6333, 16.5333],
+                ]
+            }
+        },
     ]
 };
