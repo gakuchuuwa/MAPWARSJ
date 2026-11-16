@@ -4820,7 +4820,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     weiwuer: { generalId: 'weiwuer_yusubu', cityId: 'city_yuergun', generalName: '玉素布', portrait: '/assets/WESTERN/weiwuer_yusubu.png', eliteName: '维吾尔骑兵', eliteTier: 4 },
 
-    // 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」] 白起是秦将 → 出场挂秦（百岁模式出城即归秦）
+    // 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」] 白起是秦将 → 出场挂秦（历史模式出城即归秦）
 
     dulan_d: [
         { generalId: 'dulan_azimuhan', factionId: 'dulan_d', cityId: 'city_baishawa', generalName: '阿扎姆汗', portrait: '/assets/PURU/dulan_azimuhan.png', eliteName: '普什图弯刀卫', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；杜兰尼王子，1823 瑙谢拉败死；据点白沙瓦（PURU）为当时基地；用势力精锐普什图骑
@@ -5998,7 +5998,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 公元前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
 
         { generalId: 'sijitai_satraces', cityId: 'city_asu', generalName: '萨特拉克斯', portrait: '/assets/GREECE/sijitai_satraces.png', eliteName: '斯基泰步兵', eliteTier: 4 },
-        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 托米丽司（马萨革泰女王，前530 击败并杀居鲁士二世；希罗多德《历史》I.205–214）｜势力 斯基泰（马萨革泰按同族塞种并入斯基泰）｜据点 养吉干（锡尔河/药杀水入咸海处，STEPPE·CENTRAL_ASIA 文化，马萨革泰故地；城原主花剌子模，百岁模式随在场将归斯基泰）｜普将（五表待补）｜精锐「马萨革泰骑射」T2｜立绘留空
+        // 🔴 [2026-11-12 主人令「9 位缺库主角要补」] 托米丽司（马萨革泰女王，前530 击败并杀居鲁士二世；希罗多德《历史》I.205–214）｜势力 斯基泰（马萨革泰按同族塞种并入斯基泰）｜据点 养吉干（锡尔河/药杀水入咸海处，STEPPE·CENTRAL_ASIA 文化，马萨革泰故地；城原主花剌子模，历史模式随在场将归斯基泰）｜普将（五表待补）｜精锐「马萨革泰骑射」T2｜立绘留空
         { generalId: 'sijitai_tomyris', factionId: 'sijitai', cityId: 'city_yangjigan', generalName: '托米丽司', portrait: '/assets/CENTRAL_ASIA/sijitai_tomyris.png', eliteName: '马萨革泰骑射', eliteTier: 2 },
 
     ],
@@ -7413,7 +7413,7 @@ export function getDefaultCityFactionId(cityId: string | null | undefined): stri
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
     const refs = _cityGeneralIndex.get(cityId);
     if (!refs || refs.length === 0) {
-        // 🔴 [2026-11-11 主人令「百岁模式统一不弄叛军，全部为守将」]
+        // 🔴 [2026-11-11 主人令「历史模式统一不弄叛军，全部为守将」]
         // 无挂载武将的据点回退到据点史实势力（cities_v2），不再落入 panshu
         const city = CITIES_V2.find((c) => c.id === cityId);
         return city?.factionId || 'panshu';
@@ -7503,9 +7503,9 @@ export function getFactionIdOfGeneral(generalId: string | null | undefined): str
 
  * 武将**自己的势力**；不填返回 null＝跟据点势力。
 
- * 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+ * 🔴 [2026-10-20 主人令「历史模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
 
- *    百岁模式下它也是出城军团的**真实势力**（敌我、占城归属都按它，见 `Army.generalId`）；
+ *    历史模式下它也是出城军团的**真实势力**（敌我、占城归属都按它，见 `Army.generalId`）；
 
  *    据点归属仍用 `getFactionIdOfGeneral`（取据点势力），据点本身不变。
 
@@ -7594,7 +7594,7 @@ export function getGeneralRecordByGeneralId(
 
     /**
  * 🔴 [2026-11-11 主人令「武将登场时势力还没成立，这不可能」]
- * 百岁模式出场年 = max(登场年, 势力起始年)；由 FACTION_SPAN 注入 generalOnStage（该文件不反向依赖本文件）。
+ * 历史模式出场年 = max(登场年, 势力起始年)；由 FACTION_SPAN 注入 generalOnStage（该文件不反向依赖本文件）。
  * 挂错势力的武将（起止年与本人完全错开）窗口为空 → 不出场，由数据侧改正后再出场。
  */
 setGeneralFactionStartProvider((generalId) => {

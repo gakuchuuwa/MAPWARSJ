@@ -1575,7 +1575,7 @@ export class CityAssetManager {
         return this.ensureChromaNeutralTemplateForPath(this.templateFlagPath);
     }
 
-    /** 百岁模式无在场武将（idle）专用无势力色中立灰旗底图（S10QZ/7-1.png，与小地图 #999999 同口径且无宽旗露边） */
+    /** 历史模式无在场武将（idle）专用无势力色中立灰旗底图（S10QZ/7-1.png，与小地图 #999999 同口径且无宽旗露边） */
     private static idleNeutralFlagUrl: string | null = null;
     private static idleNeutralFlagPromise: Promise<string> | null = null;
 
@@ -1613,7 +1613,7 @@ export class CityAssetManager {
         if (url) setFactionFlagStyleRule(factionId, url);
     }
 
-    /** 百岁模式武将登场/退场或切模式时：同步刷新旗面是否挂势力色＋清文字缓存 */
+    /** 历史模式武将登场/退场或切模式时：同步刷新旗面是否挂势力色＋清文字缓存 */
     public static syncFactionIdleState(factionId: string): void {
         this.invalidateFlagTextCache(factionId);
         if (!factionId || factionId === 'panjun' || this.isBlankRebelFlagFaction(factionId)) return;
@@ -2196,7 +2196,7 @@ export class CityAssetManager {
                     console.warn('[CityAssetManager] 旗号文字生成失败:', queueKey, error);
                 }
             } while (canContinue());
-            // 🔴 [2026-10-20] 一轮生成的那几张**一次扫完**再 patch：百岁模式换时代时一次会有上千家排队，
+            // 🔴 [2026-10-20] 一轮生成的那几张**一次扫完**再 patch：历史模式换时代时一次会有上千家排队，
             //   逐家 patch 各扫一遍全图太贵（等价结果，不改变 patch 时机）。
             if (generated.length > 0) {
                 (window as unknown as {
@@ -2256,7 +2256,7 @@ export class CityAssetManager {
             return { factionId, variantKey: `blank_${factionId}`, text: '', fill: '', stroke: '' };
         }
         // 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 旗面文字一律用势力本名的旗号，不再用时代泛称；
-        //   百岁模式该势力无在场武将（idle）：旗面不挂势力色，60 文化贴文化符号旗，7 汉字圈文化写文化单字（华/魏/吴/蜀/荆/越/凉）。
+        //   历史模式该势力无在场武将（idle）：旗面不挂势力色，60 文化贴文化符号旗，7 汉字圈文化写文化单字（华/魏/吴/蜀/荆/越/凉）。
         const idle = isFactionIdle(factionId);
         if (idle) {
             const idleStyle = buildingStyle ?? getFactionCultureAt(factionId, undefined);
@@ -2334,7 +2334,7 @@ export class CityAssetManager {
             }
         }
 
-        // §10.2.1：浅旗黑字白边，深旗白字黑边（百岁 idle 兜底中立灰旗固定白字黑边）
+        // §10.2.1：浅旗黑字白边，深旗白字黑边（历史模式 idle 兜底中立灰旗固定白字黑边）
         const useWhiteText = idle ? true : this.resolveFlagTextIsDark(factionId);
         const styleSuffix = buildingStyle ? `@${buildingStyle}` : '';
         return {

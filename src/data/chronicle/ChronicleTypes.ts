@@ -125,6 +125,16 @@ export interface ChronicleMainlineEvent {
     strategic: string[];
     tactical: string[];
     source: string;
+    /** 所属章幕（2026-11-16 起主线 7 幕 63 章）；first＝本章第一场，actFirst＝本幕第一场 */
+    chapter?: { no: number; title: string; act: number; actTitle: string; first: boolean; actFirst: boolean };
+}
+
+/** 章幕序号转中文数字（1–99）：1→一、10→十、21→二十一 */
+export function toChineseNumeral(n: number): string {
+    const D = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+    if (n < 10) return D[n];
+    const t = Math.floor(n / 10), u = n % 10;
+    return `${t === 1 ? '' : D[t]}十${u ? D[u] : ''}`;
 }
 
 /** 缺库主角判定 */

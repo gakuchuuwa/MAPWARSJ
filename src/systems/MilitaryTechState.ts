@@ -159,12 +159,12 @@ export function yearToTechEra(year: number): TechEra {
     return 'imperial';
 }
 
-/** 当前是否处于按历史时代门控科技的模式（百岁模式 centenarian / 剧本模式 script） */
+/** 当前是否处于按历史时代门控科技的模式（历史模式 centenarian / 剧本模式 script） */
 function isEraTimeGatedMode(): boolean {
     if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) return true;
     const g = (globalThis as { window?: { game?: { playerHero?: { autoPlan?: string } } } }).window?.game;
     const mode = g?.playerHero?.autoPlan;
-    // 百岁模式（centenarian，现行开局默认）与剧本模式（script）开启历史四时代科技门控；乱斗模式（melee）全放开
+    // 历史模式（centenarian，现行开局默认）与剧本模式（script）开启历史四时代科技门控；乱斗模式（melee）全放开
     return mode ? mode !== 'melee' : true;
 }
 

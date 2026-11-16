@@ -222,7 +222,7 @@ export class BattlefieldLayer {
         const gateYear = getWonderGateYear();
         for (const bf of BATTLEFIELDS) {
             // 🔴 [2026-11-10 主人令「战场要等年份发生后才能显示出来」]
-            //    与奇观/据点建城年同一口径：有年代闸门时（百岁模式＝日历年份，剧本模式＝事件年份），
+            //    与奇观/据点建城年同一口径：有年代闸门时（历史模式＝日历年份，剧本模式＝事件年份），
             //    未到发生年份（scriptYear > gateYear）且尚未打过的战场不显示；乱斗与编辑器模式 gateYear 为 null 全显示。
             if (gateYear !== null && bf.scriptYear > gateYear && !isBattlefieldFought(bf.id)) continue;
             // 🔴 [2026-11-08 主人令「50KM以内的战场，和据点属于同一个点，不用设计。之前就是这个判定，不要重复。」]

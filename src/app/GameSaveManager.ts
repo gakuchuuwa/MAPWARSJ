@@ -73,7 +73,7 @@ export interface ArmySnapshot {
     homeCityId?: string | null;
     sourceCityId?: string | null;
     winStreak?: number;
-    /** 🔴 [2026-10-20] 军团出身势力（百岁模式下真实势力随武将，老家据点仍是出身势力） */
+    /** 🔴 [2026-10-20] 军团出身势力（历史模式下真实势力随武将，老家据点仍是出身势力） */
     homeFactionId?: string;
 }
 
@@ -93,7 +93,7 @@ export interface GameSave {
     maxWinStreak?: HistoricalStreakRecord | null;
     /** [2026-09-05 玩家] 玩家：功勋/势力/已学精锐/位置（入伍与任务不存：军团重建后 id 已变，读档一律独行） */
     player?: PlayerSaveState;
-    /** 🔴 [2026-11-11] 已打过经典战的名将 ID（百岁模式开局这批：没打不退场、打过等军团战败退场，读档要带回） */
+    /** 🔴 [2026-11-11] 已打过经典战的名将 ID（历史模式开局这批：没打不退场、打过等军团战败退场，读档要带回） */
     completedFirstBattles?: string[];
     /** 🔴 [2026-11-13] 编年史推演进度与战事归属改写 */
     chronicle?: ChronicleSaveState;
@@ -223,7 +223,7 @@ export class GameSaveManager {
                 { lat: s.lat, lng: s.lng },
                 null,                       // targetCity：恢复为待命，由 AI 重新下令
                 s.troops,
-                // 按出身势力建；构造里挂上武将后，百岁模式自动换回武将自己的势力（Army.syncGeneralFaction）
+                // 按出身势力建；构造里挂上武将后，历史模式自动换回武将自己的势力（Army.syncGeneralFaction）
                 s.homeFactionId ?? s.factionId,
                 () => { },                  // onArrive：与 createArmy 一致
                 undefined,                  // onBattleTick

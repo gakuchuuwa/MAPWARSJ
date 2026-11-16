@@ -1300,7 +1300,7 @@ export class SiegeManager {
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
 
-        // ── 乱斗/百岁·野战余威受降（2026-11-10 主人定「野战被打败的武将，必须是该据点武将，那么该据点可以不战而降」）──
+        // ── 乱斗/历史模式·野战余威受降（2026-11-10 主人定「野战被打败的武将，必须是该据点武将，那么该据点可以不战而降」）──
         const fieldDefeat = getCityFieldDefeat(targetCity.id);
         if (fieldDefeat) {
             const myTroops = attackerUnits.reduce((sum, u) => sum + (u.troops || 0), 0);

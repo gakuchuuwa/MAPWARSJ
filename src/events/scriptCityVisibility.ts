@@ -166,7 +166,7 @@ export class ScriptCityVisibility {
         //    那年存在的 → 全部显现（城样貌＋白名）；那年不存在的 → **只显示灰色名字**（不画城、不可点）。
         //    来由：第 2 场的路标【特尔诺沃】是中世纪保加利亚都城，公元前335年不该有——它却因为「点名」被顶成白名。
         const absentNow = new Set(current?.absentCities ?? []);
-        // 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和百岁模式中，如果建城年不到，就是小城。」]
+        // 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和历史模式中，如果建城年不到，就是小城。」]
         //    大城与中城在未到建城年时由 syncCityFoundedTypes 降为小城（small_city）显示，不再隐藏成纯灰字。
         const gateNow = (cityId: string): boolean =>
             !absentNow.has(cityId) && (!current || isBigOrMediumBaseCity(cityId) || cityExistsInYear(cityId, current.year));

@@ -16,7 +16,7 @@ let bootHold = false;
 /** 是否待在首场战略播报前并入单骑入世开篇词（单局一次性消费） */
 let prologuePending = false;
 
-/** 装填编年史单骑入世开场（新开百岁模式时调用） */
+/** 装填编年史单骑入世开场（新开历史模式时调用） */
 export function armChronicleOpening(currentlyPaused = true): void {
     bootHold = currentlyPaused;
     prologuePending = true;
@@ -29,7 +29,7 @@ export function releaseChronicleOpeningBootHold(): boolean {
     return true;
 }
 
-/** 取消或作废未消费的开场状态（读档、切离百岁模式、中止行程时调用） */
+/** 取消或作废未消费的开场状态（读档、切离历史模式、中止行程时调用） */
 export function cancelChronicleOpening(): void {
     bootHold = false;
     prologuePending = false;

@@ -96,7 +96,7 @@ function createTools(app: GameApp): WebMcpToolDefinition[] {
                 const matches = app.cityManager.getCities()
                     .map((city) => {
                         // 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」]
-                        //   百岁模式亦统一返回势力本名，不用时代泛称顶替。
+                        //   历史模式亦统一返回势力本名，不用时代泛称顶替。
                         const factionNameRaw = app.cityManager.getFactionName(city.factionId);
                         const factionName = factionNameRaw;
                         return { city, factionName, factionNameRaw };

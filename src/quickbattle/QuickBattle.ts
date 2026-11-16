@@ -84,6 +84,16 @@ const QUICK_NAVAL_SPOTS: { label: string; lat: number; lng: number }[] = [
     { label: '阿拉伯海面', lat: 16.0, lng: 64.0 },
     { label: '日本海中部海面', lat: 39.0, lng: 134.5 },
 ];
+/**
+ * 🔴 [2026-11-16 海战 zoom 15 试验] 带海岸的海峡：zoom 15 一屏约 10 公里，开阔海面看不到岸，加几处海峡看绕岸效果。
+ * 只在 zoom 15 试验开着时进候选（localStorage `mapwar.navalZoom15` 不是 '0'）；海峡两点在 zoom 9 的粗海陆里常被判成陆，故不做那道检查，
+ * 真正落水交给海战场面按 zoom 13 细数据就近找水面。
+ */
+const QUICK_NAVAL_STRAITS: { label: string; lat: number; lng: number }[] = [
+    { label: '萨拉米斯海峡', lat: 37.955, lng: 23.53 },
+    { label: '关门海峡', lat: 33.96, lng: 130.95 },
+    { label: '鸣梁海峡', lat: 34.57, lng: 126.31 },
+];
 type PanelMode = 'classic' | 'random';
 type ClassicKindFilter = 'all' | FirstBattleKind;
 
@@ -610,7 +620,7 @@ class QuickBattle {
             followResupplySystem?: { update: () => void };
         } | undefined;
         if (lm?.followResupplySystem) lm.followResupplySystem.update = noop;
-        // 解除百岁/剧本年份闸门：保证全库武将显示真名、武将技生效、据点保持真实城级与奇观，并清空百岁前 800 年的时代泛称覆盖
+        // 解除历史模式/剧本年份闸门：保证全库武将显示真名、武将技生效、据点保持真实城级与奇观，并清空历史模式前 800 年的时代泛称覆盖
         setGameModeProvider(() => 'melee');
         setCentenarianYearProvider(() => null);
         setScriptYearProvider(() => null);
@@ -1594,6 +1604,12 @@ class QuickBattle {
     /** 海战：随机一处开阔海面，东西两侧各放一支舰队（两点都须是水） */
     private pickNavalSpot(): { att: { lat: number; lng: number }; def: { lat: number; lng: number }; label: string } {
         const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
+        let z15 = true;
+        try { z15 = localStorage.getItem('mapwar.navalZoom15') !== '0'; } catch { /* 默认开 */ }
+        if (z15 && Math.random() < 0.5) {
+            const st = QUICK_NAVAL_STRAITS[Math.floor(Math.random() * QUICK_NAVAL_STRAITS.length)];
+            return { att: { lat: st.lat, lng: st.lng - 0.02 }, def: { lat: st.lat, lng: st.lng + 0.02 }, label: st.label };
+        }
         const pool = [...QUICK_NAVAL_SPOTS].sort(() => Math.random() - 0.5);
         for (const sp of pool) {
             const a = { lat: sp.lat, lng: sp.lng - 0.03 };
@@ -1996,7 +2012,7 @@ export function startQuickBattleMode(app: GameApp): void {
         }
         clearInterval(timer);
         try {
-            // 先解除百岁/剧本年份闸门，再采集武将（否则开局默认百岁前 800 年会把未登场名将名字改称「XX将军」、把势力名改称古典泛称）
+            // 先解除历史模式/剧本年份闸门，再采集武将（否则开局默认历史模式前 800 年会把未登场名将名字改称「XX将军」、把势力名改称古典泛称）
             if (app.playerHero) (app.playerHero as unknown as Record<string, unknown>).autoPlan = 'melee';
             setGameModeProvider(() => 'melee');
             setCentenarianYearProvider(() => null);

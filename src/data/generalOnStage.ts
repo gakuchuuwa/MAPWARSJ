@@ -19,11 +19,11 @@ import { GameConfig } from '../config/GameConfig';
 
 /** 当前剧本年份（由 GameApp 注入 = 当前这一场历史事件的年份）；未注入 → null */
 let scriptYearProvider: () => number | null = () => null;
-/** 百岁模式当前年份（由 GameApp 注入：百岁模式时返回当前游戏年份，其余模式返回 null） */
+/** 历史模式当前年份（由 GameApp 注入：历史模式时返回当前游戏年份，其余模式返回 null） */
 let centenarianYearProvider: () => number | null = () => null;
 /**
  * 🔴 [2026-11-10 主人令「到年纪的武将改为，等军团完全被打败了，再退场」]
- * 百岁模式下，该武将此刻是否有尚未完全战败的在场军团（由 GameApp 注入）。
+ * 历史模式下，该武将此刻是否有尚未完全战败的在场军团（由 GameApp 注入）。
  */
 let activeLegionGeneralChecker: (generalId: string) => boolean = () => false;
 
@@ -42,7 +42,7 @@ export function setActiveLegionGeneralChecker(fn: (generalId: string) => boolean
 /**
  * 🔴 [2026-11-11 主人令「武将登场时势力还没成立，这不可能」] 武将所属势力的起始年（FactionLifeYears），
  * 由 FactionGenerals 在加载时注入（本文件不直接引 FactionGenerals，避免循环依赖）。
- * 百岁模式出场年 = max(登场年, 势力起始年)：刘邦这类二十岁以后才起兵的开国者，随势力起兵同步出场。
+ * 历史模式出场年 = max(登场年, 势力起始年)：刘邦这类二十岁以后才起兵的开国者，随势力起兵同步出场。
  */
 let factionStartProvider: (generalId: string) => number | null = () => null;
 
@@ -89,7 +89,7 @@ export function clearClassicBattleForcedOnStage(): void {
     classicBattleForcedOnStage.clear();
 }
 
-/** 取当前模式下的判定年份（剧本＝事件年，百岁＝日历年，其余＝null） */
+/** 取当前模式下的判定年份（剧本＝事件年，历史模式＝日历年，其余＝null） */
 export function getCurrentStageYear(): number | null {
     if (inYearLookup) return null;
     const scriptMode = isScriptPeriod();
@@ -121,7 +121,7 @@ function withStageLookup<T>(generalId: string, onReentry: () => T, compute: () =
     }
 }
 
-/** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年]且无在场未败军团 → 按普通守将处理） */
+/** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 历史模式不在[登场年,百岁年]且无在场未败军团 → 按普通守将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
     if (classicBattleForcedOnStage.has(generalId)) return true;
@@ -135,7 +135,7 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
     }
     if (year == null) return true;
     if (scriptMode) {
-        // 🔴 [2026-10-31 主人令「登场年一律改为20岁，只在百岁模式生效」]
+        // 🔴 [2026-10-31 主人令「登场年一律改为20岁，只在历史模式生效」]
         //    剧本模式不再按登场年拦人，只按卒年（剧本自身的事件表已决定谁在场）
         const life = GENERAL_LIFE_YEARS[generalId];
         if (!life) return false;
@@ -148,12 +148,12 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
         () => getCentenarianStageWindow(generalId),
     );
     // 🔴 [2026-11-12 主人令「现在没有经典战役这一说了，只有剧本战，一律按生卒年登场」]
-    //    百岁模式严格按 [登场年, 卒年]；原「军团没败不退场」（2026-11-10）作废。
+    //    历史模式严格按 [登场年, 卒年]；原「军团没败不退场」（2026-11-10）作废。
     if (!win || year < win.from) return false;
     return year <= win.to;
 }
 
-/** 百岁模式下该武将是否已满退场年纪（year > win.to） */
+/** 历史模式下该武将是否已满退场年纪（year > win.to） */
 export function isGeneralPastCentenarianAge(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup || isScriptPeriod()) return false;
     inYearLookup = true;
@@ -181,7 +181,7 @@ export function setFirstBattleStatusProvider(fn: (generalId: string) => FirstBat
 }
 
 /**
- * 百岁模式在场窗口 [登场年, 卒年]；未收录 → null。
+ * 历史模式在场窗口 [登场年, 卒年]；未收录 → null。
  * 🔴 [2026-11-12 主人令「现在没有经典战役这一说了，只有剧本战，一律按生卒年登场。这样更加真实，简单」]
  *   · 登场年＝getGeneralDebutYear（默认生年+20，条目写了 debut 以 debut 为准）；退场年＝卒年；
  *   · 作废：开局这批「开局即登场／经典战没打不退场／开局后 50～150 年分批退场」（2026-10-20、2026-11-11）、

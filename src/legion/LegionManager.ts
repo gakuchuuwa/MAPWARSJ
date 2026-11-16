@@ -366,7 +366,7 @@ export class LegionManager {
             const cityId = army.homeCityId ?? army.getSourceCityId();
             if (cityId) {
                 const city = this.cityManager.getCity(cityId);
-                // 🔴 [2026-10-21] 百岁模式军团随武将换了势力时，出身城仍属出身势力（子受＝商、朝歌＝周）也要算「已出征」，否则同一武将会被再掷一次
+                // 🔴 [2026-10-21] 历史模式军团随武将换了势力时，出身城仍属出身势力（子受＝商、朝歌＝周）也要算「已出征」，否则同一武将会被再掷一次
                 if (city && (city.factionId === army.getFactionId() || city.factionId === army.getHomeFactionId())) {
                     const onStageGenerals = getCityAnchoredGeneralsFast(city.id).filter((g) => isGeneralOnStage(g.generalId));
                     const allGeneralsUsed =
@@ -888,7 +888,7 @@ export class LegionManager {
             const city = this.cityManager.getCity(entry.id);
             if (!city) continue;
             if (!city.factionId || city.factionId === factionId || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(city.factionId, factionId)) continue;
-            // 🔴 [2026-10-21 主人报「子受卡住不能动了」] 百岁模式不打自己老家：军团随武将换了势力（子受＝商），
+            // 🔴 [2026-10-21 主人报「子受卡住不能动了」] 历史模式不打自己老家：军团随武将换了势力（子受＝商），
             //    出身据点仍属出身势力（牧野后朝歌归周）时，这座城不算拦路敌城——否则一出城就被 ZOC 钉在城下反复攻自己老家。
             if (
                 army &&

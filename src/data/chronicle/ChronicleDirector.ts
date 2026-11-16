@@ -1,5 +1,5 @@
 /**
- * 编年史导演层（2026-11-13）：百岁模式下按主线逐场推演。
+ * 编年史导演层（2026-11-13）：历史模式下按主线逐场推演。
  * 只管「演到第几场、这一场跟谁、打哪一仗、念哪两段」；走路、会面、开战、播报全部交给现有经典战管线。
  * 总方针见 `docs/02-design/systems/编年史自动推进-设计方案-2026-11-12.md` 〇节。
  */
@@ -37,14 +37,14 @@ const BY_BATTLE_ID = new Map<string, ChronicleMainlineEvent>(
     CHRONICLE_MAINLINE.filter((e) => e.battle).map((e) => [e.battle!.battleId!, e]),
 );
 
-/** 新开一局百岁模式：从主线第一场演起 */
+/** 新开一局历史模式：从主线第一场演起 */
 export function startChronicle(): void {
     active = CHRONICLE_MAINLINE.length > 0;
     index = 0;
     cityOwners.clear();
 }
 
-/** 编年史正在推演（百岁模式、已开演、主线未演完） */
+/** 编年史正在推演（历史模式、已开演、主线未演完） */
 export function isChronicleActive(): boolean {
     return active && getGameMode() === 'centenarian' && index < CHRONICLE_MAINLINE.length;
 }
@@ -60,6 +60,8 @@ export function firstChronicleEvent(): ChronicleMainlineEvent | null {
 export interface ChronicleSaveState {
     active: boolean;
     index: number;
+    /** 当前场的事件 ID（2026-11-16 起）：主线重排顺序后按 ID 恢复，序号只作旧档兜底 */
+    eventId?: string;
     cityOwners: [string, { factionId: string; year: number }][];
 }
 
@@ -67,6 +69,7 @@ export function getChronicleSaveState(): ChronicleSaveState {
     return {
         active,
         index,
+        eventId: CHRONICLE_MAINLINE[index]?.id,
         cityOwners: [...cityOwners.entries()],
     };
 }
@@ -80,7 +83,8 @@ export function restoreChronicleSaveState(state: ChronicleSaveState | null | und
     }
     active = !!state.active && CHRONICLE_MAINLINE.length > 0;
     const maxIdx = CHRONICLE_MAINLINE.length;
-    index = Math.max(0, Math.min(maxIdx, Math.floor(state.index || 0)));
+    const byId = state.eventId ? CHRONICLE_MAINLINE.findIndex((e) => e.id === state.eventId) : -1;
+    index = byId >= 0 ? byId : Math.max(0, Math.min(maxIdx, Math.floor(state.index || 0)));
     if (Array.isArray(state.cityOwners)) {
         for (const [cityId, entry] of state.cityOwners) {
             if (typeof cityId === 'string' && entry && typeof entry.factionId === 'string') {

@@ -4,7 +4,7 @@
  *
  * 规则：
  *   · 全库据点在 `CITY_FOUNDED_YEAR` 中均已登记建城年；
- *   · 在 **剧本模式（`script`）** 与 **百岁模式（`centenarian`）** 下：
+ *   · 在 **剧本模式（`script`）** 与 **历史模式（`centenarian`）** 下：
  *       若当前年份 < 该据点的建城年（`CITY_FOUNDED_YEAR[cityId]`），大城（`big_city`）、中城（`medium_city`）、
  *       小城（`small_city`）、险要/关隘（`pass`）一律降为 **城寨（`stockade`）**，驻军上限按城寨计算；
  *       一旦当前年份 ≥ 建城年，恢复为其原本的城级；
@@ -37,7 +37,7 @@ export function getBaseBigOrMediumCityType(cityId: string): DowngradableCityType
 
 /**
  * 计算某座据点在指定模式与年份下的有效城级：
- * 剧本 / 百岁模式下，大城、中城、小城、险要若未到建城年则为 `stockade`（城寨），到年或乱斗模式恢复原城级。
+ * 剧本 / 历史模式下，大城、中城、小城、险要若未到建城年则为 `stockade`（城寨），到年或乱斗模式恢复原城级。
  */
 export function resolveEffectiveCityType(
     cityId: string,

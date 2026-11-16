@@ -452,8 +452,13 @@ export function blendMaterialGrid(
 
 /** 瓦片坐标 → 地理取样原点（zoom 9 全局像素） */
 export function materialOriginForTile(z: number, x: number, y: number): MaterialOrigin {
-    const scale = 2 ** (9 - z);
-    return { gx9: x * 256 * scale, gy9: y * 256 * scale, scale };
+    // 🔴 [2026-11-16 海战 zoom 15 试验] zoom 10 以上贴图不再跟着地理一起放大：
+    //    纹理坐标原本锚在 zoom 9 像素，到 zoom 15 会被放大 64 倍（一个纹素占 64 屏幕像素，只剩平涂色块）。
+    //    高于 10 时按 zoom 10 的放大倍数铺（纹理按屏幕尺度重复）。zoom 9 / 10 逐像素不变。
+    const texZ = Math.min(z, 10);
+    const scale = 2 ** (9 - texZ);
+    const k = 2 ** (texZ - z);
+    return { gx9: x * 256 * k * scale, gy9: y * 256 * k * scale, scale };
 }
 
 /**

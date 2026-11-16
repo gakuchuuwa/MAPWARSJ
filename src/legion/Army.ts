@@ -58,9 +58,9 @@ export class Army implements IBattleUnit {
     public troops: number; // [IBattleUnit] Must be public
     private _factionId: string;
     /**
-     * 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+     * 🔴 [2026-10-20 主人令「历史模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
      * 军团**出身势力**（建军时 / 外部 setFactionId 时的势力，＝老家据点的势力）。
-     * 百岁模式里 `_factionId` 会跟武将自己的势力走（王离出长安 → qin），老家判定（失守 / 撤回 / 不打老家）看这个。
+     * 历史模式里 `_factionId` 会跟武将自己的势力走（王离出长安 → qin），老家判定（失守 / 撤回 / 不打老家）看这个。
      */
     private _baseFactionId: string;
     private onArrive: (army: Army) => void;
@@ -1608,19 +1608,19 @@ export class Army implements IBattleUnit {
         if (this.renderer) this.renderer.factionId = this.getDisplayFactionId();
     }
 
-    /** 军团出身势力（老家据点的势力；百岁模式下可能与 `getFactionId()` 不同） */
+    /** 军团出身势力（老家据点的势力；历史模式下可能与 `getFactionId()` 不同） */
     public getHomeFactionId(): string {
         return this._baseFactionId;
     }
 
     /**
-     * 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」「百岁模式，出城的军团是真归秦了」]
-     * 百岁模式：军团**真实势力**＝武将自己的势力（没有就回出身势力）→ 敌我、占城归属都按它。
+     * 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」「历史模式，出城的军团是真归秦了」]
+     * 历史模式：军团**真实势力**＝武将自己的势力（没有就回出身势力）→ 敌我、占城归属都按它。
      * 🔴 [2026-10-23 主人「城被占，城里武将归占领者」] 乱斗不跟武将走：军团势力＝派它出来的那座城的主人（出身势力）。
      * 剧本 / 乱斗 / 编辑器不动。
      */
     private syncGeneralFaction(): void {
-        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 百岁也一样：军团势力＝派它出来的城的主人，不再跟武将自己的政权走
+        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 历史模式也一样：军团势力＝派它出来的城的主人，不再跟武将自己的政权走
         return;
         // eslint-disable-next-line no-unreachable
         if (getGameMode() !== 'centenarian' || this._baseFactionId === undefined) return;

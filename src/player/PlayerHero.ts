@@ -62,7 +62,7 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { PlayerLifeLog, type LifeEventKind, type LifeLogSave } from './PlayerLifeLog';
 import { downloadLifeStoryPack } from './PlayerLifeStoryPack';
 
-/** 自动模式的两套玩法：百岁模式（默认，按登场年～百岁出现，玩家自动随编年史推进）、乱斗模式（全部武将恒在场）。 */
+/** 自动模式的两套玩法：历史模式（默认，按登场年～百岁出现，玩家自动随编年史推进）、乱斗模式（全部武将恒在场）。 */
 /**
  * 玩家玩法档。🔴 [2026-11-12 主人令「删除剧本模式」] 剧本模式已删除：
  * `'script'` 只作**旧存档迁移字面量**保留，任何入口进来都会被 `setAutoPlan` 迁成 `'centenarian'`；
@@ -497,7 +497,7 @@ export class PlayerHero {
     /** 自动模式：自动选据点（兵多 + 名将）、自动入伍、军团战败自动换下一个势力。
      *  🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将，去掉其他的条件」——判据只剩这两条。
      *  🔴 [2026-10-05 主人令] 开局默认**关闭**（原 2026-09-09「开局默认自动」作废）：
-     *     先选好百岁还是乱斗（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
+     *     先选好历史模式还是乱斗（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
     public autoMode = true;
     /** 玩家面板四选一模式（autoMode 仅在 'auto' 时为真，保持旧读取口径不变） */
     public playMode: PlayerPlayMode = 'auto';
@@ -508,7 +508,7 @@ export class PlayerHero {
     public readonly horses: HorseStable;
     /**
      * 自动模式走哪套玩法（2026-11-12 删除剧本模式后只剩两档）：
-     *   · `'centenarian'` 百岁模式 —— 默认；武将按年份登场/退场，玩家自动随编年史推进；
+     *   · `'centenarian'` 历史模式 —— 默认；武将按年份登场/退场，玩家自动随编年史推进；
      *   · `'melee'` 乱斗模式 —— 完全不碰历史战场，一直找武将入伍打乱斗。
      *
      * 旧存档里的 `'script'` 由 `setAutoPlan` 迁移为 `'centenarian'`。
@@ -1227,8 +1227,8 @@ export class PlayerHero {
         return [];
     }
     /**
-     * 切换自动模式的玩法（百岁 / 乱斗）。
-     * 🔴 [2026-11-12 删除剧本模式] 旧存档里的 `'script'` 一律迁移为百岁；不再有剧本档。
+     * 切换自动模式的玩法（历史模式 / 乱斗）。
+     * 🔴 [2026-11-12 删除剧本模式] 旧存档里的 `'script'` 一律迁移为历史模式；不再有剧本档。
      * 切玩法时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则新玩法会被一趟已经出发的行程架空。
      * `travelPointLabel` 只在 `travelToPoint` 里设，全项目只有战场引导会调它。
      */

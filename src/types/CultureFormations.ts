@@ -2253,7 +2253,7 @@ export function resolveGeneralLegionName(factionId?: string | null, generalId?: 
 }
 
 /**
- * 建筑文化 × 时代 → 该格的二级军团名。**只给百岁模式「势力名/旗号改用时代泛称」取名用**（eraFactionDisplay），
+ * 建筑文化 × 时代 → 该格的二级军团名。**只给历史模式「势力名/旗号改用时代泛称」取名用**（eraFactionDisplay），
  * 不决定任何军团的出兵。
  */
 export function resolveCultureEraLegionName(year: number, buildingStyle: string | null | undefined): string | null {

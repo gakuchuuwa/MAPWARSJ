@@ -32,7 +32,8 @@ import { audioManager } from '../audio/AudioManager';
 import { NavalFxSprites } from '../map/NavalFxSprites';
 import { FX_CFG } from '../ui/scene13/Scene13ProjectilesAndFx';
 import { SubtitleBanner } from '../ui/SubtitleBanner';
-import { navalHiddenUnitIds } from './navalSceneState';
+import { navalHiddenUnitIds, navalSceneFlags } from './navalSceneState';
+import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import {
     NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
@@ -90,6 +91,27 @@ const LAND_MARGIN = 500;
  * 所以开场先停一小会儿（字幕报战名与风向），分几次重采样海岸线、重摆船，拿到可靠的海陆再开船。
  */
 const PREP_RESAMPLE_AT = [0.7, 1.6, 2.6];
+/** zoom 15 时海陆数据要现拉（zoom 13 的掩膜与高程），多给一次重采样 */
+const PREP_RESAMPLE_AT_Z15 = [0.7, 1.6, 2.6, 4.0];
+
+/**
+ * 🔴 [2026-11-16 主人令「先做个 zoom15 海战试验版给我看」] 海战把战略地图本身放大到 zoom 15 来打：
+ *   船仍是战略地图 zoom 9 的大小，地理放大 64 倍（一屏约 10 公里），海峡、小岛、江河都按真实海岸绕。
+ *   默认开；localStorage `mapwar.navalZoom15` 设成 '0' 退回 zoom 9 的旧打法。
+ */
+const NAVAL_ZOOM15_KEY = 'mapwar.navalZoom15';
+const NAVAL_ZOOM15 = 15;
+/** zoom 15 时海陆判定用的细数据级别（ESRI 掩膜最细 13；高程同级） */
+const FINE_LANDSEA_Z = 13;
+function readNavalSceneZoom(): number {
+    try { return localStorage.getItem(NAVAL_ZOOM15_KEY) === '0' ? NAVAL_SCENE_ZOOM : NAVAL_ZOOM15; } catch { return NAVAL_ZOOM15; }
+}
+/** zoom 15 期间要藏起来的战略图层：据点、道路、河流线、领土、植被、动物、商路、标签……只留晕渲底图、海浪、海洋生物和部队画布（投射物） */
+const NAVAL_Z15_STYLE = `
+    body.naval-z15 .leaflet-map-pane > .leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-coastalWave-pane):not(.leaflet-marineLife-pane):not(.leaflet-units-pane):not(.leaflet-unitsLow-pane) {
+        visibility: hidden !important;
+    }
+`;
 /** 天气中文名与它对海战的影响（播报用；数值见 NavalBattleSim.WEATHER_EFFECTS） */
 const WEATHER_TEXT: Record<string, { name: string; effect: string }> = {
     SEA_STORM: { name: '暴风雨', effect: '海上起了暴风雨，船难操控，弓弩失准，火攻难成' },
@@ -216,6 +238,10 @@ export class NavalWarLayer {
     private subtitleAt = -99;
     private shipLenCache = new Map<string, number>();
     private prepStep = 0;
+    /** 本场海战用的地图缩放（9 = 旧打法；15 = 试验版） */
+    private sceneZoom = NAVAL_SCENE_ZOOM;
+    /** 进场前的地图视野，退场原样还回去 */
+    private prevView: { center: L.LatLng; zoom: number; maxZoom: number } | null = null;
     private weatherKind: string | null = null;
     private weatherCheckAt = 0;
 
@@ -283,7 +309,24 @@ export class NavalWarLayer {
         this.attach();
         this.init = init;
         this.runId++;
-        this.setupGeography(this.getMap(), init.center ?? null);
+        const map0 = this.getMap();
+        this.sceneZoom = readNavalSceneZoom();
+        if (map0) {
+            this.prevView = { center: map0.getCenter(), zoom: map0.getZoom(), maxZoom: map0.getMaxZoom() };
+            if (map0.getMaxZoom() < this.sceneZoom) map0.setMaxZoom(this.sceneZoom);
+        }
+        const z15 = this.sceneZoom > NAVAL_SCENE_ZOOM;
+        navalSceneFlags.hideAllUnits = z15;
+        navalSceneFlags.unitScaleOverride = z15 ? strategicArmyScale(NAVAL_SCENE_ZOOM) : null;
+        if (z15 && !document.getElementById('naval-z15-style')) {
+            const st = document.createElement('style');
+            st.id = 'naval-z15-style';
+            st.textContent = NAVAL_Z15_STYLE;
+            document.head.appendChild(st);
+        }
+        document.body.classList.toggle('naval-z15', z15);
+        if (z15 && map0 && init.center) this.prefetchFineLandSea(init.center);
+        this.setupGeography(map0, init.center ?? null);
         this.sim = this.makeSim(init);
         this.prepStep = 0;
         // 与陆战进战术模式同一步：接上战场所在地此刻的天气（没有就按当地气候与季节补一团）
@@ -358,6 +401,18 @@ export class NavalWarLayer {
         this.subtitleQueue = [];
         navalHiddenUnitIds.clear();
         document.body.classList.remove('naval-war-active');
+        // 还原地图：视野先回去，再把缩放上限收回（Leaflet 收上限时若还在 15 会自己硬跳）
+        const map = this.getMap();
+        if (map && this.prevView) {
+            try {
+                map.setView(this.prevView.center, this.prevView.zoom, { animate: false });
+                map.setMaxZoom(this.prevView.maxZoom);
+            } catch { /* 地图还原失败不影响收场 */ }
+        }
+        this.prevView = null;
+        navalSceneFlags.hideAllUnits = false;
+        navalSceneFlags.unitScaleOverride = null;
+        document.body.classList.remove('naval-z15');
         if (this.canvas) {
             this.canvas.style.display = 'none';
             this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -387,9 +442,10 @@ export class NavalWarLayer {
         if (!this.sim) return;
         const realDt = Math.max(0, Math.min(0.1, dt));
         this.wallT += realDt;
-        if (this.active && !this.decided && this.prepStep < PREP_RESAMPLE_AT.length) {
+        const prepTimes = this.sceneZoom > NAVAL_SCENE_ZOOM ? PREP_RESAMPLE_AT_Z15 : PREP_RESAMPLE_AT;
+        if (this.active && !this.decided && this.prepStep < prepTimes.length) {
             // 开场准备：重采样海岸线、重摆船（船还没开动，换中心与重摆都看不出来）
-            if (this.wallT >= PREP_RESAMPLE_AT[this.prepStep]) {
+            if (this.wallT >= prepTimes[this.prepStep]) {
                 this.prepStep++;
                 if (this.init) {
                     this.setupGeography(this.getMap(), this.init.center ?? null, false);
@@ -487,11 +543,13 @@ export class NavalWarLayer {
         this.centerPx = null;
         if (!map) return;
         const c0 = center ? L.latLng(center.lat, center.lng) : map.getCenter();
-        const p0 = map.project(c0, NAVAL_SCENE_ZOOM);
+        const Z = this.sceneZoom;
+        const p0 = map.project(c0, Z);
+        const fine = Z > NAVAL_SCENE_ZOOM;
         const seaAt = (p: L.Point): boolean => {
             try {
-                const ll = map.unproject(p, NAVAL_SCENE_ZOOM);
-                return TerrainSpeedSystem.isSeaAt({ lat: ll.lat, lng: ll.lng });
+                const ll = map.unproject(p, Z);
+                return fine ? this.fineWaterAt(ll.lat, ll.lng) : TerrainSpeedSystem.isSeaAt({ lat: ll.lat, lng: ll.lng });
             } catch { return true; }
         };
         const landFrac = (base: L.Point): number => {
@@ -519,9 +577,9 @@ export class NavalWarLayer {
             if (bestFrac === 0) break;   // 整屏全海域，不必再往远找
         }
         this.centerPx = best;
-        this.centerLL = map.unproject(best, NAVAL_SCENE_ZOOM);
+        this.centerLL = map.unproject(best, Z);
         // 只在开场摆一次视野；准备期重采样换了中心也不跳地图，交给镜头平滑平移过去
-        if (moveView) map.setView(this.centerLL, NAVAL_SCENE_ZOOM, { animate: false });
+        if (moveView) map.setView(this.centerLL, Z, { animate: false });
         if (bestFrac > 0.55) return;   // 四面是陆：不绕岸
         const cols = Math.ceil((NAVAL_WORLD_W + LAND_MARGIN * 2) / LAND_CELL) + 1;
         const rows = Math.ceil((NAVAL_WORLD_H + LAND_MARGIN * 2) / LAND_CELL) + 1;
@@ -537,6 +595,44 @@ export class NavalWarLayer {
         this.landRows = rows;
     }
 
+    /**
+     * zoom 15 用的细海陆判定：ESRI zoom 13 掩膜说是水就是水（江河湖泊也算，船能进），说不是就不是；
+     * 掩膜没到先看 zoom 13 高程（≤0 算水），都没到才退回 zoom 9 的粗判定，并去拉细数据。
+     */
+    private fineWaterAt(lat: number, lng: number): boolean {
+        const ws = LandSeaSystem.getWaterSampler();
+        const es = LandSeaSystem.getSampler();
+        const m = ws.isWaterSync(lat, lng, FINE_LANDSEA_Z);
+        if (m === true) return true;
+        if (m === false) return false;
+        ws.scheduleFetch(lat, lng, FINE_LANDSEA_Z);
+        const e = es.getElevationSync(lat, lng, FINE_LANDSEA_Z);
+        if (e === null) {
+            es.scheduleFetch(lat, lng, FINE_LANDSEA_Z);
+            return TerrainSpeedSystem.isSeaAt({ lat, lng });
+        }
+        return e <= 0;
+    }
+
+    /** 开场先把战场一带的 zoom 13 海陆数据拉起来（找水面的搜索范围约 ±2 个战场宽） */
+    private prefetchFineLandSea(center: { lat: number; lng: number }): void {
+        const map = this.getMap();
+        if (!map) return;
+        try {
+            const p = map.project(L.latLng(center.lat, center.lng), this.sceneZoom);
+            const half = NAVAL_WORLD_W * U_REF * 2.2;
+            const nw = map.unproject(L.point(p.x - half, p.y - half), this.sceneZoom);
+            const se = map.unproject(L.point(p.x + half, p.y + half), this.sceneZoom);
+            LandSeaSystem.getWaterSampler().prefetchBounds(nw.lat, se.lat, nw.lng, se.lng, FINE_LANDSEA_Z);
+            LandSeaSystem.getSampler().prefetchBounds(nw.lat, se.lat, nw.lng, se.lng, FINE_LANDSEA_Z);
+        } catch { /* 预取失败就靠重采样时按需拉 */ }
+    }
+
+    /** 船、旗、标签、浪花的缩放：船始终是战略地图 zoom 9 的大小，只有玩家手动缩放时跟着变 */
+    private mapScaleAt(zoom: number): number {
+        return strategicArmyScale(NAVAL_SCENE_ZOOM) * Math.pow(2, zoom - this.sceneZoom);
+    }
+
     private isWaterAt(x: number, y: number): boolean {
         const g = this.landGrid;
         if (!g) return true;
@@ -548,7 +644,7 @@ export class NavalWarLayer {
 
     /** 当前缩放下 1 世界单位 = 多少 CSS 像素 */
     private unitPx(map: L.Map): number {
-        return U_REF * Math.pow(2, map.getZoom() - NAVAL_SCENE_ZOOM);
+        return U_REF * Math.pow(2, map.getZoom() - this.sceneZoom);
     }
 
     /** 经纬度 → 容器 CSS 像素（亚像素，与 GlobalUnitRenderer.latLngToContainerPointSubpixel 同法） */
@@ -561,7 +657,7 @@ export class NavalWarLayer {
     }
 
     private worldToLatLng(map: L.Map, x: number, y: number): L.LatLng {
-        return map.unproject(this.worldToRefPx(x, y, this.centerPx!), NAVAL_SCENE_ZOOM);
+        return map.unproject(this.worldToRefPx(x, y, this.centerPx!), this.sceneZoom);
     }
 
     /** 本帧的世界 → 屏幕换算（每帧取一次锚点，之后都是线性） */
@@ -798,7 +894,7 @@ export class NavalWarLayer {
         ctx.setTransform(dpr, 0, 0, dpr, rect.left * dpr, rect.top * dpr);
         const xf = this.frameXf(map);
         const zoom = map.getZoom();
-        const mapScale = strategicArmyScale(Math.min(zoom, 10));
+        const mapScale = this.mapScaleAt(zoom);
         const toS = (x: number, y: number) => ({ x: xf.ax + (x - NAVAL_WORLD_W / 2) * xf.u, y: xf.ay + (y - NAVAL_WORLD_H / 2) * xf.u });
         const projection: WakeProjection = {
             toWorld: (p) => {
@@ -858,7 +954,7 @@ export class NavalWarLayer {
         let resDeg = shipDeg - Math.atan2(Math.sin(frameRad), 0.5 * Math.cos(frameRad)) * 180 / Math.PI;
         while (resDeg > 180) resDeg -= 360;
         while (resDeg < -180) resDeg += 360;
-        const hs = HULL_BASE * strategicArmyScale(Math.min(zoom, 10)) * getNavalShipDrawScale(s.shipKey);
+        const hs = HULL_BASE * this.mapScaleAt(zoom) * getNavalShipDrawScale(s.shipKey);
         return { x: at.x, y: at.y, dir, rot: resDeg * Math.PI / 180, deg: shipDeg, hs, len: this.refLen(s.shipKey) * hs };
     }
 

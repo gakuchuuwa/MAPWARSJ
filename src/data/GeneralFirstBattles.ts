@@ -12269,7 +12269,7 @@ export function isFirstBattleDoneForBattle(generalId: string | null | undefined)
 
 const SAVE_BATTLE_PREFIX = 'battle:';
 
-/** 存档用：已接过的经典战＋已随过的名将（🔴 百岁模式开局这批靠它决定退不退场，读档必须带回来） */
+/** 存档用：已接过的经典战＋已随过的名将（🔴 历史模式开局这批靠它决定退不退场，读档必须带回来） */
 export function listCompletedFirstBattles(): string[] {
     return [...joinedGenerals, ...[...completedBattleKeys].map((k) => SAVE_BATTLE_PREFIX + k)];
 }

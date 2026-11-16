@@ -23,7 +23,7 @@ import {
     actAt, blockOffsetAt, slotPlanAt, easeInOut, SCENE13_CONTACT_RATIO,
 } from './legion/Scene13Choreographer'; // [2026-08-10 剧本法]
 import { LegionFlagDrawer } from './legion/LegionFlagDrawer'; // [AI FLAG SYSTEM]
-import { navalHiddenUnitIds } from '../naval/navalSceneState';
+import { navalHiddenUnitIds, navalSceneFlags } from '../naval/navalSceneState';
 import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
 import { BanditDrawer, BanditState } from './BanditDrawer';
 import { LegionType } from '../types/UnitTypes';
@@ -828,6 +828,8 @@ export class GlobalUnitRenderer {
         // 否则大地图军团以 zoom10 样式叠在 13 待命画面上（主人实锤）。
         const lingering = (window as any).game?.battleScene?.isLingering?.() === true;
         if (this.map.getZoom() >= 13 && (warActive || lingering)) return [];
+        // 🔴 [2026-11-16 海战 zoom 15 试验] 海战放大期间战略军团一律不画
+        if (navalSceneFlags.hideAllUnits) return [];
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
@@ -1301,7 +1303,7 @@ export class GlobalUnitRenderer {
         // [2026-08-16 修·残局待命闪特效] lingering 期间箭矢特效同样不画（与军团门控一致）。
         const lingeringNow = (window as any).game?.battleScene?.isLingering?.() === true;
         if (!warActiveNow && !lingeringNow) {
-            this.projectileSystem.draw(this.ctx, scale);
+            this.projectileSystem.draw(this.ctx, navalSceneFlags.unitScaleOverride ?? scale);
         }
 
         this.lastFrameDrawMs = performance.now() - frameStart;

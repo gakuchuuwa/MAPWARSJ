@@ -106,6 +106,9 @@ type TileCommitJob =
         modeVersion: number;
     };
 
+/** ESRI World_Shaded_Relief 最细一级（更高缩放借这一级的父瓦片当水域掩膜） */
+const ESRI_MASK_MAX_Z = 13;
+
 export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
     private shadowOpacity: number;
@@ -171,6 +174,7 @@ export class HillshadeLayer extends L.GridLayer {
             zIndex: 2,
             // 🔴 [2026-09-18] 与底图同口径：跟拍平移时 50ms 补一次瓦片，别让边缘留空（默认 200ms）
             updateInterval: 50,
+            keepBuffer: 4,
             azimuth: 315,
             altitude: 40,
             ...options
@@ -259,9 +263,9 @@ export class HillshadeLayer extends L.GridLayer {
             winterBitmap?.close();
             // 取图/解码超时或偶发失败：保留「未探索灰雾」遮罩并在后台自动延时重试，绝不留刺眼蓝洞或死块
             if (error) console.warn('[Hillshade] tile delayed, keeping fog & scheduling retry:', error);
-            if (retryCount < 4) {
+            if (retryCount < 10) {
                 const nextRetry = retryCount + 1;
-                const delayMs = 1800 * nextRetry;
+                const delayMs = Math.min(8000, 1200 * nextRetry);
                 setTimeout(() => {
                     if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, nextRetry);
@@ -929,10 +933,17 @@ export class HillshadeLayer extends L.GridLayer {
             url: `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${coords.z}/${coords.x}/${coords.y}.png`,
             // 注意 ESRI 是 {z}/{y}/{x}，y 在前。Worker 只在该瓦片确实含海平面以下像素时
             // 才会真去取（见 hasBelowSeaPixel），内陆瓦片这个 URL 根本不会被请求。
+            // 🔴 [2026-11-16 海战 zoom 15 试验] ESRI 晕渲底图最细只到 zoom 13：更高缩放借 zoom 13 父瓦片的对应一块放大用，
+            //    否则 zoom 14/15 拿不到掩膜，海拔高于海面的江河湖泊会被画成陆地。zoom ≤ 13 与原来完全一样。
             waterMaskUrl: ESRI_SHADED_RELIEF_URL
-                .replace('{z}', String(coords.z))
-                .replace('{y}', String(coords.y))
-                .replace('{x}', String(coords.x)),
+                .replace('{z}', String(Math.min(coords.z, ESRI_MASK_MAX_Z)))
+                .replace('{y}', String(coords.z > ESRI_MASK_MAX_Z ? coords.y >> (coords.z - ESRI_MASK_MAX_Z) : coords.y))
+                .replace('{x}', String(coords.z > ESRI_MASK_MAX_Z ? coords.x >> (coords.z - ESRI_MASK_MAX_Z) : coords.x)),
+            waterMaskSub: coords.z > ESRI_MASK_MAX_Z ? (() => {
+                const d = coords.z - ESRI_MASK_MAX_Z;
+                const sub = 256 >> d;
+                return { sx: (coords.x - ((coords.x >> d) << d)) * sub, sy: (coords.y - ((coords.y >> d) << d)) * sub, size: sub };
+            })() : undefined,
             width: size.x,
             height: size.y,
             params: {

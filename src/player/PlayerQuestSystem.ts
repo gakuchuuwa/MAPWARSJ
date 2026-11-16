@@ -54,7 +54,7 @@ import {
 } from '../data/GeneralFirstBattles';
 import { advanceChronicle, chronicleBattleFor, currentChronicleEvent, isChronicleActive, isChronicleBattleId, setChronicleCityOwner, startChronicle, stopChronicle } from '../data/chronicle/ChronicleDirector';
 import { cancelChronicleOpening, consumeChronicleOpeningPrologue, isChronicleOpeningBlocking } from '../data/chronicle/ChronicleOpening';
-import type { ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
+import { toChineseNumeral, type ChronicleMainlineEvent } from '../data/chronicle/ChronicleTypes';
 import { getFirstBattleStrategicParagraphs } from '../data/GeneralFirstBattleStrategicBackgrounds';
 import { ClassicBattleBriefingRunner } from './ClassicBattleBriefingRunner';
 import { isFactionIdle } from '../data/eraFactionDisplay';
@@ -457,11 +457,13 @@ export class PlayerQuestSystem {
                     marchTimeRecorder.reset();
                 } else if (plan === 'centenarian' && !isChronicleActive()) {
                     startChronicle();
+                    this.chronicleAnnouncedChapter = 0;
                     const ev = currentChronicleEvent();
                     if (ev) {
                         const y = this.deps.getYear?.();
                         if (y == null || y < ev.year) this.deps.jumpToYear?.(ev.year);
                         this.deps.setSeason?.(ev.season);
+                        this.announceChronicleChapter(ev);
                     }
                 }
             }
@@ -2906,7 +2908,7 @@ export class PlayerQuestSystem {
         }
 
         // 🔴 [2026-11-13 主人令「玩家不脱离军团、不脱离势力，无法进行下一个武将的事件」]
-        //    百岁模式：这位武将没有下一场经典战 → 战后辞别离营（军团照旧由 AI 打），去找下一位武将
+        //    历史模式：这位武将没有下一场经典战 → 战后辞别离营（军团照旧由 AI 打），去找下一位武将
         if (!nextFb && this.deps.hero.autoPlan === 'centenarian') {
             if (q.generalId) {
                 this.declinedGenerals.add(q.generalId);
@@ -3110,7 +3112,7 @@ export class PlayerQuestSystem {
 
     /**
      * 🔴 [2026-11-11 主人定「同一个武将多场战役的，不是立马接，是直接就下一场，除非军团打败了」]
-     * 连战用：这位名将眼下还没打过、且年份已到的那一场（百岁按游戏年份、乱斗没有年份就不拦）。
+     * 连战用：这位名将眼下还没打过、且年份已到的那一场（历史模式按游戏年份、乱斗没有年份就不拦）。
      * 不在场（百岁退场到年）→ 不连战。
      */
     private nextClassicBattleForChaining(generalId: string | null | undefined): GeneralFirstBattle | null {
@@ -3375,7 +3377,7 @@ export class PlayerQuestSystem {
         const last = this.chronicleLast;
         const host = last?.hostId ? this.deps.legionManager.getLegionById(last.hostId) : null;
         if (!ev) {
-            // 主线演完：历法自动恢复（冻结只认 isChronicleActive），回到普通百岁玩法
+            // 主线演完：历法自动恢复（冻结只认 isChronicleActive），回到普通历史模式玩法
             this.chronicleLast = null;
             if (this.deps.hero.isAttached() && !this.quest) this.deps.hero.detach();
             if (host && !host.isDestroyed) {
@@ -3388,6 +3390,7 @@ export class PlayerQuestSystem {
         const nowYear = this.deps.getYear?.();
         if (nowYear != null && nowYear < ev.year) this.deps.jumpToYear?.(ev.year);
         this.deps.setSeason?.(ev.season);
+        this.announceChronicleChapter(ev);
         if (ev.kind === 'narrative') {
             this.playChronicleNarrative(ev);
             return;
@@ -3411,6 +3414,19 @@ export class PlayerQuestSystem {
         if (host && !host.isDestroyed) this.departChronicleHost(host);
         gameLog('expedition', `[编年史] 下一场【${ev.title}】随行主将 ${ev.leadGeneralId} → 前往会合`);
         this.findNextGeneralNow();
+    }
+
+    /** 上次提示过的章（同一章不重复提示，读档后首次进入会再提示一次） */
+    private chronicleAnnouncedChapter = 0;
+
+    /** 进入新的一章（或一幕）时用提示条报出章幕标题：主线 7 幕 63 章（2026-11-16） */
+    private announceChronicleChapter(ev: ChronicleMainlineEvent): void {
+        const c = ev.chapter;
+        if (!c || !c.first || this.chronicleAnnouncedChapter === c.no) return;
+        this.chronicleAnnouncedChapter = c.no;
+        if (c.actFirst) this.deps.notify(`第${toChineseNumeral(c.act)}幕　${c.actTitle}`);
+        this.deps.notify(`第${toChineseNumeral(c.no)}章　${c.title}`);
+        gameLog('expedition', `[编年史] 第${c.act}幕第${c.no}章【${c.title}】开篇：${ev.title}`);
     }
 
     /** 叙事场：两段播报依次念完（语音＋现有字幕条），再推进到下一场 */
@@ -3879,7 +3895,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 🔴 [2026-10-23 主人「同意合并：百岁模式当世界，剧本作为跑在里面的主线」] 探马主线：玩家独自赶路。
+     * 🔴 [2026-10-23 主人「同意合并：历史模式当世界，剧本作为跑在里面的主线」] 探马主线：玩家独自赶路。
      * 行军旁白这一整套（挂点、一路一句、到点没念完就停下听完）原来只跟「玩家随军的那支军团」；
      * 玩家还是平民、一个人走主线的路时，改跟玩家本人（`journeyMover`）。
      */
@@ -4758,7 +4774,7 @@ export class PlayerQuestSystem {
 
     /**
      * 🔴 [2026-11-11 主人定「只在排队这批人里挑最近的那位」「只用于开局这批」]
-     * 百岁模式：开局这批里还没打经典战的名将（见 isOpeningQueueGeneral）排在一切寻将规则之前，
+     * 历史模式：开局这批里还没打经典战的名将（见 isOpeningQueueGeneral）排在一切寻将规则之前，
      * 在他们里面挑**离玩家最近**的那位（率军在外就按军团位置算）；这批人打完就回到 pickAutoCity 的常规轮换。
      * 告辞过的这一轮跳过。
      */
@@ -4795,7 +4811,7 @@ export class PlayerQuestSystem {
             if (!c.factionId) continue;
             const g = this.pickCityGeneralForPlayer(c.id, { requireInCity: false, preferUnvisited: true });
             if (!g) continue;
-            // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」/ 2026-10-18 百岁模式同口径]（乱斗恒在场，不受影响）
+            // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」/ 2026-10-18 历史模式同口径]（乱斗恒在场，不受影响）
             if (!isGeneralOnStage(g.generalId)) continue;
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。

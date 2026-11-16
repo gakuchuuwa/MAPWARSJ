@@ -205,6 +205,11 @@ export interface HillshadeRequest {
      * 取不到时按 null 处理，颜色退回纯高程判据——不阻塞出图。
      */
     waterMaskUrl?: string;
+    /**
+     * 🔴 [2026-11-16 海战 zoom 15 试验] ESRI 晕渲底图最细只到 zoom 13：更高缩放时 waterMaskUrl 指向 zoom 13 的父瓦片，
+     * 这里给出本瓦片在父瓦片里的那一块（源像素），取出后放大成本瓦片尺寸。不给 = 整张就是本瓦片。
+     */
+    waterMaskSub?: { sx: number; sy: number; size: number };
     width: number;
     height: number;
     params: {
@@ -2173,6 +2178,7 @@ async function fetchWaterMask(
     url: string | undefined,
     width: number,
     height: number,
+    sub?: { sx: number; sy: number; size: number },
 ): Promise<Uint8Array | null> {
     if (!url) return null;
     try {
@@ -2184,7 +2190,14 @@ async function fetchWaterMask(
         const canvas = new OffscreenCanvas(width, height);
         const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D | null;
         if (!ctx) { bmp.close(); return null; }
-        ctx.drawImage(bmp, 0, 0, width, height);
+        if (sub) {
+            // 父瓦片的一小块放大：最近邻，掩膜要的是「是不是水」，插值会把海岸糊出半透明的假判定
+            ctx.imageSmoothingEnabled = false;
+            const k = bmp.width / 256;
+            ctx.drawImage(bmp, sub.sx * k, sub.sy * k, sub.size * k, sub.size * k, 0, 0, width, height);
+        } else {
+            ctx.drawImage(bmp, 0, 0, width, height);
+        }
         bmp.close();
         const rgba = ctx.getImageData(0, 0, width, height).data;
         // ESRI 该级瓦片缓存烤坏（整块纯灰）→ 会被误读成「整块都是陆地」，
@@ -2243,7 +2256,7 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         // 规则贴图在高程解码后立即开拉，与水体掩膜及邻块下载并行
         resolveRules(pickRuleTextures(src, hasBelowSea || mayHaveLake, req));
         const maskPending = needMask
-            ? fetchWaterMask(req.waterMaskUrl, req.width, req.height)
+            ? fetchWaterMask(req.waterMaskUrl, req.width, req.height, req.waterMaskSub)
             : Promise.resolve(null);
         const paddedDemPending = req.experimentalRelief && req.coords && req.coords.z >= 7 && req.coords.z <= 12
             ? getPaddedDem(src, req.coords, centerDem ?? undefined, usedCoarseFallback)

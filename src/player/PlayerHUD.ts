@@ -93,7 +93,7 @@ export class PlayerHUD {
             /** 🔴 [2026-10-02 主人令「在玩家面板中添加一个十倍加速按钮」] 对局倍速（1 常规 / 10 加速） */
             getSpeed?(): number;
             setSpeed?(mult: number): void;
-            /** 🔴 [2026-10-20 主人令] 百岁模式跳年：返回实际跳到的年份，非百岁模式返回 null */
+            /** 🔴 [2026-10-20 主人令] 历史模式跳年：返回实际跳到的年份，非历史模式返回 null */
             getYear?(): number;
             jumpToYear?(year: number): number | null;
             /** 直播观众竞拍改名状态与主播一键否决（退回违规改名积分并拉黑） */
@@ -661,8 +661,8 @@ export class PlayerHUD {
         });
         secControls.appendChild(planSel);
 
-        // 📅 跳年（🔴 [2026-10-20 主人令]「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代」）
-        //    负数＝公元前（如 -221＝公元前221年）；只在百岁模式显示。
+        // 📅 跳年（🔴 [2026-10-20 主人令]「在历史模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代」）
+        //    负数＝公元前（如 -221＝公元前221年）；只在历史模式显示。
         if (hero.autoPlan === 'centenarian' && this.deps.jumpToYear) {
             const yearWrap = document.createElement('span');
             yearWrap.style.cssText = 'display:inline-flex; align-items:center; gap:3px;';

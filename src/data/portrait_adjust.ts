@@ -11451,6 +11451,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/WEI/zhao_zhaokuo.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

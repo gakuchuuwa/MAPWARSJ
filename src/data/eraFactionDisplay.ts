@@ -1,5 +1,5 @@
 /**
- * 🔴 [2026-10-20 主人定] 百岁模式：**武将不在世的势力，名字与旗号改用「当时代的军团名」**。
+ * 🔴 [2026-10-20 主人定] 历史模式：**武将不在世的势力，名字与旗号改用「当时代的军团名」**。
  *
  * 主人原话（逐字照录）：
  *   「武将不在世的时候，势力和旗号也不能用。可以统一改为军团哪种泛称的名字。」
@@ -19,7 +19,7 @@
  *     中原（CENTRAL）四时代的名字**不写死朝代名**，一律随当时代军团名
  *     （古典时代华夏军团→华夏、封建时代中原军团→中原、城堡时代中华军团→中华、帝国时代中国军团→中国），
  *     **旗号四个时代统一只写一个字「华」**（见下面的 `CENTRAL|*` 条目）；
- *   · 只在**百岁模式**启用（`refreshEraFactionDisplays(null)` 即关闭：剧本模式用史实归属、乱斗不变）。
+ *   · 只在**历史模式**启用（`refreshEraFactionDisplays(null)` 即关闭：剧本模式用史实归属、乱斗不变）。
  */
 import { CITIES_V2 } from './cities_v2';
 import { FACTIONS } from './factions';
@@ -202,7 +202,7 @@ function getGeneralsByOwnFaction(): Map<string, string[]> {
     return map;
 }
 
-/** 该势力此刻还有没有在场武将（任一在场即算在场；判定即百岁模式的「登场年 ～ 登场年 + 100」） */
+/** 该势力此刻还有没有在场武将（任一在场即算在场；判定即历史模式的「登场年 ～ 登场年 + 100」） */
 function hasOnStageGeneral(factionId: string): boolean {
     const ids = getGeneralsByOwnFaction().get(factionId);
     if (!ids) return false;
@@ -215,27 +215,27 @@ function hasOnStageGeneral(factionId: string): boolean {
 /** 当前生效的时代名覆盖：factionId → 名字（含可选旗号文字；空 = 关闭） */
 let overrides = new Map<string, EraNameDef>();
 
-/** 百岁模式当前无在场武将的势力集合（全量 `FACTIONS` + `'panshu'`，与 `overrides` 解耦以防无首城势力漏判） */
+/** 历史模式当前无在场武将的势力集合（全量 `FACTIONS` + `'panshu'`，与 `overrides` 解耦以防无首城势力漏判） */
 let idleFactions = new Set<string>();
 
-/** 百岁模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非百岁模式），供据点级时代名用 */
+/** 历史模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非历史模式），供据点级时代名用 */
 let activeEra: DefenseEraAge | null = null;
 
 /**
- * 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 该势力此刻在百岁模式里有没有在场武将（无 → true）。
+ * 🔴 [2026-11-13 主人令「当然要显示势力本名，一切按历史」] 该势力此刻在历史模式里有没有在场武将（无 → true）。
  * 只用于「无在场武将不挂势力色、旗面用文化符号」的判断；势力名一律显示本名，不再用时代泛称顶替。
  */
 export function isFactionIdle(factionId: string | null | undefined): boolean {
     return !!factionId && getGameMode() === 'centenarian' && idleFactions.has(factionId);
 }
 
-/** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名；只在百岁模式生效） */
+/** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名；只在历史模式生效） */
 export function getEraFactionDisplayName(factionId: string | null | undefined): string | null {
     if (!factionId || getGameMode() !== 'centenarian') return null;
     return overrides.get(factionId)?.name ?? null;
 }
 
-/** 该势力此刻的**旗号文字**（主人单独定过的，如凉州→「凉」）；没单独定 → null（沿用显示名前两字；只在百岁模式生效） */
+/** 该势力此刻的**旗号文字**（主人单独定过的，如凉州→「凉」）；没单独定 → null（沿用显示名前两字；只在历史模式生效） */
 export function getEraFactionDisplayFlagText(factionId: string | null | undefined): string | null {
     if (!factionId || getGameMode() !== 'centenarian') return null;
     return overrides.get(factionId)?.flagText ?? null;
@@ -251,7 +251,7 @@ export function getEraFactionDisplayFlagText(factionId: string | null | undefine
  *   · 闸门与势力级口径完全一致 —— 该势力此刻没有在场武将（`overrides` 里有它）才换名；
  *   · 名字/旗号取 `本据点 buildingStyle × 当前时代` 的军团名（函谷关、潼关＝中原 → 古典「华夏」，旗号「华」）。
  *
- * 返回 null = 照旧用势力原名（非百岁模式 / 该势力有在场武将 / 本据点风格解不出军团）。
+ * 返回 null = 照旧用势力原名（非历史模式 / 该势力有在场武将 / 本据点风格解不出军团）。
  */
 export function getEraCityDisplayName(
     factionId: string | null | undefined,

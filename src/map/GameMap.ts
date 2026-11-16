@@ -134,7 +134,8 @@ export class GameMap {
             center: [lat, lng],
             zoom: 9, // 🔴 [2026-09-24 主人定] 开局一律 ZOOM9（原 8）
             minZoom: 9,
-            maxZoom: 10,
+            // 🔴 [2026-11-16 主人令「把 ZOOM10 删掉，以后不用了，海战已经换了」] 战略地图锁死 zoom 9
+            maxZoom: 9,
             zoomSnap: 1,
             zoomDelta: 1,
             zoomControl: false,
@@ -416,9 +417,9 @@ export class GameMap {
                     // 显示尺寸若设为 512，会使请求坐标减半，命中不存在的文件。
                     tileSize: 256,
                     minZoom: 9,
-                    maxZoom: 10,
+                    maxZoom: 9,
                     minNativeZoom: 9,
-                    maxNativeZoom: 10,
+                    maxNativeZoom: 9,
                     keepBuffer: 4,            // [OPTIMIZATION] 缓存上下左右 4 级瓦片，消除频繁切换与飞行的白块
                     updateWhenZooming: false, // [OPTIMIZATION] 缩放动画中保留上一层级瓦片不立刻释放，维持连续性
                     // 🔴 [2026-09-18 主人报障「移动时屏幕边部出现没刷新的边缘」]

@@ -3428,7 +3428,7 @@ export class TerritorySystem {
         CityAssetManager.requestFactionFlagTint(city.factionId);
 
         // 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
-        //   百岁模式的旗号时代名按**本据点建筑文化**取（同一势力的中原/江南据点各用各的时代名），
+        //   历史模式的旗号时代名按**本据点建筑文化**取（同一势力的中原/江南据点各用各的时代名），
         //   所以旗号文字要带上据点的 buildingStyle；这个值同时写进旗面元素的 data 属性，
         //   跨时代重刷（patchFactionFlagTexts）时不用回头查 CityManager 也能算对。
         const cityBuildingStyle = (city as City & { buildingStyle?: string }).buildingStyle ?? city.region;
@@ -3875,7 +3875,7 @@ export class TerritorySystem {
     }
 
     /**
-     * 🔴 [2026-10-20 主人定] 百岁模式一次会换掉很多势力的旗号（跨年十几个、跨时代上千个），
+     * 🔴 [2026-10-20 主人定] 历史模式一次会换掉很多势力的旗号（跨年十几个、跨时代上千个），
      * 必须**只扫一遍 marker**，不许每个势力各扫一遍全图。
      */
     public patchFactionFlagTexts(factionIds: ReadonlySet<string>): void {
@@ -3931,7 +3931,7 @@ export class TerritorySystem {
             // 🔴 [2026-09-25 据点显示名会变（开局套唯一显示名 `cityDisplayNames.ts`、玩家改名）]
             //    原来这里只改第二个 span（兵力）、把城名当成不变的 → 改名后标签上仍挂着旧名（实测「切回剧本」时露馅）。
             // 🔴 [2026-11-01] 旗面 `<div class="city-flag-host">` 挂在 labelOriginal 内（与 `.city-label-content` 并列）：
-            //    切模式（剧本 1 个 span ⇄ 乱斗/百岁 2 个 span）时只替换 `.city-label-content`，严禁整颗 setIcon 抹掉 `.city-flag-host`！
+            //    切模式（剧本 1 个 span ⇄ 乱斗/历史模式 2 个 span）时只替换 `.city-label-content`，严禁整颗 setIcon 抹掉 `.city-flag-host`！
             const el = labelOriginal.getElement();
             if (el) {
                 const contentEl = el.querySelector('.city-label-content');
@@ -4099,7 +4099,7 @@ export class TerritorySystem {
         return isFactionIdle(factionId) ? '#999999' : this.factionManager.getFactionColor(factionId);
     }
 
-    /** 百岁模式在场武将状态变化时，同步刷新相关势力的领土多边形填充与彩色边界线颜色 */
+    /** 历史模式在场武将状态变化时，同步刷新相关势力的领土多边形填充与彩色边界线颜色 */
     public refreshFactionTerritoryColors(factionIds: ReadonlySet<string>): void {
         if (factionIds.size === 0) return;
         this.territoryLayerGroup.eachLayer((layer: any) => {

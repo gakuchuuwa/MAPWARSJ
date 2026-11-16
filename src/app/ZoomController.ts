@@ -3,7 +3,9 @@
  *
  * 规则（2026-09-01 主人重定，**旧规则已整套作废，勿参考历史注释**）：
  *   🔴 [2026-09-24 主人定「全局一律改为 ZOOM9，不再进入任何其他」] 自动缩放目标全部是 9
- *      （开局、规则 1、规则 2 陆战、规则 5 行军）；**唯一例外：海战（舰队 vs 舰队）开打 → 10**（主人同日补定），下文的 8/10 是旧值，只作沿革。
+ *      （开局、规则 1、规则 2 开打、规则 5 行军）。
+ *   🔴 [2026-11-16 主人令「把 ZOOM10 删掉，以后不用了，海战已经换了」] 原来的唯一例外「海战开打 → 10」已删：
+ *      舰队对舰队改进海战场面（src/naval/），战略地图锁死 zoom 9（GameMap maxZoom 9）。下文的 8/10 是旧值，只作沿革。
  *   1. **开始跟随一支新军团 → zoom 8**（现为 9）。首次跟随是这一条，战败后换人也是这一条。
  *      玩家入伍的军团例外 → 9；玩家独行不缩放（镜头交给玩家）。
  *   2. **战略地图上一开打就按形态切**：海战（舰队 vs 舰队）→ zoom 10；
@@ -38,8 +40,6 @@ import { GameMap } from '../map/GameMap';
 const LAND_ZOOM = 9;
 /** 规则 5 用：陆上行军连续 15 秒后的目标 zoom（🔴 2026-09-11 主人定：改回 9） */
 const LAND_MARCH_ZOOM = 9;
-/** 规则 2 用：海战开打 zoom（🔴 2026-09-11 主人定：改回 9） */
-const NAVAL_BATTLE_ZOOM = 10; // 🔴 [2026-09-24 主人定「海战依然可以 10」] 唯一例外
 /**
  * 规则 5 用：**海上行军**的目标 zoom。
  *
@@ -52,7 +52,6 @@ const NAVAL_BATTLE_ZOOM = 10; // 🔴 [2026-09-24 主人定「海战依然可以
  *  差别在**单次多久** —— z10 把同样多的卡顿攒成「少而长」的几下，389ms 一下是肉眼可见的
  *  「卡住了」，184ms 只是滑一下。直播观赏性上 9 明显占优。
  *  机理：同样航速下 z10 的像素位移是 z9 的两倍，跟拍平移更快、跨瓦片边界频率翻倍。
- * ⚠️ 别把这一条和规则 2 的 NAVAL_BATTLE_ZOOM 合回一个常量：那是演出，这是顿挫，两码事。
  */
 const NAVAL_MARCH_ZOOM = 9;
 /** 开始跟随一支新军团时的 zoom（首次跟随 / 战败换人都用它）。🔴 [2026-09-24 主人定「全局一律 ZOOM9」] 原 8 */
@@ -116,7 +115,7 @@ export class ZoomController {
         // ── 规则 2：战略地图上一开打就按形态切（海战 10 / 陆地战 9，攻城=陆地战）──
         //    战术层（13 独立画布）自己管镜头，激活期间让位给规则 3 的冻结。
         if (inBattle && armyId && armyAlive && !this.getIsTacticalScene()) {
-            this.applyZoom(ZoomController.isNavalBattle(army) ? NAVAL_BATTLE_ZOOM : LAND_ZOOM);
+            this.applyZoom(LAND_ZOOM);   // 🔴 [2026-11-16] 海战也是 9（zoom 10 已删）
             this.lastArmyId = armyId;
             return;
         }
@@ -178,14 +177,6 @@ export class ZoomController {
         this.marchZoomSinceMs = null;
     }
 
-    /**
-     * 这场仗是不是海战。海战 = **舰队 vs 舰队**，只在战略地图上打（没有 zoom13 战术层）。
-     * **攻城战一律算陆地战**（主人 2026-09-01 明确）——`currentBattleType === 'siege'`
-     * 一律不算海战，哪怕打的人是舰队。
-     */
-    private static isNavalBattle(army: any): boolean {
-        return army?.isOnSea === true && army?.currentBattleType === 'field';
-    }
 
     private applyZoom(zoom: number): void {
         const leaflet = this.map.getLeafletMap();

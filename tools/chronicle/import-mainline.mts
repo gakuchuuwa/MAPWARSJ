@@ -1,5 +1,6 @@
 /**
  * 编年史主线导入器（2026-11-13）：编年史 json（唯一真源）＋ 导演编排表 → src/data/chronicle/ChronicleMainline.generated.ts
+ * 2026-11-16：播放顺序与章幕改按 剧本模式/99_GG任务与交付/主线63章切分表_2026-11-16.json；播报文字先由 merge-63-chapters.mjs 回写进 json
  * 跑法：npx tsx --import ./tools/sim-preload.mjs tools/chronicle/import-mainline.mts
  * 校验失败（事件 / 武将 / 势力不存在）直接退出，不写文件。
  */
@@ -56,8 +57,29 @@ const errors: string[] = [];
 const factionName = new Map(FACTIONS.map((f) => [f.id, f.name]));
 const cityIds = new Set(CITIES_V2.map((c) => c.id));
 
+// 播放顺序与章幕：按 63 章切分表（2026-11-16 起）；编排细节（路线、出发点、胜方等）仍取导演编排表
+const SPLIT = '剧本模式/99_GG任务与交付/主线63章切分表_2026-11-16.json';
+const split = JSON.parse(readFileSync(SPLIT, 'utf-8')) as {
+    幕: Record<string, string>;
+    order: string[];
+    chapters: { 章: number; 幕: number; 标题: string; events: string[] }[];
+};
+const scriptById = new Map(CHRONICLE_SCRIPT.map((s) => [s.eventId, s]));
+for (const id of split.order) if (!scriptById.has(id)) errors.push(`${id} 在切分表里但不在导演编排表`);
+for (const id of scriptById.keys()) if (!split.order.includes(id)) errors.push(`${id} 在导演编排表里但不在切分表`);
+const chapterById = new Map<string, ChronicleMainlineEvent['chapter']>();
+let lastAct = 0;
+for (const c of split.chapters) {
+    c.events.forEach((id, k) => chapterById.set(id, {
+        no: c.章, title: c.标题, act: c.幕, actTitle: split.幕[String(c.幕)] ?? '',
+        first: k === 0, actFirst: k === 0 && c.幕 !== lastAct,
+    }));
+    lastAct = c.幕;
+}
+const orderedScript = split.order.map((id) => scriptById.get(id)).filter((s): s is NonNullable<typeof s> => !!s);
+
 const out: ChronicleMainlineEvent[] = [];
-for (const s of CHRONICLE_SCRIPT) {
+for (const s of orderedScript) {
     const e = events.get(s.eventId);
     if (!e) { errors.push(`${s.eventId} 不在编年史 json`); continue; }
     if (!generals.has(s.leadGeneralId)) errors.push(`${s.eventId} 随行主将 ${s.leadGeneralId} 不在库`);
@@ -76,6 +98,7 @@ for (const s of CHRONICLE_SCRIPT) {
         strategic: (e['战略播报'] ?? '').split(/\r?\n/).map((p) => p.trim()).filter(Boolean),
         tactical: [e['战术播报']].filter(Boolean),
         source: e['一手史料出处'],
+        ...(chapterById.get(s.eventId) ? { chapter: chapterById.get(s.eventId) } : {}),
     };
     if (s.kind !== 'battle') errors.push(`${s.eventId} 主线每场都要开战（不收只播报的场）`);
     if (s.kind === 'battle') {

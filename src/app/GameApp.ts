@@ -115,7 +115,7 @@ export { STARTING_CAPITALS } from '../data/StartingCapitals';
 /** 剧本模式开局：玩家出生点离归属武将所在城的距离（度，≈65 公里） */
 const SCRIPT_SPAWN_DIST_DEG = 0.6;
 /** 编年史开局「离主将据点约 200 公里」的兜底距离（路网找不到远城时用）
- *  ⚠️ [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 百岁开局已固定出生在君士坦丁堡
+ *  ⚠️ [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 历史模式开局已固定出生在君士坦丁堡
  *  （`PLAYER_START_CITY_ID`），下面这两条「按赶路时长挑城」的口径不再是开局路径。 */
 const CHRONICLE_SPAWN_DIST_DEG = 1.8;
 /** 🔴 [2026-11-13 主人令「人物起始位置和第一个人物地点放远一点」「30 秒左右移动到武将处」] 开局沿陆路约走这么多秒才到第一位主将 */
@@ -310,7 +310,7 @@ export class GameApp {
                 if (this.gameTimeHUD) {
                     this.gameTimeHUD.updateTime(year, this.timeSystem.getSeason());
                 }
-                // 🔴 [2026-10-20 主人定] 百岁模式跨年：不在世武将的势力名字/旗号换当时代的军团名
+                // 🔴 [2026-10-20 主人定] 历史模式跨年：不在世武将的势力名字/旗号换当时代的军团名
                 this.syncEraFactionDisplays();
             });
             this.timeSystem.onSeasonChange((season, year) => {
@@ -365,19 +365,19 @@ export class GameApp {
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
             setScriptPeriodProvider(() => false);
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
-            //    玩家对象晚于此处创建 → 取不到时按默认的百岁模式算（非剧本期）。
+            //    玩家对象晚于此处创建 → 取不到时按默认的历史模式算（非剧本期）。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
                 () => false,
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
-            // 🔴 [2026-10-20 主人令「百岁模式出城的军团真归秦；乱斗模式一个据点一个武将一个势力，多武将不并存」]
-            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认百岁模式算。
+            // 🔴 [2026-10-20 主人令「历史模式出城的军团真归秦；乱斗模式一个据点一个武将一个势力，多武将不并存」]
+            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认历史模式算。
             setGameModeProvider(() => this.playerHero?.autoPlan ?? 'centenarian');
             // 乱斗出将先挑和城主同政权的武将：数据层要知道据点现在归谁
             setCityOwnerProvider((cityId) => this.cityManager?.getCity(cityId)?.factionId ?? null);
-            // 🔴 [2026-10-18 主人定] 百岁模式：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
+            // 🔴 [2026-10-18 主人定] 历史模式：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
             setCentenarianYearProvider(() =>
                 (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian'
                     ? (this.timeSystem?.getYear() ?? null)
@@ -432,7 +432,7 @@ export class GameApp {
             });
             // 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
             //    特殊建筑（城内奇观）建成年代闸门的「当前年份」—— 与据点建城年同一套模式口径：
-            //    剧本模式取当前事件年份、百岁模式取日历年份、乱斗与编辑器模式为 null（不按年代拦）。
+            //    剧本模式取当前事件年份、历史模式取日历年份、乱斗与编辑器模式为 null（不按年代拦）。
             setWonderGateYearProvider(() => {
                 if (this.cityManager?.getIsEditorMode()) return null;
                 const mode = this.playerHero?.autoPlan ?? 'centenarian';
@@ -451,7 +451,7 @@ export class GameApp {
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             this.cityManager.setOnYearOrEditorChange(() => {
                 this.syncCityFoundedTypes();
-                // 百岁模式跨年 / 编辑器切换 → 特殊建筑与战场按新建成年份重画
+                // 历史模式跨年 / 编辑器切换 → 特殊建筑与战场按新建成年份重画
                 this.map.getMonumentLayer()?.syncFoundedYear();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
             });
@@ -471,7 +471,7 @@ export class GameApp {
             setLoadingMessage('正在升旗入场…');
             setLoadingProgress(80);
             this.syncCityFoundedTypes();
-            // 🔴 [2026-10-20 主人定] 百岁模式：开局就按当前年份把「不在世武将的势力」换成当时代军团名
+            // 🔴 [2026-10-20 主人定] 历史模式：开局就按当前年份把「不在世武将的势力」换成当时代军团名
             this.syncEraFactionDisplays();
             // 势力色块默认关（chk-faction 未勾选）。禁止 toggleTerritoryLayer(true) / renderTerritoryOnly。§10.1
             await this.cityManager.renderCitiesOnly();
@@ -532,7 +532,7 @@ export class GameApp {
                 () => (this.cityManager?.getCities() ?? [])
                     .filter((c) => this.cityManager.isCityVisible(c))
                     .map((c) => {
-                        // 🔴 [2026-11-13 主人令] 百岁模式：势力此刻无在场武将 → 小地图不涂势力色（与据点旗同口径）
+                        // 🔴 [2026-11-13 主人令] 历史模式：势力此刻无在场武将 → 小地图不涂势力色（与据点旗同口径）
                         const idle = isFactionIdle(c.factionId);
                         return {
                             id: c.id, lat: c.latitude, lng: c.longitude, type: c.type,
@@ -746,7 +746,7 @@ export class GameApp {
             wireGeneralSkillCombat(this, legionManager);
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
-            //    玩家对象晚于此处创建 → 取不到时按默认的百岁模式算（非剧本期）。
+            //    玩家对象晚于此处创建 → 取不到时按默认的历史模式算（非剧本期）。
             // 🔴 [2026-11-13 编年史] 主线推演中后台 AI 不出征、不募兵（据点归属只按史实跳年重算）
             const isScriptPeriod = () => isChronicleActive();
             this.aiController = new AIController(
@@ -957,8 +957,8 @@ export class GameApp {
     }
 
     /**
-     * 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和百岁模式中，如果建城年不到，就是小城。」]
-     * 剧本模式按当前事件年份、百岁模式按当前日历年份：未到建城年的大城/中城降为小城（small_city），到年或乱斗模式恢复原城级。
+     * 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和历史模式中，如果建城年不到，就是小城。」]
+     * 剧本模式按当前事件年份、历史模式按当前日历年份：未到建城年的大城/中城降为小城（small_city），到年或乱斗模式恢复原城级。
      */
     private syncCityFoundedTypes(): void {
         const mode = this.playerHero?.autoPlan ?? 'centenarian';
@@ -971,14 +971,14 @@ export class GameApp {
     }
 
     /**
-     * 🔴 [2026-10-20 主人定] 百岁模式：**武将不在世的势力，名字与旗号改用当时代的军团名**
+     * 🔴 [2026-10-20 主人定] 历史模式：**武将不在世的势力，名字与旗号改用当时代的军团名**
      * （如日本古典时代＝大和、15XX 德川在世＝武藏）。只改显示，不改归属；
      * 剧本模式（用史实归属）/ 乱斗模式（原样）一律关闭。
      */
     private syncEraFactionDisplays(): void {
         if (!this.cityManager) return;
         const mode = this.playerHero?.autoPlan ?? 'centenarian';
-        // 🔴 [2026-10-20 主人令「据点和势力没有关系了」「真实的历史不应该是B吗」] 百岁模式据点归当年在场武将的势力
+        // 🔴 [2026-10-20 主人令「据点和势力没有关系了」「真实的历史不应该是B吗」] 历史模式据点归当年在场武将的势力
         //    （开局、跨年、切模式与时代名同一批时机；先定归属再算名字）
         syncCentenarianGeneralOwners(this.cityManager, mode === 'centenarian');
         // 🔴 [2026-10-23 主人「据点每局归哪个势力不要固定，请随机。但要保证每个势力都有据点」] 切进乱斗那一刻抽一次
@@ -1005,9 +1005,9 @@ export class GameApp {
     public getLiveVideo(): string { return this.liveLink?.getVideo() ?? ''; }
 
     /**
-     * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
+     * 🔴 [2026-10-20 主人令「在历史模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
      *    并对应好所有的登场武将，城市，特殊建筑」]
-     * 只在百岁模式生效。据点归属按「开局」口径重来（先还原原主，再归给新年份的在场武将）；
+     * 只在历史模式生效。据点归属按「开局」口径重来（先还原原主，再归给新年份的在场武将）；
      * 武将登场、时代名旗号、大中城降级、特殊建筑建成年代全部按新年份重算。返回实际跳到的年份。
      */
     private applyChronicleCityOwnership(year: number): void {
@@ -1052,8 +1052,8 @@ export class GameApp {
         //    归属武将的城外（格拉尼库斯河战役 = 佩拉）；乱斗模式照旧在全世界随机挑一个据点。
         const scriptStart = findCurrentScriptEventCity(allCities);
         // 🔴 [2026-10-08 主人令「开局玩家出现的位置请随机」] 不再绑定剧本事件城：一律在全部据点里随机挑一个（scriptStart 只留给下面的出生距离判定）
-        // 🔴 [2026-10-21 主人令「百岁模式开局必须在欧亚，因为美洲哪里都没武将」「能排除的都排除」]
-        //    百岁模式随机出生点：只在「有在场武将的据点」里挑（美洲/无将之地自然排除）；
+        // 🔴 [2026-10-21 主人令「历史模式开局必须在欧亚，因为美洲哪里都没武将」「能排除的都排除」]
+        //    历史模式随机出生点：只在「有在场武将的据点」里挑（美洲/无将之地自然排除）；
         //    一座都没有 → 退而排除美洲（经度 < -30°）；再不行才用全部据点。
         const isCentenarianStart = (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian';
         const withGeneral = isCentenarianStart
@@ -1062,7 +1062,7 @@ export class GameApp {
         const eurasia = isCentenarianStart ? allCities.filter((c) => c.longitude >= -30) : allCities;
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
         // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
-        // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 百岁模式：出生在编年史第一事件主将的据点城外（约 65 公里）
+        // 🔴 [2026-11-13 主人令「玩家开局出现在居鲁士附近」] 历史模式：出生在编年史第一事件主将的据点城外（约 65 公里）
         // 🔴 [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」→「改到阿纳达一带，有点远了」]
         //    出生据点改为固定阿达纳（见 PLAYER_START_CITY_ID）；chronicleStart（首场出场据点）只留「行军目标／日志」，不再决定出生在哪。
         if (isCentenarianStart) {
@@ -1078,15 +1078,15 @@ export class GameApp {
             : chronicleLeadId
                 ? allCities.find((c) => getCityAnchoredGenerals(c.id).some((g) => g.generalId === chronicleLeadId))
                 : undefined;
-        /** 百岁开局固定出生据点（缺城就退回原逻辑，不至于开不了局） */
+        /** 历史模式开局固定出生据点（缺城就退回原逻辑，不至于开不了局） */
         const fixedStartCity = isCentenarianStart ? allCities.find((c) => c.id === PLAYER_START_CITY_ID) : undefined;
         const startCity = fixedStartCity ?? chronicleStart ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         // 编年史开局：沿陆路找一座「走到第一位主将约 CHRONICLE_SPAWN_TRAVEL_SEC 秒」的城，出生在它城外
         //    玩家单骑速度＝统一行军速度 × 骑兵平原倍率 × 单骑倍率（度／秒）；路程按道路坐标的经纬度长度累计
-        // 🔴 [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 百岁开局已固定君士坦丁堡，
-        //    「30 秒路程外那座城」的选法不再用于开局（本段保留给仍按赶路时长选城的非百岁场景）。
+        // 🔴 [2026-11-14 主人令「把人物起始位置设计到君士坦丁堡」] 历史模式开局已固定君士坦丁堡，
+        //    「30 秒路程外那座城」的选法不再用于开局（本段保留给仍按赶路时长选城的非历史模式场景）。
         const farSpawn = (!fixedStartCity && chronicleStart && roadRegistry.isInitialized()) ? (() => {
             const targetDeg = CHRONICLE_SPAWN_TRAVEL_SEC * PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * MOVEMENT_MATRIX.CAVALRY.plain * PLAYER_HERO_SPEED_MULT;
             const adj = roadRegistry.getAdjacencyList();
@@ -1198,7 +1198,7 @@ export class GameApp {
         this.syncEraFactionDisplays();
         this.syncScriptOwners();
         this.syncCityFoundedTypes();
-        // 玩家对象建好后按模式重算一次特殊建筑建成年代闸门（剧本=事件年份 / 百岁=日历年份 / 乱斗=不拦）
+        // 玩家对象建好后按模式重算一次特殊建筑建成年代闸门（剧本=事件年份 / 历史模式=日历年份 / 乱斗=不拦）
         this.map.getMonumentLayer()?.syncFoundedYear();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
@@ -1326,10 +1326,10 @@ export class GameApp {
                     return;
                 }
                 scriptHudMinimizedOnce = false;   // 剧本打完切乱斗：下次再进剧本时重新最小化一次
-                // 🔴 [2026-11-14 主人令「百岁模式中，把军团面板，和军情面板默认最小化，不自动展开」]
-                //    军团／军情两块在百岁模式里**不参与轮播**：轮播的展开相不去开它们（＝不自动展开），
+                // 🔴 [2026-11-14 主人令「历史模式中，把军团面板，和军情面板默认最小化，不自动展开」]
+                //    军团／军情两块在历史模式里**不参与轮播**：轮播的展开相不去开它们（＝不自动展开），
                 //    收起相也不去动它们（主人手点开的就留着，不按回去 —— 与 2026-09-26「我说的隐藏是最小化」同口径）。
-                //    进百岁模式那一下由下面 `hero` 的 onChange 一次性收起（默认最小化），
+                //    进历史模式那一下由下面 `hero` 的 onChange 一次性收起（默认最小化），
                 //    两块自己的抽屉按钮照常能点开。玩家面板与右下角信息面板仍按原规则走。
                 if (getGameMode() === 'centenarian') {
                     this.gameTimeHUD?.setCollapsed(!expanded, false);
@@ -1375,8 +1375,8 @@ export class GameApp {
             }
             if (hero.autoPlan !== lastAutoPlan) {
                 lastAutoPlan = hero.autoPlan;
-                // 🔴 [2026-11-14 主人令「百岁模式中，把军团面板，和军情面板默认最小化，不自动展开」]
-                //    切进百岁模式那一下把两块收起来（只收这一次，之后轮播再也不替主人展开它们）。
+                // 🔴 [2026-11-14 主人令「历史模式中，把军团面板，和军情面板默认最小化，不自动展开」]
+                //    切进历史模式那一下把两块收起来（只收这一次，之后轮播再也不替主人展开它们）。
                 if (lastAutoPlan === 'centenarian') {
                     this.cameraFollowUI.closeList();
                     this.brawlFeedPanel?.setExpanded(false);
@@ -1386,7 +1386,7 @@ export class GameApp {
         if (hero.isTourMode()) {
             minimizeTourPanels();
         }
-        // 🔴 [2026-11-14 主人令] 百岁模式开局即最小化：军团／军情两块收成侧边抽屉，
+        // 🔴 [2026-11-14 主人令] 历史模式开局即最小化：军团／军情两块收成侧边抽屉，
         //    只留「军团」「军情」两个展开按钮（面板自己的抽屉按钮照常能点开）。
         if (hero.autoPlan === 'centenarian') {
             this.cameraFollowUI.closeList();

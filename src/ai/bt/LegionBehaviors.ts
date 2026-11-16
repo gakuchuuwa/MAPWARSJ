@@ -90,7 +90,7 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
 
 /**
  * 🔴 [2026-10-21 主人报「子受卡住不能动了」] 老家「算自己人」的势力：
- * 百岁模式军团随武将换了势力（子受＝商，出身朝歌时朝歌已归周 → 出身势力＝周）。
+ * 历史模式军团随武将换了势力（子受＝商，出身朝歌时朝歌已归周 → 出身势力＝周）。
  * 老家后来回到**武将自己的势力**手里（妇好收复朝歌＝商），也算没丢；
  * 旧口径只认出身势力 → 判「老家失守」去收复一座己方城，到了打不了、走了又折回，原地打转。
  */
@@ -109,7 +109,7 @@ function homeNeedsHelp(ctx: BTContext): boolean {
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
     // 已失守 → 收复（判据统一走 isHomeCityLost，勿再内联手写）
-    // 🔴 [2026-10-20] 老家判定看出身势力（百岁模式王离出长安是秦军，长安仍属唐 ≠ 失守）
+    // 🔴 [2026-10-20] 老家判定看出身势力（历史模式王离出长安是秦军，长安仍属唐 ≠ 失守）
     if (isHomeCityLost(homeId, homeOwnerFactionOf(ctx.army, ctx.cityManager), ctx.cityManager)) return true;
     return ctx.legionManager.isCityBeingSieged(homeId);                   // 仍我方且正被攻城 → 回援（在途/迫近不算）
 }
@@ -347,7 +347,7 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
     if (lastDrawCityId) {
         excludeTargetIds.add(lastDrawCityId);
     }
-    // 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+    // 🔴 [2026-10-20 主人令「历史模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
     //    军团真实势力随武将、与出身势力不同时，老家据点（仍属出身势力）不许当成敌城去打。
     const originId = getArmyOriginCityId(ctx.army);
     const homeFaction = ctx.army.getHomeFactionId();
