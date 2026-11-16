@@ -11,6 +11,7 @@ import { WAR_TYPES } from '../../data/WarTypes';
 import type { FormationMode } from '../../types/CultureFormations';
 import { commanderRowOf } from '../../types/LegionRowOrder';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, getFactionCultureRegion, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { getLegionNavalFleetRoster, type LegionNavalFleetRoster } from '../../data/LegionNavalFleets.generated';
 import { needsSail, getSailDeltas, getSailPartDir, getSailPart as getSharedSailPart, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../../data/NavalSails';
 import { REGION_TO_DE_STYLE } from '../../systems/cityDeStyle';
 import { gameLog } from '../../utils/GameLogger';
@@ -2126,9 +2127,19 @@ export class LegionPhalanxDrawer {
         shipCount: number,
         mode: NavalFormationMode = 'auto',
         shipId: NavalShipAssetId = 'LOU_CHUAN',
+        roster: LegionNavalFleetRoster | null = null,
     ): { r: number; c: number; ship: NavalShipAssetId }[] {
+        const pickShip = (idx: number): NavalShipAssetId => {
+            if (!roster) return shipId;
+            if (idx === 0) return roster.flagShipKey;
+            const escorts = Math.max(1, shipCount - 1);
+            const band = Math.floor(((idx - 1) * 3) / escorts);
+            if (band === 0) return roster.frontShipKey;
+            if (band === 1) return roster.mainShipKey;
+            return roster.backShipKey;
+        };
         const formation: { r: number; c: number; ship: NavalShipAssetId }[] = [
-            { r: 0, c: 0, ship: shipId },
+            { r: 0, c: 0, ship: pickShip(0) },
         ];
 
         // [2026-08-20] 队形改为可配置（军团编辑器「海军阵型」），auto = 下面的旧行为逐像素不变。
@@ -2136,7 +2147,7 @@ export class LegionPhalanxDrawer {
             // 一字横阵：全队与航向垂直排开，舷侧齐射面最大。左右交替向外长，旗舰居中。
             for (let i = 1; i < shipCount; i++) {
                 const k = Math.ceil(i / 2);
-                formation.push({ r: 0, c: (i % 2 === 1 ? -k : k), ship: shipId });
+                formation.push({ r: 0, c: (i % 2 === 1 ? -k : k), ship: pickShip(i) });
             }
             return formation;
         }
@@ -2144,7 +2155,7 @@ export class LegionPhalanxDrawer {
             // 楔形雁行：旗舰居前，后随向两翼斜后方展开（每多一对，后退一段、外扩一列）
             for (let i = 1; i < shipCount; i++) {
                 const k = Math.ceil(i / 2);
-                formation.push({ r: -k, c: (i % 2 === 1 ? -k * 0.6 : k * 0.6), ship: shipId });
+                formation.push({ r: -k, c: (i % 2 === 1 ? -k * 0.6 : k * 0.6), ship: pickShip(i) });
             }
             return formation;
         }
@@ -2157,14 +2168,14 @@ export class LegionPhalanxDrawer {
         if (mode === 'column' || mode === 'auto') {
             // 单纵队：后随船依次向后排
             for (let i = 1; i < shipCount; i++) {
-                formation.push({ r: -i, c: 0, ship: shipId });
+                formation.push({ r: -i, c: 0, ship: pickShip(i) });
             }
         } else {
             // 双列（仅显式选 'double' 时走）：分两列交错（左右各一行，最后单艘补左列）
             let r = 1;
             for (let i = 1; i < shipCount; i++) {
                 const col = (i % 2 === 1) ? -0.5 : 0.5;   // ±0.5 × 船宽 = 两列中心隔一个船宽
-                formation.push({ r: -r, c: col, ship: shipId });
+                formation.push({ r: -r, c: col, ship: pickShip(i) });
                 if (i % 2 === 0) r += 1;
             }
         }
@@ -2355,6 +2366,7 @@ export class LegionPhalanxDrawer {
          *    isFighting 在那种情况恒为 false，判不出来。
          */
         navalBattleActive = false,
+        legionName?: string,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -2429,7 +2441,8 @@ export class LegionPhalanxDrawer {
         // 🔴 [2026-10-31 主人令「海战只显示双方的旗舰对战，双方只显示一艘船」]
         //   海战（双将舰队野战）时编队固定 1 艘 = 旗舰；行军 / 停泊 / 攻城照旧按兵力档位。
         const shipCount = navalBattleActive ? 1 : (navalState?.shipCount ?? shipCountForTroops(troops));
-        const formation = this.navalFormation(shipCount, navalMode, targetShipId);
+        const navalRoster = !lockedShipId ? getLegionNavalFleetRoster(legionName) : null;
+        const formation = this.navalFormation(shipCount, navalMode, targetShipId, navalRoster);
 
         // 按所需船型准备贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
         interface NavalTypeDraw {

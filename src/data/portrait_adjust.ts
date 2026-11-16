@@ -1158,8 +1158,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/JAPAN/satsuma_daojinjiajiu.png": {
-            "scale": 0.95,
-            "offsetX": 0,
+            "scale": 0.91,
+            "offsetX": 6,
             "offsetY": -22
         },
         "/assets/JAPAN/suwa_d_zoufanglaizhong.png": {
@@ -11138,7 +11138,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -40
         },
         "/assets/WEI/bfe3_85.png": {
-            "scale": 1.32,
+            "scale": 1.28,
             "offsetX": 34,
             "offsetY": 10
         },
@@ -11496,6 +11496,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 12,
             "offsetY": -2
+        },
+        "/assets/CENTRAL/tang_gen_467.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL/han_d_shouling.png": {
+            "scale": 1.05,
+            "offsetX": 3,
+            "offsetY": 0
+        },
+        "/assets/MONGOL/nan_xiongnu_gen_165.png": {
+            "scale": 1.16,
+            "offsetX": 9,
+            "offsetY": 6
+        },
+        "/assets/JIANGNAN/nan_liang_gen_402.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/BRITONS/bfe_harold_godwinson.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/VIKINGS/nuowei_erikred.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/MALAY/bfe_purnavarman.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

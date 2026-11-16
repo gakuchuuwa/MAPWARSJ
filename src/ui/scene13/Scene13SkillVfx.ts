@@ -15,6 +15,12 @@ export interface Scene13SkillVfx {
     playerCast: boolean;
     /** 直播观众付费打赏释放（true = 帝王鎏金天降排面强化） */
     paid?: boolean;
+    /** 特效类型：默认六计；'hundredKill' = 百人斩战场爆发特效 */
+    kind?: 'hundredKill';
+    /** 跟随锚点（如触发百人斩的主将） */
+    anchor?: WarMan | null;
+    /** 达成斩杀数（100 / 200 / ...） */
+    kills?: number;
     targets: WarMan[];
     points: Scene13SkillVfxPoint[];
 }
@@ -1361,8 +1367,13 @@ export function drawScene13SkillCastVfx(
         const p = clamp01((nowMs - v.startMs) / (v.dur * 1000));
         if (p >= 1) continue;
         ctx.save();
-        if (layer === 'ground') drawGroundOne(ctx, v, p, lift);
-        else drawTopOne(ctx, v, p, lift);
+        if (v.kind === 'hundredKill') {
+            if (layer === 'ground') drawHundredKillGround(ctx, v, p, lift);
+            else drawHundredKillTop(ctx, v, p, lift);
+        } else {
+            if (layer === 'ground') drawGroundOne(ctx, v, p, lift);
+            else drawTopOne(ctx, v, p, lift);
+        }
         ctx.restore();
     }
     ctx.restore();
@@ -1525,4 +1536,184 @@ export function drawScene13SkillStatusVfx(
         drawStamp(ctx, badge, m.x, hy, iconR);
     }
     ctx.restore();
+}
+
+// ── 7. 陆战「百人斩」战场特效（脚下裂地冲击波 + 十字裂空刀罡 + 战气火星 + 头顶战印） ──
+function resolveHundredKillOrigin(v: Scene13SkillVfx, lift: Lift): { x: number; y: number } {
+    const a = v.anchor;
+    const wx = a && a.hp > 0 ? a.x : v.x;
+    const wy = a && a.hp > 0 ? a.y : v.y;
+    return { x: wx, y: wy - lift(wx, wy) };
+}
+
+function drawHundredKillGround(
+    ctx: CanvasRenderingContext2D,
+    v: Scene13SkillVfx,
+    p: number,
+    lift: Lift,
+): void {
+    const { x, y } = resolveHundredKillOrigin(v, lift);
+    const fade = p < 0.7 ? 1 : clamp01((1 - p) / 0.3);
+    const e = easeOut(Math.min(1, p * 1.45));
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // 1. 脚下赤金战气光晕底盘
+    const baseR = 62 + Math.sin(p * Math.PI * 4) * 6;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, 0.5);
+    const g = ctx.createRadialGradient(0, 0, 4, 0, 0, baseR);
+    g.addColorStop(0, `rgba(255,245,190,${(0.62 * fade).toFixed(3)})`);
+    g.addColorStop(0.45, `rgba(255,90,36,${(0.48 * fade).toFixed(3)})`);
+    g.addColorStop(1, 'rgba(220,25,30,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, baseR, 0, TAU);
+    ctx.fill();
+
+    // 2. 双层赤金裂地冲击波环
+    for (let ring = 0; ring < 2; ring++) {
+        const rp = clamp01(p * 1.6 - ring * 0.16);
+        if (rp <= 0 || rp >= 1) continue;
+        const rr = 22 + easeOut(rp) * (ring === 0 ? 150 : 112);
+        const ra = (1 - rp) * (ring === 0 ? 0.85 : 0.65);
+        ctx.strokeStyle = ring === 0
+            ? `rgba(255,215,90,${ra.toFixed(3)})`
+            : `rgba(255,60,40,${ra.toFixed(3)})`;
+        ctx.lineWidth = Math.max(1.5, (1 - rp) * (ring === 0 ? 5.5 : 3.5));
+        ctx.beginPath();
+        ctx.arc(0, 0, rr, 0, TAU);
+        ctx.stroke();
+    }
+
+    // 3. 12 道辐射状剑气裂地光痕
+    const rayAlpha = (1 - clamp01(p * 1.25)) * 0.78;
+    if (rayAlpha > 0.02) {
+        for (let i = 0; i < 12; i++) {
+            const ang = (i / 12) * TAU + 0.18;
+            const r0 = 16 + e * 18;
+            const r1 = 48 + e * (82 + (i % 2) * 26);
+            drawTaperedSlash(
+                ctx,
+                Math.cos(ang) * r0, Math.sin(ang) * r0,
+                Math.cos(ang) * r1, Math.sin(ang) * r1,
+                3.8 * (1 - clamp01(p * 1.1)),
+                `rgba(255,75,36,${rayAlpha.toFixed(3)})`,
+                `rgba(255,248,210,${rayAlpha.toFixed(3)})`,
+            );
+        }
+    }
+    ctx.restore();
+    ctx.restore();
+}
+
+function drawHundredKillTop(
+    ctx: CanvasRenderingContext2D,
+    v: Scene13SkillVfx,
+    p: number,
+    lift: Lift,
+): void {
+    const { x, y } = resolveHundredKillOrigin(v, lift);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // 1. 爆发期十字交叉裂空刀罡 + 旋转弯月斩刃
+    if (p < 0.55) {
+        const bp = p / 0.55;
+        const bAlpha = Math.sin(bp * Math.PI);
+        const slashLen = 48 + easeOut(bp) * 64;
+        const slashAngles = [-0.62, 0.62, -2.52, 2.52, -0.15, 2.99];
+        for (let i = 0; i < slashAngles.length; i++) {
+            const a = slashAngles[i] + bp * (i % 2 === 0 ? 0.18 : -0.18);
+            const dx = Math.cos(a) * slashLen;
+            const dy = Math.sin(a) * slashLen * 0.68;
+            drawTaperedSlash(
+                ctx,
+                x - dx * 0.45, y - 16 - dy * 0.45,
+                x + dx, y - 16 + dy,
+                (i < 4 ? 7.5 : 5.2) * (1 - bp * 0.55),
+                `rgba(255,62,38,${(0.9 * bAlpha).toFixed(3)})`,
+                `rgba(255,250,220,${bAlpha.toFixed(3)})`,
+            );
+        }
+        for (let c = 0; c < 2; c++) {
+            ctx.save();
+            ctx.translate(x, y - 16);
+            ctx.rotate(c * Math.PI + bp * (c === 0 ? 1.8 : -1.5));
+            drawTaperedCrescent(
+                ctx, 0, 0,
+                34 + easeOut(bp) * 42,
+                11 * (1 - bp * 0.5),
+                Math.PI * 0.95,
+                `rgba(255,130,40,${(0.82 * bAlpha).toFixed(3)})`,
+                `rgba(255,248,215,${(0.95 * bAlpha).toFixed(3)})`,
+            );
+            ctx.restore();
+        }
+    }
+
+    // 2. 升腾赤金战气火星粒子
+    const sparkFade = p < 0.65 ? 1 : clamp01((1 - p) / 0.35);
+    for (let i = 0; i < 24; i++) {
+        const seed = (i * 73 + 19) % 100;
+        const sp = clamp01(p * 1.15 - (seed / 100) * 0.25);
+        if (sp <= 0 || sp >= 1) continue;
+        const ang = (i / 24) * TAU + sp * 2.2;
+        const rad = 16 + easeOut(sp) * (46 + (seed % 38));
+        const sx = x + Math.cos(ang) * rad;
+        const sy = y - 10 + Math.sin(ang) * rad * 0.48 - sp * (65 + (seed % 45));
+        const sz = (1.6 + (seed % 3) * 0.9) * (1 - sp * 0.6);
+        const sa = (1 - sp) * sparkFade;
+        ctx.fillStyle = i % 3 === 0
+            ? `rgba(255,245,180,${sa.toFixed(3)})`
+            : `rgba(255,95,40,${sa.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(sx, sy, sz, 0, TAU);
+        ctx.fill();
+    }
+    ctx.restore();
+
+    // 3. 主将头顶「百人斩」鎏金古纹印记（世界坐标随主将移动，非屏幕 UI 横幅）
+    const badgeAlpha = p < 0.14
+        ? p / 0.14
+        : (p < 0.72 ? 1 : clamp01((1 - p) / 0.28));
+    if (badgeAlpha > 0.02) {
+        const pop = p < 0.16 ? 0.55 + easeOut(p / 0.16) * 0.58 : (p < 0.26 ? 1.13 - ((p - 0.16) / 0.10) * 0.13 : 1.0);
+        const rise = p * 18;
+        const bx = x;
+        const by = y - 62 - rise;
+        const label = (v.kills && v.kills >= 200) ? `${Math.floor(v.kills / 100) * 100}人斩` : '百人斩';
+
+        ctx.save();
+        ctx.translate(bx, by);
+        ctx.scale(pop, pop);
+        ctx.globalAlpha = badgeAlpha;
+
+        // 背后赤金光轮
+        const halo = ctx.createRadialGradient(0, 0, 2, 0, 0, 34);
+        halo.addColorStop(0, 'rgba(255,80,35,0.68)');
+        halo.addColorStop(0.65, 'rgba(255,185,50,0.28)');
+        halo.addColorStop(1, 'rgba(255,80,35,0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(0, 0, 34, 0, TAU);
+        ctx.fill();
+
+        ctx.font = "900 18px 'Noto Serif SC','STSong','SimSun',serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(42,6,6,0.92)';
+        ctx.strokeText(label, 0, 0);
+        const tg = ctx.createLinearGradient(0, -10, 0, 10);
+        tg.addColorStop(0, '#fff7cc');
+        tg.addColorStop(0.5, '#ffd24c');
+        tg.addColorStop(1, '#ff6828');
+        ctx.fillStyle = tg;
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+    }
 }

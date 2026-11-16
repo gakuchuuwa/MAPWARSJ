@@ -49,15 +49,15 @@ interface SeaRouteCandidate {
  *    否则面板上显示的航程会是个带系数的假数。
  */
 const OPEN_SEA_PENALTY = 1.5;
-/** 港口海路条数分级区间（大城 6–9、中城 3–6、小城与险要 1–6、城寨 1–3） */
+/** 港口海路条数分级区间（大城 6–9、中城 3–6、小城与险要 2–6、城寨 2–4） */
 const PORT_SEA_ROUTE_LIMITS: Record<string, { min: number; max: number; label: string }> = {
     big_city: { min: 6, max: 9, label: '大城' },
     medium_city: { min: 3, max: 6, label: '中城' },
-    small_city: { min: 1, max: 6, label: '小城' },
-    pass: { min: 1, max: 6, label: '险要' },
-    stockade: { min: 1, max: 3, label: '城寨' },
+    small_city: { min: 2, max: 6, label: '小城' },
+    pass: { min: 2, max: 6, label: '险要' },
+    stockade: { min: 2, max: 4, label: '城寨' },
 };
-const DEFAULT_PORT_SEA_ROUTE_LIMIT = { min: 1, max: 6, label: '据点' };
+const DEFAULT_PORT_SEA_ROUTE_LIMIT = { min: 2, max: 6, label: '据点' };
 
 /**
  * 🔴 [2026-10-13 主人问「为什么道路编辑器中有的海路会横穿陆地」，授权全权修复]

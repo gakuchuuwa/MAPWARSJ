@@ -16,6 +16,7 @@ import type { NavalWindCode } from '../data/NavalBattleParams.generated';
 
 export type NavalSide = 'attacker' | 'defender';
 export type NavalRole = 'front' | 'main' | 'back' | 'flag';
+export type NavalRepRole = 'intruder' | 'keeper';
 export type NavalShipState = 'alive' | 'sinking' | 'sunk' | 'fled';
 
 export const NAVAL_WORLD_W = 2800;
@@ -60,6 +61,8 @@ export interface NavalShip {
     /** 开战时属于哪方（被夺的船 side 会变） */
     origSide: NavalSide;
     role: NavalRole;
+    /** 乱入者 / 维序者代表船标记（对峙代表，镜头优先跟随） */
+    repRole?: NavalRepRole;
     shipKey: string;
     /** 画船用的势力（染色）：夺船后换成夺船方 */
     factionId: string;
@@ -114,10 +117,12 @@ export interface NavalProjectile {
     crewDamage: number;
     splash: number;
     ignite: boolean;
+    /** 中国楼船专属：火箭齐射特效标记 */
+    fireArrow?: boolean;
 }
 
 export type NavalEvent =
-    | { type: 'fire'; weapon: Exclude<NavalWeapon, 'ram'>; side: NavalSide; x: number; y: number; shipId: number; tx: number; ty: number; dur: number }
+    | { type: 'fire'; weapon: Exclude<NavalWeapon, 'ram'>; side: NavalSide; x: number; y: number; shipId: number; tx: number; ty: number; dur: number; fireArrow?: boolean }
     | { type: 'impact'; weapon: Exclude<NavalWeapon, 'ram'>; hit: boolean; x: number; y: number }
     | { type: 'ignite'; side: NavalSide; x: number; y: number; shipId: number; isFlag: boolean }
     | { type: 'ram'; side: NavalSide; x: number; y: number }
@@ -346,6 +351,26 @@ export class NavalBattleSim {
         for (const s of this.ships) if (s.side === side) hpSum += s.maxHp;
         this.initHp[side] = hpSum;
         this.initCount[side] = n;
+        this.assignRepShip(side);
+    }
+
+    /** 为指定阵营选定/补位一名代表船（乱入者或维序者）：优先中排居中护航船，其次前后排，最后旗舰 */
+    public assignRepShip(side: NavalSide): NavalShip | null {
+        const intruderSide: NavalSide = this.attackerRight ? 'defender' : 'attacker';
+        const repRole: NavalRepRole = side === intruderSide ? 'intruder' : 'keeper';
+        const existing = this.ships.find((s) => s.repRole === repRole && s.side === side && s.state === 'alive');
+        if (existing) return existing;
+        for (const s of this.ships) {
+            if (s.repRole === repRole) s.repRole = undefined;
+        }
+        const cy = NAVAL_WORLD_H / 2;
+        const pool = this.ships.filter((s) => s.side === side && s.state === 'alive');
+        if (pool.length === 0) return null;
+        // 优先由高耐久的旗舰担任乱入者/维序者，旗舰沉没前绝不轻易阵亡或频繁换船
+        const rank = (r: NavalRole) => (r === 'flag' ? 0 : r === 'main' ? 1 : r === 'front' ? 2 : 3);
+        pool.sort((a, b) => rank(a.role) - rank(b.role) || Math.abs(a.y - cy) - Math.abs(b.y - cy));
+        pool[0].repRole = repRole;
+        return pool[0];
     }
 
     /** 就近找水面（出生点压在陆地上时用） */
@@ -472,6 +497,8 @@ export class NavalBattleSim {
         this.resolveContacts();
         this.updateProjectiles(dt);
         this.updatePhase();
+        this.assignRepShip('attacker');
+        this.assignRepShip('defender');
         this.checkEnd();
     }
 
@@ -694,13 +721,15 @@ export class NavalBattleSim {
             const igniteBoost = isArrow && windward === s.side ? 1.6 : 1;
             const igniteBase = isArrow ? spec.igniteChance * 0.65 : spec.igniteChance;
             const dur = Math.max(0.15, Math.hypot(x1 - x0, y1 - y0) / spec.speed);
+            const fireArrow = isArrow && !s.weapons.includes('cannon');
             this.projectiles.push({
                 kind: w, side: s.side, x0, y0, x1, y1, t: 0, dur,
                 arc: spec.arc, targetId: tgt.id, hit,
                 damage: spec.damage * m, crewDamage: spec.crewDamage * m, splash: spec.splash,
                 ignite: this.rng() < igniteBase * igniteBoost * this.wx.ignite,
+                fireArrow,
             });
-            this.events.push({ type: 'fire', weapon: w, side: s.side, x: x0, y: y0, shipId: s.id, tx: x1, ty: y1, dur });
+            this.events.push({ type: 'fire', weapon: w, side: s.side, x: x0, y: y0, shipId: s.id, tx: x1, ty: y1, dur, fireArrow });
         }
     }
 

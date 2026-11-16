@@ -4178,6 +4178,25 @@ export class Scene13WarLayer {
 
             this.playerSetup.onKill(!!killer.hero);
 
+            if (this.playerKills > 0 && this.playerKills % 100 === 0) {
+                const anchor = (this.heroMan && this.heroMan.hp > 0) ? this.heroMan : killer;
+                this.skillVfx.push({
+                    six: 'baizhan',
+                    kind: 'hundredKill',
+                    side: killer.f as 0 | 1,
+                    x: anchor.x,
+                    y: anchor.y,
+                    angle: 0,
+                    startMs: performance.now(),
+                    dur: 2.3,
+                    playerCast: true,
+                    anchor,
+                    kills: this.playerKills,
+                    targets: [],
+                    points: [],
+                });
+            }
+
         }
 
     }
@@ -18496,11 +18515,13 @@ export class Scene13WarLayer {
 
                     const kind: 'slash' | 'thrust' = isThrust ? 'thrust' : 'slash';
 
-                    const slashColors = ['#FFFFFF', '#FFF8D6', '#FFE58F', '#F0F8FF'];
+                    const slashColors = m.hero
+                        ? ['#FFD24C', '#FF8C2B', '#FFF5C0']
+                        : ['#FFFFFF', '#FFF8D6', '#FFE58F', '#F0F8FF'];
 
                     const color = slashColors[(Math.random() * slashColors.length) | 0];
 
-
+                    const baseRadius = kind === 'thrust' ? 18 : 22;
 
                     this.slashes.push({
 
@@ -18516,9 +18537,9 @@ export class Scene13WarLayer {
 
                         // [2026-08-20 主人定] 稍微加大刀光弧度与停留时间，增强近战打击感
 
-                        dur: kind === 'thrust' ? 0.15 : 0.18,
+                        dur: m.hero ? 0.24 : (kind === 'thrust' ? 0.16 : 0.20),
 
-                        radius: kind === 'thrust' ? 16 : 20,
+                        radius: m.hero ? baseRadius * 1.45 : baseRadius,
 
                         color,
 

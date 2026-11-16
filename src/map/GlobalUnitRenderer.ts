@@ -2831,6 +2831,7 @@ export class GlobalUnitRenderer {
                     //   只有「舰队 vs 舰队的野战」才收成旗舰一艘（isNavalFleetBattle）；
                     //   海上行军 / 港口停泊不满足该判据，船数照旧按兵力。
                     this.isNavalFleetBattle(unit),
+                    unit.name,
                 );
             } else {
                 // 🔴 [2026-09-24 主人报「旗舰往北，其他的船为什么不在后面跟着？」]

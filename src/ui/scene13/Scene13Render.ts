@@ -648,78 +648,13 @@ export function render(this: Scene13WarLayer): void {
         ctx.globalAlpha = 1;
     }
 
-    // ── 刀光剑影（半月斩击弧光 & 突刺枪芒 & 接触星芒）──
+    // ── 白刃战刀光剑影（锥形弯月斩击弧刃 & 破空突刺枪芒 & 命中十字星芒）──
     if (this.slashes.length) {
         ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
         for (const s of this.slashes) {
             const p = Math.min(1, s.t / s.dur);
-            const alpha = Math.max(0, 1 - p * p) * 0.9;
-            ctx.save();
-            ctx.translate(s.x, s.y);
-            ctx.rotate(s.angle);
-            ctx.globalAlpha = alpha;
-
-            // 命中瞬间接触星芒（瞬态十字闪光）
-            if (p < 0.4) {
-                const fp = p / 0.4;
-                const fa = (1 - fp) * 0.95;
-                const sl = (s.kind === 'thrust' ? 5.5 : 7) * (1 - fp * 0.35);
-                ctx.save();
-                ctx.globalAlpha = fa;
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 1.2 * (1 - fp);
-                ctx.beginPath();
-                ctx.moveTo(-sl, 0); ctx.lineTo(sl, 0);
-                ctx.moveTo(0, -sl); ctx.lineTo(0, sl);
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            if (s.kind === 'slash') {
-                // 刀剑微弯斩击刀痕（弧刃更清晰张扬）
-                const len = s.radius * (0.9 + p * 0.2);
-                const h = s.flip ? -3.8 : 3.8;
-
-                // 外层微光
-                ctx.beginPath();
-                ctx.moveTo(0, -len * 0.5);
-                ctx.quadraticCurveTo(h, 0, 0, len * 0.5);
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = 2.0 * (1 - p);
-                ctx.lineCap = 'round';
-                ctx.shadowColor = s.color;
-                ctx.shadowBlur = 3;
-                ctx.stroke();
-
-                // 核心白亮线
-                ctx.beginPath();
-                ctx.moveTo(0, -len * 0.38);
-                ctx.quadraticCurveTo(h * 0.7, 0, 0, len * 0.38);
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 1.0 * (1 - p);
-                ctx.stroke();
-            } else {
-                // 长枪/矛突刺短芒（沿刺击方向的坚挺枪芒）
-                const len = s.radius * (0.85 + p * 0.3);
-
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(len, 0);
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = 1.8 * (1 - p);
-                ctx.lineCap = 'round';
-                ctx.shadowColor = '#FFFFFF';
-                ctx.shadowBlur = 3;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(len * 0.75, 0);
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 0.9 * (1 - p);
-                ctx.stroke();
-            }
-            ctx.restore();
+            drawMeleeSlashEffect(ctx, s.x, s.y, s.angle, s.radius, s.kind, s.color, s.flip, p);
         }
         ctx.restore();
     }
@@ -801,4 +736,92 @@ export function render(this: Scene13WarLayer): void {
     this.perfStats.tDrawDecor = +_tDrawDecor.toFixed(2);
     this.perfStats.tDrawUnits = +_tDrawUnits.toFixed(2);
     this.perfStats.tTotal = +(performance.now() - _tFrameStart).toFixed(2);
+}
+
+/** 陆战与海战接舷战共用的白刃战斩击 / 突刺 / 十字星芒绘制 */
+export function drawMeleeSlashEffect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    angle: number,
+    radius: number,
+    kind: 'slash' | 'thrust',
+    color: string,
+    flip: boolean,
+    p: number,
+): void {
+    const alpha = Math.max(0, 1 - p * p) * 0.94;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.globalAlpha = alpha;
+
+    // 命中瞬间十字交叉星芒 + 瞬态冲击环
+    if (p < 0.42) {
+        const fp = p / 0.42;
+        const fa = (1 - fp) * 0.95;
+        const sl = (kind === 'thrust' ? 8 : 10.5) * (radius / 20) * (1 - fp * 0.35);
+        ctx.save();
+        ctx.globalAlpha = fa;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = Math.max(1, 1.8 * (1 - fp));
+        ctx.beginPath();
+        ctx.moveTo(-sl, 0); ctx.lineTo(sl, 0);
+        ctx.moveTo(0, -sl); ctx.lineTo(0, sl);
+        ctx.stroke();
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(0.8, 1.4 * (1 - fp));
+        ctx.beginPath();
+        ctx.arc(0, 0, (4 + fp * 10) * (radius / 20), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    if (kind === 'slash') {
+        const halfLen = radius * (0.62 + p * 0.16);
+        const bend = (flip ? -1 : 1) * radius * 0.44;
+        const thick = (radius * 0.28) * (1 - p * 0.72);
+        const dir = flip ? -1 : 1;
+
+        ctx.beginPath();
+        ctx.moveTo(-dir * halfLen * 0.15, -halfLen);
+        ctx.quadraticCurveTo(bend + dir * thick, 0, -dir * halfLen * 0.15, halfLen);
+        ctx.quadraticCurveTo(bend - dir * thick * 0.65, 0, -dir * halfLen * 0.15, -halfLen);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(-dir * halfLen * 0.08, -halfLen * 0.78);
+        ctx.quadraticCurveTo(bend + dir * thick * 0.45, 0, -dir * halfLen * 0.08, halfLen * 0.78);
+        ctx.quadraticCurveTo(bend - dir * thick * 0.25, 0, -dir * halfLen * 0.08, -halfLen * 0.78);
+        ctx.closePath();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+    } else {
+        const len = radius * (0.95 + p * 0.45);
+        const halfW = Math.max(1.2, radius * 0.14 * (1 - p * 0.75));
+        const startX = -len * 0.25;
+        const tipX = len * 0.85;
+
+        ctx.beginPath();
+        ctx.moveTo(tipX, 0);
+        ctx.lineTo(startX + len * 0.22, -halfW);
+        ctx.lineTo(startX, 0);
+        ctx.lineTo(startX + len * 0.22, halfW);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(tipX * 0.92, 0);
+        ctx.lineTo(startX + len * 0.28, -halfW * 0.48);
+        ctx.lineTo(startX + len * 0.12, 0);
+        ctx.lineTo(startX + len * 0.28, halfW * 0.48);
+        ctx.closePath();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+    }
+    ctx.restore();
 }

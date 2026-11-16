@@ -35,6 +35,10 @@ import { SubtitleBanner } from '../ui/SubtitleBanner';
 import { navalHiddenUnitIds, navalSceneFlags } from './navalSceneState';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { syncTacticalWeatherAt, renderTacticalWeather, queryWeatherAt, getSeaStormWaveBoostAt, type TacticalWeatherContext } from '../map/WeatherLayer';
+import { Scene13GroundLayerGL, resolveNatureSprite, TAC_MAP_HALF_W, TAC_MAP_HALF_H } from '../ui/scene13/Scene13GroundLayerGL';
+import { drawMeleeSlashEffect } from '../ui/scene13/Scene13Render';
+import { ensureCleanImage } from '../ui/scene13/Scene13SpriteCache';
+import { buildNavalGroundData, type NavalDecorItem } from './NavalGroundBuilder';
 import {
     NavalBattleSim, NAVAL_WORLD_W, NAVAL_WORLD_H, windName,
     type NavalSide, type NavalShip, type NavalEvent, type NavalPhase, type NavalWeatherKind,
@@ -258,6 +262,11 @@ export class NavalWarLayer {
 
     private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
+    private glCanvas: HTMLCanvasElement | null = null;
+    private groundLayerGL: Scene13GroundLayerGL | null = null;
+    private useGroundGL = false;
+    private decorItems: NavalDecorItem[] = [];
+    private groundGen = 0;
     private active = false;
     private lingering = false;
     private sim: NavalBattleSim | null = null;
@@ -284,6 +293,9 @@ export class NavalWarLayer {
     private camTgt: { x: number; y: number } | null = null;
     private camVel = { x: 0, y: 0 };
     private camMoving = false;
+    /** 方案 A：当前锁定的交战船 ID（锁定后除非沉没/溃逃不轻易换人，防止来回晃） */
+    private camWatchShipId: number | null = null;
+    private camTier = 4;
     private subtitleQueue: string[] = [];
     private subtitleAt = -99;
     private shipLenCache = new Map<string, number>();
@@ -319,6 +331,12 @@ export class NavalWarLayer {
             `;
             document.head.appendChild(st);
         }
+        const glCv = document.createElement('canvas');
+        glCv.id = 'naval-gl-canvas';
+        glCv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:399;pointer-events:none;display:none;';
+        document.body.appendChild(glCv);
+        this.glCanvas = glCv;
+
         const cv = document.createElement('canvas');
         cv.id = 'naval-war-canvas';
         cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:400;pointer-events:none;display:none;';
@@ -379,6 +397,7 @@ export class NavalWarLayer {
             this.centerPx = map0 ? map0.project(L.latLng(init.center?.lat ?? 35, init.center?.lng ?? 20), this.sceneZoom) : null;
             this.centerLL = init.center ? L.latLng(init.center.lat, init.center.lng) : (map0 ? map0.getCenter() : null);
             if (map0 && this.centerLL) map0.setView(this.centerLL, this.sceneZoom, { animate: false });
+            if (this.centerLL) this.prefetchFineLandSea(this.centerLL);
             this.landGrid = null;
         } else {
             this.setupGeography(map0, init.center ?? null);
@@ -411,6 +430,8 @@ export class NavalWarLayer {
         this.camTgt = null;
         this.camVel = { x: 0, y: 0 };
         this.camMoving = false;
+        this.camWatchShipId = null;
+        this.camTier = 4;
         this.subtitleQueue = [];
         this.subtitleAt = -99;
         this.active = true;
@@ -423,6 +444,7 @@ export class NavalWarLayer {
         for (const k of DE_FX_KEYS) getDeFx(k);
         getDeSeaImg(0); getDeSeaImg(1); getDeSeaImg(2);
         if (this.canvas) this.canvas.style.display = 'block';
+        this.requestNavalGroundGL();
         document.body.classList.add('naval-war-active');
         (window as any).game?.combatUI?.applyScene13Layout?.(true);
         const wind = windName(this.sim.windAng);
@@ -451,7 +473,7 @@ export class NavalWarLayer {
             seed: init.seed,
             favored: init.favored ?? null,
             attackerRight: !!init.followedOnDefenderSide,
-            isWater: this.landGrid ? (x, y) => this.isWaterAt(x, y) : undefined,
+            isWater: (x, y) => this.isWaterAt(x, y),
             windCode: init.windCode ?? null,
             weatherKind: init.weatherKind ?? null,
         });
@@ -485,6 +507,17 @@ export class NavalWarLayer {
         navalSceneFlags.hideAllUnits = false;
         navalSceneFlags.unitScaleOverride = null;
         document.body.classList.remove('naval-z15');
+        this.groundGen++;
+        this.useGroundGL = false;
+        this.decorItems = [];
+        if (this.groundLayerGL) {
+            try { this.groundLayerGL.destroy(); } catch { /* 上下文已丢失 */ }
+            this.groundLayerGL = null;
+        }
+        if (this.glCanvas) {
+            this.glCanvas.style.display = 'none';
+            this.glCanvas.style.backgroundImage = '';
+        }
         if (this.canvas) {
             this.canvas.style.display = 'none';
             this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -520,7 +553,11 @@ export class NavalWarLayer {
             if (this.wallT >= prepTimes[this.prepStep]) {
                 this.prepStep++;
                 if (this.init) {
-                    this.setupGeography(this.getMap(), this.init.center ?? null, false);
+                    this.setupGeography(this.getMap(), this.init.center ?? null, true);
+                    this.camTgt = null;
+                    this.camVel = { x: 0, y: 0 };
+                    this.camMoving = false;
+                    if (this.prepStep === 2 || this.prepStep === 3) this.requestNavalGroundGL();
                     this.sim = this.makeSim(this.init);
                     this.weatherKind = null;
                     this.applyWeather(false);
@@ -706,12 +743,68 @@ export class NavalWarLayer {
     }
 
     private isWaterAt(x: number, y: number): boolean {
+        if (this.useGroundGL && this.groundLayerGL) {
+            const glX = TAC_MAP_HALF_W + (x - NAVAL_WORLD_W / 2);
+            const glY = TAC_MAP_HALF_H + (y - NAVAL_WORLD_H / 2);
+            const W = TAC_MAP_HALF_W * 2;
+            const H = TAC_MAP_HALF_H * 2;
+            if (glX < 0 || glY < 0 || glX >= W || glY >= H) return true;
+            return this.groundLayerGL.isWaterAt(glX, glY, W, H);
+        }
         const g = this.landGrid;
         if (!g) return true;
         const i = Math.round((x + LAND_MARGIN) / LAND_CELL);
         const j = Math.round((y + LAND_MARGIN) / LAND_CELL);
         if (i < 0 || j < 0 || i >= this.landCols || j >= this.landRows) return true;
         return g[j * this.landCols + i] === 1;
+    }
+
+    /** 初始化/重建海战 WebGL 地面层（与陆战 Scene13 共用 Scene13GroundLayerGL，水域 ~80% / 陆地 ~20%） */
+    private requestNavalGroundGL(): void {
+        if (!this.glCanvas || !this.init) return;
+        const gen = ++this.groundGen;
+        const glCv = this.glCanvas;
+        const lat = this.centerLL?.lat ?? this.init.center?.lat ?? 35;
+        const lng = this.centerLL?.lng ?? this.init.center?.lng ?? 20;
+        const map = this.getMap();
+        const centerPx = this.centerPx ?? (map && this.centerLL ? map.project(this.centerLL, this.sceneZoom) : null);
+        const fine = this.sceneZoom > NAVAL_SCENE_ZOOM;
+        const built = buildNavalGroundData({
+            lat,
+            lng,
+            seed: this.init.seed,
+            isRealWaterAt: (map && centerPx) ? (wx, wy) => {
+                try {
+                    const ll = map.unproject(this.worldToRefPx(wx, wy, centerPx), this.sceneZoom);
+                    return fine ? this.fineWaterAt(ll.lat, ll.lng) : TerrainSpeedSystem.isSeaAt({ lat: ll.lat, lng: ll.lng });
+                } catch {
+                    return true;
+                }
+            } : undefined,
+        });
+        this.decorItems = built.decorItems.slice().sort((a, b) => a.y - b.y);
+        for (const it of this.decorItems) ensureNavalNatureLoaded(it.spriteName);
+
+        const waterTile = built.groundTiles.water || 'wt2';
+        glCv.style.backgroundImage = `url(/SUCAI_TERRAIN/${waterTile}.png)`;
+        glCv.style.backgroundRepeat = 'repeat';
+        glCv.style.backgroundPosition = 'center center';
+        glCv.style.display = 'block';
+
+        void Scene13GroundLayerGL.create(glCv, built.mapData, built.groundTiles, { isSiege: false }).then((glLayer) => {
+            if (gen !== this.groundGen || !this.isActive()) {
+                glLayer.destroy();
+                return;
+            }
+            if (this.groundLayerGL) {
+                try { this.groundLayerGL.destroy(); } catch { /* ignore */ }
+            }
+            this.groundLayerGL = glLayer;
+            glLayer.setSeasonalGroundProfile(built.lat, built.lng, built.isSnowGround);
+            this.useGroundGL = true;
+        }).catch((err) => {
+            console.warn('[NavalWar] WebGL 海战地面初始化失败，保留 2D 铺底:', err);
+        });
     }
 
     /** 当前缩放下 1 世界单位 = 多少 CSS 像素 */
@@ -752,8 +845,13 @@ export class NavalWarLayer {
                     if (e.weapon === 'cannon') {
                         this.fx.push({ k: 'muzzle', x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: 0 });
                         this.sfx('naval_cannon_fire', 0.35);
-                    } else if (e.weapon === 'arrow') this.sfx('naval_arrow_fire', 0.45);
-                    else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
+                    } else if (e.weapon === 'arrow') {
+                        this.sfx('naval_arrow_fire', 0.45);
+                        if (e.fireArrow) {
+                            this.fx.push({ k: 'deImpact', key: 'FLAMETHROWER_FLAME', x: e.x, y: e.y - 10, t: 0, dur: 0.26, scale: 0.34 });
+                            this.fx.push({ k: 'spark', x: e.x, y: e.y - 8, t: 0 });
+                        }
+                    } else if (e.weapon === 'trebuchet') this.sfx('naval_cannon_fire', 0.9);
                     break;
                 }
                 case 'impact':
@@ -874,34 +972,71 @@ export class NavalWarLayer {
     // ─────────────────────────── 镜头：平移战略地图本身 ───────────────────────────
 
     /**
-     * 🔴 [2026-11-16 主人令「海战的跟随镜头请检查下，合理吗，最好不要乱动」] 稳定跟拍：
-     *   · 目标 = 在场战船（未沉、未溃逃）的重心，旗舰算两份；再做 2.5 秒低通 —— 有船沉 / 逃 / 被夺时重心不跳；
-     *     旧写法取「所有船的外框中心」，外框边上一艘船一没，目标就跳几百像素。
-     *   · 死区 + 迟滞：重心偏离画面中心超过 16% 屏宽 / 屏高才开始追，追回 3% 以内就停；
-     *     旧写法没有死区，船绕着打、目标每帧在变，镜头 95% 的时间都在漂。
-     *   · 限速 90 px/s、加速度 80 px/s²：起步、停下都是缓的，不会被一次跳变拽着猛冲（旧写法实测峰值 676 px/s）。
-     *   · 出大事不拉镜头（见 focusOn）。
+     * 方案 A 镜头目标挑选：
+     *   · 未交战期（bestTier === 4）：返回 null（稳在战场中心，双方舰队同框对阵）；
+     *   · 进入交战（开火或接舷）后按「0 乱入者 → 1 维序者 → 2 旗舰 → 3 普通船」四顺位锁定；
+     *   · 一旦锁定某艘交战船，只要它仍存活未溃逃就持续跟随，绝不定时跳切，彻底杜绝来回晃。
+     */
+    private pickCamShip(sim: NavalBattleSim): NavalShip | null {
+        const engaging = (s: NavalShip): boolean => (
+            s.state === 'alive' && !s.routing && (
+                s.boardingWith !== null ||
+                sim.time - s.lastFireAt < 4.0 ||
+                sim.time - s.lastHitAt < 4.0
+            )
+        );
+        const watched = this.camWatchShipId !== null ? sim.getShip(this.camWatchShipId) : undefined;
+        if (this.camTier < 4 && watched && watched.state === 'alive' && !watched.routing) {
+            return watched;
+        }
+        const tierOf = (s: NavalShip): number => {
+            if (!engaging(s)) return 4;
+            if (s.repRole === 'intruder') return 0;
+            if (s.repRole === 'keeper') return 1;
+            if (s.role === 'flag') return 2;
+            return 3;
+        };
+        let bestTier = 4;
+        for (const s of sim.ships) {
+            if (s.state !== 'alive' || s.routing) continue;
+            const t = tierOf(s);
+            if (t < bestTier) bestTier = t;
+        }
+        if (bestTier === 4) {
+            this.camWatchShipId = null;
+            this.camTier = 4;
+            return null;
+        }
+        const cx = this.camTgt?.x ?? NAVAL_WORLD_W / 2;
+        const cy = this.camTgt?.y ?? NAVAL_WORLD_H / 2;
+        let best: NavalShip | null = null;
+        let bestD2 = Infinity;
+        for (const s of sim.ships) {
+            if (s.state !== 'alive' || s.routing || tierOf(s) !== bestTier) continue;
+            const d2 = (s.x - cx) ** 2 + (s.y - cy) ** 2;
+            if (d2 < bestD2) { bestD2 = d2; best = s; }
+        }
+        if (best) {
+            this.camWatchShipId = best.id;
+            this.camTier = bestTier;
+        }
+        return best;
+    }
+
+    /**
+     * 方案 A 稳定跟拍：
+     *   · 未交战前稳在战场中心（双方舰队同框对阵）；
+     *   · 交战后按四顺位平滑跟随（2.0 秒低通 + 16% 启动 / 3% 停稳大死区 + 柔和限速）。
      */
     private updateCamera(dt: number): void {
         const map = this.getMap();
         const sim = this.sim;
         if (!map || !sim || !this.centerLL || dt <= 0) return;
-        // ① 在场战船重心（溃逃、下沉的不算；全溃散时退回所有还浮着的船）
-        let sx = 0, sy = 0, w = 0;
-        for (const pass of [0, 1]) {
-            for (const s of sim.ships) {
-                if (s.state !== 'alive') continue;
-                if (pass === 0 && s.routing) continue;
-                const k = s.role === 'flag' ? 2 : 1;
-                sx += s.x * k; sy += s.y * k; w += k;
-            }
-            if (w > 0) break;
-        }
-        if (w === 0) return;
-        const rawX = sx / w;
-        const rawY = sy / w + 45;   // 底部有兵力条，取景略往下压一点即可
+        const target = this.pickCamShip(sim);
+        const rawX = target ? target.x : NAVAL_WORLD_W / 2;
+        const rawY = (target ? target.y : NAVAL_WORLD_H / 2) + 45;
         if (!this.camTgt) this.camTgt = { x: rawX, y: rawY };
-        const a = 1 - Math.exp(-dt / 0.7);
+        const a = 1 - Math.exp(-dt / 2.0);
         this.camTgt.x += (rawX - this.camTgt.x) * a;
         this.camTgt.y += (rawY - this.camTgt.y) * a;
         // ② 目标在屏幕上离中心多远
@@ -909,11 +1044,11 @@ export class NavalWarLayer {
         const size = map.getSize();
         const offX = xf.ax + (this.camTgt.x - NAVAL_WORLD_W / 2) * xf.u - size.x / 2;
         const offY = xf.ay + (this.camTgt.y - NAVAL_WORLD_H / 2) * xf.u - size.y / 2;
-        // ③ 死区迟滞
-        if (!this.camMoving && (Math.abs(offX) > size.x * 0.08 || Math.abs(offY) > size.y * 0.08)) this.camMoving = true;
-        if (this.camMoving && Math.hypot(offX, offY) < Math.min(size.x, size.y) * 0.02) this.camMoving = false;
+        // ③ 死区迟滞（16% 启动、3% 停稳，绝不来回晃）
+        if (!this.camMoving && (Math.abs(offX) > size.x * 0.16 || Math.abs(offY) > size.y * 0.16)) this.camMoving = true;
+        if (this.camMoving && Math.hypot(offX, offY) < Math.min(size.x, size.y) * 0.03) this.camMoving = false;
         // ④ 限速 + 限加速度
-        const MAX_V = 220, MAX_A = 280;
+        const MAX_V = 110, MAX_A = 90;
         let wantX = 0, wantY = 0;
         if (this.camMoving) {
             wantX = offX * 1.4;
@@ -978,9 +1113,19 @@ export class NavalWarLayer {
         const order = sim.ships.filter((s) => s.state !== 'sunk' && s.state !== 'fled').sort((a, b) => a.y - b.y);
         const poses = new Map<number, ShipPose>();
         for (const s of order) poses.set(s.id, this.shipPose(s, toS(s.x, s.y), zoom));
-        // ① 海面铺底（zoom > 12 时学习陆战 Scene13：1:1 原生 DE 海水贴图 + 世界锚定波纹）+ 船尾/船头浪花
+        // ① 海面与 DE 海岸：优先使用与陆战 Scene13 一致的 WebGL 地面层（Scene13GroundLayerGL）
         const tick = performance.now();
-        if (zoom > 12) {
+        if (this.useGroundGL && this.groundLayerGL && this.glCanvas) {
+            if (this.glCanvas.width !== cw || this.glCanvas.height !== ch) {
+                this.glCanvas.width = cw;
+                this.glCanvas.height = ch;
+            }
+            const camZoom = xf.u * dpr;
+            const camX = (xf.ax + rect.left) * dpr - TAC_MAP_HALF_W * camZoom;
+            const camY = (xf.ay + rect.top) * dpr - TAC_MAP_HALF_H * camZoom;
+            this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom });
+            this.groundLayerGL.render();
+        } else if (zoom > 12) {
             this.drawDeSeaBackground(ctx, toS, vw, vh);
             this.drawSeaRipples(ctx, toS, xf.u, vw, vh, tick, sim.windAng);
         }
@@ -994,15 +1139,30 @@ export class NavalWarLayer {
             );
         }
         for (const s of order) this.drawBoardingLink(ctx, s, toS, xf.u);
-        // ② 旗杆（在船后面）→ 船 → 旗面
+        // ② 旗杆（在船后面）→ 船 → 旗面，穿插海岸树木与海礁按脚点 y 深度排序
         const year = (window as any).game?.timeSystem?.getYear?.() ?? -999;
-        for (const s of order) {
+        const decor = this.decorItems;
+        let di = 0;
+        let si = 0;
+        const drawOneShip = (s: NavalShip) => {
             const p = poses.get(s.id)!;
-            const isFlag = s.role === 'flag' && s.state === 'alive';
-            if (isFlag) LegionFlagDrawer.drawPole(ctx, { x: p.x, y: p.y }, mapScale, s.factionId || 'panshu');
+            const showFlag = s.state === 'alive';
+            const flagScale = s.role === 'flag' ? mapScale : mapScale * 0.78;
+            if (showFlag) LegionFlagDrawer.drawPole(ctx, { x: p.x, y: p.y }, flagScale, s.factionId || 'panshu');
             this.drawShip(ctx, s, p, xf.u, mapScale);
-            if (isFlag) LegionFlagDrawer.drawFlag(ctx, { x: p.x, y: p.y }, 0, mapScale, Date.now(), s.factionId || 'panshu', year);
+            if (showFlag) LegionFlagDrawer.drawFlag(ctx, { x: p.x, y: p.y }, 0, flagScale, Date.now() + s.id * 180, s.factionId || 'panshu', year);
+        };
+        const drawOneDecor = (it: NavalDecorItem) => {
+            const sp = toS(it.x, it.y);
+            if (sp.x < -180 || sp.x > vw + 180 || sp.y < -180 || sp.y > vh + 240) return;
+            drawNavalDecorItem(ctx, it.spriteName, sp.x, sp.y, xf.u * it.scale, Math.abs(Math.floor(it.x * 7 + it.y * 13)));
+        };
+        while (si < order.length && di < decor.length) {
+            if (decor[di].y <= order[si].y) drawOneDecor(decor[di++]);
+            else drawOneShip(order[si++]);
         }
+        while (di < decor.length) drawOneDecor(decor[di++]);
+        while (si < order.length) drawOneShip(order[si++]);
         for (const s of order) this.drawBoardingMelee(ctx, s, toS, xf.u, mapScale);
         this.drawProjectiles(ctx, toS, xf.u, mapScale);
         this.drawFx(ctx, toS, xf.u, mapScale);
@@ -1105,6 +1265,27 @@ export class NavalWarLayer {
 
             // DE 尘烟精灵（IMPACT_DUST / IMPACT_TREBUCHET_SMOKE）
             drawDeFxFrame(ctx, slot === 1 ? 'FX_TREBUCHET_SMOKE' : 'FX_WALL_DUST', cx, cy + 4 * u, k, dustScale, 0.45 * fade);
+
+            // 陆战 Scene13 同款白刃战刀光剑影（锥形弯月刀罡 / 突刺枪芒 / 十字星芒）
+            const cycleId = Math.floor(this.wallT * 2.4 + slot) + s.id * 7 + o.id * 13;
+            const slashAng = Math.atan2(dy, dx) + ((cycleId % 2 === 0 ? 0.35 : -0.35) + Math.sin(cycleId * 1.9) * 0.45);
+            const slashKind: 'slash' | 'thrust' = cycleId % 3 === 0 ? 'thrust' : 'slash';
+            const slashColors = ['#FFFFFF', '#FFF8D6', '#FFE58F', '#FFD24C'];
+            const slashCol = slashColors[Math.abs(cycleId) % slashColors.length];
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            drawMeleeSlashEffect(
+                ctx,
+                cx,
+                cy - 4 * u,
+                slashAng,
+                (slashKind === 'thrust' ? 16 : 20) * u,
+                slashKind,
+                slashCol,
+                (cycleId & 1) === 0,
+                k,
+            );
+            ctx.restore();
 
             // Scene13 同款兵刃交锋火星
             for (let sp = 0; sp < 5; sp++) {
@@ -1257,8 +1438,43 @@ export class NavalWarLayer {
                 // 学陆战箭塔（Scene13WarLayer.fireDefBuildingVolley）：每发单支 DE 火箭（PROJ_ARROW_FIRE），由船舷随机间隔射出
                 const fx = getDeFx('PROJ_ARROW_FIRE') ?? getDeFx('PROJ_ARROW');
                 const key = getDeFx('PROJ_ARROW_FIRE') ? 'PROJ_ARROW_FIRE' : 'PROJ_ARROW';
-                const midFr = fx ? Math.floor(fx.frames / 2) : 5;
-                drawDeFxFrame(ctx, key, x, y, p, baseScale * 1.18, 1, angle, midFr);
+                if (pr.fireArrow) {
+                    // 中国楼船专属：炽烈火箭火光拖尾 + 跳动火星 + 动态火焰帧
+                    const pt = Math.max(0, p - 0.14);
+                    const tx = s0.x + dx * pt;
+                    const ty = s0.y + dy * pt - 4 * arcH * pt * (1 - pt);
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = 'rgba(255,95,24,0.68)';
+                    ctx.lineWidth = Math.max(2.2, 4.2 * u);
+                    ctx.beginPath();
+                    ctx.moveTo(tx, ty);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    ctx.strokeStyle = 'rgba(255,238,145,0.92)';
+                    ctx.lineWidth = Math.max(1.0, 1.8 * u);
+                    ctx.beginPath();
+                    ctx.moveTo((tx + x) * 0.5, (ty + y) * 0.5);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    for (let k = 1; k <= 2; k++) {
+                        const pk = Math.max(0, p - k * 0.055);
+                        const sx = s0.x + dx * pk + Math.sin(pk * 40 + k * 2.1) * 2.5 * u;
+                        const sy = s0.y + dy * pk - 4 * arcH * pk * (1 - pk) + Math.cos(pk * 35 + k) * 2 * u;
+                        ctx.fillStyle = k === 1 ? 'rgba(255,215,95,0.85)' : 'rgba(255,105,30,0.65)';
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, (2.2 - k * 0.5) * u, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+                const animFr = (pr.fireArrow && fx)
+                    ? Math.floor((p * 3) * fx.frames) % Math.max(1, fx.frames)
+                    : (fx ? Math.floor(fx.frames / 2) : 5);
+                drawDeFxFrame(ctx, key, x, y, p, baseScale * (pr.fireArrow ? 2.65 : 2.4), 1, angle, animFr);
             } else if (pr.kind === 'cannon') {
                 drawDeFxFrame(ctx, 'PROJ_BALL', x, y, (p * 2) % 1, baseScale * 1.1, 1, angle);
             } else if (pr.kind === 'trebuchet') {
@@ -1526,10 +1742,39 @@ export class NavalWarLayer {
         }
     }
 
-    /** 旗舰：战略地图同款名字标签（武将 / 军团 / 兵力）；船受了伤才显示细血条 */
+    /** 旗舰：战略地图同款名字标签（武将 / 军团 / 兵力）；乱入者/维序者代表船带同款名牌血条；其余船受了伤才显示细血条 */
     private drawShipBadge(ctx: CanvasRenderingContext2D, s: NavalShip, p: ShipPose, mapScale: number): void {
         if (s.state !== 'alive' || !this.init) return;
-        if (s.hp < s.maxHp - 0.5 || s.boardingWith !== null) {
+        if (s.repRole) {
+            const isIntruder = s.repRole === 'intruder';
+            const heroName = (window as any).game?.playerHero?.name;
+            const label = isIntruder ? (heroName || '乱入者') : '维序者';
+            const textColor = isIntruder ? '#ffd27a' : '#7ae0ff';
+            const barColor = isIntruder ? '#e04a3a' : '#3a9ee0';
+            const ry = p.y - p.len * 0.48;
+            ctx.save();
+            ctx.font = "bold 13px 'Noto Serif SC','SimSun',serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(0,0,0,0.82)';
+            ctx.strokeText(label, p.x, ry);
+            ctx.fillStyle = textColor;
+            ctx.fillText(label, p.x, ry);
+            const bw = 42, bh = 4.5;
+            ctx.fillStyle = 'rgba(0,0,0,0.65)';
+            ctx.fillRect(p.x - bw / 2, ry + 2, bw, bh);
+            ctx.fillStyle = barColor;
+            ctx.fillRect(p.x - bw / 2, ry + 2, bw * Math.max(0, Math.min(1, s.hp / s.maxHp)), bh);
+            if (s.boardingWith !== null) {
+                const cr = Math.max(0, Math.min(1, s.crew / s.maxCrew));
+                ctx.fillStyle = 'rgba(10,12,16,0.72)';
+                ctx.fillRect(p.x - bw / 2, ry + 8, bw, 4);
+                ctx.fillStyle = '#f2e6c8';
+                ctx.fillRect(p.x - bw / 2, ry + 8.5, bw * cr, 3);
+            }
+            ctx.restore();
+        } else if (s.hp < s.maxHp - 0.5 || s.boardingWith !== null) {
             const w = Math.max(32, p.len * 0.45);
             const y = p.y - p.len * 0.42;
             const ratio = Math.max(0, Math.min(1, s.hp / s.maxHp));
@@ -1612,6 +1857,54 @@ export class NavalWarLayer {
             ctx.fillText(`上风 ${name.length > 5 ? name.slice(0, 5) : name}`, cx, cy + R + 40);
         }
     }
+}
+
+interface NavalNatureEntry {
+    img: HTMLImageElement | null;
+    meta: { frames: number; box_w: number; box_h: number; anchor_x: number; anchor_y: number } | null;
+    loading: boolean;
+}
+const navalNatureBank = new Map<string, NavalNatureEntry>();
+
+function resolveNavalNatureDir(name: string): string {
+    const r = resolveNatureSprite(name);
+    if (r && r[0] === 'NATURE') return r[1];
+    return name;
+}
+
+function ensureNavalNatureLoaded(name: string): void {
+    const dir = resolveNavalNatureDir(name);
+    if (navalNatureBank.has(dir)) return;
+    const entry: NavalNatureEntry = { img: null, meta: null, loading: true };
+    navalNatureBank.set(dir, entry);
+    void Promise.all([
+        ensureCleanImage(`/SUCAI_NATURE/${dir}/frames.png`, null),
+        fetch(`/SUCAI_NATURE/${dir}/_meta.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([img, meta]) => {
+        entry.img = img;
+        entry.meta = meta;
+        entry.loading = false;
+    });
+}
+
+function drawNavalDecorItem(
+    ctx: CanvasRenderingContext2D,
+    name: string,
+    sx: number,
+    sy: number,
+    scale: number,
+    variantSeed: number,
+): void {
+    const dir = resolveNavalNatureDir(name);
+    const entry = navalNatureBank.get(dir);
+    if (!entry?.img || !entry.meta || !entry.img.complete || !entry.img.naturalWidth) return;
+    const m = entry.meta;
+    const fr = variantSeed % Math.max(1, m.frames);
+    ctx.drawImage(
+        entry.img,
+        fr * m.box_w, 0, m.box_w, m.box_h,
+        sx - m.anchor_x * scale, sy - m.anchor_y * scale, m.box_w * scale, m.box_h * scale,
+    );
 }
 
 interface ShipPose {
