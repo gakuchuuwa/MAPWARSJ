@@ -687,6 +687,15 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_aodongcheng: 698, // 698大祚荣立渤海国营敖东城
     city_taqian: 91, // 91年东汉班超任西域都护驻它乾城
     city_jilusai: -102, // 约前102汉置鸡鹿塞（朔方郡关门）
+    city_lulong_pass: -280, // 战国燕至汉置卢龙塞
+    city_shoujiangcheng: -104, // 前104汉公孙敖筑受降城
+    city_guanglu_pass: -102, // 前102汉徐自为筑光禄塞
+    city_wusun_beisai: 90, // 东汉乌孙北塞
+    city_tanggu: 220, // 三国秦岭傥谷关垒
+    city_liugu: 640, // 唐贞观柳谷军镇
+    city_fankou: 208, // 建安十三年孙吴樊口水军要塞
+    city_biliniusi_pass: -71, // 前71罗马比利牛斯山口关隘
+    city_brenner_pass: -15, // 前15罗马阿尔卑斯布伦纳山口要隘
     city_raoleshui: 450, // 约450《魏书》首记库莫奚饶乐水（西拉木伦）
     city_wuchuanzhen: 420, // 约420北魏置六镇之一的武川镇
     city_keyimen: 1038, // 约1038西夏立国置贺兰山口克夷门关
@@ -1169,7 +1178,110 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_lier: 1000, // 约1000年佛兰德里尔
     city_toulouse: -100, // 约前1世纪罗马图卢兹
     city_nantes: -100, // 约前1世纪罗马南
+    city_chios: -700, // 希俄斯
+    city_lemnos: -700, // 莱姆诺斯
+    city_kefalonia: -600, // 凯法利尼亚
+    city_apollonia_illyria: -588, // 阿波罗尼亚
+    city_colossae: -500, // 科洛赛
+    city_skiathos: -600, // 斯基亚索斯
+    city_patras: -400, // 帕特雷
+    city_zakynthos: -600, // 扎金索斯
+    city_kabyle: -341, // 卡比莱
+    city_al_arish: -300, // 阿里什
+    city_magnesia_sipylum: -500, // 马格尼西亚
+    city_kaunos: -550, // 考诺斯
+    city_perinthus: -602, // 佩林索斯
+    city_phaselis: -690, // 法塞利斯
+    city_euboea: -700, // 优卑亚
+    city_ikaria: -600, // 伊卡里亚
+    city_kythnos: -600, // 基斯诺斯
+    city_pylos: -425, // 皮洛斯
+    city_lychnidos: -350, // 利克尼斯托斯
+    city_dion: -420, // 迪翁
+    city_marathus: -550, // 马拉托斯
+    city_synnada: -300, // 辛纳达
+    city_arcadiopolis: 400, // 阿卡迪奥波利斯
+    city_amorium: -200, // 阿莫里乌姆
+    city_baalbek: -300, // 巴勒贝克
+    city_apamea: -300, // 阿帕梅亚
+    city_maras: -500, // 马拉什
+    city_baja: 1308, // 巴亚
+    city_contrebia: -200, // 孔特雷比亚
+    city_detmold: 783, // 代特莫尔德
+    city_autun: -15, // 奥古斯托杜努姆
+    city_wurzburg: 704, // 维尔茨堡
+    city_lincoln: 60, // 林肯
+    city_cherbourg: 933, // 瑟堡
+    city_amiens: -50, // 亚眠
+    city_catania: -729, // 卡塔纳
+    city_certima: -200, // 克尔蒂马
+    city_ocilis: -200, // 奥基利斯
+    city_talavera: -181, // 塔拉韦拉
+    city_sicca: -300, // 锡卡
+    city_ruspina: -400, // 鲁斯皮纳
+    city_obulco: -200, // 奥布尔科
+    city_brescia: -400, // 布里克西亚
+    city_trento: -200, // 特里登图姆
+    city_bolzano: -15, // 庞斯德鲁西
+    city_salona: -100, // 萨洛纳
+    city_ancona: -387, // 安科纳
+    city_bologna: -189, // 博诺尼亚
+    city_piacenza: -218, // 普拉森提亚
+    city_emona: 14, // 埃莫纳
+    city_segusio: -100, // 塞古西奥
+    city_havelberg: 948, // 哈弗尔贝格
+    city_passau: 100, // 帕绍
+    city_lorch: 190, // 洛尔希
+    city_girona: -79, // 赫罗纳
+    city_cheb: 1061, // 埃格尔
+    city_ribe: 705, // 里伯
+    city_ulm: 854, // 乌尔姆
+    city_troia: 1019, // 特罗亚
+    city_mileto: 1059, // 米莱托
+    city_oslo: 1040, // 奥斯陆
+    city_pevensey: 290, // 佩文西
+    city_stamford: 918, // 斯坦福
+    city_ipswich: 620, // 伊普斯维奇
+    city_carhaix: 14, // 卡赖
+    city_bergerac: 1080, // 贝热拉克
+    city_saint_jean_dangely: 817, // 圣让当热利
+    city_limoges: -10, // 利摩日
+    city_avranches: -50, // 阿夫朗什
+    city_argentan: 1000, // 阿让唐
+    city_namur: 900, // 那慕尔
+    city_lausanne: -15, // 洛桑
+    city_langres: -50, // 朗格勒
+    city_neufchateau: 1094, // 讷沙托
+    city_cuneo: 1198, // 库内奥
+    city_vercelli: -100, // 韦尔切利
+    city_osijek: 131, // 奥西耶克
+    city_gyor: 100, // 杰尔
+    city_sopron: 100, // 肖普朗
+    city_kormend: 1244, // 克尔门德
+    city_szekesfehervar: 972, // 白堡
+    city_szigetvar: 1420, // 锡盖特瓦尔
+    city_sirmium: -100, // 西尔米乌姆
+    city_krusevac: 1371, // 克鲁舍瓦茨
+    city_nikopolis: 629, // 尼科波利斯
+    city_drobeta: 103, // 德罗贝塔
+    city_viminacium: 86, // 维米纳基乌姆
+    city_madjar: 1250, // 马贾尔
+    city_kolomna: 1177, // 科洛姆纳
+    city_bolghar: 900, // 保加尔
+    city_czerwinsk: 1155, // 切尔温斯克
+    city_lidzbark: 1301, // 利兹巴克
+    city_buzau: 1431, // 布泽乌
+    city_barlad: 1134, // 伯尔拉德
+    city_lugoj: 1334, // 卢戈日
+    city_kolomyia: 1241, // 科洛梅亚
+    city_mikytin_rih: 1639, // 米基廷角
+    city_bila_tserkva: 1032, // 白采尔科维
+    city_khmilnyk: 1362, // 赫梅利尼克
+    city_zbarazh: 1211, // 兹巴拉日
+    city_brody: 1084, // 布罗德
+    city_uralsk: 1584, // 乌拉尔斯克
     city_avignon: -100, // 约前1世纪卡马尔格阿维尼翁
+    city_masailiya: -600, // 公元前600年希腊福凯亚人建城马萨利亚（马赛）
     city_calais: 900, // 约9世纪加莱
     city_oushi: -100, // 约前1世纪阿马尼亚克欧什
     city_shatteer: 1000, // 约1000年沙特尔主教城
