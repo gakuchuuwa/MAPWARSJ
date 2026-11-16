@@ -1297,6 +1297,18 @@ export class RoadRegistry {
     }
 
     /**
+     * 更新图节点坐标（供道路编辑器移动据点/战场后同步内存图）
+     */
+    public updateNodePosition(id: string, lat: number, lng: number): void {
+        const node = this.nodes.get(id);
+        if (!node) return;
+        node.lat = lat;
+        node.lng = lng;
+        this.cityGrid = null;
+        this.clearDistanceCache();
+    }
+
+    /**
      * 更新一条矢量道路的坐标
      */
     public updateVectorRoadCoordinates(roadId: string, coordinates: [number, number][]): void {

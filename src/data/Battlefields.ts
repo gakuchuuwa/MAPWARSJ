@@ -1084,8 +1084,8 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     {
         id: 'bf_puleihai_beisai',
         name: '蒲类海北塞之战',
-        lat: 44.12,
-        lng: 93.15,
+        lat: 44.2576,
+        lng: 93.3554,
         scriptYear: 93,
         note: '编年史 evt_0694 塞北追斩自立北单于於除鞬之战（93，东汉 vs 北匈奴）。距最近据点巴里坤 59.06km。不画路。',
     },

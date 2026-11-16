@@ -1083,8 +1083,8 @@ export default defineConfig({
 
                 // ========================================================
                 // [2026-11-15 主人需求] /api/save-battlefield-pos
-                //   道路编辑器拖拽移动战场坐标：只更新对应 bf_* 的 lat / lng，防整页刷新打断画路
-                //   body: { id: 'bf_xxx', lat: number, lng: number }
+                //   道路编辑器拖拽移动战场或据点坐标：只更新对应 bf_* / city_* 的 lat / lng，防整页刷新打断画路
+                //   body: { id: 'bf_xxx' | 'city_xxx', lat: number, lng: number }
                 // ========================================================
                 server.middlewares.use('/api/save-battlefield-pos', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ ok: false, error: 'Method not allowed' })); return; }
@@ -1097,34 +1097,36 @@ export default defineConfig({
                             const id = String(data?.id ?? '').trim();
                             const lat = Number(data?.lat);
                             const lng = Number(data?.lng);
-                            if (!/^bf_[a-z0-9_]+$/.test(id) || !Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                            const isBf = /^bf_[a-z0-9_]+$/.test(id);
+                            const isCity = /^city_[a-z0-9_]+$/.test(id);
+                            if ((!isBf && !isCity) || !Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
                                 res.statusCode = 400;
-                                res.end(JSON.stringify({ ok: false, error: '参数无效：需要合法的 bf_ id 与经纬度' }));
+                                res.end(JSON.stringify({ ok: false, error: '参数无效：需要合法的 bf_ / city_ id 与经纬度' }));
                                 return;
                             }
-                            const bfFilePath = path.resolve(__dirname, 'src/data/Battlefields.ts');
-                            const raw = fs.readFileSync(bfFilePath, 'utf-8');
+                            const targetPath = path.resolve(__dirname, isBf ? 'src/data/Battlefields.ts' : 'src/data/cities_v2.ts');
+                            const raw = fs.readFileSync(targetPath, 'utf-8');
                             const idEsc = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                             const blockRe = new RegExp(`(\\{[^{}]*?\\bid\\s*:\\s*'${idEsc}'[^{}]*?\\})`, 's');
                             const m = blockRe.exec(raw);
                             if (!m) {
                                 res.statusCode = 404;
-                                res.end(JSON.stringify({ ok: false, error: `未找到战场 ${id}` }));
+                                res.end(JSON.stringify({ ok: false, error: `未找到据点 ${id}` }));
                                 return;
                             }
                             const rLat = Number(lat.toFixed(4));
                             const rLng = Number(lng.toFixed(4));
-                            let updatedBlock = m[1]
+                            const updatedBlock = m[1]
                                 .replace(/(\blat\s*:\s*)-?\d+(?:\.\d+)?/, `$1${rLat}`)
                                 .replace(/(\blng\s*:\s*)-?\d+(?:\.\d+)?/, `$1${rLng}`);
                             if (updatedBlock === m[1] && (!/\blat\s*:/.test(m[1]) || !/\blng\s*:/.test(m[1]))) {
                                 res.statusCode = 500;
-                                res.end(JSON.stringify({ ok: false, error: `战场 ${id} 缺少 lat/lng 字段` }));
+                                res.end(JSON.stringify({ ok: false, error: `据点 ${id} 缺少 lat/lng 字段` }));
                                 return;
                             }
                             const nextRaw = raw.slice(0, m.index) + updatedBlock + raw.slice(m.index + m[1].length);
                             markRoadSaveWrite();
-                            fs.writeFileSync(bfFilePath, nextRaw, 'utf-8');
+                            fs.writeFileSync(targetPath, nextRaw, 'utf-8');
                             res.statusCode = 200;
                             res.end(JSON.stringify({ ok: true, id, lat: rLat, lng: rLng }));
                         } catch (err: any) {

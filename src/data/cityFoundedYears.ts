@@ -689,7 +689,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_jilusai: -102, // 约前102汉置鸡鹿塞（朔方郡关门）
     city_lulong_pass: -280, // 战国燕至汉置卢龙塞
     city_shoujiangcheng: -104, // 前104汉公孙敖筑受降城
-    city_guanglu_pass: -102, // 前102汉徐自为筑光禄塞
+    city_guanglu_pass: -102, // 前102汉五原塞石门障
     city_wusun_beisai: 90, // 东汉乌孙北塞
     city_tanggu: 220, // 三国秦岭傥谷关垒
     city_liugu: 640, // 唐贞观柳谷军镇
@@ -1280,6 +1280,123 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_zbarazh: 1211, // 兹巴拉日
     city_brody: 1084, // 布罗德
     city_uralsk: 1584, // 乌拉尔斯克
+    city_nakhshab: -300, // 纳赫沙布
+    city_semnan: -200, // 塞姆南
+    city_nakhchivan: -500, // 纳希切万
+    city_ahar: 500, // 阿哈尔
+    city_barda: 460, // 巴尔达
+    city_marand: -300, // 马兰德
+    city_kangavar: -300, // 坎加瓦尔
+    city_kermanshah: 390, // 克尔曼沙赫
+    city_gymnias: -450, // 金姆尼亚斯
+    city_tulamba: -326, // 图兰巴
+    city_wasit: 702, // 瓦西特
+    city_yanze: -100, // 盐泽
+    city_yixun: -77, // 伊循城
+    city_zeugma: -300, // 泽乌格马
+    city_taron: -300, // 塔龙
+    city_dongqiemi: -100, // 东且弥
+    city_weixu: -100, // 危须
+    city_mardin: 300, // 马尔丁
+    city_bezabde: 300, // 贝扎布德
+    city_badghis: 450, // 巴德吉斯
+    city_baishuijian: 600, // 白水涧
+    city_taliqan: 650, // 塔里干
+    city_chaghaniyan: 400, // 恰加尼扬
+    city_changle_hexi: -111, // 常乐
+    city_kulan: 600, // 俱兰城
+    city_chittor: 728, // 奇托尔
+    city_nagapattinam: 800, // 纳加帕蒂南
+    city_kashan_iran: 500, // 卡尚
+    city_hit: -2000, // 希特
+    city_anbar: 250, // 安巴尔
+    city_ahlat: 1000, // 阿赫拉特
+    city_bathinda: 900, // 巴廷达
+    city_zarnuq: 1100, // 札儿努黑
+    city_shamaxi: -100, // 沙马基
+    city_khudafarin: 1027, // 胡达费林
+    city_khoy: 400, // 霍伊
+    city_pidie: 1400, // 佩迪尔
+    city_ambala: 1300, // 安巴拉
+    city_jalandhar: 100, // 贾兰达尔
+    city_kaliabor: 1500, // 卡利亚博尔
+    city_lhari: 1650, // 拉里
+    city_yangon: 1000, // 大光
+    city_zhanda: 1400, // 盏达
+    city_tingri: 1792, // 定日
+    city_gyirong: 700, // 济咙
+    city_sahiwal: 1500, // 萨希瓦尔
+    city_gujranwala: 1700, // 古杰兰瓦拉
+    city_kuozhou: 557, // 廓州
+    city_linqing: -200, // 临清
+    city_yuxian_sx: -500, // 孟县
+    city_xinye: -200, // 新野
+    city_fanhe: -121, // 番禾
+    city_guizhou_hb: -400, // 归州
+    city_sizhou: 580, // 泗州
+    city_haiyuan: 1099, // 海原
+    city_puqi: 223, // 蒲圻
+    city_pengze: -201, // 彭泽
+    city_fangzi: -400, // 房子
+    city_qinqiu: -600, // 寝丘
+    city_shuofang: -127, // 朔方
+    city_huling: -400, // 胡陵
+    city_loufan: -400, // 楼烦
+    city_juli: -300, // 巨里
+    city_jianli: 222, // 监利
+    city_daling: -400, // 大陵
+    city_tashi: -100, // 沓氏
+    city_sana: -200, // 三阿
+    city_niuchuan: 386, // 牛川
+    city_weinan: -350, // 渭南
+    city_wugudao: 645, // 乌骨岛
+    city_shicheng_hb: -200, // 石城
+    city_duanshi: -403, // 端氏
+    city_liaozhou: 596, // 辽州
+    city_juye: -200, // 巨野
+    city_dingyuan: -200, // 定远
+    city_lishui: 591, // 溧水
+    city_baibaocheng: 1000, // 白豹城
+    city_binzhou_gx: 631, // 宾州
+    city_shuyang: 549, // 沭阳
+    city_shijiudao: 1161, // 石臼岛
+    city_dongguan: 757, // 东莞
+    city_huzhou: -248, // 湖州
+    city_qinzhan: 1406, // 芹站
+    city_dulan_bulongjir: 1718, // 布隆吉尔
+    city_batang: 1700, // 巴塘
+    city_xiangyin: 474, // 湘阴
+    city_lujiang: -200, // 庐江
+    city_dewudao: 660, // 德物岛
+    city_wutanzili: -100, // 乌贪訾离
+    city_chuyue: 640, // 处月
+    city_yanmianzhou: 658, // 咽面州
+    city_shuanghe_xj: 658, // 双河
+    city_kedah: 500, // 吉打
+    city_jambi: 650, // 占卑
+    city_ningjiangzhou: 1014, // 宁江州
+    city_liaobinzhou: 999, // 辽宾州
+    city_balezhuna: 1203, // 巴勒渚纳
+    city_changzhou_nm: 1196, // 昌州
+    city_alimalig_xj: 1200, // 阿力麻里
+    city_kangaba: 1050, // 康加巴
+    city_quanning: 1270, // 全宁
+    city_madiun: 1568, // 马迪乌恩
+    city_shangdu_nm: 1260, // 商都
+    city_iida: 1200, // 饭田
+    city_gogeumdo: 1598, // 古今岛
+    city_sogok: 1700, // 索果克
+    city_rayong: 1500, // 罗勇
+    city_chonburi: 1400, // 春武里
+    city_orsk: 1735, // 奥尔斯克
+    city_turgay: 1771, // 图尔盖
+    city_nhatrang: 200, // 芽庄
+    city_phuyen: 1611, // 富安
+    city_champoton: 900, // 钱波通
+    city_tlaxcala: 1350, // 特拉斯卡拉
+    city_piura: 1532, // 皮乌拉
+    city_ubatuba: 1554, // 乌巴图巴
+    city_angra_dos_reis: 1502, // 安格拉杜斯雷斯
     city_avignon: -100, // 约前1世纪卡马尔格阿维尼翁
     city_masailiya: -600, // 公元前600年希腊福凯亚人建城马萨利亚（马赛）
     city_calais: 900, // 约9世纪加莱
