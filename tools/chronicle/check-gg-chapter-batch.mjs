@@ -49,6 +49,18 @@ expect.forEach((x, k) => {
   const text = s.join('') + (g.战术播报 ?? '');
   if (/回溯|先于此役|载之前/.test(s.join(''))) err(x.id, '战略播报含倒叙词（回溯/先于此役/载之前）');
   for (const [re, m] of BAN) if (m && re.test(text)) err(x.id, m);
+  // 凑字复读（2026-11-17 第4–6幕 64 场把同一分句连写两遍）：同一场战略播报里，分句重复或一句是另一句的开头/结尾
+  const clauses = s.join('。').split(/[，。、]/).map((c) => c.trim()).filter((c) => len(c) >= 7);
+  const dup = new Set();
+  for (let i = 0; i < clauses.length; i++) for (let j = i + 1; j < clauses.length; j++) {
+    const [p, o] = len(clauses[i]) <= len(clauses[j]) ? [clauses[i], clauses[j]] : [clauses[j], clauses[i]];
+    if (o.startsWith(p) || o.endsWith(p) || (len(p) >= 10 && o.includes(p)) || (len(p) >= 8 && p.slice(0, 8) === o.slice(0, 8))) dup.add(p);
+  }
+  if (dup.size) err(x.id, `战略播报分句重复（凑字）：${[...dup].join(' ／ ')}`);
+  // 兵力确数（写作红线：不写兵力数字）：「五万精锐」「三千余人」之类；万里、千载这类不是兵力，放行
+  const troops = [...text.matchAll(/[一二三四五六七八九两]+[十百千]?[万千]余?[^，。、]{0,4}/g)].map((m) => m[0])
+    .filter((w) => !/^[一两]?[万千](里|户|民|国|载|世|古|难|分|秋|乘|年|丈|状|钧|众一心|辛|岁|方|象|人口)|千万人口|万里|千里|千载|千年|万世|万古|千秋|米|落|老幼|妇孺/.test(w));
+  if (troops.length) err(x.id, `写了兵力确数：${troops.join('、')}`);
   // 「朝」单独检查：除「朝鲜」外，作政权后缀的「X朝」都不许；「朝廷/朝野/朝政」等常用词放行
   const chao = [...text.matchAll(/(?<!临|满|入|还|归|在)朝(?!鲜|廷|野|政|堂|中|臣|见|贡|局|会|夕|阳|向|着|天|服|拜|议|柄|发|纲)/g)].map((m) => text.slice(Math.max(0, m.index - 2), m.index + 2));
   if (chao.length) warns.push(`${x.id} 含「朝」需人工看：${chao.join('、')}`);

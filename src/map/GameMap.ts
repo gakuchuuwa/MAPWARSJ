@@ -12,6 +12,7 @@ import { StrategicGridLayer } from './StrategicGridLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { MonumentLayer } from './MonumentLayer';
 import { BattlefieldLayer } from './BattlefieldLayer';
+import { GreatWallLayer } from './GreatWallLayer';
 import { CITIES_V2 } from '../data/cities_v2';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { VegetationLayer } from './VegetationLayer';
@@ -90,6 +91,7 @@ export class GameMap {
     private monumentLayer: MonumentLayer | null = null;
     /** 🔴 [2026-09-12 主人定] 战场图层（战场不是据点，是独立地名，类似奇观） */
     private battlefieldLayer: BattlefieldLayer | null = null;
+    private greatWallLayer: GreatWallLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
     private marineLifeLayer: MarineLifeLayer | null = null;
     private weatherLayer: WeatherLayer | null = null;
@@ -256,6 +258,7 @@ export class GameMap {
         this.monumentLayer = new MonumentLayer(this.map);
         // 🔴 [2026-09-12 主人定] 战场图层：战场独立于据点体系（一个地名而已，类似奇观）
         this.battlefieldLayer = new BattlefieldLayer(this.map);
+        this.greatWallLayer = new GreatWallLayer(this.map);
 
         // [USER REQUEST] WSAD 移动地图
         this.initKeyboardNavigation();
@@ -268,6 +271,10 @@ export class GameMap {
 
     public getBattlefieldLayer(): BattlefieldLayer | null {
         return this.battlefieldLayer;
+    }
+
+    public getGreatWallLayer(): GreatWallLayer | null {
+        return this.greatWallLayer;
     }
 
     /** 线上部署：无右侧 Leaflet 面板，仍启用与开发版相同的默认图层 */
